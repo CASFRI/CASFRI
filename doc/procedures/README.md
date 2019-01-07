@@ -1,1 +1,1 @@
-Internatl procedures documents for CASFRI team members
+Internal procedures documents for CASFRI team members
