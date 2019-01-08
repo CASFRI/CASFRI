@@ -57,9 +57,10 @@ All CASFRI v5 documentation will be written in markdown and version controlled o
     3. Tables to be added should be stored as csv files
 
 # 3. Software versions
-All team members should use:
-* PostgreSQL v???
-* PostGIS v???
+Client is using:
+* PostgreSQL v9.6*
+* PostGIS v2.3.7
+We also need:
 * GDAL/OGR v???
 
 # 4. Backup procedures
