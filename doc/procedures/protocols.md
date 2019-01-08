@@ -59,7 +59,7 @@ All CASFRI v5 documentation will be written in markdown and version controlled o
 # 3. Software versions
 Client is using:
 * PostgreSQL v9.6*
-* PostGIS v2.3.7
+* PostGIS v2.3.7  
 We also need:
 * GDAL/OGR v???
 
