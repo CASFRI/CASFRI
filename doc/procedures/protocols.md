@@ -1,4 +1,4 @@
-# GitHub protocols
+# 1. GitHub protocols
 
 ## Repositories
 Two repositories were made under @edwardsmarc account:
@@ -43,7 +43,7 @@ More details on these models can be found [here](http://www.goring.org/resources
     * and Issue 2 could be
     > Convert/load the remaining three FRIs
  
-# Documentation
+# 2. Documentation
 All CASFRI v5 documentation will be written in markdown and version controlled on GitHub. Two options exist for writing documentation:
 1. For simple documents such as this, markdown can be written directly in GitHub, or in a text editor. A .md file will be stored on GitHub. This is the preferred method for internal, non-formal documentation.
 2. For formal documentation (e.g. CASFRI standards, translation engine specs etc.), RStudio should be used to create .Rmd files. This is the prefferred method for the following reasons:
@@ -56,11 +56,11 @@ All CASFRI v5 documentation will be written in markdown and version controlled o
     2. Any external files such as csv tables should be stored in a sub-folder called *rmdTabs*
     3. Tables to be added should be stored as csv files
 
-# Software versions
+# 3. Software versions
 All team members should use:
 * PostgreSQL v???
 * PostGIS v???
 * GDAL/OGR v???
 
-# Backup procedures
+# 4. Backup procedures
 ???
