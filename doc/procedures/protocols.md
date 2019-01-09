@@ -71,3 +71,8 @@ Client is using:
 
 # 5. File naming
 ???
+
+# 6. PostgreSQL structure
+* Database: cas?
+* Schema: one for each province?
+* Tables: one for each FRI?
