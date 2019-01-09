@@ -20,9 +20,11 @@ The recommended workflow is as follows:
 1. Pull from the master repository on GitHub (e.g. press the "Pull" button in GitKraken).
 2. Edit code locally.
 3. Commit changes.
-4. Push changes to the master repository on Github.
+4. Push changes to the master repository on Github.  
 
-This model can break down if multiple people are pushing changes to the same files and merge conflict result. We don't anticipate this happening due to our small team. Team members will mostly be working on their own code. If merge conflicts become as issue we could change to a *branch and pull* model where we still use a shared repository but changes are made o branches of the repository which are then incorporated back to the master branch via pull requests. We prefer these two models over a fork and pull model which requires each user to fork a copy the master repository to their own GitHub account.
+* Push and Pull should be done regularly to keep the master repository current.
+* This model can break down if multiple people are pushing changes to the same files and merge conflicts result. We don't anticipate this happening due to our small team. Team members will mostly be working on their own code. 
+* If merge conflicts become as issue we could change to a *branch and pull* model where we still use a shared repository but changes are made to branches of the repository which are then incorporated back to the master branch via pull requests. We prefer these two models over a fork and pull model which requires each user to fork and copy the master repository to their own GitHub account.
 
 More details on these models can be found [here](http://www.goring.org/resources/project-management.html).
 
@@ -37,6 +39,7 @@ More details on these models can be found [here](http://www.goring.org/resources
   * All issues should have at least on Assignee
   * Label to indicate where the issue fits into the project (e.g. *conversion*)
   * Labels to indicate set-backs (e.g. *Help wanted*)
+  * Description should be updated to reflect any set-backs or barriers that were overcome (this will be useful for project reporting)
   * Appropriate scale
     * For example, Issue 1 could be
     > Convert/load the first FRI
