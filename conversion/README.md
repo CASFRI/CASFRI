@@ -11,3 +11,9 @@ Scripts for converting and loading source files into the database.
   * https://gis.stackexchange.com/questions/22175/how-to-add-field-with-filename-when-merging-shapefiles-with-ogr2ogr
   * http://trac.osgeo.org/gdal/wiki/FAQVector
 
+## Bash
+* Scripts should be written in Bash so they are useable on clients Linux systems
+* Windows 10 Linux app should facilitate this:
+  * https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
+  * https://www.howtogeek.com/261591/how-to-create-and-run-bash-shell-scripts-on-windows-10/
+  * Using the Linux text editor accessible through the app should ensure scripts will transfer between our Windows system and the clients Linux system
