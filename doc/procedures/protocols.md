@@ -64,7 +64,7 @@ Client is using:
 * PostgreSQL v9.6*
 * PostGIS v2.3.7  
 * GDAL/OGR v1.11.0
- * We are using v1.11.4 because it has an installer online (GISInternals.com) and v1.11.0 does not.
+  * We are using v1.11.4 because it has an installer online (GISInternals.com) and v1.11.0 does not.
 
 # 4. Backup procedures
 ???
