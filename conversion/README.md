@@ -17,3 +17,4 @@ Scripts for converting and loading source files into the database.
   * https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
   * https://www.howtogeek.com/261591/how-to-create-and-run-bash-shell-scripts-on-windows-10/
   * Using the Linux text editor accessible through the app should ensure scripts will transfer between our Windows system and the clients Linux system
+* Or use Notepad++ with Linuc encoding, then run scripts from Git Bash.
