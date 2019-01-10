@@ -10,6 +10,7 @@ Scripts for converting and loading source files into the database.
 * Must add a new column containing the source filename during loading
   * https://gis.stackexchange.com/questions/22175/how-to-add-field-with-filename-when-merging-shapefiles-with-ogr2ogr
   * http://trac.osgeo.org/gdal/wiki/FAQVector
+* Spatial indexing when loading into PostgreSQL - haven't figured this out yet.
 
 ## Bash
 * Scripts should be written in Bash so they are useable on clients Linux systems
