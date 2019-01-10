@@ -73,6 +73,6 @@ Client is using:
 ???
 
 # 6. PostgreSQL structure
-* Database: cas?
-* Schema: one for each province?
-* Tables: one for each FRI?
+* Database: cas05
+* Schema: one for loaded files, one for translation engine, one for translated files
+* Tables: one for each FRI
