@@ -48,7 +48,7 @@ More details on these models can be found [here](http://www.goring.org/resources
  
 # 2. Documentation
 All CASFRI v5 documentation will be written in markdown and version controlled on GitHub. Two options exist for writing documentation:
-1. For simple documents such as this, markdown can be written directly in GitHub, or in a text editor. A .md file will be stored on GitHub. This is the preferred method for internal, non-formal documentation.
+1. For simple documents such as this, markdown can be written directly in the GitHub text editor. A .md file will be stored on GitHub. This is the preferred method for internal, non-formal documentation.
 2. For formal documentation (e.g. CASFRI standards, translation engine specs etc.), RStudio should be used to create .Rmd files. This is the prefferred method for the following reasons:
   * Scripts can easily be edited to output multiple formats, this could be useful for meeting various client needs (e.g. html, pdf).
   * We can utilize R packages for displaying tables
@@ -58,6 +58,7 @@ All CASFRI v5 documentation will be written in markdown and version controlled o
     1. Always output a .md file so the document can be viewed on GitHub
     2. Any external files such as csv tables should be stored in a sub-folder called *rmdTabs*
     3. Tables to be added should be stored as csv files
+    4. If an .Rmd file is present, always edit it, rather than editing the .md file directly in the GitHub text editor. The .Rmd and .md should always be in sync. 
 
 # 3. Software versions
 Client is using:
