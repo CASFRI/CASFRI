@@ -25,6 +25,7 @@ The recommended workflow is as follows:
 * Push and Pull should be done regularly to keep the master repository current.
 * This model can break down if multiple people are pushing changes to the same files and merge conflicts result. We don't anticipate this happening due to our small team. Team members will mostly be working on their own code. 
 * If merge conflicts become as issue we could change to a *branch and pull* model where we still use a shared repository but changes are made to branches of the repository which are then incorporated back to the master branch via pull requests. We prefer these two models over a fork and pull model which requires each user to fork and copy the master repository to their own GitHub account.
+* Each team member should maintain their own local .gitignore files (i.e. don't push them to GitHub).
 
 More details on these models can be found [here](http://www.goring.org/resources/project-management.html).
 
