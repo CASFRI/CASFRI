@@ -8,6 +8,7 @@ Scripts for converting and loading source files into the database.
 * One script and target table per photo year shapefile when present 
 * Must add a new column containing the source filename during loading
 * Must add spatial index when loading into PostgreSQL (using ogrinfo?).
+* Must covert projection to Canada Albers Equal Area Conic
 
 ## Bash
 * Scripts should be written in Bash so they are useable on clients Linux systems
