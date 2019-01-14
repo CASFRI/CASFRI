@@ -9,6 +9,7 @@ Scripts for converting and loading source files into the database.
 * Must add a new column containing the source filename during loading
 * Must add spatial index when loading into PostgreSQL (using ogrinfo?).
 * Must covert projection to Canada Albers Equal Area Conic
+ * SRID in PostgreSQL is set to 900914 after transforming. This is because our prj isn't recognized by PostGIS. **Check that CASFRI v4 also gets this SRID.**
 
 ## Bash
 * Scripts should be written in Bash so they are useable on clients Linux systems
