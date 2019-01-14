@@ -8,6 +8,9 @@ Scripts for converting and loading source files into the database.
 * One script and target table per photo year shapefile when present 
 * Must add a new column containing the source filename during loading
 * Must add spatial index when loading into PostgreSQL
+  * automatically created when loading!
+    * If spatial indexing is needed however, it can be added by adding the following line to the batch file:
+    * ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE INDEX BC_0008_spatial_index ON bc.vri_sql_test USING GIST (wkb_geometry);"
 * Must covert projection to Canada Albers Equal Area Conic
   * SRID in PostgreSQL is set to 900914 after transforming. This is because our prj isn't recognized by PostGIS. **Check that CASFRI v4 also gets this SRID.**
 
