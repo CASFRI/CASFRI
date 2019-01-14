@@ -7,9 +7,9 @@ Scripts for converting and loading source files into the database.
   * If source FRI has multiple files, the script should append them all into the same target table in PostgreSQL
 * One script and target table per photo year shapefile when present 
 * Must add a new column containing the source filename during loading
-* Must add spatial index when loading into PostgreSQL (using ogrinfo?).
+* Must add spatial index when loading into PostgreSQL
 * Must covert projection to Canada Albers Equal Area Conic
- * SRID in PostgreSQL is set to 900914 after transforming. This is because our prj isn't recognized by PostGIS. **Check that CASFRI v4 also gets this SRID.**
+  * SRID in PostgreSQL is set to 900914 after transforming. This is because our prj isn't recognized by PostGIS. **Check that CASFRI v4 also gets this SRID.**
 
 ## Bash
 * Scripts should be written in Bash so they are useable on clients Linux systems
