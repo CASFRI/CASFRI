@@ -34,5 +34,11 @@ Scripts for converting and loading source files into the database.
 * Download GDAL 1.11.4 from gisinternals.com. Download core installer and FileGDB plugin.
 * Add edit PATH using the tutorial here: https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows
 * See the scripts and https://www.gdal.org/ogr2ogr.html for funcitonality. The main components used are:
-  * -f: the output format and access to database.
+  * -f: the output format and access to database
   >-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" C:\Temp\VEG_COMP_LYR_R1_POLY\VEG_COMP_LYR_R1_POLY.gdb
+  * -nln: name of the new layer
+  >-nln bc.BC_0008
+  * -t_srs: the required target projection. In our case all tables should be converted to Canada Albers Equal Area Conic.
+  >-t_srs C:\Temp\canadaAlbersEqualAreaConic.prj
+  * -sql: this allows tables to be edited with sql code. We use this for adding the filename as a column, but it can also be used to filter the table when loading, or any other data manipulations
+  >-sql "SELECT *, 'VEG_COMP_LYR_R1_POLY' as src_filename FROM 'VEG_COMP_LYR_R1_POLY'"
