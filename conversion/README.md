@@ -29,3 +29,10 @@ Scripts for converting and loading source files into the database.
 * Using Windows 10 Ubuuntu app
  * https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
  * https://www.howtogeek.com/261591/how-to-create-and-run-bash-shell-scripts-on-windows-10/
+
+## ogr2ogr
+* Download GDAL 1.11.4 from gisinternals.com. Download core installer and FileGDB plugin.
+* Add edit PATH using the tutorial here: https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows
+* See the scripts and https://www.gdal.org/ogr2ogr.html for funcitonality. The main components used are:
+  * -f: the output format and access to database.
+  >-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" C:\Temp\VEG_COMP_LYR_R1_POLY\VEG_COMP_LYR_R1_POLY.gdb
