@@ -12,6 +12,7 @@ Scripts for converting and loading source files into the database.
     * If spatial indexing is needed however, it can be added by adding the following line to the batch file:
     > ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE INDEX BC_0008_spatial_index ON bc.vri_sql_test USING GIST (wkb_geometry);"
 * Must covert projection to Canada Albers Equal Area Conic
+* Done in ogr2ogr using canadaAlbersEqualAreaConic.prj file saved in the conservsion folder. This file was downloaded from https://epsg.io/102001 using the OGC WKT option. This is the same projection used in cas04 except the prj file used in the python scripts was in the ESRI WKT format. 
   * SRID in PostgreSQL is set to 900914 after transforming. This is because our prj isn't recognized by PostGIS. **Check that CASFRI v4 also gets this SRID.**
 
 ## Bash
