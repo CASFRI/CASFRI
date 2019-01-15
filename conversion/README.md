@@ -10,7 +10,7 @@ Scripts for converting and loading source files into the database.
 * Must add spatial index when loading into PostgreSQL
   * automatically created when loading!
     * If spatial indexing is needed however, it can be added by adding the following line to the batch file:
-    * ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE INDEX BC_0008_spatial_index ON bc.vri_sql_test USING GIST (wkb_geometry);"
+    > ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE INDEX BC_0008_spatial_index ON bc.vri_sql_test USING GIST (wkb_geometry);"
 * Must covert projection to Canada Albers Equal Area Conic
   * SRID in PostgreSQL is set to 900914 after transforming. This is because our prj isn't recognized by PostGIS. **Check that CASFRI v4 also gets this SRID.**
 
@@ -20,7 +20,6 @@ Scripts for converting and loading source files into the database.
  * Use Notepad++ with Linux encoding to write scripts, then run scripts from Git Bash or from Windows 10 Ubuutu app.
 * ISSUE: cannot get bash to recognize ogr2ogr.
  * Setting up ogr2ogr in Batch file until I get it working. Will then convert to Bash.
-
 
 ## Useful links
 * Adding filename column
