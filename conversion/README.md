@@ -29,6 +29,8 @@ Scripts for converting and loading source files into the database.
 * Using Windows 10 Ubuuntu app
  * https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
  * https://www.howtogeek.com/261591/how-to-create-and-run-bash-shell-scripts-on-windows-10/
+* Troubleshooting shapefile imports
+ * https://gis.stackexchange.com/questions/195172/import-a-shapefile-to-postgis-with-ogr2ogr-gives-unable-to-open-datasource/195223
 
 ## ogr2ogr
 * Download GDAL 1.11.4 from gisinternals.com. Download core installer and FileGDB plugin.
