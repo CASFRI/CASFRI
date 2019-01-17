@@ -44,3 +44,9 @@ Scripts for converting and loading source files into the database.
   >-t_srs C:\Temp\canadaAlbersEqualAreaConic.prj
   * -sql: this allows tables to be edited with sql code. We use this for adding the filename as a column, but it can also be used to filter the table when loading, or any other data manipulations
   >-sql "SELECT *, 'VEG_COMP_LYR_R1_POLY' as src_filename FROM 'VEG_COMP_LYR_R1_POLY'"
+  
+  ## File types
+  #### Geodatabase
+  #### Shapefile
+  #### ESRI E00 Coverage
+  #### ESRI Binary Coverage
