@@ -21,13 +21,13 @@ Conversion and loading now happens at the same time and will be implimented usin
 * Must add spatial index when loading into PostgreSQL
 * Must covert projection to Canada Albers Equal Area Conic
 * Should be written in bash script so accessible on clients Linux system
- * **ISSUE: cannot get bash to run ogr2ogr correctly. File path issues.**
+  * **ISSUE: cannot get bash to run ogr2ogr correctly. File path issues.**
   * Setting up ogr2ogr in Batch file until I get it working. Will then convert to Bash.
 
 ## Bash
 * Scripts should be written in Bash so they are useable on clients Linux systems
 * Windows 10 Linux app should facilitate this
- * Use Notepad++ with Linux encoding to write scripts, then run scripts from Git Bash or from Windows 10 Ubuutu app.
+  * Use Notepad++ with Linux encoding to write scripts, then run scripts from Git Bash or from Windows 10 Ubuutu app.
 
 ## ogr2ogr
 * Download GDAL 1.11.4 from gisinternals.com. Download core installer and FileGDB plugin.
