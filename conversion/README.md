@@ -41,6 +41,10 @@ Conversion and loading now happens at the same time and will be implimented usin
   >-t_srs C:\Temp\canadaAlbersEqualAreaConic.prj
   * -sql: this allows tables to be edited with sql code. We use this for adding the filename as a column, but it can also be used to filter the table when loading, or any other data manipulations
   >-sql "SELECT *, 'VEG_COMP_LYR_R1_POLY' as src_filename FROM 'VEG_COMP_LYR_R1_POLY'"
+  * -append: appends table into existing PostgreSQL table. Needs to be combined with -update when appending to PostgreSQL to ensure table is opened in update mode.
+  >-append -update
+  * -addfields: used when appending and the source and target table do not have identical fields.
+  >-append -update -addfields
 
 ## Spatial index
 * Spatial indexes are automatically created when loading
