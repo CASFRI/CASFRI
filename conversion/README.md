@@ -69,7 +69,9 @@ Conversion and loading now happens at the same time and will be implimented usin
 * An old ESRI standrad. Not well documented or understood because ESRI maintains propriotory access to the format. Limits usefulness of open source tools with this format.
 * Problems importing AB_0006 E00 file. Doesn't load attributes. Tried converting to Binary Coverage using avcimport then loading Binary Coverage. Still same issue. Will come back to this one.
 
-#### ESRI Binary Coverage
+#### ArcInfo Coverage
+* Coverage accessed using path to feature layer. e.g. C:\Temp\Canfor\t059r04m6\forest
+* Layer name to access table in ogr2ogr sql statements is PAL.
 
 ## Useful links
 * Adding filename column
