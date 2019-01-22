@@ -73,6 +73,13 @@ Conversion and loading now happens at the same time and will be implimented usin
 * Coverage accessed using path to feature layer. e.g. C:\Temp\Canfor\t059r04m6\forest
 * Layer name to access table in ogr2ogr sql statements is PAL.
 
+## Field types
+* For some fields PostgreSQL/ogr sets a NUMERIC field type on import with a default precision and scale. I haven't figured out how this is defined yet.
+  * e.g. long integers from AB_0016 Coverages FOREST-ID field were imported as NUMERIC(5,0).
+  * e.g. Doubles from NB_0001 shapefiles SHAPE_AREA field were imported as NUMERIC(19,11).
+* This can result in values in fields that do not fit in the default precision lengths. This causes an import error.
+* Solution is to load with '-lco precicion=NO' which ignores precision requirements and load NUMERIC types as DOUBLES (technically FLOAT8 values). Any appended tables will also be converted to doubles.
+
 ## Useful links
 * Adding filename column
  * https://gis.stackexchange.com/questions/22175/how-to-add-field-with-filename-when-merging-shapefiles-with-ogr2ogr
