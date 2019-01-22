@@ -4,11 +4,13 @@
 
 ::The year of photography is included in the attributes table (REFERENCE_YEAR)
 
-::Load into a target table in a schema named 'bc'. Schema should be created manually in PostgreSQL before loading.
+::Load into a target table in a schema named 'bc'.
 
 
 ::CURRENTLY SET TO LOAD ENTIRE DATABASE. CAN CHANGE THIS TO FILTER ON INVENTORY_STANDARD_ID IF NEEDED. CHECK WITH STEVE.
 
+::Create schema if it doesn't exist
+ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS bc";
 
 ::Source file location
 SET srcF=C:\Temp\VEG_COMP_LYR_R1_POLY\VEG_COMP_LYR_R1_POLY.gdb
@@ -35,4 +37,4 @@ ogr2ogr ^
 ::-sql "SELECT *, '%fileName%' as src_filename FROM '%fileName%' WHERE Inventory_Standard_CD='V'"
 
 ::Spatial index should be created automatically, if not, un-comment the ogrinfo line
-::ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE INDEX BC_0008_spatial_index ON bc.BC_0008_VEG_COMP_LYR_R1_POLY USING GIST (wkb_geometry);"
+::ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE INDEX BC_0008_spatial_index ON bc.BC_0008 USING GIST (wkb_geometry);"
