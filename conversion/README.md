@@ -67,7 +67,17 @@ Conversion and loading now happens at the same time and will be implimented usin
 
 #### ESRI ArcInfo Workstation interchange file E00
 * An old ESRI standrad. Not well documented or understood because ESRI maintains propriotory access to the format. Limits usefulness of open source tools with this format.
-* Problems importing AB_0006 E00 file. Doesn't load attributes. Tried converting to Binary Coverage using avcimport then loading Binary Coverage. Still same issue. Will come back to this one.
+* Tools to convert E00 to ArcInfo Coverage:
+  1. Import71.exe - windows based converter from ESRI. Used in cas4
+  2. ACVImport - Linux and Windows - mixed success
+  * These both work and produce the same output. A Coverage including arc, label, polygon, tic files.
+  * The attributes are not stored with the polygons though. They are saved in a .att table only viewable in ArcGIS.
+  * ogr2ogr does not attach these attributes when loading the Coverage and the .att is not available in the folder system.
+  * CAS 4 joined the .att table to the polygons using acrpy.
+* Methods tried so far:
+  1. Load e00 directly using ogr2ogr - this loads the polygons but not the attributes.
+  2. Convert e00 to ArcInfo Coverage using either export71 or avcimport. Then load coverage using ogr2ogr - results in coverage containing polygons, and seperate .att table containing attributes. .att is only accessible in ArcCatalog.
+  3. Convert e00 to shp using ogr2ogr - creates ARC, CNT, LAB and PAL shapefiles but no attributes.
 
 #### ArcInfo Coverage
 * Coverage accessed using path to feature layer. e.g. C:\Temp\Canfor\t059r04m6\forest
