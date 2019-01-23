@@ -26,8 +26,10 @@ Conversion and loading now happens at the same time and will be implimented usin
 
 ## Bash
 * Scripts should be written in Bash so they are useable on clients Linux systems
-* Windows 10 Linux app should facilitate this
-  * Use Notepad++ with Linux encoding to write scripts, then run scripts from Git Bash or from Windows 10 Ubuutu app.
+* Success using Git Bash in the script folder (right click, Git Bash).
+* All paths made relative to the source folder.
+* Use Notepad++ with Linux encoding (edit > EOL Conversion > UNIX) to write scripts.
+* Could also use Ubuntu app in Windows 10.
 
 ## ogr2ogr
 * Download GDAL 1.11.4 from gisinternals.com. Download core installer and FileGDB plugin.
