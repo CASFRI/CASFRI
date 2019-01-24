@@ -19,7 +19,7 @@ srcD=$(dirname $BASH_SOURCE)
 #Create schema if it doesn't exist
 $srcD"/../../../../../../../program files/gdal/ogrinfo.exe" PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS nb";
 
-#Projection file. Canada Albers Equal Area Conic. %~dp0 fetches the directory that contains the batch file.
+#Projection file. Canada Albers Equal Area Conic.
 prjF=$srcD"/canadaAlbersEqualAreaConic.prj"
 
 #Target table name
