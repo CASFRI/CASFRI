@@ -1,31 +1,30 @@
 ::This script loads the AB_0016 FRI data into PostgreSQL
 
 ::The format of the source dataset is ArcInfo Coverages divided into mapsheets.
-::The FRI data is stored in the "forest/polygon" feature for each mapsheet.
+::The FRI data is stored in the "forest" feature for each mapsheet.
 ::Script needs to loop through each mapsheet and append to the same target table in PostgreSQL.
-::This can be done using the -append argument. Note that -update also needed in order to append in PostgreSQL. -addfields not needed as columns match in all tables.
+::This can be done using the -append argument. Note that -update is also needed in order to append in PostgreSQL. -addfields is not needed here as columns match in all tables.
+
+::The year of photography is included as a shapefile. Photo year will be joined to the loaded table in PostgreSQL
 
 ::Load into a target table in a schema named 'ab'. 
 
 ::Workflow as recommended here: https://trac.osgeo.org/gdal/wiki/FAQVector#FAQ-Vector
-::load the first table normally, then delete all the data. This serves as a template
-::then loop through all Coverages and append to the template table
-
-::Variables:
-::srcF - Source file location
-::fileName - Filename field. This will be added as a column called src_filename and later used to create the cas_id field
-::trgtT - Target table name in PostgreSQL
-::prjF - Target projection - Canada Albers Equal Area Conic. %~dp0 fetches the directory that contains the batch file. Use this to point to the prj file stored with the scripts
+::Load the first table normally, then delete all the data. This serves as a template
+::Then loop through all Coverages and append to the template table
 
 ::Create schema if it doesn't exist
 ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS ab";
 
+::Projection file. Canada Albers Equal Area Conic. %~dp0 fetches the directory that contains the batch file.
 SET batchDir=%~dp0
 SET prjF="%batchDir%canadaAlbersEqualAreaConic.prj"
+
+::Target table name in PostgreSQL
 SET trgtT=ab.AB_0016
 
 ::1.::make table template
-::load first mapsheet. Using precision=NO because the FOREST-ID field is set to NUMERIC(5,0) when imported but data have 6 digits.
+::load first mapsheet. Using precision=NO because the FOREST-ID field is set to NUMERIC(5,0) when imported but data have 6 digits. Causes error.
 ogr2ogr ^
 -f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" C:\Temp\Canfor_temp\t059r04m6\forest ^
 -nln %trgtT% ^
@@ -43,7 +42,7 @@ ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "del
 ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "ALTER TABLE %trgtT% ADD forest_id_1 integer;"
 ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "ALTER TABLE %trgtT% ADD forest_id_2 integer;"
 
-::2::loop through all mapsheets. Note - can't easily set variables inside loops.
+::2::loop through all mapsheets. Note - can't easily set variables inside loops so provide file paths directly as arguments.
 :: /D is used for accessing folder paths in for loop. Only grabs folders beginning with t.
 :: -sql statement adds new columns with the values of the invalid columns
 for /D %%F IN (C:\Temp\Canfor\t*) DO (

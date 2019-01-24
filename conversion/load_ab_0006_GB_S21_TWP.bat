@@ -4,35 +4,63 @@
 
 ::The year of photography is included as a shapefile. Photo year will be joined to the loaded table in PostgreSQL
 
-::Load into a target table in a schema named 'ab'. Schema should be created manually in PostgreSQL before loading.
+::Load into a target table in a schema named 'ab'.
 
-
+::Create schema if it doesn't exist
+::ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS ab";
 
 ::Test - convert e00 to Binary Coverage using avcimport.exe downloaded from http://avce00.maptools.org/avce00/index.html. This is reported to be more reliable as gdal does not always do a good job of converting topology.
-:: Also creates the attributes table whihc was getting lost when importing e00 directly.
-::C:\Temp\avcimport.exe C:\Temp\GB_S21_TWP.E00 C:\Temp\GB_S21_TWP_avcimport\GB_S21_TWP_c
-::C:\Temp\avcimport.exe C:\Temp\Porc_mountain.e00 C:\Temp\porcupine_cov\porc_cov TRIED A DIFFERENT E00. DIDN't WORK EITHER.
-::Still doesn't load properly into postgis
+::C:\Temp\avcimport.exe C:\Temp\GB_S21_TWP.E00 C:\Temp\gb_s21_twp_avcimport\avcimport
+
+::Test avc import
+::ogrinfo PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS test";
+::ogr2ogr ^
+::-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" C:\Temp\gb_s21_twp_avcimport ^
+::-nln test.avctest ^
+::-t_srs "%~dp0canadaAlbersEqualAreaConic.prj" ^
+::-overwrite
+
+::Test export71 import
+::ogr2ogr ^
+::-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" C:\Temp\gb_s21_twp_export71\export71.att ^
+::-nln test.71test ^
+::-t_srs "%~dp0canadaAlbersEqualAreaConic.prj" ^
+::-overwrite
+
+::Test e00 to shp
+::ogr2ogr C:\Temp\gb_s21_twp_e00toshp.shp C:\Temp\GB_S21_TWP.E00
+
+::Test direct load
+::ogr2ogr ^
+::-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" C:\Temp\GB_S21_TWP.E00 ^
+::-nln test.e00 ^
+::-t_srs "%~dp0canadaAlbersEqualAreaConic.prj" ^
+::-overwrite
+
+
+
+
+
 
 ::Source file location
-SET srcF=C:\Temp\GB_S21_TWP_avcimport\GB_S21_TWP_c
+::SET srcF=C:\Temp\GB_S21_TWP_avcimport\GB_S21_TWP_c
 
 ::Filename field. This will be added as a column called src_filename and later used to create the cas_id field
-SET fileName=GB_S21_TWP
+::SET fileName=GB_S21_TWP
 
 ::Target table name
-SET trgtT=ab.AB_0006
+::SET trgtT=ab.AB_0006
 
 ::Target projection - Canada Albers Equal Area Conic
 :: %~dp0 fetches the directory that contains the batch file. Use this to point to the prj file stored with the scripts
-SET batchDir=%~dp0
-SET prjF="%batchDir%canadaAlbersEqualAreaConic.prj"
+::SET batchDir=%~dp0
+::SET prjF="%batchDir%canadaAlbersEqualAreaConic.prj"
 
 ::Run ogr2ogr
-ogr2ogr ^
--f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" %srcF% ^
--nln %trgtT%
--t_srs %prjF%
+::ogr2ogr ^
+::-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" %srcF% ^
+::-nln %trgtT%
+::-t_srs %prjF%
 
 
 ::ADDING FILENAME DOESNT'T WORK. FIX.

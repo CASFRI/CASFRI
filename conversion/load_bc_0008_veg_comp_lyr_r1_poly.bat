@@ -1,6 +1,6 @@
 ::This script loads the British Columbia VRI data into PostgreSQL
 
-::The format of the source dataset is a single geodatabase
+::The format of the source dataset is a geodatabase
 
 ::The year of photography is included in the attributes table (REFERENCE_YEAR)
 
@@ -21,8 +21,7 @@ SET fileName=VEG_COMP_LYR_R1_POLY
 ::Target table name
 SET trgtT=bc.BC_0008
 
-::Target projection - Canada Albers Equal Area Conic
-:: %~dp0 fetches the directory that contains the batch file. Use this to point to the prj file stored with the scripts
+::Projection file. Canada Albers Equal Area Conic. %~dp0 fetches the directory that contains the batch file.
 SET batchDir=%~dp0
 SET prjF="%batchDir%canadaAlbersEqualAreaConic.prj"
 
