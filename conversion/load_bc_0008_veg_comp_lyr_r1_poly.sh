@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#This script loads the British Columbia VRI data into PostgreSQL
+
 #The format of the source dataset is a geodatabase
 
 #The year of photography is included in the attributes table (REFERENCE_YEAR)
@@ -13,13 +15,13 @@
 srcD=$(dirname $BASH_SOURCE)
 
 #Create schema if it doesn't exist
-$srcD"/../../../../../../../program files/gdal/ogrinfo.exe" PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS test";
+$srcD"/../../../../../../../program files/gdal/ogrinfo.exe" PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS bc";
 
 #Projection file. Canada Albers Equal Area Conic.
 prjF=$srcD"/canadaAlbersEqualAreaConic.prj"
 
 #Target table name
-trgtT=test.BC_0001
+trgtT=bc.BC_0008
 
 #Source file path
 srcF=$srcD"/../../../../../../../Temp/VEG_COMP_LYR_R1_POLY/VEG_COMP_LYR_R1_POLY.gdb"
