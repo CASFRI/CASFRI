@@ -80,6 +80,7 @@ Conversion and loading now happens at the same time and will be implimented usin
   1. Load e00 directly using ogr2ogr - this loads the polygons but not the attributes.
   2. Convert e00 to ArcInfo Coverage using either export71 or avcimport. Then load coverage using ogr2ogr - results in coverage containing polygons, and seperate .att table containing attributes. .att is only accessible in ArcCatalog.
   3. Convert e00 to shp using ogr2ogr - creates ARC, CNT, LAB and PAL shapefiles but no attributes.
+ * Take a look at https://github.com/pramsey/pgsql-ogr-fdw. I think this is still limited to OGR accessible formats so might not help.
 
 #### ArcInfo Coverage
 * Coverage accessed using path to feature layer. e.g. C:\Temp\Canfor\t059r04m6\forest
