@@ -5,4 +5,4 @@ bookdown::gitbook:
       before: |
         <li><a href="./">CASFRI Specifications</a></li>
       after: |
-        <li><a href="https://github.com/edwardsmarc/casfri/doc/specifications" target="blank">GitHub Pages</a></li>
+        <li><a href="https://github.com/edwardsmarc/CASFRI/blob/master/doc/specifications/">GitHub Pages</a></li>
