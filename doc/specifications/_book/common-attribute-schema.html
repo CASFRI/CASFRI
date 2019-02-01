@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>2 Common Attribute Schema | CASFRI Specifications</title>
+  <meta name="description" content="Revised Cosco document">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+
+  <meta property="og:title" content="2 Common Attribute Schema | CASFRI Specifications" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Revised Cosco document" />
+  <meta name="github-repo" content="casfri/notebook" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="2 Common Attribute Schema | CASFRI Specifications" />
+  
+  <meta name="twitter:description" content="Revised Cosco document" />
+  
+
+<meta name="author" content="The CASFRI Team">
+
+
+<meta name="date" content="2019-02-01">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="intro.html">
+<link rel="next" href="ecological-attributes.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">CASFRI Specifications</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Overview</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html"><i class="fa fa-check"></i><b>2</b> Common Attribute Schema</a><ul>
+<li class="chapter" data-level="2.1" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#header-information"><i class="fa fa-check"></i><b>2.1</b> Header Information</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#jurisdiction"><i class="fa fa-check"></i><b>2.1.1</b> Jurisdiction</a></li>
+<li class="chapter" data-level="2.1.2" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#spatial-reference"><i class="fa fa-check"></i><b>2.1.2</b> Spatial Reference</a></li>
+<li class="chapter" data-level="2.1.3" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#ownership"><i class="fa fa-check"></i><b>2.1.3</b> Ownership</a></li>
+<li class="chapter" data-level="2.1.4" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#tenure-type"><i class="fa fa-check"></i><b>2.1.4</b> Tenure Type</a></li>
+<li class="chapter" data-level="2.1.5" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#inventory-metadata"><i class="fa fa-check"></i><b>2.1.5</b> Inventory Metadata</a></li>
+<li class="chapter" data-level="2.1.6" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#cas-data-acquisition"><i class="fa fa-check"></i><b>2.1.6</b> CAS Data Acquisition</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#cas-base-polygon-attributes"><i class="fa fa-check"></i><b>2.2</b> CAS Base Polygon Attributes</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#polygon-identification"><i class="fa fa-check"></i><b>2.2.1</b> Polygon Identification</a></li>
+<li class="chapter" data-level="2.2.2" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#polygon-area-and-perimeter"><i class="fa fa-check"></i><b>2.2.2</b> Polygon Area and Perimeter</a></li>
+<li class="chapter" data-level="2.2.3" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#year-of-aerial-photography"><i class="fa fa-check"></i><b>2.2.3</b> Year of Aerial Photography</a></li>
+<li class="chapter" data-level="2.2.4" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#administration-unit"><i class="fa fa-check"></i><b>2.2.4</b> Administration Unit</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#cas-forest-and-non-forest-attributes"><i class="fa fa-check"></i><b>2.3</b> CAS Forest and Non-Forest Attributes</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#stand-structure"><i class="fa fa-check"></i><b>2.3.1</b> Stand Structure</a></li>
+<li class="chapter" data-level="2.3.2" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#structure-percent-or-range"><i class="fa fa-check"></i><b>2.3.2</b> Structure Percent or Range</a></li>
+<li class="chapter" data-level="2.3.3" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#number-of-layers"><i class="fa fa-check"></i><b>2.3.3</b> Number of Layers</a></li>
+<li class="chapter" data-level="2.3.4" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#layer"><i class="fa fa-check"></i><b>2.3.4</b> Layer</a></li>
+<li class="chapter" data-level="2.3.5" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#layer-rank"><i class="fa fa-check"></i><b>2.3.5</b> Layer Rank</a></li>
+<li class="chapter" data-level="2.3.6" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#soil-moisture-regime"><i class="fa fa-check"></i><b>2.3.6</b> Soil Moisture Regime</a></li>
+<li class="chapter" data-level="2.3.7" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#crown-closure"><i class="fa fa-check"></i><b>2.3.7</b> Crown Closure</a></li>
+<li class="chapter" data-level="2.3.8" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#height"><i class="fa fa-check"></i><b>2.3.8</b> Height</a></li>
+<li class="chapter" data-level="2.3.9" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#species-composition"><i class="fa fa-check"></i><b>2.3.9</b> Species Composition</a></li>
+<li class="chapter" data-level="2.3.10" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#stand-origin"><i class="fa fa-check"></i><b>2.3.10</b> Stand Origin</a></li>
+<li class="chapter" data-level="2.3.11" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#site-class"><i class="fa fa-check"></i><b>2.3.11</b> Site Class</a></li>
+<li class="chapter" data-level="2.3.12" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#site-index"><i class="fa fa-check"></i><b>2.3.12</b> Site Index</a></li>
+<li class="chapter" data-level="2.3.13" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#unproductive-forest"><i class="fa fa-check"></i><b>2.3.13</b> Unproductive Forest</a></li>
+<li class="chapter" data-level="2.3.14" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#naturally-non-vegetated"><i class="fa fa-check"></i><b>2.3.14</b> Naturally Non Vegetated</a></li>
+<li class="chapter" data-level="2.3.15" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#non-vegetated-anthropogenic"><i class="fa fa-check"></i><b>2.3.15</b> Non-Vegetated Anthropogenic</a></li>
+<li class="chapter" data-level="2.3.16" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#non-forested-vegetated"><i class="fa fa-check"></i><b>2.3.16</b> Non-Forested Vegetated</a></li>
+<li class="chapter" data-level="2.3.17" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#disturbance"><i class="fa fa-check"></i><b>2.3.17</b> Disturbance</a></li>
+<li class="chapter" data-level="2.3.18" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#disturbance-extent"><i class="fa fa-check"></i><b>2.3.18</b> Disturbance Extent</a></li>
+<li class="chapter" data-level="2.3.19" data-path="common-attribute-schema.html"><a href="common-attribute-schema.html#disturbance-year"><i class="fa fa-check"></i><b>2.3.19</b> Disturbance Year</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="ecological-attributes.html"><a href="ecological-attributes.html"><i class="fa fa-check"></i><b>3</b> Ecological Attributes</a><ul>
+<li class="chapter" data-level="3.1" data-path="ecological-attributes.html"><a href="ecological-attributes.html#wetland"><i class="fa fa-check"></i><b>3.1</b> Wetland</a></li>
+<li class="chapter" data-level="3.2" data-path="ecological-attributes.html"><a href="ecological-attributes.html#ecosite"><i class="fa fa-check"></i><b>3.2</b> Ecosite</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="bibliography.html"><a href="bibliography.html"><i class="fa fa-check"></i><b>4</b> Bibliography</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/edwardsmarc/casfri/doc/specifications" target="blank">GitHub Pages</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">CASFRI Specifications</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="common-attribute-schema" class="section level1">
+<h1><span class="header-section-number">2</span> Common Attribute Schema</h1>
+<p>The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.</p>
+<p>Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada. Gillis and Leckie<sup>1</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography. A summary of recent or current inventories across Canada are presented in Appendix 1. These inventories are the most likely sources for data that can contribute to the avian bird modeling project.</p>
+<p>Based on the review, detailed tables were produced to summarize each inventory standard by province and territory. Two national parks, Wood Buffalo and Prince Albert are included. Conversion rule sets were then produced as part of the detailed tables to identify how each province or territory inventory attribute codes translate into CAS attribute codes. Detailed tables and conversion rule sets for each CAS attribute are presented in Appendices noted in the appropriate sections of this document.</p>
+<p>Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is &gt; and the upper bound is &lt;). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta “B” - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a common resolution or set of values.</p>
+<p>Attributes for CAS are stored in six attribute files to facilitate conversion and translation:</p>
+<ol style="list-style-type: decimal">
+<li><p>Header (HDR) attributes - values assigned to all polygons based on provenance or reference information;</p></li>
+<li><p>CAS Base Polygon (CAS) attributes - values that identify a polygon and provide a link between the CAS polygon and the original inventory polygon;</p></li>
+<li><p>Forest-Level (LYR) attributes - values that pertain to the polygon for productive and non-productive forest land;</p></li>
+<li><p>Non-Forest Land (NFL) attributes - values that pertain to naturally non-vegetated, non-forest anthropogenic, and non-forest vegetated land;</p></li>
+<li><p>Disturbance history (DST) attributes - values that pertain to any disturbance that has occurred in a polygon including type, year, and extent; and</p></li>
+<li><p>Ecological specific (ECO) attributes - values representing ecosites and wetlands.</p></li>
+</ol>
+<p>The main body of this report (Sections 2.1 through 2.3 and Section 3) defines each of the six attribute categories and tabulates the attributes and their characteristics. A summary of the data structure and data dictionary is presented in Appendix 2.</p>
+<p>Each inventory data base has a unique data structure. A conversion procedure must be documented describing how to load the source inventory into CAS. A sample procedure is presented in Appendix 16.</p>
+<p><sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.</p>
+<div id="header-information" class="section level2">
+<h2><span class="header-section-number">2.1</span> Header Information</h2>
+<p>Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, spatial reference, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are detailed on the following pages.</p>
+<div id="jurisdiction" class="section level3">
+<h3><span class="header-section-number">2.1.1</span> Jurisdiction</h3>
+<p>Jurisdiction identifies the province or territory from which the inventory data came.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">JURISDICTION</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">British Columbia</td>
+<td align="left">BC</td>
+</tr>
+<tr class="even">
+<td align="left">Alberta</td>
+<td align="left">AB</td>
+</tr>
+<tr class="odd">
+<td align="left">Saskatchewan</td>
+<td align="left">SK</td>
+</tr>
+<tr class="even">
+<td align="left">Manitoba</td>
+<td align="left">MB</td>
+</tr>
+<tr class="odd">
+<td align="left">Ontario</td>
+<td align="left">ON</td>
+</tr>
+<tr class="even">
+<td align="left">Quebec</td>
+<td align="left">QC</td>
+</tr>
+<tr class="odd">
+<td align="left">Prince Edward Island</td>
+<td align="left">PE</td>
+</tr>
+<tr class="even">
+<td align="left">New Brunswick</td>
+<td align="left">NB</td>
+</tr>
+<tr class="odd">
+<td align="left">Nova Scotia</td>
+<td align="left">NS</td>
+</tr>
+<tr class="even">
+<td align="left">Newfoundland and Labrador</td>
+<td align="left">NL</td>
+</tr>
+<tr class="odd">
+<td align="left">Yukon Territory</td>
+<td align="left">YK</td>
+</tr>
+<tr class="even">
+<td align="left">Northwest Territories</td>
+<td align="left">NT</td>
+</tr>
+<tr class="odd">
+<td align="left">Wood Buffalo National Park</td>
+<td align="left">WB</td>
+</tr>
+<tr class="even">
+<td align="left">Prince Albert National Park</td>
+<td align="left">PA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="spatial-reference" class="section level3">
+<h3><span class="header-section-number">2.1.2</span> Spatial Reference</h3>
+<p>Spatial reference describes the reference frame for, and the means to encode, coordinates in the data set including a coordinate system, projection, and datum. Coordinates can be referenced to any desired geographic grid. The coordinate system is a method of representing points in a space of given dimensions by coordinates to establish position. A projection is a systematic construction of lines drawn on a plane surface representative of and corresponding to the meridians and parallels of the curved surface of the earth. A datum is the geodetic datum specifying that coordinate system in which horizontal control points are located. The North American Datum (NAD) of 1983 is the current datum used in Canada. Some inventories may use the NAD of 1927.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">COORDINATE_SYSTEM</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Universal Trans Mercator</td>
+<td align="left">UTM</td>
+</tr>
+<tr class="even">
+<td align="left">British Columbia Geographic System</td>
+<td align="left">BCGS</td>
+</tr>
+<tr class="odd">
+<td align="left">National Topographic System</td>
+<td align="left">NTS</td>
+</tr>
+<tr class="even">
+<td align="left">Ontario Base Map</td>
+<td align="left">OBM</td>
+</tr>
+<tr class="odd">
+<td align="left">Township System</td>
+<td align="left">TOWNSHIP</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">PROJECTION</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Albers System</td>
+<td align="left">ALBERS</td>
+</tr>
+<tr class="even">
+<td align="left">Universal Trans Mercator System</td>
+<td align="left">UTM</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">DATUM</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">North American Datum 1927</td>
+<td align="left">NAD27</td>
+</tr>
+<tr class="even">
+<td align="left">North American Datum 1983</td>
+<td align="left">NAD83</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="ownership" class="section level3">
+<h3><span class="header-section-number">2.1.3</span> Ownership</h3>
+<p>Ownership identifies who owns the inventory data, who owns the land that the inventory covers, and degree of permission to which the data can be used. Ownership of the inventory can be federal, provincial, territory, industry, private, or First Nation. Ownership of the land is identified as being crown, private, military, or First Nation. Permission identifies whether the use of the data is unrestricted, restricted or limited.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">INV_OWNER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Provincial Government</td>
+<td align="left">PROV_GOV</td>
+</tr>
+<tr class="even">
+<td align="left">Federal Government</td>
+<td align="left">FED_GOV</td>
+</tr>
+<tr class="odd">
+<td align="left">Yukon Territory or Northwest Territories</td>
+<td align="left">TERRITORY</td>
+</tr>
+<tr class="even">
+<td align="left">First Nations</td>
+<td align="left">FN</td>
+</tr>
+<tr class="odd">
+<td align="left">Industry</td>
+<td align="left">INDUSTRY</td>
+</tr>
+<tr class="even">
+<td align="left">Private</td>
+<td align="left">PRIVATE</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">LAND_OWNER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Crown</td>
+<td align="left">CROWN</td>
+</tr>
+<tr class="even">
+<td align="left">Private</td>
+<td align="left">PRIVATE</td>
+</tr>
+<tr class="odd">
+<td align="left">Military</td>
+<td align="left">MILITARY</td>
+</tr>
+<tr class="even">
+<td align="left">First Nation</td>
+<td align="left">FN</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">PERMISSIONS</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Use of the inventory data is unrestricted</td>
+<td align="left">UNRESTRICTED</td>
+</tr>
+<tr class="even">
+<td align="left">Use of the inventory data has restrictions</td>
+<td align="left">RESTRICTED</td>
+</tr>
+<tr class="odd">
+<td align="left">Use of the data has limitations</td>
+<td align="left">LIMITED</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="tenure-type" class="section level3">
+<h3><span class="header-section-number">2.1.4</span> Tenure Type</h3>
+<p>Tenure type identifies the kind of agreement or license under which the inventory was done. Various tenure types exist across Canada. The most common types are included in the list below; any others are to be coded as “other”.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">TENURE_TYPE</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Tree Farm License</td>
+<td align="left">TFL</td>
+</tr>
+<tr class="even">
+<td align="left">Forest License</td>
+<td align="left">FL</td>
+</tr>
+<tr class="odd">
+<td align="left">Forest Management Agreement</td>
+<td align="left">FMA</td>
+</tr>
+<tr class="even">
+<td align="left">Forest Management License Agreement</td>
+<td align="left">FMLA</td>
+</tr>
+<tr class="odd">
+<td align="left">Sustainable Forest License</td>
+<td align="left">SFL</td>
+</tr>
+<tr class="even">
+<td align="left">National or Provincial Park</td>
+<td align="left">PARK</td>
+</tr>
+<tr class="odd">
+<td align="left">Northern Boreal Initiative</td>
+<td align="left">NBI</td>
+</tr>
+<tr class="even">
+<td align="left">Private Land</td>
+<td align="left">PRIVATE</td>
+</tr>
+<tr class="odd">
+<td align="left">Administered by the Military</td>
+<td align="left">MILITARY</td>
+</tr>
+<tr class="even">
+<td align="left">First Nation or Métis Area</td>
+<td align="left">FN</td>
+</tr>
+<tr class="odd">
+<td align="left">Tenure type not on list</td>
+<td align="left">OTHER</td>
+</tr>
+<tr class="even">
+<td align="left">Timber Limit</td>
+<td align="left">TL</td>
+</tr>
+<tr class="odd">
+<td align="left">No tenure</td>
+<td align="left">NONE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inventory-metadata" class="section level3">
+<h3><span class="header-section-number">2.1.5</span> Inventory Metadata</h3>
+<p>Inventory metadata provides general information with regard to a particular forest or vegetation inventory. The inventory type identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation Inventory or AVI. The inventory type along with a version number usually identifies an inventory.</p>
+<p>The inventory version identifies the standards used to produce a consistent inventory, usually across large landbases and for a relatively long period of time. Inventory Reference Year identifies the year the inventory done. An inventory can take several years to complete; therefore, Reference Year Minimum and Maximum dates are included to identify the interval for when the inventory was completed. In some cases inventory reference year and air photo year will be the same. Several years of successive or periodic acquisition are possible; therefore, a minimum and a maximum year are recorded. Inventory Start and Finish Year identifies the year the inventory was started and finished. Year of Update indicates the year that an inventory was updated.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">INV_TYPE</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Inventory name or type of inventory</td>
+<td align="left">Alpha Numeric</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">INV_VERSION</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">The standard and version of the standard used to create the inventory</td>
+<td align="left">Alpha Numeric</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">REFERENCE_YEAR_MIN and REFERENCE_YEAR_MAX</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Reference Year Minimum - first year of inventory</td>
+<td align="left">1960 - 2020</td>
+</tr>
+<tr class="even">
+<td align="left">Reference Year Maximum - last year of inventory</td>
+<td align="left">1960 - 2020</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">INV_START_YR and INV_FINISH_YR</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Inventory start year - year inventory was started</td>
+<td align="left">1960 - 2020</td>
+</tr>
+<tr class="even">
+<td align="left">Inventory finish year - year inventory was finished</td>
+<td align="left">1960 - 2020</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">INV_UPDATE_YR</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Year when an update to the inventory data was updated</td>
+<td align="left">1960 - 2020</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="cas-data-acquisition" class="section level3">
+<h3><span class="header-section-number">2.1.6</span> CAS Data Acquisition</h3>
+<p>CAS data acquisition identifies the year that the inventory was acquired for CAS. A unique number is assigned to each inventory for purposes of CAS identification.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">INV_ACQ_YR</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Year inventory was acquired for CAS</td>
+<td align="left">2008 - 2020</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">INV_ACQ_ID</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Data acquisition identification number</td>
+<td align="left">1 - 1000</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+</div>
+<div id="cas-base-polygon-attributes" class="section level2">
+<h2><span class="header-section-number">2.2</span> CAS Base Polygon Attributes</h2>
+<p>The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.</p>
+<div id="polygon-identification" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> Polygon Identification</h3>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">ORIGINAL_STAND_ID</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Original stand identification - unique number for each polygon within the original inventory</td>
+<td align="left">1 - 10,000,000</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">CAS_STAND_ID</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">CAS stand identification - unique number for each polygon within CAS</td>
+<td align="left">Alpha Numeric</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">MAPSHEET_ID</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Map sheet identification according to original naming convention for an inventory</td>
+<td align="left">Alpha Numeric</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">IDENTIFICATION_ID</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Unique number for a particular inventory section</td>
+<td align="left">1 - 1000</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="polygon-area-and-perimeter" class="section level3">
+<h3><span class="header-section-number">2.2.2</span> Polygon Area and Perimeter</h3>
+<p>Each polygon area and perimeter is recorded.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">POLYGON_AREA and POLYGON_PERIMETER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Polygon area (ha).</td>
+<td align="left">0.1 - 10,000</td>
+</tr>
+<tr class="even">
+<td align="left">Polygon perimeter (ha).</td>
+<td align="left">0.1 - infinity</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="year-of-aerial-photography" class="section level3">
+<h3><span class="header-section-number">2.2.3</span> Year of Aerial Photography</h3>
+<p>Photo Year is the year in which the inventory was considered initiated and completed. An inventory can take several years to complete; therefore, Photo Year Minimum and Maximum dates are included to identify the interval for when the inventory was completed. In some cases inventory reference year and air photo year are the same. Several years of successive or periodic acquisition are possible; therefore, a minimum and a maximum year are recorded.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">PHOTO_YEAR_MIN and PHOTO_YEAR_MAX</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Photo Year Minimum - earliest year of aerial photo acquisition</td>
+<td align="left">1960 - 2020</td>
+</tr>
+<tr class="even">
+<td align="left">Photo Year Maximum - last year of aerial photo acquisition</td>
+<td align="left">1960 - 2020</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="administration-unit" class="section level3">
+<h3><span class="header-section-number">2.2.4</span> Administration Unit</h3>
+<p>Administration unit identifies any inventory sub-unit boundaries that exist within an inventory. Sub- unit boundaries can possibly split a polygon; therefore, this CAS attribute is applied at the CAS base polygon level. Two administration unit (possibly hierarchical) levels of organization are identified, such as Forest Management Units (FMUs) and Working Circle (WC) or Compartment (CMPT). Their interpretation is source-data-set explicit.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">ADM_UNIT_1 and ADM_UNIT_2</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Administration Unit 1</td>
+<td align="left">Alpha Numeric,e.g. FMU</td>
+</tr>
+<tr class="even">
+<td align="left">Administration Unit 2</td>
+<td align="left">Alpha Numeric, e.g. WC</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+</div>
+<div id="cas-forest-and-non-forest-attributes" class="section level2">
+<h2><span class="header-section-number">2.3</span> CAS Forest and Non-Forest Attributes</h2>
+<div id="stand-structure" class="section level3">
+<h3><span class="header-section-number">2.3.1</span> Stand Structure</h3>
+<p>Structure is the physical arrangement or vertical pattern of organization of the vegetation within a polygon. A stand can be identified as single layered, multilayered, complex, or horizontal. A single layered stand has stem heights that do not vary significantly and the vegetation has only one main canopy layer.</p>
+<p>A multilayered stand can have several distinct layers and each layer is significant, has a distinct height difference, and is evenly distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other. Layers can be treed or non-treed. Up to 9 layers are allowed; most inventories recognize only one or two layers. The largest number of layers recognized is in the British Columbia VRI with 9 followed by Saskatchewan SFVI with 7 and Manitoba FLI with 5. Each layer is assigned an independent description with the tallest layer described in the upper portion of the label. The number of layers and a ranking of the layers can also be assigned. Some inventories (e.g. Saskatchewan UTM, Quebec TIE, Prince Edward Island, and Nova Scotia) can imply that a second layer exists; however, the second layer is not described or only a species type is indicated.</p>
+<p>Complex layered stands exhibit a high variation in tree heights. There is no single definitive forested layer as nearly all height classes (and frequently ages) are represented in the stand. The height is chosen from a stand midpoint usually followed by a height range.</p>
+<p>Horizontal structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi- label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. The detailed table for stand structure is presented in Appendix 3.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">STAND STRUCTURE</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Single layered - vegetation within a polygon where the heights do not vary significantly.</td>
+<td align="left">S</td>
+</tr>
+<tr class="even">
+<td align="left">Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable and evenly distributed. Each layer is assigned an independent description.</td>
+<td align="left">M</td>
+</tr>
+<tr class="odd">
+<td align="left">Complex - stands exhibit a high variation of heights with no single</td>
+<td align="left">C</td>
+</tr>
+<tr class="even">
+<td align="left">Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small to delineate as a separate H polygon.</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="structure-percent-or-range" class="section level3">
+<h3><span class="header-section-number">2.3.2</span> Structure Percent or Range</h3>
+<p>Stand Structure Percent or Range is assigned when a complex or horizontal structured polygon is identified. Stand structure percent is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.</p>
+<p>Stand Structure Range is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">STAND_STRUCTURE_PER and STAND_STRUCTURE_ RANGE</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Stand Structure Percent - used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon.</td>
+<td align="left">9-Jan</td>
+</tr>
+<tr class="even">
+<td align="left">Stand Structure Range - height range (m) around the midpoint height of the stand.</td>
+<td align="left">9-Jan</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="number-of-layers" class="section level3">
+<h3><span class="header-section-number">2.3.3</span> Number of Layers</h3>
+<p>Number of Layers is an attribute related to stand structure and identifies how many layers have been identified for a particular polygon.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">NUMBER_OF_LAYERS</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified.</td>
+<td align="left">9-Jan</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="layer" class="section level3">
+<h3><span class="header-section-number">2.3.4</span> Layer</h3>
+<p>Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on.</p>
+<p>The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">LAYER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified.</td>
+<td align="left">1 - 9, V</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="layer-rank" class="section level3">
+<h3><span class="header-section-number">2.3.5</span> Layer Rank</h3>
+<p>Layer Rank value is an attribute related to stand structure and refers to layer importance for forest management planning, operational, or silvicultural purposes. When a Layer Rank is not specified, layers can be sorted in order of importance by layer number.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">LAYER RANK</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc.</td>
+<td align="left">9-Jan</td>
+</tr>
+<tr class="even">
+<td align="left">Blank - no value</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="soil-moisture-regime" class="section level3">
+<h3><span class="header-section-number">2.3.6</span> Soil Moisture Regime</h3>
+<p>Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. The detailed soil moisture regime table and CAS conversion is presented in Appendix 4.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">SMR</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum.</td>
+<td align="left">D</td>
+</tr>
+<tr class="even">
+<td align="left">Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum.</td>
+<td align="left">F</td>
+</tr>
+<tr class="odd">
+<td align="left">Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration.</td>
+<td align="left">M</td>
+</tr>
+<tr class="even">
+<td align="left">Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water.</td>
+<td align="left">W</td>
+</tr>
+<tr class="odd">
+<td align="left">Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water.</td>
+<td align="left">A</td>
+</tr>
+<tr class="even">
+<td align="left">Blank - no value</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="crown-closure" class="section level3">
+<h3><span class="header-section-number">2.3.7</span> Crown Closure</h3>
+<p>Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CAS recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Upper Bound - upper bound of a crown closure class</td>
+<td align="left">0 - 100</td>
+</tr>
+<tr class="even">
+<td align="left">Lower Bound - lower bound of a crown closure class</td>
+<td align="left">0 - 100</td>
+</tr>
+<tr class="odd">
+<td align="left">Blank - no value</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="height" class="section level3">
+<h3><span class="header-section-number">2.3.8</span> Height</h3>
+<p>Stand height is based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">HEIGHT_UPPER and HEIGHT_LOWER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Upper Bound - upper bound of a height class.</td>
+<td align="left">0 - 100</td>
+</tr>
+<tr class="even">
+<td align="left">Lower Bound - lower bound of a height class.</td>
+<td align="left">0 - 100</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="species-composition" class="section level3">
+<h3><span class="header-section-number">2.3.9</span> Species Composition</h3>
+<p>Species composition is the percentage of each tree species represented within a forested polygon by layer. Species are listed in descending order according to their contribution based on crown closure, basal area, or volume depending on the province or territory. A total of ten species can be used in one label. The CAS attribute will capture estimation to the nearest percent; however, most inventories across Canada describe species to the nearest 10% (in actual percent value or multiples of 10). Species composition for each forest stand and layer must sum to 100%.</p>
+<p>The detailed table for species composition is presented in Appendix 7. Some inventories (Alberta Phase 3, Saskatchewan UTM, Quebec TIE, and Newfoundland, and National Parks) do not recognize a percentage breakdown of species but rather group species as contributing a major (greater than 26 percent) or minor (less than 26 percent) amount to the composition. Also included in Appendix 7 is a translation table that assigns a species composition percentage breakdown for those inventories that do not have a percentage breakdown.</p>
+<p>CAS species codes are derived from the species‟ Latin name using the first four letters of the Genus and the first four letters of the Species unless there is a conflict, then the last letter of the species portion of the code is changed. Unique codes are required for generic groups and hybrids. A species list has been developed representing every inventory species identified across Canada including hybrids, exotics and generic groups (Appendix 8). Generic groups represent situations where species were not required to be recognized past the generic name or where photo interpreters could not identify an individual species. A list of species that is represented by the generic groups by province, territory, or Park has also been developed and is presented in Appendix 9.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">SPEC1, SPEC1_PER, SPEC2, SPEC2_PER, SPEC3, SPEC3_PER, SPEC4, SPEC4_PER, SPEC5, SPEC5_PER, SPEC6, SPEC6_PER, SEPC7, SPEC7_PER, SPEC8, SPEC8_PER, SPEC9, SPEC9_PER, SPEC10, SPEC10_PER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Species (SPEC#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon.</td>
+<td align="left">POPU TREM</td>
+</tr>
+<tr class="even">
+<td align="left">Species Percent (SPEC#_PER) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="stand-origin" class="section level3">
+<h3><span class="header-section-number">2.3.10</span> Stand Origin</h3>
+<p>Stand origin is the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CAS origin. The detailed stand origin table is presented in Appendix 10.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">ORIGIN_UPPER and ORIGIN_LOWER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Upper Bound - upper bound of an age class</td>
+<td align="left">0 - 2020</td>
+</tr>
+<tr class="even">
+<td align="left">Lower Bound - lower bound of an age class</td>
+<td align="left">0 - 2020</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="site-class" class="section level3">
+<h3><span class="header-section-number">2.3.11</span> Site Class</h3>
+<p>Site class is an estimate of the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography, climate, elevation, and moisture availability. See Appendix 11 for the detailed site table.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">SITE_CLASS</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Unproductive - cannot support a commercial forest</td>
+<td align="left">U</td>
+</tr>
+<tr class="even">
+<td align="left">Poor - poor tree growth based on age height relationship</td>
+<td align="left">P</td>
+</tr>
+<tr class="odd">
+<td align="left">Medium - medium tree growth based on age height relationship</td>
+<td align="left">M</td>
+</tr>
+<tr class="even">
+<td align="left">Good - medium tree growth based on age height relationship</td>
+<td align="left">G</td>
+</tr>
+<tr class="odd">
+<td align="left">Blank - no value</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="site-index" class="section level3">
+<h3><span class="header-section-number">2.3.12</span> Site Index</h3>
+<p>Site Index is an estimate of site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada. See Appendix 11 for the detailed site table.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">SITE_INDEX</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Site Index - estimate of site productivity for tree growth based on a specified reference age.</td>
+<td align="left">0 - 99</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="unproductive-forest" class="section level3">
+<h3><span class="header-section-number">2.3.13</span> Unproductive Forest</h3>
+<p>Unproductive forest is forest land not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. The detailed table, CAS codes, and conversion rule sets are presented in Appendix 12.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">UNPRODUCTIVE_FOREST</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Treed Muskeg - treed wetland sites</td>
+<td align="left">TM</td>
+</tr>
+<tr class="even">
+<td align="left">Open Muskeg - open (&lt;10% trees) wetland sites</td>
+<td align="left">OM</td>
+</tr>
+<tr class="odd">
+<td align="left">Alpine forest - high elevation forest usually above 1800 m</td>
+<td align="left">AL</td>
+</tr>
+<tr class="even">
+<td align="left">Scrub Deciduous - scrub deciduous trees on poor sites</td>
+<td align="left">SD</td>
+</tr>
+<tr class="odd">
+<td align="left">Scrub Coniferous - scrub coniferous trees on poor sites</td>
+<td align="left">SC</td>
+</tr>
+<tr class="even">
+<td align="left">Non Productive Forest - poor forest types on rocky or wet sites</td>
+<td align="left">NP</td>
+</tr>
+<tr class="odd">
+<td align="left">Productive Forest - any other forest</td>
+<td align="left">P</td>
+</tr>
+<tr class="even">
+<td align="left">Blank - no value</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="naturally-non-vegetated" class="section level3">
+<h3><span class="header-section-number">2.3.14</span> Naturally Non Vegetated</h3>
+<p>The Naturally Non-Vegetated class refers to land types with no vegetation cover. The maximum vegetation cover varies across Canada but is usually less than six or ten percent. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">NATURALLY_NON_VEGETATED</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Alpine - high elevation exposed land</td>
+<td align="left">AP</td>
+</tr>
+<tr class="even">
+<td align="left">Lake - ponds, lakes or reservoirs</td>
+<td align="left">LA</td>
+</tr>
+<tr class="odd">
+<td align="left">River - double-lined watercourse</td>
+<td align="left">RI</td>
+</tr>
+<tr class="even">
+<td align="left">Ocean - coastal waters</td>
+<td align="left">OC</td>
+</tr>
+<tr class="odd">
+<td align="left">Rock or Rubble - bed rock or talus or boulder field</td>
+<td align="left">RK</td>
+</tr>
+<tr class="even">
+<td align="left">Sand - sand dunes, sand hills, non recent water sediments</td>
+<td align="left">SA</td>
+</tr>
+<tr class="odd">
+<td align="left">Snow/Ice - ice fields, glaciers, permanent snow</td>
+<td align="left">SI</td>
+</tr>
+<tr class="even">
+<td align="left">Slide - recent slumps or slides with exposed earth</td>
+<td align="left">SL</td>
+</tr>
+<tr class="odd">
+<td align="left">Exposed Land - other non vegetated land</td>
+<td align="left">EX</td>
+</tr>
+<tr class="even">
+<td align="left">Beach - adjacent to water bodies</td>
+<td align="left">BE</td>
+</tr>
+<tr class="odd">
+<td align="left">Water Sediments - recent sand and gravel bars</td>
+<td align="left">WS</td>
+</tr>
+<tr class="even">
+<td align="left">Flood - recent flooding including beaver ponds</td>
+<td align="left">FL</td>
+</tr>
+<tr class="odd">
+<td align="left">Island - vegetated or non vegetated</td>
+<td align="left">IS</td>
+</tr>
+<tr class="even">
+<td align="left">Tidal Flats - non vegetated feature associated with oceans</td>
+<td align="left">TF</td>
+</tr>
+<tr class="odd">
+<td align="left">Blank - no value</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="non-vegetated-anthropogenic" class="section level3">
+<h3><span class="header-section-number">2.3.15</span> Non-Vegetated Anthropogenic</h3>
+<p>Non-vegetated anthropogenic areas are influenced or created by humans. These sites may or may not be vegetated. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">NON_VEGETATED_ANTHROPOGENIC</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Industrial - industrial sites</td>
+<td align="left">IN</td>
+</tr>
+<tr class="even">
+<td align="left">Facility/Infrastructure - transportation, transmission, pipeline</td>
+<td align="left">FA</td>
+</tr>
+<tr class="odd">
+<td align="left">Cultivated - pasture, crops, orchards, plantations</td>
+<td align="left">CL</td>
+</tr>
+<tr class="even">
+<td align="left">Settlement - cities, towns, ribbon development</td>
+<td align="left">SE</td>
+</tr>
+<tr class="odd">
+<td align="left">Lagoon - water filled, includes treatment sites</td>
+<td align="left">LG</td>
+</tr>
+<tr class="even">
+<td align="left">Borrow Pit - associated with facility/infrastructure</td>
+<td align="left">BP</td>
+</tr>
+<tr class="odd">
+<td align="left">Other - any not listed</td>
+<td align="left">OT</td>
+</tr>
+<tr class="even">
+<td align="left">Blank - no value</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="non-forested-vegetated" class="section level3">
+<h3><span class="header-section-number">2.3.16</span> Non-Forested Vegetated</h3>
+<p>Non-forested vegetated areas include all natural lands that have vegetation cover with usually less than 10% tree cover. These cover types can be stand alone or used in multi-layer situations. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">NON_FORESTED_VEGETATED</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Tall Shrub - shrub lands with shrubs &gt; 2 meters tall</td>
+<td align="left">ST</td>
+</tr>
+<tr class="even">
+<td align="left">Low Shrub - shrub lands with shrubs &lt; 2 meters tall</td>
+<td align="left">SL</td>
+</tr>
+<tr class="odd">
+<td align="left">Forbs - herbaceous plants other than graminoids</td>
+<td align="left">HF</td>
+</tr>
+<tr class="even">
+<td align="left">Herbs - no distinction between forbs and graminoids</td>
+<td align="left">HE</td>
+</tr>
+<tr class="odd">
+<td align="left">Graminoids - grasses, sedges, rushes, and reeds</td>
+<td align="left">HG</td>
+</tr>
+<tr class="even">
+<td align="left">Bryoid - mosses and lichens</td>
+<td align="left">BR</td>
+</tr>
+<tr class="odd">
+<td align="left">Open Muskeg - wetlands less than 10% tree cover</td>
+<td align="left">OM</td>
+</tr>
+<tr class="even">
+<td align="left">Tundra - flat treeless plains</td>
+<td align="left">TN</td>
+</tr>
+<tr class="odd">
+<td align="left">Blank - no value</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="disturbance" class="section level3">
+<h3><span class="header-section-number">2.3.17</span> Disturbance</h3>
+<p>Disturbance identifies the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human -caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 13.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">DISTURBANCE1, DISTURBANCE2, DISTURBANCE3</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Cut - logging with known extent</td>
+<td align="left">CO</td>
+</tr>
+<tr class="even">
+<td align="left">Partial Cut - portion of forest has been removed, extent known or unknown</td>
+<td align="left">PC</td>
+</tr>
+<tr class="odd">
+<td align="left">Burn - wildfires or escape fires</td>
+<td align="left">BU</td>
+</tr>
+<tr class="even">
+<td align="left">Windfall - blow down</td>
+<td align="left">WF</td>
+</tr>
+<tr class="odd">
+<td align="left">Disease - root, stem, branch diseases</td>
+<td align="left">DI</td>
+</tr>
+<tr class="even">
+<td align="left">Insect - root, bark, leader, or defoliation insects</td>
+<td align="left">IK</td>
+</tr>
+<tr class="odd">
+<td align="left">Flood - permanent flooding from blockage or damming</td>
+<td align="left">FL</td>
+</tr>
+<tr class="even">
+<td align="left">Weather - ice, frost, red belt</td>
+<td align="left">WE</td>
+</tr>
+<tr class="odd">
+<td align="left">Slide - damage from avalanche, slump, earth or rock slides</td>
+<td align="left">SL</td>
+</tr>
+<tr class="even">
+<td align="left">Other - unknown or other damage</td>
+<td align="left">OT</td>
+</tr>
+<tr class="odd">
+<td align="left">Dead Tops or Trees - dead or dying trees, cause unknown</td>
+<td align="left">DT</td>
+</tr>
+<tr class="even">
+<td align="left">Silviculture Treatments - Planting, Thinning, Seed Tree</td>
+<td align="left">SI</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="disturbance-extent" class="section level3">
+<h3><span class="header-section-number">2.3.18</span> Disturbance Extent</h3>
+<p>Disturbance extent provides an estimate of the proportion of the polygon that has been affected by the disturbance listed. Extent codes and classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">DIST1_EXT_UPPER, DIST2_EXT_UPPER, DIST3_EXT_UPPER, DIST1_EXT_LOWER, DIST2_EXT_LOWER, DIST3_EXT_LOWER</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Disturbance extent upper - upper bound of extent class</td>
+<td align="left">10 - 100</td>
+</tr>
+<tr class="even">
+<td align="left">Disturbance extent lower - lower extent of extent class</td>
+<td align="left">Jan-95</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div id="disturbance-year" class="section level3">
+<h3><span class="header-section-number">2.3.19</span> Disturbance Year</h3>
+<p>Disturbance year is the year a disturbance event occurred. The disturbance year may be unknown. Three disturbance years can be identified, one for each disturbance event.</p>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">DIST1_YR, DIST2_YR, DIST3_YR</th>
+<th align="left">Attribute Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Disturbance Year - year that a disturbance event occurred.</td>
+<td align="left">1900 - 2020</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="ecological-attributes.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
