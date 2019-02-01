@@ -1,0 +1,70 @@
+# Ecological Attributes
+
+Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.
+
+## Wetland
+
+The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>2</sup> and modified by Vitt and Halsey<sup>3,4</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland class, wetland vegetation modifier, wetland landform modifier, and wetland local modifier.
+
+Five major wetland classes are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have strong cross-correlations. Two of the classes; fen and bog, are peat-forming with greater than 40 cm of accumulated organics. The three non- peat forming wetland types are shallow open water, marsh (fresh or salt water), and swamp. A non-wetland class is also included. The Vegetation Modifier is assigned to a wetland class to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.
+
+The detailed wetland table, CAS code set, and CAS translation rule set are presented in Appendix 14. Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland classes derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. A rule set for each province or territory that identifies a method to derive wetland attributes using forest attributes or ecosite data is presented in Appendix 15. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database.
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+<br>
+
+<sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.
+
+<sup>3</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.
+
+<sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.
+
+
+## Ecosite
+
+Ecosites are site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes: Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+

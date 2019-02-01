@@ -1,0 +1,37 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(tidyverse)
+x = read_csv("cosco.csv")
+y = unique(x$Attribute)
+i = 1
+```
+
+# Introduction {#intro}
+
+Canada's vast boreal ecosystem hosts one of the most diverse bird communities in North
+America. Development pressure within the boreal region is on the increase, and there is an
+urgent need to understand the impact of changing habitats on boreal bird populations and to
+make sound management decisions. The Boreal Avian Modeling Project was initiated to help
+address the lack of basic information on boreal birds and their habitats across boreal forests in
+Canada. The need to effectively manage bird species and their habitats has resulted in the
+effort to collect and gather data across Canada to develop models that will predict bird
+abundance and distribution, and that will clarify population and habitat associations with climate
+and land cover.
+Current national databases developed from satellite-based products using biophysical variables
+have limited application at regional levels because many bird species are sensitive to variation
+in canopy tree species composition, height, and age; vegetation attributes that satellite-based
+products cannot measure. Because satellite-based land cover maps lack the thematic detail
+needed to model the processes of stand growth, succession, and regeneration, avian habitat
+models derived from satellite land cover data cannot be used to link forest management actions
+to the desired biotic indicators at the scale of forest tenure areas.
+Digital forest inventory data can overcome many of the deficiencies identified with satellitebased
+land cover data. These data exist for most operational and planned commercial forest
+tenures in the Canadian boreal forest; however, differences among data formats, attributes, and
+standards across the various forest inventories make it difficult to develop models that are
+comparable and can be consistently applied across regions. To do so, it is necessary to address
+the variation between different forest inventories and bring all available inventories into one
+explicitly defined database where attributes are consistently defined without loss of precision.
+The starting point is to review all forest inventory classifications and develop a set of common
+attributes. This document addresses the inventory review developed for the Boreal Avian
+Monitoring Project; this review is called the Common Attribute Schema (CAS).

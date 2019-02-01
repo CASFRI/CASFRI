@@ -1,0 +1,185 @@
+Attribute,Description,AttributeValue
+JURISDICTION,British Columbia,BC
+JURISDICTION,Alberta,AB
+JURISDICTION,Saskatchewan,SK
+JURISDICTION,Manitoba,MB
+JURISDICTION,Ontario,ON
+JURISDICTION,Quebec,QC
+JURISDICTION,Prince Edward Island,PE
+JURISDICTION,New Brunswick,NB
+JURISDICTION,Nova Scotia,NS
+JURISDICTION,Newfoundland and Labrador,NL
+JURISDICTION,Yukon Territory,YK
+JURISDICTION,Northwest Territories,NT
+JURISDICTION,Wood Buffalo National Park,WB
+JURISDICTION,Prince Albert National Park,PA
+COORDINATE_SYSTEM,Universal Trans Mercator,UTM
+COORDINATE_SYSTEM,British Columbia Geographic System,BCGS
+COORDINATE_SYSTEM,National Topographic System,NTS
+COORDINATE_SYSTEM,Ontario Base Map,OBM
+COORDINATE_SYSTEM,Township System,TOWNSHIP
+PROJECTION,Albers System,ALBERS
+PROJECTION,Universal Trans Mercator System,UTM
+DATUM,North American Datum 1927,NAD27
+DATUM,North American Datum 1983,NAD83
+INV_OWNER,Provincial Government,PROV_GOV
+INV_OWNER,Federal Government,FED_GOV
+INV_OWNER,Yukon Territory or Northwest Territories,TERRITORY
+INV_OWNER,First Nations,FN
+INV_OWNER,Industry,INDUSTRY
+INV_OWNER,Private,PRIVATE
+LAND_OWNER,Crown,CROWN
+LAND_OWNER,Private,PRIVATE
+LAND_OWNER,Military,MILITARY
+LAND_OWNER,First Nation,FN
+PERMISSIONS,Use of the inventory data is unrestricted,UNRESTRICTED
+PERMISSIONS,Use of the inventory data has restrictions,RESTRICTED
+PERMISSIONS,Use of the data has limitations,LIMITED
+TENURE_TYPE,Tree Farm License,TFL
+TENURE_TYPE,Forest License,FL
+TENURE_TYPE,Forest Management Agreement,FMA
+TENURE_TYPE,Forest Management License Agreement,FMLA
+TENURE_TYPE,Sustainable Forest License,SFL
+TENURE_TYPE,National or Provincial Park,PARK
+TENURE_TYPE,Northern Boreal Initiative,NBI
+TENURE_TYPE,Private Land,PRIVATE
+TENURE_TYPE,Administered by the Military,MILITARY
+TENURE_TYPE,First Nation or M&eacute;tis Area,FN
+TENURE_TYPE,Tenure type not on list,OTHER
+TENURE_TYPE,Timber Limit,TL
+TENURE_TYPE,No tenure,NONE
+INV_TYPE,Inventory name or type of inventory,Alpha Numeric
+INV_VERSION,The standard and version of the standard used to create the inventory,Alpha Numeric
+REFERENCE_YEAR_MIN and REFERENCE_YEAR_MAX,Reference Year Minimum - first year of inventory,1960 - 2020
+REFERENCE_YEAR_MIN and REFERENCE_YEAR_MAX,Reference Year Maximum - last year of inventory,1960 - 2020
+INV_START_YR and INV_FINISH_YR,Inventory start year - year inventory was started,1960 - 2020
+INV_START_YR and INV_FINISH_YR,Inventory finish year - year inventory was finished,1960 - 2020
+INV_UPDATE_YR,Year when an update to the inventory data was updated,1960 - 2020
+INV_ACQ_YR,Year inventory was acquired for CAS,2008 - 2020
+INV_ACQ_ID,Data acquisition identification number,1 - 1000
+ORIGINAL_STAND_ID,Original stand identification - unique number for each polygon within the original inventory,"1 - 10,000,000"
+CAS_STAND_ID,CAS stand identification - unique number for each polygon within CAS,Alpha Numeric
+MAPSHEET_ID,Map sheet identification according to original naming convention for an inventory,Alpha Numeric
+IDENTIFICATION_ID,Unique number for a particular inventory section,1 - 1000
+POLYGON_AREA and POLYGON_PERIMETER,Polygon area (ha).,"0.1 - 10,000"
+POLYGON_AREA and POLYGON_PERIMETER,Polygon perimeter (ha).,0.1 - infinity
+PHOTO_YEAR_MIN and PHOTO_YEAR_MAX,Photo Year Minimum - earliest year of aerial photo acquisition,1960 - 2020
+PHOTO_YEAR_MIN and PHOTO_YEAR_MAX,Photo Year Maximum - last year of aerial photo acquisition,1960 - 2020
+ADM_UNIT_1 and ADM_UNIT_2,Administration Unit 1,"Alpha Numeric,e.g. FMU"
+ADM_UNIT_1 and ADM_UNIT_2,Administration Unit 2,"Alpha Numeric, e.g. WC"
+STAND STRUCTURE,Single layered - vegetation within a polygon where the heights do not vary significantly.,S
+STAND STRUCTURE,"Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable and evenly distributed. Each layer is assigned an independent description.",M
+STAND STRUCTURE,Complex - stands exhibit a high variation of heights with no single,C
+STAND STRUCTURE,Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small to delineate as a separate H polygon.,
+STAND_STRUCTURE_PER and STAND_STRUCTURE_ RANGE,"Stand Structure Percent - used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon.",9-Jan
+STAND_STRUCTURE_PER and STAND_STRUCTURE_ RANGE,Stand Structure Range - height range (m) around the midpoint height of the stand.,9-Jan
+NUMBER_OF_LAYERS,Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified.,9-Jan
+LAYER,Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified.,"1 - 9, V"
+LAYER RANK,"Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc.",9-Jan
+LAYER RANK,Blank - no value,
+SMR,Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum.,D
+SMR,Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum.,F
+SMR,Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration.,M
+SMR,"Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water.",W
+SMR,Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water.,A
+SMR,Blank - no value,
+CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER,Upper Bound - upper bound of a crown closure class,0 - 100
+CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER,Lower Bound - lower bound of a crown closure class,0 - 100
+CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER,Blank - no value,
+HEIGHT_UPPER and HEIGHT_LOWER,Upper Bound - upper bound of a height class.,0 - 100
+HEIGHT_UPPER and HEIGHT_LOWER,Lower Bound - lower bound of a height class.,0 - 100
+"SPEC1, SPEC1_PER, SPEC2, SPEC2_PER, SPEC3, SPEC3_PER, SPEC4, SPEC4_PER, SPEC5, SPEC5_PER, SPEC6, SPEC6_PER, SEPC7, SPEC7_PER, SPEC8, SPEC8_PER, SPEC9, SPEC9_PER, SPEC10, SPEC10_PER","Species (SPEC#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon.",POPU TREM
+"SPEC1, SPEC1_PER, SPEC2, SPEC2_PER, SPEC3, SPEC3_PER, SPEC4, SPEC4_PER, SPEC5, SPEC5_PER, SPEC6, SPEC6_PER, SEPC7, SPEC7_PER, SPEC8, SPEC8_PER, SPEC9, SPEC9_PER, SPEC10, SPEC10_PER",Species Percent (SPEC#_PER) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.,
+ORIGIN_UPPER and ORIGIN_LOWER,Upper Bound - upper bound of an age class,0 - 2020
+ORIGIN_UPPER and ORIGIN_LOWER,Lower Bound - lower bound of an age class,0 - 2020
+SITE_CLASS,Unproductive - cannot support a commercial forest,U
+SITE_CLASS,Poor - poor tree growth based on age height relationship,P
+SITE_CLASS,Medium - medium tree growth based on age height relationship,M
+SITE_CLASS,Good - medium tree growth based on age height relationship,G
+SITE_CLASS,Blank - no value,
+SITE_INDEX,Site Index - estimate of site productivity for tree growth based on a specified reference age.,0 - 99
+UNPRODUCTIVE_FOREST,Treed Muskeg - treed wetland sites,TM
+UNPRODUCTIVE_FOREST,Open Muskeg - open (<10% trees) wetland sites,OM
+UNPRODUCTIVE_FOREST,Alpine forest - high elevation forest usually above 1800 m,AL
+UNPRODUCTIVE_FOREST,Scrub Deciduous - scrub deciduous trees on poor sites,SD
+UNPRODUCTIVE_FOREST,Scrub Coniferous - scrub coniferous trees on poor sites,SC
+UNPRODUCTIVE_FOREST,Non Productive Forest - poor forest types on rocky or wet sites,NP
+UNPRODUCTIVE_FOREST,Productive Forest - any other forest,P
+UNPRODUCTIVE_FOREST,Blank - no value,
+NATURALLY_NON_VEGETATED,Alpine - high elevation exposed land,AP
+NATURALLY_NON_VEGETATED,"Lake - ponds, lakes or reservoirs",LA
+NATURALLY_NON_VEGETATED,River - double-lined watercourse,RI
+NATURALLY_NON_VEGETATED,Ocean - coastal waters,OC
+NATURALLY_NON_VEGETATED,Rock or Rubble - bed rock or talus or boulder field,RK
+NATURALLY_NON_VEGETATED,"Sand - sand dunes, sand hills, non recent water sediments",SA
+NATURALLY_NON_VEGETATED,"Snow/Ice - ice fields, glaciers, permanent snow",SI
+NATURALLY_NON_VEGETATED,Slide - recent slumps or slides with exposed earth,SL
+NATURALLY_NON_VEGETATED,Exposed Land - other non vegetated land,EX
+NATURALLY_NON_VEGETATED,Beach - adjacent to water bodies,BE
+NATURALLY_NON_VEGETATED,Water Sediments - recent sand and gravel bars,WS
+NATURALLY_NON_VEGETATED,Flood - recent flooding including beaver ponds,FL
+NATURALLY_NON_VEGETATED,Island - vegetated or non vegetated,IS
+NATURALLY_NON_VEGETATED,Tidal Flats - non vegetated feature associated with oceans,TF
+NATURALLY_NON_VEGETATED,Blank - no value,
+NON_VEGETATED_ANTHROPOGENIC,Industrial - industrial sites,IN
+NON_VEGETATED_ANTHROPOGENIC,"Facility/Infrastructure - transportation, transmission, pipeline",FA
+NON_VEGETATED_ANTHROPOGENIC,"Cultivated - pasture, crops, orchards, plantations",CL
+NON_VEGETATED_ANTHROPOGENIC,"Settlement - cities, towns, ribbon development",SE
+NON_VEGETATED_ANTHROPOGENIC,"Lagoon - water filled, includes treatment sites",LG
+NON_VEGETATED_ANTHROPOGENIC,Borrow Pit - associated with facility/infrastructure,BP
+NON_VEGETATED_ANTHROPOGENIC,Other - any not listed,OT
+NON_VEGETATED_ANTHROPOGENIC,Blank - no value,
+NON_FORESTED_VEGETATED,Tall Shrub - shrub lands with shrubs > 2 meters tall,ST
+NON_FORESTED_VEGETATED,Low Shrub - shrub lands with shrubs < 2 meters tall,SL
+NON_FORESTED_VEGETATED,Forbs - herbaceous plants other than graminoids,HF
+NON_FORESTED_VEGETATED,Herbs - no distinction between forbs and graminoids,HE
+NON_FORESTED_VEGETATED,"Graminoids - grasses, sedges, rushes, and reeds",HG
+NON_FORESTED_VEGETATED,Bryoid - mosses and lichens,BR
+NON_FORESTED_VEGETATED,Open Muskeg - wetlands less than 10% tree cover,OM
+NON_FORESTED_VEGETATED,Tundra - flat treeless plains,TN
+NON_FORESTED_VEGETATED,Blank - no value,
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3",Cut - logging with known extent,CO
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3","Partial Cut - portion of forest has been removed, extent known or unknown",PC
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3",Burn - wildfires or escape fires,BU
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3",Windfall - blow down,WF
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3","Disease - root, stem, branch diseases",DI
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3","Insect - root, bark, leader, or defoliation insects",IK
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3",Flood - permanent flooding from blockage or damming,FL
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3","Weather - ice, frost, red belt",WE
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3","Slide - damage from avalanche, slump, earth or rock slides",SL
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3",Other - unknown or other damage,OT
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3","Dead Tops or Trees - dead or dying trees, cause unknown",DT
+"DISTURBANCE1, DISTURBANCE2, DISTURBANCE3","Silviculture Treatments - Planting, Thinning, Seed Tree",SI
+"DIST1_EXT_UPPER, DIST2_EXT_UPPER, DIST3_EXT_UPPER, DIST1_EXT_LOWER, DIST2_EXT_LOWER, DIST3_EXT_LOWER",Disturbance extent upper - upper bound of extent class,10 - 100
+"DIST1_EXT_UPPER, DIST2_EXT_UPPER, DIST3_EXT_UPPER, DIST1_EXT_LOWER, DIST2_EXT_LOWER, DIST3_EXT_LOWER",Disturbance extent lower - lower extent of extent class,Jan-95
+"DIST1_YR, DIST2_YR, DIST3_YR",Disturbance Year - year that a disturbance event occurred.,1900 - 2020
+WETLAND_CLASS,"Bog - > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss",B
+WETLAND_CLASS,"Fen - > 40 cm of peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed",F
+WETLAND_CLASS,Swamp - woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent subsurface water. Various mixtures of mineral sediments and peat.,
+WETLAND_CLASS,"Marsh - emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water",M
+WETLAND_CLASS,Shallow Open Water - freshwater lakes < 2 m depth,O
+WETLAND_CLASS,Tidal Flats - ocean areas with exposed flats,T
+WETLAND_CLASS,Estuary - mixed freshwater/saltwater marsh areas,E
+WETLAND_CLASS,Wetland - no distinction of class,W
+WETLAND_CLASS,Not Wetland - upland areas,Z
+WETLAND_CLASS,Blank - no value,
+WETLAND_VEGETATION_MODIFIER,Forested - closed canopy > 70% tree cover,F
+WETLAND_VEGETATION_MODIFIER,Wooded - open canopy > 6% to 70% tree cover,T
+WETLAND_VEGETATION_MODIFIER,Open Non-Treed Freshwater - < 6% tree cover with shrubs,O
+WETLAND_VEGETATION_MODIFIER,"Open Non-Treed Coastal - < 6% tree cover, with shrubs",C
+WETLAND_VEGETATION_MODIFIER,Mud - no vegetation cover,M
+WETLAND_VEGETATION_MODIFIER,Blank - no value,
+WETLAND_LANDFORM_MODIFIER,Permafrost Present,X
+WETLAND_LANDFORM_MODIFIER,Patterning Present,P
+WETLAND_LANDFORM_MODIFIER,No Permafrost or Patterning Present,N
+WETLAND_LANDFORM_MODIFIER,Saline or Alkaline Present,A
+WETLAND_LANDFORM_MODIFIER,Blank - no value,
+WETLAND_LOCAL_MODIFIER,Collapse Scar Present in permafrost area,C
+WETLAND_LOCAL_MODIFIER,Internal Lawn With Islands of Forested Peat Plateau,R
+WETLAND_LOCAL_MODIFIER,Internal Lawns Present (permafrost was once present),I
+WETLAND_LOCAL_MODIFIER,Internal Lawns Not Present,N
+WETLAND_LOCAL_MODIFIER,Shrub Cover > 25%,S
+WETLAND_LOCAL_MODIFIER,Graminoids With Shrub Cover < 25%,G
+WETLAND_LOCAL_MODIFIER,Blank - no value,
+ECOSITE,"Ecosite - an area defined by a specific combination of site, soil, and",A-Z / 0-199
+ECOSITE,vegetation characteristics as influenced by environmental factors.,
