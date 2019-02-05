@@ -2,7 +2,7 @@
 knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
 library(tidyverse)
-x = read_csv("cosco.csv")
+x = read_csv("tables/main_document.csv")
 y = unique(x$Attribute)
 i = 1
 ```
