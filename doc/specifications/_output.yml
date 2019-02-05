@@ -6,5 +6,3 @@ bookdown::gitbook:
         <li><a href="./">CASFRI Specifications</a></li>
       after: |
         <li><a href="https://github.com/edwardsmarc/CASFRI/blob/master/doc/specifications/">GitHub Pages</a></li>
-bookdown::pdf_book:
-  keep_tex: yes

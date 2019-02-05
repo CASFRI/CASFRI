@@ -1,6 +1,6 @@
 # CASFRI Specifications
 
-* [Click here to view the CASFRI Specifications document as an HTML file](html/index.html)
+* [Click here to view the CASFRI Specifications document as an HTML file](https://prvernier.github.io/casfri_specs/)
 
 ## To do
 
