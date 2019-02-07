@@ -1,26 +1,9 @@
 # CASFRI Specifications
 
-* [Click here to view the CASFRI Specifications document as an HTML file](https://edwardsmarc.github.io/CASFRI/specifications/docs/index.html)
+The CASFRI Specifications document (Cosco 2011) was converted to Google docs for ease of maintenance and updating. It is thus considered to be a "live" document which can be edited by CASFRI team members. There are still some formatting issues to be resolved as well as a few appendices that need to be added. The pages can be found here:
 
-## To do
+  * [Click here to view and edit the CASFRI Specifications](https://edwardsmarc.github.io/CASFRI/specifications/index.html)
 
-  * add PDF document option
-  * review all converted text (rmd files)
-  * review and format all csv files
+Note that there is also a draft bookdown version of the document which is no longer maintained since the Google docs version is more efficient in terms of updating.
 
-## Journal
-
-Feb 6, 2019
-
-  * Prepared cas_appendices.xlsx workbook containing several appendices from the Cosco specifications document. Other appendices will be added in the next few days. Also, converted workbook to html files for viewing on GitHub. 
-
-Feb 4, 2019
-
-  * Converted appendices 1-7 to csv files and created rmarkdown page to read tables
-  * Note that the csv tables have a lot of problems and need to be thoroughly cleaned
-  
-Feb 1, 2019
-
-  * Converted chapters 1-4 to rmarkdown (rough draft that will need to be inspected and cleaned)
-  * Created bookdown project, including _bookdown.yml and _output.yml files
-  
+  * [Click here to view the CASFRI Specifications (bookdown format)](https://edwardsmarc.github.io/CASFRI/specifications/bookdown/docs/index.html)
