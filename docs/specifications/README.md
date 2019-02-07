@@ -4,12 +4,15 @@
 
 ## To do
 
-  * figure out how to publish html pages on github
   * add PDF document option
   * review all converted text (rmd files)
   * review and format all csv files
 
 ## Journal
+
+Feb 6, 2019
+
+  * Prepared cas_appendices.xlsx workbook containing several appendices from the Cosco specifications document. Other appendices will be added in the next few days. Also, converted workbook to html files for viewing on GitHub. 
 
 Feb 4, 2019
 

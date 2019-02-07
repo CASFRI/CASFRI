@@ -12,4 +12,4 @@ description: "Revised Cosco document"
 
 # Overview {-}
 
-This notebook is being converted to markdown from the original John Cosco PDF specification document. Once the conversion is complete, it will be possible for CASFRI project members to modify and update the documents by editing the underlying ".Rmd" files that start with a number e.g., 01-intro.Rmd.
+This notebook is being converted to markdown from the original John Cosco PDF specification document. Once the conversion is complete, it will be possible for CASFRI project members to modify and update the document by editing the underlying ".Rmd" files that start with a number e.g., 01-intro.Rmd.
