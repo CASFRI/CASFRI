@@ -1,5 +1,5 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,str,"""notNull(var1, """"NULL"""", var2, """"NULL"""", var3, """"NULL"""", var4, """"NULL"""")""",concat(),,
+CAS_ID,str,"notNull(var1, ""NULL"", var2, ""NULL"", var3, ""NULL"", var4, ""NULL"")",concat(),,
 DIST_1,,,,,
 DIST_YR_1,,,,,
 DIST_EXT_UPPER_1,,,,,
