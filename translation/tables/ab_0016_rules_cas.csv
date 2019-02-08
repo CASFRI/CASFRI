@@ -1,0 +1,11 @@
+targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+CAS_ID,str,"""notNull(var1, """"NULL"""", var2, """"NULL"""", var3, """"NULL"""", var4, """"NULL"""")""",concat(),,
+ORIG_STAND_ID,,,,,
+STAND_STRUCTURE,,,,,
+NUM_OF_LAYERS,,,,,
+IDENTIFICATION_ID,,,,,
+MAP_SHEET_ID,,,,,
+GIS_AREA,,,,,
+GIS_PERIMETER,,,,,
+INVENTORY_AREA,,,,,
+PHOTO_YEAR,,,,,

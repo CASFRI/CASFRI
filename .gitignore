@@ -1,5 +1,2 @@
-*.bat
-.Rproj.user
 .Rhistory
-.RData
-.Ruserdata
+Rgui.lnk

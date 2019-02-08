@@ -1,0 +1,13 @@
+targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+CAS_ID,str,"""notNull(var1, """"NULL"""", var2, """"NULL"""", var3, """"NULL"""", var4, """"NULL"""")""",concat(),,
+SOIL_MOIST_REG,,,,,
+STRUCTURE_PER,,,,,
+LAYER,,,,,
+LAYER_RANK,,,,,
+CROWN_CLOSURE_UPPER,,,,,
+CROWN_CLOSURE_LOWER,,,,,
+HEIGHT_UPPER,,,,,
+HEIGHT_LOWER,,,,,
+NAT_NON_VEG,,,,,
+NON_FOR_ANTH,,,,,
+NON_FOR_VEG,,,,,
