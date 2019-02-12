@@ -13,70 +13,80 @@
 #Workflow is to load the first table normally, then append the others
 #Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
 
-#Source file location - make all paths relative to source
-srcD=$(dirname $BASH_SOURCE)
+
+######################################## variables #######################################
+
+# PostgreSQL variables
+pghost=localhost
+pgdbname=cas
+pguser=postgres
+pgpassword=postgres
+schema=test
+trgtT=test.NB_0001 #Target table name
+srcF="../../../../../../../Temp/nb_source" #Source folder path
+srcWater=$srcF"/Waterbody.shp"
+fileWater=Waterbody
+srcNonForest=$srcF"/Non Forest.shp"
+fileNonForest=NonForest
+srcWetland=$srcF"/wetland.shp"
+fileWetland=wetland
+srcForest=$srcF"/Forest.shp"
+fileForest=Forest
+
+# path variables
+ogrinfo="/../../../../../../../program files/gdal/ogrinfo.exe"
+ogr2ogr="/../../../../../../../program files/gdal/ogr2ogr.exe"
+prjF="canadaAlbersEqualAreaConic.prj"
+##########################################################################################
+
+
+############################ Script - shouldn't need editing #############################
 
 #Create schema if it doesn't exist
-$srcD"/../../../../../../../program files/gdal/ogrinfo.exe" PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS nb";
-
-#Projection file. Canada Albers Equal Area Conic.
-prjF=$srcD"/canadaAlbersEqualAreaConic.prj"
-
-#Target table name
-trgtT=nb.NB_0001
-
+ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
 
 ### FILE 1 ###
 #Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
 #Solution is to load the Waterbody table first with -lco precision=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
 
-#Source file path
-srcF=$srcD"/../../../../../../../Temp/NB_source/Waterbody.shp"
-
-#Filename field. This will be added as a column called src_filename and later used to create the cas_id field
-fileName=Waterbody
 echo "1"
 #Run ogr2ogr
-$srcD"/../../../../../../../program files/gdal/ogr2ogr.exe" \
--f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" $srcF \
+ogr2ogr \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcWater \
 -lco precision=NO \
 -nln $trgtT \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$fileName' as src_filename FROM '$fileName'" \
+-sql "SELECT *, '$fileWater' as src_filename FROM '$fileWater'" \
 -overwrite
 
 ### FILE 2 ###
-#APPEND SECOND TABLE - note table name is provided explicitly in -sql statement. This was done so the space can be removed from %fileName%. We don't want spaces in cas_id.
-srcF=$srcD"/../../../../../../../Temp/NB_source/Non Forest.shp"
-fileName=NonForest
+#APPEND SECOND TABLE - note table name is provided explicitly in -sql statement. This was done so the space can be removed. We don't want spaces in cas_id.
 echo "2"
-$srcD"/../../../../../../../program files/gdal/ogr2ogr.exe" \
+ogr2ogr \
 -update -append -addfields \
--f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" "$srcF" \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcNonForest" \
 -nln $trgtT \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$fileName' as src_filename FROM 'Non Forest'"
+-sql "SELECT *, '$fileNonForest' as src_filename FROM 'Non Forest'"
+
 echo "3"
 ### FILE 3 ###
-srcF=$srcD"/../../../../../../../Temp/NB_source/wetland.shp"
-fileName=wetland
-$srcD"/../../../../../../../program files/gdal/ogr2ogr.exe" \
+ogr2ogr \
 -update -append -addfields \
--f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" $srcF \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcWetland \
 -nln $trgtT \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$fileName' as src_filename FROM '$fileName'"
+-sql "SELECT *, '$fileWetland' as src_filename FROM '$fileWetland'"
+
 echo "4"
 ## File 4 ###
-srcF=$srcD"/../../../../../../../Temp/NB_source/Forest.shp"
-fileName=Forest
-$srcD"/../../../../../../../program files/gdal/ogr2ogr.exe" \
+ogr2ogr \
 -update -append -addfields \
--f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" $srcF \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcForest \
 -nln $trgtT \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$fileName' as src_filename FROM '$fileName'"
+-sql "SELECT *, '$fileForest' as src_filename FROM '$fileForest'"

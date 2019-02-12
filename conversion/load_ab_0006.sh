@@ -12,30 +12,36 @@
 
 #Converted E00 to geodatabase in ArcGIS. This script will load the geodatabase.
 
-#Source file location - make all paths relative to source
-srcD=$(dirname $BASH_SOURCE)
+######################################## variables #######################################
+
+# PostgreSQL variables
+pghost=localhost
+pgdbname=cas
+pguser=postgres
+pgpassword=postgres
+schema=test
+trgtT=test.AB_0006 #Target table name
+srcF="../../../../../../../Temp/ab_0006.gdb" #Source file path
+fileName=ab_0006 #Filename field. This will be added as a column called src_filename and later used to create the cas_id field. Must match source filename.
+
+# path variables
+ogrinfo="/../../../../../../../program files/gdal/ogrinfo.exe"
+ogr2ogr="/../../../../../../../program files/gdal/ogr2ogr.exe"
+prjF="canadaAlbersEqualAreaConic.prj"
+##########################################################################################
+
+
+############################ Script - shouldn't need editing #############################
 
 #Create schema if it doesn't exist
-$srcD"/../../../../../../../program files/gdal/ogrinfo.exe" PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS ab";
-
-#Projection file. Canada Albers Equal Area Conic.
-prjF=$srcD"/canadaAlbersEqualAreaConic.prj"
-
-#Target table name
-trgtT=ab.AB_0006
-
-#Source file path
-srcF=$srcD"/../../../../../../../Temp/GB_S21_TWP/geodatabase/GB_S21_TWP.gdb"
-
-#Filename field. This will be added as a column called src_filename and later used to create the cas_id field
-fileName=GB_S21_TWP
+ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
 
 #Run ogr2ogr
-$srcD"/../../../../../../../program files/gdal/ogr2ogr.exe" \
--f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" $srcF \
+ogr2ogr \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcF \
 -nln $trgtT \
 -t_srs $prjF \
 -sql "SELECT *, '$fileName' as src_filename FROM '$fileName'"
 
 #Spatial index should be created automatically, if not, un-comment the ogrinfo line
-#$srcD"/../../../../../../../program files/gdal/ogrinfo.exe" PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE INDEX BC_0008_spatial_index ON bc.BC_0008 USING GIST (wkb_geometry);"
+#ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE INDEX ab_0006_spatial_index ON ab.ab_0008 USING GIST (wkb_geometry);"
