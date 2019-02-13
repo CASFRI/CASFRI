@@ -2,8 +2,6 @@
 title: ""
 output:
   html_document:
-    toc: true
-    toc_float: true
     number_sections: true
     css: style.css
     keep_md: true
@@ -24,7 +22,7 @@ Prepared by: John A. Cosco, Chief Inventory Forester, February 2011<br>
 Revised by: The CASFRI Project Team, February 2019</center>
 <br><br>
 
-# Introduction {#intro}
+# Introduction
 
 Canada's vast boreal ecosystem hosts one of the most diverse bird communities in North America. Development pressure within the boreal region is on the increase, and there is an urgent need to understand the impact of changing habitats on boreal bird populations and to
 make sound management decisions. The Boreal Avian Modeling Project was initiated to help address the lack of basic information on boreal birds and their habitats across boreal forests in Canada. The need to effectively manage bird species and their habitats has resulted in the effort to collect and gather data across Canada to develop models that will predict bird abundance and distribution, and that will clarify population and habitat associations with climate and land cover.
