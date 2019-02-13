@@ -1,3 +1,39 @@
+---
+title: ""
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    css: style.css
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(tidyverse)
+x = read_csv("tables.csv")
+y = unique(x$Attribute)
+i = 1
+```
+
+<center><br><br><b><font size=+2>COMMON ATTRIBUTE SCHEMA (CAS)<br>FOR FOREST INVENTORIES ACROSS CANADA</font></b>
+<br><br><br>
+Prepared by: John A. Cosco, Chief Inventory Forester, February 2011<br>
+Revised by: The CASFRI Project Team, February 2019</center>
+<br><br>
+
+# Introduction {#intro}
+
+Canada's vast boreal ecosystem hosts one of the most diverse bird communities in North America. Development pressure within the boreal region is on the increase, and there is an urgent need to understand the impact of changing habitats on boreal bird populations and to
+make sound management decisions. The Boreal Avian Modeling Project was initiated to help address the lack of basic information on boreal birds and their habitats across boreal forests in Canada. The need to effectively manage bird species and their habitats has resulted in the effort to collect and gather data across Canada to develop models that will predict bird abundance and distribution, and that will clarify population and habitat associations with climate and land cover.
+
+Current national databases developed from satellite-based products using biophysical variables have limited application at regional levels because many bird species are sensitive to variation in canopy tree species composition, height, and age; vegetation attributes that satellite-based products cannot measure. Because satellite-based land cover maps lack the thematic detail needed to model the processes of stand growth, succession, and regeneration, avian habitat models derived from satellite land cover data cannot be used to link forest management actions to the desired biotic indicators at the scale of forest tenure areas.
+
+Digital forest inventory data can overcome many of the deficiencies identified with satellitebased land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one
+explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).
+
 # Common Attribute Schema
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.
@@ -573,8 +609,230 @@ names(z) = c(y[i], "Attribute Value")
 kable(z)
 ```
 
+# Ecological Attributes
+
+Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.
+
+## Wetland
+
+The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>2</sup> and modified by Vitt and Halsey<sup>3,4</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland class, wetland vegetation modifier, wetland landform modifier, and wetland local modifier.
+
+Five major wetland classes are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have strong cross-correlations. Two of the classes; fen and bog, are peat-forming with greater than 40 cm of accumulated organics. The three non- peat forming wetland types are shallow open water, marsh (fresh or salt water), and swamp. A non-wetland class is also included. The Vegetation Modifier is assigned to a wetland class to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.
+
+The detailed wetland table, CAS code set, and CAS translation rule set are presented in Appendix 14. Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland classes derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. A rule set for each province or territory that identifies a method to derive wetland attributes using forest attributes or ecosite data is presented in Appendix 15. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database.
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+<br>
+
+<sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.
+
+<sup>3</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.
+
+<sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.
 
 
+## Ecosite
+
+Ecosites are site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes: Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.
+
+<br>
+
+```{r echo=FALSE, message=FALSE}
+i = i + 1
+z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
+names(z) = c(y[i], "Attribute Value")
+kable(z)
+```
+
+# Bibliography
+
+<b>British Columbia</b>
+
+Ministry of Forests 1982. Forest and Range Inventory Manual, Chapter 3, Forest Classification.
+
+Ministry of Forests 1992. Forest Inventory Manual. Volumes 1 - 5.
+
+Resource Inventory Committee 2002. Vegetation Resources Inventory, Version 2.4. Photo Interpretation Procedures. Ministry of Sustainable Resource Management. Terrestrial Information Branch (http://www.for.gov.bc.ca/risc).
+
+Sandvoss, M, B. McClymont and C. Farnden (compilers) 2005. A User's Guide to the Vegetation Resources Inventory. Timberline Forest Inventory Consultants.
+
+<b>Alberta</b>
+
+Alberta Department of Energy and Nat. Res. 1985. Alberta Phase 3 Forest Inventory: An Overview. Rep. No. I/86.
+
+Alberta Department of Energy and Nat. Res. 1985. Alberta Phase 3 Inventory: Forest Cover Type Specifications. Rep. No. 58.
+
+Alberta Environmental Protection 1991. Alberta Vegetation Inventory Standards Manual, Version 2.1. Resource Data Division. Data Acquisition Branch.
+
+Alberta Sustainable Resource development. 2005. Alberta Vegetation Inventory Standards. Version 2.1.1 March 2005. Chapter 3 - Vegetation Inventory Standards and Data Model Documents. Resource Information Branch.
+
+Halsey L. and D.H. Vitt. 1977 Alberta Wetland Inventory Standards. Version 1.0. June.
+
+Halsey L., D.H. Vitt, D. Beilman, S. Crow, S. Meehelcic, and R. Wells. 2004. Alberta Wetland Inventory Classification System Version 2.0. Alberta Sustainable Resource Development, Resource Data Branch. Pub. No, T/031.
+
+<b>Saskatchewan</b>
+
+Lindenas, D.J. 1985. Specifications for the Interpretation and Mapping of Aerial Photographs in the Forest Inventory Section. Sask. Dept. Parks and Renew. Res. Internal Manual.
+
+Saskatchewan Environment 2004. Saskatchewan Forest Vegetation Inventory, Version 4.0.
+
+Forest Service. (www.se.gov.sk.ca/forests/forestmanagement/Sask_Leg_Manuals.htm.
+
+<b>Manitoba</b>
+
+Manitoba Conservation. Prior to 1992. Forest Inventory Manual 1.0 and 1.1. Forest Inventory and Resource Analysis.
+
+Manitoba Conservation. 1992 - 1996. Forest Inventory Manual 1.2. Forest Inventory and Resource Analysis.
+
+Manitoba Conservation. 1996 - 1997. Forest Inventory Manual 1.3. Forest Inventory and Resource Analysis.
+
+Manitoba Conservation. 2001. Forest Lands Inventory Manual 1.1. Forest Inventory and Resource Analysis.
+
+Louisiana Pacific Canada Ltd. 2004. FLI User Guide (Draft). Prepared by The Forestry Corp. Ontario
+
+Ontario Ministry of Natural Resources. 1996. Specifications for Forest Resources Inventory Photo Interpretation. Updated Mar. 1996.
+
+Ontario Ministry of Natural Resources. 2001. Specifications for Forest Resources Inventory Photo Interpretation. Updated Sept. 2001.
+
+Ontario Ministry of Natural Resources. 2007. Ontario Forest Resources Inventory Photo Interpretation Specifications. Updated Dec_2007.
+
+Ontario Ministry of Natural Resources. 2010. Ontario Forest Resources Inventory Photo Interpretation Specifications. Updated Dec_2010.
+
+OMNR, April 2001. Forest Information Manual. Toronto: Queen's Printer for Ontario. 400 pp.
+
+OMNR, April 2007. Forest Information Manual. Toronto: Queen's Printer for Ontario. 107 pp. (http://ontariosforests.mnr.gov.on.ca/ontariosforests.cfm)
+
+Pikangikum First Nation. 2003. Whitefeather Forest FRI/FEC Procedures Manual. Internal Document prepared by Timberline Forest Inventory Consultants Ltd.
+
+Eabametoong and Mishkeegogamang First Nation. 2007. FRI/FEC Procedures Manual. Internal Document prepared by Timberline Natural Resource Group Ltd.
+
+<b>Quebec</b>
+
+Foret Quebec. 2003. Normes de Cartographie Ecoforestiere. Troisieme Inventaire Ecoforestier. Ministere des Ressources Naturelles, de la Faune et des Parcs du Quebec. Direction des Inventaires Forestiers.
+
+Foret Quebec. 2008. Norme de Stratification Ecoforestiere. Quatrieme Inventaire Ecoforestier.
+
+Direction des Inventaires Forestiers.
+
+<b>Prince Edward Island</b>
+
+Prince Edward Island Dept. of Agric. and For. 2001. Photo Interpretation Specifications.
+
+Province of Prince Edward Island. Natural Resources Division, Revised 2001.
+
+<b>New Brunswick</b>
+
+Dept. of Nat. Resources. 2005. New Brunswick Integrated Land Classification System. Forest Management Branch
+
+<b>Nova Scotia</b>
+
+Dept. of Nat. Resources 2006. Photo Interpretation Specifications. Forestry Division. Manual FOR 2006-1.
+
+<b>Newfoundland and Labrador</b>
+
+Dept. of Nat. Resources 2006. Photo Interpretation Procedures and Technical Specifications.
+
+Forestry Services Branch.
+
+<b>Yukon Territory</b>
+
+Yukon Energy, Mines, and Resources. 2006. Yukon Vegetation Inventory Manual. Version 2.1.
+
+Forest Management Branch.
+
+<b>Northwest Territories</b>
+
+Dept. of Energy and Natural Resources 2004. Northwest Territories Forest Vegetation Photo Interpretation, Transfer and Database Standards. Forest Resources, Forest Management Division.
+
+Dept. of Energy and Natural Resources. 2006. Northwest Territories Forest Vegetation Inventory Standards with Softcopy Supplements, Version 3.0. Forest Resources, Forest Management Division.
+
+<b>Prince Albert National Park</b>
+
+Padbury, G.E., W.K. Head, and W.E. Souster. 1978. Biophysical Resource Inventory of Prince Albert National Park, Saskatchewan. Saskatchewan Institute of Pedology Publication S185, Saskatoon.
+
+Fitzsimmons, M. 1998. Prince Albert National Park Forest Cover Data in Vector Format. http://daac.ornl.gov/boreas/STAFF/panpfcov/comp/PNP_For_Cov.txt
+
+<b>Wood Buffalo National Park</b>
+
+Air Photo Analysis Associates. 1979. Biophysical inventory of Wood Buffalo National Park.
+
+Prepared for Department of Indian and Northern Affairs, Parks Canada. Prairie Region.
+
+WBNPBiophysical. 2001. SMMS Metadata Report.
+
+<b>General</b>
+
+Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada.
+
+Petawawa National Forestry Institute, Information Report PI-X-114.
+
+Leckie D.G and Gillis M.D. 1995 Forest Inventory in Canada with emphasis on map production.
+
+The Forestry Chronicle 71 (1): 74 - 88.
+
+National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.
 
 
+# Appendices
 
+The appendices are listed below and can be viewed or edited using the cas_appendices.xlsx workbook located in the github specifications folder.
+
+  * Appendix 1	Current Canadian Inventories
+  * Appendix 2	Data Structure and Data Dictionary
+  * Appendix 3	Stand Structure - Summary of Canadian Forest Inventories
+  * Appendix 4	Soil Moisture Regime - Summary of Canadian Forest Inventories and CAS Conversion
+  * Appendix 5	Crown Closure - Summary of Canadian Forest Inventories
+  * Appendix 6	Stand Height - Summary of Canadian Forest Inventories
+  * Appendix 7a	Species Composition - Summary of Canadian Forest Inventories
+  * Appendix 7b	CAS Species Percent Translation (For Forest Inventories that do not provide species percent)
+  * Appendix 8	CAS Species List and Codes
+  * Appendix 9	CAS Generic Species Group List
+  * Appendix 10	Stand Origin (Age) - Summary of Canadian Forest Inventories
+  * Appendix 11	Site Class and Site Index and CAS Conversion
+  * Appendix 12a	Non-Forested, Non-Vegetated, and Unproductive Forest - Summary of Canadian Forest Inventories
+  * Appendix 12b	CAS Codes Non-Forested, Non-Vegetated, and Unproductive Forest Codes
+  * Appendix 12c	CAS Non-Forested, Non-Vegetated, and Unproductive Forest Conversion
+  * Appendix 13a	Disturbance History - Summary of Canadian Forest Inventories
+  * Appendix 13b	Disturbance History - CAS Disturbance History Codes
+  * Appendix 13c	Disturbance History - CAS Conversion
+  * Appendix 14a	Wetland - Summary of Canadian Forest Inventories
+  * Appendix 14b	Wetland - CAS Wetland Conversion
+  * Appendix 14c	Wetland - CAS Wetland Codes
+  * Appendix 15	Procedures for CAS Wetland Derivation
+  * Appendix 16	Ecosite - Summary of Canadian Forest Inventories
+  * Appendix 17	Sample of Export Procedure
