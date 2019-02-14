@@ -2,9 +2,10 @@
 title: ""
 output:
   html_document:
+    toc: true
+    toc_float: true
     number_sections: true
     css: style.css
-    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
