@@ -20,12 +20,12 @@ pguser=postgres
 pgpassword=postgres
 schema=test
 trgtT=test.BC_0008 #Target table name
-srcF="../../../../../../../Temp/bc_test.gdb" #Source file path
+srcF="../../../../../../../../Temp/bc_test.gdb" #Source file path
 fileName=bc_test #Filename field. This will be added as a column called src_filename and later used to create the cas_id field
 
 # path variables
-ogrinfo="/../../../../../../../program files/gdal/ogrinfo.exe"
-ogr2ogr="/../../../../../../../program files/gdal/ogr2ogr.exe"
+ogrinfo="../../../../../../../../program files/gdal/ogrinfo.exe"
+ogr2ogr="../../../../../../../../program files/gdal/ogr2ogr.exe"
 prjF="canadaAlbersEqualAreaConic.prj"
 ##########################################################################################
 
@@ -33,10 +33,10 @@ prjF="canadaAlbersEqualAreaConic.prj"
 ############################ Script - shouldn't need editing #############################
 
 #Create schema if it doesn't exist
-ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS "$schema;
+$ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS "$schema;
 
 #Run ogr2ogr
-ogr2ogr \
+$ogr2ogr \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcF \
 -nln $trgtT \
 -t_srs $prjF \

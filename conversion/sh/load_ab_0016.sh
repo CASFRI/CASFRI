@@ -24,12 +24,12 @@ pguser=postgres
 pgpassword=postgres
 schema=test
 trgtT=test.AB_0016 #Target table name
-srcF="../../../../../../../Temp/Canfor_test" #Source folder path
+srcF="../../../../../../../../Temp/Canfor_test" #Source folder path
 firstfile=$srcF"/t059r04m6/forest"
 
 # path variables
-ogrinfo="/../../../../../../../program files/gdal/ogrinfo.exe"
-ogr2ogr="/../../../../../../../program files/gdal/ogr2ogr.exe"
+ogrinfo="../../../../../../../../program files/gdal/ogrinfo.exe"
+ogr2ogr="../../../../../../../../program files/gdal/ogr2ogr.exe"
 prjF="canadaAlbersEqualAreaConic.prj"
 ##########################################################################################
 
@@ -37,13 +37,13 @@ prjF="canadaAlbersEqualAreaConic.prj"
 ############################ Script - shouldn't need editing #############################
 
 #Create schema if it doesn't exist
-ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
+$ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
 
 echo "1."
 ## 1. ##
 #make table template
 #load first mapsheet. Using precision=NO because the FOREST-ID field is set to NUMERIC(5,0) when imported but data have 6 digits. Causes error.
-ogr2ogr \
+$ogr2ogr \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $firstfile \
 -nln $trgtT \
 -t_srs $prjF \
@@ -52,14 +52,14 @@ ogr2ogr \
 -overwrite
 
 #delete rows but not table
-ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "delete  from $trgtT"
+$ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "delete  from $trgtT"
 
 #Two fields (FOREST# and FOREST-ID) don't load correctly because field names are not valid in PostgreSQL. Create two new columns (forest_id_1 and forest_id_2) with valid field names to hold these variables.
 #Original columns will be loaded as forest_ and forest_id, they will be NULL because ogr2ogr cannot append the values from the invalid field names.
 #New fields will be added to the right of the table
 #Using ogrinfo - add two new integer columns to hold the FOREST# and FOREST-ID integers. Name them forest_id_1 and forest_id_2.
-ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "ALTER TABLE $trgtT ADD forest_id_1 integer;"
-ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "ALTER TABLE $trgtT ADD forest_id_2 integer;"
+$ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "ALTER TABLE $trgtT ADD forest_id_1 integer;"
+$ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "ALTER TABLE $trgtT ADD forest_id_2 integer;"
 
 echo "2."
 ## 2. ##
@@ -73,7 +73,7 @@ do
 	echo "srcF: " $srcFF
 	echo "filename: " $filename
 	
-	ogr2ogr \
+	$ogr2ogr \
 	-update -append \
 	-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcFF \
 	-nln $trgtT \

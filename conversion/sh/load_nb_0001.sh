@@ -23,7 +23,7 @@ pguser=postgres
 pgpassword=postgres
 schema=test
 trgtT=test.NB_0001 #Target table name
-srcF="../../../../../../../Temp/nb_source" #Source folder path
+srcF="../../../../../../../../Temp/nb_source" #Source folder path
 srcWater=$srcF"/Waterbody.shp"
 fileWater=Waterbody
 srcNonForest=$srcF"/Non Forest.shp"
@@ -34,8 +34,8 @@ srcForest=$srcF"/Forest.shp"
 fileForest=Forest
 
 # path variables
-ogrinfo="/../../../../../../../program files/gdal/ogrinfo.exe"
-ogr2ogr="/../../../../../../../program files/gdal/ogr2ogr.exe"
+ogrinfo="../../../../../../../../program files/gdal/ogrinfo.exe"
+ogr2ogr="../../../../../../../../program files/gdal/ogr2ogr.exe"
 prjF="canadaAlbersEqualAreaConic.prj"
 ##########################################################################################
 
@@ -43,7 +43,7 @@ prjF="canadaAlbersEqualAreaConic.prj"
 ############################ Script - shouldn't need editing #############################
 
 #Create schema if it doesn't exist
-ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
+$ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
 
 ### FILE 1 ###
 #Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
@@ -51,7 +51,7 @@ ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sq
 
 echo "1"
 #Run ogr2ogr
-ogr2ogr \
+$ogr2ogr \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcWater \
 -lco precision=NO \
 -nln $trgtT \
@@ -63,7 +63,7 @@ ogr2ogr \
 ### FILE 2 ###
 #APPEND SECOND TABLE - note table name is provided explicitly in -sql statement. This was done so the space can be removed. We don't want spaces in cas_id.
 echo "2"
-ogr2ogr \
+$ogr2ogr \
 -update -append -addfields \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcNonForest" \
 -nln $trgtT \
@@ -73,7 +73,7 @@ ogr2ogr \
 
 echo "3"
 ### FILE 3 ###
-ogr2ogr \
+$ogr2ogr \
 -update -append -addfields \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcWetland \
 -nln $trgtT \
@@ -83,7 +83,7 @@ ogr2ogr \
 
 echo "4"
 ## File 4 ###
-ogr2ogr \
+$ogr2ogr \
 -update -append -addfields \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcForest \
 -nln $trgtT \
