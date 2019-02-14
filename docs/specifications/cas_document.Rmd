@@ -10,6 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(DT)
 library(knitr)
 library(tidyverse)
 x = read_csv("tables.csv")
@@ -32,6 +33,8 @@ Current national databases developed from satellite-based products using biophys
 
 Digital forest inventory data can overcome many of the deficiencies identified with satellitebased land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one
 explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).
+
+<br>
 
 # Common Attribute Schema
 
@@ -63,9 +66,13 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 
 <sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.
 
+<br>
+
 ## Header Information
 
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, spatial reference, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are detailed on the following pages.
+
+<br>
 
 ### Jurisdiction
 
@@ -74,8 +81,10 @@ Jurisdiction identifies the province or territory from which the inventory data 
 ```{r echo=FALSE, message=FALSE}
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
+
+<br>
 
 ### Spatial Reference
 
@@ -85,7 +94,7 @@ Spatial reference describes the reference frame for, and the means to encode, co
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -94,7 +103,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -103,8 +112,10 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
+
+<br>
 
 ### Ownership		
 
@@ -114,7 +125,7 @@ Ownership identifies who owns the inventory data, who owns the land that the inv
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -123,7 +134,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -132,8 +143,10 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
+
+<br>
 
 ### Tenure Type
 
@@ -143,8 +156,10 @@ Tenure type identifies the kind of agreement or license under which the inventor
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
+
+<br>
 
 ### Inventory Metadata
 
@@ -158,7 +173,7 @@ The inventory version identifies the standards used to produce a consistent inve
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -167,7 +182,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -176,7 +191,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -185,7 +200,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -194,8 +209,10 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
+
+<br>
 
 ### CAS Data Acquisition
 
@@ -205,7 +222,7 @@ CAS data acquisition identifies the year that the inventory was acquired for CAS
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -214,7 +231,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -223,6 +240,7 @@ kable(z)
 
 The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
+<br>
 
 ### Polygon Identification			
 
@@ -232,7 +250,7 @@ The CAS base polygon data provides polygon specific information and links the or
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -241,7 +259,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -250,7 +268,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -259,7 +277,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -274,7 +292,7 @@ Each polygon area and perimeter is recorded.
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -289,7 +307,7 @@ Photo Year is the year in which the inventory was considered initiated and compl
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -304,12 +322,14 @@ Administration unit identifies any inventory sub-unit boundaries that exist with
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
 
 ## CAS Forest and Non-Forest Attributes
+
+<br>
 
 ### Stand Structure
 
@@ -327,7 +347,7 @@ Horizontal structure represents vegetated or non-vegetated land with two or more
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -344,7 +364,7 @@ Stand Structure Range is used with complex stands and represents the height rang
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -359,7 +379,7 @@ Number of Layers is an attribute related to stand structure and identifies how m
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -376,7 +396,7 @@ The maximum number of layers recognized is nine. The uppermost layer may also be
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -391,7 +411,7 @@ Layer Rank value is an attribute related to stand structure and refers to layer 
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -406,7 +426,7 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -421,7 +441,7 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -436,7 +456,7 @@ Stand height is based on an average height of leading species of dominant and co
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -455,7 +475,7 @@ CAS species codes are derived from the species‟ Latin name using the first fou
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -470,7 +490,7 @@ Stand origin is the average initiation year of codominant and dominant trees of 
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -485,7 +505,7 @@ Site class is an estimate of the potential productivity of land for tree growth.
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -500,7 +520,7 @@ Site Index is an estimate of site productivity for tree growth. It is derived fo
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -515,7 +535,7 @@ Unproductive forest is forest land not capable of producing trees for forest ope
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -530,7 +550,7 @@ The Naturally Non-Vegetated class refers to land types with no vegetation cover.
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -545,7 +565,7 @@ Non-vegetated anthropogenic areas are influenced or created by humans. These sit
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -560,7 +580,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -575,7 +595,7 @@ Disturbance identifies the type of disturbance history that has occurred or is o
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -590,7 +610,7 @@ Disturbance extent provides an estimate of the proportion of the polygon that ha
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -605,12 +625,16 @@ Disturbance year is the year a disturbance event occurred. The disturbance year 
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
+
+<br>
 
 # Ecological Attributes
 
 Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.
+
+<br>
 
 ## Wetland
 
@@ -626,7 +650,7 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -635,7 +659,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -644,7 +668,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -653,7 +677,7 @@ kable(z)
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
 <br>
@@ -664,6 +688,7 @@ kable(z)
 
 <sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.
 
+<br>
 
 ## Ecosite
 
@@ -675,10 +700,14 @@ Ecosites are site-level descriptions that provide a linkage between vegetation a
 i = i + 1
 z = filter(x, Attribute==y[i]) %>% select(Description, AttributeValue)
 names(z) = c(y[i], "Attribute Value")
-kable(z)
+datatable(z, style = 'bootstrap', class = 'table-bordered table-condensed', options = list(paging=FALSE, searching=FALSE), rownames = FALSE)
 ```
 
+<br>
+
 # Bibliography
+
+<br>
 
 <b>British Columbia</b>
 
@@ -689,6 +718,8 @@ Ministry of Forests 1992. Forest Inventory Manual. Volumes 1 - 5.
 Resource Inventory Committee 2002. Vegetation Resources Inventory, Version 2.4. Photo Interpretation Procedures. Ministry of Sustainable Resource Management. Terrestrial Information Branch (http://www.for.gov.bc.ca/risc).
 
 Sandvoss, M, B. McClymont and C. Farnden (compilers) 2005. A User's Guide to the Vegetation Resources Inventory. Timberline Forest Inventory Consultants.
+
+<br>
 
 <b>Alberta</b>
 
@@ -704,6 +735,8 @@ Halsey L. and D.H. Vitt. 1977 Alberta Wetland Inventory Standards. Version 1.0. 
 
 Halsey L., D.H. Vitt, D. Beilman, S. Crow, S. Meehelcic, and R. Wells. 2004. Alberta Wetland Inventory Classification System Version 2.0. Alberta Sustainable Resource Development, Resource Data Branch. Pub. No, T/031.
 
+<br>
+
 <b>Saskatchewan</b>
 
 Lindenas, D.J. 1985. Specifications for the Interpretation and Mapping of Aerial Photographs in the Forest Inventory Section. Sask. Dept. Parks and Renew. Res. Internal Manual.
@@ -711,6 +744,8 @@ Lindenas, D.J. 1985. Specifications for the Interpretation and Mapping of Aerial
 Saskatchewan Environment 2004. Saskatchewan Forest Vegetation Inventory, Version 4.0.
 
 Forest Service. (www.se.gov.sk.ca/forests/forestmanagement/Sask_Leg_Manuals.htm.
+
+<br>
 
 <b>Manitoba</b>
 
@@ -740,6 +775,8 @@ Pikangikum First Nation. 2003. Whitefeather Forest FRI/FEC Procedures Manual. In
 
 Eabametoong and Mishkeegogamang First Nation. 2007. FRI/FEC Procedures Manual. Internal Document prepared by Timberline Natural Resource Group Ltd.
 
+<br>
+
 <b>Quebec</b>
 
 Foret Quebec. 2003. Normes de Cartographie Ecoforestiere. Troisieme Inventaire Ecoforestier. Ministere des Ressources Naturelles, de la Faune et des Parcs du Quebec. Direction des Inventaires Forestiers.
@@ -748,19 +785,27 @@ Foret Quebec. 2008. Norme de Stratification Ecoforestiere. Quatrieme Inventaire 
 
 Direction des Inventaires Forestiers.
 
+<br>
+
 <b>Prince Edward Island</b>
 
 Prince Edward Island Dept. of Agric. and For. 2001. Photo Interpretation Specifications.
 
 Province of Prince Edward Island. Natural Resources Division, Revised 2001.
 
+<br>
+
 <b>New Brunswick</b>
 
 Dept. of Nat. Resources. 2005. New Brunswick Integrated Land Classification System. Forest Management Branch
 
+<br>
+
 <b>Nova Scotia</b>
 
 Dept. of Nat. Resources 2006. Photo Interpretation Specifications. Forestry Division. Manual FOR 2006-1.
+
+<br>
 
 <b>Newfoundland and Labrador</b>
 
@@ -768,11 +813,15 @@ Dept. of Nat. Resources 2006. Photo Interpretation Procedures and Technical Spec
 
 Forestry Services Branch.
 
+<br>
+
 <b>Yukon Territory</b>
 
 Yukon Energy, Mines, and Resources. 2006. Yukon Vegetation Inventory Manual. Version 2.1.
 
 Forest Management Branch.
+
+<br>
 
 <b>Northwest Territories</b>
 
@@ -780,11 +829,15 @@ Dept. of Energy and Natural Resources 2004. Northwest Territories Forest Vegetat
 
 Dept. of Energy and Natural Resources. 2006. Northwest Territories Forest Vegetation Inventory Standards with Softcopy Supplements, Version 3.0. Forest Resources, Forest Management Division.
 
+<br>
+
 <b>Prince Albert National Park</b>
 
 Padbury, G.E., W.K. Head, and W.E. Souster. 1978. Biophysical Resource Inventory of Prince Albert National Park, Saskatchewan. Saskatchewan Institute of Pedology Publication S185, Saskatoon.
 
 Fitzsimmons, M. 1998. Prince Albert National Park Forest Cover Data in Vector Format. http://daac.ornl.gov/boreas/STAFF/panpfcov/comp/PNP_For_Cov.txt
+
+<br>
 
 <b>Wood Buffalo National Park</b>
 
@@ -793,6 +846,8 @@ Air Photo Analysis Associates. 1979. Biophysical inventory of Wood Buffalo Natio
 Prepared for Department of Indian and Northern Affairs, Parks Canada. Prairie Region.
 
 WBNPBiophysical. 2001. SMMS Metadata Report.
+
+<br>
 
 <b>General</b>
 
@@ -806,10 +861,15 @@ The Forestry Chronicle 71 (1): 74 - 88.
 
 National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.
 
+<br>
 
 # Appendices
 
+<br>
+
 The appendices are listed below and can be viewed or edited using the cas_appendices.xlsx workbook located in the github specifications folder.
+
+<br>
 
   * Appendix 1	Current Canadian Inventories
   * Appendix 2	Data Structure and Data Dictionary
