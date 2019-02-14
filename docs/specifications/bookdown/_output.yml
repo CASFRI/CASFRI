@@ -1,8 +1,0 @@
-bookdown::gitbook:
-  css: style.css
-  config:
-    toc:
-      before: |
-        <li><a href="./">CASFRI Specifications</a></li>
-      after: |
-        <li><a href="https://github.com/edwardsmarc/CASFRI/blob/master/doc/specifications/">GitHub Pages</a></li>

@@ -8,7 +8,7 @@ The first step in building CASFRI v5 is to convert and load the source data. CAS
 This is an extract, transform, load procedure (ETL). CASFRI v5 will switch to an extract, load, transform model (ELT). This allows the bulk of the processing to be done inside the database using a single programming language that we already have expertise in. The new model will follow these steps:
 * Conversion/loading
 * Transformation
-* Tological correaction and temporalization
+* Tological correction and temporalization
 
 Conversion and loading now happens at the same time and will be implimented using GDAL/OGR. This removes dependancies on Python and Arcpy. 
 
@@ -20,21 +20,20 @@ Conversion and loading now happens at the same time and will be implimented usin
 * Must add a new column containing the source filename during loading
 * Must add spatial index when loading into PostgreSQL
 * Must covert projection to Canada Albers Equal Area Conic
-* Should be written in bash script so accessible on clients Linux system
-  * **ISSUE: cannot get bash to run ogr2ogr correctly. File path issues.**
-  * Setting up ogr2ogr in Batch file until I get it working. Will then convert to Bash.
-
+  
 ## Bash
 * Scripts should be written in Bash so they are useable on clients Linux systems
-* Success using Git Bash in the script folder (right click, Git Bash).
-* All paths made relative to the source folder.
-* Use Notepad++ with Linux encoding (edit > EOL Conversion > UNIX) to write scripts.
-* Could also use Ubuntu app in Windows 10.
+* We wrote .sh scripts and ran them from their foder using Git Bash (right click, Git Bash).
+* All variables and file paths defined at the top of the script.
+* Used Notepad++ with Linux encoding (edit > EOL Conversion > UNIX) to write scripts.
 
-## ogr2ogr
-* Download GDAL 1.11.4 from gisinternals.com. Download core installer and FileGDB plugin.
-* Add edit PATH using the tutorial here: https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows
-* See the scripts and https://www.gdal.org/ogr2ogr.html for functionality. The main components used are:
+## OGR
+* Downloaded GDAL 1.11.4 from gisinternals.com. Downloaded core installer and FileGDB plugin.
+* Added edit PATH using the tutorial here: https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows
+* OGR has two .exe files for loading vector data.
+    * ogrinfo - we used this for running sql queries on tables in the database.
+    * ogr2ogr - we used this to load the data, and run sql queries during the loading procedure.
+* See the scripts and https://www.gdal.org/ogr2ogr.html for functionality. The main components used in ogr2ogr are:
   * -f: the output format and access to database
   >-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" C:\Temp\VEG_COMP_LYR_R1_POLY\VEG_COMP_LYR_R1_POLY.gdb
   * -nln: name of the new layer
@@ -62,7 +61,7 @@ Conversion and loading now happens at the same time and will be implimented usin
 * No issues importing .gdb files.
 
 #### Shapefile
-* In many cases multi-part and single-part polygons are mixed in same file. This is considered bad practice but doesn't tend to cause issues when working in ArcGIS. This can be seen in ArcGIS by adding a count field and running !Shape!.partCount in the python field calculator. 
+* In many cases multi-part and single-part polygons are mixed in the same file. This is considered bad practice but doesn't tend to cause issues when working in ArcGIS. This can be seen in ArcGIS by adding a count field and running !Shape!.partCount in the python field calculator. 
 * PostGIS is more specific about standardizing input geometries, so errors will occur when importing.
 * One solution is to set ` -nlt GEOMTRY` which will allow all the features to be loaded but will maintain a mix of multi- and single-part geometries which could cause issues later on.
 * The recommended solution is to set ` -nlt PROMOTE_TO_MULTI` which converts all features to multi-part features to produce a standardized set of geometries in the table.
@@ -91,7 +90,7 @@ Conversion and loading now happens at the same time and will be implimented usin
   * e.g. long integers from AB_0016 Coverages FOREST-ID field were imported as NUMERIC(5,0).
   * e.g. Doubles from NB_0001 shapefiles SHAPE_AREA field were imported as NUMERIC(19,11).
 * This can result in values in fields that do not fit in the default precision lengths. This causes an import error.
-* Solution is to load with '-lco precicion=NO' which ignores precision requirements and load NUMERIC types as DOUBLES (technically FLOAT8 values). Any appended tables will also be converted to doubles.
+* Solution is to load with '-lco precicion=NO' which ignores precision requirements and load NUMERIC types as double precision types. Any appended tables will also be converted to double precision.
 
 ## Useful links
 * Adding filename column

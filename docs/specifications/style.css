@@ -1,0 +1,22 @@
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+h1 {font-size: 18pt;}
+h2 {font-size: 14pt;}
+h3 {font-size: 11pt;
+    font-weight: bold}
+p {
+    font-size: 11pt;
+    font-face: calibri;
+}
