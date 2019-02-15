@@ -136,8 +136,6 @@ into CAS. A sample procedure is presented in Appendix 16.
 Procedures Across Canada. Petawawa National Forestry Institute,
 Information Report PI-X-114.
 
-<br>
-
 ## Header Information
 
 Header information is a primary element of CAS. Header information
@@ -145,8 +143,6 @@ identifies the source data set including jurisdiction, spatial
 reference, ownership, tenure type, inventory type, inventory version,
 inventory start and finish date and the year of acquisition for CAS.
 These attributes are detailed on the following pages.
-
-<br>
 
 ### Jurisdiction
 
@@ -170,8 +166,6 @@ inventory data came.
 | Wood Buffalo National Park  | WB              |
 | Prince Albert National Park | PA              |
 
-<br>
-
 ### Spatial Reference
 
 Spatial reference describes the reference frame for, and the means to
@@ -194,21 +188,17 @@ current datum used in Canada. Some inventories may use the NAD of 1927.
 | Ontario Base Map                   | OBM             |
 | Township System                    | TOWNSHIP        |
 
-<br>
 
 | PROJECTION                      | Attribute Value |
 | :------------------------------ | :-------------- |
 | Albers System                   | ALBERS          |
 | Universal Trans Mercator System | UTM             |
 
-<br>
 
 | DATUM                     | Attribute Value |
 | :------------------------ | :-------------- |
 | North American Datum 1927 | NAD27           |
 | North American Datum 1983 | NAD83           |
-
-<br>
 
 ### Ownership
 
@@ -246,8 +236,6 @@ limited.
 | Use of the inventory data has restrictions | RESTRICTED      |
 | Use of the data has limitations            | LIMITED         |
 
-<br>
-
 ### Tenure Type
 
 Tenure type identifies the kind of agreement or license under which the
@@ -270,8 +258,6 @@ as “other”.
 | Tenure type not on list             | OTHER           |
 | Timber Limit                        | TL              |
 | No tenure                           | NONE            |
-
-<br>
 
 ### Inventory Metadata
 
