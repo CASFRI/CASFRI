@@ -1,6 +1,6 @@
 # CASFRI Specifications
 
-The CASFRI Specifications document (Cosco 2011) was converted to Google docs for ease of maintenance and updating. It is thus considered to be a "live" document which can be edited by CASFRI team members. There are still some formatting issues to be resolved as well as a few appendices that need to be added. The pages can be found here:
+The CASFRI Specifications document (Cosco 2011) was converted to markdown format. It is a "live" document which can be edited by CASFRI team members. The appendices are available as an Excel workbook that can be downloaded.
 
-  * [CAS Specifications - main document](https://edwardsmarc.github.io/CASFRI/specifications/cas_document.html)
+  * [CAS Specifications - main document](cas_document.md)
   * [CASFRI Specifications - appendices](cas_appendices.xlsx)
