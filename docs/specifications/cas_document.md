@@ -180,6 +180,8 @@ datum specifying that coordinate system in which horizontal control
 points are located. The North American Datum (NAD) of 1983 is the
 current datum used in Canada. Some inventories may use the NAD of 1927.
 
+#### Coordinate System
+
 | COORDINATE\_SYSTEM                 | Attribute Value |
 | :--------------------------------- | :-------------- |
 | Universal Trans Mercator           | UTM             |
@@ -188,17 +190,20 @@ current datum used in Canada. Some inventories may use the NAD of 1927.
 | Ontario Base Map                   | OBM             |
 | Township System                    | TOWNSHIP        |
 
+#### Projection
 
 | PROJECTION                      | Attribute Value |
 | :------------------------------ | :-------------- |
 | Albers System                   | ALBERS          |
 | Universal Trans Mercator System | UTM             |
 
+#### Datum
 
 | DATUM                     | Attribute Value |
 | :------------------------ | :-------------- |
 | North American Datum 1927 | NAD27           |
 | North American Datum 1983 | NAD83           |
+
 
 ### Ownership
 
