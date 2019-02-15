@@ -1,14 +1,8 @@
+# COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA
 
-<center>
+Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
-<br><br><b><font size=+2>COMMON ATTRIBUTE SCHEMA (CAS)<br>FOR FOREST
-INVENTORIES ACROSS CANADA</font></b> <br><br><br> Prepared by: John A.
-Cosco, Chief Inventory Forester, February 2011<br> Revised by: The
-CASFRI Project Team, February 2019
-
-</center>
-
-<br><br>
+Revised by: The CASFRI Project Team, February 2019
 
 # Introduction
 
@@ -49,8 +43,6 @@ forest inventory classifications and develop a set of common attributes.
 This document addresses the inventory review developed for the Boreal
 Avian Monitoring Project; this review is called the Common Attribute
 Schema (CAS).
-
-<br>
 
 # Common Attribute Schema
 
