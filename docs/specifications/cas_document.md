@@ -1,6 +1,7 @@
 # COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
+
 Revised by: The CASFRI Project Team, February 2019
 
 # Introduction
@@ -20,7 +21,7 @@ Development of the CAS attribute codes and rule sets for inventory attribute cod
 
 Based on the review, detailed tables were produced to summarize each inventory standard by province and territory. Two national parks, Wood Buffalo and Prince Albert are included. Conversion rule sets were then produced as part of the detailed tables to identify how each province or territory inventory attribute codes translate into CAS attribute codes. Detailed tables and conversion rule sets for each CAS attribute are presented in Appendices noted in the appropriate sections of this document.
 
-Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is \> and the upper bound is \<). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta “B” - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a
+Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is > and the upper bound is <). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta “B” - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a
 common resolution or set of values.
 
 Attributes for CAS are stored in six attribute files to facilitate conversion and translation:
@@ -43,7 +44,7 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 
 <sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.
 
-## Header Information
+## Header Information (HDR)
 
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, spatial reference, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are detailed on the following pages.
 
@@ -51,31 +52,47 @@ Header information is a primary element of CAS. Header information identifies th
 
 Photo Year is the year in which the inventory was considered initiated and completed. An inventory can take several years to complete; therefore, Photo Year Minimum and Maximum dates are included to identify the interval for when the inventory was completed. In some cases inventory reference year and air photo year are the same. Several years of successive or periodic acquisition are possible; therefore, a minimum and a maximum year are recorded.
 
-| PHOTO\_YEAR\_MIN and PHOTO\_YEAR\_MAX                          | Attribute Value |
+| PHOTO_YEAR_MIN and PHOTO_YEAR_MAX                          | Attribute Value |
 | :------------------------------------------------------------- | :-------------- |
 | Photo Year Minimum - earliest year of aerial photo acquisition | 1960 - 2020     |
 | Photo Year Maximum - last year of aerial photo acquisition     | 1960 - 2020     |
 
-## CAS Forest and Non-Forest Attributes
+## CAS Forest and Non-Forest Attributes (LYR)
 
 ### Crown Closure
 
 Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CAS recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.
 
-| CROWN\_CLOSURE\_UPPER and CROWN\_CLOSURE\_LOWER    | Attribute Value |
+| CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER    | Attribute Value |
 | :------------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a crown closure class | 0 - 100         |
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
 | Blank - no value                                   | NA              |
 
+```
+ERROR AND MISSING VALUE CODES
+-----------------------------
+INFTY (-1) = 
+ERRCODE (-9999) = Invalid values that are not null
+UNDEF (-8888) = Undefined value - true null value - applies to all types
+```
+
 ### Height
 
 Stand height is based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6.
 
-| HEIGHT\_UPPER and HEIGHT\_LOWER              | Attribute Value |
+| HEIGHT_UPPER and HEIGHT_LOWER              | Attribute Value |
 | :------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a height class. | 0 - 100         |
 | Lower Bound - lower bound of a height class. | 0 - 100         |
+
+```
+ERROR AND MISSING VALUE CODES
+-----------------------------
+INFTY (-1) = 
+ERRCODE (-9999) = Invalid values that are not null
+UNDEF (-8888) = Undefined value - true null value - applies to all types
+```
 
 ### Species Composition
 
@@ -83,11 +100,19 @@ Species composition is the percentage of each tree species represented within a 
 
 The detailed table for species composition is presented in Appendix 7. Some inventories (Alberta Phase 3, Saskatchewan UTM, Quebec TIE, and Newfoundland, and National Parks) do not recognize a percentage breakdown of species but rather group species as contributing a major (greater than 26 percent) or minor (less than 26 percent) amount to the composition. Also included in Appendix 7 is a translation table that assigns a species composition percentage breakdown for those inventories that do not have a percentage breakdown.
 
-CAS species codes are derived from the speciesâ€Ÿ Latin name using the first four letters of the Genus and the first four letters of the Species unless there is a conflict, then the last letter of the species portion of the code is changed. Unique codes are required for generic groups and hybrids. A species list has been developed representing every inventory species identified across Canada including hybrids, exotics and generic groups (Appendix 8). Generic groups represent situations
-where species were not required to be recognized past the generic name or where photo interpreters could not identify an individual species. A list of species that is represented by the generic groups by province, territory, or Park has also been developed and is presented in Appendix 9.
+CAS species codes are derived from the speciesâ€Ÿ Latin name using the first four letters of the Genus and the first four letters of the Species unless there is a conflict, then the last letter of the species portion of the code is changed. Unique codes are required for generic groups and hybrids. A species list has been developed representing every inventory species identified across Canada including hybrids, exotics and generic groups (Appendix 8). Generic groups represent situations where species were not required to be recognized past the generic name or where photo interpreters could not identify an individual species. A list of species that is represented by the generic groups by province, territory, or Park has also been developed and is presented in Appendix 9.
 
 | SPEC1, SPEC1\_PER, SPEC2, SPEC2\_PER, SPEC3, SPEC3\_PER, SPEC4, SPEC4\_PER, SPEC5, SPEC5\_PER, SPEC6, SPEC6\_PER, SEPC7, SPEC7\_PER, SPEC8, SPEC8\_PER, SPEC9, SPEC9\_PER, SPEC10, SPEC10\_PER | Attribute Value |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Species (SPEC\#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon.                                                                             | POPU TREM       |
-| Species Percent (SPEC\#\_PER) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.                             | NA              |
+| Species (SPEC#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon.                                                                             | POPU TREM       |
+| Species Percent (SPEC#_PER) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.                             | NA              |
 
+```
+ERROR AND MISSING VALUE CODES
+-----------------------------
+INFTY (-1) = 
+ERRCODE (-9999) = Invalid values that are not null
+SPECIES_ERRCODE = "XXXX ERRC"
+MISSCODE (-1111) = Empty string ("") - does not apply to int and float
+UNDEF (-8888) = Undefined value - true null value - applies to all types
+```
