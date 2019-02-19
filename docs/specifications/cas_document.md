@@ -57,6 +57,8 @@ Photo Year is the year in which the inventory was considered initiated and compl
 | Photo Year Minimum - earliest year of aerial photo acquisition | 1960 - 2020     |
 | Photo Year Maximum - last year of aerial photo acquisition     | 1960 - 2020     |
 
+> spatial, tabular, fixed
+
 ## CAS Forest and Non-Forest Attributes (LYR)
 
 ### Crown Closure
@@ -69,13 +71,17 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
 | Blank - no value                                   | NA              |
 
-```
-ERROR AND MISSING VALUE CODES
------------------------------
-INFTY (-1) = 
-ERRCODE (-9999) = Invalid values that are not null
-UNDEF (-8888) = Undefined value - true null value - applies to all types
-```
+** Error and missing value codes **
+
+|Error_type | Data_type    | Error_code | Description                       |
+| :-------- | :----------- | :--------- | :-------------------------------- |
+| INFTY     | int or float | -1         | positive or negative infinity     |
+| ERRCODE   | all types    | -9999      | invalid values that are not null  |
+| UNDEF     | all types    | -8888      | undefined value - true null value |
+
+
+  - SPECIES_ERRCODE =&gt; "XXXX ERRC"
+  - MISSCODE =&gt; -1111 = Empty string ("") - does not apply to int and float
 
 ### Height
 
@@ -86,13 +92,13 @@ Stand height is based on an average height of leading species of dominant and co
 | Upper Bound - upper bound of a height class. | 0 - 100         |
 | Lower Bound - lower bound of a height class. | 0 - 100         |
 
-```
-ERROR AND MISSING VALUE CODES
------------------------------
-INFTY (-1) = 
-ERRCODE (-9999) = Invalid values that are not null
-UNDEF (-8888) = Undefined value - true null value - applies to all types
-```
+** Error and missing value codes **
+
+|Error_type | Data_type    | Error_code | Description                       |
+| :-------- | :----------- | :--------- | :-------------------------------- |
+| INFTY     | int or float | -1         | positive or negative infinity     |
+| ERRCODE   | all types    | -9999      | invalid values that are not null  |
+| UNDEF     | all types    | -8888      | undefined value - true null value |
 
 ### Species Composition
 
@@ -102,17 +108,32 @@ The detailed table for species composition is presented in Appendix 7. Some inve
 
 CAS species codes are derived from the speciesâ€Ÿ Latin name using the first four letters of the Genus and the first four letters of the Species unless there is a conflict, then the last letter of the species portion of the code is changed. Unique codes are required for generic groups and hybrids. A species list has been developed representing every inventory species identified across Canada including hybrids, exotics and generic groups (Appendix 8). Generic groups represent situations where species were not required to be recognized past the generic name or where photo interpreters could not identify an individual species. A list of species that is represented by the generic groups by province, territory, or Park has also been developed and is presented in Appendix 9.
 
-| SPEC1, SPEC1\_PER, SPEC2, SPEC2\_PER, SPEC3, SPEC3\_PER, SPEC4, SPEC4\_PER, SPEC5, SPEC5\_PER, SPEC6, SPEC6\_PER, SEPC7, SPEC7\_PER, SPEC8, SPEC8\_PER, SPEC9, SPEC9\_PER, SPEC10, SPEC10\_PER | Attribute Value |
-| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Species (SPEC#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon.                                                                             | POPU TREM       |
-| Species Percent (SPEC#_PER) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.                             | NA              |
+#### Species type
 
-```
-ERROR AND MISSING VALUE CODES
------------------------------
-INFTY (-1) = 
-ERRCODE (-9999) = Invalid values that are not null
-SPECIES_ERRCODE = "XXXX ERRC"
-MISSCODE (-1111) = Empty string ("") - does not apply to int and float
-UNDEF (-8888) = Undefined value - true null value - applies to all types
-```
+| SPECIES_1, SPECIES_2, SPECIES_3, SPECIES_4, SPECIES_5, SPECIES_6, SPECIES_7, SPECIES_8, SPECIES_9, SPECIES_10 | Attribute Value |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| Species (SPECIES_#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon.                                                                             | POPU TREM       |
+
+** Error and missing value codes **
+
+|Error_type       | Data_type    | Error_code  | Description                       |
+| :-------------- | :----------- | :---------- | :-------------------------------- |
+| ERRCODE         | all types    | -9999       | invalid values that are not null  |
+| UNDEF           | all types    | -8888       | undefined value - true null value |
+| SPECIES_ERRCODE | string       | "XXXX ERRC" |                                   |
+| MISSCODE        | string       | -1111       | empty string ("")                 |
+
+#### Species percentage
+
+| SPECIES_PER_1, SPECIES_PER_2, SPECIES_PER_3, SPECIES_PER_4, SPECIES_PER_5, SPECIES_PER_6, SPECIES_PER_7, SPECIES_PER_8, SPECIES_PER_9, SPECIES_PER_10 | Attribute Value |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| Species Percent (SPECIES_PER_#) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.                             | NA              |
+
+**Error and missing value codes**
+
+|Error_type | Data_type    | Error_code | Description                       |
+| :-------- | :----------- | :--------- | :-------------------------------- |
+| INFTY     | int or float | -1         | positive or negative infinity     |
+| ERRCODE   | all types    | -9999      | invalid values that are not null  |
+| UNDEF     | all types    | -8888      | undefined value - true null value |
+
