@@ -73,11 +73,11 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 
 *Error and missing value codes:*
 
-|Error_type | Data_type    | Error_code | Description                       |
-| :-------- | :----------- | :--------- | :-------------------------------- |
-| INFTY     | int or float | -1         | positive or negative infinity     |
-| ERRCODE   | all types    | -9999      | invalid values that are not null  |
-| UNDEF     | all types    | -8888      | undefined value - true null value |
+|Error_type | Data_type    | CAS04_code | Description                       | CAS05_code |
+| :-------- | :----------- | :--------- | :-------------------------------- | :--------- |
+| INFTY     | integer      | -1         | positive or negative infinity     | -Inf/+Inf  |
+| ERRCODE   | integer      | -9999      | invalid values that are not null  | -9999      |
+| UNDEF     | integer      | -8888      | undefined value - true null value | -8888      |
 
 ### Height
 
@@ -90,11 +90,11 @@ Stand height is based on an average height of leading species of dominant and co
 
 *Error and missing value code:*
 
-|Error_type | Data_type    | Error_code | Description                       |
-| :-------- | :----------- | :--------- | :-------------------------------- |
-| INFTY     | int or float | -1         | positive or negative infinity     |
-| ERRCODE   | all types    | -9999      | invalid values that are not null  |
-| UNDEF     | all types    | -8888      | undefined value - true null value |
+|Error_type | Data_type    | CAS04_code | Description                       | CAS05_code |
+| :-------- | :----------- | :--------- | :-------------------------------- | :--------- |
+| INFTY     | integer      | -1         | positive or negative infinity     | -Inf/+Inf  |
+| ERRCODE   | integer      | -9999      | invalid values that are not null  | -9999      |
+| UNDEF     | integer      | -8888      | undefined value - true null value | -8888      |
 
 ### Species Composition
 
@@ -112,12 +112,12 @@ CAS species codes are derived from the speciesâ€Ÿ Latin name using the first
 
 *Error and missing value codes:*
 
-|Error_type       | Data_type    | Error_code  | Description                       |
-| :-------------- | :----------- | :---------- | :-------------------------------- |
-| ERRCODE         | all types    | -9999       | invalid values that are not null  |
-| UNDEF           | all types    | -8888       | undefined value - true null value |
-| SPECIES_ERRCODE | string       | "XXXX ERRC" |                                   |
-| MISSCODE        | string       | -1111       | empty string ("")                 |
+|Error_type       | Data_type    | CAS04_code  | Description                       | CAS05_code  |
+| :-------------- | :----------- | :---------- | :-------------------------------- | :---------- |
+| ERRCODE         | string       | -9999       | invalid values that are not null  | "Invalid"   |
+| UNDEF           | string       | -8888       | undefined value - true null value | "Null"      |
+| SPECIES_ERRCODE | string       | "XXXX ERRC" | species error code                | "XXXX ERRC" |
+| MISSCODE        | string       | -1111       | empty string ("")                 | "Missing"   |
 
 **Species percentage**
 
@@ -127,9 +127,9 @@ CAS species codes are derived from the speciesâ€Ÿ Latin name using the first
 
 *Error and missing value codes:*
 
-|Error_type | Data_type    | Error_code | Description                       |
-| :-------- | :----------- | :--------- | :-------------------------------- |
-| INFTY     | int or float | -1         | positive or negative infinity     |
-| ERRCODE   | all types    | -9999      | invalid values that are not null  |
-| UNDEF     | all types    | -8888      | undefined value - true null value |
+|Error_type | Data_type    | CAS04_code | Description                       | CAS05_code |
+| :-------- | :----------- | :--------- | :-------------------------------- | :--------- |
+| INFTY     | integer      | -1         | positive or negative infinity     | -Inf/+Inf  |
+| ERRCODE   | integer      | -9999      | invalid values that are not null  | -9999      |
+| UNDEF     | integer      | -8888      | undefined value - true null value | -8888      |
 
