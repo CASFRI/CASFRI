@@ -71,7 +71,7 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
 | Blank - no value                                   | NA              |
 
-**Error and missing value codes**
+*Error and missing value codes*
 
 |Error_type | Data_type    | Error_code | Description                       |
 | :-------- | :----------- | :--------- | :-------------------------------- |
@@ -88,7 +88,7 @@ Stand height is based on an average height of leading species of dominant and co
 | Upper Bound - upper bound of a height class. | 0 - 100         |
 | Lower Bound - lower bound of a height class. | 0 - 100         |
 
-**Error and missing value code**
+*Error and missing value code*
 
 |Error_type | Data_type    | Error_code | Description                       |
 | :-------- | :----------- | :--------- | :-------------------------------- |
@@ -104,12 +104,13 @@ The detailed table for species composition is presented in Appendix 7. Some inve
 
 CAS species codes are derived from the speciesâ€Ÿ Latin name using the first four letters of the Genus and the first four letters of the Species unless there is a conflict, then the last letter of the species portion of the code is changed. Unique codes are required for generic groups and hybrids. A species list has been developed representing every inventory species identified across Canada including hybrids, exotics and generic groups (Appendix 8). Generic groups represent situations where species were not required to be recognized past the generic name or where photo interpreters could not identify an individual species. A list of species that is represented by the generic groups by province, territory, or Park has also been developed and is presented in Appendix 9.
 
+**Species type**
 
 | SPECIES_1, SPECIES_2, SPECIES_3, SPECIES_4, SPECIES_5, SPECIES_6, SPECIES_7, SPECIES_8, SPECIES_9, SPECIES_10 | Attribute Value |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species (SPECIES_#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon.                                                                             | POPU TREM       |
 
-** Error and missing value codes **
+*Error and missing value codes*
 
 |Error_type       | Data_type    | Error_code  | Description                       |
 | :-------------- | :----------- | :---------- | :-------------------------------- |
@@ -118,12 +119,13 @@ CAS species codes are derived from the speciesâ€Ÿ Latin name using the first
 | SPECIES_ERRCODE | string       | "XXXX ERRC" |                                   |
 | MISSCODE        | string       | -1111       | empty string ("")                 |
 
+**Species percentage**
 
 | SPECIES_PER_1, SPECIES_PER_2, SPECIES_PER_3, SPECIES_PER_4, SPECIES_PER_5, SPECIES_PER_6, SPECIES_PER_7, SPECIES_PER_8, SPECIES_PER_9, SPECIES_PER_10 | Attribute Value |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species Percent (SPECIES_PER_#) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.                             | NA              |
 
-**Error and missing value codes**
+*Error and missing value codes*
 
 |Error_type | Data_type    | Error_code | Description                       |
 | :-------- | :----------- | :--------- | :-------------------------------- |
