@@ -52,12 +52,12 @@ Header information is a primary element of CAS. Header information identifies th
 
 Photo Year is the year in which the inventory was considered initiated and completed. An inventory can take several years to complete; therefore, Photo Year Minimum and Maximum dates are included to identify the interval for when the inventory was completed. In some cases inventory reference year and air photo year are the same. Several years of successive or periodic acquisition are possible; therefore, a minimum and a maximum year are recorded.
 
+> Note: can be determined in 3 ways: spatial, tabular, fixed
+
 | PHOTO_YEAR_MIN and PHOTO_YEAR_MAX                          | Attribute Value |
 | :------------------------------------------------------------- | :-------------- |
 | Photo Year Minimum - earliest year of aerial photo acquisition | 1960 - 2020     |
 | Photo Year Maximum - last year of aerial photo acquisition     | 1960 - 2020     |
-
-> spatial, tabular, fixed
 
 ## CAS Forest and Non-Forest Attributes (LYR)
 
@@ -71,17 +71,13 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
 | Blank - no value                                   | NA              |
 
-** Error and missing value codes **
+**Error and missing value codes**
 
 |Error_type | Data_type    | Error_code | Description                       |
 | :-------- | :----------- | :--------- | :-------------------------------- |
 | INFTY     | int or float | -1         | positive or negative infinity     |
 | ERRCODE   | all types    | -9999      | invalid values that are not null  |
 | UNDEF     | all types    | -8888      | undefined value - true null value |
-
-
-  - SPECIES_ERRCODE =&gt; "XXXX ERRC"
-  - MISSCODE =&gt; -1111 = Empty string ("") - does not apply to int and float
 
 ### Height
 
@@ -92,7 +88,7 @@ Stand height is based on an average height of leading species of dominant and co
 | Upper Bound - upper bound of a height class. | 0 - 100         |
 | Lower Bound - lower bound of a height class. | 0 - 100         |
 
-** Error and missing value codes **
+**Error and missing value code **
 
 |Error_type | Data_type    | Error_code | Description                       |
 | :-------- | :----------- | :--------- | :-------------------------------- |
@@ -108,7 +104,7 @@ The detailed table for species composition is presented in Appendix 7. Some inve
 
 CAS species codes are derived from the speciesâ€Ÿ Latin name using the first four letters of the Genus and the first four letters of the Species unless there is a conflict, then the last letter of the species portion of the code is changed. Unique codes are required for generic groups and hybrids. A species list has been developed representing every inventory species identified across Canada including hybrids, exotics and generic groups (Appendix 8). Generic groups represent situations where species were not required to be recognized past the generic name or where photo interpreters could not identify an individual species. A list of species that is represented by the generic groups by province, territory, or Park has also been developed and is presented in Appendix 9.
 
-#### Species type
+SPECIES_#
 
 | SPECIES_1, SPECIES_2, SPECIES_3, SPECIES_4, SPECIES_5, SPECIES_6, SPECIES_7, SPECIES_8, SPECIES_9, SPECIES_10 | Attribute Value |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
@@ -123,7 +119,7 @@ CAS species codes are derived from the speciesâ€Ÿ Latin name using the first
 | SPECIES_ERRCODE | string       | "XXXX ERRC" |                                   |
 | MISSCODE        | string       | -1111       | empty string ("")                 |
 
-#### Species percentage
+SPECIES_PER_#
 
 | SPECIES_PER_1, SPECIES_PER_2, SPECIES_PER_3, SPECIES_PER_4, SPECIES_PER_5, SPECIES_PER_6, SPECIES_PER_7, SPECIES_PER_8, SPECIES_PER_9, SPECIES_PER_10 | Attribute Value |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
