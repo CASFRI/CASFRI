@@ -4,17 +4,17 @@ CROWN_CLOSURE_UPPER,int,"notNull(crown_closure, -8888);between(crown_closure, 0,
 CROWN_CLOSURE_LOWER,int,"notNull(crown_closure, -8888);between(crown_closure, 0, 100, -9999)",copy(crown_closure),Copies source value to CROWN_CLOSURE_LOWER,TRUE
 HEIGHT_UPPER,float,"notNull(proj_height_1, -8888);greaterThan(proj_height_1, 0.1, -9999a);lesserThan(proj_height_1, 100, -9999b)",copy(proj_height_1),Copies source value to HEIGHT_UPPER,TRUE
 HEIGHT_LOWER,float,"notNull(proj_height_1, -8888);greaterThan(proj_height_1, 0.1, -9999);lesserThan(proj_height_1, 100, -9999b)",copy(proj_height_1),Copies source value to HEIGHT_LOWER,TRUE
-SPECIES_1,str,"notNull(species_cd_1, ""NULL"");matchStr(species_cd_1,bcSppList, ""XXXX ERRC"", TRUE)","map(species_cd_1, bcSppList, casSppList)",Maps source value to SPECIES_1 using lookup table,TRUE
+SPECIES_1,str,"notNull(species_cd_1, ""NULL"");matchStr(species_cd_1,bcSppList, ""XXXX ERRC"", TRUE)","lookup(species_cd_1, bcSppList, casSppList)",Maps source value to SPECIES_1 using lookup table,TRUE
 SPECIES_PER_1,int,"notNull(species_pct_1, -8888);between(species_pct_1, 0, 100, -9999)",copy(species_pct_1),Copies source value to SPECIES_PER_1,TRUE
-SPECIES_2,str,"notNull(species_cd_2, ""NULL"");matchStr(species_cd_2,bcSppList, ""XXXX ERRC"", TRUE)","map(species_cd_2, bcSppList, casSppList)",Maps source value to SPECIES_2 using lookup table,TRUE
+SPECIES_2,str,"notNull(species_cd_2, ""NULL"");matchStr(species_cd_2,bcSppList, ""XXXX ERRC"", TRUE)","lookup(species_cd_2, bcSppList, casSppList)",Maps source value to SPECIES_2 using lookup table,TRUE
 SPECIES_PER_2,int,"notNull(species_pct_2, -8888);between(species_pct_2, 0, 100, -9999)",copy(species_pct_2),Copies source value to SPECIES_PER_2,TRUE
-SPECIES_3,str,"notNull(species_cd_3, ""NULL"");matchStr(species_cd_3,bcSppList, ""XXXX ERRC"", TRUE)","map(species_cd_3, bcSppList, casSppList)",Maps source value to SPECIES_3 using lookup table,TRUE
+SPECIES_3,str,"notNull(species_cd_3, ""NULL"");matchStr(species_cd_3,bcSppList, ""XXXX ERRC"", TRUE)","lookup(species_cd_3, bcSppList, casSppList)",Maps source value to SPECIES_3 using lookup table,TRUE
 SPECIES_PER_3,int,"notNull(species_pct_3, -8888);between(species_pct_3, 0, 100, -9999)",copy(species_pct_3),Copies source value to SPECIES_PER_3,TRUE
-SPECIES_4,str,"notNull(species_cd_4, ""NULL"");matchStr(species_cd_4,bcSppList, ""XXXX ERRC"", TRUE)","map(species_cd_4, bcSppList, casSppList)",Maps source value to SPECIES_4 using lookup table,TRUE
+SPECIES_4,str,"notNull(species_cd_4, ""NULL"");matchStr(species_cd_4,bcSppList, ""XXXX ERRC"", TRUE)","lookup(species_cd_4, bcSppList, casSppList)",Maps source value to SPECIES_4 using lookup table,TRUE
 SPECIES_PER_4,int,"notNull(species_pct_4, -8888);between(species_pct_4, 0, 100, -9999)",copy(species_pct_4),Copies source value to SPECIES_PER_4,TRUE
-SPECIES_5,str,"notNull(species_cd_5, ""NULL"");matchStr(species_cd_5,bcSppList, ""XXXX ERRC"", TRUE)","map(species_cd_5, bcSppList, casSppList)",Maps source value to SPECIES_5 using lookup table,TRUE
+SPECIES_5,str,"notNull(species_cd_5, ""NULL"");matchStr(species_cd_5,bcSppList, ""XXXX ERRC"", TRUE)","lookup(species_cd_5, bcSppList, casSppList)",Maps source value to SPECIES_5 using lookup table,TRUE
 SPECIES_PER_5,int,"notNull(species_pct_5, -8888);between(species_pct_5, 0, 100, -9999)",copy(species_pct_5),Copies source value to SPECIES_PER_5,TRUE
-SPECIES_6,str,"notNull(species_cd_6, ""NULL"");matchStr(species_cd_6,bcSppList, ""XXXX ERRC"", TRUE)","map(species_cd_6, bcSppList, casSppList)",Maps source value to SPECIES_6 using lookup table,TRUE
+SPECIES_6,str,"notNull(species_cd_6, ""NULL"");matchStr(species_cd_6,bcSppList, ""XXXX ERRC"", TRUE)","lookup(species_cd_6, bcSppList, casSppList)",Maps source value to SPECIES_6 using lookup table,TRUE
 SPECIES_PER_6,int,"notNull(species_pct_6, -8888);between(species_pct_6, 0, 100, -9999)",copy(species_pct_6),Copies source value to SPECIES_PER_6,TRUE
 SPECIES_7,str,false(|na),nothing(),attribute does not occur,FALSE
 SPECIES_PER_7,int,false(|na),nothing(),attribute does not occur,FALSE
