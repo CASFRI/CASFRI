@@ -8,43 +8,43 @@
 
 #Load into a target table in a schema named 'bc'.
 
+#If table already exists it will be overwritten.
 
-#CURRENTLY SET TO LOAD ENTIRE DATABASE. CAN CHANGE THIS TO FILTER ON INVENTORY_STANDARD_ID IF NEEDED. CHECK WITH STEVE.
+#CURRENTLY SET TO LOAD ENTIRE DATABASE. CAN CHANGE THIS TO FILTER ON INVENTORY_STANDARD_ID IF NEEDED USING -sql "SELECT *, '$fileName' as src_filename FROM '$fileName' WHERE Inventory_Standard_CD='V'"
 
 ######################################## variables #######################################
 
-# PostgreSQL variables
-pghost=localhost
-pgdbname=cas
-pguser=postgres
-pgpassword=postgres
-schema=test
-trgtT=test.BC_0008 #Target table name
-srcF="../../../../../../../../Temp/bc_test.gdb" #Source file path
-fileName=bc_test #Filename field. This will be added as a column called src_filename and later used to create the cas_id field
+# load config variables
+if [ -f ./config.sh ]; then 
+  source ./config.sh
+else
+  echo ERROR: NO config.sh FILE
+  exit 1
+fi
 
-# path variables
-ogrinfo="../../../../../../../../program files/gdal/ogrinfo.exe"
-ogr2ogr="../../../../../../../../program files/gdal/ogr2ogr.exe"
-prjF="canadaAlbersEqualAreaConic.prj"
+# PostgreSQL variables
+schema=test
+trgtT=bc_0008
+
+srcF="$friDir/bc_test.gdb"
+srcName=bc_test
+ogrTab=bc_test
+
 ##########################################################################################
 
 
 ############################ Script - shouldn't need editing #############################
 
+#Set schema.table
+schTab=$schema.$trgtT
+
 #Create schema if it doesn't exist
-$ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS "$schema;
+ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
 
 #Run ogr2ogr
-$ogr2ogr \
--f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcF \
--nln $trgtT \
+ogr2ogr \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcF" \
+-nln $schTab \
 -t_srs $prjF \
--sql "SELECT *, '$fileName' as src_filename FROM '$fileName'"
-
-#If later we need to filter, use:
-#-sql "SELECT *, '$fileName' as src_filename FROM '$fileName' WHERE Inventory_Standard_CD='V'"
-
-#Spatial index should be created automatically, if not, un-comment the ogrinfo line
-#ogrinfo PG:"host="$pghost "dbname="$pgdbname "user="$pguser "password="$pgpassword -sql "CREATE INDEX BC_0008_spatial_index ON bc.BC_0008 USING GIST (wkb_geometry);"
-##########################################################################################
+-sql "SELECT *, '$srcName' as src_filename FROM '$ogrTab'" \
+-progress -overwrite

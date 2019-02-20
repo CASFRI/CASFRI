@@ -26,7 +26,7 @@ if exist "%~dp0\config.bat" (
 SET schema=test
 SET trgtT=NB_0001
 
-SET srcWater=%friDir%\nb_test\Waterbody.shp
+SET srcWater="%friDir%\nb_test\Waterbody.shp"
 SET srcNameWater=Waterbody
 SET ogrTabWater=Waterbody
 
@@ -34,11 +34,11 @@ SET srcNonForest="%friDir%\nb_test\Non Forest.shp"
 SET srcNameNonForest=NonForest
 SET ogrTabNonForest='Non Forest'
 
-SET srcWetland=%friDir%\nb_test\wetland.shp
+SET srcWetland="%friDir%\nb_test\wetland.shp"
 SET srcNameWetland=wetland
 SET ogrTabWetland=wetland
 
-SET srcForest=%friDir%\nb_test\Forest.shp
+SET srcForest="%friDir%\nb_test\Forest.shp"
 SET srcNameForest=Forest
 SET ogrTabForest=Forest
 
@@ -118,3 +118,4 @@ SET pguser=
 SET pgpassword=
 SET friDir=
 SET prjF=
+SET schTab=

@@ -10,14 +10,16 @@
 
 #Load into a target table in a schema named 'nb'.
 
+#If table already exists it will be overwritten.
+
 #Workflow is to load the first table normally, then append the others
 #Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
 
 
 ######################################## variables #######################################
 # load config variables
-if [ -f config.sh ]; then 
-  source config.sh
+if [ -f ./config.sh ]; then 
+  source ./config.sh
 else
   echo ERROR: NO config.sh FILE
   exit 1
@@ -27,7 +29,7 @@ fi
 schema=test
 trgtT=NB_0001
 
-srcWater=$friDir/nb_test/Waterbody.shp
+srcWater="$friDir/nb_test/Waterbody.shp"
 srcNameWater=Waterbody
 ogrTabWater=Waterbody
 
@@ -35,11 +37,11 @@ srcNonForest="$friDir/nb_test/Non Forest.shp"
 srcNameNonForest=NonForest
 ogrTabNonForest='Non Forest'
 
-srcWetland=$friDir/nb_test/wetland.shp
+srcWetland="$friDir/nb_test/wetland.shp"
 srcNameWetland=wetland
 ogrTabWetland=wetland
 
-srcForest=$friDir/nb_test/Forest.shp
+srcForest="$friDir/nb_test/Forest.shp"
 srcNameForest=Forest
 ogrTabForest=Forest
 
@@ -59,13 +61,13 @@ ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sq
 #Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
 #Solution is to load the Waterbody table first with -lco precision=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
 ogr2ogr \
--f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcWater \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcWater" \
 -lco precision=NO \
 -nln $schTab \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcNameWater' as src_filename FROM '$ogrTabWater'" \
--progress
+-progress -overwrite
 
 ### FILE 2 ###
 ogr2ogr \
@@ -80,7 +82,7 @@ ogr2ogr \
 ### FILE 3 ###
 ogr2ogr \
 -update -append -addfields \
--f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcWetland \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcWetland" \
 -nln $schTab \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
@@ -90,7 +92,7 @@ ogr2ogr \
 ## File 4 ###
 ogr2ogr \
 -update -append -addfields \
--f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcForest \
+-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcForest" \
 -nln $schTab \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
