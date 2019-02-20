@@ -1,70 +1,67 @@
 #!/bin/bash
 
-# Bash script for loading translation tables into PostgreSQL
+# Batch file for loading translation tables into PostgreSQL
 
 # Input tables are format csv
 
-# Two options for loading tables:
-	# 1. User can provide an array of csv table paths to be loaded. 
-	# 2. Or user can provide the file path to a folder in which case all csv files in the folder are loaded 
-	# One or both of these options can be provided.
-# If table already exists, loading will fail and move on to the next table. To overwrite existing tables, un-comment the -overwrite line in the ogr2ogr call.
+# User provides the path to a folder, all csv files in the folder are loaded 
+
+# If overwrite=True any existing tables will be replaced
+# If overwrite=False existing tables will not be replaced, loop will fail for any tables already loaded
 
 #####################################################################################################################################################################
 #####################################################################################################################################################################
 #####################################################################################################################################################################
-# Provide either...
+# Variables
+# target schema name
+schema=translation_tables
 
-#### 1. #### a manual list of files:
-#declare -a file_list=("tables/ab_0006_rules_lyr.csv" "tables/nb_0001_species.csv")
+# postgres variables
+pghost=localhost
+pgdbname=cas
+pguser=postgres
+pgpassword=postgres
 
-# And/Or
+# gdal folder path (relative path needed if running on Windows)
+gdal_path="../../../../../../../program files/gdal"
 
-#### 2. #### a folder containing csv's to be loaded:
+# overwrite existing tables? True/False
+overwrite=True
+
+# a folder containing csv's to be loaded:
 load_folder="tables/"
 
-# target schema name
-target_schema=translation_tables
 
-# gdal folder path
-gdal_path="../../../../../../../program files/gdal"
 #####################################################################################################################################################################
 #####################################################################################################################################################################
 #####################################################################################################################################################################
+# do not edit...
 
 # make schema if it doesn't exist
-"$gdal_path/ogrinfo.exe" PG:"host=localhost dbname=cas user=postgres password=postgres" -sql "CREATE SCHEMA IF NOT EXISTS $target_schema";
+"$gdal_path/ogrinfo.exe" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
 
-#### 1. ####
-# if the file_list variable exists, load the files in the manual list
-if [ -n "$file_list" ]; then 
-	for i in "${file_list[@]}"
-	do
-		x=${i##*/} # gets file name with .csv
-		tab_name=${x%%.csv} # removes .csv
-		schema_tab=$target_schema.$tab_name # combines table name and schema name
-		
-		# load using ogr
-		echo "loading..."$schema_tab
-		"$gdal_path/ogr2ogr.exe" \
-		-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" $i \
-		-nln $schema_tab #-overwrite
-	done
+# set overwrite argument
+if [ $overwrite == True ]; then
+  overwrite_tab="-overwrite -progress"
+else 
+  overwrite_tab="-progress"
 fi
 
-#### 2. ####
-# if the load_folder variable exists, load all files in the folder
-if [ -n "$load_folder" ]; then 
+# load all files in the folder
+if [ -d "$load_folder" ]; then 
 	for i in $load_folder/*.csv
 	do
 		x=${i##*/} # gets file name with .csv
 		tab_name=${x%%.csv} # removes .csv
-		schema_tab=$target_schema.$tab_name # combines table name and schema name
+		schema_tab=$schema.$tab_name # combines table name and schema name
 		
 		# load using ogr
 		echo "loading..."$schema_tab
 		"$gdal_path/ogr2ogr.exe" \
-		-f "PostgreSQL" "PG:host=localhost dbname=cas user=postgres password=postgres" $i \
-		-nln $schema_tab #-overwrite
+		-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $i \
+		-nln $schema_tab \
+		$overwrite_tab
 	done
+else 
+  echo "FOLDER DOESN'T EXIST: " $load_folder
 fi
