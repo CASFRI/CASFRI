@@ -14,30 +14,42 @@
 
 ::######################################## variables #######################################
 
-:: PostgreSQL variables
-SET pghost=localhost
-SET pgdbname=cas
-SET pguser=postgres
-SET pgpassword=postgres
-SET schema=test
-SET trgtT=test.NB_0001
-SET srcF=C:\Temp\nb_test
-SET srcWater=%srcF%\Waterbody.shp
-SET fileWater=Waterbody
-SET srcNonForest="%srcF%\Non Forest.shp"
-SET fileNonForest=NonForest
-SET srcWetland=%srcF%\wetland.shp
-SET fileWetland=wetland
-SET srcForest=%srcF%\Forest.shp
-SET fileForest=Forest
+:: load config variables
+if exist "%~dp0\config.bat" ( 
+  call "%~dp0\config.bat"
+) else (
+  echo ERROR: NO config.bat FILE
+  exit /b
+)
 
-::path variables
-SET batchDir=%~dp0
-SET prjF="%batchDir%canadaAlbersEqualAreaConic.prj"
+:: PostgreSQL variables
+SET schema=test
+SET trgtT=NB_0001
+
+SET srcWater=%friDir%\nb_test\Waterbody.shp
+SET srcNameWater=Waterbody
+SET ogrTabWater=Waterbody
+
+SET srcNonForest="%friDir%\nb_test\Non Forest.shp"
+SET srcNameNonForest=NonForest
+SET ogrTabNonForest='Non Forest'
+
+SET srcWetland=%friDir%\nb_test\wetland.shp
+SET srcNameWetland=wetland
+SET ogrTabWetland=wetland
+
+SET srcForest=%friDir%\nb_test\Forest.shp
+SET srcNameForest=Forest
+SET ogrTabForest=Forest
+
+
 ::##########################################################################################
 
 
 ::############################ Script - shouldn't need editing #############################
+
+::Set schema.table
+SET schTab=%schema%.%trgtT%
 
 ::Create schema if it doesn't exist
 ogrinfo PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %schema%";
@@ -45,41 +57,64 @@ ogrinfo PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%"
 ::### FILE 1 ###
 ::Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
 ::Solution is to load the Waterbody table first with -lco precision=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
-
-::Run ogr2ogr
 ogr2ogr ^
+-overwrite ^
 -f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWater% ^
 -lco precision=NO ^
--nln %trgtT% ^
+-nln %schTab% ^
 -t_srs %prjF% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%fileWater%' as src_filename FROM '%fileWater%'" ^
--overwrite
+-sql "SELECT *, '%srcNameWater%' as src_filename FROM '%ogrTabWater%'" ^
+-progress
 
 ::### FILE 2 ###
-::APPEND SECOND TABLE - note table name is provided explicitly in -sql statement. This was done so the space can be removed. We don't want spaces in cas_id.
 ogr2ogr ^
 -update -append -addfields ^
 -f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcNonForest% ^
--nln %trgtT% ^
+-nln %schTab% ^
 -t_srs %prjF% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%fileNonForest%' as src_filename FROM 'Non Forest'"
+-sql "SELECT *, '%srcNameNonForest%' as src_filename FROM %ogrTabNonForest%" ^
+-progress
 
 ::### FILE 3 ###
 ogr2ogr ^
 -update -append -addfields ^
 -f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWetland% ^
--nln %trgtT% ^
+-nln %schTab% ^
 -t_srs %prjF% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%fileWetland%' as src_filename FROM '%fileWetland%'"
+-sql "SELECT *, '%srcNameWetland%' as src_filename FROM '%ogrTabWetland%'" ^
+-progress
 
 ::## File 4 ###
 ogr2ogr ^
 -update -append -addfields ^
 -f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcForest% ^
--nln %trgtT% ^
+-nln %schTab% ^
 -t_srs %prjF% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%fileForest%' as src_filename FROM '%fileForest%'"
+-sql "SELECT *, '%srcNameForest%' as src_filename FROM '%ogrTabForest%'" ^
+-progress
+
+::unload variables
+SET schema=
+SET trgtT=
+SET srcWater=
+SET srcNameWater=
+SET ogrTabWater=
+SET srcNonForest=
+SET srcNameNonForest=
+SET ogrTabNonForest=
+SET srcWetland=
+SET srcNameWetland=
+SET ogrTabWetland=
+SET srcForest=
+SET srcNameForest=
+SET ogrTabForest=
+SET pghost=
+SET pgdbname=
+SET pguser=
+SET pgpassword=
+SET friDir=
+SET prjF=

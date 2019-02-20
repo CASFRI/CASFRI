@@ -15,78 +15,84 @@
 
 
 ######################################## variables #######################################
+# load config variables
+if [ -f config.sh ]; then 
+  source config.sh
+else
+  echo ERROR: NO config.sh FILE
+  exit 1
+fi
 
 # PostgreSQL variables
-pghost=localhost
-pgdbname=cas
-pguser=postgres
-pgpassword=postgres
 schema=test
-trgtT=test.NB_0001 #Target table name
-srcF="../../../../../../../../Temp/nb_source" #Source folder path
-srcWater=$srcF"/Waterbody.shp"
-fileWater=Waterbody
-srcNonForest=$srcF"/Non Forest.shp"
-fileNonForest=NonForest
-srcWetland=$srcF"/wetland.shp"
-fileWetland=wetland
-srcForest=$srcF"/Forest.shp"
-fileForest=Forest
+trgtT=NB_0001
 
-# path variables
-ogrinfo="../../../../../../../../program files/gdal/ogrinfo.exe"
-ogr2ogr="../../../../../../../../program files/gdal/ogr2ogr.exe"
-prjF="canadaAlbersEqualAreaConic.prj"
+srcWater=$friDir/nb_test/Waterbody.shp
+srcNameWater=Waterbody
+ogrTabWater=Waterbody
+
+srcNonForest="$friDir/nb_test/Non Forest.shp"
+srcNameNonForest=NonForest
+ogrTabNonForest='Non Forest'
+
+srcWetland=$friDir/nb_test/wetland.shp
+srcNameWetland=wetland
+ogrTabWetland=wetland
+
+srcForest=$friDir/nb_test/Forest.shp
+srcNameForest=Forest
+ogrTabForest=Forest
+
+
 ##########################################################################################
 
 
 ############################ Script - shouldn't need editing #############################
 
+#Set schema.table
+schTab=$schema.$trgtT
+
 #Create schema if it doesn't exist
-$ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
+ogrinfo "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
 
 ### FILE 1 ###
 #Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
 #Solution is to load the Waterbody table first with -lco precision=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
-
-echo "1"
-#Run ogr2ogr
-$ogr2ogr \
+ogr2ogr \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcWater \
 -lco precision=NO \
--nln $trgtT \
+-nln $schTab \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$fileWater' as src_filename FROM '$fileWater'" \
--overwrite
+-sql "SELECT *, '$srcNameWater' as src_filename FROM '$ogrTabWater'" \
+-progress
 
 ### FILE 2 ###
-#APPEND SECOND TABLE - note table name is provided explicitly in -sql statement. This was done so the space can be removed. We don't want spaces in cas_id.
-echo "2"
-$ogr2ogr \
+ogr2ogr \
 -update -append -addfields \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcNonForest" \
--nln $trgtT \
+-nln $schTab \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$fileNonForest' as src_filename FROM 'Non Forest'"
+-sql "SELECT *, '$srcNameNonForest' as src_filename FROM '$ogrTabNonForest'" \
+-progress
 
-echo "3"
 ### FILE 3 ###
-$ogr2ogr \
+ogr2ogr \
 -update -append -addfields \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcWetland \
--nln $trgtT \
+-nln $schTab \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$fileWetland' as src_filename FROM '$fileWetland'"
+-sql "SELECT *, '$srcNameWetland' as src_filename FROM '$ogrTabWetland'" \
+-progress
 
-echo "4"
 ## File 4 ###
-$ogr2ogr \
+ogr2ogr \
 -update -append -addfields \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $srcForest \
--nln $trgtT \
+-nln $schTab \
 -t_srs $prjF \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$fileForest' as src_filename FROM '$fileForest'"
+-sql "SELECT *, '$srcNameForest' as src_filename FROM '$ogrTabForest'" \
+-progress
