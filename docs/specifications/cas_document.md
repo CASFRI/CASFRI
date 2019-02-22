@@ -6,7 +6,7 @@ Revised by: The CASFRI Project Team, February 2019
 
 # Introduction
 
-Canada’s vast boreal ecosystem hosts one of the most diverse bird communities in North America. Development pressure within the boreal region is on the increase, and there is an urgent need to understand the impact of changing habitats on boreal bird populations and to make sound management decisions. The Boreal Avian Modeling Project was initiated to help address the lack of basic information on boreal birds and their habitats across boreal forests in Canada. The need to effectively manage bird species and their habitats has resulted in the effort to collect and gather data across Canada to develop models that will predict bird abundance and distribution, and that will clarify population and habitat associations with climate and land cover.
+Canada's vast boreal ecosystem hosts one of the most diverse bird communities in North America. Development pressure within the boreal region is on the increase, and there is an urgent need to understand the impact of changing habitats on boreal bird populations and to make sound management decisions. The Boreal Avian Modeling Project was initiated to help address the lack of basic information on boreal birds and their habitats across boreal forests in Canada. The need to effectively manage bird species and their habitats has resulted in the effort to collect and gather data across Canada to develop models that will predict bird abundance and distribution, and that will clarify population and habitat associations with climate and land cover.
 
 Current national databases developed from satellite-based products using biophysical variables have limited application at regional levels because many bird species are sensitive to variation in canopy tree species composition, height, and age; vegetation attributes that satellite-based products cannot measure. Because satellite-based land cover maps lack the thematic detail needed to model the processes of stand growth, succession, and regeneration, avian habitat models derived from satellite land cover data cannot be used to link forest management actions to the desired biotic indicators at the scale of forest tenure areas.
 
@@ -48,13 +48,16 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, spatial reference, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are detailed on the following pages.
 
+### CASFRI Identification
+
+
 ### Year of Aerial Photography
 
 Photo Year is the year in which the inventory was considered initiated and completed. An inventory can take several years to complete; therefore, Photo Year Minimum and Maximum dates are included to identify the interval for when the inventory was completed. In some cases inventory reference year and air photo year are the same. Several years of successive or periodic acquisition are possible; therefore, a minimum and a maximum year are recorded.
 
 > Note: can be determined in 3 ways: spatial, tabular, fixed
 
-| PHOTO_YEAR_MIN and PHOTO_YEAR_MAX                          | Attribute Value |
+| PHOTO_YEAR_MIN and PHOTO_YEAR_MAX                              | Attribute Value |
 | :------------------------------------------------------------- | :-------------- |
 | Photo Year Minimum - earliest year of aerial photo acquisition | 1960 - 2020     |
 | Photo Year Maximum - last year of aerial photo acquisition     | 1960 - 2020     |
@@ -65,7 +68,7 @@ Photo Year is the year in which the inventory was considered initiated and compl
 
 Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CAS recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.
 
-| CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER    | Attribute Value |
+| CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER        | Attribute Value |
 | :------------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a crown closure class | 0 - 100         |
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
@@ -83,7 +86,7 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 
 Stand height is based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6.
 
-| HEIGHT_UPPER and HEIGHT_LOWER              | Attribute Value |
+| HEIGHT_UPPER and HEIGHT_LOWER                | Attribute Value |
 | :------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a height class. | 0 - 100         |
 | Lower Bound - lower bound of a height class. | 0 - 100         |
