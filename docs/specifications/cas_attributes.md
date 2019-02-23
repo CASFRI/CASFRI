@@ -7,7 +7,7 @@
 ```
 The CAS_ID is a concatenation of four attributes:
   * inventory name
-  * header id - unique number ID associated with the inventory (e.g., inventory_standard_cd in BC)
+  * header id - unique number associated with the inventory (e.g., inventory_standard_cd in BC)
   * map id - mapsheet id based on regular grid
   * SOURCE_OBJECTID and OBJECTID; the latter is from the source dataset but not sure about the former?
 ```
@@ -42,7 +42,7 @@ Notes:
 Notes:
 
   * This can be determined in 3 ways: spatial, tabular, fixed
-  * The CAS_04 only has PHOTO_YEAR not _MIN and _MAX: is this what we want?
+  * The CAS_04 only has PHOTO_YEAR not MIN and MAX: is this what we want?
   * BC - copy values from REFERENCE_YEAR
 
 | PHOTO_YEAR_MIN and PHOTO_YEAR_MAX                              | Attribute Value |
