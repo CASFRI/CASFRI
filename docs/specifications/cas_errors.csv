@@ -1,0 +1,11 @@
+Class,Type,Applies_to,Description,Example,Error_type (CAS04),CAS04_code,CAS05_code
+Special values,Infinity,integer,Positive or negative infinity,Height measured from 0 to infinity,INFTY,-1,+Inf/-Inf
+Null values,Null number,integer or float,Undefined value - true null value,Crown closure is not measured in a clearcut,UNDEF,-8888,-8888
+,Null string,string,Undefined value - true null value,Tree species are not recorded in a clearcut,UNDEF,-8888,"""Null"""
+Missing values,Missing string,string,Empty string that is not null,"There are only 2 tree species and others are recorded as """"",MISSCODE,-1111,"""Missing"""
+,Missing number,integer or float,Missing number that is not null,There are only 2 tree species and others are recorded as 0,MISSCODE,-1111,-1111
+Invalid values,Out of range,integer or float,Value is outside of the allowed range of values,Species percentage exceeds 100%,ERRCODE,-9999,-9999
+,Not member of set,string,Value is not a member of a set or list,Jurisdiction is not a member of allowable jurisdictions,ERRCODE,-9999,"""Invalid"""
+,Wrong data type,all,Value is of the wrong data type,Crown closure is measured as a float instead of an integer,TYPE_ERROR,,
+,Precision too high,float,Precision is greater than allowed,Stand height is recorded to 2 decimal places instead of 1,PRECISION_ERROR,,
+,Species error code,string,Species code is not in a list,Species code is malformed or does not exist in a list,SPECIES_ERRCODE,"""XXXX ERRC""","""XXX ERRC"""

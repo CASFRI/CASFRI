@@ -1,6 +1,10 @@
 # CASFRI Attributes
 
+The CASFRI includes 88 attributes that are either integer, float or string data types. For each attribute, we describe i) allowable values and ii) codes to use in case of special, null, missing or invalid values.
+
 ## Header Information (HDR)
+
+## Base Polygon (CAS)
 
 ### CAS_ID
 
@@ -51,7 +55,7 @@ Notes:
 | Photo Year Maximum - last year of aerial photo acquisition     | 1960 - 2020     |
 
 
-## CAS Forest and Non-Forest Attributes (LYR)
+## Forest and Non-Forest Attributes (LYR)
 
 ### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER
 
@@ -117,3 +121,10 @@ Notes:
 | INFTY     | integer      | -1         | positive or negative infinity     | -Inf/+Inf  |
 | ERRCODE   | integer      | -9999      | invalid values that are not null  | -9999      |
 | UNDEF     | integer      | -8888      | undefined value - true null value | -8888      |
+
+
+## Non-forest Land (NFL)
+
+## Disturbance (DST)
+
+## Ecological (ECO)
