@@ -1,121 +1,112 @@
-::This script loads the New Brunswick FRI data into PostgreSQL
+:: This script loads the New Brunswick FRI data into PostgreSQL
 
-::The format of the source dataset is four shapefiles named Forest.shp, Non Forest.shp, Waterbody.shp, and wetland.shp
-::These four files need to be combined into a single PostgreSQL table
-::This can be done using the -append argument. Note that -update is also needed in order to append in PostgreSQL. -addfields is also needed because columns do not match between tables. 
+:: The format of the source dataset is four shapefiles named Forest.shp, 
+:: Non Forest.shp, Waterbody.shp, and wetland.shp
+::
+:: These four files are combined into a single PostgreSQL table
+:: This is done using the -append argument. Note that -update is also 
+:: needed in order to append in PostgreSQL. -addfields is also needed 
+:: because columns do not match between tables.
 
-::The year of photography is included in the attributes table (DATAYR)
+:: The year of photography is included in the attributes table (DATAYR)
 
-::Load into a target table in a schema named 'nb'.
+:: Load into a target table in the schema defined in the config file.
 
-::Workflow is to load the first table normally, then append the others
-::Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
+:: If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
+:: in the configuration file.
+
+:: Workflow is to load the first table normally, then append the others
+:: Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
 
 
-::######################################## variables #######################################
+:: #################################### Set variables ######################################
 
-:: load config variables
-if exist "%~dp0\config.bat" ( 
-  call "%~dp0\config.bat"
+SETLOCAL
+
+:: Load config variables from local config file
+if exist "%~dp0\..\..\config.bat" ( 
+  call "%~dp0\..\..\config.bat"
 ) else (
   echo ERROR: NO config.bat FILE
   exit /b
 )
 
-:: PostgreSQL variables
-SET schema=test
-SET trgtT=NB_0001
+:: Set unvariable variables
 
-SET srcWater="%friDir%\nb_test\Waterbody.shp"
+SET NB_subFolder=NB\v.00.03-v.00.04\
+
 SET srcNameWater=Waterbody
-SET ogrTabWater=Waterbody
+SET ogrTabWater=%srcNameWater%
+SET srcWaterFullPath="%friDir%\%NB_subFolder%%ogrTabWater%.shp"
 
-SET srcNonForest="%friDir%\nb_test\Non Forest.shp"
 SET srcNameNonForest=NonForest
-SET ogrTabNonForest='Non Forest'
+SET ogrTabNonForest=Non Forest
+SET srcNonForestFullPath="%friDir%\%NB_subFolder%%ogrTabNonForest%.shp"
 
-SET srcWetland="%friDir%\nb_test\wetland.shp"
 SET srcNameWetland=wetland
-SET ogrTabWetland=wetland
+SET ogrTabWetland=%srcNameWetland%
+SET srcWetlandFullPath="%friDir%\%NB_subFolder%%ogrTabWetland%.shp"
 
-SET srcForest="%friDir%\nb_test\Forest.shp"
 SET srcNameForest=Forest
-SET ogrTabForest=Forest
+SET ogrTabForest=%srcNameForest%
+SET srcForestFullPath="%friDir%\%NB_subFolder%%ogrTabForest%.shp"
+
+SET prjFile="%~dp0\canadaAlbersEqualAreaConic.prj"
+SET fullTargetTableName=%targetFRISchema%.nb01
 
 
-::##########################################################################################
+if %overwriteFRI% == True (
+  SET overwrite_tab=-overwrite 
+) else (
+  SET overwrite_tab=
+)
 
-
-::############################ Script - shouldn't need editing #############################
-
-::Set schema.table
-SET schTab=%schema%.%trgtT%
+:: ########################################## Process ######################################
 
 ::Create schema if it doesn't exist
-ogrinfo PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %schema%";
+"%gdalFolder%/ogrinfo" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
 
 ::### FILE 1 ###
 ::Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
 ::Solution is to load the Waterbody table first with -lco precision=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
-ogr2ogr ^
+"%gdalFolder%/ogr2ogr" ^
 -overwrite ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWater% ^
+-f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWaterFullPath% ^
 -lco precision=NO ^
--nln %schTab% ^
--t_srs %prjF% ^
+-nln %fullTargetTableName% ^
+-t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWater%' as src_filename FROM '%ogrTabWater%'" ^
--progress
+-sql "SELECT *, '%srcNameWater%' AS src_filename FROM ""%ogrTabWater%""" ^
+-progress %overwrite_tab%
 
 ::### FILE 2 ###
-ogr2ogr ^
+"%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcNonForest% ^
--nln %schTab% ^
--t_srs %prjF% ^
+-f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcNonForestFullPath% ^
+-nln %fullTargetTableName% ^
+-t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameNonForest%' as src_filename FROM %ogrTabNonForest%" ^
+-sql "SELECT *, '%srcNameNonForest%' AS src_filename FROM ""%ogrTabNonForest%""" ^
 -progress
 
 ::### FILE 3 ###
-ogr2ogr ^
+"%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWetland% ^
--nln %schTab% ^
--t_srs %prjF% ^
+-f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWetlandFullPath% ^
+-nln %fullTargetTableName% ^
+-t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWetland%' as src_filename FROM '%ogrTabWetland%'" ^
+-sql "SELECT *, '%srcNameWetland%' AS src_filename FROM ""%ogrTabWetland%""" ^
 -progress
 
 ::## File 4 ###
-ogr2ogr ^
+"%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcForest% ^
--nln %schTab% ^
--t_srs %prjF% ^
+-f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcForestFullPath% ^
+-nln %fullTargetTableName% ^
+-t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameForest%' as src_filename FROM '%ogrTabForest%'" ^
+-sql "SELECT *, '%srcNameForest%' AS src_filename FROM ""%ogrTabForest%""" ^
 -progress
 
-::unload variables
-SET schema=
-SET trgtT=
-SET srcWater=
-SET srcNameWater=
-SET ogrTabWater=
-SET srcNonForest=
-SET srcNameNonForest=
-SET ogrTabNonForest=
-SET srcWetland=
-SET srcNameWetland=
-SET ogrTabWetland=
-SET srcForest=
-SET srcNameForest=
-SET ogrTabForest=
-SET pghost=
-SET pgdbname=
-SET pguser=
-SET pgpassword=
-SET friDir=
-SET prjF=
-SET schTab=
+ENDLOCAL

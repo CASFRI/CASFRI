@@ -1,61 +1,55 @@
-::This script loads the British Columbia VRI data into PostgreSQL
+:: This script loads the British Columbia VRI forest inventory (BC08) into PostgreSQL
 
-::The format of the source dataset is a geodatabase
+:: The format of the source dataset is a geodatabase
 
-::The year of photography is included in the attributes table (REFERENCE_YEAR)
+:: The year of photography is included in the attributes table (REFERENCE_YEAR)
 
-::Load into a target table in a schema named 'bc'.
+:: Load into a target table in the schema defined in the config file.
 
-::If table already exists it will be overwritten.
+:: If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
+:: in the configuration file.
 
-::CURRENTLY SET TO LOAD ENTIRE DATABASE. CAN CHANGE THIS TO FILTER ON INVENTORY_STANDARD_ID IF NEEDED USING -sql "SELECT *, '$fileName' as src_filename FROM '$fileName' WHERE Inventory_Standard_CD='V'"
+:: CURRENTLY SET TO LOAD ENTIRE DATABASE. CAN CHANGE THIS TO FILTER ON INVENTORY_STANDARD_ID 
+:: IF NEEDED USING -sql "SELECT *, '$fileName' as src_filename FROM '$fileName' WHERE Inventory_Standard_CD='V'"
 
-::######################################## variables #######################################
+:: #################################### Set variables ######################################
 
-:: load config variables
-if exist "%~dp0\config.bat" ( 
-  call "%~dp0\config.bat"
+SETLOCAL
+
+:: Load config variables from local config file
+if exist "%~dp0\..\..\config.bat" ( 
+  call "%~dp0\..\..\config.bat"
 ) else (
   echo ERROR: NO config.bat FILE
   exit /b
 )
 
-:: PostgreSQL variables
-SET schema=test
-SET trgtT=bc_0008
+:: Set unvariable variables
 
-SET srcF="%friDir%\bc_test.gdb"
-SET srcName=bc_test
-SET ogrTab=bc_test
+SET srcFileName=VEG_COMP_LYR_R1_POLY
+SET srcFullPath="%friDir%\BC\v.00.05\VEG_COMP_LYR_R1_POLY\%srcFileName%.gdb"
 
-::##########################################################################################
+SET prjFile="%~dp0\canadaAlbersEqualAreaConic.prj"
+SET fullTargetTableName=%targetFRISchema%.bc08
 
 
-::############################ Script - shouldn't need editing #############################
+if %overwriteFRI% == True (
+  SET overwrite_tab=-overwrite 
+) else (
+  SET overwrite_tab=
+)
 
-::Set schema.table
-SET schTab=%schema%.%trgtT%
+:: ########################################## Process ######################################
 
-::Create schema if it doesn't exist
-ogrinfo PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %schema%";
+:: Create schema if it doesn't exist
+"%gdalFolder%/ogrinfo" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
 
-::Run ogr2ogr
-ogr2ogr ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcF% ^
--nln %schTab% ^
--t_srs %prjF% ^
--sql "SELECT *, '%srcName%' as src_filename FROM '%ogrTab%'" ^
--progress -overwrite
+:: Run ogr2ogr
+"%gdalFolder%/ogr2ogr" ^
+-f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% ^
+-nln %fullTargetTableName% ^
+-t_srs %prjFile% ^
+-sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%srcFileName%""" ^
+-progress %overwrite_tab%
 
-::unload variables
-SET schema=
-SET trgtT=
-SET srcF=
-SET srcName=
-SET ogrTab=
-SET pghost=
-SET pgdbname=
-SET pguser=
-SET pgpassword=
-SET friDir=
-SET prjF=
+ENDLOCAL

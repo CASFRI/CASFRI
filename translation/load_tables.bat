@@ -7,48 +7,40 @@
 :: If overwrite=True any existing tables will be replaced
 :: If overwrite=False existing tables will not be replaced, loop will fail for any tables already loaded
 
-::#####################################################################################################################################################################
-::#####################################################################################################################################################################
-::#####################################################################################################################################################################
-:: Variables
-:: target schema name
-SET schema=translation_tables
+:: #################################### Set variables ######################################
 
-:: postgres variables
-SET pghost=localhost
-SET pgdbname=cas
-SET pguser=postgres
-SET pgpassword=postgres
-
-:: overwrite existing tables? True/False
-SET overwrite=True
-
-:: a folder containing csv's to be loaded:
-SET load_folder="C:\Users\MarcEdwards\Documents\CASFRI v5\git\CASFRI\translation\tables"
-
-
-
-::#####################################################################################################################################################################
-::#####################################################################################################################################################################
-::#####################################################################################################################################################################
-:: do not edit...
-if %overwrite% == True (
-  SET overwrite_tab=-overwrite -progress
+:: Load config variables from local config file
+if exist "%~dp0\..\config.bat" ( 
+  call "%~dp0\..\config.bat"
 ) else (
-  SET overwrite_tab=-progress
+  echo ERROR: NO config.bat FILE
+  exit /b
 )
 
-:: make schema if it doesn't exist
-ogrinfo PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %schema%";
+:: Folder containing translation file to be loaded:
+SET load_folder="%~dp0tables"
+
+
+::######################################################################################################
+
+:: Do not edit...
+if %overwriteTTables% == True (
+  SET overwrite_tab=-overwrite
+) else (
+  SET overwrite_tab=
+)
+
+:: Make schema if it doesn't exist
+"%gdalFolder%/ogrinfo" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetTranslationFileSchema%";
 
 :: load all files in the folder
 if exist %load_folder% (
   for %%F IN (%load_folder%\*.csv) DO (
 	echo loading %%~nF
-	ogr2ogr ^
+	"%gdalFolder%/ogr2ogr" ^
 	-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%F" ^
-	-nln %schema%.%%~nF ^
-	%overwrite_tab%
+	-nln %targetTranslationFileSchema%.%%~nF ^
+	%overwrite_tab% -progress
 )) else ( 
   echo FOLDER DOESN'T EXIST: %load_folder%
 )
