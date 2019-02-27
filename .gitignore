@@ -1,2 +1,5 @@
 .gitignore
-pierre
+Rgui.lnk
+config.bat
+config.sh
+.Rhistory
