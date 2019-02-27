@@ -1,7 +1,7 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
 CAS_ID,str,"notNull(var1| ""NULL""| var2|""NULL""|var3|""NULL""|var4|""NULL"")",concat(),Concatenates four attributes to create CAS_ID,TRUE
-CROWN_CLOSURE_UPPER,int,"notNull(density|-8888);match(density|""A,B,C,D,"")","map(density, ""A,B,C,D,"", ""6,31,51,71"")",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
-CROWN_CLOSURE_LOWER,int,"notNull(density|-8888);match(density|""A,B,C,D,"")","map(density, ""A,B,C,D,"", ""30,50,70,100"")",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+CROWN_CLOSURE_UPPER,int,"notNull(density|""NULL"");match(density|""A,B,C,D,"")","map(density, ""A,B,C,D,"", ""6,31,51,71"")",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
+CROWN_CLOSURE_LOWER,int,"notNull(density|""NULL"");match(density|""A,B,C,D,"")","map(density, ""A,B,C,D,"", ""30,50,70,100"")",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 HEIGHT_UPPER,int,"notNull(height|-8888);greaterThan(height|1|-9999a);lesserThan(height|100|-9999b)",copy(height),Copies source value to HEIGHT_UPPER,TRUE
 HEIGHT_LOWER,int,"notNull(height|-8888);greaterThan(height|1|-9999);lesserThan(height|100|-9999b)",copy(height),Copies source value to HEIGHT_LOWER,TRUE
 SPECIES_1,str,"notNull(sp1|""NULL"");match(sp1,abSppList|""XXXX ERRC""|TRUE)","lookup(sp1, abSppList, casSppList)",Maps source value to SPECIES_1 using lookup table,TRUE
