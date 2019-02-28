@@ -1,5 +1,15 @@
+# CASFRI Specifications
+
+The CASFRI includes 88 attributes that are either integer, float or string data types. For each attribute, we describe i) allowable values and ii) codes to use in case of special, null, missing or invalid values.
+
+## Errors and Missing Values
+
+
+
+## CASFRI Attributes
+
 | HDR | CAS | LYR | NFL | DST | ECO  |
-| :---------------- | :------------ | :---------     | :--------------| :----- | :----------- |
+| :---------------- | :---------------- | :---------------- | :---------------- | :---------------- | :---------------- |
 | IDENTIFICATION_ID	| [CAS_ID](attributes/cas_id.md) | [CAS_ID](attributes/cas_id.md) | [CAS_ID](attributes/cas_id.md) | [CAS_ID](attributes/cas_id.md) | [CAS_ID](attributes/cas_id.md) |
 | JURISDICTION | ORIG_STAND_ID | SOIL_MOIST_REG | SOIL_MOIST_REG | DIST_1-3 | WETLAND_TYPE |
 | COORDINATE_SYS | STAND_STRUCTURE | STRUCTURE_PER | STRUCTURE_PER | DIST_YR_1-3 | WET_VEG_COVER |
@@ -11,8 +21,8 @@
 | TENURE_TYPE | INVENTORY_AREA | [HEIGHT_LOWER](attributes/height.md) | HEIGHT_LOWER |  |  |
 | INV_TYPE | PHOTO_YEAR | PRODUCTIVE_FOR | NAT_NON_VEG |  |  |
 | INV_VERSION |  | [SPECIES_1-10](attributes/species.md) | NON_FOR_ANTH |  |  |
-| INV_START_YR |  | [SPECIES_PER_1-10](attrubutes/species_pct.md) | NON_FOR_VEG |  |  | 
+| INV_START_YR |  | [SPECIES_PER_1-10](attrubutes/species_pct.md) | NON_FOR_VEG |  |  |
 | INV_FINISH_YR |  | ORIGIN_UPPER |  |  |  |
 | INV_ACQ_ID |  | ORIGIN_LOWER |  |  |  |
 | INV_ACQ_YR |  | SITE_CLASS |  |  |  |
-| INV_UPDATE_YR |  | SITE_INDEX |  |  |  | 
+| INV_UPDATE_YR |  | SITE_INDEX |  |  |  |
