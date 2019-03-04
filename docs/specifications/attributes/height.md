@@ -1,4 +1,4 @@
-### HEIGHT_UPPER, HEIGHT_LOWER
+# HEIGHT_UPPER, HEIGHT_LOWER
 
 | HEIGHT_UPPER and HEIGHT_LOWER                | Attribute Value |
 | :------------------------------------------- | :-------------- |
