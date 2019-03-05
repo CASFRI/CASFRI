@@ -18,6 +18,8 @@
 :: Workflow is to load the first table normally, then append the others
 :: Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
 
+:: stdlab attribute needed to make cas id. Only present in forest.shp.
+:: add as attribute with 0 for other files
 
 :: #################################### Set variables ######################################
 
@@ -33,7 +35,7 @@ if exist "%~dp0\..\..\config.bat" (
 
 :: Set unvariable variables
 
-SET NB_subFolder=NB\v.00.03-v.00.04\
+SET NB_subFolder=NB\SourceDataset\v.00.03-v.00.04\
 
 SET srcNameWater=Waterbody
 SET ogrTabWater=%srcNameWater%
@@ -75,7 +77,7 @@ if %overwriteFRI% == True (
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWater%' AS src_filename FROM ""%ogrTabWater%""" ^
+-sql "SELECT *, '%srcNameWater%' AS src_filename, 0 AS stdlab FROM ""%ogrTabWater%""" ^
 -progress %overwrite_tab%
 
 ::### FILE 2 ###
@@ -85,7 +87,7 @@ if %overwriteFRI% == True (
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameNonForest%' AS src_filename FROM ""%ogrTabNonForest%""" ^
+-sql "SELECT *, '%srcNameNonForest%' AS src_filename, 0 AS stdlab FROM ""%ogrTabNonForest%""" ^
 -progress
 
 ::### FILE 3 ###
@@ -95,7 +97,7 @@ if %overwriteFRI% == True (
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWetland%' AS src_filename FROM ""%ogrTabWetland%""" ^
+-sql "SELECT *, '%srcNameWetland%' AS src_filename, 0 AS stdlab FROM ""%ogrTabWetland%""" ^
 -progress
 
 ::## File 4 ###

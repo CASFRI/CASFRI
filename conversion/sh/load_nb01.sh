@@ -20,7 +20,8 @@
 # Workflow is to load the first table normally, then append the others
 # Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
 
-
+# stdlab attribute needed to make cas id. Only present in forest.shp.
+# add as attribute with 0 for other files
 ######################################## Set variables #######################################
 
 # load config variables
@@ -72,7 +73,7 @@ fi
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWater' as src_filename FROM '$ogrTabWater'" \
+-sql "SELECT *, '$srcNameWater' as src_filename, 0 as stdlab FROM '$ogrTabWater'" \
 -progress $overwrite_tab
 
 ### FILE 2 ###
@@ -82,7 +83,7 @@ fi
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameNonForest' as src_filename FROM '$ogrTabNonForest'" \
+-sql "SELECT *, '$srcNameNonForest' as src_filename, 0 as stdlab FROM '$ogrTabNonForest'" \
 -progress
 
 ### FILE 3 ###
@@ -92,7 +93,7 @@ fi
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWetland' as src_filename FROM '$ogrTabWetland'" \
+-sql "SELECT *, '$srcNameWetland' as src_filename, 0 as stdlab FROM '$ogrTabWetland'" \
 -progress
 
 ## File 4 ###
