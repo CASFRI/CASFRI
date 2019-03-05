@@ -1,0 +1,77 @@
+﻿CATEGORY,ATTRIBUTE,INVENTORY CODES,DESCRIPTION
+Header Information (HDR),Jurisdiction,"BC, AB, SK, MB, ON QC, PE, NB, NS, NL, YT, NT, FD, NU","Province, Territory, Federal"
+,Coordinate System,"UTM, BCGS, OBM, NTS, Township",
+,Projection,"UTM, ALBERS",
+,Datum,"NAD 83, 27",North American Datum 27 or 83
+,Ownership of the Inventory,,"Provincial Government, Federal Government, Territory, First Nation, Industry, Private"
+,Ownership of the Land,,"Crown, Private, Military, First Nation"
+,Permissions,,Data Share
+,Tenure Type,"TFL, FL, TF, MF, FMA, FMLA, SFL, PARK, FMU, NBI, Private, Military, First Nation, None","Type of Tenure, if any"
+,Inventory Type,"FCI, VRI, Phase 3, UTM, AVI, SFVI, FLI, FRI, TIE, QIE, ","Type of inventory, e.g. forest cover, vegetation"
+,Inventory Version ID,"None, 2.1, 2.1+, 2.4, 3.0, 4.0, Year",Inventory standard or version number
+,Inventory Year Start,,Year of inventory period that lead to inventory product - start date
+,Inventory Year Finish,,Year of inventory period that lead to inventory product - completion date
+,Year of Update,,Year inventory was updated
+,Year of Acquisition,,Year inventory was acquired for project
+,Data Acquisition ID,,
+Common Attribute Schema (CAS),Original Stand ID ,,Polygon ID from original inventory
+,CAS Stand ID,,"Polygon ID from common inventory composed of Province, Mapsheet ID, Identification ID and Orignal Stand ID"
+,Mapsheet ID,,"Stores the cartographic reference system underlaying the forest inventory composed of Province, Mapsheet ID, Identification ID and Orign Stand ID"
+,Identification ID,,ID that refers to the Identification / Header table
+,Area,,Area of polygon (ha)
+,Perimeter,,Perimeter of polygon (m)
+Forested layer (LYR),Soil Moisture Regime,"Null, Miss, D, F, M, W, A",D = Dry; F = Mesic; M = Moist; W = Wet; A = Aquatic; Null = not in stand; Miss = data missing
+,Stand Structure,"Null, Miss, S, M, C, H",S = Single layer; M = Multi-layered; C = Complex layered; H = Horizontal; Null = not in stand; Miss = data missing
+,Structure % or Range,"Null, Miss, 1 to 9",Horizontal structure percent (e.g. 8 = 80 %) or complex structure height range (m) Null = not in stand; Miss = data missing
+,Number of Layers,"Null, Miss, 1 to 9",Number of layers in a polygon with 1 being the upper most layer Null = not in stand; Miss = data missing
+,Layer,"Null, Miss, 1 to 9, V",Identifies which layer is being described; V = vetern Null = not in stand; Miss = data missing
+,Layer Rank,"Null, Miss, 1 to 9",Assigns a rank in order of importance to each layer Null = not in stand; Miss = data missing
+,Crown Closure Class (%) Upper,"Null, Miss",Crown Closure % upper bound Null = not in stand; Miss = data missing
+,Crown Closure Class (%) Lower,"Null, Miss",Crown Closure % lower boundNull = not in stand; Miss = data missing
+,Height Upper,"Null, Miss",Height (m) upper bound Null = not in stand; Miss = data missing
+,Height Lower,"Null, Miss",Height (m) lower bound Null = not in stand; Miss = data missing
+,Species  1,See Species List,Species composition - 1st Species
+,Species % 1,See Species List,Species composition - 2nd Species
+,Species 2,See Species List,Species composition - 3rd Species
+,Species % 2,See Species List,Species composition - 4th Species
+,Species 3,See Species List,Species composition - 5th Species
+,Species % 3,See Species List,Species composition - 6th Species
+,Species 4,See Species List,Species composition - 7th Species
+,Species % 4,See Species List,Species composition - 8th Species
+,Species 5,See Species List,Species composition - 9th Species
+,Species % 5,See Species List,Species composition - 10th Species
+,Species 6,,Species percent - 1st Species
+,Species % 6,,Species percent - 2nd Species
+,Species 7,,Species percent - 3rd Species
+,Species % 7,,Species percent - 4th Species
+,Species 8,,Species percent - 5th Species
+,Species % 8,,Species percent - 6th Species
+,Species 9,,Species percent - 7th Species
+,Species % 9,,Species percent - 8th Species
+,Species 10,,Species percent - 9th Species
+,Species % 10,,Species percent - 10th Species
+,Origin Upper,,Stand origin upper bound
+,Origin Lower,,Stand origin lower bound
+,Site  Class,"Null, Miss, U, P, M, G",U = unproductive; P = Poor; M = Medium; G = Good; Null = not in stand; M = data missing
+,Site Index,"Null, Miss, 0.1 - 99",Site index for stand; Null = not in stand; M = data missing
+,Unproductive Forest,"Null, Miss, TM, TR, AL, SD, SC, NP",Unproductive treed land; Null = not in stand; M = data missing
+Non-Forest Land (NFL),Naturally Non-vegetated,"Null, Miss, AD, LA, RI, OC, RK, SD, SI, SL, EX, BE, WS, FL, IS",Non-vegetated land; Null = not in stand; M = data missing
+,Non-forest Anthropogenic,"Null, Miss, IN, FA, AG, SE, LA, BP, ON",Land with human influence; Null = not in stand; M = data missing
+,Non-forested Vegetated,"Null, Miss, ST, SL, HF, HE, HG, BR, OM",Vegetated land with no tree cover (< 6%); Null = not in stand; M = data missing
+Disturbance (DST),Disturbance 1,"Null, Miss",Type of disturbance - oldest recorded first Null = not in stand; Miss = data missing
+,Disturbance Year 1,"Null, Miss",Type of disturbance - more recent than dist. 1 Null = not in stand; Miss = data missing
+,Disturbance Extent 1 Upper,"Null, Miss",Type of disturbance - most recent Null = not in stand; Miss = data missing
+,Disturbance Extent 1 Lower,"Null, Miss",Year of disturbance - oldest recorded first Null = not in stand; Miss = data missing
+,Disturbance 2,"Null, Miss",Year of disturbance - more recent than dist. 1 Null = not in stand; Miss = data missing
+,Disturbance Year 2,"Null, Miss",Year of disturbance - most recent Null = not in stand; Miss = data missing
+,Disturbance Extent 2 Upper,"Null, Miss, 1 to 5",Extent of disturbance upper bound Null = not in stand; Miss = data missing
+,Disturbance Extent 2 Lower,"Null, Miss, 1 to 5",Extent of disturbance lower bound Null = not in stand; Miss = data missing
+,Disturbance 3,"Null, Miss, 1 to 5",Extent of disturbance upper bound Null = not in stand; Miss = data missing
+,Disturbance Year 3,"Null, Miss, 1 to 5",Extent of disturbance lower bound Null = not in stand; Miss = data missing
+,Disturbance Extent 3 Upper,"Null, Miss, 1 to 5",Extent of disturbance upper bound Null = not in stand; Miss = data missing
+,Disturbance Extent 3 Lower,"Null, Miss, 1 to 5",Extent of disturbance lower bound Null = not in stand; Miss = data missing
+Ecological (ECO),Wetland Type,"B, F, S, M,O, T, E, W",B = Bog; F = Fen; S = Swamp; M = Marsh; O = Shallow open waters; T = Tidal flats; E = Estuary; W = Wetland no distinction; Null = not in stand; Miss = data missing
+,Wetland Vegetation Cover,"F, T, O, M",F = Forested; T = Treed; O = Open; M = Mud Null = not in stand; Miss = data missing
+,Wetland Land Form Modifier,"X, P, N",X = Permafrost present; P = Patterning present; N = No permafrost or patterning Null = not in stand; Miss = data missing
+,Wetland Local Modifier,"C, R, I, N, S, G",Null = not in stand; Miss = data missing
+,Ecosite,"Null, Miss, 1 - 300",Regional ecosite as identifier by original inventory

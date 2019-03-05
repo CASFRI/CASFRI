@@ -18,7 +18,7 @@ This naming convention allows manual or automated tracing of any final forest st
 
 The five elements used to construct the CAS_ID may vary by inventory and these variations are described in the following sections.
 
-## AB_0006
+## AB06
 
 The AB_0006 inventory has the following variations:
 
@@ -27,7 +27,7 @@ The AB_0006 inventory has the following variations:
   * Name of mapsheet: trm_1
   * Object identifier: poly_num
 
-## AB_0016
+## AB16
 
 The AB_0016 inventory has the following variations:
 
@@ -36,7 +36,7 @@ The AB_0016 inventory has the following variations:
   * Name of mapsheet: "x" + "T0" + township + "R0" + range + "M" + meridian
   * Object identifier: forest_id
 
-## BC_0008
+## BC08
 
 The BC_0008 inventory has the following variations:
 
@@ -45,7 +45,7 @@ The BC_0008 inventory has the following variations:
   * Name of mapsheet: map_id
   * Object identifier: objectid
 
-## NB_0001
+## NB01
 
 The NB_0001 inventory has the following variations:
 

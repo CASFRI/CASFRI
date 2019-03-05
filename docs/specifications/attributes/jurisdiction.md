@@ -2,6 +2,8 @@
 
 Jurisdiction identifies the province or territory from which the inventory data came.
 
+## Acceptable values:
+
 | JURISDICTION                | Attribute Value |
 | :-------------------------- | :-------------- |
 | British Columbia            | BC              |

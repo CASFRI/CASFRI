@@ -1,5 +1,7 @@
 # HEIGHT_UPPER, HEIGHT_LOWER
 
+*Acceptable values:*
+
 | HEIGHT_UPPER and HEIGHT_LOWER                | Attribute Value |
 | :------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a height class. | 0 - 100         |
