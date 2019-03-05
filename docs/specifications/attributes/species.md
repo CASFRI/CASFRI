@@ -1,13 +1,13 @@
-# SPECIES_X
+## SPECIES_X
 
-## Acceptable values:
+### Acceptable values:
 
 | SPECIES_1 - SPECIES_10                                                                                                | Attribute Value |
 | :-------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species (SPECIES_#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon. | POPU TREM       |
 
 
-## Error and missing value codes:
+### Error and missing value codes:
 
 |Error_type       | Data_type    | CAS04_code  | Description                       | CAS05_code  |
 | :-------------- | :----------- | :---------- | :-------------------------------- | :---------- |
@@ -16,3 +16,4 @@
 | SPECIES_ERRCODE | string       | "XXXX ERRC" | species error code                | "XXXX ERRC" |
 | MISSCODE        | string       | -1111       | empty string ("")                 | "Missing"   |
 
+### Notes:
