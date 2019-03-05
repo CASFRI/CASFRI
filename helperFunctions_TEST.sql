@@ -16,7 +16,7 @@ RETURNS text AS $$
     var4 text;
     var5 text;
   BEGIN
-    var1 = 'ab06';
+    var1 = headerId;
     var2 = TT_Pad(source_filename,15,'x');
     var3 = TT_Pad(mapsheet,10, 'x');
     var4 = TT_Pad(objectID,10,'0');
@@ -27,4 +27,4 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 
 -- test on ab06
---SELECT CasIdTest(src_filename::text, src_filename::text, trm_1::text, poly_num::text, poly_num::text) AS CAS_ID FROM rawfri.ab06;
+SELECT CasIdTest('ab_06', src_filename::text, trm_1::text, poly_num::text, poly_num::text) AS CAS_ID FROM rawfri.ab06;
