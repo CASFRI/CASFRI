@@ -1,7 +1,0 @@
-targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,str,"notNull(var1, ""NULL"", var2, ""NULL"", var3, ""NULL"", var4, ""NULL"")",concat(),,
-WETLAND_TYPE,,,,,
-WET_VEG_COVER,,,,,
-WET_LANDFORM_MOD,,,,,
-WET_LOCAL_MOD,,,,,
-ECO_SITE,,,,,
