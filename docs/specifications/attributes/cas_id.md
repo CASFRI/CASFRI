@@ -44,7 +44,8 @@ The AB16 inventory has the following variations:
 
 The BC08 inventory has the following variations:
 
-  * Header identifier: "BC08" + inventory_standard_cd [converter from=c("F","V","I","L"), to=c("4","5","6","7"); Note that "L" appears to be new to the latest version of the inventory (double check).]
+  * Header identifier: "BC08"
+    - Note: previously, the header identifier included the inventory_standard_cd [converted from=c("F","V","I"), to=c("4","5","6"); this was dropped on the assumption, to be confirmed, that all data have been converted to "V" type.
   * Source file name: "VEG_COMP_LYR_R1"
   * Name of mapsheet: map_id
   * Object identifier: objectid

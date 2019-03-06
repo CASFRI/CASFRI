@@ -1,5 +1,5 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,str,"notNull(var1, ""NULL"", var2, ""NULL"", var3, ""NULL"", var4, ""NULL"")",concat(),,
+CAS_ID,str,"notNull(var1,var2,var3,var4,var5|'NULL')","casId('BC08, 'VEG_COMP_LYR_R1', 'src_filename', 'map_id', 'objectid')",,
 DIST_1,,,,,
 DIST_YR_1,,,,,
 DIST_EXT_UPPER_1,,,,,

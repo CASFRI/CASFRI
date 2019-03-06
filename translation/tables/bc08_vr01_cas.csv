@@ -1,5 +1,5 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,str,"notNull(var1|""NULL""|var2|""NULL""|var3|""NULL""|var4|""NULL"")",concat(),Concatenates four attributes to create CAS_ID,TRUE
-IDENTIFICATION_ID,str,"notNull(inventory_standard_cd|-1111);between(inventory_standard_cd|4|7|-9999)","map(inventory_standard_cd, ""F,V,I,L"", ""4,5,6,7"")",Maps source value to IDENTIFICATION_ID using lists of values,TRUE
+CAS_ID,str,"notNull(var1,var2,var3,var4,var5|'NULL')","casId('BC08, 'VEG_COMP_LYR_R1', 'src_filename', 'map_id', 'objectid')",Concatenates five attributes to create CAS_ID,TRUE
+IDENTIFICATION_ID,str,"notNull(inventory_standard_cd|-1111);between(inventory_standard_cd|4|7|-9999)","map(inventory_standard_cd, 'F,V,I,L', '4,5,6,7')",Maps source value to IDENTIFICATION_ID using lists of values,TRUE
 MAP_SHEET_ID,str,"notNull(map_id|-8888);length(map_id|1|-9999)",copy(map_id),Copies source value to MAP_SHEET_ID,TRUE
 PHOTO_YEAR,int,"notNull(reference_year|-8888);between(reference_year|1960|2020|-9999)",copy(reference_year),Copies source value to PHOTO_YEAR,TRUE
