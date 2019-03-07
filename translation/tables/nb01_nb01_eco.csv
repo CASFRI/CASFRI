@@ -1,7 +1,0 @@
-targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,str,"notNull(var1,var2,var3,var4,var5|'NULL')","casId('NB01, 'FOREST_NONFOR', 'src_filename', '', 'stdlab')",,
-WETLAND_TYPE,,,,,
-WET_VEG_COVER,,,,,
-WET_LANDFORM_MOD,,,,,
-WET_LOCAL_MOD,,,,,
-ECO_SITE,,,,,

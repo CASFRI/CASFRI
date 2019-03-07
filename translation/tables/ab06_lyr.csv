@@ -1,5 +1,5 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,str,"notNull(var1,var2,var3,var4,var5|'NULL')","casId('AB06, 'GB_S21_TWP', 'src_filename', 'trm_1', 'poly_num')",Concatenates five attributes to create CAS_ID,TRUE
+CAS_ID,str,"notNull(var1,var2,var3,var4,var5|'NULL')","casId1('ab06', src_filename, trm_1, poly_num, ogc_fid)",Concatenates five attributes to create CAS_ID,TRUE
 CROWN_CLOSURE_UPPER,int,"notNull(density|'NULL');match(density|'A,B,C,D,')","map(density, 'A,B,C,D,', '6,31,51,71')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 CROWN_CLOSURE_LOWER,int,"notNull(density|'NULL');match(density|'A,B,C,D,')","map(density, 'A,B,C,D,', '30,50,70,100')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 HEIGHT_UPPER,int,"notNull(height|-8888);greaterThan(height|1|-9999a);lesserThan(height|100|-9999b)",copy(height),Copies source value to HEIGHT_UPPER,TRUE

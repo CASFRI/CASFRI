@@ -1,5 +1,5 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,str,"notNull(var1,var2,var3,var4,var5|'NULL')","casId('BC08, 'VEG_COMP_LYR_R1', 'src_filename', 'map_id', 'objectid')",Concatenates five attributes to create CAS_ID,TRUE
+CAS_ID,str,"notNull(var1,var2,var3,var4,var5|'NULL')","casId1('bc08', src_filename, map_id, objectid, ogc_fid)",Concatenates five attributes to create CAS_ID,TRUE
 CROWN_CLOSURE_UPPER,int,"notNull(crown_closure|-8888);between(crown_closure|0|100|-9999)",copy(crown_closure),Copies source value to CROWN_CLOSURE_UPPER,TRUE
 CROWN_CLOSURE_LOWER,int,"notNull(crown_closure|-8888);between(crown_closure|0|100|-9999)",copy(crown_closure),Copies source value to CROWN_CLOSURE_LOWER,TRUE
 HEIGHT_UPPER,float,"notNull(proj_height_1|-8888);greaterThan(proj_height_1|0.1|-9999a);lesserThan(proj_height_1|100|-9999b)",copy(proj_height_1),Copies source value to HEIGHT_UPPER,TRUE
