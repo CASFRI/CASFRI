@@ -37,7 +37,7 @@ The AB16 inventory has the following variations:
 
   * Header identifier: "AB16"
   * Source file name: "xxxxxxxxxCANFOR"
-  * Name of mapsheet: "x" + "T0" + township + "R0" + range + "M" + meridian
+  * Name of mapsheet: "x" + "T0" + township + "R0" + range + "M" + meridian [actually, there is a field: map_id?]
   * Object identifier: forest_id
 
 **BC08**
