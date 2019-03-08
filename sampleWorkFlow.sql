@@ -54,6 +54,7 @@ SELECT * FROM rawfri.ab06 LIMIT 10;
 -- DROP TABLE IF EXISTS rawfri.ab06_test;
 CREATE TABLE rawfri.ab06_test AS
 SELECT * FROM rawfri.ab06
+--WHERE poly_num_1 = 811451038
 LIMIT 10;
 
 -- Display
@@ -81,17 +82,23 @@ ogc_fid = 5;
 SELECT * FROM translation.ab06_lyr_test;
 
 -------------------------------------------------------
--- Translate the small test inventory !
+-- Translate!
 -------------------------------------------------------
 
--- Create translation function.
+-- Create translation function
 -- 1. schema of translation table. 2. translation table name. 3. suffix
 SELECT TT_Prepare('translation', 'ab06_lyr_test');
 
--- Translate!
+-- Translate the sample!
 SELECT * FROM TT_Translate('rawfri', 'ab06_test', 'translation', 'ab06_lyr_test');
 
--- Translate the big thing
+-- Translate the big thing!
+CREATE SCHEMA casfri50;
+
+--DROP TABLE IF EXISTS casfri50.ab06;
+CREATE TABLE casfri50.ab06 AS
 SELECT * FROM TT_Translate('rawfri', 'ab06', 'translation', 'ab06_lyr_test');
+
+SELECT * FROM casfri50.ab06;
 
 
