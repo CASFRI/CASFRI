@@ -35,27 +35,21 @@ if %overwriteTTables% == True (
 "%gdalFolder%/ogrinfo" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetTranslationFileSchema%";
 
 :: load all files in the folder
-(for %%f IN (%load_folders%) DO (
-	if exist %%f (
-		for %%g IN (%%f\*.csv) DO (
-			echo loading %%~ng
-			"%gdalFolder%/ogr2ogr" ^
-			-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%g" ^
-			-nln %targetTranslationFileSchema%.%%~ng ^
-			%overwrite_tab% -progress
-	)) else (
-		echo FOLDER DOESN'T EXIST: %%g
-	)
-))
-
-
-::if exist %load_folder% (
-::  for %%F IN (%load_folder%\*.csv) DO (
-::	echo loading %%~nF
-::	"%gdalFolder%/ogr2ogr" ^
-::	-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%F" ^
-::	-nln %targetTranslationFileSchema%.%%~nF ^
-::	%overwrite_tab% -progress
-::)) else ( 
- :: echo FOLDER DOESN'T EXIST: %load_folder%
-::)
+if exist %load_folder% (
+  for %%F IN (%load_folder%\*.csv) DO (
+	echo loading %%~nF
+	"%gdalFolder%/ogr2ogr" ^
+	-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%F" ^
+	-nln %targetTranslationFileSchema%.%%~nF ^
+	%overwrite_tab% -progress
+  )
+  for %%F IN (%load_folder%\lookup\*.csv) DO (
+  	echo loading %%~nF
+  	"%gdalFolder%/ogr2ogr" ^
+  	-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%F" ^
+  	-nln %targetTranslationFileSchema%.%%~nF ^
+  	%overwrite_tab% -progress
+  )
+) else ( 
+  echo FOLDER DOESN'T EXIST: %load_folder%
+)
