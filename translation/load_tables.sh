@@ -9,48 +9,59 @@
 # If overwrite=True any existing tables will be replaced
 # If overwrite=False existing tables will not be replaced, loop will fail for any tables already loaded
 
-#################################### Set variables ######################################
-# Load config variables from local config file
-if [ -f ../config.sh ]; then 
-  source ../config.sh
-else
-  echo ERROR: NO config.sh FILE
-  exit 1
-fi
+#####################################################################################################################################################################
+#####################################################################################################################################################################
+#####################################################################################################################################################################
+# Variables
+# target schema name
+schema=translation_tables
 
-# Folder containing translation file to be loaded:
-load_folders='tables/ tables/lookup'
+# postgres variables
+pghost=localhost
+pgdbname=cas
+pguser=postgres
+pgpassword=postgres
+
+# gdal folder path (relative path needed if running on Windows)
+gdal_path="../../../../../../../program files/gdal"
+
+# overwrite existing tables? True/False
+overwrite=True
+
+# a folder containing csv's to be loaded:
+load_folder="tables/"
+
 
 #####################################################################################################################################################################
-
+#####################################################################################################################################################################
+#####################################################################################################################################################################
 # do not edit...
 
+# make schema if it doesn't exist
+"$gdal_path/ogrinfo.exe" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $schema";
+
 # set overwrite argument
-if [ $overwriteTTables == True ]; then
-  overwrite_tab="-overwrite"
+if [ $overwrite == True ]; then
+  overwrite_tab="-overwrite -progress"
 else 
-  overwrite_tab=
+  overwrite_tab="-progress"
 fi
 
-# make schema if it doesn't exist
-"$gdalFolder/ogrinfo.exe" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetTranslationFileSchema";
-
 # load all files in the folder
-for t in $load_folders
-do
-	echo $t
-	if [ -d "$t" ]; then 
-		for i in $t/*.csv
-		do
-			x=${i##*/} # gets file name with .csv
-			tab_name=${x%%.csv} # removes .csv
+if [ -d "$load_folder" ]; then 
+	for i in $load_folder/*.csv
+	do
+		x=${i##*/} # gets file name with .csv
+		tab_name=${x%%.csv} # removes .csv
+		schema_tab=$schema.$tab_name # combines table name and schema name
 		
-			# load using ogr
-			echo "loading..."$tab_name
-			"$gdalFolder/ogr2ogr.exe" \
-			-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $i \
-			-nln $targetTranslationFileSchema.$tab_name \
-			-progress $overwrite_tab
-			done
-	fi
-done
+		# load using ogr
+		echo "loading..."$schema_tab
+		"$gdal_path/ogr2ogr.exe" \
+		-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $i \
+		-nln $schema_tab \
+		$overwrite_tab
+	done
+else 
+  echo "FOLDER DOESN'T EXIST: " $load_folder
+fi
