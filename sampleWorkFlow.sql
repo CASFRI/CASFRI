@@ -40,6 +40,7 @@
    
 
 -- No not display debug messages.
+SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 
 -------------------------------------------------------
@@ -59,7 +60,7 @@ LIMIT 10;
 
 -- Display
 SELECT src_filename, trm_1, poly_num, ogc_fid, density, height, sp1
-FROM rawfri.ab06_test 
+FROM rawfri.ab06_test;
 
 -------------------------------------------------------
 -- Work on translation file
@@ -91,6 +92,13 @@ SELECT TT_Prepare('translation', 'ab06_lyr_test');
 
 -- Translate the sample!
 SELECT * FROM TT_Translate('rawfri', 'ab06_test', 'translation', 'ab06_lyr_test');
+
+-- Display original values and translated values side-by-side to compare and debug the translation table
+SELECT ogc_fid, src_filename, trm_1, poly_num, cas_id, 
+       density, crown_closure_lower, crown_closure_upper, 
+       height, height_upper, height_lower
+FROM TT_Translate('rawfri', 'ab06_test', 'translation', 'ab06_lyr_test'), rawfri.ab06_test
+WHERE poly_num = substr(cas_id, 33, 10)::int;
 
 -- Translate the big thing!
 CREATE SCHEMA casfri50;
