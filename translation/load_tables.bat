@@ -41,6 +41,14 @@ if exist %load_folder% (
 	-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%F" ^
 	-nln %targetTranslationFileSchema%.%%~nF ^
 	%overwrite_tab% -progress
-)) else ( 
+  )
+  for %%F IN (%load_folder%\lookup\*.csv) DO (
+  	echo loading %%~nF
+  	"%gdalFolder%/ogr2ogr" ^
+  	-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%F" ^
+  	-nln %targetTranslationFileSchema%.%%~nF ^
+  	%overwrite_tab% -progress
+  )
+) else ( 
   echo FOLDER DOESN'T EXIST: %load_folder%
 )
