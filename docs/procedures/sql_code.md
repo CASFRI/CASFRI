@@ -1,4 +1,4 @@
-## Useful sql code for PostgreSQL quesries
+## Useful sql code for PostgreSQL queries
 
 #### Find Spatial Reference System Identifier (SRID)
 > SELECT DISTINCT ST_SRID(wkb_geometry) from bc.bc_0008;
