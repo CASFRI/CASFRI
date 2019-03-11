@@ -46,23 +46,3 @@ if %overwriteTTables% == True (
 		echo FOLDER DOESN'T EXIST: %%g
 	)
 ))
-
-:: load all files in the folder
-::if exist %load_folder% (
-::  for %%F IN (%load_folder%\*.csv) DO (
-::	echo loading %%~nF
-::	"%gdalFolder%/ogr2ogr" ^
-::	-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%F" ^
-::	-nln %targetTranslationFileSchema%.%%~nF ^
-::	%overwrite_tab% -progress
-:: )
-::  for %%F IN (%load_folder%\lookup\*.csv) DO (
-:: 	echo loading %%~nF
-::  	"%gdalFolder%/ogr2ogr" ^
-::  	-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%F" ^
-::  	-nln %targetTranslationFileSchema%.%%~nF ^
-::  	%overwrite_tab% -progress
-::  )
-::) else ( 
-::  echo FOLDER DOESN'T EXIST: %load_folder%
-::)
