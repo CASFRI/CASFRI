@@ -38,7 +38,6 @@
 -- 5) You are now ready to start translating the inventories following
 --    the rest of this file instructions...
    
-
 -- No not display debug messages.
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
@@ -46,32 +45,78 @@ SET tt.debug TO FALSE;
 -------------------------------------------------------
 -- Work on source inventory
 -------------------------------------------------------
-
+-- AB06
+-------------------------------------------------------
 -- Have a look at one of the source inventory table
 SELECT * FROM rawfri.ab06 LIMIT 10;
 
--- Create a smaller test inventory table to test before launching the 
--- complete translation process
+-- Count the number of rows
+SELECT count(*)
+FROM rawfri.ab06;
+
+-- Create a smaller test inventory table
 -- DROP TABLE IF EXISTS rawfri.ab06_test;
 CREATE TABLE rawfri.ab06_test AS
 SELECT * FROM rawfri.ab06
 --WHERE poly_num_1 = 811451038
-LIMIT 10;
+LIMIT 200;
 
 -- Display
 SELECT src_filename, trm_1, poly_num, ogc_fid, density, height, sp1
 FROM rawfri.ab06_test;
 
 -------------------------------------------------------
+-- AB16
+-------------------------------------------------------
+-- Have a look at one of the source inventory table
+SELECT * FROM rawfri.ab16 LIMIT 10;
+
+-- Count the number of rows
+SELECT count(*)
+FROM rawfri.ab16;
+
+-- Create a smaller test inventory table
+-- DROP TABLE IF EXISTS rawfri.ab16_test;
+CREATE TABLE rawfri.ab16_test AS
+SELECT * FROM rawfri.ab16
+--WHERE poly_num_1 = 811451038
+LIMIT 200;
+
+-- Display
+SELECT src_filename, forest_id, ogc_fid, crownclose, height, sp1
+FROM rawfri.ab16_test;
+
+-------------------------------------------------------
+-- BC08
+-------------------------------------------------------
+-- Have a look at one of the source inventory table
+SELECT * FROM rawfri.bc08 LIMIT 10;
+
+-- Count the number of rows
+SELECT count(*)
+FROM rawfri.bc08;
+
+-- Create a smaller test inventory table
+-- DROP TABLE IF EXISTS rawfri.bc08_test;
+CREATE TABLE rawfri.bc08_test AS
+SELECT * FROM rawfri.bc08
+--WHERE poly_num_1 = 811451038
+LIMIT 2000;
+
+-- Display
+SELECT src_filename, map_id, ogc_fid, crown_closure, proj_height_1, species_cd_1
+FROM rawfri.bc08_test;
+-------------------------------------------------------
 -- Work on translation file
+-------------------------------------------------------
+-- AB06
 -------------------------------------------------------
 -- Display the translation table of interest
 SELECT * FROM translation.ab06_avi01_lyr; 
 
--- Create a subset translation table in case some rows are still not 
--- working well
--- DROP TABLE IF EXISTS translation.ab06_lyr_test;
-CREATE TABLE translation.ab06_lyr_test AS
+-- Create a subset translation table if necessary
+-- DROP TABLE IF EXISTS translation.ab06_avi01_lyr_test;
+CREATE TABLE translation.ab06_avi01_lyr_test AS
 SELECT * FROM translation.ab06_avi01_lyr
 WHERE ogc_fid = 1 OR 
 ogc_fid = 2 OR 
@@ -80,33 +125,128 @@ ogc_fid = 4 OR
 ogc_fid = 5;
 
 -- Display
-SELECT * FROM translation.ab06_lyr_test;
+SELECT * FROM translation.ab06_avi01_lyr_test;
 
 -------------------------------------------------------
--- Translate!
+-- AB16
 -------------------------------------------------------
+-- Display the translation table of interest
+SELECT * FROM translation.ab16_avi01_lyr; 
 
+-- Create a subset translation table if necessary
+-- DROP TABLE IF EXISTS translation.ab16_avi01_lyr_test;
+CREATE TABLE translation.ab16_avi01_lyr_test AS
+SELECT * FROM translation.ab16_avi01_lyr
+WHERE ogc_fid = 1 OR 
+ogc_fid = 2 OR 
+ogc_fid = 3 OR 
+ogc_fid = 4 OR 
+ogc_fid = 5;
+
+-- Display
+SELECT * FROM translation.ab16_avi01_lyr_test;
+
+-------------------------------------------------------
+-- BC08
+-------------------------------------------------------
+-- Display the translation table of interest
+SELECT * FROM translation.bc08_vri01_lyr; 
+
+-- Create a subset translation table if necessary
+-- DROP TABLE IF EXISTS translation.bc08_vri01_lyr_test;
+CREATE TABLE translation.bc08_vri01_lyr_test AS
+SELECT * FROM translation.bc08_vri01_lyr
+WHERE ogc_fid = 1 OR 
+ogc_fid = 2 OR 
+ogc_fid = 3 OR 
+ogc_fid = 4 OR 
+ogc_fid = 5;
+
+-- Display
+SELECT * FROM translation.bc08_vri01_lyr_test;
+
+-------------------------------------------------------
+-- Translate the sample table!
+-------------------------------------------------------
+-- AB06
+-------------------------------------------------------
 -- Create translation function
--- 1. schema of translation table. 2. translation table name. 3. suffix
-SELECT TT_Prepare('translation', 'ab06_lyr_test');
+SELECT TT_Prepare('translation', 'ab06_avi01_lyr_test', '_ab06');
 
 -- Translate the sample!
-SELECT * FROM TT_Translate('rawfri', 'ab06_test', 'translation', 'ab06_lyr_test');
+SELECT * FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi01_lyr_test');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT ogc_fid, src_filename, trm_1, poly_num, cas_id, 
+SELECT src_filename, trm_1, poly_num, ogc_fid, cas_id, 
        density, crown_closure_lower, crown_closure_upper, 
        height, height_upper, height_lower
-FROM TT_Translate('rawfri', 'ab06_test', 'translation', 'ab06_lyr_test'), rawfri.ab06_test
+FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi01_lyr_test'), rawfri.ab06_test
 WHERE poly_num = substr(cas_id, 33, 10)::int;
 
--- Translate the big thing!
-CREATE SCHEMA casfri50;
+-------------------------------------------------------
+-- AB16
+-------------------------------------------------------
+-- Create translation function
+SELECT TT_Prepare('translation', 'ab16_avi01_lyr_test', '_ab16');
 
+-- Translate the sample!
+SELECT * FROM TT_Translate_ab16('rawfri', 'ab16_test', 'translation', 'ab16_avi01_lyr_test');
+
+-- Display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, forest_id, ogc_fid, cas_id, 
+       crownclose, crown_closure_lower, crown_closure_upper, 
+       height, height_upper, height_lower
+FROM TT_Translate_ab16('rawfri', 'ab16_test', 'translation', 'ab16_avi01_lyr_test'), rawfri.ab16_test
+WHERE ogc_fid = right(cas_id, 7)::int;
+
+-------------------------------------------------------
+-- BC08
+-------------------------------------------------------
+-- Create translation function
+SELECT TT_Prepare('translation', 'bc08_vri01_lyr_test', '_bc08');
+
+-- Translate the sample!
+SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri01_lyr_test');
+
+-- Display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, map_id, ogc_fid, cas_id, 
+       crown_closure, crown_closure_lower, crown_closure_upper, 
+       proj_height_1, height_upper, height_lower
+FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri01_lyr_test'), rawfri.bc08_test
+WHERE ogc_fid = right(cas_id, 7)::int;
+
+-------------------------------------------------------
+-- Translate the big thing!
+-------------------------------------------------------
+CREATE SCHEMA casfri50;
+-------------------------------------------------------
+-- AB06 - 55 seconds
+-------------------------------------------------------
 --DROP TABLE IF EXISTS casfri50.ab06;
 CREATE TABLE casfri50.ab06 AS
-SELECT * FROM TT_Translate('rawfri', 'ab06', 'translation', 'ab06_lyr_test');
+SELECT * FROM TT_Translate_ab06('rawfri', 'ab06', 'translation', 'ab06_avi01_lyr_test');
 
 SELECT * FROM casfri50.ab06;
+
+-------------------------------------------------------
+-- AB16 - 14 minutes
+-------------------------------------------------------
+--DROP TABLE IF EXISTS casfri50.ab16;
+CREATE TABLE casfri50.ab16 AS
+SELECT * FROM TT_Translate_ab16('rawfri', 'ab16', 'translation', 'ab16_avi01_lyr_test');
+
+SELECT * FROM casfri50.ab16;
+
+-------------------------------------------------------
+-- BC08 - XX minutes
+-------------------------------------------------------
+--DROP TABLE IF EXISTS casfri50.ab16;
+CREATE TABLE casfri50.bc08 AS
+SELECT * FROM TT_Translate_bc08('rawfri', 'bc08', 'translation', 'bc08_vri01_lyr_test');
+
+SELECT * FROM casfri50.bc08;
+
+
+
 
 
