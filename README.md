@@ -12,9 +12,9 @@ CASFRI version 5 makes a number of updates to previous versions:
 * Assignment of attribute specific meaningful error codes.
 
 The three steps for building CASFRI v5 are:
-* Conversion/loading
-* Transformation
-* Topological correction and temporalization
+1. Conversion/loading
+2. Transformation
+3. Topological correction and temporalization
 
 # Directory structure
 <pre>
@@ -57,7 +57,7 @@ CASFRI v5 uses a four-code standard for identifying FRIs. Each FRI is coded usin
 Inventory standards are the attribute specifications applied to a given inventory. Multiple FRIs from a province/territory can use the same standard, however jurisdictions will occasionally update their standards, and each jurisdiction has their own unique inventory standards. The CASFRI specifications need to apply different sets of translation rules for different standards. Each standard is applied a code made of three letters representing the standard, and two numbers representing the version of the standard. e.g. VRI01.
 
 # Conversion and loading
-Conversion and loading happen at the same time and is implemented using GDAL/OGR. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. FRIs with shapefiles detailing the photo year have a second loading script for the photo year file. Every loading script adds a new attribute to the target table with the name of the source file. This is used when constructing the CAS_ID, a unique row identifier code.
+Conversion and loading happen at the same time and are implemented using GDAL/OGR. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. FRIs with shapefiles detailing the photo year have a second loading script for the photo year file. Every loading script adds a new attribute to the target table with the name of the source file. This is used when constructing the CAS_ID, a unique row identifier code.
 
 ### Supported file types
 All conversion/loading scripts are provided as both .sh files and .bat files.

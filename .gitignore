@@ -3,3 +3,5 @@ Rgui.lnk
 config.bat
 config.sh
 .Rhistory
+*.Rmd
+*.html
