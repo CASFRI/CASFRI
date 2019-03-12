@@ -1,9 +1,9 @@
-CROWN\_CLOSURE\_UPPER, CROWN\_CLOSURE\_LOWER
-================
+
+## “CROWN\_CLOSURE\_UPPER, CROWN\_CLOSURE\_LOWER”
 
 Revised: March 12, 2019
 
-## Acceptable values:
+### Acceptable values:
 
 | CROWN\_CLOSURE\_UPPER and CROWN\_CLOSURE\_LOWER    | Attribute Value |
 | :------------------------------------------------- | :-------------- |
@@ -11,7 +11,7 @@ Revised: March 12, 2019
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
 | Blank - no value                                   | NA              |
 
-## Error and missing value codes:
+### Error and missing value codes:
 
 | Error\_type        | Description                            | CROWN\_CLOSURE\_LOWER | CROWN\_CLOSURE\_UPPER |
 | :----------------- | :------------------------------------- | --------------------: | --------------------: |
@@ -25,6 +25,6 @@ Revised: March 12, 2019
 | Invalid value      | Invalid value                          |                \-9997 |                \-9997 |
 | Precision too high | Precision is greater than allowed      |                \-9996 |                \-9996 |
 
-## Notes:
+### Notes:
 
   - AB16 uses crownclosure rather than density that AB06 uses

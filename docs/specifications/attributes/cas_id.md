@@ -1,9 +1,9 @@
-CAS\_ID
-================
+
+## CAS\_ID
 
 Revised: March 12, 2019
 
-## Acceptable values:
+### Acceptable values:
 
 A unique identifier (CAS\_ID) is generated for each polygon to act as
 the primary key in the database. The CAS\_ID is a fixed length field (53
@@ -20,8 +20,10 @@ characters (“-”):
 5.  Serial number to ensure the uniqueness of the identifier (7 numeric
     characters)
 
-Examples: - ON\_0001-xxxxxxxxxMU030L-xxxxxMU030-0030000003-0000001 -
-BC\_0004-VEG\_COMP\_LYR\_R1-xxx082C095-0000000001-0000001
+Examples:
+
+  - ON\_0001-xxxxxxxxxMU030L-xxxxxMU030-0030000003-0000001
+  - BC\_0004-VEG\_COMP\_LYR\_R1-xxx082C095-0000000001-0000001
 
 This naming convention allows manual or automated tracing of any final
 forest stand stored in the database back to its specific record in the
@@ -38,7 +40,7 @@ The five elements used to construct the CAS\_ID may vary by inventory
 and these variations are described in the following
 sections.
 
-## Error and missing value codes:
+### Error and missing value codes:
 
 | Error\_type        | Description                            | CAS\_ID         |
 | :----------------- | :------------------------------------- | :-------------- |
@@ -52,7 +54,7 @@ sections.
 | Invalid value      | Invalid value                          | INVALID         |
 | Precision too high | Precision is greater than allowed      | NA              |
 
-## Notes:
+### Notes:
 
   - Should we change the header identifier to contain 5 vs 7 characters?
 

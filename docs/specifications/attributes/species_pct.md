@@ -1,13 +1,13 @@
-SPECIES\_PER\_1-10
-================
 
-## Acceptable values:
+## “SPECIES\_PER\_1-10”
+
+### Acceptable values:
 
 | SPECIES\_PER\_1 - SPECIES\_PER\_10                                                                                                                                      | Attribute Value |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species Percent (SPECIES\_PER\_\#) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%. | NA              |
 
-## Error and missing value codes:
+### Error and missing value codes:
 
 | Error\_type        | Description                            | SPECIES\_PER\_1-10 |
 | :----------------- | :------------------------------------- | -----------------: |
@@ -21,6 +21,6 @@ SPECIES\_PER\_1-10
 | Invalid value      | Invalid value                          |             \-9997 |
 | Precision too high | Precision is greater than allowed      |             \-9996 |
 
-## Notes:
+### Notes:
 
   - AB16 uses sp\*\_percnt rather than sp\*\_per that AB6 uses

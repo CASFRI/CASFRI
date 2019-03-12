@@ -1,14 +1,14 @@
-HEIGHT\_UPPER, HEIGHT\_LOWER
-================
 
-## Acceptable values:
+## “HEIGHT\_UPPER, HEIGHT\_LOWER”
+
+### Acceptable values:
 
 | HEIGHT\_UPPER and HEIGHT\_LOWER              | Attribute Value |
 | :------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a height class. | 0 - 100         |
 | Lower Bound - lower bound of a height class. | 0 - 100         |
 
-## Error and missing value code:
+### Error and missing value code:
 
 | Error\_type        | Description                            | HEIGHT\_LOWER | HEIGHT\_UPPER |
 | :----------------- | :------------------------------------- | ------------: | ------------: |
@@ -22,4 +22,4 @@ HEIGHT\_UPPER, HEIGHT\_LOWER
 | Invalid value      | Invalid value                          |        \-9997 |        \-9997 |
 | Precision too high | Precision is greater than allowed      |        \-9996 |        \-9996 |
 
-## Notes:
+### Notes:

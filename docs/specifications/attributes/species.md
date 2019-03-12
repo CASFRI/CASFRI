@@ -1,13 +1,13 @@
-SPECIES\_1-10
-================
 
-## Acceptable values:
+## “SPECIES\_1-10”
+
+### Acceptable values:
 
 | SPECIES\_1 - SPECIES\_10                                                                                                | Attribute Value |
 | :---------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species (SPECIES\_\#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon. | POPU TREM       |
 
-## Error and missing value codes:
+### Error and missing value codes:
 
 | Error\_type        | Description                            | SPECIES\_1-10   |
 | :----------------- | :------------------------------------- | :-------------- |
@@ -21,4 +21,4 @@ SPECIES\_1-10
 | Invalid value      | Invalid value                          | INVALID         |
 | Precision too high | Precision is greater than allowed      | NA              |
 
-## Notes:
+### Notes:
