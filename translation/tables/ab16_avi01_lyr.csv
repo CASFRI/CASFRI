@@ -1,9 +1,9 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,text,"notNull(src_filename,src_filename,forest_id,ogc_fid|INVALID)","casId('ab16', src_filename, src_filename, forest_id, ogc_fid)",Concatenates five attributes to create CAS_ID,TRUE
-CROWN_CLOSURE_UPPER,integer,"notNull(crownclose|NULL);match(crownclose,A,B,C,D|-9998)","map(crownclose, 'A,B,C,D', '6,31,51,71')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
-CROWN_CLOSURE_LOWER,integer,"notNull(crownclose|NULL);match(crownclose,A,B,C,D|-9998)","map(crownclose, 'A,B,C,D', '30,50,70,100')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
-HEIGHT_UPPER,integer,"notNull(height|-8888);greaterThan(height,1,-9999);lessThan(height,100,-9999)",copy(height),Copies source value to HEIGHT_UPPER,TRUE
-HEIGHT_LOWER,integer,"notNull(height|-8888);greaterThan(height,1,-9999);lessThan(height,100,-9999)",copy(height),Copies source value to HEIGHT_LOWER,TRUE
+CAS_ID,text,"notNull(src_filename,forest_id_2,ogc_fid|INVALID)","casId('ab16', src_filename, src_filename, forest_id_2, ogc_fid)",Concatenates five attributes to create CAS_ID,TRUE
+CROWN_CLOSURE_UPPER,integer,"notNull(crownclose|NULL);match(crownclose,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '30,50,70,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
+CROWN_CLOSURE_LOWER,integer,"notNull(crownclose|NULL);match(crownclose,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '6,31,51,71')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+HEIGHT_UPPER,integer,"notNull(height|-8888);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copy(height),Copies source value to HEIGHT_UPPER,TRUE
+HEIGHT_LOWER,integer,"notNull(height|-8888);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copy(height),Copies source value to HEIGHT_LOWER,TRUE
 SPECIES_1,text,"notNull(sp1|NULL);match(sp1,translation,ab_av01_species|NOT_IN_SET)","lookup(sp1, translation, ab_avi01_species, spec1)",Maps source value to SPECIES_1 using lookup table,TRUE
 SPECIES_PER_1,integer,"notNull(sp1_percnt|-8888);between(sp1_percnt,0,100|-9999)",copy(sp1_percnt),Copies source value to SPECIES_PER_1,TRUE
 SPECIES_2,text,"notNull(sp2|NULL);match(sp2,translation,ab_avi01_species|NOT_IN_SET)","lookup(sp1, translation, ab_avi01_species, spec2)",Maps source value to SPECIES_2 using lookup table,TRUE
