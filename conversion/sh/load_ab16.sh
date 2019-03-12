@@ -18,10 +18,6 @@
 # If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
 # in the configuration file.
 
-# Workflow as recommended here: https://trac.osgeo.org/gdal/wiki/FAQVector#FAQ-Vector
-# Load the first table normally, then delete all the data. This serves as a template
-# Then loop through all Coverages and append to the template table
-
 ######################################## Set variables #######################################
 
 # load config variables
