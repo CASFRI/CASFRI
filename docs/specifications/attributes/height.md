@@ -1,5 +1,5 @@
 
-## “HEIGHT\_UPPER, HEIGHT\_LOWER”
+## HEIGHT\_UPPER, HEIGHT\_LOWER
 
 ### Acceptable values:
 

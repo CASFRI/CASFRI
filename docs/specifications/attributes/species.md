@@ -1,5 +1,5 @@
 
-## “SPECIES\_1-10”
+## SPECIES\_1-10
 
 ### Acceptable values:
 
