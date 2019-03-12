@@ -1,4 +1,4 @@
-# CASFRI 5
+# Intro
 Digital Forest Resource Inventories (FRIs) are compiled by provincial and territorial governments and are key inputs into forest management planning. They have also been used widely to model species habitat in the Canadian boreal forest, and in combination with climate and weather data to model wildfire size and frequency. FRI datasets consist of stand maps interpreted from aerial photography at scales ranging from 1:10,000 to 1:40,000, which are typically conducted on a 10- to 20-year cycle, and may be periodically updated to reflect changes such as burned areas, harvesting, insect damage, silviculture, and forest growth. The stand maps estimate the location, extent, condition, composition, and structure of the forest resource. Each jurisdiction has developed its own procedures and standards for forest inventories. 
 
 The Common Attribute Schema for Forest Resource Inventories (CASFRI) standardizes FRI data from each jurisdication in Canada allowing a national FRI dataset to be created with continuous coverage. A major challenge in assembling a national coverage of FRI data is reconciling the many differences in variable formats, attributes, and standards among disparate inventories. Standardization is necessary so that models can be developed using data from multiple jurisdictions or inventory versions.
@@ -37,15 +37,19 @@ Loading scripts require GDAL v1.11.4.
 Table translation requires the PostTranslationEngine v0.1beta
 
 # Vocabulary
-<pre>
-Source table            Raw FRI received from jurisdications.
-Loaded source table     Raw FRI converted and loaded into PostgreSQL.
-Target table             Translated FRI table in the CAS specification.
-Translation table       User created table detailing the translation rules.
-Lookup table            User created table to accompany the translation table.
-Translation engine      The [Post Translation Engine](https://github.com/edwardsmarc/postTranslationEngine).
-Helper function         A set of funtions used in the translation table that facilitate translation.
-</pre>
+*Source table* - Raw FRI received from jurisdications.
+
+*Loaded source table* - Raw FRI converted and loaded into PostgreSQL.
+
+*Target table* - Translated FRI table in the CAS specification.
+
+*Translation table* - User created table detailing the translation rules.
+
+*Lookup table* - User created table to accompany the translation table.
+
+*Translation engine* - The [Post Translation Engine](https://github.com/edwardsmarc/postTranslationEngine).
+
+*Helper function* - A set of funtions used in the translation table that facilitate translation.
 
 # FRI and standard codes
 CASFRI v5 uses a four code standard for identifying FRIs. Each FRI is coded using two letters for the province or territory, and two numbers that increment for each new FRI added in that province/territory. e.g. BC01.
@@ -55,7 +59,7 @@ Inventory standards are the attribute specifications applied to a given inventor
 # Conversion and loading
 Conversion and loading happens at the same time and is implimented using GDAL/OGR. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. FRIs with shapefiles detailing the photo year have a second loading script for the photo year file. Every loading script adds a new attribute to the target table with the name of the source file. This is used when constructing the CAS_ID, a unique row identifier code.
 
-## Supported file types
+### Supported file types
 All conversion/loading scripts are provided as both .sh files and .bat files.
 
 Currently supported FRI formats are:
@@ -65,11 +69,32 @@ Currently supported FRI formats are:
 
 E00 files are not currently supported. Source tables in this format should be converted into a supported format before loading.
 
-## Projection
+### Projection
 All source tables are projected in the Canada Albers Equal Area Conic projection during loading.
 
 # Translation
-Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [Post Translation Engine](https://github.com/edwardsmarc/postTranslationEngine). The translation engine uses a translation table that describes rules for translating each loaded source table into a target table. The translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a funtion named Between() validates that the source data is within the expected range, and a function named Map() maps a set of source values to a set of target values. After the translation engine has run on all loaded source tables, the result is a complete set of target tables all with matching attributes as defined by the CASFRI standard. 
+Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [Post Translation Engine](https://github.com/edwardsmarc/postTranslationEngine). The translation engine uses a translation table that describes rules for translating each loaded source table into a target table. The translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a funtion named Between() validates that the source data is within the expected range, and a function named Map() maps a set of source values to a set of target values. A list of all helper functions is available in the Post Translation Engine [readMe](https://github.com/edwardsmarc/postTranslationEngine). After the translation engine has run on all loaded source tables, the result is a complete set of target tables all with matching attributes as defined by the CASFRI standard. 
 
-## Error codes
+### Error codes
 Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reprted as text (e.g. INVALID). Different error codes are reported depending on the cause. A full description of possible error codes can be found in the [CASFRI specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
+
+# Workflow
+### Converting/loading FRIs
+* In an operating system command window, load the necessary inventories using the proper conversion scripts located in either the bat or sh conversion folder. 
+* You must copy and edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat.
+* After running each conversion/loading script, the source FRI tables will be added to the PostgreSQL schema specified in the config file.
+### Loading translation tables
+* In an operating system command window, load the translation files using the load_tables (.bat or .sh) script located in the translation folder. 
+* You must copy and edit the configSample (.bat or .sh) file to match your system configuration and save it as config.sh or config.bat.
+* The script will load all translation tables stored in the provided folder paths into the specified schema.
+### Installing engine
+* In a PostgreSQL query window, run, in this order:
+  1. the postTranslationEngine/engine.sql file,
+  2. the postTranslationEngine/helperFunctions.sql file,
+  3. the helperFunctionsTest.sql file. All tests should pass.
+  4. the engineTest.sql file. All tests should pass.
+* You can uninstall all the functions by running the helperFunctionsUninstall.sql and the engineUninstall.sql files.
+### Translating
+* Run the translation engine for each FRI using the loaded source FRI table and the translation table.
+* Refer to the sampleWorkFlow.sql file located in the CASFRI root directory for an example of how to run the translation engine.
+# Credits
