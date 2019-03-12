@@ -12,9 +12,9 @@ CASFRI version 5 makes a number of updates to previous versions:
 * Assignment of attribute specific meaningful error codes.
 
 The three steps for building CASFRI v5 are:
-* Conversion/loading
-* Transformation
-* Topological correction and temporalization
+1. Conversion/loading
+2. Transformation
+3. Topological correction and temporalization
 
 # Directory structure
 <pre>
