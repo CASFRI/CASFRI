@@ -149,21 +149,19 @@ reported as integers (e.g. -9999) whereas text attributes will have
 errors reported as text (e.g. INVALID). Different error codes are
 reported depending on the cause.
 
-| Error.type         | Description                            | Function                                           | Generic.Small.Four.Char.Code | Generic.Large.Four.Char.Code | Generic.Small.Int.Code | Generic.Large.Int.Code | Generic.Double.Code | Generic.Text.Code | X  |
-| :----------------- | :------------------------------------- | :------------------------------------------------- | ---------------------------: | ---------------------------: | ---------------------: | ---------------------: | ------------------: | :---------------- | :- |
-| Special values     |                                        |                                                    |                           NA |                           NA |                     NA |                     NA |                  NA |                   | NA |
-| \-Infinity         | Negative infinity                      | NO FUNCTION                                        |                       \-2222 |                  \-222222222 |                \-32768 |           \-2147483648 |        \-2147483648 | MINUS\_INF        | NA |
-| \+Infinity         | Positive infinity                      | NO FUNCTION                                        |                       \-2221 |                  \-222222221 |                  32767 |             2147483647 |          2147483647 | PLUS\_INF         | NA |
-| Missing values     |                                        |                                                    |                           NA |                           NA |                     NA |                     NA |                  NA |                   | NA |
-| Null               | Undefined value - true null value      | TT\_NotNull()                                      |                       \-8888 |                  \-888888888 |                \-32767 |           \-2147483647 |        \-2147483647 | NULL\_VALUE       | NA |
-| Empty string       | Missing that is not null               | TT\_NotEmpty()                                     |                           NA |                           NA |                     NA |                     NA |                  NA | EMPTY\_STRING     | NA |
-| Not applicable     | Target attribute not in source table   | TT\_False()                                        |                       \-8887 |                  \-888888887 |                \-32765 |           \-2147483645 |        \-2147483645 | NOT\_APPLICABLE   | NA |
-| Invalid values     |                                        |                                                    |                           NA |                           NA |                     NA |                     NA |                  NA |                   | NA |
-| Out of range       | Value is outside the range of values   | TT\_Between(); TT\_GreaterThan(); TT\_LesserThan() |                       \-9999 |                  \-999999999 |                \-32764 |           \-2147483644 |        \-2147483644 | OUT\_OF\_RANGE    | NA |
-| Not member of set  | Value is not a member of a set or list | TT\_Match()                                        |                       \-9998 |                  \-999999998 |                \-32763 |           \-2147483643 |        \-2147483643 | NOT\_IN\_SET      | NA |
-| Invalid value      | Invalid value                          | NO FUNCTION                                        |                       \-9997 |                  \-999999997 |                \-32762 |           \-2147483642 |        \-2147483642 | INVALID           | NA |
-| Precision too high | Precision is greater than allowed      | NO FUNCTION                                        |                       \-9996 |                  \-999999996 |                \-32761 |           \-2147483641 |        \-2147483641 | WRONG\_PRECISION  | NA |
-| Wrong data type    | Value is of the wrong data type        | TT\_IsInt(); TT\_IsNumeric(); TT\_IsString()       |                       \-9995 |                  \-999999995 |                \-32760 |           \-2147483640 |        \-2147483640 | WRONG\_TYPE       | NA |
+
+| Class          | Type               | Description                            | Function                                           | Text.message     | Small.int.code | Large.int.code |  Double.code |
+| :------------- | :----------------- | :------------------------------------- | :------------------------------------------------- | :--------------- | -------------: | -------------: | -----------: |
+| Special values | \-Infinity         | Negative infinity                      | NO FUNCTION                                        | MINUS\_INF       |         \-2222 |    \-222222222 | \-2147483648 |
+|                | \+Infinity         | Positive infinity                      | NO FUNCTION                                        | PLUS\_INF        |         \-2221 |    \-222222221 |   2147483647 |
+| Missing values | Null               | Undefined value - true null value      | TT\_NotNull()                                      | NULL\_VALUE      |         \-8888 |    \-888888888 | \-2147483647 |
+|                | Empty string       | Missing that is not null               | TT\_NotEmpty()                                     | EMPTY\_STRING    |             NA |             NA |           NA |
+|                | Not applicable     | Target attribute not in source table   | TT\_False()                                        | NOT\_APPLICABLE  |         \-8887 |    \-888888887 | \-2147483645 |
+| Invalid values | Out of range       | Value is outside the range of values   | TT\_Between(); TT\_GreaterThan(); TT\_LesserThan() | OUT\_OF\_RANGE   |         \-9999 |    \-999999999 | \-2147483644 |
+|                | Not member of set  | Value is not a member of a set or list | TT\_Match()                                        | NOT\_IN\_SET     |         \-9998 |    \-999999998 | \-2147483643 |
+|                | Invalid value      | Invalid value                          | NO FUNCTION                                        | INVALID          |         \-9997 |    \-999999997 | \-2147483642 |
+|                | Precision too high | Precision is greater than allowed      | NO FUNCTION                                        | WRONG\_PRECISION |         \-9996 |    \-999999996 | \-2147483641 |
+|                | Wrong data type    | Value is of the wrong data type        | TT\_IsInt(); TT\_IsNumeric(); TT\_IsString()       | WRONG\_TYPE      |         \-9995 |    \-999999995 | \-2147483640 |
 
 ## Header Information (HDR)
 
