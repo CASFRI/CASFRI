@@ -58,7 +58,7 @@ FROM rawfri.ab06;
 -- DROP TABLE IF EXISTS rawfri.ab06_test;
 CREATE TABLE rawfri.ab06_test AS
 SELECT * FROM rawfri.ab06
---WHERE poly_num_1 = 811451038
+--WHERE ogc_fid = 811451038
 LIMIT 200;
 
 -- Display
@@ -79,7 +79,7 @@ FROM rawfri.ab16;
 -- DROP TABLE IF EXISTS rawfri.ab16_test;
 CREATE TABLE rawfri.ab16_test AS
 SELECT * FROM rawfri.ab16
---WHERE poly_num_1 = 811451038
+--WHERE ogc_fid = 811451038
 LIMIT 200;
 
 -- Display
@@ -100,12 +100,33 @@ FROM rawfri.bc08;
 -- DROP TABLE IF EXISTS rawfri.bc08_test;
 CREATE TABLE rawfri.bc08_test AS
 SELECT * FROM rawfri.bc08
---WHERE poly_num_1 = 811451038
-LIMIT 2000;
+--WHERE ogc_fid = 811451038
+LIMIT 200;
 
 -- Display
 SELECT src_filename, map_id, ogc_fid, crown_closure, proj_height_1, species_cd_1
 FROM rawfri.bc08_test;
+
+-------------------------------------------------------
+-- NB01
+-------------------------------------------------------
+-- Have a look at one of the source inventory table
+SELECT * FROM rawfri.nb01 LIMIT 10;
+
+-- Count the number of rows
+SELECT count(*)
+FROM rawfri.nb01;
+
+-- Create a smaller test inventory table
+-- DROP TABLE IF EXISTS rawfri.nb01_test;
+CREATE TABLE rawfri.nb01_test AS
+SELECT * FROM rawfri.nb01
+--WHERE ogc_fid = 811451038
+LIMIT 200;
+
+-- Display
+SELECT src_filename, stdlab, ogc_fid, l1cc, l1ht, l1s1
+FROM rawfri.nb01_test;
 -------------------------------------------------------
 -- Work on translation file
 -------------------------------------------------------
@@ -166,6 +187,25 @@ ogc_fid = 5;
 SELECT * FROM translation.bc08_vri01_lyr_test;
 
 -------------------------------------------------------
+-- NB01
+-------------------------------------------------------
+-- Display the translation table of interest
+SELECT * FROM translation.nb01_nbi01_lyr; 
+
+-- Create a subset translation table if necessary
+-- DROP TABLE IF EXISTS translation.bc08_vri01_lyr_test;
+CREATE TABLE translation.nb01_nbi01_lyr_test AS
+SELECT * FROM translation.nb01_nbi01_lyr
+WHERE ogc_fid = 1 OR 
+ogc_fid = 2 OR 
+ogc_fid = 3 OR 
+ogc_fid = 4 OR 
+ogc_fid = 5;
+
+-- Display
+SELECT * FROM translation.nb01_nbi01_lyr_test;
+
+-------------------------------------------------------
 -- Translate the sample table!
 -------------------------------------------------------
 -- AB06
@@ -216,6 +256,22 @@ FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri01_lyr_tes
 WHERE ogc_fid = right(cas_id, 7)::int;
 
 -------------------------------------------------------
+-- NB01
+-------------------------------------------------------
+-- Create translation function
+SELECT TT_Prepare('translation', 'nb01_nbi01_lyr_test', '_nb01');
+
+-- Translate the sample!
+SELECT * FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi01_lyr_test');
+
+-- Display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, stdlab, ogc_fid, cas_id, 
+       l1cc, crown_closure_lower, crown_closure_upper, 
+       l1ht, height_upper, height_lower, l1s1
+FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi01_lyr_test'), rawfri.nb01_test
+WHERE ogc_fid = right(cas_id, 7)::int;
+
+-------------------------------------------------------
 -- Translate the big thing!
 -------------------------------------------------------
 CREATE SCHEMA casfri50;
@@ -246,7 +302,14 @@ SELECT * FROM TT_Translate_bc08('rawfri', 'bc08', 'translation', 'bc08_vri01_lyr
 
 SELECT * FROM casfri50.bc08;
 
+-------------------------------------------------------
+-- NB01 - XX minutes
+-------------------------------------------------------
+--DROP TABLE IF EXISTS casfri50.nb01;
+CREATE TABLE casfri50.nb01 AS
+SELECT * FROM TT_Translate_nb01('rawfri', 'nb01', 'translation', 'nb01_nbi01_lyr_test');
 
+SELECT * FROM casfri50.nb01;
 
 
 
