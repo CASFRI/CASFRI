@@ -1,5 +1,5 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,text,"notNull(src_filename,map_id,feature_id,ogc_fid|INVALID)","casId('bc08', src_filename, map_id, feature_id, ogc_fid)",Concatenates five attributes to create CAS_ID,TRUE
+CAS_ID,text,"notNull(src_filename,map_id,feature_id,ogc_fid|NULL_VALUE)","casId('bc08', src_filename, map_id, feature_id, ogc_fid)",Concatenates five attributes to create CAS_ID,TRUE
 CROWN_CLOSURE_UPPER,integer,"notNull(crown_closure|-8888);between(crown_closure,0,100|-9999)",copy(crown_closure),Copies source value to CROWN_CLOSURE_UPPER,TRUE
 CROWN_CLOSURE_LOWER,integer,"notNull(crown_closure|-8888);between(crown_closure,0,100|-9999)",copy(crown_closure),Copies source value to CROWN_CLOSURE_LOWER,TRUE
 HEIGHT_UPPER,double precision,"notNull(proj_height_1|-8888);greaterThan(proj_height_1,0.1|-9999);lessThan(proj_height_1,100|-9999)",copy(proj_height_1),Copies source value to HEIGHT_UPPER,TRUE
