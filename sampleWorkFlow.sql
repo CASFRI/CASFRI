@@ -43,7 +43,9 @@ SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 
 -------------------------------------------------------
+-------------------------------------------------------
 -- Work on source inventory
+-------------------------------------------------------
 -------------------------------------------------------
 -- AB06
 -------------------------------------------------------
@@ -100,11 +102,11 @@ FROM rawfri.bc08;
 -- DROP TABLE IF EXISTS rawfri.bc08_test;
 CREATE TABLE rawfri.bc08_test AS
 SELECT * FROM rawfri.bc08
---WHERE ogc_fid = 811451038
+--WHERE ogc_fid = 424344
 LIMIT 200;
 
 -- Display
-SELECT src_filename, map_id, ogc_fid, crown_closure, proj_height_1, species_cd_1
+SELECT src_filename, map_id, feature_id, ogc_fid, crown_closure, proj_height_1, species_cd_1
 FROM rawfri.bc08_test;
 
 -------------------------------------------------------
@@ -128,7 +130,9 @@ LIMIT 200;
 SELECT src_filename, stdlab, ogc_fid, l1cc, l1ht, l1s1
 FROM rawfri.nb01_test;
 -------------------------------------------------------
+-------------------------------------------------------
 -- Work on translation file
+-------------------------------------------------------
 -------------------------------------------------------
 -- AB06
 -------------------------------------------------------
@@ -140,10 +144,9 @@ SELECT * FROM translation.ab06_avi01_lyr;
 CREATE TABLE translation.ab06_avi01_lyr_test AS
 SELECT * FROM translation.ab06_avi01_lyr
 WHERE ogc_fid = 1 OR 
-ogc_fid = 2 OR 
-ogc_fid = 3 OR 
-ogc_fid = 4 OR 
-ogc_fid = 5;
+ogc_fid = 2 OR ogc_fid = 3 OR 
+ogc_fid = 4 OR ogc_fid = 5 OR 
+ogc_fid = 6;
 
 -- Display
 SELECT * FROM translation.ab06_avi01_lyr_test;
@@ -159,10 +162,9 @@ SELECT * FROM translation.ab16_avi01_lyr;
 CREATE TABLE translation.ab16_avi01_lyr_test AS
 SELECT * FROM translation.ab16_avi01_lyr
 WHERE ogc_fid = 1 OR 
-ogc_fid = 2 OR 
-ogc_fid = 3 OR 
-ogc_fid = 4 OR 
-ogc_fid = 5;
+ogc_fid = 2 OR ogc_fid = 3 OR 
+ogc_fid = 4 OR ogc_fid = 5 OR
+ogc_fid = 6;
 
 -- Display
 SELECT * FROM translation.ab16_avi01_lyr_test;
@@ -178,10 +180,9 @@ SELECT * FROM translation.bc08_vri01_lyr;
 CREATE TABLE translation.bc08_vri01_lyr_test AS
 SELECT * FROM translation.bc08_vri01_lyr
 WHERE ogc_fid = 1 OR 
-ogc_fid = 2 OR 
-ogc_fid = 3 OR 
-ogc_fid = 4 OR 
-ogc_fid = 5;
+ogc_fid = 2 OR ogc_fid = 3 OR 
+ogc_fid = 4 OR ogc_fid = 5 OR
+ogc_fid = 6;
 
 -- Display
 SELECT * FROM translation.bc08_vri01_lyr_test;
@@ -193,20 +194,21 @@ SELECT * FROM translation.bc08_vri01_lyr_test;
 SELECT * FROM translation.nb01_nbi01_lyr; 
 
 -- Create a subset translation table if necessary
--- DROP TABLE IF EXISTS translation.bc08_vri01_lyr_test;
+-- DROP TABLE IF EXISTS translation.nb01_nbi01_lyr_test;
 CREATE TABLE translation.nb01_nbi01_lyr_test AS
 SELECT * FROM translation.nb01_nbi01_lyr
 WHERE ogc_fid = 1 OR 
-ogc_fid = 2 OR 
-ogc_fid = 3 OR 
-ogc_fid = 4 OR 
-ogc_fid = 5;
+ogc_fid = 2 OR ogc_fid = 3 OR 
+ogc_fid = 4 OR ogc_fid = 5 OR
+ogc_fid = 6;
 
 -- Display
 SELECT * FROM translation.nb01_nbi01_lyr_test;
 
 -------------------------------------------------------
+-------------------------------------------------------
 -- Translate the sample table!
+-------------------------------------------------------
 -------------------------------------------------------
 -- AB06
 -------------------------------------------------------
@@ -272,7 +274,9 @@ FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi01_lyr_tes
 WHERE ogc_fid = right(cas_id, 7)::int;
 
 -------------------------------------------------------
+-------------------------------------------------------
 -- Translate the big thing!
+-------------------------------------------------------
 -------------------------------------------------------
 CREATE SCHEMA casfri50;
 -------------------------------------------------------
