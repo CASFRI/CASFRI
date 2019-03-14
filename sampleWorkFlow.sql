@@ -102,6 +102,7 @@ FROM rawfri.bc08;
 -- DROP TABLE IF EXISTS rawfri.bc08_test;
 CREATE TABLE rawfri.bc08_test AS
 SELECT * FROM rawfri.bc08
+WHERE crown_closure > 0
 --WHERE ogc_fid = 424344
 LIMIT 200;
 
@@ -141,7 +142,7 @@ FROM rawfri.nb01_test;
 SELECT * FROM translation.ab06_avi01_lyr; 
 
 -- Create a subset translation table if necessary
--- DROP TABLE IF EXISTS translation.ab06_avi01_lyr_test;
+DROP TABLE IF EXISTS translation.ab06_avi01_lyr_test;
 CREATE TABLE translation.ab06_avi01_lyr_test AS
 SELECT * FROM translation.ab06_avi01_lyr
 WHERE ogc_fid = 1 OR 
@@ -159,7 +160,7 @@ SELECT * FROM translation.ab06_avi01_lyr_test;
 SELECT * FROM translation.ab16_avi01_lyr; 
 
 -- Create a subset translation table if necessary
--- DROP TABLE IF EXISTS translation.ab16_avi01_lyr_test;
+DROP TABLE IF EXISTS translation.ab16_avi01_lyr_test;
 CREATE TABLE translation.ab16_avi01_lyr_test AS
 SELECT * FROM translation.ab16_avi01_lyr
 WHERE ogc_fid = 1 OR 
@@ -177,7 +178,7 @@ SELECT * FROM translation.ab16_avi01_lyr_test;
 SELECT * FROM translation.bc08_vri01_lyr; 
 
 -- Create a subset translation table if necessary
--- DROP TABLE IF EXISTS translation.bc08_vri01_lyr_test;
+DROP TABLE IF EXISTS translation.bc08_vri01_lyr_test;
 CREATE TABLE translation.bc08_vri01_lyr_test AS
 SELECT * FROM translation.bc08_vri01_lyr
 WHERE ogc_fid = 1 OR 
@@ -195,7 +196,7 @@ SELECT * FROM translation.bc08_vri01_lyr_test;
 SELECT * FROM translation.nb01_nbi01_lyr; 
 
 -- Create a subset translation table if necessary
--- DROP TABLE IF EXISTS translation.nb01_nbi01_lyr_test;
+DROP TABLE IF EXISTS translation.nb01_nbi01_lyr_test;
 CREATE TABLE translation.nb01_nbi01_lyr_test AS
 SELECT * FROM translation.nb01_nbi01_lyr
 WHERE ogc_fid = 1 OR 
@@ -239,7 +240,8 @@ SELECT * FROM TT_Translate_ab16('rawfri', 'ab16_test', 'translation', 'ab16_avi0
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, forest_id, ogc_fid, cas_id, 
        crownclose, crown_closure_lower, crown_closure_upper, 
-       height, height_upper, height_lower
+       height, height_upper, height_lower,
+       sp1, species_1
 FROM TT_Translate_ab16('rawfri', 'ab16_test', 'translation', 'ab16_avi01_lyr_test'), rawfri.ab16_test
 WHERE ogc_fid = right(cas_id, 7)::int;
 
@@ -255,7 +257,8 @@ SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri0
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, map_id, ogc_fid, cas_id, 
        crown_closure, crown_closure_lower, crown_closure_upper, 
-       proj_height_1, height_upper, height_lower
+       proj_height_1, height_upper, height_lower,
+       species_cd_1, species_1
 FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri01_lyr_test'), rawfri.bc08_test
 WHERE ogc_fid = right(cas_id, 7)::int;
 
@@ -271,7 +274,8 @@ SELECT * FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi0
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, stdlab, ogc_fid, cas_id, 
        l1cc, crown_closure_lower, crown_closure_upper, 
-       l1ht, height_upper, height_lower, l1s1
+       l1ht, height_upper, height_lower, 
+       l1s1, species_1
 FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi01_lyr_test'), rawfri.nb01_test
 WHERE ogc_fid = right(cas_id, 7)::int;
 
