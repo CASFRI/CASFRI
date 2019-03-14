@@ -1,5 +1,5 @@
 targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,text,"notNull(src_filename,stdlab,ogc_fid|NULL_VALUE)","casId('nb01', src_filename, '', stdlab, ogc_fid)",Concatenates five attributes to create CAS_ID,TRUE
+CAS_ID,text,"notNull(src_filename|NULL_VALUE);notNull(stdlab,ogc_fid|-8888)","casId('nb01', src_filename, '', stdlab, ogc_fid)",Concatenates five attributes to create CAS_ID,TRUE
 CROWN_CLOSURE_UPPER,integer,"notNull(l1cc|-8888);between(l1cc,0,100|-9999)","map(l1cc, '1,2,3,4,5', '30,50,70,90,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 CROWN_CLOSURE_LOWER,integer,"notNull(l1cc|-8888);between(l1cc,0,100|-9999)","map(l1cc, '1,2,3,4,5', '10,31,51,71,91')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 HEIGHT_UPPER,double precision,"notNull(l1ht|-8888);greaterThan(l1ht,0.1|-9999);lessThan(l1ht,100|-9999)",copy(l1ht),Copies source value to HEIGHT_UPPER,TRUE
