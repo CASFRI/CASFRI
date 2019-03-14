@@ -15,12 +15,12 @@ SPECIES_PER_4,integer,"notNull(sp4_per|-8888);between(sp4_per,0,100|-9999)",copy
 SPECIES_5,text,"notNull(sp5|NULL_VALUE);notEmpty(sp5|EMPTY_STRING);match(sp5,translation,ab_avi01_species|NOT_IN_SET)","lookup(sp5, translation, ab_avi01_species, spec5)",Maps source value to SPECIES_5 using lookup table,TRUE
 SPECIES_PER_5,integer,"notNull(sp5_per|-8888);between(sp5_per,0,100|-9999)",copy(sp5_per),Copies source value to SPECIES_PER_5,TRUE
 SPECIES_6,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_6,integer,false(|NA),nothing(),attribute does not occur,TRUE
+SPECIES_PER_6,integer,false(|-7777),nothing(),attribute does not occur,TRUE
 SPECIES_7,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_7,integer,false(|NA),nothing(),attribute does not occur,TRUE
+SPECIES_PER_7,integer,false(|-7777),nothing(),attribute does not occur,TRUE
 SPECIES_8,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_8,integer,false(|NA),nothing(),attribute does not occur,TRUE
+SPECIES_PER_8,integer,false(|-7777),nothing(),attribute does not occur,TRUE
 SPECIES_9,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_9,integer,false(|NA),nothing(),attribute does not occur,TRUE
+SPECIES_PER_9,integer,false(|-7777),nothing(),attribute does not occur,TRUE
 SPECIES_10,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_10,integer,false(|NA),nothing(),attribute does not occur,TRUE
+SPECIES_PER_10,integer,false(|-7777),nothing(),attribute does not occur,TRUE
