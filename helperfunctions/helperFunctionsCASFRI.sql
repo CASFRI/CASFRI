@@ -78,5 +78,30 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
+-- Variant taking three numeric
+-- DROP FUNCTION IF EXISTS TT_casId(text, text, double precision, double precision, double precision);
+CREATE OR REPLACE FUNCTION TT_casId(
+  inventoryId text,
+  sourceFile text,
+  mapsheetId double precision,
+  polygonIdCol double precision,
+  rowId double precision
+)
+RETURNS text AS $$
+  SELECT TT_casId(inventoryId, sourceFile, mapsheetId::text, polygonIdCol::text, rowId::text);
+$$ LANGUAGE sql VOLATILE;
+
+-- Variant taking two numeric
+-- DROP FUNCTION IF EXISTS TT_casId(text, text, text, double precision, double precision);
+CREATE OR REPLACE FUNCTION TT_casId(
+  inventoryId text,
+  sourceFile text,
+  mapsheetId text,
+  polygonIdCol double precision,
+  rowId double precision
+)
+RETURNS text AS $$
+  SELECT TT_casId(inventoryId, sourceFile, mapsheetId, polygonIdCol::text, rowId::text);
+$$ LANGUAGE sql VOLATILE;
 
 
