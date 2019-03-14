@@ -14,13 +14,13 @@ SPECIES_4,text,"notNull(l1s4|NULL_VALUE);notEmpty(sp1|EMPTY_STRING);match(l1s4,t
 SPECIES_PER_4,integer,"notNull(l1pr4|-8888);between(l1pr4,0,100|-9999)",copy(l1pr4),Copies source value to SPECIES_PER_4,TRUE
 SPECIES_5,text,"notNull(l1s5|NULL_VALUE);notEmpty(sp1|EMPTY_STRING);match(l1s5,translation,nb_nbi01_species|NOT_IN_SET)","lookup(l1s5, translation, nb_nbi01_species, spec5)",Maps source value to SPECIES_5 using lookup table,TRUE
 SPECIES_PER_5,integer,"notNull(l1pr5|-8888);between(l1pr5,0,100|-9999)",copy(l1pr5),Copies source value to SPECIES_PER_5,TRUE
-SPECIES_6,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_6,integer,false(|-7777),nothing(),attribute does not occur,TRUE
-SPECIES_7,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_7,integer,false(|-7777),nothing(),attribute does not occur,TRUE
-SPECIES_8,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_8,integer,false(|-7777),nothing(),attribute does not occur,TRUE
-SPECIES_9,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_9,integer,false(|-7777),nothing(),attribute does not occur,TRUE
-SPECIES_10,text,false(|NA),nothing(),attribute does not occur,TRUE
-SPECIES_PER_10,integer,false(|-7777),nothing(),attribute does not occur,TRUE
+SPECIES_6,text,false(|NOT_APPLICABLE),nothing(),attribute does not occur,TRUE
+SPECIES_PER_6,integer,false(|-8887),nothing(),attribute does not occur,TRUE
+SPECIES_7,text,false(|NOT_APPLICABLE),nothing(),attribute does not occur,TRUE
+SPECIES_PER_7,integer,false(|-8887),nothing(),attribute does not occur,TRUE
+SPECIES_8,text,false(|NOT_APPLICABLE),nothing(),attribute does not occur,TRUE
+SPECIES_PER_8,integer,false(|-8887),nothing(),attribute does not occur,TRUE
+SPECIES_9,text,false(|NOT_APPLICABLE),nothing(),attribute does not occur,TRUE
+SPECIES_PER_9,integer,false(|-8887),nothing(),attribute does not occur,TRUE
+SPECIES_10,text,false(|NOT_APPLICABLE),nothing(),attribute does not occur,TRUE
+SPECIES_PER_10,integer,false(|-8887),nothing(),attribute does not occur,TRUE
