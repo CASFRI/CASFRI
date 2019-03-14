@@ -122,7 +122,8 @@ FROM rawfri.nb01;
 -- Create a smaller test inventory table
 -- DROP TABLE IF EXISTS rawfri.nb01_test;
 CREATE TABLE rawfri.nb01_test AS
-SELECT * FROM rawfri.nb01
+SELECT * FROM rawfri.nb01 
+WHERE stdlab > 0
 --WHERE ogc_fid = 811451038
 LIMIT 200;
 
@@ -221,7 +222,8 @@ SELECT * FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi0
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, trm_1, poly_num, ogc_fid, cas_id, 
        density, crown_closure_lower, crown_closure_upper, 
-       height, height_upper, height_lower
+       height, height_upper, height_lower,
+       sp1, species_1
 FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi01_lyr_test'), rawfri.ab06_test
 WHERE poly_num = substr(cas_id, 33, 10)::int;
 
