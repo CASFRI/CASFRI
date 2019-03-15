@@ -64,7 +64,7 @@ SELECT * FROM rawfri.ab06
 LIMIT 200;
 
 -- Display
-SELECT src_filename, trm_1, poly_num, ogc_fid, density, height, sp1
+SELECT src_filename, trm_1, poly_num, ogc_fid, density, height, sp1, sp1_per
 FROM rawfri.ab06_test;
 
 -------------------------------------------------------
@@ -85,7 +85,7 @@ SELECT * FROM rawfri.ab16
 LIMIT 200;
 
 -- Display
-SELECT src_filename, forest_id, ogc_fid, crownclose, height, sp1
+SELECT src_filename, forest_id, ogc_fid, crownclose, height, sp1, sp1_percnt
 FROM rawfri.ab16_test;
 
 -------------------------------------------------------
@@ -107,7 +107,7 @@ WHERE crown_closure > 0
 LIMIT 200;
 
 -- Display
-SELECT src_filename, map_id, feature_id, ogc_fid, crown_closure, proj_height_1, species_cd_1
+SELECT src_filename, map_id, feature_id, ogc_fid, crown_closure, proj_height_1, species_cd_1, species_pct_1
 FROM rawfri.bc08_test;
 
 -------------------------------------------------------
@@ -129,7 +129,7 @@ WHERE stdlab > 0
 LIMIT 200;
 
 -- Display
-SELECT src_filename, stdlab, ogc_fid, l1cc, l1ht, l1s1
+SELECT src_filename, stdlab, ogc_fid, l1cc, l1ht, l1s1, l1pr1
 FROM rawfri.nb01_test;
 -------------------------------------------------------
 -------------------------------------------------------
@@ -148,7 +148,7 @@ SELECT * FROM translation.ab06_avi01_lyr
 WHERE ogc_fid = 1 OR 
 ogc_fid = 2 OR ogc_fid = 3 OR 
 ogc_fid = 4 OR ogc_fid = 5 OR 
-ogc_fid = 6;
+ogc_fid = 6 OR ogc_fid = 7;
 
 -- Display
 SELECT * FROM translation.ab06_avi01_lyr_test;
@@ -166,7 +166,7 @@ SELECT * FROM translation.ab16_avi01_lyr
 WHERE ogc_fid = 1 OR 
 ogc_fid = 2 OR ogc_fid = 3 OR 
 ogc_fid = 4 OR ogc_fid = 5 OR
-ogc_fid = 6;
+ogc_fid = 6 OR ogc_fid = 7;
 
 -- Display
 SELECT * FROM translation.ab16_avi01_lyr_test;
@@ -184,7 +184,7 @@ SELECT * FROM translation.bc08_vri01_lyr
 WHERE ogc_fid = 1 OR 
 ogc_fid = 2 OR ogc_fid = 3 OR 
 ogc_fid = 4 OR ogc_fid = 5 OR
-ogc_fid = 6;
+ogc_fid = 6 OR ogc_fid = 7;
 
 -- Display
 SELECT * FROM translation.bc08_vri01_lyr_test;
@@ -202,7 +202,7 @@ SELECT * FROM translation.nb01_nbi01_lyr
 WHERE ogc_fid = 1 OR 
 ogc_fid = 2 OR ogc_fid = 3 OR 
 ogc_fid = 4 OR ogc_fid = 5 OR
-ogc_fid = 6;
+ogc_fid = 6 OR ogc_fid = 7;
 
 -- Display
 SELECT * FROM translation.nb01_nbi01_lyr_test;
@@ -224,7 +224,8 @@ SELECT * FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi0
 SELECT src_filename, trm_1, poly_num, ogc_fid, cas_id, 
        density, crown_closure_lower, crown_closure_upper, 
        height, height_upper, height_lower,
-       sp1, species_1
+       sp1, species_1,
+       sp1_per, species_per_1
 FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi01_lyr_test'), rawfri.ab06_test
 WHERE poly_num = substr(cas_id, 33, 10)::int;
 
@@ -241,7 +242,8 @@ SELECT * FROM TT_Translate_ab16('rawfri', 'ab16_test', 'translation', 'ab16_avi0
 SELECT src_filename, forest_id, ogc_fid, cas_id, 
        crownclose, crown_closure_lower, crown_closure_upper, 
        height, height_upper, height_lower,
-       sp1, species_1
+       sp1, species_1,
+       sp1_percnt, species_per_1
 FROM TT_Translate_ab16('rawfri', 'ab16_test', 'translation', 'ab16_avi01_lyr_test'), rawfri.ab16_test
 WHERE ogc_fid = right(cas_id, 7)::int;
 
@@ -258,7 +260,8 @@ SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri0
 SELECT src_filename, map_id, ogc_fid, cas_id, 
        crown_closure, crown_closure_lower, crown_closure_upper, 
        proj_height_1, height_upper, height_lower,
-       species_cd_1, species_1
+       species_cd_1, species_1,
+       species_pct_1, species_per_1
 FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri01_lyr_test'), rawfri.bc08_test
 WHERE ogc_fid = right(cas_id, 7)::int;
 
@@ -275,7 +278,8 @@ SELECT * FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi0
 SELECT src_filename, stdlab, ogc_fid, cas_id, 
        l1cc, crown_closure_lower, crown_closure_upper, 
        l1ht, height_upper, height_lower, 
-       l1s1, species_1
+       l1s1, species_1,
+       l1pr1, species_per_1
 FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi01_lyr_test'), rawfri.nb01_test
 WHERE ogc_fid = right(cas_id, 7)::int;
 
