@@ -40,7 +40,7 @@ ogrTab='PAL'
 ########################################## Process ######################################
 
 #Create schema if it doesn't exist
-"$gdalFolder/ogrinfo" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
+"$gdalFolder/ogrinfo" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
 
 # Loop through all mapsheets.
 # For first load, set -lco precision=NO to avoid type errors on import. Remove for following loads.
@@ -50,7 +50,7 @@ ogrTab='PAL'
 # Original columns will be loaded as forest_ and forest_id, they will be NULL because ogr2ogr cannot append the values from the invalid field names.
 # New fields will be added to the right of the table
 
-if [ $overwriteFRI == TRUE ]; then
+if [ $overwriteFRI == True ]; then
   update="-overwrite -lco precision=NO"
 else 
   update="-lco precision=NO"
@@ -59,7 +59,7 @@ fi
 for F in "$srcFullPath/t"* 
 do	
 	"$gdalFolder/ogr2ogr" \
-	-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$F/forest" \
+	-f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$F/forest" \
 	-nln $fullTargetTableName \
 	-t_srs $prjFile \
 	-sql "SELECT *, '${F##*/}' as src_filename, 'FOREST#' as 'forest_id_1', 'FOREST-ID' as 'forest_id_2' FROM $ogrTab" \
