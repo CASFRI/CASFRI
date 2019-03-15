@@ -33,7 +33,7 @@ else
 fi
 
 # make schema if it doesn't exist
-"$gdalFolder/ogrinfo.exe" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetTranslationFileSchema";
+"$gdalFolder/ogrinfo.exe" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetTranslationFileSchema";
 
 # load all files in the folder
 for t in $load_folders
@@ -48,7 +48,7 @@ do
 			# load using ogr
 			echo "loading..."$tab_name
 			"$gdalFolder/ogr2ogr.exe" \
-			-f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" $i \
+			-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" $i \
 			-nln $targetTranslationFileSchema.$tab_name \
 			-progress $overwrite_tab
 			done

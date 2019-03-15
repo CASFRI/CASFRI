@@ -31,7 +31,7 @@ if %overwriteTTables% == True (
 )
 
 :: Make schema if it doesn't exist
-"%gdalFolder%/ogrinfo" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetTranslationFileSchema%";
+"%gdalFolder%/ogrinfo" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetTranslationFileSchema%";
 
 :: load all files in the folder
 (for %%f IN (%load_folders%) DO (
@@ -39,7 +39,7 @@ if %overwriteTTables% == True (
 		for %%g IN (%%f\*.csv) DO (
 			echo loading %%~ng
 			"%gdalFolder%/ogr2ogr" ^
-			-f "PostgreSQL" "PG:host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%g" ^
+			-f "PostgreSQL" "PG:host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%g" ^
 			-nln %targetTranslationFileSchema%.%%~ng ^
 			%overwrite_tab% -progress
 	)) else (
