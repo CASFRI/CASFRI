@@ -66,13 +66,13 @@ if %overwriteFRI% == True (
 :: ########################################## Process ######################################
 
 ::Create schema if it doesn't exist
-"%gdalFolder%/ogrinfo" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
+"%gdalFolder%/ogrinfo" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
 
 ::### FILE 1 ###
 ::Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
 ::Solution is to load the Waterbody table first with -lco precision=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
 "%gdalFolder%/ogr2ogr" ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWaterFullPath% ^
+-f "PostgreSQL" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWaterFullPath% ^
 -lco precision=NO ^
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
@@ -83,7 +83,7 @@ if %overwriteFRI% == True (
 ::### FILE 2 ###
 "%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcNonForestFullPath% ^
+-f "PostgreSQL" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcNonForestFullPath% ^
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
@@ -93,7 +93,7 @@ if %overwriteFRI% == True (
 ::### FILE 3 ###
 "%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWetlandFullPath% ^
+-f "PostgreSQL" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWetlandFullPath% ^
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
@@ -103,7 +103,7 @@ if %overwriteFRI% == True (
 ::## File 4 ###
 "%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcForestFullPath% ^
+-f "PostgreSQL" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcForestFullPath% ^
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
