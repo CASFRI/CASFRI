@@ -57,7 +57,7 @@ SELECT count(*)
 FROM rawfri.ab06;
 
 -- Create a smaller test inventory table
--- DROP TABLE IF EXISTS rawfri.ab06_test;
+DROP TABLE IF EXISTS rawfri.ab06_test;
 CREATE TABLE rawfri.ab06_test AS
 SELECT * FROM rawfri.ab06
 --WHERE ogc_fid = 2
@@ -78,7 +78,7 @@ SELECT count(*)
 FROM rawfri.ab16;
 
 -- Create a smaller test inventory table
--- DROP TABLE IF EXISTS rawfri.ab16_test;
+DROP TABLE IF EXISTS rawfri.ab16_test;
 CREATE TABLE rawfri.ab16_test AS
 SELECT * FROM rawfri.ab16
 --WHERE ogc_fid = 18317
@@ -99,7 +99,7 @@ SELECT count(*)
 FROM rawfri.bc08;
 
 -- Create a smaller test inventory table
--- DROP TABLE IF EXISTS rawfri.bc08_test;
+DROP TABLE IF EXISTS rawfri.bc08_test;
 CREATE TABLE rawfri.bc08_test AS
 SELECT * FROM rawfri.bc08
 WHERE crown_closure > 0
@@ -121,7 +121,7 @@ SELECT count(*)
 FROM rawfri.nb01;
 
 -- Create a smaller test inventory table
--- DROP TABLE IF EXISTS rawfri.nb01_test;
+DROP TABLE IF EXISTS rawfri.nb01_test;
 CREATE TABLE rawfri.nb01_test AS
 SELECT * FROM rawfri.nb01 
 WHERE stdlab > 0
