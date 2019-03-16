@@ -60,7 +60,7 @@ FROM rawfri.ab06;
 -- DROP TABLE IF EXISTS rawfri.ab06_test;
 CREATE TABLE rawfri.ab06_test AS
 SELECT * FROM rawfri.ab06
---WHERE ogc_fid = 811451038
+--WHERE ogc_fid = 2
 LIMIT 200;
 
 -- Display
@@ -81,7 +81,7 @@ FROM rawfri.ab16;
 -- DROP TABLE IF EXISTS rawfri.ab16_test;
 CREATE TABLE rawfri.ab16_test AS
 SELECT * FROM rawfri.ab16
---WHERE ogc_fid = 811451038
+--WHERE ogc_fid = 18317
 LIMIT 200;
 
 -- Display
@@ -145,10 +145,11 @@ SELECT * FROM translation.ab06_avi01_lyr;
 DROP TABLE IF EXISTS translation.ab06_avi01_lyr_test;
 CREATE TABLE translation.ab06_avi01_lyr_test AS
 SELECT * FROM translation.ab06_avi01_lyr
-WHERE ogc_fid = 1 OR 
-ogc_fid = 2 OR ogc_fid = 3 OR 
-ogc_fid = 4 OR ogc_fid = 5 OR 
-ogc_fid = 6 OR ogc_fid = 7;
+--WHERE ogc_fid = 1 OR 
+--ogc_fid = 2 OR ogc_fid = 3 OR 
+--ogc_fid = 4 OR ogc_fid = 5 OR 
+--ogc_fid = 6 OR ogc_fid = 7
+;
 
 -- Display
 SELECT * FROM translation.ab06_avi01_lyr_test;
@@ -163,10 +164,11 @@ SELECT * FROM translation.ab16_avi01_lyr;
 DROP TABLE IF EXISTS translation.ab16_avi01_lyr_test;
 CREATE TABLE translation.ab16_avi01_lyr_test AS
 SELECT * FROM translation.ab16_avi01_lyr
-WHERE ogc_fid = 1 OR 
-ogc_fid = 2 OR ogc_fid = 3 OR 
-ogc_fid = 4 OR ogc_fid = 5 OR
-ogc_fid = 6 OR ogc_fid = 7;
+--WHERE ogc_fid = 1 OR 
+--ogc_fid = 2 OR ogc_fid = 3 OR 
+--ogc_fid = 4 OR ogc_fid = 5 OR
+--ogc_fid = 6 OR ogc_fid = 7
+;
 
 -- Display
 SELECT * FROM translation.ab16_avi01_lyr_test;
@@ -181,10 +183,11 @@ SELECT * FROM translation.bc08_vri01_lyr;
 DROP TABLE IF EXISTS translation.bc08_vri01_lyr_test;
 CREATE TABLE translation.bc08_vri01_lyr_test AS
 SELECT * FROM translation.bc08_vri01_lyr
-WHERE ogc_fid = 1 OR 
-ogc_fid = 2 OR ogc_fid = 3 OR 
-ogc_fid = 4 OR ogc_fid = 5 OR
-ogc_fid = 6 OR ogc_fid = 7;
+--WHERE ogc_fid = 1 OR 
+--ogc_fid = 2 OR ogc_fid = 3 OR 
+--ogc_fid = 4 OR ogc_fid = 5 OR
+--ogc_fid = 6 OR ogc_fid = 7
+;
 
 -- Display
 SELECT * FROM translation.bc08_vri01_lyr_test;
@@ -199,10 +202,11 @@ SELECT * FROM translation.nb01_nbi01_lyr;
 DROP TABLE IF EXISTS translation.nb01_nbi01_lyr_test;
 CREATE TABLE translation.nb01_nbi01_lyr_test AS
 SELECT * FROM translation.nb01_nbi01_lyr
-WHERE ogc_fid = 1 OR 
-ogc_fid = 2 OR ogc_fid = 3 OR 
-ogc_fid = 4 OR ogc_fid = 5 OR
-ogc_fid = 6 OR ogc_fid = 7;
+--WHERE ogc_fid = 1 OR 
+--ogc_fid = 2 OR ogc_fid = 3 OR 
+--ogc_fid = 4 OR ogc_fid = 5 OR
+--ogc_fid = 6 OR ogc_fid = 7
+;
 
 -- Display
 SELECT * FROM translation.nb01_nbi01_lyr_test;
