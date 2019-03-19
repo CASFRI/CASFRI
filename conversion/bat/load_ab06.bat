@@ -31,7 +31,7 @@ if exist "%~dp0\..\..\config.bat" (
 SET srcFileName=GB_S21_TWP
 SET srcFullPath="%friDir%\AB\SourceDataset\v00.04\CROWNFMA\GordonBuchananTolko\S21_Gordon_Buchanan_Tolko\GB_S21_TWP\gdb\%srcFileName%.gdb"
 
-SET prjFile="%~dp0\canadaAlbersEqualAreaConic.prj"
+SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab06
 
 

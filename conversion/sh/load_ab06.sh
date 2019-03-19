@@ -29,7 +29,7 @@ fi
 srcFileName=GB_S21_TWP
 srcFullPath="$friDir/AB/SourceDataset/v00.04/CROWNFMA/GordonBuchananTolko/S21_Gordon_Buchanan_Tolko/GB_S21_TWP/gdb/$srcFileName.gdb"
 
-prjFile="./canadaAlbersEqualAreaConic.prj"
+prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.ab06
 
 if [ $overwriteFRI == True ]; then

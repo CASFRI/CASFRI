@@ -11,7 +11,7 @@ targetFRISchema=rawfri
 targetTranslationFileSchema=translation
 
 friDir=E:/FRIs
-gdalFolder="C:/Program Files (x86)/GDAL"
+gdalFolder="C:/Program Files/GDAL"
 
 overwriteFRI=True
 overwriteTTables=True
