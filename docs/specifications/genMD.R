@@ -1,6 +1,0 @@
-rmarkdown::render("attributes/cas_id.rmd")
-rmarkdown::render("attributes/crown_closure.rmd")
-rmarkdown::render("attributes/height.rmd")
-rmarkdown::render("attributes/species.rmd")
-rmarkdown::render("cas_attributes.rmd")
-rmarkdown::render("cas_inventories.rmd")
