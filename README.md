@@ -31,11 +31,11 @@ The three steps for building CASFRI v5 are:
 
 # Requirements
 
-*CASFRI v5 uses PostgreSQL 9.6 and PostGIS v2.3.7.
+* CASFRI v5 uses PostgreSQL 9.6 and PostGIS v2.3.7.
 
-*Loading scripts require GDAL v1.11.4 and access to a Bash or batch shell. IMPORTANT: ab16 will not load with GDAL v2.X
+* Loading scripts require GDAL v1.11.4 and access to a Bash or batch shell. IMPORTANT: ab16 will not load with GDAL v2.X
 
-*Table translation requires the PostTranslationEngine v0.1beta
+* Table translation requires the PostTranslationEngine v0.1beta
 
 # Vocabulary
 *Source data* - Raw FRI data received from jurisdictions.
