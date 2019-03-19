@@ -1,11 +1,21 @@
-# COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA
+---
+title: ""
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    css: style.css
+    keep_md: yes
+---
 
-Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
+<center><br><br><b><font size=+2>COMMON ATTRIBUTE SCHEMA (CAS)<br>FOR FOREST INVENTORIES ACROSS CANADA</font></b>
+<br><br><br>
+Prepared by: John A. Cosco, Chief Inventory Forester, February 2011<br>
+Revised by: The CASFRI Project Team, March 2019</center>
+<br><br>
 
-Revised by: The CASFRI Project Team, February 2019
-
-
-## Introduction
+# Introduction
 
 Canada's vast boreal ecosystem hosts one of the most diverse bird communities in North America. Development pressure within the boreal region is on the increase, and there is an urgent need to understand the impact of changing habitats on boreal bird populations and to make sound management decisions. The Boreal Avian Modeling Project was initiated to help address the lack of basic information on boreal birds and their habitats across boreal forests in Canada. The need to effectively manage bird species and their habitats has resulted in the effort to collect and gather data across Canada to develop models that will predict bird abundance and distribution, and that will clarify population and habitat associations with climate and land cover.
 
@@ -13,7 +23,7 @@ Current national databases developed from satellite-based products using biophys
 
 Digital forest inventory data can overcome many of the deficiencies identified with satellitebased land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).
 
-## Common Attribute Schema
+# Common Attribute Schema
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index,
 non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.
@@ -45,15 +55,119 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 
 <sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.
 
+## Error and Missing Value Codes
+
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.
+
+
+```r
+x = read.csv("errors/cas_errors_general.csv")
+knitr::kable(x)
+```
+
+
+
+Class            Type                 Description                              Function                                          Text.message       Small.int.code   Large.int.code   Double.code
+---------------  -------------------  ---------------------------------------  ------------------------------------------------  ----------------  ---------------  ---------------  ------------
+Special values   -Infinity            Negative infinity                        NO FUNCTION                                       MINUS_INF                   -2222       -222222222   -2147483648
+                 +Infinity            Positive infinity                        NO FUNCTION                                       PLUS_INF                    -2221       -222222221    2147483647
+Missing values   Null                 Undefined value - true null value        TT_NotNull()                                      NULL_VALUE                  -8888       -888888888   -2147483647
+                 Empty string         Missing that is not null                 TT_NotEmpty()                                     EMPTY_STRING                   NA               NA            NA
+                 Not applicable       Target attribute not in source table     TT_False()                                        NOT_APPLICABLE              -8887       -888888887   -2147483645
+Invalid values   Out of range         Value is outside the range of values     TT_Between(); TT_GreaterThan(); TT_LesserThan()   OUT_OF_RANGE                -9999       -999999999   -2147483644
+                 Not member of set    Value is not a member of a set or list   TT_Match()                                        NOT_IN_SET                  -9998       -999999998   -2147483643
+                 Invalid value        Invalid value                            NO FUNCTION                                       INVALID                     -9997       -999999997   -2147483642
+                 Precision too high   Precision is greater than allowed        NO FUNCTION                                       WRONG_PRECISION             -9996       -999999996   -2147483641
+                 Wrong data type      Value is of the wrong data type          TT_IsInt(); TT_IsNumeric(); TT_IsString()         WRONG_TYPE                  -9995       -999999995   -2147483640
+
+
 ## Header Information (HDR)
 
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, spatial reference, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are detailed on the following pages.
 
 ### CASFRI Identification
 
-The CAS_ID is a unique identifier that is generated for each polygon and acts as the primary key in the database. The CAS_ID is a fixed length field (53 bytes) composed of five elements delimited by dash characters ("-").
 
-  * [Click here for additional information...](attributes/cas_id.md)
+
+## CASFRI Identification
+
+Revised: March 19, 2019
+
+### CAS_ID
+
+The CAS_ID is a unique identifier that is generated for each polygon and acts as the primary key in the database. The CAS_ID is a fixed length field (53 bytes) composed of five elements delimited by dash characters ("-"):
+
+  1. Header identifier composed of a 2 letter acronym of the [jurisdiction](jurisdiction.md) and 4 character numeric dataset code separated by an underscore (7 alphanumeric characters)
+  2. Source file name (15 alphanumeric characters)
+  3. Name of the [mapsheet](map_sheet_id.md) or geographical division (10 alphanumeric characters)
+  4. Object identifier used in the source file (10 numeric characters)
+  5. Serial number to ensure the uniqueness of the identifier (7 numeric characters)
+
+Examples:
+
+  - ON_0001-xxxxxxxxxMU030L-xxxxxMU030-0030000003-0000001
+  - BC_0004-VEG_COMP_LYR_R1-xxx082C095-0000000001-0000001
+
+This naming convention allows manual or automated tracing of any final forest stand stored in the database back to its specific record in the original file within the given SIDS. This fixed length format was designed to ease automated parsing of the identifier using standard string libraries. We assumed that a stand polygon is always assigned to a larger spatial unit, usually survey units such as NTS mapsheets or townships. Finally, we added, at the polygon level, the field HEADER_ID. This acts as the unique identifier of the SIDS within a jurisdiction. It links each polygon to the HDR record corresponding to its SIDS.
+
+The five elements used to construct the CAS_ID may vary by inventory and these variations are described in the following sections.
+
+**Acceptable values:**
+
+| CAS_ID                                                               | Attribute Value |
+| :------------------------------------------------------------------- | :-------------- |
+| CAS stand identification - unique number for each polygon within CAS | Alpha Numeric   |
+
+**Error and missing value codes:**
+
+
+Error_type       Description                            CAS_ID         
+---------------  -------------------------------------  ---------------
+Null value       Undefined value - true null value      NULL_VALUE     
+Empty string     Missing that is not null               EMPTY_STRING   
+Not applicable   Target attribute not in source table   NOT_APPLICABLE 
+Invalid value    Invalid value                          INVALID        
+
+**Notes:**
+
+  * Should we change the header identifier to contain 5 vs 7 characters?
+
+*AB06*
+
+The AB06 inventory has the following variations:
+
+  * Header identifier: "AB06"
+  * Source file name: "xxxxxGB_S21_TWP"
+  * Name of mapsheet: trm_1
+  * Object identifier: poly_num
+
+*AB16*
+
+The AB16 inventory has the following variations:
+
+  * Header identifier: "AB16"
+  * Source file name: "xxxxxxxxxCANFOR"
+  * Name of mapsheet: "x" + "T0" + township + "R0" + range + "M" + meridian
+  * Object identifier: forest_id
+
+*BC08*
+
+The BC08 inventory has the following variations:
+
+  * Header identifier: "BC08"
+    - Note: previously, the header identifier included the inventory_standard_cd [converted from=c("F","V","I"), to=c("4","5","6"); this was dropped on the assumption, to be confirmed, that all data have been converted to "V" type.
+  * Source file name: "VEG_COMP_LYR_R1"
+  * Name of mapsheet: map_id
+  * Object identifier: objectid
+
+*NB01*
+
+The NB01 inventory has the following variations:
+
+  * Header identifier: "NB01"
+  * Source file name: "xxFOREST_NONFOR"
+  * Name of mapsheet: "xxxxxxxxxx"
+  * Object identifier: stdlab
 
 ### Year of Aerial Photography
 
@@ -70,15 +184,38 @@ Photo Year is the year in which the inventory was considered initiated and compl
 
 ### Crown Closure
 
+
+
+## CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER
+
+Revised: March 19, 2019
+
 Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CAS recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.
 
-  * [Click here for additional information...](attributes/crown_closure.md)
+**Acceptable values:**
 
 | CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER        | Attribute Value |
 | :------------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a crown closure class | 0 - 100         |
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
 | Blank - no value                                   | NA              |
+
+
+**Error and missing value codes:**
+
+
+Error_type           Description                               CROWN_CLOSURE_LOWER   CROWN_CLOSURE_UPPER
+-------------------  ---------------------------------------  --------------------  --------------------
+Null value           Undefined value - true null value                       -8888                 -8888
+Not applicable       Target attribute not in source table                    -8886                 -8886
+Out of range         Value is outside the range of values                    -9999                 -9999
+Not in set           Value is not a member of a set or list                  -9998                 -9998
+Invalid value        Invalid value                                           -9997                 -9997
+Precision too high   Precision is greater than allowed                       -9996                 -9996
+
+**Notes:**
+
+  * AB16 uses crownclosure rather than density that AB06 uses
 
 ### Height
 

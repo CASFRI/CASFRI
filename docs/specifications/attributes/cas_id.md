@@ -1,13 +1,13 @@
 
-## CAS\_ID
+## CASFRI Identification
 
-Revised: March 12, 2019
+Revised: March 19, 2019
 
-### Acceptable values:
+### CAS\_ID
 
-A unique identifier (CAS\_ID) is generated for each polygon to act as
-the primary key in the database. The CAS\_ID is a fixed length field (53
-bytes) composed of five fixed length elements delimited by dash
+The CAS\_ID is a unique identifier that is generated for each polygon
+and acts as the primary key in the database. The CAS\_ID is a fixed
+length field (53 bytes) composed of five elements delimited by dash
 characters (“-”):
 
 1.  Header identifier composed of a 2 letter acronym of the
@@ -37,28 +37,30 @@ jurisdiction. It links each polygon to the HDR record corresponding to
 its SIDS.
 
 The five elements used to construct the CAS\_ID may vary by inventory
-and these variations are described in the following
-sections.
+and these variations are described in the following sections.
 
-### Error and missing value codes:
+**Acceptable
+values:**
 
-| Error\_type        | Description                            | CAS\_ID         |
-| :----------------- | :------------------------------------- | :-------------- |
-| Neg infinity       | Negative infinity                      | NA              |
-| Pos infinity       | Positive infinity                      | NA              |
-| Null value         | Undefined value - true null value      | NULL\_VALUE     |
-| Empty string       | Missing that is not null               | EMPTY\_STRING   |
-| Not applicable     | Target attribute not in source table   | NOT\_APPLICABLE |
-| Out of range       | Value is outside the range of values   | NA              |
-| Not in set         | Value is not a member of a set or list | NA              |
-| Invalid value      | Invalid value                          | INVALID         |
-| Precision too high | Precision is greater than allowed      | NA              |
+| CAS\_ID                                                              | Attribute Value |
+| :------------------------------------------------------------------- | :-------------- |
+| CAS stand identification - unique number for each polygon within CAS | Alpha Numeric   |
 
-### Notes:
+**Error and missing value
+codes:**
+
+| Error\_type    | Description                          | CAS\_ID         |
+| :------------- | :----------------------------------- | :-------------- |
+| Null value     | Undefined value - true null value    | NULL\_VALUE     |
+| Empty string   | Missing that is not null             | EMPTY\_STRING   |
+| Not applicable | Target attribute not in source table | NOT\_APPLICABLE |
+| Invalid value  | Invalid value                        | INVALID         |
+
+**Notes:**
 
   - Should we change the header identifier to contain 5 vs 7 characters?
 
-**AB06**
+*AB06*
 
 The AB06 inventory has the following variations:
 
@@ -67,7 +69,7 @@ The AB06 inventory has the following variations:
   - Name of mapsheet: trm\_1
   - Object identifier: poly\_num
 
-**AB16**
+*AB16*
 
 The AB16 inventory has the following variations:
 
@@ -77,7 +79,7 @@ The AB16 inventory has the following variations:
     meridian
   - Object identifier: forest\_id
 
-**BC08**
+*BC08*
 
 The BC08 inventory has the following variations:
 
@@ -90,7 +92,7 @@ The BC08 inventory has the following variations:
   - Name of mapsheet: map\_id
   - Object identifier: objectid
 
-**NB01**
+*NB01*
 
 The NB01 inventory has the following variations:
 
