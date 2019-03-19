@@ -6,12 +6,13 @@ SET pghost=localhost
 SET pgdbname=CASFRI
 SET pguser=postgres
 SET pgpassword=postgres
+SET pgpassword4ab16=postgres
 
 SET targetFRISchema=rawfri
 SET targetTranslationFileSchema=translation
 
 SET friDir=I://Fris
-SET gdalFolder=C:\Program Files (x86)\GDAL
+SET gdalFolder=C:\Program Files\GDAL
 
 SET overwriteFRI=True
 SET overwriteTTables=True
