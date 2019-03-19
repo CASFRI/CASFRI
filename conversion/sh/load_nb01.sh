@@ -50,7 +50,7 @@ srcNameForest=Forest
 ogrTabForest=$srcNameForest
 srcForestFullPath="$friDir/$NB_subFolder$ogrTabForest.shp"
 
-prjFile="./canadaAlbersEqualAreaConic.prj"
+prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.nb01
 
 if [ $overwriteFRI == True ]; then

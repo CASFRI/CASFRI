@@ -53,7 +53,7 @@ SET srcNameForest=Forest
 SET ogrTabForest=%srcNameForest%
 SET srcForestFullPath="%friDir%\%NB_subFolder%%ogrTabForest%.shp"
 
-SET prjFile="%~dp0\canadaAlbersEqualAreaConic.prj"
+SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.nb01
 
 

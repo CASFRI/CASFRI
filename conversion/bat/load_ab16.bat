@@ -36,7 +36,7 @@ if exist "%~dp0\..\..\config.bat" (
 SET srcFirstFileName=t059r04m6
 SET srcFullPath=%friDir%\AB\SourceDataset\v00.04\NONGOV\Canfor\
 
-SET prjFile="%~dp0\canadaAlbersEqualAreaConic.prj"
+SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab16
 
 

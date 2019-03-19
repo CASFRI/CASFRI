@@ -31,7 +31,7 @@ fi
 srcFirstFileName=t059r04m6
 srcFullPath=$friDir/AB/SourceDataset/v00.04/NONGOV/Canfor
 
-prjFile="./canadaAlbersEqualAreaConic.prj"
+prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.ab16
 
 # PostgreSQL variables

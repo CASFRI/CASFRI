@@ -29,7 +29,7 @@ if exist "%~dp0\..\..\config.bat" (
 SET srcFileName=VEG_COMP_LYR_R1_POLY
 SET srcFullPath="%friDir%\BC\SourceDataset\v.00.05\VEG_COMP_LYR_R1_POLY\%srcFileName%.gdb"
 
-SET prjFile="%~dp0\canadaAlbersEqualAreaConic.prj"
+SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.bc08
 
 
