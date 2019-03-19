@@ -2,8 +2,7 @@
 
 The CASFRI Specifications document and accompanying tables reside in this folder. The original Specifications were written by John Cosco in 2009 and revised in 2011. We have translated the 2011 version to markdown format and created a current version of the document which includes revisions and edits. The main documents include:
 
-  * [CAS attributes (current version)](cas_attributes.md)
-  * [CAS appendices (current version)](cas_appendices.md)
+  * [CAS specifications (current version)](cas_specifications.md)
   * [CAS inventories (current version)](cas_inventories.md)
 
 Archived documents:

@@ -1,4 +1,4 @@
-CAS Attributes
+CASFRI Specifications
 ================
 
   - [Introduction](#introduction)
@@ -140,7 +140,7 @@ bound and upper bound. In the Alberta Vegetation Inventory, crown
 closure is captured in four cover classes: A, B, C and D, while the
 British Columbia Vegetation Resource Inventory captures crown closure as
 values ranging from 1 to 100 to the nearest 1 percent. In CAS, an
-Alberta â€œBâ€ - value would be represented as an interval: 31 for the
+Alberta “B” - value would be represented as an interval: 31 for the
 lower bound and 50 for the upper bound. A British Columbia crown closure
 value of 36 would be represented as a CAS value of 36 for both the lower
 and upper bounds. All of the information contained in the original
@@ -446,12 +446,12 @@ and acts as the primary key in the database. The CAS\_ID is a fixed
 length field (53 bytes) composed of five elements delimited by dash
 characters (“-”):
 
-1.  Header identifier composed of a 2 letter acronym of the
-    [jurisdiction](jurisdiction.md) and 4 character numeric dataset code
-    separated by an underscore (7 alphanumeric characters)
-2.  Source file name (15 alphanumeric characters)
-3.  Name of the [mapsheet](map_sheet_id.md) or geographical division (10
+1.  Header identifier composed of a 2 letter acronym of the jurisdiction
+    and 4 character numeric dataset code separated by an underscore (7
     alphanumeric characters)
+2.  Source file name (15 alphanumeric characters)
+3.  Name of the mapsheet or geographical division (10 alphanumeric
+    characters)
 4.  Object identifier used in the source file (10 numeric characters)
 5.  Serial number to ensure the uniqueness of the identifier (7 numeric
     characters)
