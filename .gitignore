@@ -4,6 +4,7 @@ config.bat
 config.sh
 style.css
 .Rhistory
+*.R
 *.Rmd
 *.html
 sampleWorkFlow_pv.sql
