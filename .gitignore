@@ -8,3 +8,5 @@ style.css
 *.Rmd
 *.html
 sampleWorkFlow_pv.sql
+specifications.Rproj
+.Rproj.user

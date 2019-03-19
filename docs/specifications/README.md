@@ -20,7 +20,7 @@ Archived documents:
 
 ./archive             Original CASFRI specifications (md format) including appendices (xlsx format)
 
-./attributes          Individual attributes files with information about acceptable values and error codes; these are embedded in the cas_attributes.md file
+./attributes          Individual attributes files with information about acceptable values and error codes
 
 ./errors              Error and missing value specifications and codes (csv and xlsx files)
 </pre>

@@ -7,7 +7,10 @@ output:
     number_sections: true
     css: style.css
     keep_md: yes
+    code_folding: hide
 ---
+
+
 
 <center><br><br><b><font size=+2>COMMON ATTRIBUTE SCHEMA (CAS)<br>FOR FOREST INVENTORIES ACROSS CANADA</font></b>
 <br><br><br>
@@ -61,8 +64,7 @@ Error codes are needed during translation if source values are invalid, null, or
 
 
 ```r
-x = read.csv("errors/cas_errors_general.csv")
-knitr::kable(x)
+knitr::kable(x1)
 ```
 
 
@@ -173,8 +175,6 @@ The NB01 inventory has the following variations:
 
 Photo Year is the year in which the inventory was considered initiated and completed. An inventory can take several years to complete; therefore, Photo Year Minimum and Maximum dates are included to identify the interval for when the inventory was completed. In some cases inventory reference year and air photo year are the same. Several years of successive or periodic acquisition are possible; therefore, a minimum and a maximum year are recorded.
 
-  * [Click here for additional information...](attributes/photo_year.md)
-
 | PHOTO_YEAR_MIN and PHOTO_YEAR_MAX                              | Attribute Value |
 | :------------------------------------------------------------- | :-------------- |
 | Photo Year Minimum - earliest year of aerial photo acquisition | 1960 - 2020     |
@@ -184,15 +184,7 @@ Photo Year is the year in which the inventory was considered initiated and compl
 
 ### Crown Closure
 
-
-
-## CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER
-
-Revised: March 19, 2019
-
 Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CAS recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.
-
-**Acceptable values:**
 
 | CROWN_CLOSURE_UPPER and CROWN_CLOSURE_LOWER        | Attribute Value |
 | :------------------------------------------------- | :-------------- |
@@ -200,8 +192,7 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
 | Blank - no value                                   | NA              |
 
-
-**Error and missing value codes:**
+*Error and missing value codes:*
 
 
 Error_type           Description                               CROWN_CLOSURE_LOWER   CROWN_CLOSURE_UPPER
@@ -213,20 +204,27 @@ Not in set           Value is not a member of a set or list                  -99
 Invalid value        Invalid value                                           -9997                 -9997
 Precision too high   Precision is greater than allowed                       -9996                 -9996
 
-**Notes:**
-
-  * AB16 uses crownclosure rather than density that AB06 uses
-
 ### Height
 
 Stand height is based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6.
-
-  * [Click here for additional information...](attributes/height.md)
 
 | HEIGHT_UPPER and HEIGHT_LOWER                | Attribute Value |
 | :------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a height class. | 0 - 100         |
 | Lower Bound - lower bound of a height class. | 0 - 100         |
+
+*Error and missing value codes:*
+
+
+Error_type           Description                             HEIGHT_LOWER   HEIGHT_UPPER
+-------------------  -------------------------------------  -------------  -------------
+Neg infinity         Negative infinity                              -2222          -2222
+Pos infinity         Positive infinity                              -2221          -2221
+Null value           Undefined value - true null value              -8888          -8888
+Not applicable       Target attribute not in source table           -8886          -8886
+Out of range         Value is outside the range of values           -9999          -9999
+Invalid value        Invalid value                                  -9997          -9997
+Precision too high   Precision is greater than allowed              -9996          -9996
 
 ### Species Composition
 
@@ -238,16 +236,33 @@ CAS species codes are derived from the species' Latin name using the first four 
 
 **Species type**
 
-  * [Click here for additional information...](attributes/species.md)
-
 | SPECIES_1, SPECIES_2, SPECIES_3, SPECIES_4, SPECIES_5, SPECIES_6, SPECIES_7, SPECIES_8, SPECIES_9, SPECIES_10 | Attribute Value |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species (SPECIES_#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon.                                                                             | POPU TREM       |
+*Error and missing value codes:*
+
+
+Error_type       Description                              SPECIES_1-10   
+---------------  ---------------------------------------  ---------------
+Null value       Undefined value - true null value        NULL_VALUE     
+Empty string     Missing that is not null                 EMPTY_STRING   
+Not applicable   Target attribute not in source table     NOT_APPLICABLE 
+Not in set       Value is not a member of a set or list   NOT_IN_SET     
+Invalid value    Invalid value                            INVALID        
 
 **Species percentage**
-
-  * [Click here for additional information...](attributes/species_pct.md)
 
 | SPECIES_PER_1, SPECIES_PER_2, SPECIES_PER_3, SPECIES_PER_4, SPECIES_PER_5, SPECIES_PER_6, SPECIES_PER_7, SPECIES_PER_8, SPECIES_PER_9, SPECIES_PER_10 | Attribute Value |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species Percent (SPECIES_PER_#) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.                             | NA              |
+
+*Error and missing value codes:*
+
+
+Error_type           Description                             SPECIES_PER_1-10
+-------------------  -------------------------------------  -----------------
+Null value           Undefined value - true null value                  -8888
+Not applicable       Target attribute not in source table               -8886
+Out of range         Value is outside the range of values               -9999
+Invalid value        Invalid value                                      -9997
+Precision too high   Precision is greater than allowed                  -9996
