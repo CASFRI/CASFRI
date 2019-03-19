@@ -1,13 +1,30 @@
-CASFRI Specifications
-================
 
-# COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA
+  - [Introduction](#introduction)
+  - [Common Attribute Schema](#common-attribute-schema)
+      - [Error and Missing Value Codes](#error-and-missing-value-codes)
+      - [Header Information (HDR)](#header-information-hdr)
+          - [CASFRI Identification](#casfri-identification)
+      - [CASFRI Identification](#casfri-identification-1)
+          - [CAS\_ID](#cas_id)
+          - [Year of Aerial Photography](#year-of-aerial-photography)
+      - [CAS Forest and Non-Forest Attributes
+        (LYR)](#cas-forest-and-non-forest-attributes-lyr)
+          - [Crown Closure](#crown-closure)
+          - [Height](#height)
+          - [Species Composition](#species-composition)
 
-Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
+<center>
 
-Revised by: The CASFRI Project Team, March 2019
+<br><br><b><font size=+2>COMMON ATTRIBUTE SCHEMA (CAS)<br>FOR FOREST
+INVENTORIES ACROSS CANADA</font></b> <br><br><br> Prepared by: John A.
+Cosco, Chief Inventory Forester, February 2011<br> Revised by: The
+CASFRI Project Team, March 2019
 
-## Introduction
+</center>
+
+<br><br>
+
+# Introduction
 
 Canada’s vast boreal ecosystem hosts one of the most diverse bird
 communities in North America. Development pressure within the boreal
@@ -47,7 +64,7 @@ This document addresses the inventory review developed for the Boreal
 Avian Monitoring Project; this review is called the Common Attribute
 Schema (CAS).
 
-## Common Attribute Schema
+# Common Attribute Schema
 
 The common attribute schema (CAS) is a comprehensive attribute
 classification suitable for avian habitat modeling. Its development
@@ -95,7 +112,7 @@ bound and upper bound. In the Alberta Vegetation Inventory, crown
 closure is captured in four cover classes: A, B, C and D, while the
 British Columbia Vegetation Resource Inventory captures crown closure as
 values ranging from 1 to 100 to the nearest 1 percent. In CAS, an
-Alberta “B” - value would be represented as an interval: 31 for the
+Alberta â€œBâ€ - value would be represented as an interval: 31 for the
 lower bound and 50 for the upper bound. A British Columbia crown closure
 value of 36 would be represented as a CAS value of 36 for both the lower
 and upper bounds. All of the information contained in the original
@@ -139,7 +156,7 @@ into CAS. A sample procedure is presented in Appendix 16.
 Procedures Across Canada. Petawawa National Forestry Institute,
 Information Report PI-X-114.
 
-### Error and Missing Value Codes
+## Error and Missing Value Codes
 
 Error codes are needed during translation if source values are invalid,
 null, or missing. In CASFRI v5, error codes have been designed to match
@@ -147,8 +164,12 @@ the attribute type and to reflect the type of error that was
 encountered. For example, an integer attribute will have error codes
 reported as integers (e.g. -9999) whereas text attributes will have
 errors reported as text (e.g. INVALID). Different error codes are
-reported depending on the cause.
+reported depending on the
+cause.
 
+``` r
+knitr::kable(x1)
+```
 
 | Class          | Type               | Description                            | Function                                           | Text.message     | Small.int.code | Large.int.code |  Double.code |
 | :------------- | :----------------- | :------------------------------------- | :------------------------------------------------- | :--------------- | -------------: | -------------: | -----------: |
@@ -173,12 +194,107 @@ These attributes are detailed on the following pages.
 
 ### CASFRI Identification
 
+## CASFRI Identification
+
+Revised: March 19, 2019
+
+### CAS\_ID
+
 The CAS\_ID is a unique identifier that is generated for each polygon
 and acts as the primary key in the database. The CAS\_ID is a fixed
 length field (53 bytes) composed of five elements delimited by dash
-characters (“-”).
+characters (“-”):
 
-  - [Click here for additional information…](attributes/cas_id.md)
+1.  Header identifier composed of a 2 letter acronym of the
+    [jurisdiction](jurisdiction.md) and 4 character numeric dataset code
+    separated by an underscore (7 alphanumeric characters)
+2.  Source file name (15 alphanumeric characters)
+3.  Name of the [mapsheet](map_sheet_id.md) or geographical division (10
+    alphanumeric characters)
+4.  Object identifier used in the source file (10 numeric characters)
+5.  Serial number to ensure the uniqueness of the identifier (7 numeric
+    characters)
+
+Examples:
+
+  - ON\_0001-xxxxxxxxxMU030L-xxxxxMU030-0030000003-0000001
+  - BC\_0004-VEG\_COMP\_LYR\_R1-xxx082C095-0000000001-0000001
+
+This naming convention allows manual or automated tracing of any final
+forest stand stored in the database back to its specific record in the
+original file within the given SIDS. This fixed length format was
+designed to ease automated parsing of the identifier using standard
+string libraries. We assumed that a stand polygon is always assigned to
+a larger spatial unit, usually survey units such as NTS mapsheets or
+townships. Finally, we added, at the polygon level, the field
+HEADER\_ID. This acts as the unique identifier of the SIDS within a
+jurisdiction. It links each polygon to the HDR record corresponding to
+its SIDS.
+
+The five elements used to construct the CAS\_ID may vary by inventory
+and these variations are described in the following sections.
+
+**Acceptable
+values:**
+
+| CAS\_ID                                                              | Attribute Value |
+| :------------------------------------------------------------------- | :-------------- |
+| CAS stand identification - unique number for each polygon within CAS | Alpha Numeric   |
+
+**Error and missing value
+codes:**
+
+| Error\_type    | Description                          | CAS\_ID         |
+| :------------- | :----------------------------------- | :-------------- |
+| Null value     | Undefined value - true null value    | NULL\_VALUE     |
+| Empty string   | Missing that is not null             | EMPTY\_STRING   |
+| Not applicable | Target attribute not in source table | NOT\_APPLICABLE |
+| Invalid value  | Invalid value                        | INVALID         |
+
+**Notes:**
+
+  - Should we change the header identifier to contain 5 vs 7 characters?
+
+*AB06*
+
+The AB06 inventory has the following variations:
+
+  - Header identifier: “AB06”
+  - Source file name: “xxxxxGB\_S21\_TWP”
+  - Name of mapsheet: trm\_1
+  - Object identifier: poly\_num
+
+*AB16*
+
+The AB16 inventory has the following variations:
+
+  - Header identifier: “AB16”
+  - Source file name: “xxxxxxxxxCANFOR”
+  - Name of mapsheet: “x” + “T0” + township + “R0” + range + “M” +
+    meridian
+  - Object identifier: forest\_id
+
+*BC08*
+
+The BC08 inventory has the following variations:
+
+  - Header identifier: “BC08”
+      - Note: previously, the header identifier included the
+        inventory\_standard\_cd \[converted from=c(“F”,“V”,“I”),
+        to=c(“4”,“5”,“6”); this was dropped on the assumption, to be
+        confirmed, that all data have been converted to “V” type.
+  - Source file name: “VEG\_COMP\_LYR\_R1”
+  - Name of mapsheet: map\_id
+  - Object identifier: objectid
+
+*NB01*
+
+The NB01 inventory has the following variations:
+
+  - Header identifier: “NB01”
+  - Source file name: “xxFOREST\_NONFOR”
+  - Name of mapsheet: “xxxxxxxxxx”
+  - Object identifier: stdlab
 
 ### Year of Aerial Photography
 
@@ -188,10 +304,8 @@ therefore, Photo Year Minimum and Maximum dates are included to identify
 the interval for when the inventory was completed. In some cases
 inventory reference year and air photo year are the same. Several years
 of successive or periodic acquisition are possible; therefore, a minimum
-and a maximum year are recorded.
-
-  - [Click here for additional
-information…](attributes/photo_year.md)
+and a maximum year are
+recorded.
 
 | PHOTO\_YEAR\_MIN and PHOTO\_YEAR\_MAX                          | Attribute Value |
 | :------------------------------------------------------------- | :-------------- |
@@ -209,14 +323,23 @@ is commonly represented by classes and differs across Canada; therefore,
 CAS recognizes an upper and lower percentage bound for each class. The
 detailed crown closure table is presented in Appendix 5.
 
-  - [Click here for additional
-    information…](attributes/crown_closure.md)
-
 | CROWN\_CLOSURE\_UPPER and CROWN\_CLOSURE\_LOWER    | Attribute Value |
 | :------------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a crown closure class | 0 - 100         |
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
 | Blank - no value                                   | NA              |
+
+*Error and missing value
+codes:*
+
+| Error\_type        | Description                            | CROWN\_CLOSURE\_LOWER | CROWN\_CLOSURE\_UPPER |
+| :----------------- | :------------------------------------- | --------------------: | --------------------: |
+| Null value         | Undefined value - true null value      |                \-8888 |                \-8888 |
+| Not applicable     | Target attribute not in source table   |                \-8886 |                \-8886 |
+| Out of range       | Value is outside the range of values   |                \-9999 |                \-9999 |
+| Not in set         | Value is not a member of a set or list |                \-9998 |                \-9998 |
+| Invalid value      | Invalid value                          |                \-9997 |                \-9997 |
+| Precision too high | Precision is greater than allowed      |                \-9996 |                \-9996 |
 
 ### Height
 
@@ -227,12 +350,23 @@ by actual values or by height class and its representation is variable
 across Canada; therefore, CAS will use upper and lower bounds to
 represent height. The detailed height table is presented in Appendix 6.
 
-  - [Click here for additional information…](attributes/height.md)
-
 | HEIGHT\_UPPER and HEIGHT\_LOWER              | Attribute Value |
 | :------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a height class. | 0 - 100         |
 | Lower Bound - lower bound of a height class. | 0 - 100         |
+
+*Error and missing value
+codes:*
+
+| Error\_type        | Description                          | HEIGHT\_LOWER | HEIGHT\_UPPER |
+| :----------------- | :----------------------------------- | ------------: | ------------: |
+| Neg infinity       | Negative infinity                    |        \-2222 |        \-2222 |
+| Pos infinity       | Positive infinity                    |        \-2221 |        \-2221 |
+| Null value         | Undefined value - true null value    |        \-8888 |        \-8888 |
+| Not applicable     | Target attribute not in source table |        \-8886 |        \-8886 |
+| Out of range       | Value is outside the range of values |        \-9999 |        \-9999 |
+| Invalid value      | Invalid value                        |        \-9997 |        \-9997 |
+| Precision too high | Precision is greater than allowed    |        \-9996 |        \-9996 |
 
 ### Species Composition
 
@@ -268,20 +402,38 @@ list of species that is represented by the generic groups by province,
 territory, or Park has also been developed and is presented in Appendix
 9.
 
-**Species type**
-
-  - [Click here for additional
-information…](attributes/species.md)
+**Species
+type**
 
 | SPECIES\_1, SPECIES\_2, SPECIES\_3, SPECIES\_4, SPECIES\_5, SPECIES\_6, SPECIES\_7, SPECIES\_8, SPECIES\_9, SPECIES\_10 | Attribute Value |
 | :---------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species (SPECIES\_\#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon. | POPU TREM       |
 
-**Species percentage**
+*Error and missing value
+codes:*
 
-  - [Click here for additional
-information…](attributes/species_pct.md)
+| Error\_type    | Description                            | SPECIES\_1-10   |
+| :------------- | :------------------------------------- | :-------------- |
+| Null value     | Undefined value - true null value      | NULL\_VALUE     |
+| Empty string   | Missing that is not null               | EMPTY\_STRING   |
+| Not applicable | Target attribute not in source table   | NOT\_APPLICABLE |
+| Not in set     | Value is not a member of a set or list | NOT\_IN\_SET    |
+| Invalid value  | Invalid value                          | INVALID         |
+
+**Species
+percentage**
 
 | SPECIES\_PER\_1, SPECIES\_PER\_2, SPECIES\_PER\_3, SPECIES\_PER\_4, SPECIES\_PER\_5, SPECIES\_PER\_6, SPECIES\_PER\_7, SPECIES\_PER\_8, SPECIES\_PER\_9, SPECIES\_PER\_10 | Attribute Value |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------- |
 | Species Percent (SPECIES\_PER\_\#) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.   | NA              |
+
+*Error and missing value
+codes:*
+
+| Error\_type        | Description                          | SPECIES\_PER\_1-10 |
+| :----------------- | :----------------------------------- | -----------------: |
+| Null value         | Undefined value - true null value    |             \-8888 |
+| Not applicable     | Target attribute not in source table |             \-8886 |
+| Out of range       | Value is outside the range of values |             \-9999 |
+| Invalid value      | Invalid value                        |             \-9997 |
+| Precision too high | Precision is greater than allowed    |             \-9996 |
