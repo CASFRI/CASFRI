@@ -12,7 +12,6 @@ CASFRI Specifications
           - [CAS Data Acquisition](#cas-data-acquisition)
       - [CAS Base Polygon Attributes](#cas-base-polygon-attributes)
           - [Polygon Identification](#polygon-identification)
-          - [CASFRI Identification](#casfri-identification)
           - [CAS\_ID](#cas_id)
           - [Polygon Area and Perimeter](#polygon-area-and-perimeter)
           - [Year of Aerial Photography](#year-of-aerial-photography)
@@ -436,8 +435,6 @@ identifiers.
 | Original stand identification - unique number for each polygon within the original inventory | 1 - 10,000,000  |
 
 <br>
-
-### CASFRI Identification
 
 ### CAS\_ID
 
