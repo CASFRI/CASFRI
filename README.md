@@ -98,4 +98,10 @@ Error codes are needed during translation if source values are invalid, null, or
 ### Translating
 * Run the translation engine for each FRI using the loaded source FRI table and the translation table.
 * Refer to the sampleWorkFlow.sql file located in the CASFRI root directory for an example of how to run the translation engine.
+
 # Credits
+Pierre Racine
+
+Pierre Vernier
+
+Marc Edwards
