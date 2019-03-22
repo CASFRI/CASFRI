@@ -35,7 +35,7 @@ The three steps for building CASFRI v5 are:
 
 * Loading scripts require GDAL v1.11.4 and access to a Bash or batch shell. IMPORTANT: ab16 will not load with GDAL v2.X
 
-* Table translation requires the PostTranslationEngine v0.1beta
+* Table translation requires the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework)
 
 # Vocabulary
 *Source data* - Raw FRI data received from jurisdictions.
