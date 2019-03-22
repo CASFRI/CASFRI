@@ -5,13 +5,13 @@ The Common Attribute Schema for Forest Resource Inventories (CASFRI) standardize
 
 The [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications) focus on the most common attributes that are consistently recorded in forest inventories across Canada and which are relevant to habitat modeling and state of forest reporting. These attributes include crown closure, species composition, height, mean canopy or stand origin age, stand structure, moisture regime, site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history.
 
-CASFRI version 5 makes a number of updates to previous versions:
+CASFRI-5 makes a number of updates to previous versions:
 * Addition of new inventories.
 * Implementation of a new extract, load, transform procedure focused around PostgreSQL and a small number of open source dependencies.
 * Implementation of a temporalization procedure to create a temporal database of all available inventories.
-* Assignment of attribute specific meaningful error codes.
+* Assignment of attribute specific error codes.
 
-The three steps for building CASFRI v5 are:
+The three steps for building CASFRI-5 are:
 1. Conversion/loading
 2. Transformation
 3. Topological correction and temporalization
@@ -31,9 +31,9 @@ The three steps for building CASFRI v5 are:
 
 # Requirements
 
-* CASFRI v5 uses PostgreSQL 9.6 and PostGIS v2.3.7.
+* CASFRI-5 uses PostgreSQL 9.6 and PostGIS v2.3.7.
 
-* Loading scripts require GDAL v1.11.4 and access to a Bash or batch shell. IMPORTANT: ab16 will not load with GDAL v2.X
+* Loading scripts require GDAL v1.11.4 and access to a Bash or Batch shell. IMPORTANT: some file types will not load with GDAL v2.X
 
 * Table translation requires the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework)
 
@@ -53,7 +53,7 @@ The three steps for building CASFRI v5 are:
 *Helper function* - A set of functions used in the translation table to facilitate translation.
 
 # FRI and standard codes
-CASFRI v5 uses a four-code standard for identifying FRIs. Each FRI is coded using two letters for the province or territory, and two numbers that increment for each new FRI added in that province/territory. e.g. BC01.
+CASFRI-5 uses a four-code standard for identifying FRIs. Each FRI is coded using two letters for the province or territory, and two numbers that increment for each new FRI added in that province/territory. e.g. BC01.
 
 Inventory standards are the attribute specifications applied to a given inventory. Multiple FRIs from a province/territory can use the same standard, however jurisdictions will occasionally update their standards, and each jurisdiction has their own unique inventory standards. The CASFRI specifications need to apply different sets of translation rules for different standards. Each standard is applied a code made of three letters representing the standard, and two numbers representing the version of the standard. e.g. VRI01.
 
@@ -66,9 +66,9 @@ All conversion/loading scripts are provided as both .sh files and .bat files.
 Currently supported FRI formats are:
 * Geodatabase
 * Shapefile
-* ESRI Coverage
+* Arc/Info Binary Coverage
 
-E00 files are not currently supported. Source tables in this format should be converted into a supported format before loading, for example a file geodatabase.
+Arc/Info E00 files are not currently supported. Source tables in this format should be converted into a supported format before loading, for example a file geodatabase.
 
 ### Projection
 All source tables are transformed to the Canada Albers Equal Area Conic projection during loading.
@@ -77,7 +77,7 @@ All source tables are transformed to the Canada Albers Equal Area Conic projecti
 Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). The translation engine uses a translation table that describes rules for translating each loaded source table into a target table. The translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a function named Between() validates that the source data is within the expected range of values, and a function named Map() maps a set of source values to a set of target values. A list of all helper functions is available in the PostgreSQL Table Translation Framework [readMe](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). After the translation engine has run on all loaded source tables, the result is a complete set of target tables, each with matching attributes as defined by the CASFRI standard. 
 
 ### Error codes
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. A full description of possible error codes can be found in the [CASFRI specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI-5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. A full description of possible error codes can be found in the [CASFRI-5 specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
 
 # Workflow
 ### Converting/loading FRIs
