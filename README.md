@@ -48,7 +48,7 @@ The three steps for building CASFRI v5 are:
 
 *Lookup table* - User created table used in conjunction with the translation tables; for example, to recode provincial species lists to a standard set of 8-character codes.
 
-*Translation engine* - The [Post Translation Engine](https://github.com/edwardsmarc/postTranslationEngine).
+*Translation engine* - The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
 
 *Helper function* - A set of functions used in the translation table to facilitate translation.
 
@@ -74,7 +74,7 @@ E00 files are not currently supported. Source tables in this format should be co
 All source tables are transformed to the Canada Albers Equal Area Conic projection during loading.
 
 # Translation
-Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [Post Translation Engine](https://github.com/edwardsmarc/postTranslationEngine). The translation engine uses a translation table that describes rules for translating each loaded source table into a target table. The translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a function named Between() validates that the source data is within the expected range of values, and a function named Map() maps a set of source values to a set of target values. A list of all helper functions is available in the Post Translation Engine [readMe](https://github.com/edwardsmarc/postTranslationEngine). After the translation engine has run on all loaded source tables, the result is a complete set of target tables, each with matching attributes as defined by the CASFRI standard. 
+Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). The translation engine uses a translation table that describes rules for translating each loaded source table into a target table. The translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a function named Between() validates that the source data is within the expected range of values, and a function named Map() maps a set of source values to a set of target values. A list of all helper functions is available in the PostgreSQL Table Translation Framework [readMe](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). After the translation engine has run on all loaded source tables, the result is a complete set of target tables, each with matching attributes as defined by the CASFRI standard. 
 
 ### Error codes
 Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. A full description of possible error codes can be found in the [CASFRI specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
@@ -89,9 +89,9 @@ Error codes are needed during translation if source values are invalid, null, or
 * You must copy and edit the configSample (.bat or .sh) file to match your system configuration and save it as config.sh or config.bat.
 * The script will load all translation tables stored in the provided folder paths into the specified schema.
 ### Installing engine
-* In a PostgreSQL query window, run, in this order:
-  1. the postTranslationEngine/engine.sql file,
-  2. the postTranslationEngine/helperFunctions.sql file,
+* In a PostgreSQL query window, run, in this order, SQL files found in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework):
+  1. the engine.sql file,
+  2. the helperFunctions.sql file,
   3. the helperFunctionsTest.sql file. All tests should pass.
   4. the engineTest.sql file. All tests should pass.
 * You can uninstall all the functions by running the helperFunctionsUninstall.sql and the engineUninstall.sql files.
