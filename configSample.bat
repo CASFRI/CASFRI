@@ -6,7 +6,6 @@ SET pghost=localhost
 SET pgdbname=CASFRI
 SET pguser=postgres
 SET pgpassword=postgres
-SET pgpassword4ab16=postgres
 
 SET targetFRISchema=rawfri
 SET targetTranslationFileSchema=translation

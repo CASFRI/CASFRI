@@ -19,11 +19,11 @@
 SETLOCAL
 
 :: Load config variables from local config file
-if exist "%~dp0\..\..\config.bat" ( 
-  call "%~dp0\..\..\config.bat"
-) else (
-  echo ERROR: NO config.bat FILE
-  exit /b
+IF EXIST "%~dp0\..\..\config.bat" ( 
+  CALL "%~dp0\..\..\config.bat"
+) ELSE (
+  ECHO ERROR: NO config.bat FILE
+  EXIT /b
 )
 
 :: Set unvariable variables
@@ -35,9 +35,9 @@ SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab06
 
 
-if %overwriteFRI% == True (
+IF %overwriteFRI% == True (
   SET overwrite_tab=-overwrite 
-) else (
+) ELSE (
   SET overwrite_tab=
 )
 

@@ -19,16 +19,20 @@
 :: Load the first table normally, then delete all the data. This serves as a template
 :: Then loop through all Coverages and append to the template table
 
+:: NOTE: If pgpassword, as defined in the local config.bat file, contains an exclamation mark,
+:: (e.g. psswrd!) you must also define pgpassword4ab16 to the same value and escape the 
+:: question mark with a double caret like this: SET pgpassword4ab16=psswrd^^!
+
 ::######################################## variables #######################################
 
 SETLOCAL
 
 :: Load config variables from local config file
-if exist "%~dp0\..\..\config.bat" ( 
-  call "%~dp0\..\..\config.bat"
-) else (
-  echo ERROR: NO config.bat FILE
-  exit /b
+IF EXIST "%~dp0\..\..\config.bat" ( 
+  CALL "%~dp0\..\..\config.bat"
+) ELSE (
+  ECHO ERROR: NO config.bat FILE
+  EXIT /b
 )
 
 :: Set unvariable variables
@@ -40,10 +44,11 @@ SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab16
 
 
-if %overwriteFRI% == True (
+IF %overwriteFRI% == True (
   SET ogr_options=-overwrite 
 )
 
+IF "%pgpassword4ab16%"=="" SET pgpassword4ab16=%pgpassword%
 
 :: PostgreSQL variables
 
@@ -64,7 +69,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 :: Original columns will be loaded as forest_ and forest_id, they will be NULL because ogr2ogr cannot append the values from the invalid field names.
 :: New fields will be added to the right of the table
 
-for /D %%F IN (%srcFullPath%\t*) DO (
+FOR /D %%F IN (%srcFullPath%\t*) DO (
   "%gdalFolder%/ogr2ogr" ^
   -f "PostgreSQL" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" ^
   -sql "SELECT *, '%%~nF' as src_filename, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
