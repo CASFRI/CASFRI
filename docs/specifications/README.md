@@ -24,3 +24,8 @@ Archived documents:
 </pre>
 
 # Credit
+Pierre Racine
+
+Pierre Vernier
+
+Marc Edwards
