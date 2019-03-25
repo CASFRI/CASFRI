@@ -1557,10 +1557,12 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="common-attribute-schema" class="section level1">
 <h1>Common Attribute Schema</h1>
-<p>The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.</p>
+<p>The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index,<br />
+non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.</p>
 <p>Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada. Gillis and Leckie<sup>1</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography. A summary of recent or current inventories across Canada are presented in Appendix 1. These inventories are the most likely sources for data that can contribute to the avian bird modeling project.</p>
 <p>Based on the review, detailed tables were produced to summarize each inventory standard by province and territory. Two national parks, Wood Buffalo and Prince Albert are included. Conversion rule sets were then produced as part of the detailed tables to identify how each province or territory inventory attribute codes translate into CAS attribute codes. Detailed tables and conversion rule sets for each CAS attribute are presented in Appendices noted in the appropriate sections of this document.</p>
-<p>Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is &gt; and the upper bound is &lt;). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta “B” - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a common resolution or set of values.</p>
+<p>Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is &gt; and the upper bound is &lt;). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta “B” - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a<br />
+common resolution or set of values.</p>
 <p>Attributes for CAS are stored in six attribute files to facilitate conversion and translation:</p>
 <ol style="list-style-type: decimal">
 <li><p>Header (HDR) attributes - values assigned to all polygons based on provenance or reference information;</p></li>
@@ -1576,7 +1578,7 @@ Revised by: The CASFRI Project Team, March 2019
 <div id="error-and-missing-value-codes" class="section level2">
 <h2>Error and Missing Value Codes</h2>
 <p>Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.</p>
-<pre class="r"><code>knitr::kable(x1)</code></pre>
+<pre class="r"><code>knitr::kable(x1)     </code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -1769,7 +1771,11 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="spatial-reference" class="section level3">
 <h3>Spatial Reference</h3>
-<p>Spatial reference describes the reference frame for, and the means to encode, coordinates in the data set including a coordinate system, projection, and datum. Coordinates can be referenced to any desired geographic grid. The coordinate system is a method of representing points in a space of given dimensions by coordinates to establish position. A projection is a systematic construction of lines drawn on a plane surface representative of and corresponding to the meridians and parallels of the curved surface of the earth. A datum is the geodetic datum specifying that coordinate system in which horizontal control points are located. The North American Datum (NAD) of 1983 is the current datum used in Canada. Some inventories may use the NAD of 1927.</p>
+<p>Spatial reference describes the reference frame for, and the means to encode, coordinates in the data set including a coordinate system,<br />
+projection, and datum. Coordinates can be referenced to any desired geographic grid. The coordinate system is a method of representing<br />
+points in a space of given dimensions by coordinates to establish position. A projection is a systematic construction of lines drawn on a<br />
+plane surface representative of and corresponding to the meridians and parallels of the curved surface of the earth. A datum is the geodetic<br />
+datum specifying that coordinate system in which horizontal control points are located. The North American Datum (NAD) of 1983 is the current datum used in Canada. Some inventories may use the NAD of 1927.</p>
 <table>
 <thead>
 <tr class="header">
@@ -1993,8 +1999,12 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="inventory-metadata" class="section level3">
 <h3>Inventory Metadata</h3>
-<p>Inventory metadata provides general information with regard to a particular forest or vegetation inventory. The inventory type identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation Inventory or AVI. The inventory type along with a version number usually identifies an inventory.</p>
-<p>The inventory version identifies the standards used to produce a consistent inventory, usually across large landbases and for a relatively long period of time. Inventory Reference Year identifies the year the inventory done. An inventory can take several years to complete; therefore, Reference Year Minimum and Maximum dates are included to identify the interval for when the inventory was completed. In some cases inventory reference year and air photo year will be the same. Several years of successive or periodic acquisition are possible; therefore, a minimum and a maximum year are recorded. Inventory Start and Finish Year identifies the year the inventory was started and finished. Year of Update indicates the year that an inventory was updated.</p>
+<p>Inventory metadata provides general information with regard to a particular forest or vegetation inventory. The inventory type identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became<br />
+more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation<br />
+Inventory or AVI. The inventory type along with a version number usually identifies an inventory.</p>
+<p>The inventory version identifies the standards used to produce a consistent inventory, usually across large landbases and for a relatively long period of time. Inventory Reference Year identifies the year the inventory done. An inventory can take several years to complete; therefore, Reference Year Minimum and Maximum dates are included to identify the interval for when the inventory was completed. In some cases inventory reference year and air photo year will be the same. Several years of successive or periodic acquisition are possible;<br />
+therefore, a minimum and a maximum year are recorded. Inventory Start and Finish Year identifies the year the inventory was started and<br />
+finished. Year of Update indicates the year that an inventory was updated.</p>
 <p><br></p>
 <table>
 <thead>
@@ -2121,7 +2131,9 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="cas-base-polygon-attributes" class="section level2">
 <h2>CAS Base Polygon Attributes</h2>
-<p>The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.</p>
+<p>The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification<br />
+attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include polygon area and polygon<br />
+perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.</p>
 <p><br></p>
 <div id="polygon-identification" class="section level3">
 <h3>Polygon Identification</h3>
@@ -2150,15 +2162,20 @@ Revised by: The CASFRI Project Team, March 2019
 <h3>CAS_ID</h3>
 <p>The CAS_ID is a unique identifier that is generated for each polygon and acts as the primary key in the database. The CAS_ID is a fixed length field (53 bytes) composed of five elements delimited by dash characters (“-”):</p>
 <ol style="list-style-type: decimal">
-<li>Header identifier composed of a 2 letter acronym of the jurisdiction and 4 character numeric dataset code separated by an underscore (7 alphanumeric characters)</li>
-<li>Source file name (15 alphanumeric characters)</li>
-<li>Name of the mapsheet or geographical division (10 alphanumeric characters)</li>
-<li>Object identifier used in the source file (10 numeric characters)</li>
+<li>Header identifier composed of a 2 letter acronym of the jurisdiction and 4 character numeric dataset code separated by an underscore (7 alphanumeric characters)<br />
+</li>
+<li>Source file name (15 alphanumeric characters)<br />
+</li>
+<li>Name of the mapsheet or geographical division (10 alphanumeric characters)<br />
+</li>
+<li>Object identifier used in the source file (10 numeric characters)<br />
+</li>
 <li>Serial number to ensure the uniqueness of the identifier (7 numeric characters)</li>
 </ol>
 <p>Examples:</p>
 <ul>
-<li>ON_0001-xxxxxxxxxMU030L-xxxxxMU030-0030000003-0000001</li>
+<li>ON_0001-xxxxxxxxxMU030L-xxxxxMU030-0030000003-0000001<br />
+</li>
 <li>BC_0004-VEG_COMP_LYR_R1-xxx082C095-0000000001-0000001</li>
 </ul>
 <p>This naming convention allows manual or automated tracing of any final forest stand stored in the database back to its specific record in the original file within the given SIDS. This fixed length format was designed to ease automated parsing of the identifier using standard string libraries. We assumed that a stand polygon is always assigned to a larger spatial unit, usually survey units such as NTS mapsheets or townships. Finally, we added, at the polygon level, the field HEADER_ID. This acts as the unique identifier of the SIDS within a jurisdiction. It links each polygon to the HDR record corresponding to its SIDS.</p>
@@ -2303,7 +2320,10 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="administration-unit" class="section level3">
 <h3>Administration Unit</h3>
-<p>Administration unit identifies any inventory sub-unit boundaries that exist within an inventory. Sub- unit boundaries can possibly split a polygon; therefore, this CAS attribute is applied at the CAS base polygon level. Two administration unit (possibly hierarchical) levels of organization are identified, such as Forest Management Units (FMUs) and Working Circle (WC) or Compartment (CMPT). Their interpretation is source-data-set explicit.</p>
+<p>Administration unit identifies any inventory sub-unit boundaries that exist within an inventory. Sub- unit boundaries can possibly split a<br />
+polygon; therefore, this CAS attribute is applied at the CAS base polygon level. Two administration unit (possibly hierarchical) levels of<br />
+organization are identified, such as Forest Management Units (FMUs) and Working Circle (WC) or Compartment (CMPT). Their interpretation is<br />
+source-data-set explicit.</p>
 <p><br></p>
 <table>
 <thead>
@@ -2315,11 +2335,11 @@ Revised by: The CASFRI Project Team, March 2019
 <tbody>
 <tr class="odd">
 <td align="left">Administration Unit 1</td>
-<td align="left">Alpha Numeric,e.g.Â FMU</td>
+<td align="left">Alpha Numeric, e.g. FMU</td>
 </tr>
 <tr class="even">
 <td align="left">Administration Unit 2</td>
-<td align="left">Alpha Numeric, e.g.Â WC</td>
+<td align="left">Alpha Numeric, e.g. WC</td>
 </tr>
 </tbody>
 </table>
@@ -2332,7 +2352,10 @@ Revised by: The CASFRI Project Team, March 2019
 <div id="stand-structure" class="section level3">
 <h3>Stand Structure</h3>
 <p>Structure is the physical arrangement or vertical pattern of organization of the vegetation within a polygon. A stand can be identified as single layered, multilayered, complex, or horizontal. A single layered stand has stem heights that do not vary significantly and the vegetation has only one main canopy layer.</p>
-<p>A multilayered stand can have several distinct layers and each layer is significant, has a distinct height difference, and is evenly distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other. Layers can be treed or non-treed. Up to 9 layers are allowed; most inventories recognize only one or two layers. The largest number of layers recognized is in the British Columbia VRI with 9 followed by Saskatchewan SFVI with 7 and Manitoba FLI with 5. Each layer is assigned an independent description with the tallest layer described in the upper portion of the label. The number of layers and a ranking of the layers can also be assigned. Some inventories (e.g.Â Saskatchewan UTM, Quebec TIE, Prince Edward Island, and Nova Scotia) can imply that a second layer exists; however, the second layer is not described or only a species type is indicated.</p>
+<p>A multilayered stand can have several distinct layers and each layer is significant, has a distinct height difference, and is evenly<br />
+distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other. Layers can be treed or non-treed. Up to 9 layers are allowed; most inventories recognize only one or two layers. The largest number of layers recognized is in the British Columbia VRI with 9 followed by Saskatchewan SFVI with 7 and Manitoba FLI with 5. Each layer is assigned an independent description with the tallest layer described in the upper portion of the label. The number of layers and a ranking of the layers can also be assigned. Some<br />
+inventories (e.g.Â Saskatchewan UTM, Quebec TIE, Prince Edward Island, and Nova Scotia) can imply that a second layer exists; however, the<br />
+second layer is not described or only a species type is indicated.</p>
 <p>Complex layered stands exhibit a high variation in tree heights. There is no single definitive forested layer as nearly all height classes (and frequently ages) are represented in the stand. The height is chosen from a stand midpoint usually followed by a height range.</p>
 <p>Horizontal structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi- label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. The detailed table for stand structure is presented in Appendix 3.</p>
 <p><br></p>
@@ -2370,8 +2393,10 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="structure-percent-or-range" class="section level3">
 <h3>Structure Percent or Range</h3>
-<p>Stand Structure Percent or Range is assigned when a complex or horizontal structured polygon is identified. Stand structure percent is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.</p>
-<p>Stand Structure Range is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.</p>
+<p>Stand Structure Percent or Range is assigned when a complex or horizontal structured polygon is identified. Stand structure percent is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire<br />
+polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.</p>
+<p>Stand Structure Range is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6<br />
+means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.</p>
 <p><br></p>
 <table>
 <colgroup>
@@ -2387,11 +2412,11 @@ Revised by: The CASFRI Project Team, March 2019
 <tbody>
 <tr class="odd">
 <td align="left">Stand Structure Percent - used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon.</td>
-<td align="left">9-Jan</td>
+<td align="left">1 - 9</td>
 </tr>
 <tr class="even">
 <td align="left">Stand Structure Range - height range (m) around the midpoint height of the stand.</td>
-<td align="left">9-Jan</td>
+<td align="left">1 - 9</td>
 </tr>
 </tbody>
 </table>
@@ -2415,7 +2440,7 @@ Revised by: The CASFRI Project Team, March 2019
 <tbody>
 <tr class="odd">
 <td align="left">Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified.</td>
-<td align="left">9-Jan</td>
+<td align="left">1 - 9</td>
 </tr>
 </tbody>
 </table>
@@ -2423,7 +2448,8 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="layer" class="section level3">
 <h3>Layer</h3>
-<p>Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on.</p>
+<p>Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer<br />
+identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on.</p>
 <p>The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.</p>
 <p><br></p>
 <table>
@@ -2448,7 +2474,8 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="layer-rank" class="section level3">
 <h3>Layer Rank</h3>
-<p>Layer Rank value is an attribute related to stand structure and refers to layer importance for forest management planning, operational, or silvicultural purposes. When a Layer Rank is not specified, layers can be sorted in order of importance by layer number.</p>
+<p>Layer Rank value is an attribute related to stand structure and refers to layer importance for forest management planning, operational, or<br />
+silvicultural purposes. When a Layer Rank is not specified, layers can be sorted in order of importance by layer number.</p>
 <p><br></p>
 <table>
 <colgroup>
@@ -2464,7 +2491,7 @@ Revised by: The CASFRI Project Team, March 2019
 <tbody>
 <tr class="odd">
 <td align="left">Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc.</td>
-<td align="left">9-Jan</td>
+<td align="left">1 - 9</td>
 </tr>
 <tr class="even">
 <td align="left">Blank - no value</td>
@@ -2476,7 +2503,9 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="soil-moisture-regime" class="section level3">
 <h3>Soil Moisture Regime</h3>
-<p>Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. The detailed soil moisture regime table and CAS conversion is presented in Appendix 4.</p>
+<p>Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is<br />
+influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code<br />
+represents the similarity of classes across Canada. The detailed soil moisture regime table and CAS conversion is presented in Appendix 4.</p>
 <p><br></p>
 <table>
 <colgroup>
@@ -2791,7 +2820,9 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="stand-origin" class="section level3">
 <h3>Stand Origin</h3>
-<p>Stand origin is the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CAS origin. The detailed stand origin table is presented in Appendix 10.</p>
+<p>Stand origin is the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is<br />
+determined either to the nearest year or decade. An upper and lower bound is used to identify CAS origin. The detailed stand origin table is<br />
+presented in Appendix 10.</p>
 <p><br></p>
 <table>
 <thead>
@@ -2815,7 +2846,9 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="site-class" class="section level3">
 <h3>Site Class</h3>
-<p>Site class is an estimate of the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography, climate, elevation, and moisture availability. See Appendix 11 for the detailed site table.</p>
+<p>Site class is an estimate of the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography,<br />
+climate, elevation, and moisture availability. See Appendix 11 for the detailed site<br />
+table.</p>
 <p><br></p>
 <table>
 <thead>
@@ -2851,7 +2884,8 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="site-index" class="section level3">
 <h3>Site Index</h3>
-<p>Site Index is an estimate of site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada. See Appendix 11 for the detailed site table.</p>
+<p>Site Index is an estimate of site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and<br />
+stand age based on a specified reference age. Site index is not available for most inventories across Canada. See Appendix 11 for the detailed site table.</p>
 <p><br></p>
 <table>
 <colgroup>
@@ -2875,7 +2909,9 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="unproductive-forest" class="section level3">
 <h3>Unproductive Forest</h3>
-<p>Unproductive forest is forest land not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. The detailed table, CAS codes, and conversion rule sets are presented in Appendix 12.</p>
+<p>Unproductive forest is forest land not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed<br />
+sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. The detailed table, CAS codes, and conversion rule sets<br />
+are presented in Appendix 12.</p>
 <p><br></p>
 <table>
 <thead>
@@ -2999,7 +3035,8 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="non-vegetated-anthropogenic" class="section level3">
 <h3>Non-Vegetated Anthropogenic</h3>
-<p>Non-vegetated anthropogenic areas are influenced or created by humans. These sites may or may not be vegetated. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.</p>
+<p>Non-vegetated anthropogenic areas are influenced or created by humans. These sites may or may not be vegetated. The detailed table, CAS codes,<br />
+and CAS conversion rule set are presented in Appendix 12.</p>
 <p><br></p>
 <table>
 <thead>
@@ -3167,7 +3204,9 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="disturbance-extent" class="section level3">
 <h3>Disturbance Extent</h3>
-<p>Disturbance extent provides an estimate of the proportion of the polygon that has been affected by the disturbance listed. Extent codes and classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event.</p>
+<p>Disturbance extent provides an estimate of the proportion of the polygon that has been affected by the disturbance listed. Extent codes and<br />
+classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can<br />
+be identified, one for each disturbance event.</p>
 <p><br></p>
 <table>
 <colgroup>
@@ -3187,7 +3226,7 @@ Revised by: The CASFRI Project Team, March 2019
 </tr>
 <tr class="even">
 <td align="left">Disturbance extent lower - lower extent of extent class</td>
-<td align="left">Jan-95</td>
+<td align="left">1 - 95</td>
 </tr>
 </tbody>
 </table>
@@ -3217,13 +3256,21 @@ Revised by: The CASFRI Project Team, March 2019
 </div>
 <div id="ecological-attributes" class="section level1">
 <h1>Ecological Attributes</h1>
-<p>Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.</p>
+<p>Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes<br />
+have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever<br />
+possible.</p>
 <p><br></p>
 <div id="wetland" class="section level2">
 <h2>Wetland</h2>
 <p>The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>2</sup> and modified by Vitt and Halsey<sup>3,4</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland class, wetland vegetation modifier, wetland landform modifier, and wetland local modifier.</p>
-<p>Five major wetland classes are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have strong cross-correlations. Two of the classes; fen and bog, are peat-forming with greater than 40 cm of accumulated organics. The three non- peat forming wetland types are shallow open water, marsh (fresh or salt water), and swamp. A non-wetland class is also included. The Vegetation Modifier is assigned to a wetland class to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.</p>
-<p>The detailed wetland table, CAS code set, and CAS translation rule set are presented in Appendix 14. Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland classes derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. A rule set for each province or territory that identifies a method to derive wetland attributes using forest attributes or ecosite data is presented in Appendix 15. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database.</p>
+<p>Five major wetland classes are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have<br />
+strong cross-correlations. Two of the classes; fen and bog, are peat-forming with greater than 40 cm of accumulated organics. The three non- peat forming wetland types are shallow open water, marsh (fresh or salt water), and swamp. A non-wetland class is also included. The Vegetation Modifier is assigned to a wetland class to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.</p>
+<p>The detailed wetland table, CAS code set, and CAS translation rule set are presented in Appendix 14. Not many forest inventories across Canada<br />
+provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland classes<br />
+derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory<br />
+database is dependent on the attributes that already exist. A rule set for each province or territory that identifies a method to derive<br />
+wetland attributes using forest attributes or ecosite data is presented in Appendix 15. The wetland derivation may not be complete nor will it<br />
+always be possible to derive or record all four wetland attributes in the CAS database.</p>
 <p><br></p>
 <table>
 <colgroup>
@@ -3387,12 +3434,16 @@ Revised by: The CASFRI Project Team, March 2019
 <p><br></p>
 <p><sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No.Â 24.</p>
 <p><sup>3</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.</p>
-<p><sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.</p>
+<p><sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al. </p>
 <p><br></p>
 </div>
 <div id="ecosite" class="section level2">
 <h2>Ecosite</h2>
-<p>Ecosites are site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes: Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.</p>
+<p>Ecosites are site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The<br />
+detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not<br />
+available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to<br />
+accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes:<br />
+Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.</p>
 <p><br></p>
 <table>
 <colgroup>
@@ -3425,21 +3476,27 @@ Revised by: The CASFRI Project Team, March 2019
 <p><b>British Columbia</b></p>
 <p>Ministry of Forests 1982. Forest and Range Inventory Manual, Chapter 3, Forest Classification.</p>
 <p>Ministry of Forests 1992. Forest Inventory Manual. Volumes 1 - 5.</p>
-<p>Resource Inventory Committee 2002. Vegetation Resources Inventory, Version 2.4. Photo Interpretation Procedures. Ministry of Sustainable Resource Management. Terrestrial Information Branch (<a href="http://www.for.gov.bc.ca/risc" class="uri">http://www.for.gov.bc.ca/risc</a>).</p>
-<p>Sandvoss, M, B. McClymont and C. Farnden (compilers) 2005. A Userâ€™s Guide to the Vegetation Resources Inventory. Timberline Forest Inventory Consultants.</p>
+<p>Resource Inventory Committee 2002. Vegetation Resources Inventory, Version 2.4. Photo Interpretation Procedures. Ministry of Sustainable<br />
+Resource Management. Terrestrial Information Branch (<a href="http://www.for.gov.bc.ca/risc" class="uri">http://www.for.gov.bc.ca/risc</a>).</p>
+<p>Sandvoss, M, B. McClymont and C. Farnden (compilers) 2005. A Userâ€™s Guide to the Vegetation Resources Inventory. Timberline Forest Inventory<br />
+Consultants.</p>
 <p><br></p>
 <p><b>Alberta</b></p>
 <p>Alberta Department of Energy and Nat. Res. 1985. Alberta Phase 3 Forest Inventory: An Overview. Rep.Â No.Â I/86.</p>
 <p>Alberta Department of Energy and Nat. Res. 1985. Alberta Phase 3 Inventory: Forest Cover Type Specifications. Rep.Â No.Â 58.</p>
-<p>Alberta Environmental Protection 1991. Alberta Vegetation Inventory Standards Manual, Version 2.1. Resource Data Division. Data Acquisition Branch.</p>
-<p>Alberta Sustainable Resource development. 2005. Alberta Vegetation Inventory Standards. Version 2.1.1 March 2005. Chapter 3 - Vegetation Inventory Standards and Data Model Documents. Resource Information Branch.</p>
+<p>Alberta Environmental Protection 1991. Alberta Vegetation Inventory Standards Manual, Version 2.1. Resource Data Division. Data Acquisition<br />
+Branch.</p>
+<p>Alberta Sustainable Resource development. 2005. Alberta Vegetation Inventory Standards. Version 2.1.1 March 2005. Chapter 3 - Vegetation<br />
+Inventory Standards and Data Model Documents. Resource Information Branch.</p>
 <p>Halsey L. and D.H. Vitt. 1977 Alberta Wetland Inventory Standards. Version 1.0. June.</p>
-<p>Halsey L., D.H. Vitt, D. Beilman, S. Crow, S. Meehelcic, and R. Wells. 2004. Alberta Wetland Inventory Classification System Version 2.0. Alberta Sustainable Resource Development, Resource Data Branch. Pub. No, T/031.</p>
+<p>Halsey L., D.H. Vitt, D. Beilman, S. Crow, S. Meehelcic, and R. Wells. 2004. Alberta Wetland Inventory Classification System Version 2.0.<br />
+Alberta Sustainable Resource Development, Resource Data Branch. Pub. No, T/031.</p>
 <p><br></p>
 <p><b>Saskatchewan</b></p>
 <p>Lindenas, D.J. 1985. Specifications for the Interpretation and Mapping of Aerial Photographs in the Forest Inventory Section. Sask. Dept. Parks and Renew. Res. Internal Manual.</p>
 <p>Saskatchewan Environment 2004. Saskatchewan Forest Vegetation Inventory, Version 4.0.</p>
-<p>Forest Service. (www.se.gov.sk.ca/forests/forestmanagement/Sask_Leg_Manuals.htm.</p>
+<p>Forest Service.<br />
+(www.se.gov.sk.ca/forests/forestmanagement/Sask_Leg_Manuals.htm.</p>
 <p><br></p>
 <p><b>Manitoba</b></p>
 <p>Manitoba Conservation. Prior to 1992. Forest Inventory Manual 1.0 and 1.1. Forest Inventory and Resource Analysis.</p>
@@ -3451,13 +3508,17 @@ Revised by: The CASFRI Project Team, March 2019
 <p>Ontario Ministry of Natural Resources. 2001. Specifications for Forest Resources Inventory Photo Interpretation. Updated Sept.Â 2001.</p>
 <p>Ontario Ministry of Natural Resources. 2007. Ontario Forest Resources Inventory Photo Interpretation Specifications. Updated Dec_2007.</p>
 <p>Ontario Ministry of Natural Resources. 2010. Ontario Forest Resources Inventory Photo Interpretation Specifications. Updated Dec_2010.</p>
-<p>OMNR, April 2001. Forest Information Manual. Toronto: Queenâ€™s Printer for Ontario. 400 pp.</p>
-<p>OMNR, April 2007. Forest Information Manual. Toronto: Queenâ€™s Printer for Ontario. 107 pp. (<a href="http://ontariosforests.mnr.gov.on.ca/ontariosforests.cfm" class="uri">http://ontariosforests.mnr.gov.on.ca/ontariosforests.cfm</a>)</p>
-<p>Pikangikum First Nation. 2003. Whitefeather Forest FRI/FEC Procedures Manual. Internal Document prepared by Timberline Forest Inventory Consultants Ltd.</p>
-<p>Eabametoong and Mishkeegogamang First Nation. 2007. FRI/FEC Procedures Manual. Internal Document prepared by Timberline Natural Resource Group Ltd.</p>
+<p>OMNR, April 2001. Forest Information Manual. Toronto: Queenâ€™s Printer for Ontario. 400 pp. </p>
+<p>OMNR, April 2007. Forest Information Manual. Toronto: Queenâ€™s Printer for Ontario. 107 pp.<br />
+(<a href="http://ontariosforests.mnr.gov.on.ca/ontariosforests.cfm" class="uri">http://ontariosforests.mnr.gov.on.ca/ontariosforests.cfm</a>)</p>
+<p>Pikangikum First Nation. 2003. Whitefeather Forest FRI/FEC Procedures Manual. Internal Document prepared by Timberline Forest Inventory<br />
+Consultants Ltd. </p>
+<p>Eabametoong and Mishkeegogamang First Nation. 2007. FRI/FEC Procedures Manual. Internal Document prepared by Timberline Natural Resource Group<br />
+Ltd. </p>
 <p><br></p>
 <p><b>Quebec</b></p>
-<p>Foret Quebec. 2003. Normes de Cartographie Ecoforestiere. Troisieme Inventaire Ecoforestier. Ministere des Ressources Naturelles, de la Faune et des Parcs du Quebec. Direction des Inventaires Forestiers.</p>
+<p>Foret Quebec. 2003. Normes de Cartographie Ecoforestiere. Troisieme Inventaire Ecoforestier. Ministere des Ressources Naturelles, de la<br />
+Faune et des Parcs du Quebec. Direction des Inventaires Forestiers.</p>
 <p>Foret Quebec. 2008. Norme de Stratification Ecoforestiere. Quatrieme Inventaire Ecoforestier.</p>
 <p>Direction des Inventaires Forestiers.</p>
 <p><br></p>
@@ -3481,11 +3542,14 @@ Revised by: The CASFRI Project Team, March 2019
 <p><br></p>
 <p><b>Northwest Territories</b></p>
 <p>Dept. of Energy and Natural Resources 2004. Northwest Territories Forest Vegetation Photo Interpretation, Transfer and Database Standards. Forest Resources, Forest Management Division.</p>
-<p>Dept. of Energy and Natural Resources. 2006. Northwest Territories Forest Vegetation Inventory Standards with Softcopy Supplements, Version 3.0. Forest Resources, Forest Management Division.</p>
+<p>Dept. of Energy and Natural Resources. 2006. Northwest Territories Forest Vegetation Inventory Standards with Softcopy Supplements, Version<br />
+3.0. Forest Resources, Forest Management Division.</p>
 <p><br></p>
 <p><b>Prince Albert National Park</b></p>
-<p>Padbury, G.E., W.K. Head, and W.E. Souster. 1978. Biophysical Resource Inventory of Prince Albert National Park, Saskatchewan. Saskatchewan Institute of Pedology Publication S185, Saskatoon.</p>
-<p>Fitzsimmons, M. 1998. Prince Albert National Park Forest Cover Data in Vector Format. <a href="http://daac.ornl.gov/boreas/STAFF/panpfcov/comp/PNP_For_Cov.txt" class="uri">http://daac.ornl.gov/boreas/STAFF/panpfcov/comp/PNP_For_Cov.txt</a></p>
+<p>Padbury, G.E., W.K. Head, and W.E. Souster. 1978. Biophysical Resource Inventory of Prince Albert National Park, Saskatchewan. Saskatchewan<br />
+Institute of Pedology Publication S185, Saskatoon.</p>
+<p>Fitzsimmons, M. 1998. Prince Albert National Park Forest Cover Data in Vector Format.<br />
+<a href="http://daac.ornl.gov/boreas/STAFF/panpfcov/comp/PNP_For_Cov.txt" class="uri">http://daac.ornl.gov/boreas/STAFF/panpfcov/comp/PNP_For_Cov.txt</a></p>
 <p><br></p>
 <p><b>Wood Buffalo National Park</b></p>
 <p>Air Photo Analysis Associates. 1979. Biophysical inventory of Wood Buffalo National Park.</p>
@@ -3506,29 +3570,52 @@ Revised by: The CASFRI Project Team, March 2019
 <p>The appendices are listed below and can be viewed or edited using the cas_appendices.xlsx workbook located in the github specifications folder.</p>
 <p><br></p>
 <ul>
-<li>Appendix 1 Current Canadian Inventories</li>
-<li>Appendix 2 Data Structure and Data Dictionary</li>
-<li>Appendix 3 Stand Structure - Summary of Canadian Forest Inventories</li>
-<li>Appendix 4 Soil Moisture Regime - Summary of Canadian Forest Inventories and CAS Conversion</li>
-<li>Appendix 5 Crown Closure - Summary of Canadian Forest Inventories</li>
-<li>Appendix 6 Stand Height - Summary of Canadian Forest Inventories</li>
-<li>Appendix 7a Species Composition - Summary of Canadian Forest Inventories</li>
-<li>Appendix 7b CAS Species Percent Translation (For Forest Inventories that do not provide species percent)</li>
-<li>Appendix 8 CAS Species List and Codes</li>
-<li>Appendix 9 CAS Generic Species Group List</li>
-<li>Appendix 10 Stand Origin (Age) - Summary of Canadian Forest Inventories</li>
-<li>Appendix 11 Site Class and Site Index and CAS Conversion</li>
-<li>Appendix 12a Non-Forested, Non-Vegetated, and Unproductive Forest - Summary of Canadian Forest Inventories</li>
-<li>Appendix 12b CAS Codes Non-Forested, Non-Vegetated, and Unproductive Forest Codes</li>
-<li>Appendix 12c CAS Non-Forested, Non-Vegetated, and Unproductive Forest Conversion</li>
-<li>Appendix 13a Disturbance History - Summary of Canadian Forest Inventories</li>
-<li>Appendix 13b Disturbance History - CAS Disturbance History Codes</li>
-<li>Appendix 13c Disturbance History - CAS Conversion</li>
-<li>Appendix 14a Wetland - Summary of Canadian Forest Inventories</li>
-<li>Appendix 14b Wetland - CAS Wetland Conversion</li>
-<li>Appendix 14c Wetland - CAS Wetland Codes</li>
-<li>Appendix 15 Procedures for CAS Wetland Derivation</li>
-<li>Appendix 16 Ecosite - Summary of Canadian Forest Inventories</li>
+<li>Appendix 1 Current Canadian Inventories<br />
+</li>
+<li>Appendix 2 Data Structure and Data Dictionary<br />
+</li>
+<li>Appendix 3 Stand Structure - Summary of Canadian Forest Inventories<br />
+</li>
+<li>Appendix 4 Soil Moisture Regime - Summary of Canadian Forest Inventories and CAS Conversion<br />
+</li>
+<li>Appendix 5 Crown Closure - Summary of Canadian Forest Inventories<br />
+</li>
+<li>Appendix 6 Stand Height - Summary of Canadian Forest Inventories<br />
+</li>
+<li>Appendix 7a Species Composition - Summary of Canadian Forest Inventories<br />
+</li>
+<li>Appendix 7b CAS Species Percent Translation (For Forest Inventories that do not provide species percent)<br />
+</li>
+<li>Appendix 8 CAS Species List and Codes<br />
+</li>
+<li>Appendix 9 CAS Generic Species Group List<br />
+</li>
+<li>Appendix 10 Stand Origin (Age) - Summary of Canadian Forest Inventories<br />
+</li>
+<li>Appendix 11 Site Class and Site Index and CAS Conversion<br />
+</li>
+<li>Appendix 12a Non-Forested, Non-Vegetated, and Unproductive Forest - Summary of Canadian Forest Inventories<br />
+</li>
+<li>Appendix 12b CAS Codes Non-Forested, Non-Vegetated, and Unproductive Forest Codes<br />
+</li>
+<li>Appendix 12c CAS Non-Forested, Non-Vegetated, and Unproductive Forest Conversion<br />
+</li>
+<li>Appendix 13a Disturbance History - Summary of Canadian Forest Inventories<br />
+</li>
+<li>Appendix 13b Disturbance History - CAS Disturbance History Codes<br />
+</li>
+<li>Appendix 13c Disturbance History - CAS Conversion<br />
+</li>
+<li>Appendix 14a Wetland - Summary of Canadian Forest Inventories<br />
+</li>
+<li>Appendix 14b Wetland - CAS Wetland Conversion<br />
+</li>
+<li>Appendix 14c Wetland - CAS Wetland Codes<br />
+</li>
+<li>Appendix 15 Procedures for CAS Wetland Derivation<br />
+</li>
+<li>Appendix 16 Ecosite - Summary of Canadian Forest Inventories<br />
+</li>
 <li>Appendix 17 Sample of Export Procedure</li>
 </ul>
 </div>
