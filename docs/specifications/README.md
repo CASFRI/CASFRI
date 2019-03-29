@@ -8,6 +8,8 @@ The CASFRI Specifications document and accompanying tables reside in this folder
 
 Archived documents:
 
+These documents were converted from the original Cosco 2011 document to markdown (main doc and appendices 9 & 15) and Excel formats (appendices). The Excel worksheet can be converted to individual csv files as needed.
+
   * [Original CASFRI specifications document (Cosco 2011)](archive/cas_specifications_feb2011.md)
   * [Original CASFRI specifications appendices (Cosco 2011)](archive/cas_appendices_feb2011.xlsx)
 
