@@ -15,7 +15,7 @@ A number of CASFRI database instances have been produced since 2009. CASFRI-5 is
 
 The three involved in the production of the CASFRI-5 database are:
 
-1. Conversion (from many different FRI file format) and loading (in the database) using bash files (or batch files) and ogr2ogr.
+1. Conversion (from many different FRI file format) and loading (in the database) using Bash files (or Batch files) and ogr2ogr.
 2. Translation of in-db FRI to CAS
 3. Temporalization of CAS data
 
