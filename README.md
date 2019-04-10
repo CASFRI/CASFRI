@@ -36,7 +36,7 @@ The three involved in the production of the CASFRI 5.0 database are:
 
 The production process of CASFRI 5.0 requires:
 
-* GDAL v1.11.4 and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.X. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34).
+* [GDAL v1.11.4](http://www.gisinternals.com/query.html?content=filelist&file=release-1800-x64-gdal-1-11-4-mapserver-6-4-3.zip) and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.X. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34).
 
 * PostgreSQL 9.6 and PostGIS 2.3.x to store and translate the database. More recent versions should work as well.
 
