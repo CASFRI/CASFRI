@@ -34,11 +34,13 @@ The three involved in the production of the CASFRI-5 database are:
 
 # Requirements
 
-* CASFRI-5 uses PostgreSQL 9.6 and PostGIS v2.3.7.
+The production process of CASFRI-5 requires:
 
-* Loading scripts require GDAL v1.11.4 and access to a Bash or Batch shell. IMPORTANT: some file types will not load with GDAL v2.X
+* GDAL v1.11.4 and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.X. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34).
 
-* Table translation requires the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework)
+* PostgreSQL 9.6 and PostGIS 2.3.x to store and translate the database. More recent versions should work as well.
+
+* The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) to translate the database.
 
 # Vocabulary
 *Source data* - Raw FRI data received from jurisdictions.
@@ -47,18 +49,18 @@ The three involved in the production of the CASFRI-5 database are:
 
 *Target table* - Translated FRI table in the CAS specification.
 
-*Translation table* - User created table detailing the translation rules and read by the translation engine.
+*Translation table* - User created table detailing the validation and translation rules and interpreted by the translation engine.
 
 *Lookup table* - User created table used in conjunction with the translation tables; for example, to recode provincial species lists to a standard set of 8-character codes.
 
 *Translation engine* - The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
 
-*Helper function* - A set of functions used in the translation table to facilitate translation.
+*Helper function* - A set of PL/pgSQL functions used in the translation table to facilitate validation of source values and their translation to target values.
 
-# FRI and standard codes
+# FRI and Inventory Standard Identifiers
 CASFRI-5 uses a four-code standard for identifying FRIs. Each FRI is coded using two letters for the province or territory, and two numbers that increment for each new FRI added in that province/territory. e.g. BC01.
 
-Inventory standards are the attribute specifications applied to a given inventory. Multiple FRIs from a province/territory can use the same standard, however jurisdictions will occasionally update their standards, and each jurisdiction has their own unique inventory standards. The CASFRI specifications need to apply different sets of translation rules for different standards. Each standard is applied a code made of three letters representing the standard, and two numbers representing the version of the standard. e.g. VRI01.
+Inventory standards are the attribute specifications applied to a given inventory. Multiple FRIs from a province/territory can use the same standard, however jurisdictions will occasionally update their standards, and each jurisdiction has their own unique inventory standards. The CASFRI specifications need to apply different sets of translation rules for different standards. Each standard is assigned a code made of three letters representing the standard, and two numbers representing the version of the standard. e.g. VRI01. All identifiers are listed in the [FRI inventory list CSV file](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv).
 
 # Conversion and loading
 Conversion and loading happen at the same time and are implemented using GDAL/OGR. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. FRIs with shapefiles detailing the photo year have a second loading script for the photo year file. Every loading script adds a new attribute to the target table with the name of the source file. This is used when constructing the CAS_ID, a unique row identifier code.
