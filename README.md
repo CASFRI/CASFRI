@@ -13,13 +13,13 @@ A number of CASFRI instances have been produced since 2009. CASFRI 5.x is the fi
 * Implementation of a temporalization procedure to create a temporal database of all available inventories.
 * Enhancement of attribute generic and specific error codes.
 
-The three involved in the production of the CASFRI 5.x database are:
+The three steps involved in the production of the CASFRI 5.x database are:
 
 1. Conversion (from many different FRI file format) and loading (in the database) using Bash files (or Batch files) and ogr2ogr.
 2. Translation of in-db FRI to CAS
 3. Temporalization of CAS data
 
-Note that forest resource inventories converted and translated by this package are not provided with this project du to the numerous licensing agreements that have to be passed with the different production juridictions.
+Note that forest resource inventories converted and translated by this package are not provided with this project due to the numerous licensing agreements that have to be passed with the different production juridictions.
 
 # Version Releases
 
