@@ -5,7 +5,7 @@ The Common Attribute Schema for Forest Resource Inventories (CASFRI) standardize
 
 The [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications) document the CAS database schema. It focuses on the most common attributes that are consistently recorded in forest inventories across Canada and which are relevant to habitat modeling and state of forest reporting. These attributes include crown closure, species composition, height, mean canopy or stand origin age, stand structure, moisture regime, site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history.
 
-A number of CASFRI instances have been produced since 2009. CASFRI 5.0 is the fifth version of CASFRI. It makes a number of updates to previous versions:
+A number of CASFRI instances have been produced since 2009. CASFRI 5.x is the fifth version of CASFRI. It makes a number of updates to previous versions:
 
 * Addition of new and more up-to-date inventories.
 * Implementation of a new conversion and loading procedure focused around the open source software GDQL/OGR (in place of ArcGIS).
@@ -13,7 +13,7 @@ A number of CASFRI instances have been produced since 2009. CASFRI 5.0 is the fi
 * Implementation of a temporalization procedure to create a temporal database of all available inventories.
 * Enhancement of attribute generic and specific error codes.
 
-The three involved in the production of the CASFRI 5.0 database are:
+The three involved in the production of the CASFRI 5.x database are:
 
 1. Conversion (from many different FRI file format) and loading (in the database) using Bash files (or Batch files) and ogr2ogr.
 2. Translation of in-db FRI to CAS
@@ -34,7 +34,7 @@ The three involved in the production of the CASFRI 5.0 database are:
 
 # Requirements
 
-The production process of CASFRI 5.0 requires:
+The production process of CASFRI 5.x requires:
 
 * [GDAL v1.11.4](http://www.gisinternals.com/query.html?content=filelist&file=release-1800-x64-gdal-1-11-4-mapserver-6-4-3.zip) and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.X. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34).
 
@@ -58,7 +58,7 @@ The production process of CASFRI 5.0 requires:
 *Helper function* - A set of PL/pgSQL functions used in the translation table to facilitate validation of source values and their translation to target values.
 
 # FRI and Inventory Standard Identifiers
-CASFRI 5.0 uses a four-code standard for identifying FRIs. Each FRI is coded using two letters for the province or territory, and two numbers that increment for each new FRI added in that province/territory. e.g. BC01.
+CASFRI 5.x uses a four-code standard for identifying FRIs. Each FRI is coded using two letters for the province or territory, and two numbers that increment for each new FRI added in that province/territory. e.g. BC01.
 
 Inventory standards are the attribute specifications applied to a given inventory. Multiple FRIs from a province/territory can use the same standard, however jurisdictions will occasionally update their standards, and each jurisdiction has their own unique inventory standards. The CASFRI specifications need to apply different sets of translation rules for different standards. Each standard is assigned a code made of three letters representing the standard, and two numbers representing the version of the standard. e.g. VRI01. 
 
@@ -87,7 +87,7 @@ All source tables are transformed to the Canada Albers Equal Area Conic projecti
 Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). The translation engine uses a translation table that describes rules to validate each loaded source table and translate each row into a target table. Validation and translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a function named Between() validates that the source data is within the expected range of values, and a function named Map() maps a set of source values to a set of target values. A list of all helper functions is available in the PostgreSQL Table Translation Framework [readMe](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). After the translation engine has run on all loaded source tables, the result is a complete set of target tables, each with matching attributes as defined by the CASFRI standard. 
 
 ### Error Codes
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI 5.0, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the rule being invalidated. A full description of possible error codes can be found in the [CASFRI 5.0 specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI 5.x, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the rule being invalidated. A full description of possible error codes can be found in the [CASFRI 5.x specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
 
 # Workflow
 
