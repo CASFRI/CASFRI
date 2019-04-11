@@ -109,7 +109,7 @@ Error codes are needed during translation if source values are invalid, null, or
 * In an operating system command window, load the necessary inventories by executing the proper conversion scripts located in either the .bat or .sh conversion folder.
 * After running each conversion/loading script, the source FRI tables will be added to the PostgreSQL schema specified in the config file ("rawfri" by default).
 
-Conversion and loading script are written so that FRIs to convert and load must be stored in a specific folder hierarchy. TO BE PROPERLY EXPLAINED AFTER FIX FOR [ISSUE #40](https://github.com/edwardsmarc/CASFRI/issues/40).
+Conversion and loading scripts are written so that FRIs to convert and load must be stored in a specific folder hierarchy. TO BE PROPERLY EXPLAINED AFTER FIX FOR [ISSUE #40](https://github.com/edwardsmarc/CASFRI/issues/40).
 
 ### Loading Translation Tables
 * Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
