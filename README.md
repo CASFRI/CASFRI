@@ -19,6 +19,12 @@ The three involved in the production of the CASFRI 5.x database are:
 2. Translation of in-db FRI to CAS
 3. Temporalization of CAS data
 
+# Version Releases
+
+The framework follows the [Semantic Versioning 2.0.0](https://semver.org/) versioning scheme (major.minor.revision). Increments in revision version numbers are for bug fixes. Increment in minor version numbers are for new features, changes to the helper functions (our API) and bug fixes, all not breaking backward compatibility with existing translation files. Increments in major version number are for changes breaking backward compatibility in the helper functions (meaning users have to make some changes in their translation tables).
+
+The current version is 0.0.1-beta and is available for download at https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework/releases/tag/v0.1-beta
+
 # Directory structure
 <pre>
 ./                    Sample files for configuring and running scripts
