@@ -125,9 +125,9 @@ Conversion and loading scripts are written so that FRIs to convert and load must
 
 **Pierre Racine**, Center for forest research, University Laval.
 
-**Pierre Vernier**, Center for forest research, University Laval.
+**Pierre Vernier**, database designer.
 
-**Marc Edwards**, Center for forest research, University Laval.
+**Marc Edwards**, programmer.
 
 **Mélina Houle**, Center for forest research, University Laval (previous versions of CASFRI).
 
