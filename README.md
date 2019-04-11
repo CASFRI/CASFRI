@@ -113,16 +113,16 @@ Conversion and loading script are written so that FRIs to convert and load must 
 * Refer to the sampleWorkFlow.sql file located in the CASFRI root directory for an example of how to run the translation engine.
 
 # Credits
-Steve Cumming, Center for forest research, University Laval
+**Steve Cumming**, Center for forest research, University Laval
 
-Pierre Racine, Center for forest research, University Laval
+**Pierre Racine**, Center for forest research, University Laval
 
-Pierre Vernier, Center for forest research, University Laval
+**Pierre Vernier**, Center for forest research, University Laval
 
-Marc Edwards, Center for forest research, University Laval
+**Marc Edwards**, Center for forest research, University Laval
 
-Mélina Houle, Center for forest research, University Laval (previous versions of CASFRI)
+**Mélina Houle**, Center for forest research, University Laval (previous versions of CASFRI)
 
-Bénédicte Kenmei, Center for forest research, University Laval (previous versions of CASFRI)
+**Bénédicte Kenmei**, Center for forest research, University Laval (previous versions of CASFRI)
 
-John Cosco, Timberline Forest Inventory Consultants (previous versions of CASFRI)
+**John Cosco**, Timberline Forest Inventory Consultants (previous versions of CASFRI)
