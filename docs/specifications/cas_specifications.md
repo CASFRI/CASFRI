@@ -1,48 +1,6 @@
 CASFRI Specifications
 ================
 
-  - [Introduction](#introduction)
-  - [Common Attribute Schema](#common-attribute-schema)
-      - [Error and Missing Value Codes](#error-and-missing-value-codes)
-      - [Header Information (HDR)](#header-information-hdr)
-          - [Jurisdiction](#jurisdiction)
-          - [Spatial Reference](#spatial-reference)
-          - [Tenure Type](#tenure-type)
-          - [Inventory Metadata](#inventory-metadata)
-          - [CAS Data Acquisition](#cas-data-acquisition)
-      - [CAS Base Polygon Attributes](#cas-base-polygon-attributes)
-          - [Polygon Identification](#polygon-identification)
-          - [CAS\_ID](#cas_id)
-          - [Polygon Area and Perimeter](#polygon-area-and-perimeter)
-          - [Year of Aerial Photography](#year-of-aerial-photography)
-          - [Administration Unit](#administration-unit)
-      - [CAS Forest and Non-Forest Attributes
-        (LYR)](#cas-forest-and-non-forest-attributes-lyr)
-          - [Stand Structure](#stand-structure)
-          - [Structure Percent or Range](#structure-percent-or-range)
-          - [Number of Layers](#number-of-layers)
-          - [Layer](#layer)
-          - [Layer Rank](#layer-rank)
-          - [Soil Moisture Regime](#soil-moisture-regime)
-          - [Crown Closure](#crown-closure)
-          - [Height](#height)
-          - [Species Composition](#species-composition)
-          - [Stand Origin](#stand-origin)
-          - [Site Class](#site-class)
-          - [Site Index](#site-index)
-          - [Unproductive Forest](#unproductive-forest)
-          - [Naturally Non Vegetated](#naturally-non-vegetated)
-          - [Non-Vegetated Anthropogenic](#non-vegetated-anthropogenic)
-          - [Non-Forested Vegetated](#non-forested-vegetated)
-          - [Disturbance](#disturbance)
-          - [Disturbance Extent](#disturbance-extent)
-          - [Disturbance Year](#disturbance-year)
-  - [Ecological Attributes](#ecological-attributes)
-      - [Wetland](#wetland)
-      - [Ecosite](#ecosite)
-  - [Bibliography](#bibliography)
-  - [Appendices](#appendices)
-
 COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011<br>
@@ -195,7 +153,7 @@ reported depending on the
 cause.
 
 ``` r
-knitr::kable(x1)     
+knitr::kable(x1)  
 ```
 
 | Class          | Type               | Description                            | Function                                           | Text.message     | Small.int.code | Large.int.code |  Double.code |
@@ -417,7 +375,7 @@ CAS identification.
 
 <br>
 
-## CAS Base Polygon Attributes
+## Polygon Attributes (CAS)
 
 The CAS base polygon data provides polygon specific information and
 links the original inventory polygon ID to the CAS ID. Identification  
@@ -540,12 +498,11 @@ recorded.
 ### Administration Unit
 
 Administration unit identifies any inventory sub-unit boundaries that
-exist within an inventory. Sub- unit boundaries can possibly split a  
+exist within an inventory. Sub- unit boundaries can possibly split a
 polygon; therefore, this CAS attribute is applied at the CAS base
-polygon level. Two administration unit (possibly hierarchical) levels
-of  
+polygon level. Two administration unit (possibly hierarchical) levels of
 organization are identified, such as Forest Management Units (FMUs) and
-Working Circle (WC) or Compartment (CMPT). Their interpretation is  
+Working Circle (WC) or Compartment (CMPT). Their interpretation is
 source-data-set explicit.
 
 <br>
@@ -557,7 +514,7 @@ source-data-set explicit.
 
 <br>
 
-## CAS Forest and Non-Forest Attributes (LYR)
+## Forest Attributes (LYR)
 
 <br>
 
@@ -573,15 +530,14 @@ A multilayered stand can have several distinct layers and each layer is
 significant, has a distinct height difference, and is evenly  
 distributed. Generally the layers are intermixed and when viewed
 vertically, one layer is above the other. Layers can be treed or
-non-treed. Up to 9 layers are allowed; most inventories recognize only
+non-treed.Up to 9 layers are allowed; most inventories recognize only
 one or two layers. The largest number of layers recognized is in the
 British Columbia VRI with 9 followed by Saskatchewan SFVI with 7 and
 Manitoba FLI with 5. Each layer is assigned an independent description
 with the tallest layer described in the upper portion of the label. The
-number of layers and a ranking of the layers can also be assigned.
-Some  
+number of layers and a ranking of the layers can also be assigned. Some
 inventories (e.g.Â Saskatchewan UTM, Quebec TIE, Prince Edward Island,
-and Nova Scotia) can imply that a second layer exists; however, the  
+and Nova Scotia) can imply that a second layer exists; however, the
 second layer is not described or only a species type is indicated.
 
 Complex layered stands exhibit a high variation in tree heights. There
@@ -615,21 +571,16 @@ presented in Appendix
 Stand Structure Percent or Range is assigned when a complex or
 horizontal structured polygon is identified. Stand structure percent is
 used with horizontal stands and identifies the percentage of stand area,
-assigned in 10% increments, attributed by each stratum within the
-entire  
+assigned in 10% increments, attributed by each stratum within the entire
 polygon and must add up to 100%. Any number of horizontal strata can be
-described per horizontal polygon.
-
+described per horizontal polygon.  
 Stand Structure Range is used with complex stands and represents the
-height range (m) around the stand midpoint. For example, height range
-6  
+height range (m) around the stand midpoint. For example, height range 6
 means that the range around the midpoint height is 3 meters above and 3
 meters below the
 midpoint.
 
-<br>
-
-| STAND\_STRUCTURE\_PER and STAND\_STRUCTURE\_ RANGE                                                                                                                                                                                         | Attribute Value |
+| STAND\_STRUCTURE\_PER and STAND\_STRUCTURE\_RANGE                                                                                                                                                                                          | Attribute Value |
 | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Stand Structure Percent - used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 9           |
 | Stand Structure Range - height range (m) around the midpoint height of the stand.                                                                                                                                                          | 1 - 9           |
@@ -653,7 +604,7 @@ polygon.
 ### Layer
 
 Layer is an attribute related to stand structure that identifies which
-layer is being referred to in a multi-layered stand. The layer  
+layer is being referred to in a multi-layered stand. The layer
 identification creates a link between each polygon attribute and the
 corresponding layer. Layer 1 will always be the top (uppermost) layer in
 the stand sequentially followed by Layer 2 and so on.
@@ -664,8 +615,6 @@ with a crown closure of 1 to 5 percent and must occur with at least one
 other layer; it typically includes the oldest trees in a
 stand.
 
-<br>
-
 | LAYER                                                                                                                                   | Attribute Value |
 | :-------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified. | 1 - 9, V        |
@@ -675,33 +624,30 @@ stand.
 ### Layer Rank
 
 Layer Rank value is an attribute related to stand structure and refers
-to layer importance for forest management planning, operational, or  
+to layer importance for forest management planning, operational, or
 silvicultural purposes. When a Layer Rank is not specified, layers can
 be sorted in order of importance by layer
 number.
 
-<br>
-
-| LAYER RANK                                                                                                                   | Attribute Value |
+| LAYER\_RANK                                                                                                                  | Attribute Value |
 | :--------------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc. | 1 - 9           |
 | Blank - no value                                                                                                             | NA              |
+| na                                                                                                                           | na              |
 
 <br>
 
 ### Soil Moisture Regime
 
 Soil moisture regime describes the available moisture supply for plant
-growth over a period of several years. Soil moisture regime is  
+growth over a period of several years. Soil moisture regime is
 influenced by precipitation, evapotranspiration, topography, insolation,
-ground water, and soil texture. The CAS soil moisture regime code  
+ground water, and soil texture. The CAS soil moisture regime code
 represents the similarity of classes across Canada. The detailed soil
 moisture regime table and CAS conversion is presented in Appendix
 4.
 
-<br>
-
-| SMR                                                                                                                                   | Attribute Value |
+| SOIL\_MOIST\_REG                                                                                                                      | Attribute Value |
 | :------------------------------------------------------------------------------------------------------------------------------------ | :-------------- |
 | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum.                       | D               |
 | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum. | F               |
@@ -709,6 +655,7 @@ moisture regime table and CAS conversion is presented in Appendix
 | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water.     | W               |
 | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water.     | A               |
 | Blank - no value                                                                                                                      | NA              |
+| na                                                                                                                                    | na              |
 
 <br>
 
@@ -716,8 +663,8 @@ moisture regime table and CAS conversion is presented in Appendix
 
 Crown closure is an estimate of the percentage of ground area covered by
 vertically projected tree crowns, shrubs, or herbaceous cover. Crown
-closure is usually estimated independently for each layer. Crown closure
-is commonly represented by classes and differs across Canada; therefore,
+closure is usually estimated independently for each layer.Crown closure
+is commonly represented by classes and differs across Canada therefore,
 CAS recognizes an upper and lower percentage bound for each class. The
 detailed crown closure table is presented in Appendix 5.
 
@@ -748,10 +695,10 @@ by actual values or by height class and its representation is variable
 across Canada; therefore, CAS will use upper and lower bounds to
 represent height. The detailed height table is presented in Appendix 6.
 
-| HEIGHT\_UPPER and HEIGHT\_LOWER              | Attribute Value |
-| :------------------------------------------- | :-------------- |
-| Upper Bound - upper bound of a height class. | 0 - 100         |
-| Lower Bound - lower bound of a height class. | 0 - 100         |
+| HEIGHT\_UPPER and HEIGHT\_LOWER             | Attribute Value |
+| :------------------------------------------ | :-------------- |
+| Upper Bound - upper bound of a height class | 0 - 100         |
+| Lower Bound - lower bound of a height class | 0 - 100         |
 
 *Error and missing value
 codes:*
@@ -765,6 +712,30 @@ codes:*
 | Out of range       | Value is outside the range of values |        \-9999 |        \-9999 |
 | Invalid value      | Invalid value                        |        \-9997 |        \-9997 |
 | Precision too high | Precision is greater than allowed    |        \-9996 |        \-9996 |
+
+<br>
+
+### Unproductive Forest
+
+Unproductive forest is forest land not capable of producing trees for
+forest operations. They are usually wetlands, very dry sites, exposed
+sites, rocky sites, higher elevation sites, or those sites with shallow
+or poor soils. The detailed table, CAS codes, and conversion rule sets
+are presented in Appendix
+12.
+
+| UNPRODUCTIVE\_FOREST                                            | Attribute Value |
+| :-------------------------------------------------------------- | :-------------- |
+| Treed Muskeg - treed wetland sites                              | TM              |
+| Open Muskeg - open (\<10% trees) wetland sites                  | OM              |
+| Alpine forest - high elevation forest usually above 1800 m      | AL              |
+| Scrub Deciduous - scrub deciduous trees on poor sites           | SD              |
+| Scrub Coniferous - scrub coniferous trees on poor sites         | SC              |
+| Non Productive Forest - poor forest types on rocky or wet sites | NP              |
+| Productive Forest - any other forest                            | P               |
+| Blank - no value                                                | NA              |
+
+<br>
 
 ### Species Composition
 
@@ -803,7 +774,7 @@ territory, or Park has also been developed and is presented in Appendix
 **Species
 type**
 
-| SPECIES\_1, SPECIES\_2, SPECIES\_3, SPECIES\_4, SPECIES\_5, SPECIES\_6, SPECIES\_7, SPECIES\_8, SPECIES\_9, SPECIES\_10 | Attribute Value |
+| SPECIES\_1 … SPECIES\_10                                                                                                | Attribute Value |
 | :---------------------------------------------------------------------------------------------------------------------- | :-------------- |
 | Species (SPECIES\_\#) - Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon. | POPU TREM       |
 
@@ -821,9 +792,9 @@ codes:*
 **Species
 percentage**
 
-| SPECIES\_PER\_1, SPECIES\_PER\_2, SPECIES\_PER\_3, SPECIES\_PER\_4, SPECIES\_PER\_5, SPECIES\_PER\_6, SPECIES\_PER\_7, SPECIES\_PER\_8, SPECIES\_PER\_9, SPECIES\_PER\_10 | Attribute Value |
-| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------- |
-| Species Percent (SPECIES\_PER\_\#) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%.   | NA              |
+| SPECIES\_PER\_1 … SPECIES\_PER\_10                                                                                                                                      | Attribute Value |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| Species Percent (SPECIES\_PER\_\#) - Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%. | NA              |
 
 *Error and missing value
 codes:*
@@ -841,13 +812,10 @@ codes:*
 ### Stand Origin
 
 Stand origin is the average initiation year of codominant and dominant
-trees of the leading species within each layer of a polygon. Origin is  
+trees of the leading species within each layer of a polygon. Origin is
 determined either to the nearest year or decade. An upper and lower
-bound is used to identify CAS origin. The detailed stand origin table
-is  
+bound is used to identify CAS origin. The detailed stand origin table is
 presented in Appendix 10.
-
-<br>
 
 | ORIGIN\_UPPER and ORIGIN\_LOWER           | Attribute Value |
 | :---------------------------------------- | :-------------- |
@@ -859,13 +827,10 @@ presented in Appendix 10.
 ### Site Class
 
 Site class is an estimate of the potential productivity of land for tree
-growth. Site class reflects tree growth response to soils, topography,  
+growth. Site class reflects tree growth response to soils, topography,
 climate, elevation, and moisture availability. See Appendix 11 for the
-detailed
-site  
+detailed site
 table.
-
-<br>
 
 | SITE\_CLASS                                                  | Attribute Value |
 | :----------------------------------------------------------- | :-------------- |
@@ -880,44 +845,19 @@ table.
 ### Site Index
 
 Site Index is an estimate of site productivity for tree growth. It is
-derived for all forested polygons based on leading species, height,
-and  
+derived for all forested polygons based on leading species, height, and
 stand age based on a specified reference age. Site index is not
 available for most inventories across Canada. See Appendix 11 for the
 detailed site
 table.
 
-<br>
-
-| SITE\_INDEX                                                                                    | Attribute Value |
-| :--------------------------------------------------------------------------------------------- | :-------------- |
-| Site Index - estimate of site productivity for tree growth based on a specified reference age. | 0 - 99          |
+| SITE\_INDEX                                                                       | Attribute Value |
+| :-------------------------------------------------------------------------------- | :-------------- |
+| Estimate of site productivity for tree growth based on a specified reference age. | 0 - 99          |
 
 <br>
 
-### Unproductive Forest
-
-Unproductive forest is forest land not capable of producing trees for
-forest operations. They are usually wetlands, very dry sites, exposed  
-sites, rocky sites, higher elevation sites, or those sites with shallow
-or poor soils. The detailed table, CAS codes, and conversion rule sets  
-are presented in Appendix
-12.
-
-<br>
-
-| UNPRODUCTIVE\_FOREST                                            | Attribute Value |
-| :-------------------------------------------------------------- | :-------------- |
-| Treed Muskeg - treed wetland sites                              | TM              |
-| Open Muskeg - open (\<10% trees) wetland sites                  | OM              |
-| Alpine forest - high elevation forest usually above 1800 m      | AL              |
-| Scrub Deciduous - scrub deciduous trees on poor sites           | SD              |
-| Scrub Coniferous - scrub coniferous trees on poor sites         | SC              |
-| Non Productive Forest - poor forest types on rocky or wet sites | NP              |
-| Productive Forest - any other forest                            | P               |
-| Blank - no value                                                | NA              |
-
-<br>
+## Non-Forest Attributes (NFL)
 
 ### Naturally Non Vegetated
 
@@ -952,8 +892,7 @@ and CAS conversion rule set are presented in Appendix
 ### Non-Vegetated Anthropogenic
 
 Non-vegetated anthropogenic areas are influenced or created by humans.
-These sites may or may not be vegetated. The detailed table, CAS
-codes,  
+These sites may or may not be vegetated. The detailed table, CAS codes,
 and CAS conversion rule set are presented in Appendix
 12.
 
@@ -996,6 +935,8 @@ table, CAS codes, and CAS conversion rule set are presented in Appendix
 
 <br>
 
+## Disturbance Attributes (DST)
+
 ### Disturbance
 
 Disturbance identifies the type of disturbance history that has occurred
@@ -1033,8 +974,7 @@ Appendix
 Disturbance extent provides an estimate of the proportion of the polygon
 that has been affected by the disturbance listed. Extent codes and  
 classes vary across Canada where they occur; therefore, CAS identifies
-upper and lower bounds for this category. Three disturbance extents
-can  
+upper and lower bounds for this category. Three disturbance extents can
 be identified, one for each disturbance
 event.
 
@@ -1062,17 +1002,17 @@ event.
 
 <br>
 
-# Ecological Attributes
+## Ecological Attributes (ECO)
 
 Ecological attributes are generally not included or are incompletely
-recorded in typical forest inventories across Canada. Two attributes  
+recorded in typical forest inventories across Canada. Two attributes
 have been included for CAS: ecosite and wetland. These attributes are to
-be translated or derived for CAS from other attributes whenever  
+be translated or derived for CAS from other attributes whenever
 possible.
 
 <br>
 
-## Wetland
+### Wetland
 
 The wetland classification scheme used for CAS follows the classes
 developed by the National Wetlands Working Group<sup>2</sup> and
@@ -1086,7 +1026,7 @@ Five major wetland classes are recognized based on wetland development
 from hydrologic, chemical, and biotic gradients that commonly have  
 strong cross-correlations. Two of the classes; fen and bog, are
 peat-forming with greater than 40 cm of accumulated organics. The three
-non- peat forming wetland types are shallow open water, marsh (fresh or
+non-peat forming wetland types are shallow open water, marsh (fresh or
 salt water), and swamp. A non-wetland class is also included. The
 Vegetation Modifier is assigned to a wetland class to describe the
 amount of vegetation cover. The Landform Modifier is a modifier label
@@ -1096,17 +1036,15 @@ absence of permafrost features or if vegetation cover is shrub or
 graminoid dominated.
 
 The detailed wetland table, CAS code set, and CAS translation rule set
-are presented in Appendix 14. Not many forest inventories across
-Canada  
+are presented in Appendix 14. Not many forest inventories across Canada
 provide a wetland attribute. Some inventories have complete or partial
-wetland attributes while others will need to have wetland classes  
+wetland attributes while others will need to have wetland classes
 derived from other attributes or ecosite information. The level of
-wetland detail that is possible to describe from a particular
-inventory  
+wetland detail that is possible to describe from a particular inventory
 database is dependent on the attributes that already exist. A rule set
-for each province or territory that identifies a method to derive  
+for each province or territory that identifies a method to derive
 wetland attributes using forest attributes or ecosite data is presented
-in Appendix 15. The wetland derivation may not be complete nor will it  
+in Appendix 15. The wetland derivation may not be complete nor will it
 always be possible to derive or record all four wetland attributes in
 the CAS
 database.
@@ -1172,15 +1110,14 @@ L. Halsey and D. Vitt.
 
 <br>
 
-## Ecosite
+### Ecosite
 
 Ecosites are site-level descriptions that provide a linkage between
 vegetation and soil/moisture and nutrient features on the site. The  
 detailed ecosite table is presented in Appendix 16. A common attribute
-structure for ecosite is not provided for CAS because ecosite is not  
+structure for ecosite is not provided for CAS because ecosite is not
 available for most forest inventories across Canada nor can it be
-derived from existing attributes. An ecosite field is included in CAS
-to  
+derived from existing attributes. An ecosite field is included in CAS to
 accommodate inventories that do include ecosite data. The original
 inventory attribute value is captured in CAS. For example some codes:  
 Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta =
