@@ -5,7 +5,7 @@ The Common Attribute Schema for Forest Resource Inventories (CASFRI) standardize
 
 The [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications) document the CAS database schema. It focuses on the most common attributes that are consistently recorded in forest inventories across Canada and which are relevant to habitat modeling and state of forest reporting. These attributes include crown closure, species composition, height, mean canopy or stand origin age, stand structure, moisture regime, site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history.
 
-A number of CASFRI instances have been produced since 2009. CASFRI 5.x is the fifth version of CASFRI. It makes a number of updates to previous versions:
+A number of CASFRI instances have been produced since 2009. CASFRI 5.x is the fifth version of CASFRI. It makes a number of significant updates to previous versions:
 
 * Addition of new and more up-to-date inventories.
 * Implementation of a new conversion and loading procedure focused around the open source software GDQL/OGR (in place of ArcGIS).
@@ -19,11 +19,13 @@ The three involved in the production of the CASFRI 5.x database are:
 2. Translation of in-db FRI to CAS
 3. Temporalization of CAS data
 
+Note that forest resource inventories converted and translated by this package are not provided with this project du to the numerous licensing agreements that have to be passed with the different production juridictions.
+
 # Version Releases
 
-The framework follows the [Semantic Versioning 2.0.0](https://semver.org/) versioning scheme (major.minor.revision). Increments in revision version numbers are for bug fixes. Increment in minor version numbers are for new features, changes to the helper functions (our API) and bug fixes, all not breaking backward compatibility with existing translation files. Increments in major version number are for changes breaking backward compatibility in the helper functions (meaning users have to make some changes in their translation tables).
+CASFRI follows the [Semantic Versioning 2.0.0](https://semver.org/) versioning scheme (major.minor.revision) adapted for a dataset. Increments in revision version numbers are for bug fixes. Increment in minor version numbers are for new features, new inventories, additions to the schema (new attributes) and bug fixes, all not breaking backward compatibility with previous CASFRI schemas. Increments in major version number are for schema changes breaking backward compatibility in existing code manipulating the data.
 
-The current version is 0.0.1-beta and is available for download at https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework/releases/tag/v0.1-beta
+The current version is 5.0.1-beta and is available for download at https://github.com/edwardsmarc/CASFRI/releases/tag/v5.0.1-beta
 
 # Directory structure
 <pre>
