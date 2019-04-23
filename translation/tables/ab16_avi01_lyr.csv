@@ -1,7 +1,7 @@
-﻿rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
 1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(forest_id_2|-8888);notNull(ogc_fid|-8888),"padConcat('ab16', 'CANFOR', src_filename, forest_id_2, feature_id, ogc_fid, 4,15,10,10,7, 'x','x','x',0,0, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(moist_reg|NULL_VALUE);matchList(moist_reg,'a,A,d,D,m,M,w,W'|-9998)","map(moist_reg, 'a,A,d,D,m,M,w,W', 'A,A,D,D,F,F,W,W')",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
-3,STRUCTURE_PER,integer,"notNull(struc_val|-8888);isInt(struc_val);between(struc_val,1,9|-9999)",copy(struc_val),Copy source value to STRUCTURE_PER,TRUE
+3,STRUCTURE_PER,integer,"notNull(std_struct|-8888);matchList(std_struct,' 0,0,C4,C5,M,M0,MO'|-9998)","map(std_struct, ' 0,0,C4,C5,M,M0,MO', ',-9999,-9999,4,5,-9999,-9999,-9999')",Copy source value to STRUCTURE_PER,TRUE
 4,LAYER,integer,false(|-8887),copy(1),Copy value of 1 to LAYER,TRUE
 5,LAYER_RANK,integer,false(|-8887),copy(1),Copy value of 1 to LAYER_RANK,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(density|-8888);matchList(density,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '30,50,70,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
