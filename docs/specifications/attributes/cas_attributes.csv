@@ -27,7 +27,7 @@ cas,inventory_area,float,0,,,,
 cas,photo_year,int,0,,,,
 lyr,cas_id,str,0,multi-attribute,multi-attribute,multi-attribute,multi-attribute
 lyr,soil_moist_reg,str,0,moist_reg,moisture,soil_moisture_regime_1,na
-lyr,structure_per,int,0,,,,
+lyr,structure_per,int,0,,std_struct,,
 lyr,layer,int,0,,,,
 lyr,layer_rank,int,0,,,,
 lyr,crown_closure_upper,int,1,density,crownclose,crown_closure,l1cc

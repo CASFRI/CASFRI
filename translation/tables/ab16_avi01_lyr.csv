@@ -1,24 +1,24 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(forest_id_2|-8888);notNull(ogc_fid|-8888),"padConcat('ab16', 'CANFOR', src_filename, forest_id_2, feature_id, ogc_fid, 4,15,10,10,7, 'x','x','x',0,0, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(moist_reg|NULL_VALUE);matchList(moist_reg,'a,A,d,D,m,M,w,W'|-9998)","map(moist_reg, 'a,A,d,D,m,M,w,W', 'A,A,D,D,F,F,W,W')",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
-3,STRUCTURE_PER,integer,"notNull(std_struct|-8888);matchList(std_struct,' 0,0,C4,C5,M,M0,MO'|-9998)","map(std_struct, ' 0,0,C4,C5,M,M0,MO', ',-9999,-9999,4,5,-9999,-9999,-9999')",Copy source value to STRUCTURE_PER,TRUE
-4,LAYER,integer,false(|-8887),copy(1),Copy value of 1 to LAYER,TRUE
-5,LAYER_RANK,integer,false(|-8887),copy(1),Copy value of 1 to LAYER_RANK,TRUE
-6,CROWN_CLOSURE_UPPER,integer,"notNull(density|-8888);matchList(density,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '30,50,70,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
-7,CROWN_CLOSURE_LOWER,integer,"notNull(density|-8888);matchList(density,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '6,31,51,71')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
-8,HEIGHT_UPPER,integer,"notNull(height|-8888);isInt(height);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copy(height),Copies source value to HEIGHT_UPPER,TRUE
-9,HEIGHT_LOWER,integer,"notNull(height|-8888);isInt(height);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copy(height),Copies source value to HEIGHT_LOWER,TRUE
+1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(forest_id_2|-8888);notNull(ogc_fid|-8888),"padConcat('ab16', 'CANFOR', src_filename, forest_id_2, ogc_fid, 4,15,10,10,7, 'x','x','x',0,0, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+2,SOIL_MOIST_REG,text,"notNull(moisture|NULL_VALUE);matchList(moisture,'a,A,d,D,m,M,w,W'|-9998)","mapText(moisture, 'a,A,d,D,m,M,w,W', 'A,A,D,D,F,F,W,W')",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
+3,STRUCTURE_PER,integer,"notNull(std_struct|-8888);matchList(std_struct,' 0,0,C4,C5,M,M0,MO'|-9998)","mapInt(std_struct, ' 0,0,C4,C5,M,M0,MO', '-9999,-9999,4,5,-9999,-9999,-9999')",Copy source value to STRUCTURE_PER,TRUE
+4,LAYER,integer,true(|-8887),copyInt(1),Copy value of 1 to LAYER,TRUE
+5,LAYER_RANK,integer,true(|-8887),copyInt(1),Copy value of 1 to LAYER_RANK,TRUE
+6,CROWN_CLOSURE_UPPER,integer,"notNull(crownclose|-8888);matchList(crownclose,'A,B,C,D'|-9998)","mapInt(crownclose, 'A,B,C,D', '30,50,70,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
+7,CROWN_CLOSURE_LOWER,integer,"notNull(crownclose|-8888);matchList(crownclose,'A,B,C,D'|-9998)","mapInt(crownclose, 'A,B,C,D', '6,31,51,71')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+8,HEIGHT_UPPER,integer,"notNull(height|-8888);isInt(height|-8889);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copyInt(height),Copies source value to HEIGHT_UPPER,TRUE
+9,HEIGHT_LOWER,integer,"notNull(height|-8888);isInt(height|-8889);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copyInt(height),Copies source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(|NOT_APPLICABLE),nothing(),Waiting for a new helper function,TRUE
-11,SPECIES_1,text,"notNull(sp1|NULL_VALUE);notEmpty(sp1|EMPTY_STRING);matchTable(sp1,translation,ab_avi01_species|NOT_IN_SET)","lookup(sp1, translation, ab_avi01_species, spec1)",Maps source value to SPECIES_1 using lookup table,TRUE
-12,SPECIES_PER_1,integer,"notNull(sp1_per|-8888);isInt(sp1_per);between(sp1_per,0,100|-9999)",copy(sp1_per),Copies source value to SPECIES_PER_1,TRUE
-13,SPECIES_2,text,"notNull(sp2|NULL_VALUE);notEmpty(sp2|EMPTY_STRING);matchTable(sp2,translation,ab_avi01_species|NOT_IN_SET)","lookup(sp2, translation, ab_avi01_species, spec2)",Maps source value to SPECIES_2 using lookup table,TRUE
-14,SPECIES_PER_2,integer,"notNull(sp2_per|-8888);isInt(sp2_per);between(sp2_per,0,100|-9999)",copy(sp2_per),Copies source value to SPECIES_PER_2,TRUE
-15,SPECIES_3,text,"notNull(sp3|NULL_VALUE);notEmpty(sp3|EMPTY_STRING);matchTable(sp3,translation,ab_avi01_species|NOT_IN_SET)","lookup(sp3, translation, ab_avi01_species, spec3)",Maps source value to SPECIES_3 using lookup table,TRUE
-16,SPECIES_PER_3,integer,"notNull(sp3_per|-8888);isInt(sp3_per);between(sp3_per,0,100|-9999)",copy(sp3_per),Copies source value to SPECIES_PER_3,TRUE
-17,SPECIES_4,text,"notNull(sp4|NULL_VALUE);notEmpty(sp4|EMPTY_STRING);matchTable(sp4,translation,ab_avi01_species|NOT_IN_SET)","lookup(sp4, translation, ab_avi01_species, spec4)",Maps source value to SPECIES_4 using lookup table,TRUE
-18,SPECIES_PER_4,integer,"notNull(sp4_per|-8888);isInt(sp4_per);between(sp4_per,0,100|-9999)",copy(sp4_per),Copies source value to SPECIES_PER_4,TRUE
-19,SPECIES_5,text,"notNull(sp5|NULL_VALUE);notEmpty(sp5|EMPTY_STRING);matchTable(sp5,translation,ab_avi01_species|NOT_IN_SET)","lookup(sp5, translation, ab_avi01_species, spec5)",Maps source value to SPECIES_5 using lookup table,TRUE
-20,SPECIES_PER_5,integer,"notNull(sp5_per|-8888);isInt(sp5_per);between(sp5_per,0,100|-9999)",copy(sp5_per),Copies source value to SPECIES_PER_5,TRUE
+11,SPECIES_1,text,"notNull(sp1|NULL_VALUE);notEmpty(sp1|EMPTY_STRING);matchTable(sp1,translation,ab_avi01_species|NOT_IN_SET)","lookupText(sp1, translation, ab_avi01_species, spec1, TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
+12,SPECIES_PER_1,integer,"notNull(sp1_percnt|-8888);isNumeric(sp1_percnt|-8889);between(sp1_percnt,0,100|-9999)",copyInt(sp1_percnt),Copies source value to SPECIES_PER_1,TRUE
+13,SPECIES_2,text,"notNull(sp2|NULL_VALUE);notEmpty(sp2|EMPTY_STRING);matchTable(sp2,translation,ab_avi01_species|NOT_IN_SET)","lookupText(sp2, translation, ab_avi01_species, spec2, TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
+14,SPECIES_PER_2,integer,"notNull(sp2_percnt|-8888);isNumeric(sp2_percnt|-8889);between(sp2_percnt,0,100|-9999)",copyInt(sp2_percnt),Copies source value to SPECIES_PER_2,TRUE
+15,SPECIES_3,text,"notNull(sp3|NULL_VALUE);notEmpty(sp3|EMPTY_STRING);matchTable(sp3,translation,ab_avi01_species|NOT_IN_SET)","lookupText(sp3, translation, ab_avi01_species, spec3, TRUE)",Maps source value to SPECIES_3 using lookup table,TRUE
+16,SPECIES_PER_3,integer,"notNull(sp3_percnt|-8888);isNumeric(sp3_percnt|-8889);between(sp3_percnt,0,100|-9999)",copyInt(sp3_percnt),Copies source value to SPECIES_PER_3,TRUE
+17,SPECIES_4,text,"notNull(sp4|NULL_VALUE);notEmpty(sp4|EMPTY_STRING);matchTable(sp4,translation,ab_avi01_species|NOT_IN_SET)","lookupText(sp4, translation, ab_avi01_species, spec4, TRUE)",Maps source value to SPECIES_4 using lookup table,TRUE
+18,SPECIES_PER_4,integer,"notNull(sp4_percnt|-8888);isNumeric(sp4_percnt|-8889);between(sp4_percnt,0,100|-9999)",copyInt(sp4_percnt),Copies source value to SPECIES_PER_4,TRUE
+19,SPECIES_5,text,"notNull(sp5|NULL_VALUE);notEmpty(sp5|EMPTY_STRING);matchTable(sp5,translation,ab_avi01_species|NOT_IN_SET)","lookupText(sp5, translation, ab_avi01_species, spec5, TRUE)",Maps source value to SPECIES_5 using lookup table,TRUE
+20,SPECIES_PER_5,integer,"notNull(sp5_percnt|-8888);isNumeric(sp5_percnt|-8889);between(sp5_percnt,0,100|-9999)",copyInt(sp5_percnt),Copies source value to SPECIES_PER_5,TRUE
 21,SPECIES_6,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
 22,SPECIES_PER_6,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
 23,SPECIES_7,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
@@ -29,7 +29,7 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 28,SPECIES_PER_9,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
 29,SPECIES_10,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
 30,SPECIES_PER_10,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
-31,ORIGIN_UPPER,integer,"notNull(origin|-8888);isInt(origin);between(origin,0,2020|-9999)",copy(origin),Copies (origin) to ORIGIN_UPPER,TRUE
-32,ORIGIN_LOWER,integer,"notNull(origin|-8888);isInt(origin);between(origin,0,2020|-9999)",copy(origin),Copies (origin) to ORIGIN_LOWER,TRUE
-33,SITE_CLASS,text,"notNull(tpr|NULL_VALUE);matchList(tpr,'U,F,M,G'|NOT_IN_SET)","map(tpr, 'U,F,M,G', 'U,P,M,G')",Maps source value to SITE_CLASS using lists of values,TRUE
+31,ORIGIN_UPPER,integer,"notNull(origin|-8888);isInt(origin|-8889);between(origin,0,2020|-9999)",copyInt(origin),Copies (origin) to ORIGIN_UPPER,TRUE
+32,ORIGIN_LOWER,integer,"notNull(origin|-8888);isInt(origin|-8889);between(origin,0,2020|-9999)",copyInt(origin),Copies (origin) to ORIGIN_LOWER,TRUE
+33,SITE_CLASS,text,"notNull(tpr|NULL_VALUE);matchList(tpr,'U,F,M,G'|NOT_IN_SET)","mapText(tpr, 'U,F,M,G', 'U,P,M,G')",Maps source value to SITE_CLASS using lists of values,TRUE
 34,SITE_INDEX,numeric,false(|-8887),nothing(),Attribute does not occur,TRUE
