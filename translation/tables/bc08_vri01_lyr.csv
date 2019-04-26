@@ -10,17 +10,17 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 9,HEIGHT_LOWER,double precision,"notNull(proj_height_1|-8888);isNumeric(proj_height_1|-8889);greaterThan(proj_height_1,0.1|-9999);lessThan(proj_height_1,100|-9999)",copyDouble(proj_height_1),Copies source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(|NOT_APPLICABLE),nothing(),Waiting for a new helper function,TRUE
 11,SPECIES_1,text,"notNull(species_cd_1|NULL_VALUE);notEmpty(species_cd_1|EMPTY_STRING);matchTable(species_cd_1,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_1, translation, bc_vri01_species, spec1, TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
-12,SPECIES_PER_1,integer,"notNull(species_pct_1|-8888);isNumeric(species_pct_1|-8889);between(species_pct_1,0,100|-9999)",copyDouble(species_pct_1),Copies source value to SPECIES_PER_1,TRUE
+12,SPECIES_PER_1,integer,"notNull(species_pct_1|-8888);isNumeric(species_pct_1|-8889);between(species_pct_1,0,100|-9999)",copyInt(species_pct_1),Copies source value to SPECIES_PER_1,TRUE
 13,SPECIES_2,text,"notNull(species_cd_2|NULL_VALUE);notEmpty(species_cd_2|EMPTY_STRING);matchTable(species_cd_2,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_2, translation, bc_vri01_species, spec2, TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
-14,SPECIES_PER_2,integer,"notNull(species_pct_2|-8888);isNumeric(species_pct_2|-8889);between(species_pct_2,0,100|-9999)",copyDouble(species_pct_2),Copies source value to SPECIES_PER_2,TRUE
+14,SPECIES_PER_2,integer,"notNull(species_pct_2|-8888);isNumeric(species_pct_2|-8889);between(species_pct_2,0,100|-9999)",copyInt(species_pct_2),Copies source value to SPECIES_PER_2,TRUE
 15,SPECIES_3,text,"notNull(species_cd_3|NULL_VALUE);notEmpty(species_cd_3|EMPTY_STRING);matchTable(species_cd_3,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_3, translation, bc_vri01_species, spec3, TRUE)",Maps source value to SPECIES_3 using lookup table,TRUE
-16,SPECIES_PER_3,integer,"notNull(species_pct_3|-8888);isNumeric(species_pct_3|-8889);between(species_pct_3,0,100|-9999)",copyDouble(species_pct_3),Copies source value to SPECIES_PER_3,TRUE
+16,SPECIES_PER_3,integer,"notNull(species_pct_3|-8888);isNumeric(species_pct_3|-8889);between(species_pct_3,0,100|-9999)",copyInt(species_pct_3),Copies source value to SPECIES_PER_3,TRUE
 17,SPECIES_4,text,"notNull(species_cd_4|NULL_VALUE);notEmpty(species_cd_4|EMPTY_STRING);matchTable(species_cd_4,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_4, translation, bc_vri01_species, spec4, TRUE)",Maps source value to SPECIES_4 using lookup table,TRUE
-18,SPECIES_PER_4,integer,"notNull(species_pct_4|-8888);isNumeric(species_pct_4|-8889);between(species_pct_4,0,100|-9999)",copyDouble(species_pct_4),Copies source value to SPECIES_PER_4,TRUE
+18,SPECIES_PER_4,integer,"notNull(species_pct_4|-8888);isNumeric(species_pct_4|-8889);between(species_pct_4,0,100|-9999)",copyInt(species_pct_4),Copies source value to SPECIES_PER_4,TRUE
 19,SPECIES_5,text,"notNull(species_cd_5|NULL_VALUE);notEmpty(species_cd_5|EMPTY_STRING);matchTable(species_cd_5,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_5, translation, bc_vri01_species, spec5, TRUE)",Maps source value to SPECIES_5 using lookup table,TRUE
-20,SPECIES_PER_5,integer,"notNull(species_pct_5|-8888);isNumeric(species_pct_5|-8889);between(species_pct_5,0,100|-9999)",copyDouble(species_pct_5),Copies source value to SPECIES_PER_5,TRUE
+20,SPECIES_PER_5,integer,"notNull(species_pct_5|-8888);isNumeric(species_pct_5|-8889);between(species_pct_5,0,100|-9999)",copyInt(species_pct_5),Copies source value to SPECIES_PER_5,TRUE
 21,SPECIES_6,text,"notNull(species_cd_6|NULL_VALUE);notEmpty(species_cd_6|EMPTY_STRING);matchTable(species_cd_6,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_6, translation, bc_vri01_species, spec6, TRUE)",Maps source value to SPECIES_6 using lookup table,TRUE
-22,SPECIES_PER_6,integer,"notNull(species_pct_6|-8888);isNumeric(species_pct_6|-8889);between(species_pct_6,0,100|-9999)",copyDouble(species_pct_6),Copies source value to SPECIES_PER_6,TRUE
+22,SPECIES_PER_6,integer,"notNull(species_pct_6|-8888);isNumeric(species_pct_6|-8889);between(species_pct_6,0,100|-9999)",copyInt(species_pct_6),Copies source value to SPECIES_PER_6,TRUE
 23,SPECIES_7,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
 24,SPECIES_PER_7,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
 25,SPECIES_8,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
