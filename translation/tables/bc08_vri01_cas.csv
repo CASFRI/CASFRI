@@ -1,11 +1,11 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
 1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(map_id|NULL_VALUE);notNull(feature_id|-8888);notNull(ogc_fid|-8888),"padConcat('bc08', src_filename, map_id, feature_id, ogc_fid, 4,15,10,10,7, 'x','x','x',0,0, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
-2,ORIG_STAND_ID,text,,,,
-3,STAND_STRUCTURE,text,,,,
-4,NUM_OF_LAYERS,integer,,,,
-5,IDENTIFICATION_ID,integer,,,,
-6,MAP_SHEET_ID,text,,,,
-7,GIS_AREA,numeric,,,,
-8,GIS_PERIMETER,numeric,,,,
-9,INVENTORY_AREA,numeric,,,,
-10,PHOTO_YEAR,integer,,,,
+2,ORIG_STAND_ID,text,"notNull(feature_id|NULL_VALUE;isInt(feature_id|-8889);greaterThan(feature_id,0|-9999)",copyInt(feature_id),Copies source value to ORIG_STAND_ID,TRUE
+3,STAND_STRUCTURE,text,true(|1),copyText("S"),Copies value S to STAND_STRUCTURE,TRUE
+4,NUM_OF_LAYERS,integer,true(|1),copyInt(1),Copies value 1 to NUM_OF_LAYERS,TRUE
+5,IDENTIFICATION_ID,integer,"notNull(inventory_standard_cd|NULL_VALUE);matchList(inventory_standard_cd,'F,V,I,L'|-9998)","mapText(inventory_standard_cd, 'F,V,I,L', '4,5,6,0')",Maps source value to IDENTIFCATION_ID using list,TRUE
+6,MAP_SHEET_ID,text,notNull(map_id|NULL_VALUE),copyText(map_id),Copies source value to MAP_SHEET_ID,TRUE
+7,GIS_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area);greaterThan(shape_area,0|-9999)",copyDouble(shape_area),Copies source value to GIS_AREA,TRUE
+8,GIS_PERIMETER,double precision,"notNull(shape_length|-8888);isNumeric(shape_length);greaterThan(shape_length,0|-9999)",copyDouble(shape_length),Copies source value to GIS_PERIMETER,TRUE
+9,INVENTORY_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area);greaterThan(shape_area,0|-9999)",copyDouble(shape_area),Copies source value to INVENTORY_AREA,TRUE
+10,PHOTO_YEAR,integer,"notNull(reference_year|NULL_VALUE;isInt(reference_year|-8889);between(reference_year,1900,2020|-9999)",copyInt(reference_year),Copies source value to PHOTO_YEAR,TRUE
