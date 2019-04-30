@@ -1,15 +1,15 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
 1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(map_id|NULL_VALUE);notNull(feature_id|-8888);notNull(ogc_fid|-8888),"padConcat('bc08', src_filename, map_id, feature_id, ogc_fid, 4,15,10,10,7, 'x','x','x',0,0, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
-2,DIST_1,text,,,,
-3,DIST_YR_1,integer,,,,
-4,DIST_EXT_UPPER_1,integer,,,,
-5,DIST_EXT_LOWER_1,integer,,,,
-6,DIST_2,text,,,,
-7,DIST_YR_2,integer,,,,
-8,DIST_EXT_UPPER_2,integer,,,,
-9,DIST_EXT_LOWER_2,integer,,,,
-10,DIST_3,text,,,,
-11,DIST_YR_3,integer,,,,
-12,DIST_EXT_UPPER_3,integer,,,,
-13,DIST_EXT_LOWER_3,integer,,,,
-14,LAYER,integer,,,,
+2,DIST_1,text,"notNull(line_7b_disturbance_history|NULL_VALUE);matchList(line_7b_disturbance_history,'L,B,W,D,K,S,F,I,R,G,Y,A,C,T,U,V,N'|-9998)","mapText(line_7b_disturbance_history, 'L,B,W,D,K,S,F,I,R,G,Y,A,C,T,U,V,N', 'CO,BU,WF,DI,OT,SL,FL,IK,SI,WE,WE,OT,OT,OT,OT,OT,UK')",Maps source value to DIST_1 using lists of values,TRUE
+3,DIST_YR_1,integer,"notNull(line_7b_disturbance_history|-8888);isInt(line_7b_disturbance_history|-8889);between(line_7b_disturbance_history,0,2020|-9999)",copyInt(line_7b_disturbance_history),Copies (line_7b_disturbance_history) to DIST_YR_1,TRUE
+4,DIST_EXT_UPPER_1,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+5,DIST_EXT_LOWER_1,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+6,DIST_2,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+7,DIST_YR_2,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+8,DIST_EXT_UPPER_2,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+9,DIST_EXT_LOWER_2,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+10,DIST_3,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+11,DIST_YR_3,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+12,DIST_EXT_UPPER_3,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+13,DIST_EXT_LOWER_3,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+14,LAYER,integer,true(|-8887),copyInt(1),Copy value of 1 to LAYER,TRUE
