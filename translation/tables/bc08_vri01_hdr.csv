@@ -1,17 +1,17 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-1,IDENTIFICATION_ID,,,,,
-2,JURISDICTION,,,,,
-3,COORDINATE_SYS,,,,,
-4,PROJECTION,,,,,
-5,DATUM,,,,,
-6,INVENTORY_OWNER,,,,,
-7,LAND_OWNER,,,,,
-8,PERMISSION,,,,,
-9,TENURE_TYPE,,,,,
-10,INV_TYPE,,,,,
-11,INV_VERSION,,,,,
-12,INV_START_YR,,,,,
-13,INV_FINISH_YR,,,,,
-14,INV_ACQ_ID,,,,,
-15,INV_ACQ_YR,,,,,
-16,INV_UPDATE_YR,,,,,
+1,IDENTIFICATION_ID,integer,"notNull(inventory_standard_cd|NULL_VALUE);matchList(inventory_standard_cd,'F,V,I,L'|-9998)","mapInt(inventory_standard_cd, 'F,V,I,L', '4,5,6,0')",Maps source value to IDENTIFCATION_ID using list,TRUE
+2,JURISDICTION,text,true(|1),copyText('BC'),Copies value 'BC' to JURISDICTION,TRUE
+3,COORDINATE_SYS,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+4,PROJECTION,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+5,DATUM,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+6,INVENTORY_OWNER,text,true(|1),copyText('PROV_GOV'),Copies value 'PROV_GOV' to INVENTORY_OWNER,TRUE
+7,LAND_OWNER,text,true(|1),copyText('MOF'),Copies value 'MOF' to LAND_OWNER,TRUE
+8,PERMISSION,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+9,TENURE_TYPE,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+10,INV_TYPE,text,"notNull(inventory_standard_cd|NULL_VALUE);matchList(inventory_standard_cd,'F,V,I,L'|-9998)",copyText(inventory_standard_cd),Copies source value to INV_TYPE,TRUE
+11,INV_VERSION,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+12,INV_START_YR,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+13,INV_FINISH_YR,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+14,INV_ACQ_ID,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+15,INV_ACQ_YR,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+16,INV_UPDATE_YR,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
