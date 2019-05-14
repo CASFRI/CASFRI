@@ -1,0 +1,31 @@
+body{
+  /*font-size: 12px;*/
+}
+td {
+  /*font-size: 8px;*/
+}
+h1.title {
+  font-size: 38px;
+  font-weight: normal;
+  color: black;
+}
+h1 {
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+}
+h2 {
+  font-size: 15px;
+  font-weight: bold;
+  color: blue;
+}
+h3 {
+  /*font-size: 18px;
+  color: black;*/
+}
+code.r{
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}

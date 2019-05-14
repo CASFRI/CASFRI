@@ -1,0 +1,32 @@
+name: CASFRI 5.0
+output_dir: '.'
+navbar:
+  title: CASFRI 5.0
+  left:
+  - text: Home
+    href: index.html
+  - text: Docs
+    menu:
+    - text: Specifications
+      href: cas_specifications.html
+  - text: BC08
+    menu:
+    - text: HDR Attributes
+      href: bc08_hdr.html
+    - text: CAS Attributes
+      href: bc08_cas.html
+    - text: LYR Attributes
+      href: bc08_lyr.html
+    - text: NFL Attributes
+      href: bc08_nfl.html
+    - text: DST Attributes
+      href: bc08_dst.html
+    - text: ECO Attributes
+      href: bc08_eco.html
+output:
+  html_document:
+    highlight: textmate
+    theme: cosmo
+    lib_dir: site_libs
+    self_contained: no
+    css: styles.css
