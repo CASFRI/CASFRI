@@ -470,7 +470,7 @@ div.tocify {
 <h1>What’s new</h1>
 <p>May 14, 2019</p>
 <ul>
-<li>One ECO attribute is currently ready to reviewed. The others should be ready soon.</li>
+<li>wetland_type and eco_site are ready to reviewed. The other attributes should be ready soon.</li>
 </ul>
 <p><br></p>
 </div>
@@ -569,7 +569,36 @@ x = mutate(x, mod1 = substr(line_7b_disturbance_history,1,1),
 </div>
 <div id="casfri-4" class="section level3">
 <h3>CASFRI</h3>
-<p>dfSummary(x[“eco_site”], graph.col=FALSE, max.distinct.values=20)</p>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 4861240 x 1  
+## Duplicates: 4859761  
+## 
+## ---------------------------------------------------------------------------------
+## No   Variable      Stats / Values       Freqs (% of Valid)   Valid      Missing  
+## ---- ------------- -------------------- -------------------- ---------- ---------
+## 1    eco_site      1. BWBS.mk...F        302120 ( 6.2%)      4861240    0        
+##      [character]   2. BWBS.mk...M        107676 ( 2.2%)      (100%)     (0%)     
+##                    3. SBS.mc.2..M         93911 ( 1.9%)                          
+##                    4. CWH.vm.1..M         75383 ( 1.6%)                          
+##                    5. CWH.vh.2..          67242 ( 1.4%)                          
+##                    6. ESSF.mv.3..M        66557 ( 1.4%)                          
+##                    7. BWBS.mw...F         66174 ( 1.4%)                          
+##                    8. BWBS.mw...M         62655 ( 1.3%)                          
+##                    9. SBPS.xc...          58953 ( 1.2%)                          
+##                    10. ESSF.mc...M        57610 ( 1.2%)                          
+##                    11. BWBS.mk...         55687 ( 1.1%)                          
+##                    12. CWH.vm.1..         55597 ( 1.1%)                          
+##                    13. CWH.vm.2..M        52321 ( 1.1%)                          
+##                    14. SBS.dk...M         51401 ( 1.1%)                          
+##                    15. SBS.mk.1..M        50339 ( 1.0%)                          
+##                    16. IDF.dk.3..M        46735 ( 1.0%)                          
+##                    17. SWB.mk...M         44084 ( 0.9%)                          
+##                    18. ESSF.mv.4..M       40811 ( 0.8%)                          
+##                    19. BWBS.dk...         37073 ( 0.8%)                          
+##                    20. SBS.dw.3..M        36063 ( 0.7%)                          
+##                    [ 1459 others ]      3432848 (70.6%)                          
+## ---------------------------------------------------------------------------------</code></pre>
 </div>
 </div>
 </div>

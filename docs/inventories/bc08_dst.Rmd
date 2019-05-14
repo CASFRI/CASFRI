@@ -1,0 +1,108 @@
+---  
+title: "DST Attributes"
+output:  
+  html_document:  
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    css: styles.css
+---  
+
+<br>
+
+# What's new
+
+May 14, 2019
+
+  * Some DST attributes are ready to reviewed.
+  * The others don't have any CAS_04 correspondence and will need to be discussed.
+
+<br>
+
+# Overview
+
+  * Only DIST_1, DIST_YR_1, and LAYER seem to have values in the CAS_04.
+
+## dist_1 {.tabset}
+
+**dist_1** and **dist_yr_1** seem to be taken from *line_7b_disturbance_history*. From the metadata: "The disturbance history described as a list of abbreviations for the techniques along with the years each technique was employed. Possible values are B (wildfire), BE (escaped burn), BG (ground burn), BR (range burn), BW (wildlife burn), D (disease), F (flooding), I (insect), K (fume kill), L (logging), L% (logged with percentage), R (site rehabilitation), S (slide), and W (wind throw)."
+
+  * These codes don't seem to match up with the BC data
+  * "M" and "P" occur in data but are not in metadata or Perl code
+  * "W", "K", "S", "F", "G", "Y", "T", "V" do not occur in the data but are in Perl code
+  * "N" -> "UK" is a new disturbance code defined by SC in Perl code
+  * TT_Engine needs "substr" helper function
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c("L", "B", "W", "D", "K", "S", "F", "I", "R", "G", "Y", "A", "C", "T", "U", "V", "N")
+casList = c("CO","BU","WF","DI","OT","SL","FL","IK","SI","WE","WE","OT","OT","OT","OT","OT","UK")
+x = mutate(x, mod1 = substr(line_7b_disturbance_history,1,1),
+              dist_1=if_else(is.na(mod1),"NULL_VALUE",if_else(!mod1 %in% friList,"NOT_IN_SET",mapvalues(mod1, friList, casList))))
+```
+
+### RAWFRI
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["mod1"], graph.col=FALSE, max.distinct.values=20)
+```
+
+### CASFRI
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["dist_1"], graph.col=FALSE, max.distinct.values=20)
+```
+
+## dist_yr_1 {.tabset}
+
+  * TT_Engine needs "substr" helper function
+  * CAS_04 uses mod1yr>10 as cut-off between the 1900s and 2000s but that doesn't seem right; here we use 17.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, mod1yr = substr(line_7b_disturbance_history,2,3),
+              dist_yr_1=if_else(is.na(mod1yr),as.numeric(-8888),
+              if_else(mod1yr>17,as.numeric(paste0(19,mod1yr)),as.numeric(paste0(20,mod1yr)))),
+              dist_yr_1=as.integer(dist_yr_1))
+```
+
+### RAWFRI
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["mod1yr"], graph.col=FALSE, max.distinct.values=10)
+```
+
+### CASFRI
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_yr_1, graph.col=FALSE, max.distinct.values=101)
+```
+
+
+## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
+
+  * value = -8888 in cas04
+  * There is some Perl code to calculate this but it is commented out
+
+## dist_2 {.tabset}
+
+* value = "-8888" in cas04
+
+## dist_year_2 {.tabset}
+
+* value = -8888 in cas04
+
+## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
+
+* value = -8888 in cas04
+
+## dist_3 {.tabset}
+
+* value = ""-8888" in cas04
+
+## dist_yr_3 {.tabset}
+
+* value = -8888 in cas04
+
+## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
+
+* value = -8888 in cas04
+
+## layer {.tabset}
+
+  * value = 1 in cas04

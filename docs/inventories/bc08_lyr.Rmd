@@ -1,0 +1,288 @@
+---  
+title: "LYR Attributes"
+output:  
+  html_document:  
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    css: styles.css
+---  
+
+<br>
+
+# What's new
+
+May 14, 2019
+
+  * LYR attributes are ready to reviewed.
+
+<br>
+
+# Overview
+
+  * See comments under individual attribute heading
+
+## soil_moist_reg {.tabset}
+
+  * how many NAs are there? 1321483
+  * are there any "" or " "? 0
+  * should they be treated the same or differently? NULL_VALUE
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, soil_moist_reg = case_when(
+    is.na(soil_moisture_regime_1) ~ "NULL_VALUE",
+    str_trim(soil_moisture_regime_1)=="" ~ "EMPTY_STRING",
+    soil_moisture_regime_1 %in% c(0,1,2) ~ "D",
+    soil_moisture_regime_1 %in% c(3,4) ~ "F",
+    soil_moisture_regime_1 %in% c(5,6) ~ "M",
+    soil_moisture_regime_1 %in% c(7,8) ~ "W",
+    TRUE                      ~ "NOT_IN_SET"))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["soil_moisture_regime_1"], graph.col=FALSE, max.distinct.values=99)
+```
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["soil_moist_reg"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## structure_per {.tabset}
+
+The attribute structure_per is not created from an FRI attribute:
+
+  * assigned a value of UNDEF in cas04?
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, structure_per=0)
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["structure_per"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## layer {.tabset}
+
+The attribute layer is not created from an FRI attribute:
+
+  * assigned a value of 1
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, layer=1)
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["layer"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## layer_rank {.tabset}
+
+The attribute layer_rank is not created from an FRI attribute:
+
+  * assigned a value of 1
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, layer_rank=1)
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["layer_rank"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## crown_closure {.tabset}
+
+  * crown_closure can be copied directly; it is an integer ranging from 0-100
+  * Null values should be assigned error code -8888
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, crown_closure_lower=if_else(is.na(crown_closure), as.integer(-8888), crown_closure),
+              crown_closure_upper=if_else(is.na(crown_closure), as.integer(-8888), crown_closure))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["crown_closure"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["crown_closure_lower"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["crown_closure_upper"], graph.col=FALSE, max.distinct.values=101)
+```
+
+## height {.tabset}
+
+  * proj_height_1 can be copied directly; it is a numeric attribute ranging from 0.0-93.5
+  * CASFRI specifies that values can range from 0-100, implying that if there if height>100 then it should be assigned 100 (check on this?)
+  * Null values should be assigned error code -8888
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, height_upper=if_else(is.na(proj_height_1), as.numeric(-8888), proj_height_1),
+              height_lower=if_else(is.na(proj_height_1), as.numeric(-8888), proj_height_1))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["proj_height_1"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["height_lower"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["height_upper"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## species_1-10 {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, species_1=if_else(str_trim(species_cd_1)=="", "EMPTY_STRING", species_cd_1))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["species_cd_1"], graph.col=FALSE, max.distinct.values=99)
+```
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["species_1"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## species_per_1-10 {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, species_per_1=species_pct_1)
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["species_pct_1"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["species_per_1"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## productive_for {.tabset}
+
+  * This attribute has not yet been translated correctly!
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, mod1=substr(line_7b_disturbance_history, 1,1), mod1yr=substr(line_7b_disturbance_history, 2,3), structure_per = -8888, layer=1, layer_rank=1, productive_for = "PF" )
+x = mutate(x, productive_for=if_else((!is.na(species_cd_1) & str_trim(species_cd_1)=="") & (!is.na(crown_closure) | !is.na(proj_height_1)), "PP", productive_for))
+x = mutate(x, productive_for=if_else(!is.na(mod1) & mod1=="L", "PF", productive_for))
+#x = mutate(x, productive_for=if_else(modcon1!="CC" & species_1=="EMPTY_STRING" & (crown_closure_upper!=-9998 | height_upper!=-9999), "PP", "PF"))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["productive_for"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## origin {.tabset}
+
+  * translation function to substract reference_year from proj_age_1
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, projected_year=as.double(substr(projected_date, 1, 4)),
+              origin_upper=if_else(proj_age_1==0, -9999, (projected_year - proj_age_1)),
+              origin_lower=if_else(proj_age_1==0, -9999, (projected_year - proj_age_1)))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["proj_age_1"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["origin_lower"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["origin_upper"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## site_class {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+friList = c('U','F','M','G')
+casList = c('U','P','M','G')
+x = mutate(x, site_class=0)
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["site_class"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## site_index {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, bc_site_index = site_index)
+x = mutate(x, site_index=if_else(str_trim(bc_site_index)=="", -8888, bc_site_index))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["bc_site_index"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["site_index"], graph.col=FALSE, max.distinct.values=99)
+```

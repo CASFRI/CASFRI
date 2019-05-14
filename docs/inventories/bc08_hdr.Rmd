@@ -1,0 +1,94 @@
+---  
+title: "HDR Attributes"
+output:  
+  html_document:  
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    css: styles.css
+---  
+
+<br>
+
+# What's new
+
+May 14, 2019
+
+  * HDR attributes are ready to reviewed.
+
+<br>
+
+# Overview
+
+The HDR attributes table for CAS_04 consiss of three rows, one per inventory_standard_code.
+
+  * It might be easiest to create this table manually since there is no need to loop over all records
+  * The latest inventory_standard_cd attribute includes 4 categories: F, V, I, and L which was not present or used in CAS_04
+    - what is L and should we include it?
+    - was it present in past inventories and ignored?
+  * Several CASFRI attributes have no values. Is this by design or should we be adding these?
+
+## identification_id {.tabset}
+
+  * "mapInt(inventory_standard_cd, 'F,V,I,L', '4,5,6,0')"
+
+## jurisdiction {.tabset}
+
+  * copyText('BC')
+
+## coordinate_sys {.tabset}
+
+  * nothing()
+
+## projection {.tabset}
+
+  * nothing()
+
+## datum {.tabset}
+
+  * nothing()
+
+## inventory_owner {.tabset}
+
+  * copyText('PROV_GOV')
+
+## land_owner {.tabset}
+
+  * copyText('MOF')
+
+## permission {.tabset}
+
+  * nothing()
+
+## tenure_type {.tabset}
+
+  * nothing()
+
+## inv_type {.tabset}
+
+  * copyText(inventory_standard_cd)
+
+## inv_version {.tabset}
+
+  * nothing()
+
+## inv_start_yr {.tabset}
+
+  * nothing()
+
+## inv_finish_yr {.tabset}
+
+  * nothing()
+
+## inv_acq_id {.tabset}
+
+  * nothing()
+
+## inv_acq_yr {.tabset}
+
+  * nothing()
+
+## inv_update_yr {.tabset}
+
+  * nothing()

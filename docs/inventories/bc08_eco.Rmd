@@ -1,0 +1,85 @@
+---  
+title: "ECO Attributes"
+output:  
+  html_document:  
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    css: styles.css
+---  
+
+<br>
+
+# What's new
+
+May 14, 2019
+
+  * wetland_type and eco_site are ready to reviewed. The other attributes should be ready soon.
+
+<br>
+
+# Overview
+
+  * See comments under individual attribute heading
+
+## wetland_type {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c("B","F","M","S","T")
+casList = c("B","F","M","S","T")
+x = mutate(x, mod1 = substr(line_7b_disturbance_history,1,1),
+              dist_1=if_else(is.na(mod1),"NULL_VALUE",if_else(!mod1 %in% friList,"NOT_IN_SET",mapvalues(mod1, friList, casList))))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["mod1"], graph.col=FALSE, max.distinct.values=20)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["dist_1"], graph.col=FALSE, max.distinct.values=20)
+```
+
+## wet_veg_cover {.tabset}
+
+### RAWFRI
+
+### CASFRI
+
+## wet_landform_mod {.tabset}
+
+### RAWFRI
+
+### CASFRI
+
+## wet_local_mod {.tabset}
+
+### RAWFRI
+
+### CASFRI
+
+## eco_site {.tabset}
+
+  * concatenated from bec_zone_code, bec_subzone, bec_variant, bec_phase, site_position_meso
+  * add a "." between attributes and "" if attribute is null
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x,
+    eco_site = if_else(is.na(bec_zone_code), "", bec_zone_code),
+    eco_site = if_else(is.na(bec_subzone), paste0(eco_site,"."), paste0(eco_site,".",bec_subzone)),
+    eco_site = if_else(is.na(bec_variant), paste0(eco_site,"."), paste0(eco_site,".",bec_variant)),
+    eco_site = if_else(is.na(bec_phase), paste0(eco_site,"."), paste0(eco_site,".",bec_phase)),
+    eco_site = if_else(is.na(site_position_meso), paste0(eco_site,"."), paste0(eco_site,".",site_position_meso)))
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["eco_site"], graph.col=FALSE, max.distinct.values=20)
+```
