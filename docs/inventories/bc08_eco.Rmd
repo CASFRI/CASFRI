@@ -15,7 +15,7 @@ output:
 
 May 14, 2019
 
-  * wetland_type and eco_site are ready to reviewed. The other attributes should be ready soon.
+  * eco_site is ready to reviewed. The other attributes should be ready soon.
 
 <br>
 
@@ -25,23 +25,20 @@ May 14, 2019
 
 ## wetland_type {.tabset}
 
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-friList = c("B","F","M","S","T")
-casList = c("B","F","M","S","T")
-x = mutate(x, mod1 = substr(line_7b_disturbance_history,1,1),
-              dist_1=if_else(is.na(mod1),"NULL_VALUE",if_else(!mod1 %in% friList,"NOT_IN_SET",mapvalues(mod1, friList, casList))))
 ```
 
 ### RAWFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x["mod1"], graph.col=FALSE, max.distinct.values=20)
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=20)
 ```
 
 ### CASFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x["dist_1"], graph.col=FALSE, max.distinct.values=20)
+#dfSummary(x["wetland_type"], graph.col=FALSE, max.distinct.values=20)
 ```
 
 ## wet_veg_cover {.tabset}

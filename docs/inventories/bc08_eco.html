@@ -470,7 +470,7 @@ div.tocify {
 <h1>What’s new</h1>
 <p>May 14, 2019</p>
 <ul>
-<li>wetland_type and eco_site are ready to reviewed. The other attributes should be ready soon.</li>
+<li>eco_site is ready to reviewed. The other attributes should be ready soon.</li>
 </ul>
 <p><br></p>
 </div>
@@ -481,48 +481,11 @@ div.tocify {
 </ul>
 <div id="wetland_type" class="section level2 tabset">
 <h2>wetland_type</h2>
-<pre class="r"><code>friList = c(&quot;B&quot;,&quot;F&quot;,&quot;M&quot;,&quot;S&quot;,&quot;T&quot;)
-casList = c(&quot;B&quot;,&quot;F&quot;,&quot;M&quot;,&quot;S&quot;,&quot;T&quot;)
-x = mutate(x, mod1 = substr(line_7b_disturbance_history,1,1),
-              dist_1=if_else(is.na(mod1),&quot;NULL_VALUE&quot;,if_else(!mod1 %in% friList,&quot;NOT_IN_SET&quot;,mapvalues(mod1, friList, casList))))</code></pre>
 <div id="rawfri" class="section level3">
 <h3>RAWFRI</h3>
-<pre><code>## Data Frame Summary  
-##   
-## Dimensions: 4861240 x 1  
-## Duplicates: 4861228  
-## 
-## ------------------------------------------------------------------------------
-## No   Variable      Stats / Values   Freqs (% of Valid)   Valid      Missing   
-## ---- ------------- ---------------- -------------------- ---------- ----------
-## 1    mod1          1. A                  2 ( 0.0%)       1223952    3637288   
-##      [character]   2. B             177419 (14.5%)       (25.18%)   (74.82%)  
-##                    3. C                 14 ( 0.0%)                            
-##                    4. D                592 ( 0.0%)                            
-##                    5. I             478534 (39.1%)                            
-##                    6. L             522507 (42.7%)                            
-##                    7. M                238 ( 0.0%)                            
-##                    8. N              42775 ( 3.5%)                            
-##                    9. P                340 ( 0.0%)                            
-##                    10. R               467 ( 0.0%)                            
-##                    11. U              1064 ( 0.1%)                            
-## ------------------------------------------------------------------------------</code></pre>
 </div>
 <div id="casfri" class="section level3">
 <h3>CASFRI</h3>
-<pre><code>## Data Frame Summary  
-##   
-## Dimensions: 4861240 x 1  
-## Duplicates: 4861236  
-## 
-## ------------------------------------------------------------------------------
-## No   Variable      Stats / Values    Freqs (% of Valid)   Valid      Missing  
-## ---- ------------- ----------------- -------------------- ---------- ---------
-## 1    dist_1        1. B               177419 ( 3.6%)      4861240    0        
-##      [character]   2. M                  238 ( 0.0%)      (100%)     (0%)     
-##                    3. NOT_IN_SET     1046295 (21.5%)                          
-##                    4. NULL_VALUE     3637288 (74.8%)                          
-## ------------------------------------------------------------------------------</code></pre>
 </div>
 </div>
 <div id="wet_veg_cover" class="section level2 tabset">
