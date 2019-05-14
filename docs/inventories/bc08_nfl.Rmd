@@ -30,7 +30,7 @@ May 14, 2019
 
 <br>
 
-# Attributes translation
+# Attributes
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 

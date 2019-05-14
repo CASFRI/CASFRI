@@ -24,6 +24,10 @@ May 14, 2019
 
   * Only DIST_1, DIST_YR_1, and LAYER seem to have values in the CAS_04.
 
+<br>
+
+# Attributes
+
 ## dist_1 {.tabset}
 
 **dist_1** and **dist_yr_1** seem to be taken from *line_7b_disturbance_history*. From the metadata: "The disturbance history described as a list of abbreviations for the techniques along with the years each technique was employed. Possible values are B (wildfire), BE (escaped burn), BG (ground burn), BR (range burn), BW (wildlife burn), D (disease), F (flooding), I (insect), K (fume kill), L (logging), L% (logged with percentage), R (site rehabilitation), S (slide), and W (wind throw)."

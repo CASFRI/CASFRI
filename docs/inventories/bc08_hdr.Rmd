@@ -29,6 +29,10 @@ The HDR attributes table for CAS_04 consiss of three rows, one per inventory_sta
     - was it present in past inventories and ignored?
   * Several CASFRI attributes have no values. Is this by design or should we be adding these?
 
+<br>
+
+# Attributes
+
 ## identification_id {.tabset}
 
   * "mapInt(inventory_standard_cd, 'F,V,I,L', '4,5,6,0')"
