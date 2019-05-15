@@ -468,6 +468,10 @@ div.tocify {
 <p><br></p>
 <div id="whats-new" class="section level1">
 <h1>What’s new</h1>
+<p>May 15, 2019</p>
+<ul>
+<li>Revised productive_for.</li>
+</ul>
 <p>May 14, 2019</p>
 <ul>
 <li>LYR attributes are ready to reviewed.</li>
@@ -1037,27 +1041,37 @@ div.tocify {
 <div id="productive_for" class="section level2 tabset">
 <h2>productive_for</h2>
 <ul>
-<li>This attribute has not yet been translated correctly!</li>
+<li>This attribute uses for_mgmt_land_base_ind to identify productive forest.</li>
+<li>Previously, this was done using multiple attributes (see CAS_04 Perl code).</li>
 </ul>
-<pre class="r"><code>x = mutate(x, mod1=substr(line_7b_disturbance_history, 1,1), mod1yr=substr(line_7b_disturbance_history, 2,3), structure_per = -8888, layer=1, layer_rank=1, productive_for = &quot;PF&quot; )
-x = mutate(x, productive_for=if_else((!is.na(species_cd_1) &amp; str_trim(species_cd_1)==&quot;&quot;) &amp; (!is.na(crown_closure) | !is.na(proj_height_1)), &quot;PP&quot;, productive_for))
-x = mutate(x, productive_for=if_else(!is.na(mod1) &amp; mod1==&quot;L&quot;, &quot;PF&quot;, productive_for))
-#x = mutate(x, productive_for=if_else(modcon1!=&quot;CC&quot; &amp; species_1==&quot;EMPTY_STRING&quot; &amp; (crown_closure_upper!=-9998 | height_upper!=-9999), &quot;PP&quot;, &quot;PF&quot;))</code></pre>
+<pre class="r"><code>x = mutate(x, productive_for = if_else(
+    for_mgmt_land_base_ind==&quot;Y&quot;, &quot;PF&quot;, &quot;PP&quot;))</code></pre>
 <div id="rawfri-8" class="section level3">
 <h3>RAWFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 4861240 x 1  
+## Duplicates: 4861238  
+## 
+## -----------------------------------------------------------------------------------------
+## No   Variable                  Stats / Values   Freqs (% of Valid)   Valid      Missing  
+## ---- ------------------------- ---------------- -------------------- ---------- ---------
+## 1    for_mgmt_land_base_ind    1. N              965016 (19.9%)      4861240    0        
+##      [character]               2. Y             3896224 (80.2%)      (100%)     (0%)     
+## -----------------------------------------------------------------------------------------</code></pre>
 </div>
 <div id="casfri-6" class="section level3">
 <h3>CASFRI</h3>
 <pre><code>## Data Frame Summary  
 ##   
 ## Dimensions: 4861240 x 1  
-## Duplicates: 4861239  
+## Duplicates: 4861238  
 ## 
 ## ---------------------------------------------------------------------------------
 ## No   Variable          Stats / Values   Freqs (% of Valid)   Valid      Missing  
 ## ---- ----------------- ---------------- -------------------- ---------- ---------
-## 1    productive_for    1. PF            4861240 (100.0%)     4861240    0        
-##      [character]                                             (100%)     (0%)     
+## 1    productive_for    1. PF            3896224 (80.2%)      4861240    0        
+##      [character]       2. PP             965016 (19.9%)      (100%)     (0%)     
 ## ---------------------------------------------------------------------------------</code></pre>
 </div>
 </div>
