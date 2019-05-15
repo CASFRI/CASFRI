@@ -13,6 +13,10 @@ output:
 
 # What's new
 
+May 15, 2019
+
+  * Revised productive_for.
+
 May 14, 2019
 
   * LYR attributes are ready to reviewed.
@@ -203,19 +207,18 @@ dfSummary(x["species_per_1"], graph.col=FALSE, max.distinct.values=99)
 
 ## productive_for {.tabset}
 
-  * This attribute has not yet been translated correctly!
+  * This attribute uses for_mgmt_land_base_ind to identify productive forest.
+  * Previously, this was done using multiple attributes (see CAS_04 Perl code).
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
-x = mutate(x, mod1=substr(line_7b_disturbance_history, 1,1), mod1yr=substr(line_7b_disturbance_history, 2,3), structure_per = -8888, layer=1, layer_rank=1, productive_for = "PF" )
-x = mutate(x, productive_for=if_else((!is.na(species_cd_1) & str_trim(species_cd_1)=="") & (!is.na(crown_closure) | !is.na(proj_height_1)), "PP", productive_for))
-x = mutate(x, productive_for=if_else(!is.na(mod1) & mod1=="L", "PF", productive_for))
-#x = mutate(x, productive_for=if_else(modcon1!="CC" & species_1=="EMPTY_STRING" & (crown_closure_upper!=-9998 | height_upper!=-9999), "PP", "PF"))
+x = mutate(x, productive_for = if_else(
+    for_mgmt_land_base_ind=="Y", "PF", "PP"))
 ```
 
 ### RAWFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+dfSummary(x["for_mgmt_land_base_ind"], graph.col=FALSE, max.distinct.values=99)
 ```
 
 ### CASFRI
