@@ -468,31 +468,32 @@ div.tocify {
 <p><br></p>
 <div id="whats-new" class="section level1">
 <h1>What’s new</h1>
-<p>May 14, 2019</p>
 <ul>
-<li>All NFL attributes are ready to reviewed.</li>
+<li>Added material to Overview and moved bc_vri01_nfl.xlsx to “lookup” folder (2019-05-16)</li>
+<li>All NFL attributes are ready to reviewed (2019-05-14)</li>
 </ul>
 <p><br></p>
 </div>
 <div id="overview" class="section level1">
 <h1>Overview</h1>
+<p>Based on the CAS_04 database, NFL polygons do not overlap LYR polygons. In other words, a forested polygon cannot also include information on land cover components that occur within the boundaries and vice versa [is this the intent of CASFRI?].</p>
+<p>Some specific notes:</p>
 <ul>
 <li>Create NFL attributes for polygons where for_mgmt_land_base_ind==“N”. This attribute is new (see PDF) and should be preferable to using crown_closure (as suggested by CASFRI or species_cd_1 as used in Perl code).</li>
 <li>The key FRI attributes are for “V” and “I” are land_cover_class_cd_1, non_veg_cover_type1, and bclcs_level4</li>
 <li>The key FRI attributes are for “F” are non_productive_descriptor_cd and bclcs_level4</li>
 <li>The order FRI attributes are processed is important; a polygon can have a value for 1 or 2 of those attributes, they are not exclusive.</li>
 <li>The fri and cas parameters in the mapvalues function (see code sections below) are specific to the FRI and CAS attributes and are described in the accompanying spreadsheet (bc08_nfl.xlsx).</li>
-<li><a target="_blank" href="">Click here for additional notes on BC inventories.</a></li>
 </ul>
 <p><br></p>
 </div>
 <div id="attributes" class="section level1">
 <h1>Attributes</h1>
 <pre class="r"><code># NFL codes
-lcc1 = read_excel(&quot;bc08_nfl.xlsx&quot;, sheet=&quot;land_cover_class_cd_1&quot;)
-bclcs4 = read_excel(&quot;bc08_nfl.xlsx&quot;, sheet=&quot;bclcs_level_4&quot;)
-nveg1 = read_excel(&quot;bc08_nfl.xlsx&quot;, sheet=&quot;non_veg_cover_type_1&quot;)
-nprod = read_excel(&quot;bc08_nfl.xlsx&quot;, sheet=&quot;non_productive_descriptor_cd&quot;)
+lcc1 = read_excel(&quot;../../translation/tables/lookup/bc_vri01_nfl.xlsx&quot;, sheet=&quot;land_cover_class_cd_1&quot;)
+bclcs4 = read_excel(&quot;../../translation/tables/lookup/bc_vri01_nfl.xlsx&quot;, sheet=&quot;bclcs_level_4&quot;)
+nveg1 = read_excel(&quot;../../translation/tables/lookup/bc_vri01_nfl.xlsx&quot;, sheet=&quot;non_veg_cover_type_1&quot;)
+nprod = read_excel(&quot;../../translation/tables/lookup/bc_vri01_nfl.xlsx&quot;, sheet=&quot;non_productive_descriptor_cd&quot;)
 
 x = mutate(x, 
 
