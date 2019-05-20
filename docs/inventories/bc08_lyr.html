@@ -421,6 +421,9 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="bc08.html">Notes</a>
+    </li>
+    <li>
       <a href="bc08_hdr.html">HDR Attributes</a>
     </li>
     <li>
@@ -468,13 +471,10 @@ div.tocify {
 <p><br></p>
 <div id="whats-new" class="section level1">
 <h1>What’s new</h1>
-<p>May 15, 2019</p>
 <ul>
-<li>Revised productive_for.</li>
-</ul>
-<p>May 14, 2019</p>
-<ul>
-<li>LYR attributes are ready to reviewed.</li>
+<li>Revised some of the code and added comments (2019-05-20)</li>
+<li>Revised productive_for (2019-05-15)</li>
+<li>LYR attributes are ready to reviewed (2019-05-14)</li>
 </ul>
 <p><br></p>
 </div>
@@ -490,9 +490,7 @@ div.tocify {
 <div id="soil_moist_reg" class="section level2 tabset">
 <h2>soil_moist_reg</h2>
 <ul>
-<li>how many NAs are there? 1321483</li>
-<li>are there any "" or " "? 0</li>
-<li>should they be treated the same or differently? NULL_VALUE</li>
+<li>The attribute soil_moist_reg is translated from the BC attribute soil_moisture_regime_1 (see code below for rules)</li>
 </ul>
 <pre class="r"><code>x = mutate(x, soil_moist_reg = case_when(
     is.na(soil_moisture_regime_1) ~ &quot;NULL_VALUE&quot;,
@@ -501,7 +499,7 @@ div.tocify {
     soil_moisture_regime_1 %in% c(3,4) ~ &quot;F&quot;,
     soil_moisture_regime_1 %in% c(5,6) ~ &quot;M&quot;,
     soil_moisture_regime_1 %in% c(7,8) ~ &quot;W&quot;,
-    TRUE                      ~ &quot;NOT_IN_SET&quot;))</code></pre>
+    TRUE ~ &quot;NOT_IN_SET&quot;))</code></pre>
 <div id="rawfri" class="section level3">
 <h3>RAWFRI</h3>
 <pre><code>## Data Frame Summary  
@@ -622,8 +620,11 @@ div.tocify {
 <li>crown_closure can be copied directly; it is an integer ranging from 0-100</li>
 <li>Null values should be assigned error code -8888</li>
 </ul>
-<pre class="r"><code>x = mutate(x, crown_closure_lower=if_else(is.na(crown_closure), as.integer(-8888), crown_closure),
-              crown_closure_upper=if_else(is.na(crown_closure), as.integer(-8888), crown_closure))</code></pre>
+<pre class="r"><code>x = mutate(x, crown_closure_lower=case_when(
+    is.na(crown_closure) ~ as.integer(-8888),
+    crown_closure &lt; 0 | crown_closure &gt; 100 ~ as.integer(-9999),
+    TRUE ~ crown_closure),
+    crown_closure_upper=crown_closure_lower)</code></pre>
 <div id="rawfri-4" class="section level3">
 <h3>RAWFRI</h3>
 <pre><code>## Data Frame Summary  
@@ -777,8 +778,11 @@ div.tocify {
 <li>CASFRI specifies that values can range from 0-100, implying that if there if height&gt;100 then it should be assigned 100 (check on this?)</li>
 <li>Null values should be assigned error code -8888</li>
 </ul>
-<pre class="r"><code>x = mutate(x, height_upper=if_else(is.na(proj_height_1), as.numeric(-8888), proj_height_1),
-              height_lower=if_else(is.na(proj_height_1), as.numeric(-8888), proj_height_1))</code></pre>
+<pre class="r"><code>x = mutate(x, height_upper=case_when(
+    is.na(proj_height_1) ~ -8888,
+    proj_height_1 &lt; 0.1 | proj_height_1 &gt; 100 ~ -9999,
+    TRUE ~ proj_height_1),
+    height_lower=height_upper)</code></pre>
 <div id="rawfri-5" class="section level3">
 <h3>RAWFRI</h3>
 <pre><code>## Data Frame Summary  
@@ -805,9 +809,9 @@ div.tocify {
 ## -----------------------------------------------------------------------------------------------
 ## No   Variable        Stats / Values                  Freqs (% of Valid)    Valid      Missing  
 ## ---- --------------- ------------------------------- --------------------- ---------- ---------
-## 1    height_lower    Mean (sd) : -1071.9 (2920.3)    694 distinct values   4861240    0        
+## 1    height_lower    Mean (sd) : -1072.2 (2920.8)    694 distinct values   4861240    0        
 ##      [numeric]       min &lt; med &lt; max:                                      (100%)     (0%)     
-##                      -8888 &lt; 17.8 &lt; 93.5                                                       
+##                      -9999 &lt; 17.8 &lt; 93.5                                                       
 ##                      IQR (CV) : 16.6 (-2.7)                                                    
 ## -----------------------------------------------------------------------------------------------</code></pre>
 </div>
@@ -821,16 +825,24 @@ div.tocify {
 ## -----------------------------------------------------------------------------------------------
 ## No   Variable        Stats / Values                  Freqs (% of Valid)    Valid      Missing  
 ## ---- --------------- ------------------------------- --------------------- ---------- ---------
-## 1    height_upper    Mean (sd) : -1071.9 (2920.3)    694 distinct values   4861240    0        
+## 1    height_upper    Mean (sd) : -1072.2 (2920.8)    694 distinct values   4861240    0        
 ##      [numeric]       min &lt; med &lt; max:                                      (100%)     (0%)     
-##                      -8888 &lt; 17.8 &lt; 93.5                                                       
+##                      -9999 &lt; 17.8 &lt; 93.5                                                       
 ##                      IQR (CV) : 16.6 (-2.7)                                                    
 ## -----------------------------------------------------------------------------------------------</code></pre>
 </div>
 </div>
 <div id="species_1-10" class="section level2 tabset">
 <h2>species_1-10</h2>
-<pre class="r"><code>x = mutate(x, species_1=if_else(str_trim(species_cd_1)==&quot;&quot;, &quot;EMPTY_STRING&quot;, species_cd_1))</code></pre>
+<ul>
+<li>The attributes species_1 - species_6 use a lookup table to translate species codes to the CASFRI standard. Here, we demonstrate the code for species_1 only since the same procedure is used for the other species.</li>
+</ul>
+<pre class="r"><code>sppList = read_csv(&quot;../../translation/tables/lookup/bc_vri01_species.csv&quot;)
+x = mutate(x, species_1=case_when(
+    is.na(species_cd_1) ~ &quot;NULL_VALUE&quot;,
+    str_trim(species_cd_1)==&quot;&quot; ~ &quot;EMPTY_STRING&quot;,
+    !species_cd_1 %in% sppList$SOURCE_VAL ~ &quot;NOT_IN_SET&quot;,
+    TRUE ~ mapvalues(species_cd_1, sppList$SOURCE_VAL, sppList$SPEC1)))</code></pre>
 <div id="rawfri-6" class="section level3">
 <h3>RAWFRI</h3>
 <pre><code>## Data Frame Summary  
@@ -921,90 +933,88 @@ div.tocify {
 <pre><code>## Data Frame Summary  
 ##   
 ## Dimensions: 4861240 x 1  
-## Duplicates: 4861166  
+## Duplicates: 4861175  
 ## 
-## ------------------------------------------------------------------------------
-## No   Variable      Stats / Values   Freqs (% of Valid)   Valid      Missing   
-## ---- ------------- ---------------- -------------------- ---------- ----------
-## 1    species_1     1. AC             35745 ( 0.8%)       4291559    569681    
-##      [character]   2. ACB              235 ( 0.0%)       (88.28%)   (11.72%)  
-##                    3. ACT             8003 ( 0.2%)                            
-##                    4. AT            301998 ( 7.0%)                            
-##                    5. AX                17 ( 0.0%)                            
-##                    6. B              56777 ( 1.3%)                            
-##                    7. BA             59702 ( 1.4%)                            
-##                    8. BB                 3 ( 0.0%)                            
-##                    9. BG               335 ( 0.0%)                            
-##                    10. BL           663366 (15.5%)                            
-##                    11. BM                5 ( 0.0%)                            
-##                    12. BP               25 ( 0.0%)                            
-##                    13. C                24 ( 0.0%)                            
-##                    14. CW           207634 ( 4.8%)                            
-##                    15. D               752 ( 0.0%)                            
-##                    16. DG                1 ( 0.0%)                            
-##                    17. DR            26348 ( 0.6%)                            
-##                    18. E              2081 ( 0.0%)                            
-##                    19. EA              216 ( 0.0%)                            
-##                    20. EP            46470 ( 1.1%)                            
-##                    21. ES                1 ( 0.0%)                            
-##                    22. EW                3 ( 0.0%)                            
-##                    23. F                17 ( 0.0%)                            
-##                    24. FD           161764 ( 3.8%)                            
-##                    25. FDC           73046 ( 1.7%)                            
-##                    26. FDI          201268 ( 4.7%)                            
-##                    27. H             66848 ( 1.6%)                            
-##                    28. HM            78893 ( 1.8%)                            
-##                    29. HW           277984 ( 6.5%)                            
-##                    30. JR                3 ( 0.0%)                            
-##                    31. L               743 ( 0.0%)                            
-##                    32. LA             4603 ( 0.1%)                            
-##                    33. LS                2 ( 0.0%)                            
-##                    34. LT            11822 ( 0.3%)                            
-##                    35. LW            30834 ( 0.7%)                            
-##                    36. M                 5 ( 0.0%)                            
-##                    37. MB             2867 ( 0.1%)                            
-##                    38. MV              161 ( 0.0%)                            
-##                    39. P                 5 ( 0.0%)                            
-##                    40. PA             9092 ( 0.2%)                            
-##                    41. PF                3 ( 0.0%)                            
-##                    42. PJ               43 ( 0.0%)                            
-##                    43. PL           308000 ( 7.2%)                            
-##                    44. PLC            5653 ( 0.1%)                            
-##                    45. PLI          387293 ( 9.0%)                            
-##                    46. PM                2 ( 0.0%)                            
-##                    47. PR                8 ( 0.0%)                            
-##                    48. PW              590 ( 0.0%)                            
-##                    49. PY            14250 ( 0.3%)                            
-##                    50. QG               64 ( 0.0%)                            
-##                    51. RA              106 ( 0.0%)                            
-##                    52. S             77034 ( 1.8%)                            
-##                    53. SB           319518 ( 7.4%)                            
-##                    54. SE           147295 ( 3.4%)                            
-##                    55. SS            13451 ( 0.3%)                            
-##                    56. SW           174103 ( 4.1%)                            
-##                    57. SX           449224 (10.5%)                            
-##                    58. SXE               1 ( 0.0%)                            
-##                    59. SXL               2 ( 0.0%)                            
-##                    60. SXS              38 ( 0.0%)                            
-##                    61. SXW           21189 ( 0.5%)                            
-##                    62. T                 6 ( 0.0%)                            
-##                    63. VB               69 ( 0.0%)                            
-##                    64. VP                5 ( 0.0%)                            
-##                    65. W               182 ( 0.0%)                            
-##                    66. WS               13 ( 0.0%)                            
-##                    67. X                54 ( 0.0%)                            
-##                    68. XC               54 ( 0.0%)                            
-##                    69. XH               48 ( 0.0%)                            
-##                    70. Y                 4 ( 0.0%)                            
-##                    71. YC            43556 ( 1.0%)                            
-##                    72. Z                 2 ( 0.0%)                            
-##                    73. ZH                1 ( 0.0%)                            
-## ------------------------------------------------------------------------------</code></pre>
+## -------------------------------------------------------------------------------
+## No   Variable      Stats / Values     Freqs (% of Valid)   Valid      Missing  
+## ---- ------------- ------------------ -------------------- ---------- ---------
+## 1    species_1     1. Abie amab        59702 ( 1.2%)       4861240    0        
+##      [character]   2. Abie bals            3 ( 0.0%)       (100%)     (0%)     
+##                    3. Abie gran          335 ( 0.0%)                           
+##                    4. Abie lasi       663366 (13.6%)                           
+##                    5. Abie magn            5 ( 0.0%)                           
+##                    6. Abie proc           25 ( 0.0%)                           
+##                    7. Abie spp.        56777 ( 1.2%)                           
+##                    8. Acer circ          161 ( 0.0%)                           
+##                    9. Acer macr         2867 ( 0.1%)                           
+##                    10. Acer spp.           5 ( 0.0%)                           
+##                    11. Alnu rubr       26348 ( 0.5%)                           
+##                    12. Alnu spp.         752 ( 0.0%)                           
+##                    13. Arbu menz         106 ( 0.0%)                           
+##                    14. Betu neoa         216 ( 0.0%)                           
+##                    15. Betu occi           3 ( 0.0%)                           
+##                    16. Betu papy       46470 ( 1.0%)                           
+##                    17. Betu pube           1 ( 0.0%)                           
+##                    18. Betu spp.        2081 ( 0.0%)                           
+##                    19. Cham noot       43560 ( 0.9%)                           
+##                    20. Hard unkn          49 ( 0.0%)                           
+##                    21. Juni scop           3 ( 0.0%)                           
+##                    22. Lari lari       11822 ( 0.2%)                           
+##                    23. Lari lyal        4603 ( 0.1%)                           
+##                    24. Lari occi       30834 ( 0.6%)                           
+##                    25. Lari sibi           2 ( 0.0%)                           
+##                    26. Lari spp.         743 ( 0.0%)                           
+##                    27. NOT_IN_SET          2 ( 0.0%)                           
+##                    28. NULL_VALUE     569681 (11.7%)                           
+##                    29. Pice enge      168484 ( 3.5%)                           
+##                    30. Pice glau      174103 ( 3.6%)                           
+##                    31. Pice hybr      449224 ( 9.2%)                           
+##                    32. Pice mari      319518 ( 6.6%)                           
+##                    33. Pice sitc       13451 ( 0.3%)                           
+##                    34. Pice sitx          40 ( 0.0%)                           
+##                    35. Pice spp.       77034 ( 1.6%)                           
+##                    36. Pinu albi        9092 ( 0.2%)                           
+##                    37. Pinu bank          43 ( 0.0%)                           
+##                    38. Pinu conc        5653 ( 0.1%)                           
+##                    39. Pinu conl      387293 ( 8.0%)                           
+##                    40. Pinu cont      308000 ( 6.3%)                           
+##                    41. Pinu flex           3 ( 0.0%)                           
+##                    42. Pinu mont         590 ( 0.0%)                           
+##                    43. Pinu pond       14250 ( 0.3%)                           
+##                    44. Pinu radi           2 ( 0.0%)                           
+##                    45. Pinu resi           8 ( 0.0%)                           
+##                    46. Pinu spp.           5 ( 0.0%)                           
+##                    47. Popu balb       35980 ( 0.7%)                           
+##                    48. Popu balt        8003 ( 0.2%)                           
+##                    49. Popu hybr          17 ( 0.0%)                           
+##                    50. Popu trem      301998 ( 6.2%)                           
+##                    51. Prun emar          69 ( 0.0%)                           
+##                    52. Prun pens           5 ( 0.0%)                           
+##                    53. Pseu meng      201268 ( 4.1%)                           
+##                    54. Pseu menm       73046 ( 1.5%)                           
+##                    55. Pseu menz      161781 ( 3.3%)                           
+##                    56. Quer garr          64 ( 0.0%)                           
+##                    57. Sali scou          13 ( 0.0%)                           
+##                    58. Sali spp.         182 ( 0.0%)                           
+##                    59. Soft unkn          54 ( 0.0%)                           
+##                    60. Taxu brev           6 ( 0.0%)                           
+##                    61. Thuj plic      207658 ( 4.3%)                           
+##                    62. Tsug hete      277984 ( 5.7%)                           
+##                    63. Tsug mert       78893 ( 1.6%)                           
+##                    64. Tsug spp.       66848 ( 1.4%)                           
+##                    65. Uncl spp.          56 ( 0.0%)                           
+## -------------------------------------------------------------------------------</code></pre>
 </div>
 </div>
 <div id="species_per_1-10" class="section level2 tabset">
 <h2>species_per_1-10</h2>
-<pre class="r"><code>x = mutate(x, species_per_1=species_pct_1)</code></pre>
+<ul>
+<li>The attributes species_per_1 - species_per_6 are simply copied from the attributes species_pct_1 - species_pct_6</li>
+</ul>
+<pre class="r"><code>x = mutate(x, species_per_1=case_when(
+    is.na(species_pct_1) ~ -8888,
+    species_pct_1 &lt; 0 | species_pct_1 &gt; 100 ~ -9999,
+    TRUE ~ species_pct_1))</code></pre>
 <div id="rawfri-7" class="section level3">
 <h3>RAWFRI</h3>
 <pre><code>## Data Frame Summary  
@@ -1028,21 +1038,21 @@ div.tocify {
 ## Dimensions: 4861240 x 1  
 ## Duplicates: 4861124  
 ## 
-## --------------------------------------------------------------------------------------------
-## No   Variable         Stats / Values             Freqs (% of Valid)    Valid      Missing   
-## ---- ---------------- -------------------------- --------------------- ---------- ----------
-## 1    species_per_1    Mean (sd) : 73.4 (19.4)    115 distinct values   4266108    595132    
-##      [numeric]        min &lt; med &lt; max:                                 (87.76%)   (12.24%)  
-##                       20 &lt; 70 &lt; 100                                                         
-##                       IQR (CV) : 30 (0.3)                                                   
-## --------------------------------------------------------------------------------------------</code></pre>
+## ------------------------------------------------------------------------------------------------
+## No   Variable         Stats / Values                  Freqs (% of Valid)    Valid      Missing  
+## ---- ---------------- ------------------------------- --------------------- ---------- ---------
+## 1    species_per_1    Mean (sd) : -1023.7 (2937.4)    116 distinct values   4861240    0        
+##      [numeric]        min &lt; med &lt; max:                                      (100%)     (0%)     
+##                       -8888 &lt; 70 &lt; 100                                                          
+##                       IQR (CV) : 40 (-2.9)                                                      
+## ------------------------------------------------------------------------------------------------</code></pre>
 </div>
 </div>
 <div id="productive_for" class="section level2 tabset">
 <h2>productive_for</h2>
 <ul>
-<li>This attribute uses for_mgmt_land_base_ind to identify productive forest.</li>
-<li>Previously, this was done using multiple attributes (see CAS_04 Perl code).</li>
+<li>There is some confusion here. The CASFRI specs describe an attribute named UNPRODUCTIVE_FOREST with possible values including TM, OM, AL, SD, SC, NP, P. However, this attribue is not in the actual CAS_04 implementation. Instead there is a PRODUCTIVE_FOR attribute which takes values PF or PP. This latter attribute was created from multiple attributes (see CAS_04 Perl code).</li>
+<li>Here we use the new and simpler FOR_MGMT_LAND_BASE_IND (Y or N; see docs/forest_management_land_base_definition.pdf) attribute to identify PRODUCTIVE_FOR.</li>
 </ul>
 <pre class="r"><code>x = mutate(x, productive_for = if_else(
     for_mgmt_land_base_ind==&quot;Y&quot;, &quot;PF&quot;, &quot;PP&quot;))</code></pre>
@@ -1078,7 +1088,8 @@ div.tocify {
 <div id="origin" class="section level2 tabset">
 <h2>origin</h2>
 <ul>
-<li>translation function to substract reference_year from proj_age_1</li>
+<li>The attribute origin is a simple calculation that substractc reference_year from proj_age_1</li>
+<li>Do we need a new helper function?</li>
 </ul>
 <pre class="r"><code>x = mutate(x, projected_year=as.double(substr(projected_date, 1, 4)),
               origin_upper=if_else(proj_age_1==0, -9999, (projected_year - proj_age_1)),
@@ -1134,6 +1145,9 @@ div.tocify {
 </div>
 <div id="site_class" class="section level2 tabset">
 <h2>site_class</h2>
+<ul>
+<li>Is site_class used in the BC inventory? Check Perl code.</li>
+</ul>
 <pre class="r"><code>friList = c(&#39;U&#39;,&#39;F&#39;,&#39;M&#39;,&#39;G&#39;)
 casList = c(&#39;U&#39;,&#39;P&#39;,&#39;M&#39;,&#39;G&#39;)
 x = mutate(x, site_class=0)</code></pre>
@@ -1157,26 +1171,16 @@ x = mutate(x, site_class=0)</code></pre>
 </div>
 <div id="site_index" class="section level2 tabset">
 <h2>site_index</h2>
-<pre class="r"><code>x = mutate(x, bc_site_index = site_index)
-x = mutate(x, site_index=if_else(str_trim(bc_site_index)==&quot;&quot;, -8888, bc_site_index))</code></pre>
+<ul>
+<li>In BC site_index uses site_index if available or est_site_index otherwise.</li>
+<li>Note that, in this code segment, we name the variable lyr_site_index since site_index already exists in the BC inventory</li>
+</ul>
+<pre class="r"><code>x = mutate(x, lyr_site_index=case_when(
+    is.na(site_index) &amp; is.na(est_site_index) ~ -8888,
+    is.na(site_index) &amp; !is.na(est_site_index) ~ est_site_index,
+    TRUE ~ site_index))</code></pre>
 <div id="rawfri-11" class="section level3">
 <h3>RAWFRI</h3>
-<pre><code>## Data Frame Summary  
-##   
-## Dimensions: 4861240 x 1  
-## Duplicates: 4860732  
-## 
-## -----------------------------------------------------------------------------------------
-## No   Variable         Stats / Values          Freqs (% of Valid)    Valid      Missing   
-## ---- ---------------- ----------------------- --------------------- ---------- ----------
-## 1    bc_site_index    Mean (sd) : 12.7 (6)    507 distinct values   4272292    588948    
-##      [numeric]        min &lt; med &lt; max:                              (87.88%)   (12.12%)  
-##                       0 &lt; 12.4 &lt; 90                                                      
-##                       IQR (CV) : 8.6 (0.5)                                               
-## -----------------------------------------------------------------------------------------</code></pre>
-</div>
-<div id="casfri-8" class="section level3">
-<h3>CASFRI</h3>
 <pre><code>## Data Frame Summary  
 ##   
 ## Dimensions: 4861240 x 1  
@@ -1190,6 +1194,22 @@ x = mutate(x, site_index=if_else(str_trim(bc_site_index)==&quot;&quot;, -8888, b
 ##                    0 &lt; 12.4 &lt; 90                                                      
 ##                    IQR (CV) : 8.6 (0.5)                                               
 ## --------------------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri-8" class="section level3">
+<h3>CASFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 4861240 x 1  
+## Duplicates: 4860732  
+## 
+## -------------------------------------------------------------------------------------------------
+## No   Variable          Stats / Values                  Freqs (% of Valid)    Valid      Missing  
+## ---- ----------------- ------------------------------- --------------------- ---------- ---------
+## 1    lyr_site_index    Mean (sd) : -1065.6 (2904.3)    508 distinct values   4861240    0        
+##      [numeric]         min &lt; med &lt; max:                                      (100%)     (0%)     
+##                        -8888 &lt; 11.3 &lt; 90                                                         
+##                        IQR (CV) : 9.9 (-2.7)                                                     
+## -------------------------------------------------------------------------------------------------</code></pre>
 </div>
 </div>
 </div>

@@ -27,6 +27,16 @@ May 14, 2019
 
 # Attributes
 
+## cas_id
+
+The cas_id attributes is used in 5 of the 6 CASFRI attribute tables and is only described here. The BC08 inventory has the following variations:
+
+  * Header identifier: "BC08"
+    - Note: previously, the header identifier included the inventory_standard_cd [converted from=c("F","V","I"), to=c("4","5","6"); this was dropped on the assumption, to be confirmed, that all data have been converted to "V" type.
+  * Source file name: "VEG_COMP_LYR_R1"
+  * Name of mapsheet: map_id
+  * Object identifier: objectid
+
 ## orig_stand_id {.tabset}
 
   - feature_id [do we need an isUnique() helper function?]
@@ -106,7 +116,7 @@ dfSummary(x["identification_id"], graph.col=FALSE, max.distinct.values=99)
 
 ## map_sheet_id {.tabset}
 
-  * do we need an isLength() helper function?; isText()?
+  * do we need an isLength() helper function?
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 x = mutate(x, map_sheet_id = map_id)

@@ -421,6 +421,9 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="bc08.html">Notes</a>
+    </li>
+    <li>
       <a href="bc08_hdr.html">HDR Attributes</a>
     </li>
     <li>
@@ -469,6 +472,7 @@ div.tocify {
 <div id="whats-new" class="section level1">
 <h1>What’s new</h1>
 <ul>
+<li>Added link to forest management land base definition document (2019-05-20)</li>
 <li>Added material to Overview and moved bc_vri01_nfl.xlsx to “lookup” folder (2019-05-16)</li>
 <li>All NFL attributes are ready to reviewed (2019-05-14)</li>
 </ul>
@@ -479,7 +483,7 @@ div.tocify {
 <p>Based on the CAS_04 database, NFL polygons do not overlap LYR polygons. In other words, a forested polygon cannot also include information on land cover components that occur within the boundaries and vice versa [is this the intent of CASFRI?].</p>
 <p>Some specific notes:</p>
 <ul>
-<li>Create NFL attributes for polygons where for_mgmt_land_base_ind==“N”. This attribute is new (see PDF) and should be preferable to using crown_closure (as suggested by CASFRI or species_cd_1 as used in Perl code).</li>
+<li>Create NFL attributes for polygons where for_mgmt_land_base_ind==“N”. This attribute is new (<a href="https://www2.gov.bc.ca/assets/gov/farming-natural-resources-and-industry/forestry/stewardship/forest-analysis-inventory/data-management/standards/forest_management_land_base_definition.pdf">see PDF</a>) and should be preferable to using crown_closure (as suggested by CASFRI or species_cd_1 as used in Perl code).</li>
 <li>The key FRI attributes are for “V” and “I” are land_cover_class_cd_1, non_veg_cover_type1, and bclcs_level4</li>
 <li>The key FRI attributes are for “F” are non_productive_descriptor_cd and bclcs_level4</li>
 <li>The order FRI attributes are processed is important; a polygon can have a value for 1 or 2 of those attributes, they are not exclusive.</li>
@@ -809,7 +813,7 @@ x = mutate(x,
 </div>
 <div id="crown_closure_lower" class="section level2 tabset">
 <h2>crown_closure_lower</h2>
-<p>CAS_04 has one distinct value for this attribute: -1111. However, this can be calculated from crown_closure for non-forested polygons.</p>
+<p>CAS_04 has one distinct value for this attribute: -1111. However, if needed, maybe this could be calculated from crown_closure for non-forested polygons.</p>
 <pre class="r"><code>x = mutate(x, nfl_crown_closure_lower = if_else((!nat_non_veg==&quot;NULL_VALUE&quot; | !non_for_anth==&quot;NULL_VALUE&quot; | !non_for_veg==&quot;NULL_VALUE&quot;), as.numeric(crown_closure), as.numeric(-8888)))</code></pre>
 <div id="rawfri-6" class="section level3">
 <h3>RAWFRI</h3>
@@ -930,7 +934,7 @@ x = mutate(x,
 </div>
 <div id="height_upper" class="section level2 tabset">
 <h2>height_upper</h2>
-<p>CAS_04 has one distinct value for this attribute: -1111. However, this can be calculated from crown_closure for non-forested polygons.</p>
+<p>CAS_04 has one distinct value for this attribute: -1111. However, if needed, maybe this could be calculated from proj_height_1 for non-forested polygons.</p>
 <pre class="r"><code>x = mutate(x, nfl_height_upper = if_else((!nat_non_veg==&quot;NULL_VALUE&quot; | !non_for_anth==&quot;NULL_VALUE&quot; | !non_for_veg==&quot;NULL_VALUE&quot;), as.numeric(proj_height_1), as.numeric(-8888)))</code></pre>
 <div id="rawfri-7" class="section level3">
 <h3>RAWFRI</h3>

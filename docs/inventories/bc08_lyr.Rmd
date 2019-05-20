@@ -13,13 +13,9 @@ output:
 
 # What's new
 
-May 15, 2019
-
-  * Revised productive_for.
-
-May 14, 2019
-
-  * LYR attributes are ready to reviewed.
+  * Revised some of the code and added comments (2019-05-20)
+  * Revised productive_for (2019-05-15)
+  * LYR attributes are ready to reviewed (2019-05-14)
 
 <br>
 
@@ -33,9 +29,7 @@ May 14, 2019
 
 ## soil_moist_reg {.tabset}
 
-  * how many NAs are there? 1321483
-  * are there any "" or " "? 0
-  * should they be treated the same or differently? NULL_VALUE
+  * The attribute soil_moist_reg is translated from the BC attribute soil_moisture_regime_1 (see code below for rules)
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 x = mutate(x, soil_moist_reg = case_when(
@@ -45,7 +39,7 @@ x = mutate(x, soil_moist_reg = case_when(
     soil_moisture_regime_1 %in% c(3,4) ~ "F",
     soil_moisture_regime_1 %in% c(5,6) ~ "M",
     soil_moisture_regime_1 %in% c(7,8) ~ "W",
-    TRUE                      ~ "NOT_IN_SET"))
+    TRUE ~ "NOT_IN_SET"))
 ```
 
 ### RAWFRI
@@ -119,8 +113,11 @@ dfSummary(x["layer_rank"], graph.col=FALSE, max.distinct.values=99)
   * Null values should be assigned error code -8888
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
-x = mutate(x, crown_closure_lower=if_else(is.na(crown_closure), as.integer(-8888), crown_closure),
-              crown_closure_upper=if_else(is.na(crown_closure), as.integer(-8888), crown_closure))
+x = mutate(x, crown_closure_lower=case_when(
+    is.na(crown_closure) ~ as.integer(-8888),
+    crown_closure < 0 | crown_closure > 100 ~ as.integer(-9999),
+    TRUE ~ crown_closure),
+    crown_closure_upper=crown_closure_lower)
 ```
 
 ### RAWFRI
@@ -148,8 +145,11 @@ dfSummary(x["crown_closure_upper"], graph.col=FALSE, max.distinct.values=101)
   * Null values should be assigned error code -8888
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
-x = mutate(x, height_upper=if_else(is.na(proj_height_1), as.numeric(-8888), proj_height_1),
-              height_lower=if_else(is.na(proj_height_1), as.numeric(-8888), proj_height_1))
+x = mutate(x, height_upper=case_when(
+    is.na(proj_height_1) ~ -8888,
+    proj_height_1 < 0.1 | proj_height_1 > 100 ~ -9999,
+    TRUE ~ proj_height_1),
+    height_lower=height_upper)
 ```
 
 ### RAWFRI
@@ -172,8 +172,15 @@ dfSummary(x["height_upper"], graph.col=FALSE, max.distinct.values=99)
 
 ## species_1-10 {.tabset}
 
+  * The attributes species_1 - species_6 use a lookup table to translate species codes to the CASFRI standard. Here, we demonstrate the code for species_1 only since the same procedure is used for the other species.
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
-x = mutate(x, species_1=if_else(str_trim(species_cd_1)=="", "EMPTY_STRING", species_cd_1))
+sppList = read_csv("../../translation/tables/lookup/bc_vri01_species.csv")
+x = mutate(x, species_1=case_when(
+    is.na(species_cd_1) ~ "NULL_VALUE",
+    str_trim(species_cd_1)=="" ~ "EMPTY_STRING",
+    !species_cd_1 %in% sppList$SOURCE_VAL ~ "NOT_IN_SET",
+    TRUE ~ mapvalues(species_cd_1, sppList$SOURCE_VAL, sppList$SPEC1)))
 ```
 
 ### RAWFRI
@@ -189,8 +196,13 @@ dfSummary(x["species_1"], graph.col=FALSE, max.distinct.values=99)
 
 ## species_per_1-10 {.tabset}
 
+  * The attributes species_per_1 - species_per_6 are simply copied from the attributes species_pct_1 - species_pct_6
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
-x = mutate(x, species_per_1=species_pct_1)
+x = mutate(x, species_per_1=case_when(
+    is.na(species_pct_1) ~ -8888,
+    species_pct_1 < 0 | species_pct_1 > 100 ~ -9999,
+    TRUE ~ species_pct_1))
 ```
 
 ### RAWFRI
@@ -207,8 +219,8 @@ dfSummary(x["species_per_1"], graph.col=FALSE, max.distinct.values=99)
 
 ## productive_for {.tabset}
 
-  * This attribute uses for_mgmt_land_base_ind to identify productive forest.
-  * Previously, this was done using multiple attributes (see CAS_04 Perl code).
+  * There is some confusion here. The CASFRI specs describe an attribute named UNPRODUCTIVE_FOREST with possible values including TM, OM, AL, SD, SC, NP, P. However, this attribue is not in the actual CAS_04 implementation. Instead there is a PRODUCTIVE_FOR attribute which takes values PF or PP. This latter attribute was created from multiple attributes (see CAS_04 Perl code).
+  * Here we use the new and simpler FOR_MGMT_LAND_BASE_IND (Y or N; see docs/forest_management_land_base_definition.pdf) attribute to identify PRODUCTIVE_FOR.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 x = mutate(x, productive_for = if_else(
@@ -229,7 +241,8 @@ dfSummary(x["productive_for"], graph.col=FALSE, max.distinct.values=99)
 
 ## origin {.tabset}
 
-  * translation function to substract reference_year from proj_age_1
+  * The attribute origin is a simple calculation that substractc reference_year from proj_age_1
+  * Do we need a new helper function?
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 x = mutate(x, projected_year=as.double(substr(projected_date, 1, 4)),
@@ -257,6 +270,8 @@ dfSummary(x["origin_upper"], graph.col=FALSE, max.distinct.values=99)
 
 ## site_class {.tabset}
 
+  * Is site_class used in the BC inventory? Check Perl code.
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 friList = c('U','F','M','G')
 casList = c('U','P','M','G')
@@ -277,19 +292,24 @@ dfSummary(x["site_class"], graph.col=FALSE, max.distinct.values=99)
 
 ## site_index {.tabset}
 
+ * In BC site_index uses site_index if available or est_site_index otherwise.
+ * Note that, in this code segment, we name the variable lyr_site_index since site_index already exists in the BC inventory
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-x = mutate(x, bc_site_index = site_index)
-x = mutate(x, site_index=if_else(str_trim(bc_site_index)=="", -8888, bc_site_index))
+x = mutate(x, lyr_site_index=case_when(
+    is.na(site_index) & is.na(est_site_index) ~ -8888,
+    is.na(site_index) & !is.na(est_site_index) ~ est_site_index,
+    TRUE ~ site_index))
 ```
 
 ### RAWFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x["bc_site_index"], graph.col=FALSE, max.distinct.values=99)
+dfSummary(x["site_index"], graph.col=FALSE, max.distinct.values=99)
 ```
 
 ### CASFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x["site_index"], graph.col=FALSE, max.distinct.values=99)
+dfSummary(x["lyr_site_index"], graph.col=FALSE, max.distinct.values=99)
 ```

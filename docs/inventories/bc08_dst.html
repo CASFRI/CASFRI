@@ -421,6 +421,9 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="bc08.html">Notes</a>
+    </li>
+    <li>
       <a href="bc08_hdr.html">HDR Attributes</a>
     </li>
     <li>
@@ -486,7 +489,7 @@ div.tocify {
 <h1>Attributes</h1>
 <div id="dist_1" class="section level2 tabset">
 <h2>dist_1</h2>
-<p><strong>dist_1</strong> and <strong>dist_yr_1</strong> seem to be taken from <em>line_7b_disturbance_history</em>. From the metadata: “The disturbance history described as a list of abbreviations for the techniques along with the years each technique was employed. Possible values are B (wildfire), BE (escaped burn), BG (ground burn), BR (range burn), BW (wildlife burn), D (disease), F (flooding), I (insect), K (fume kill), L (logging), L% (logged with percentage), R (site rehabilitation), S (slide), and W (wind throw).”</p>
+<p>The attributes <strong>dist_1</strong> and <strong>dist_yr_1</strong> seem to be taken from <em>line_7b_disturbance_history</em>. From the BC metadata: “The disturbance history described as a list of abbreviations for the techniques along with the years each technique was employed. Possible values are B (wildfire), BE (escaped burn), BG (ground burn), BR (range burn), BW (wildlife burn), D (disease), F (flooding), I (insect), K (fume kill), L (logging), L% (logged with percentage), R (site rehabilitation), S (slide), and W (wind throw).”</p>
 <ul>
 <li>These codes don’t seem to match up with the BC data</li>
 <li>“M” and “P” occur in data but are not in metadata or Perl code</li>
@@ -563,17 +566,106 @@ x = mutate(x, mod1 = substr(line_7b_disturbance_history,1,1),
 ## ------------------------------------------------------------------------------
 ## No   Variable      Stats / Values   Freqs (% of Valid)   Valid      Missing   
 ## ---- ------------- ---------------- -------------------- ---------- ----------
-## 1    mod1yr        1. 17            109099 ( 8.9%)       1223952    3637288   
-##      [character]   2. 07            106380 ( 8.7%)       (25.18%)   (74.82%)  
-##                    3. 11             99318 ( 8.1%)                            
-##                    4. 03             81850 ( 6.7%)                            
-##                    5. 04             80288 ( 6.6%)                            
-##                    6. 05             73669 ( 6.0%)                            
-##                    7. 08             66844 ( 5.5%)                            
-##                    8. 06             54792 ( 4.5%)                            
-##                    9. 14             27241 ( 2.2%)                            
-##                    10. 10            20827 ( 1.7%)                            
-##                    [ 90 others ]    503644 (41.1%)                            
+## 1    mod1yr        1. 00             16490 (1.4%)        1223952    3637288   
+##      [character]   2. 01             15041 (1.2%)        (25.18%)   (74.82%)  
+##                    3. 02             16750 (1.4%)                             
+##                    4. 03             81850 (6.7%)                             
+##                    5. 04             80288 (6.6%)                             
+##                    6. 05             73669 (6.0%)                             
+##                    7. 06             54792 (4.5%)                             
+##                    8. 07            106380 (8.7%)                             
+##                    9. 08             66844 (5.5%)                             
+##                    10. 09            12967 (1.1%)                             
+##                    11. 10            20827 (1.7%)                             
+##                    12. 11            99318 (8.1%)                             
+##                    13. 12            14709 (1.2%)                             
+##                    14. 13            13498 (1.1%)                             
+##                    15. 14            27241 (2.2%)                             
+##                    16. 15             8213 (0.7%)                             
+##                    17. 16            10392 (0.8%)                             
+##                    18. 17           109099 (8.9%)                             
+##                    19. 18               29 (0.0%)                             
+##                    20. 19               12 (0.0%)                             
+##                    21. 20               66 (0.0%)                             
+##                    22. 21               21 (0.0%)                             
+##                    23. 22               46 (0.0%)                             
+##                    24. 23               45 (0.0%)                             
+##                    25. 24               29 (0.0%)                             
+##                    26. 25               63 (0.0%)                             
+##                    27. 26               75 (0.0%)                             
+##                    28. 27               52 (0.0%)                             
+##                    29. 28               44 (0.0%)                             
+##                    30. 29              117 (0.0%)                             
+##                    31. 30              193 (0.0%)                             
+##                    32. 31              454 (0.0%)                             
+##                    33. 32              174 (0.0%)                             
+##                    34. 33              182 (0.0%)                             
+##                    35. 34              321 (0.0%)                             
+##                    36. 35              350 (0.0%)                             
+##                    37. 36              389 (0.0%)                             
+##                    38. 37              162 (0.0%)                             
+##                    39. 38             1343 (0.1%)                             
+##                    40. 39              226 (0.0%)                             
+##                    41. 40             1073 (0.1%)                             
+##                    42. 41              204 (0.0%)                             
+##                    43. 42              425 (0.0%)                             
+##                    44. 43              210 (0.0%)                             
+##                    45. 44              374 (0.0%)                             
+##                    46. 45              764 (0.1%)                             
+##                    47. 46              418 (0.0%)                             
+##                    48. 47              364 (0.0%)                             
+##                    49. 48              743 (0.1%)                             
+##                    50. 49              370 (0.0%)                             
+##                    51. 50             2393 (0.2%)                             
+##                    52. 51              938 (0.1%)                             
+##                    53. 52              933 (0.1%)                             
+##                    54. 53             1064 (0.1%)                             
+##                    55. 54              979 (0.1%)                             
+##                    56. 55             2130 (0.2%)                             
+##                    57. 56             1334 (0.1%)                             
+##                    58. 57             1293 (0.1%)                             
+##                    59. 58             7900 (0.6%)                             
+##                    60. 59             2391 (0.2%)                             
+##                    61. 60             6321 (0.5%)                             
+##                    62. 61             9489 (0.8%)                             
+##                    63. 62             3128 (0.3%)                             
+##                    64. 63             3358 (0.3%)                             
+##                    65. 64             3420 (0.3%)                             
+##                    66. 65             5661 (0.5%)                             
+##                    67. 66             3314 (0.3%)                             
+##                    68. 67             5827 (0.5%)                             
+##                    69. 68             4095 (0.3%)                             
+##                    70. 69             4600 (0.4%)                             
+##                    71. 70             6404 (0.5%)                             
+##                    72. 71             8358 (0.7%)                             
+##                    73. 72             4994 (0.4%)                             
+##                    74. 73             6320 (0.5%)                             
+##                    75. 74             5419 (0.4%)                             
+##                    76. 75             4978 (0.4%)                             
+##                    77. 76             6630 (0.5%)                             
+##                    78. 77             7502 (0.6%)                             
+##                    79. 78             7343 (0.6%)                             
+##                    80. 79             8228 (0.7%)                             
+##                    81. 80             8939 (0.7%)                             
+##                    82. 81             7410 (0.6%)                             
+##                    83. 82             8645 (0.7%)                             
+##                    84. 83             9819 (0.8%)                             
+##                    85. 84             8906 (0.7%)                             
+##                    86. 85            14746 (1.2%)                             
+##                    87. 86            11732 (1.0%)                             
+##                    88. 87            11909 (1.0%)                             
+##                    89. 88            11258 (0.9%)                             
+##                    90. 89            11025 (0.9%)                             
+##                    91. 90            12872 (1.0%)                             
+##                    92. 91            11472 (0.9%)                             
+##                    93. 92            13288 (1.1%)                             
+##                    94. 93            12981 (1.1%)                             
+##                    95. 94            14184 (1.2%)                             
+##                    96. 95            14470 (1.2%)                             
+##                    97. 96            16289 (1.3%)                             
+##                    98. 97            16029 (1.3%)                             
+##                    99. 98            16382 (1.3%)                             
+##                    100. 99           17146 (1.4%)                             
 ## ------------------------------------------------------------------------------</code></pre>
 </div>
 <div id="casfri-1" class="section level3">

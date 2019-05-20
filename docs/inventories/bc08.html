@@ -11,7 +11,7 @@
 
 
 
-<title>HDR Attributes</title>
+<title>Inventory Notes</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +23,6 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
@@ -262,14 +261,6 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
-<style type="text/css">
-.code-folding-btn { margin-bottom: 4px; }
-</style>
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
 
 
@@ -453,17 +444,9 @@ div.tocify {
 
 <div class="fluid-row" id="header">
 
-<div class="btn-group pull-right">
-<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu" style="min-width: 50px;">
-<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
-<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
-</ul>
-</div>
 
 
-
-<h1 class="title toc-ignore">HDR Attributes</h1>
+<h1 class="title toc-ignore">Inventory Notes</h1>
 
 </div>
 
@@ -471,122 +454,123 @@ div.tocify {
 <p><br></p>
 <div id="whats-new" class="section level1">
 <h1>What’s new</h1>
-<p>May 14, 2019</p>
+<p>Last updated: 2019-05-20</p>
+<p><br></p>
+</div>
+<div id="bookmarks" class="section level1">
+<h1>Bookmarks</h1>
 <ul>
-<li>HDR attributes are ready to reviewed.</li>
+<li><a href="https://www2.gov.bc.ca/gov/content/industry/forestry/managing-our-forest-resources/forest-inventory/data-management-and-access">Data Management and Access</a></li>
+<li><a href="https://www2.gov.bc.ca/gov/content/industry/forestry/managing-our-forest-resources/forest-inventory/data-management-and-access/vri-data-standards">VRI Data Standards</a></li>
+<li><a href="https://catalogue.data.gov.bc.ca/dataset/vri-forest-vegetation-composite-polygons-and-rank-1-layer">VRI Polygons and Rank 1 Layer</a></li>
+<li><a href="https://www2.gov.bc.ca/assets/gov/farming-natural-resources-and-industry/forestry/stewardship/forest-analysis-inventory/data-management/standards/forest_management_land_base_definition.pdf">Forest management land base definition</a></li>
 </ul>
 <p><br></p>
 </div>
-<div id="overview" class="section level1">
-<h1>Overview</h1>
-<p>The HDR attributes table for CAS_04 consiss of three rows, one per inventory_standard_code.</p>
+<div id="general" class="section level1">
+<h1>General</h1>
 <ul>
-<li>It might be easiest to create this table manually since there is no need to loop over all records</li>
-<li>The latest inventory_standard_cd attribute includes 4 categories: F, V, I, and L which was not present or used in CAS_04
+<li>The latest BC inventory database includes all inventory standards but not all attributes apply to all standards.</li>
+<li>This is particularly relevant to NFL and ECO attributes. See those sections for more details.</li>
+<li>What class is “L” in FOREST_INVENTORY_CD and should we include it or not?</li>
+<li>TFL 48 is not included in the BC inventory except for a few polygons (recent disturbances?)</li>
+<li>Spatial overlap among attribute groups (based on BC_082E translated files from CAS_04):
 <ul>
-<li>what is L and should we include it?</li>
-<li>was it present in past inventories and ignored?</li>
+<li>There is full overlap between LYR and DST polygons.</li>
+<li>There is no overlap between LYR and NFL polygons.</li>
+<li>There is no overlap between NFL and DST polygons.</li>
+<li>There is partial overlap between LYR and ECO polygons.</li>
+<li>There is partial overlap between NFL and ECO polygons.</li>
+<li>There is partial overlap between DST and ECO polygons.</li>
 </ul></li>
-<li>Several CASFRI attributes have no values. Is this by design or should we be adding these?</li>
 </ul>
 <p><br></p>
 </div>
-<div id="attributes" class="section level1">
-<h1>Attributes</h1>
-<div id="identification_id" class="section level2 tabset">
-<h2>identification_id</h2>
+<div id="nfl-attributes" class="section level1">
+<h1>NFL attributes</h1>
+<p>In CAS_04, the NFL and LYR polygons all have a unique CAS_ID implying that a polygon is either forested or non-forested. The VRI inventory, however, allows for sub-polygon components that are forested, non-forested, non-vegetated or anthropogenic. There can be 3 components and they must cover at least 10% of the polygon area each. These components are useful when finer polygons cannot be digitized.</p>
 <ul>
-<li>“mapInt(inventory_standard_cd, ‘F,V,I,L’, ‘4,5,6,0’)”</li>
+<li>Is the intent of CASFRI to keep a separation of forested vs non-forested polygons or is it desirable to maintain information at the sub-polygon level? The latter would imply that there could be NFL polygons or NFL components within LYR polygons.</li>
+<li>Are NFL attributes meant to be exclusive i.e., the polygon is considered entirely one non-forest type? For example, currently it seems that if there is a species_1 there is no NFL attributes.</li>
+<li>From Appendix 12: “CAS Translation (Whenever a forest inventory includes crown closure for a non-forested attribute - then migrate into CROWN CLOSURE LYR field)”. Does this mean that NFL attributes = “NULL_VALUE” if the crown closure field is not NULL?</li>
+<li>It might make more sense to use the new FOR_MGMT_LAND_BASE_IND to distinguish NFL from LYR attributes (see section below)</li>
+<li>Are forested (LYR) and non-forested (NFL) layer translated independently i.e., a polygon can have both types of attributes?</li>
+<li>CASFRI specifies UNPRODUCTIVE_FOREST with 6 values but the CAS_04 only has PRODUCTIVE_FOR with 2 values (“PF”,“PP”). Why is that?</li>
+<li>The Perl code (NFL section) calculates $UnProdFor from NON_FOREST_DESCRIPTOR</li>
+<li>The Perl code (NFL section) uses is.na(species_cd); however, we changed that to for_mgmt_land_base_ind = N to reflect the BC VRI recommendation.</li>
 </ul>
-</div>
-<div id="jurisdiction" class="section level2 tabset">
-<h2>jurisdiction</h2>
+<p>Notes on BC inventory attributes:</p>
 <ul>
-<li>copyText(‘BC’)</li>
+<li>there are 3 land cover components (e.g., land_cover_class_cd_1) but no corresponding percent attributes, so we cannot tell how extensive each component is within a polygon. The Photo Interpretation Procedures manual suggests these 6 attributes exist plus an additional one for all other components (pct).</li>
+<li>there are 3 non vegetation cover types (e.g., non_veg_cover_type_1) along with 3 corresponding percent (e.g., non_veg_cover_pct_1) and pattern (e.g., non_veg_cover_pattern_1) attributes. In contrast to land cover components these only track non-vegetation types.</li>
 </ul>
-</div>
-<div id="coordinate_sys" class="section level2 tabset">
-<h2>coordinate_sys</h2>
+<p>Definitions from VRI photo interp guide:</p>
 <ul>
-<li>nothing()</li>
+<li>Non-Treed polygon: a polygon is considered Non-Treed if less than 10% by crown cover of the polygon area consists of tree species of any size.</li>
+<li>Non-vegetated categories: the fifth level of the B.C. Land Cover Classification Scheme. This classifies the polygon into one of a number of specific categories of Non-Vegetated cover.</li>
+<li>Non-Vegetated cover types: the fourth level of the B.C. Land Cover Classification Scheme. This classifies the polygon as Snow / Ice, Rock / Rubble or Exposed Land if Non-Vegetated. The Non-Vegetated cover type is left blank for water features.</li>
+<li>Non-Vegetated polygon: a polygon is considered Non-Vegetated when the total cover of trees, shrubs, herbs, and bryoids (other than crustose lichens) covers less than 5% of the surface area of the polygon. Bodies of water are included in this class.</li>
 </ul>
-</div>
-<div id="projection" class="section level2 tabset">
-<h2>projection</h2>
+<div id="fri-attributes" class="section level2">
+<h2>FRI attributes</h2>
+<p>It’s not clear that the Perl code and our implementation is correct or what is intended (see previous comments/questions). It might be better to have 2 sets of NFL attributes:</p>
+<ol style="list-style-type: decimal">
+<li>Polygon-level based on BCLCS 1-5</li>
+<li>Sub-polygon-level based on the attributes we used here.</li>
+</ol>
+<p><strong>for_mgmt_land_base_ind</strong></p>
+<p>Forest Management Land Base Indicator (FMLB) is an attribute field to indicate whether the polygon is forested or has been forested and is capable of producing a stand of trees [for_mgmt_land_base_ind]. This allows the user to filter out polygons that are traditionally considered non-productive such as lakes, rock and alpine. Polygons that have harvest history are included in the FMLB as well as any polygon with a site index greater than or equal to 5.</p>
+<p>The FMLB indicator is defined based on the following criteria:</p>
 <ul>
-<li>nothing()</li>
+<li>Opening Indicator = Y; polygon is considered forest,</li>
+<li>Opening Indicator = N, but history data indicates logging; polygon is considered forest,</li>
+<li>BCLCS level 1 = U (no data); polygon is considered non-forest,</li>
+<li>BCLCS level 1 = A (alpine); polygon is considered non-forest,</li>
+<li>Non-productive descriptor is not null; polygon is considered non-forest, and</li>
+<li>Site Index &gt;= 5; polygon is considered forest.</li>
 </ul>
-</div>
-<div id="datum" class="section level2 tabset">
-<h2>datum</h2>
+<p>This is an attempt to replicate how this attribute was created.</p>
+<pre>
+library(tidyverse)
+# Replicate forest management land base indicator (FMLB; see PDF)
+xx = mutate(x, 
+    logging=if_else(substr(line_7b_disturbance_history,1,1)=="L",1,0),
+    logging=if_else(is.na(logging),0,logging),
+    fmlb = if_else(
+    (substr(line_7b_disturbance_history,1,1)=="L" & site_index>=5) |
+    (inventory_standard_cd %in% c("F") & is.na(non_productive_descriptor_cd) & site_index>=5) |
+    (inventory_standard_cd %in% c("V","I","L") & !bclcs_level_1=="U") &
+    (!bclcs_level_3=="A" & site_index>=5), 1, 0))
+table(x$fmlb, x$logging)
+</pre>
+<p><strong>non_veg_cover_type_1</strong></p>
 <ul>
-<li>nothing()</li>
+<li>Mostly used with inventory_standard_cd = “V”</li>
+<li>This set of attributes describes the portion of the polygon that is non-vegetated (vegetation cover is less than 5% of the total surface area of the polygon) and is not obscured by vegetation or shadows.</li>
+<li>Non-vegetated cover types are the designations (from BCLCS level 5) for all observable non-vegetated land cover within the polygon. Note that the level 4 non-vegetated cover type codes (SI-Snow/Ice, RO-Rock/Rubble and EL-Exposed Land) are no longer acceptable for this attribute.</li>
+<li>A maximum of five (5) non-vegetated attributes are acceptable per polygon.</li>
+<li>DW = Down Dead Wood</li>
 </ul>
-</div>
-<div id="inventory_owner" class="section level2 tabset">
-<h2>inventory_owner</h2>
+<p><strong>land_cover_class_cd_1</strong></p>
 <ul>
-<li>copyText(‘PROV_GOV’)</li>
+<li>Mostly used with inventory_standard_cd = “V”</li>
+<li>Land Cover Components (LCC’s) allow detailed description of cover complexes that occur within polygons. Up to three LCC’s can be defined within a polygon, and are ranked based on percent cover (total = 100%). Attributes for each LCC include cover codes from either level 4 or 5 of the BCLCS, plus a reporting of soil moisture regime based on nine classes. If more than three components exist, the remaining percent cover is added to the largest LCC.</li>
+<li>Includes additional non-vegetated types: SI, RO, EL that are not in non_veg_cover_type_1</li>
+<li>Where are the LCC% attributes? If not there, then we can only use the first component as an indicator of the presence of that component.</li>
 </ul>
-</div>
-<div id="land_owner" class="section level2 tabset">
-<h2>land_owner</h2>
+<p><strong>bclcs_level_4</strong></p>
 <ul>
-<li>copyText(‘MOF’)</li>
+<li>Use with all inventory_standard_cd (F, V, I, L)</li>
+<li>Provides a single classification for an entire polygon and is used for broad scale land cover reporting (therefore may not be that useful, esp. if we’re using LCCs)</li>
+<li>Missing a few classes e.g., rivers and lakes; this is fine for V where this is covered in the other 2 attributes but not for F. bclcs_level_5 records these 2 classes as RI and LA.</li>
 </ul>
-</div>
-<div id="permission" class="section level2 tabset">
-<h2>permission</h2>
+<p><strong>non_forest_descriptor</strong></p>
 <ul>
-<li>nothing()</li>
+<li>Use with inventory_standard_cd = “F”</li>
 </ul>
-</div>
-<div id="tenure_type" class="section level2 tabset">
-<h2>tenure_type</h2>
+<p><strong>non_productive_descriptor_cd</strong></p>
 <ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_type" class="section level2 tabset">
-<h2>inv_type</h2>
-<ul>
-<li>copyText(inventory_standard_cd)</li>
-</ul>
-</div>
-<div id="inv_version" class="section level2 tabset">
-<h2>inv_version</h2>
-<ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_start_yr" class="section level2 tabset">
-<h2>inv_start_yr</h2>
-<ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_finish_yr" class="section level2 tabset">
-<h2>inv_finish_yr</h2>
-<ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_acq_id" class="section level2 tabset">
-<h2>inv_acq_id</h2>
-<ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_acq_yr" class="section level2 tabset">
-<h2>inv_acq_yr</h2>
-<ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_update_yr" class="section level2 tabset">
-<h2>inv_update_yr</h2>
-<ul>
-<li>nothing()</li>
+<li>Use with inventory_standard_cd = “F”</li>
 </ul>
 </div>
 </div>

@@ -11,6 +11,8 @@ navbar:
       href: cas_specifications.html
   - text: BC08
     menu:
+    - text: Notes
+      href: bc08.html
     - text: HDR Attributes
       href: bc08_hdr.html
     - text: CAS Attributes

@@ -13,6 +13,7 @@ output:
 
 # What's new
 
+  * Added link to forest management land base definition document (2019-05-20)
   * Added material to Overview and moved bc_vri01_nfl.xlsx to "lookup" folder (2019-05-16)
   * All NFL attributes are ready to reviewed (2019-05-14)
 
@@ -24,7 +25,7 @@ Based on the CAS_04 database, NFL polygons do not overlap LYR polygons. In other
 
 Some specific notes:
 
-  * Create NFL attributes for polygons where for_mgmt_land_base_ind=="N". This attribute is new (see PDF) and should be preferable to using crown_closure (as suggested by CASFRI or species_cd_1 as used in Perl code).
+  * Create NFL attributes for polygons where for_mgmt_land_base_ind=="N". This attribute is new (<a href="https://www2.gov.bc.ca/assets/gov/farming-natural-resources-and-industry/forestry/stewardship/forest-analysis-inventory/data-management/standards/forest_management_land_base_definition.pdf">see PDF</a>) and should be preferable to using crown_closure (as suggested by CASFRI or species_cd_1 as used in Perl code).
   * The key FRI attributes are for "V" and "I" are land_cover_class_cd_1, non_veg_cover_type1, and bclcs_level4
   * The key FRI attributes are for "F" are non_productive_descriptor_cd and bclcs_level4
   * The order FRI attributes are processed is important; a polygon can have a value for 1 or 2 of those attributes, they are not exclusive.
@@ -183,7 +184,7 @@ dfSummary(x["nfl_crown_closure_upper"], graph.col=FALSE, max.distinct.values=99)
 
 ## crown_closure_lower {.tabset}
 
-CAS_04 has one distinct value for this attribute: -1111. However, this can be calculated from crown_closure for non-forested polygons.
+CAS_04 has one distinct value for this attribute: -1111. However, if needed, maybe this could be calculated from crown_closure for non-forested polygons.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 x = mutate(x, nfl_crown_closure_lower = if_else((!nat_non_veg=="NULL_VALUE" | !non_for_anth=="NULL_VALUE" | !non_for_veg=="NULL_VALUE"), as.numeric(crown_closure), as.numeric(-8888)))
@@ -203,7 +204,7 @@ dfSummary(x["nfl_crown_closure_lower"], graph.col=FALSE, max.distinct.values=99)
 
 ## height_upper {.tabset}
 
-CAS_04 has one distinct value for this attribute: -1111. However, this can be calculated from crown_closure for non-forested polygons.
+CAS_04 has one distinct value for this attribute: -1111. However, if needed, maybe this could be calculated from proj_height_1 for non-forested polygons.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 x = mutate(x, nfl_height_upper = if_else((!nat_non_veg=="NULL_VALUE" | !non_for_anth=="NULL_VALUE" | !non_for_veg=="NULL_VALUE"), as.numeric(proj_height_1), as.numeric(-8888)))

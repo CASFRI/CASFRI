@@ -421,6 +421,9 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="bc08.html">Notes</a>
+    </li>
+    <li>
       <a href="bc08_hdr.html">HDR Attributes</a>
     </li>
     <li>
@@ -483,6 +486,19 @@ div.tocify {
 </div>
 <div id="attributes" class="section level1">
 <h1>Attributes</h1>
+<div id="cas_id" class="section level2">
+<h2>cas_id</h2>
+<p>The cas_id attributes is used in 5 of the 6 CASFRI attribute tables and is only described here. The BC08 inventory has the following variations:</p>
+<ul>
+<li>Header identifier: “BC08”
+<ul>
+<li>Note: previously, the header identifier included the inventory_standard_cd [converted from=c(“F”,“V”,“I”), to=c(“4”,“5”,“6”); this was dropped on the assumption, to be confirmed, that all data have been converted to “V” type.</li>
+</ul></li>
+<li>Source file name: “VEG_COMP_LYR_R1”</li>
+<li>Name of mapsheet: map_id</li>
+<li>Object identifier: objectid</li>
+</ul>
+</div>
 <div id="orig_stand_id" class="section level2 tabset">
 <h2>orig_stand_id</h2>
 <ul>
@@ -605,7 +621,7 @@ x = mutate(x, identification_id = mapvalues(inventory_standard_cd, friList, casL
 <div id="map_sheet_id" class="section level2 tabset">
 <h2>map_sheet_id</h2>
 <ul>
-<li>do we need an isLength() helper function?; isText()?</li>
+<li>do we need an isLength() helper function?</li>
 </ul>
 <pre class="r"><code>x = mutate(x, map_sheet_id = map_id)</code></pre>
 <div id="rawfri-4" class="section level3">

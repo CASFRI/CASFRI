@@ -27,3 +27,10 @@ The four menu items (AB06, AB16, BC08, NB01) include information on the procedur
   * NB01 - not yet available
 
 <br>
+
+## CAS05 Schema
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+schema = read_csv("cas_05_schema.csv") %>% mutate_all(~replace(., is.na(.), ""))
+knitr::kable(schema)
+```

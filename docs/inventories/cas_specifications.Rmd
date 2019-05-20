@@ -8,9 +8,9 @@ output:
   
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
 library(tidyverse)  
-x0 = read_csv("../docs/specifications/attributes/cas_attribute_values.csv")  
-x1 = read.csv("../docs/specifications/errors/cas_errors_general.csv")  
-x2 = read_csv("../docs/specifications/errors/cas_errors_specific.csv")  
+x0 = read_csv("../specifications/attributes/cas_attribute_values.csv")  
+x1 = read.csv("../specifications/errors/cas_errors_general.csv")  
+x2 = read_csv("../specifications/errors/cas_errors_specific.csv")  
 ```  
   
 COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA  

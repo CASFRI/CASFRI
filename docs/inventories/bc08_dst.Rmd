@@ -30,7 +30,7 @@ May 14, 2019
 
 ## dist_1 {.tabset}
 
-**dist_1** and **dist_yr_1** seem to be taken from *line_7b_disturbance_history*. From the metadata: "The disturbance history described as a list of abbreviations for the techniques along with the years each technique was employed. Possible values are B (wildfire), BE (escaped burn), BG (ground burn), BR (range burn), BW (wildlife burn), D (disease), F (flooding), I (insect), K (fume kill), L (logging), L% (logged with percentage), R (site rehabilitation), S (slide), and W (wind throw)."
+The attributes **dist_1** and **dist_yr_1** seem to be taken from *line_7b_disturbance_history*. From the BC metadata: "The disturbance history described as a list of abbreviations for the techniques along with the years each technique was employed. Possible values are B (wildfire), BE (escaped burn), BG (ground burn), BR (range burn), BW (wildlife burn), D (disease), F (flooding), I (insect), K (fume kill), L (logging), L% (logged with percentage), R (site rehabilitation), S (slide), and W (wind throw)."
 
   * These codes don't seem to match up with the BC data
   * "M" and "P" occur in data but are not in metadata or Perl code
@@ -69,7 +69,7 @@ x = mutate(x, mod1yr = substr(line_7b_disturbance_history,2,3),
 
 ### RAWFRI
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x["mod1yr"], graph.col=FALSE, max.distinct.values=10)
+dfSummary(x["mod1yr"], graph.col=FALSE, max.distinct.values=101)
 ```
 
 ### CASFRI
