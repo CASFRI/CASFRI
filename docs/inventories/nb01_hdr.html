@@ -509,7 +509,6 @@ div.tocify {
 <h1>What’s new</h1>
 <ul>
 <li>Added CAS_04 HDR records since they are different from CASFRI specs (2019-05-21)</li>
-<li>HDR attributes are ready to reviewed (2019-05-14)</li>
 </ul>
 <p><br></p>
 </div>
@@ -517,13 +516,7 @@ div.tocify {
 <h1>Overview</h1>
 <ul>
 <li>The CASFRI attribute names for CAS_04 are very different from the specifications.</li>
-<li>The HDR attributes table for CAS_04 consists of three rows, one per inventory_standard_code.</li>
 <li>It might be easiest to create this table manually since there is no need to loop over all records</li>
-<li>The latest inventory_standard_cd attribute includes 4 categories: F, V, I, and L which was not present or used in CAS_04
-<ul>
-<li>what is L and should we include it?</li>
-<li>was it present in past inventories and ignored?</li>
-</ul></li>
 </ul>
 <p><br></p>
 </div>
@@ -531,74 +524,71 @@ div.tocify {
 <h1>CAS_04 Attributes</h1>
 <pre><code>## Data Frame Summary  
 ## z  
-## Dimensions: 3 x 19  
+## Dimensions: 1 x 19  
 ## Duplicates: 0  
 ## 
-## ---------------------------------------------------------------------------------------------
-## No   Variable                 Stats / Values                  Freqs (% of Valid)   Missing   
-## ---- ------------------------ ------------------------------- -------------------- ----------
-## 1    header_id                1. BC_0004                      1 (33.3%)            0         
-##      [character]              2. BC_0005                      1 (33.3%)            (0%)      
-##                               3. BC_0006                      1 (33.3%)                      
+## --------------------------------------------------------------------------------------------
+## No   Variable                 Stats / Values                  Freqs (% of Valid)   Missing  
+## ---- ------------------------ ------------------------------- -------------------- ---------
+## 1    header_id                1. NB_0001                      1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 2    jurisdiction             1. BC                           3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 2    jurisdiction             1. NB                           1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 3    owner_type               1. PROV_GOV                     3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 3    owner_type               1. PROV_GOV                     1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 4    owner_name               1. BCGOV FOR Forest Analysis    3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 4    owner_name               1. New Brunswick Natural Res    1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 5    inventory_type           1. FIP                          1 (33.3%)            0         
-##      [character]              2. I                            1 (33.3%)            (0%)      
-##                               3. VRI                          1 (33.3%)                      
+## 5    inventory_type           All NA&#39;s                                             1        
+##      [character]                                                                   (100%)   
 ## 
-## 6    inventory_version        All NA&#39;s                                             3         
-##      [character]                                                                   (100%)    
+## 6    inventory_version        1. With Revisions               1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 7    inventory_manual         1. FIP data dictionnary         1 (50.0%)            1         
-##      [character]              2. VRI data dictionnary         1 (50.0%)            (33.33%)  
+## 7    inventory_manual         1. NB Natural Resource data     1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 8    source_data_format       1. Geodatabase                  3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 8    source_data_format       1. Shapefile                    1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 9    acquisition_date         1. 27/05/2014                   3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 9    acquisition_date         1. 21/03/2012                   1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 10   data_transfer            1. Direct download              3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 10   data_transfer            1. FTP site ( ftp://ftp.gnb.    1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 11   received_from            1. download from  http://www    3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 11   received_from            Valid                           1 (100.0%)           0        
+##      [character]              Invalid                         0 (  0.0%)           (0%)     
+##      Emails                   Duplicates                      0 (  0.0%)                    
 ## 
-## 12   contact_info             Valid                           3 (100.0%)           0         
-##      [character]              Invalid                         0 (  0.0%)           (0%)      
-##      Emails                   Duplicates                      2 ( 66.7%)                     
+## 12   contact_info             Valid                           1 (100.0%)           0        
+##      [character]              Invalid                         0 (  0.0%)           (0%)     
+##      Emails                   Duplicates                      0 (  0.0%)                    
 ## 
-## 13   data_availability        1. Open access                  3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 13   data_availability        1. Adminitsration process       1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 14   redistribution           1. Free with acknowledgment     3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 14   redistribution           1. Needs direct agreement fr    1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 15   permission               1. UNRESTRICTED                 3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 15   permission               1. RESTRICTED                   1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 16   license_agreement        1. License agreements           3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 16   license_agreement        1. Licenses agreements          1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 17   source_data_photoyear    1. Included in SIDS             3 (100.0%)           0         
-##      [character]                                                                   (0%)      
+## 17   source_data_photoyear    1. Included in SIDS             1 (100.0%)           0        
+##      [character]                                                                   (0%)     
 ## 
-## 18   photoyear_start          Min  : 1953                     1953 : 1 (50.0%)     1         
-##      [numeric]                Mean : 1954                     1955 : 1 (50.0%)     (33.33%)  
-##                               Max  : 1955                                                    
+## 18   photoyear_start          1 distinct value                1981 : 1 (100.0%)    0        
+##      [numeric]                                                                     (0%)     
 ## 
-## 19   photoyear_end            Min  : 2008                     2008 : 1 (50.0%)     1         
-##      [numeric]                Mean : 2009.5                   2011 : 1 (50.0%)     (33.33%)  
-##                               Max  : 2011                                                    
-## ---------------------------------------------------------------------------------------------</code></pre>
+## 19   photoyear_end            1 distinct value                2010 : 1 (100.0%)    0        
+##      [numeric]                                                                     (0%)     
+## --------------------------------------------------------------------------------------------</code></pre>
 <p><br></p>
 </div>
 <div id="cas_05-attributes" class="section level1">
@@ -609,13 +599,13 @@ div.tocify {
 <div id="identification_id" class="section level2 tabset">
 <h2>identification_id</h2>
 <ul>
-<li>“mapInt(inventory_standard_cd, ‘F,V,I,L’, ‘4,5,6,0’)”</li>
+<li>nothing()</li>
 </ul>
 </div>
 <div id="jurisdiction" class="section level2 tabset">
 <h2>jurisdiction</h2>
 <ul>
-<li>copyText(‘BC’)</li>
+<li>copyText(‘NB’)</li>
 </ul>
 </div>
 <div id="coordinate_sys" class="section level2 tabset">
@@ -645,7 +635,7 @@ div.tocify {
 <div id="land_owner" class="section level2 tabset">
 <h2>land_owner</h2>
 <ul>
-<li>copyText(‘MOF’)</li>
+<li>copyText(‘New Brunswick Natural Resources’)</li>
 </ul>
 </div>
 <div id="permission" class="section level2 tabset">
@@ -663,15 +653,13 @@ div.tocify {
 <div id="inv_type" class="section level2 tabset">
 <h2>inv_type</h2>
 <ul>
-<li>can we allow multiple types in CASFRI and with the copyText function?</li>
-<li>the alternative would be splitting in 3 separate inventories as before</li>
-<li>copyText(‘FIP’,‘VRI’,‘I’)</li>
+<li>copyText(‘NA’)</li>
 </ul>
 </div>
 <div id="inv_version" class="section level2 tabset">
 <h2>inv_version</h2>
 <ul>
-<li>nothing()</li>
+<li>copyText(‘With Revisions’)</li>
 </ul>
 </div>
 <div id="inv_start_yr" class="section level2 tabset">

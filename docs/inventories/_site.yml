@@ -25,6 +25,18 @@ navbar:
       href: bc08_dst.html
     - text: ECO Attributes
       href: bc08_eco.html
+  - text: AB06
+    menu:
+    - text: HDR Attributes
+      href: ab06_hdr.html
+  - text: AB16
+    menu:
+    - text: HDR Attributes
+      href: ab16_hdr.html
+  - text: NB01
+    menu:
+    - text: HDR Attributes
+      href: nb01_hdr.html
 output:
   html_document:
     highlight: textmate
