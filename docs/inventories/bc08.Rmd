@@ -66,7 +66,7 @@ Definitions from VRI photo interp guide:
   * Non-Vegetated cover types: the fourth level of the B.C. Land Cover Classification Scheme. This classifies the polygon as Snow / Ice, Rock / Rubble or Exposed Land if Non-Vegetated. The Non-Vegetated cover type is left blank for water features.
   * Non-Vegetated polygon: a polygon is considered Non-Vegetated when the total cover of trees, shrubs, herbs, and bryoids (other than crustose lichens) covers less than 5% of the surface area of the polygon. Bodies of water are included in this class.
 
-## FRI attributes
+# FRI attributes
 
 It's not clear that the Perl code and our implementation is correct or what is intended (see previous comments/questions). It might be better to have 2 sets of NFL attributes:
 

@@ -27,14 +27,20 @@ navbar:
       href: bc08_eco.html
   - text: AB06
     menu:
+    - text: Notes
+      href: ab06.html
     - text: HDR Attributes
       href: ab06_hdr.html
   - text: AB16
     menu:
+    - text: Notes
+      href: ab16.html
     - text: HDR Attributes
       href: ab16_hdr.html
   - text: NB01
     menu:
+    - text: Notes
+      href: nb01.html
     - text: HDR Attributes
       href: nb01_hdr.html
 output:

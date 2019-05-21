@@ -20,4 +20,21 @@ bcConnect = function() {
 }
 # bcConnect()
 
-#render("bc08/
+render("index.Rmd")
+render("cas_specifications.Rmd")
+
+render("bc08.Rmd")
+render("ab06.Rmd")
+render("ab16.Rmd")
+render("nb01.Rmd")
+
+render("bc08_hdr.Rmd")
+render("ab06_hdr.Rmd")
+render("ab16_hdr.Rmd")
+render("nb01_hdr.Rmd")
+
+render("bc08_cas.Rmd")
+render("bc08_lyr.Rmd")
+render("bc08_nfl.Rmd")
+render("bc08_dst.Rmd")
+render("bc08_eco.Rmd")
