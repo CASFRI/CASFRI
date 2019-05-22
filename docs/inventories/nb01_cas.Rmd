@@ -1,0 +1,172 @@
+---  
+title: "CAS Attributes"
+output:  
+  html_document:  
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    css: styles.css
+---  
+
+<br>
+
+# What's new
+
+<br>
+
+# Overview
+
+<br>
+
+# Attributes
+
+## cas_id
+
+The cas_id attributes is used in 5 of the 6 CASFRI attribute tables and is only described here. This inventory has the following variations:
+
+  * Header identifier: "NB01"
+  * Source file name: "xxFOREST_NONFOR"
+  * Name of mapsheet: "xxxxxxxxxx"
+  * Object identifier: stdlab
+
+## orig_stand_id {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["orig_stand_id"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## stand_structure {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["stand_structure"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## num_of_layers {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["num_of_layers"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## identification_id {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["identification_id"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## map_sheet_id {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=10)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["map_sheet_id"], graph.col=FALSE, max.distinct.values=10)
+```
+
+## gis_area {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["gis_area"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## gis_perimeter {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["gis_perimeter"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## inventory_area {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["inventory_area"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## photo_year {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["photo_year"], graph.col=FALSE, max.distinct.values=99)
+```

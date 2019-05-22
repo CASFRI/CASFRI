@@ -1,0 +1,191 @@
+---  
+title: "NFL Attributes"
+output:  
+  html_document:  
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    css: styles.css
+---  
+
+<br>
+
+# What's new
+
+<br>
+
+# Overview
+
+  * Overstory: nfl, (nfl_per?), nat_non, anth_veg, anth_non
+  * Understory: unfl, unfl_per, unat_non, uanth_veg, uanth_non
+  * nat_non_veg
+    - "NMG" => "SA", #or SD?  VERIFY THIS (from ab perl code)
+  * nat_non_anth
+    - last class is TN or BT?
+    - SL = AS (guess from Cosco)
+  * non_veg_for
+    - Check AB perl code for SC, SO
+
+<br>
+
+# Attributes
+
+## nat_non_veg {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+friList = c('??','WL','NWL','WR','NWR','??','MC','MM','MR','NMM','NMR','MG','WI','NWI','??','MB','NMB','NMC','??','MS','NMS','WF','NWF','??','??')
+casList = c('AP','LA','LA','RI','RI','OC','RK','RK','RK','RK','RK','SA','SI','SI','SL','EX','EX','EX','BE','WS','WS','FL','FL','IS','TF')
+x = mutate(x, nat_non_veg=if_else(nat_non==" ","NULL_VALUE", if_else(!nat_non==" " & !nat_non %in% friList, "NOT_IN_SET", mapvalues(nat_non, friList, casList))))
+```
+
+### RAWFRI
+
+```{r echo=FASLE, message=FALSE, warning=FALSE}  
+dfSummary(x["nat_non"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["nat_non_veg"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## non_for_anth {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c('AII','AIM','AIG','AIE','II','IM','IG','IE','CIP','CIW','AIH','IP','IW','IH','AIW','IW','CA','CP','CPR','A','P','PR','ASC','ASR','AIF','SC','SR','IF','??','??','CIU','AIU','IU','AIL')
+casList = c('IN','IN','IN','IN','IN','IN','IN','IN','FA','FA','FA','FA','FA','FA','FA','FA','CL','CL','CL','CL','CL','CL','SE','SE','SE','SE','SE','SE','LG','BP','OT','OT','OT','OT')
+x = unite(x, anth_veg_non, c(anth_veg, anth_non), sep="", remove=FALSE) %>% mutate(anth_veg_non = str_trim(anth_veg_non))
+x = mutate(x, non_for_anth=if_else(anth_veg_non=="","NULL_VALUE", if_else(!anth_veg_non=="" & !anth_veg_non %in% friList, "NOT_IN_SET", mapvalues(anth_veg_non, friList, casList))))
+```
+
+### RAWFRI (anth_veg)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["anth_veg"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### RAWFRI (anth_non)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["anth_non"], graph.col=FALSE, max.distinct.values=99)
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["non_for_anth"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## non_for_veg {.tabset}
+
+  * Check AB perl code for SC, SO
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c('??','AS','HF','??','HG','AIL','IL','BR','??','??','SC','SO')
+casList = c('ST','SL','HF','HE','HG','HG','HG','BR','OM','TN','SC','SO')
+x = mutate(x, nat_non_veg=if_else(nfl=="","NULL_VALUE", if_else(!nfl=="" & !nfl %in% friList, "NOT_IN_SET", mapvalues(nfl, friList, casList))))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["nfl"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["non_for_veg"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## soil_moist_reg {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["nfl_soil_moist_reg"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## structure_per {.tabset}
+
+### RAWFRI
+
+### CASFRI
+
+## crown_closure_upper {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["nfl_crown_closure_upper"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## crown_closure_lower {.tabset}
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["nfl_crown_closure_lower"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## height_upper {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["nfl_height_upper"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## height_lower {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["nfl_height_lower"], graph.col=FALSE, max.distinct.values=99)
+```

@@ -1,0 +1,282 @@
+---  
+title: "LYR Attributes"
+output:  
+  html_document:  
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    css: styles.css
+---  
+
+<br>
+
+# What's new
+
+<br>
+
+# Overview
+
+  * See comments under individual attribute heading
+
+<br>
+
+# Attributes
+
+## soil_moist_reg {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+friList = c('a','A','d','D','m','M','w','W')
+casList = c('A','A','D','D','F','F','W','W')
+x = mutate(x, soil_moist_reg=if_else(moist_reg==" ", "NULL_VALUE", mapvalues(moist_reg, friList, casList)))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["moist_reg"], graph.col=FALSE, max.distinct.values=99)
+```
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["soil_moist_reg"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## structure_per {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, structure_per=if_else(struc_val==0, -9999, as.double(struc_val)))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["struc_val"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["structure_per"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## layer {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, layer=1)
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["layer"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## layer_rank {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, layer_rank=1)
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["layer_rank"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## crown_closure {.tabset}
+
+  * AB06 uses density rather than crownclosure that AB16 uses
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+friList = c('A','B','C','D')
+casListLower = c(6,31,51,71)
+casListUpper = c(30,50,70,100)
+x = mutate(x, crown_closure_lower=if_else(density==" ", -9998, as.double(mapvalues(density, friList, casListLower))),
+              crown_closure_upper=if_else(density==" ", -9998, as.double(mapvalues(density, friList, casListUpper))))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["density"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["crown_closure_lower"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["crown_closure_upper"], graph.col=FALSE, max.distinct.values=101)
+```
+
+## height {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, height_upper=if_else(height<1 | height>100, -9999, as.double(height)),
+              height_lower=if_else(height<1 | height>100, -9999, as.double(height)))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["height"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["height_lower"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["height_upper"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## species_1-10 {.tabset}
+
+  * AB06 uses sp\*\_per rather than sp\*\_percnt that AB16 uses
+  * species_per_1-10 should be 1-100 not 1-10
+  * The attributes species_1 - species_5 use a lookup table to translate species codes to the CASFRI standard. Here, we demonstrate the code for species_1 only since the same procedure is used for the other species.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+x = mutate(x, species_1=if_else(sp1==" ", "EMPTY_STRING", sp1))
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+sppList = read_csv("../../translation/tables/lookup/bc_vri01_species.csv")
+x = mutate(x, species_1=case_when(
+    is.na(species_cd_1) ~ "NULL_VALUE",
+    str_trim(species_cd_1)=="" ~ "EMPTY_STRING",
+    !species_cd_1 %in% sppList$SOURCE_VAL ~ "NOT_IN_SET",
+    TRUE ~ mapvalues(species_cd_1, sppList$SOURCE_VAL, sppList$SPEC1)))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["sp1"], graph.col=FALSE, max.distinct.values=99)
+```
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["species_1"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## species_per_1-10 {.tabset}
+
+  * The attributes species_per_1 - species_per_6 are simply copied from the attributes species_pct_1 - species_pct_6
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+x = mutate(x, species_per_1=sp1_per)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, species_per_1=case_when(
+    is.na(species_pct_1) ~ -8888,
+    species_pct_1 < 0 | species_pct_1 > 100 ~ -9999,
+    TRUE ~ species_pct_1))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["sp1_per"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["species_per_1"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## productive_for {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+x = mutate(x, productive_for=if_else(mod1!="CC" & species_1=="EMPTY_STRING" & (crown_closure_upper!=-9998 | height_upper!=-9999), "PP", "PF"))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["productive_for"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## origin {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, origin_upper=if_else(origin==0,-9999,as.double(origin)),
+              origin_lower=if_else(origin==0,-9999,as.double(origin)))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["origin"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["origin_lower"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["origin_upper"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## site_class {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+friList = c('U','F','M','G')
+casList = c('U','P','M','G')
+x = mutate(x, site_class=if_else(tpr==" ","NULL_VALUE", if_else(!tpr==" " & !tpr %in% friList, "NOT_IN_SET", mapvalues(tpr, friList, casList))))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["tpr"], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["site_class"], graph.col=FALSE, max.distinct.values=99)
+```
+
+## site_index {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, site_index=-8887)
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["site_index"], graph.col=FALSE, max.distinct.values=99)
+```

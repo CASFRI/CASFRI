@@ -1,0 +1,78 @@
+---  
+title: "ECO Attributes"
+output:  
+  html_document:  
+    code_folding: hide
+    toc: true
+    toc_float:
+      collapsed: false
+    css: styles.css
+---  
+
+<br>
+
+# What's new
+
+<br>
+
+# Overview
+
+<br>
+
+# Attributes
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+```
+
+## wetland_type {.tabset}
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["wetland_type"], graph.col=FALSE)
+```
+
+## wet_veg_cover {.tabset}
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["wet_veg_cover"], graph.col=FALSE)
+```
+
+## wet_landform_mod {.tabset}
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["wet_landform_mod"], graph.col=FALSE)
+```
+
+## wet_local_mod {.tabset}
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["wet_local_mod"], graph.col=FALSE)
+```
+
+## eco_site {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}  
+```
+
+### RAWFRI
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x["eco_site"], graph.col=FALSE, max.distinct.values=20)
+```
