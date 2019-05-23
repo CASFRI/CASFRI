@@ -13,6 +13,8 @@ output:
 
 # What's new
 
+  * Updated 2019-05-23
+
 <br>
 
 # Overview
@@ -149,17 +151,13 @@ dfSummary(x["height_upper"], graph.col=FALSE, max.distinct.values=99)
   * species_per_1-10 should be 1-100 not 1-10
   * The attributes species_1 - species_5 use a lookup table to translate species codes to the CASFRI standard. Here, we demonstrate the code for species_1 only since the same procedure is used for the other species.
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}  
-x = mutate(x, species_1=if_else(sp1==" ", "EMPTY_STRING", sp1))
-```
-
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 sppList = read_csv("../../translation/tables/lookup/bc_vri01_species.csv")
 x = mutate(x, species_1=case_when(
-    is.na(species_cd_1) ~ "NULL_VALUE",
-    str_trim(species_cd_1)=="" ~ "EMPTY_STRING",
-    !species_cd_1 %in% sppList$SOURCE_VAL ~ "NOT_IN_SET",
-    TRUE ~ mapvalues(species_cd_1, sppList$SOURCE_VAL, sppList$SPEC1)))
+    is.na(sp1) ~ "NULL_VALUE",
+    str_trim(sp1)=="" ~ "EMPTY_STRING",
+    !sp1 %in% sppList$SOURCE_VAL ~ "NOT_IN_SET",
+    TRUE ~ mapvalues(sp1, sppList$SOURCE_VAL, sppList$SPEC1)))
 ```
 
 ### RAWFRI
@@ -175,17 +173,14 @@ dfSummary(x["species_1"], graph.col=FALSE, max.distinct.values=99)
 
 ## species_per_1-10 {.tabset}
 
+  * To do: sp1_percnt ranges from 0-10 not 0-100
   * The attributes species_per_1 - species_per_6 are simply copied from the attributes species_pct_1 - species_pct_6
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}  
-x = mutate(x, species_per_1=sp1_per)
-```
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
 x = mutate(x, species_per_1=case_when(
-    is.na(species_pct_1) ~ -8888,
-    species_pct_1 < 0 | species_pct_1 > 100 ~ -9999,
-    TRUE ~ species_pct_1))
+    is.na(sp1_per) ~ as.integer(-8888),
+    sp1_per < 0 | sp1_per > 100 ~ as.integer(-9999),
+    TRUE ~ sp1_per))
 ```
 
 ### RAWFRI

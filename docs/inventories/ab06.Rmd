@@ -12,11 +12,14 @@ output:
 
 # What's new
 
-Last updated: 2019-05-21
+Last updated: 2019-05-23
 
 <br>
 
 # Bookmarks
+
+  * <a href="https://www.alberta.ca/vegetation-inventory-standards.aspx">VAlberta Vegetation Inventory Standards and Data Model Documents</a>
+  * <a href="https://www.alberta.ca/forest-and-vegetation-inventories-data.aspx">Forest and vegetation inventories data</a>
 
 <br>
 
@@ -26,5 +29,6 @@ Last updated: 2019-05-21
 
 # NFL attributes
 
+<br>
 
 # FRI attributes

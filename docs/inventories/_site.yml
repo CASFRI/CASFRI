@@ -31,12 +31,20 @@ navbar:
       href: ab06.html
     - text: HDR Attributes
       href: ab06_hdr.html
+    - text: CAS Attributes
+      href: ab06_cas.html
+    - text: LYR Attributes
+      href: ab06_lyr.html
   - text: AB16
     menu:
     - text: Notes
       href: ab16.html
     - text: HDR Attributes
       href: ab16_hdr.html
+    - text: CAS Attributes
+      href: ab168_cas.html
+    - text: LYR Attributes
+      href: ab16_lyr.html
   - text: NB01
     menu:
     - text: Notes
