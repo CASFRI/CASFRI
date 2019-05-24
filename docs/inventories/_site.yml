@@ -42,7 +42,7 @@ navbar:
     - text: HDR Attributes
       href: ab16_hdr.html
     - text: CAS Attributes
-      href: ab168_cas.html
+      href: ab16_cas.html
     - text: LYR Attributes
       href: ab16_lyr.html
   - text: NB01
