@@ -33,14 +33,15 @@ casRender = function(inv) {
         render("ab06.Rmd")
         render("ab06_hdr.Rmd")
         render("ab06_cas.Rmd")
-        render("ab06_cas.Rmd")
         render("ab06_lyr.Rmd")
+        render("ab06_nfl.Rmd")
     } else if (inv=="ab16") {
         # Select attributes from ab16 and save as a tibble
         render("ab16.Rmd")
         render("ab16_hdr.Rmd")
         render("ab16_cas.Rmd")
         render("ab16_lyr.Rmd")
+        render("ab16_nfl.Rmd")
     } else if (inv=="bc08") {
         render("bc08.Rmd")
         render("bc08_hdr.Rmd")

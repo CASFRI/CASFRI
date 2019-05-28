@@ -35,6 +35,8 @@ navbar:
       href: ab06_cas.html
     - text: LYR Attributes
       href: ab06_lyr.html
+    - text: NFL Attributes
+      href: ab06_nfl.html
   - text: AB16
     menu:
     - text: Notes
@@ -45,6 +47,8 @@ navbar:
       href: ab16_cas.html
     - text: LYR Attributes
       href: ab16_lyr.html
+    - text: NFL Attributes
+      href: ab16_nfl.html
   - text: NB01
     menu:
     - text: Notes
