@@ -13,6 +13,8 @@ output:
 
 # What's new
 
+  * Version 1 created on 2019-05-30
+
 <br>
 
 # Overview
@@ -21,7 +23,39 @@ output:
 
 # Attributes
 
+  * The first four attributes are created from several AB inventory attributes: density, moist_reg, sp1, sp1_per, sp2, nfl, nat_non
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, 
+
+  # Initialize CAS attributes
+  wetland_type="NULL_VALUE", wet_veg_cover="NULL_VALUE", wet_landform_mod="NULL_VALUE", wet_local_mod="NULL_VALUE",
+
+  wetland = case_when(
+    moist_reg=="w" & !is.na(nfl) ~ "NULL_VALUE",
+    moist_reg=="w" & nfl %in% c("SO","SC") ~ "SONS",
+    moist_reg=="w" & nfl %in% c("HG","HF") ~ "MONG",
+    moist_reg=="w" & nfl=="BR" ~ "FONG",
+    moist_reg=="w" & nat_non=="NWB" ~ "SONS",
+    moist_reg %in% c("a","d","m") & (sp1=="LT" | sp2=="LT") & density %in% c("A","B") ~ "FTNN",
+    moist_reg %in% c("a","d","m") & (sp1=="LT" | sp2=="LT") & density=="C" ~ "STNN",
+    moist_reg %in% c("a","d","m") & (sp1=="LT" | sp2=="LT") & density=="D" ~ "SFNN",
+    moist_reg %in% c("a","d","m") & (sp1=="SB" & sp1_per==100) & density %in% c("A","B") ~ "BTNN",
+    moist_reg %in% c("a","d","m") & (sp1=="SB" & sp1_per==100) & density=="C" ~ "STNN",
+    moist_reg %in% c("a","d","m") & (sp1=="SB" & sp1_per==100) & density=="D" ~ "SFNN",
+    moist_reg %in% c("a","d","m") & ((sp1=="SB" | sp1=="FB") & !sp2=="LT") & density %in% c("A","B","C") ~ "STNN",
+    moist_reg %in% c("a","d","m") & ((sp1=="SB" | sp1=="FB") & !sp2=="LT") & density=="D" ~ "SFNN",
+    moist_reg %in% c("a","d","m") & sp1 %in% c("BW","PB") & density %in% c("A","B","C") ~ "STNN",
+    moist_reg %in% c("a","d","m") & sp1 %in% c("BW","PB") & density=="D" ~ "SFNN",
+    TRUE ~ "NULL_VALUE"),
+  
+  # Extract from wetland:
+  wetland_type = if_else(wetland=="NULL_VALUE", "NULL_VALUE", substr(wetland,1,1)),
+  wet_veg_cover = if_else(wetland=="NULL_VALUE", "NULL_VALUE", substr(wetland,2,2)),
+  wet_landform_mod = if_else(wetland=="NULL_VALUE", "NULL_VALUE", substr(wetland,3,3)),
+  wet_local_mod = if_else(wetland=="NULL_VALUE", "NULL_VALUE", substr(wetland,4,4))
+
+)
 ```
 
 ## wetland_type {.tabset}
@@ -31,7 +65,7 @@ output:
 ### CASFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x["wetland_type"], graph.col=FALSE)
+dfSummary(x["wetland_type"], graph.col=FALSE)
 ```
 
 ## wet_veg_cover {.tabset}
@@ -41,7 +75,7 @@ output:
 ### CASFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x["wet_veg_cover"], graph.col=FALSE)
+dfSummary(x["wet_veg_cover"], graph.col=FALSE)
 ```
 
 ## wet_landform_mod {.tabset}
@@ -51,7 +85,7 @@ output:
 ### CASFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x["wet_landform_mod"], graph.col=FALSE)
+dfSummary(x["wet_landform_mod"], graph.col=FALSE)
 ```
 
 ## wet_local_mod {.tabset}
@@ -61,14 +95,13 @@ output:
 ### CASFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x["wet_local_mod"], graph.col=FALSE)
+dfSummary(x["wet_local_mod"], graph.col=FALSE)
 ```
 
 ## eco_site {.tabset}
 
-```{r echo=TRUE, message=FALSE, warning=FALSE}  
-```
-
+  * Is this used for this inventory
+  
 ### RAWFRI
 
 ### CASFRI

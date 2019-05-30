@@ -37,6 +37,10 @@ navbar:
       href: ab06_lyr.html
     - text: NFL Attributes
       href: ab06_nfl.html
+    - text: DST Attributes
+      href: ab06_dst.html
+    - text: ECO Attributes
+      href: ab06_eco.html
   - text: AB16
     menu:
     - text: Notes
@@ -49,6 +53,10 @@ navbar:
       href: ab16_lyr.html
     - text: NFL Attributes
       href: ab16_nfl.html
+    - text: DST Attributes
+      href: ab16_dst.html
+    - text: ECO Attributes
+      href: ab16_eco.html
   - text: NB01
     menu:
     - text: Notes

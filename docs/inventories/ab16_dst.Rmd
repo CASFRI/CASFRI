@@ -13,6 +13,8 @@ output:
 
 # What's new
 
+  * First version created on 2019-05-30
+
 <br>
 
 # Overview
@@ -23,50 +25,169 @@ output:
 
 ## dist_1 {.tabset}
 
+  * Perl code has a list of illegal dist types that include "SL", "SU" -> "OT"
+  * Perl code also has a comment about "CU" -> "CL"
+  * not clear why these have been labelled illegal 
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c('BU','CC','CL','CU','DT','PL','SC','SL','SN','ST','SU','TH','UK','WF')
+casList = c('BU','CO','OT','CL','DT','SI','SI','OT','DT','OT','OT','SI','OT','WF')
+x = mutate(x, dist_1=case_when(
+    is.na(modcon1) ~ "NULL_VALUE",
+    str_trim(modcon1)=="" ~ "EMPTY_STRING",
+    !modcon1 %in% friList ~ "NOT_IN_SET",
+    TRUE ~ mapvalues(modcon1, friList, casList)))
 ```
 
 ### RAWFRI
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x[""], graph.col=FALSE, max.distinct.values=20)
+dfSummary(x["modcon1"], graph.col=FALSE, max.distinct.values=20)
 ```
 
 ### CASFRI
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x["dist_1"], graph.col=FALSE, max.distinct.values=20)
+dfSummary(x["dist_1"], graph.col=FALSE, max.distinct.values=20)
 ```
 
 ## dist_yr_1 {.tabset}
 
+  * what should a value of "0" be coded as?
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, dist_yr_1=case_when(
+    is.na(modyear1) ~ as.integer(-8888),
+    modyear1==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(modyear1)))
 ```
 
 ### RAWFRI
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x[""], graph.col=FALSE, max.distinct.values=101)
+dfSummary(x["modyear1"], graph.col=FALSE, max.distinct.values=101)
 ```
 
 ### CASFRI
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x$dist_yr_1, graph.col=FALSE, max.distinct.values=101)
+dfSummary(x$dist_yr_1, graph.col=FALSE, max.distinct.values=101)
 ```
 
 ## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
 
-  * value = -8888 in cas04
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c(1,2,3,4,5)
+casListUpper = c(25,50,75,95,100)
+casListLower = c(1,26,51,76,96)
+x = mutate(x, 
+    dist_ext_upper_1=case_when(
+    is.na(modext1) ~ as.integer(-8888),
+    modext1==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(modext1, friList, casListUpper))),
+    dist_ext_lower_1=case_when(
+    is.na(modext1) ~ as.integer(-8888),
+    modext1==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(modext1, friList, casListLower)))
+    )
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["modext1"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_ext_lower_1, graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_ext_upper_1, graph.col=FALSE, max.distinct.values=101)
+```
 
 ## dist_2 {.tabset}
 
-* value = "-8888" in cas04
+  * Perl code has a list of illegal dist types that include "SL", "SU" -> "OT"
+  * Perl code also has a comment about "CU" -> "CL"
+  * not clear why these have been labelled illegal 
 
-## dist_year_2 {.tabset}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c('BU','CC','CL','CU','DT','PL','SC','SL','SN','ST','SU','TH','UK','WF')
+casList = c('BU','CO','OT','CL','DT','SI','SI','OT','DT','OT','OT','SI','OT','WF')
+x = mutate(x, dist_2=case_when(
+    is.na(modcon2) ~ "NULL_VALUE",
+    str_trim(modcon2)=="" ~ "EMPTY_STRING",
+    !modcon2 %in% friList ~ "NOT_IN_SET",
+    TRUE ~ mapvalues(modcon2, friList, casList)))
+```
 
-* value = -8888 in cas04
+### RAWFRI
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["modcon2"], graph.col=FALSE, max.distinct.values=20)
+```
 
-## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
+### CASFRI
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["dist_2"], graph.col=FALSE, max.distinct.values=20)
+```
 
-* value = -8888 in cas04
+## dist_yr_2 {.tabset}
 
+  * what should a value of "0" be coded as?
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, dist_yr_2=case_when(
+    is.na(modyear2) ~ as.integer(-8888),
+    modyear2==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(modyear2)))
+```
+
+### RAWFRI
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["modyear2"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_yr_2, graph.col=FALSE, max.distinct.values=101)
+```
+
+## dist_ext_upper_2, dist_ext_lower_2 {.tabset}
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c(1,2,3,4,5)
+casListUpper = c(25,50,75,95,100)
+casListLower = c(1,26,51,76,96)
+x = mutate(x, 
+    dist_ext_upper_2=case_when(
+    is.na(modext2) ~ as.integer(-8888),
+    modext2==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(modext2, friList, casListUpper))),
+    dist_ext_lower_2=case_when(
+    is.na(modext2) ~ as.integer(-8888),
+    modext2==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(modext2, friList, casListLower)))
+    )
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["modext2"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_ext_lower_2, graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_ext_upper_2, graph.col=FALSE, max.distinct.values=101)
+```
 ## dist_3 {.tabset}
 
 * value = ""-8888" in cas04
@@ -75,7 +196,7 @@ dfSummary(x[""], graph.col=FALSE, max.distinct.values=20)
 
 * value = -8888 in cas04
 
-## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
+## dist_ext_upper_3, dist_ext_lower_3 {.tabset}
 
 * value = -8888 in cas04
 

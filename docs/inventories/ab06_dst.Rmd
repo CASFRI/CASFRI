@@ -13,6 +13,8 @@ output:
 
 # What's new
 
+  * First version created on 2019-05-30
+
 <br>
 
 # Overview
@@ -24,60 +26,182 @@ output:
 ## dist_1 {.tabset}
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c('BU','CC','CL','PL','SC','SN','ST','TH')
+casList = c('BU','CO','OT','SI','SI','DT','OT','SI')
+x = mutate(x, dist_1=case_when(
+    is.na(mod1) ~ "NULL_VALUE",
+    str_trim(mod1)=="" ~ "EMPTY_STRING",
+    !mod1 %in% friList ~ "NOT_IN_SET",
+    TRUE ~ mapvalues(mod1, friList, casList)))
 ```
 
 ### RAWFRI
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x[""], graph.col=FALSE, max.distinct.values=20)
+dfSummary(x["mod1"], graph.col=FALSE, max.distinct.values=20)
 ```
 
 ### CASFRI
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x["dist_1"], graph.col=FALSE, max.distinct.values=20)
+dfSummary(x["dist_1"], graph.col=FALSE, max.distinct.values=20)
 ```
 
 ## dist_yr_1 {.tabset}
 
+  * what should a value of "0" be coded as?
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, dist_yr_1=case_when(
+    is.na(mod1_yr) ~ as.integer(-8888),
+    mod1_yr==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ mod1_yr))
 ```
 
 ### RAWFRI
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x[""], graph.col=FALSE, max.distinct.values=101)
+dfSummary(x["mod1_yr"], graph.col=FALSE, max.distinct.values=101)
 ```
 
 ### CASFRI
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x$dist_yr_1, graph.col=FALSE, max.distinct.values=101)
+dfSummary(x$dist_yr_1, graph.col=FALSE, max.distinct.values=101)
 ```
 
 ## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
 
-  * value = -8888 in cas04
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c(1,2,3,4,5)
+casListUpper = c(25,50,75,95,100)
+casListLower = c(1,26,51,76,96)
+x = mutate(x, 
+    dist_ext_upper_1=case_when(
+    is.na(mod1_ext) ~ as.integer(-8888),
+    mod1_ext==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(mod1_ext, friList, casListUpper))),
+    dist_ext_lower_1=case_when(
+    is.na(mod1_ext) ~ as.integer(-8888),
+    mod1_ext==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(mod1_ext, friList, casListLower)))
+    )
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["mod1_ext"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_ext_lower_1, graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_ext_upper_1, graph.col=FALSE, max.distinct.values=101)
+```
 
 ## dist_2 {.tabset}
 
-* value = "-8888" in cas04
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c('BU','CC','CL','PL','SC','SN','ST','TH')
+casList = c('BU','CO','OT','SI','SI','DT','OT','SI')
+x = mutate(x, dist_2=case_when(
+    is.na(mod2) ~ "NULL_VALUE",
+    str_trim(mod2)=="" ~ "EMPTY_STRING",
+    !mod1 %in% friList ~ "NOT_IN_SET",
+    TRUE ~ mapvalues(mod2, friList, casList)))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["mod2"], graph.col=FALSE, max.distinct.values=20)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["dist_2"], graph.col=FALSE, max.distinct.values=20)
+```
 
 ## dist_year_2 {.tabset}
 
-* value = -8888 in cas04
+  * what should a value of "0" be coded as?
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+x = mutate(x, dist_yr_2=case_when(
+    is.na(mod2_yr) ~ as.integer(-8888),
+    mod2_yr==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ mod2_yr))
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["mod2_yr"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_yr_2, graph.col=FALSE, max.distinct.values=101)
+```
 
 ## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
 
-* value = -8888 in cas04
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+friList = c(1,2,3,4,5)
+casListUpper = c(25,50,75,95,100)
+casListLower = c(1,26,51,76,96)
+x = mutate(x, 
+    dist_ext_upper_2=case_when(
+    is.na(mod2_ext) ~ as.integer(-8888),
+    mod2_ext==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(mod2_ext, friList, casListUpper))),
+    dist_ext_lower_2=case_when(
+    is.na(mod2_ext) ~ as.integer(-8888),
+    mod2_ext==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(mod2_ext, friList, casListLower)))
+    )
+```
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x["mod2_ext"], graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (lower)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_ext_lower_2, graph.col=FALSE, max.distinct.values=101)
+```
+
+### CASFRI (upper)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$dist_ext_upper_2, graph.col=FALSE, max.distinct.values=101)
+```
 
 ## dist_3 {.tabset}
 
-* value = ""-8888" in cas04
+  * not in AB06
+  * value = ""-8888" in cas04
 
 ## dist_yr_3 {.tabset}
 
-* value = -8888 in cas04
+  * value = -8888 in cas04
 
-## dist_ext_upper_1, dist_ext_lower_1 {.tabset}
+## dist_ext_upper_3, dist_ext_lower_3 {.tabset}
 
-* value = -8888 in cas04
+  * not in AB06
+  * value = -8888 in cas04
 
 ## layer {.tabset}
 

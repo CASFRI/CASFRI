@@ -13,13 +13,8 @@ output:
 
 # What's new
 
-May 15, 2019
-
-  * All ECO attributes are now ready for review.
-
-May 14, 2019
-
-  * eco_site is ready to reviewed. The other attributes should be ready soon.
+  * All ECO attributes are now ready for review. [2019-05-15]
+  * eco_site is ready to reviewed. The other attributes should be ready soon. [2019-05-14]
 
 <br>
 
@@ -32,7 +27,6 @@ May 14, 2019
 # Attributes
 
   * The first four attributes are created from several BC inventory attributes: non_productive_descriptor_cd, non_forest_descriptor, land_cover_class_cd_1, soil_moisture_regime_1, species_cd_1, species_pct_1, species_cd_2, crown_closure, and proj_height_1.
-
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 x = mutate(x, 

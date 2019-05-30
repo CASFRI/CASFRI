@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>DST Attributes</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">CASFRI 5.0</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Docs
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="cas_specifications.html">Specifications</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    BC08
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="bc08.html">Notes</a>
+    </li>
+    <li>
+      <a href="bc08_hdr.html">HDR Attributes</a>
+    </li>
+    <li>
+      <a href="bc08_cas.html">CAS Attributes</a>
+    </li>
+    <li>
+      <a href="bc08_lyr.html">LYR Attributes</a>
+    </li>
+    <li>
+      <a href="bc08_nfl.html">NFL Attributes</a>
+    </li>
+    <li>
+      <a href="bc08_dst.html">DST Attributes</a>
+    </li>
+    <li>
+      <a href="bc08_eco.html">ECO Attributes</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    AB06
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ab06.html">Notes</a>
+    </li>
+    <li>
+      <a href="ab06_hdr.html">HDR Attributes</a>
+    </li>
+    <li>
+      <a href="ab06_cas.html">CAS Attributes</a>
+    </li>
+    <li>
+      <a href="ab06_lyr.html">LYR Attributes</a>
+    </li>
+    <li>
+      <a href="ab06_nfl.html">NFL Attributes</a>
+    </li>
+    <li>
+      <a href="ab06_dst.html">DST Attributes</a>
+    </li>
+    <li>
+      <a href="ab06_eco.html">ECO Attributes</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    AB16
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="ab16.html">Notes</a>
+    </li>
+    <li>
+      <a href="ab16_hdr.html">HDR Attributes</a>
+    </li>
+    <li>
+      <a href="ab16_cas.html">CAS Attributes</a>
+    </li>
+    <li>
+      <a href="ab16_lyr.html">LYR Attributes</a>
+    </li>
+    <li>
+      <a href="ab16_nfl.html">NFL Attributes</a>
+    </li>
+    <li>
+      <a href="ab16_dst.html">DST Attributes</a>
+    </li>
+    <li>
+      <a href="ab16_eco.html">ECO Attributes</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    NB01
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="nb01.html">Notes</a>
+    </li>
+    <li>
+      <a href="nb01_hdr.html">HDR Attributes</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">DST Attributes</h1>
+
+</div>
+
+
+<p><br></p>
+<div id="whats-new" class="section level1">
+<h1>What’s new</h1>
+<ul>
+<li>First version created on 2019-05-30</li>
+</ul>
+<p><br></p>
+</div>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p><br></p>
+</div>
+<div id="attributes" class="section level1">
+<h1>Attributes</h1>
+<div id="dist_1" class="section level2 tabset">
+<h2>dist_1</h2>
+<ul>
+<li>Perl code has a list of illegal dist types that include “SL”, “SU” -&gt; “OT”</li>
+<li>Perl code also has a comment about “CU” -&gt; “CL”</li>
+<li>not clear why these have been labelled illegal</li>
+</ul>
+<pre class="r"><code>friList = c(&#39;BU&#39;,&#39;CC&#39;,&#39;CL&#39;,&#39;CU&#39;,&#39;DT&#39;,&#39;PL&#39;,&#39;SC&#39;,&#39;SL&#39;,&#39;SN&#39;,&#39;ST&#39;,&#39;SU&#39;,&#39;TH&#39;,&#39;UK&#39;,&#39;WF&#39;)
+casList = c(&#39;BU&#39;,&#39;CO&#39;,&#39;OT&#39;,&#39;CL&#39;,&#39;DT&#39;,&#39;SI&#39;,&#39;SI&#39;,&#39;OT&#39;,&#39;DT&#39;,&#39;OT&#39;,&#39;OT&#39;,&#39;SI&#39;,&#39;OT&#39;,&#39;WF&#39;)
+x = mutate(x, dist_1=case_when(
+    is.na(modcon1) ~ &quot;NULL_VALUE&quot;,
+    str_trim(modcon1)==&quot;&quot; ~ &quot;EMPTY_STRING&quot;,
+    !modcon1 %in% friList ~ &quot;NOT_IN_SET&quot;,
+    TRUE ~ mapvalues(modcon1, friList, casList)))</code></pre>
+<div id="rawfri" class="section level3">
+<h3>RAWFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120463  
+## 
+## ----------------------------------------------------------------------------
+## No   Variable      Stats / Values   Freqs (% of Valid)   Valid     Missing  
+## ---- ------------- ---------------- -------------------- --------- ---------
+## 1    modcon1       1.               111605 (92.6%)       120476    0        
+##      [character]   2. BU                 3 ( 0.0%)       (100%)    (0%)     
+##                    3. CC              5075 ( 4.2%)                          
+##                    4. CL               413 ( 0.3%)                          
+##                    5. CU                36 ( 0.0%)                          
+##                    6. DT                 7 ( 0.0%)                          
+##                    7. SC               106 ( 0.1%)                          
+##                    8. SL              2057 ( 1.7%)                          
+##                    9. SN               773 ( 0.6%)                          
+##                    10. SU               23 ( 0.0%)                          
+##                    11. TH                6 ( 0.0%)                          
+##                    12. UK                1 ( 0.0%)                          
+##                    13. WF              371 ( 0.3%)                          
+## ----------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri" class="section level3">
+<h3>CASFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120468  
+## 
+## -------------------------------------------------------------------------------
+## No   Variable      Stats / Values      Freqs (% of Valid)   Valid     Missing  
+## ---- ------------- ------------------- -------------------- --------- ---------
+## 1    dist_1        1. BU                    3 ( 0.0%)       120476    0        
+##      [character]   2. CL                   36 ( 0.0%)       (100%)    (0%)     
+##                    3. CO                 5075 ( 4.2%)                          
+##                    4. DT                  780 ( 0.6%)                          
+##                    5. EMPTY_STRING     111605 (92.6%)                          
+##                    6. OT                 2494 ( 2.1%)                          
+##                    7. SI                  112 ( 0.1%)                          
+##                    8. WF                  371 ( 0.3%)                          
+## -------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<div id="dist_yr_1" class="section level2 tabset">
+<h2>dist_yr_1</h2>
+<ul>
+<li>what should a value of “0” be coded as?</li>
+</ul>
+<pre class="r"><code>x = mutate(x, dist_yr_1=case_when(
+    is.na(modyear1) ~ as.integer(-8888),
+    modyear1==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(modyear1)))</code></pre>
+<div id="rawfri-1" class="section level3">
+<h3>RAWFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120438  
+## 
+## ---------------------------------------------------------------------------------------
+## No   Variable    Stats / Values            Freqs (% of Valid)       Valid     Missing  
+## ---- ----------- ------------------------- ------------------------ --------- ---------
+## 1    modyear1    Mean (sd) : 84 (399.4)    0    : 115368 (95.8%)    120476    0        
+##      [numeric]   min &lt; med &lt; max:          1960 :     19 ( 0.0%)    (100%)    (0%)     
+##                  0 &lt; 0 &lt; 1997              1962 :     15 ( 0.0%)                       
+##                  IQR (CV) : 0 (4.8)        1963 :     32 ( 0.0%)                       
+##                                            1964 :     41 ( 0.0%)                       
+##                                            1965 :     38 ( 0.0%)                       
+##                                            1966 :    109 ( 0.1%)                       
+##                                            1967 :    104 ( 0.1%)                       
+##                                            1968 :    195 ( 0.2%)                       
+##                                            1969 :    186 ( 0.1%)                       
+##                                            1970 :    271 ( 0.2%)                       
+##                                            1971 :    122 ( 0.1%)                       
+##                                            1972 :    161 ( 0.1%)                       
+##                                            1973 :    280 ( 0.2%)                       
+##                                            1974 :     60 ( 0.0%)                       
+##                                            1975 :    161 ( 0.1%)                       
+##                                            1976 :     30 ( 0.0%)                       
+##                                            1977 :    127 ( 0.1%)                       
+##                                            1978 :     57 ( 0.0%)                       
+##                                            1979 :     56 ( 0.0%)                       
+##                                            1980 :     69 ( 0.1%)                       
+##                                            1981 :     75 ( 0.1%)                       
+##                                            1982 :    127 ( 0.1%)                       
+##                                            1983 :     93 ( 0.1%)                       
+##                                            1984 :    151 ( 0.1%)                       
+##                                            1985 :     97 ( 0.1%)                       
+##                                            1986 :    146 ( 0.1%)                       
+##                                            1987 :    171 ( 0.1%)                       
+##                                            1988 :    142 ( 0.1%)                       
+##                                            1989 :    134 ( 0.1%)                       
+##                                            1990 :    252 ( 0.2%)                       
+##                                            1991 :    223 ( 0.2%)                       
+##                                            1992 :    268 ( 0.2%)                       
+##                                            1993 :    194 ( 0.2%)                       
+##                                            1994 :    206 ( 0.2%)                       
+##                                            1995 :    368 ( 0.3%)                       
+##                                            1996 :    327 ( 0.3%)                       
+##                                            1997 :      1 ( 0.0%)                       
+## ---------------------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri-1" class="section level3">
+<h3>CASFRI</h3>
+<pre><code>## Data Frame Summary  
+## x  
+## Dimensions: 120476 x 1  
+## Duplicates: 120438  
+## 
+## ---------------------------------------------------------------------------------------
+## No   Variable    Stats / Values            Freqs (% of Valid)       Valid     Missing  
+## ---- ----------- ------------------------- ------------------------ --------- ---------
+## 1    x           Mean (sd) : 84 (399.4)    0    : 115368 (95.8%)    120476    0        
+##      [integer]   min &lt; med &lt; max:          1960 :     19 ( 0.0%)    (100%)    (0%)     
+##                  0 &lt; 0 &lt; 1997              1962 :     15 ( 0.0%)                       
+##                  IQR (CV) : 0 (4.8)        1963 :     32 ( 0.0%)                       
+##                                            1964 :     41 ( 0.0%)                       
+##                                            1965 :     38 ( 0.0%)                       
+##                                            1966 :    109 ( 0.1%)                       
+##                                            1967 :    104 ( 0.1%)                       
+##                                            1968 :    195 ( 0.2%)                       
+##                                            1969 :    186 ( 0.1%)                       
+##                                            1970 :    271 ( 0.2%)                       
+##                                            1971 :    122 ( 0.1%)                       
+##                                            1972 :    161 ( 0.1%)                       
+##                                            1973 :    280 ( 0.2%)                       
+##                                            1974 :     60 ( 0.0%)                       
+##                                            1975 :    161 ( 0.1%)                       
+##                                            1976 :     30 ( 0.0%)                       
+##                                            1977 :    127 ( 0.1%)                       
+##                                            1978 :     57 ( 0.0%)                       
+##                                            1979 :     56 ( 0.0%)                       
+##                                            1980 :     69 ( 0.1%)                       
+##                                            1981 :     75 ( 0.1%)                       
+##                                            1982 :    127 ( 0.1%)                       
+##                                            1983 :     93 ( 0.1%)                       
+##                                            1984 :    151 ( 0.1%)                       
+##                                            1985 :     97 ( 0.1%)                       
+##                                            1986 :    146 ( 0.1%)                       
+##                                            1987 :    171 ( 0.1%)                       
+##                                            1988 :    142 ( 0.1%)                       
+##                                            1989 :    134 ( 0.1%)                       
+##                                            1990 :    252 ( 0.2%)                       
+##                                            1991 :    223 ( 0.2%)                       
+##                                            1992 :    268 ( 0.2%)                       
+##                                            1993 :    194 ( 0.2%)                       
+##                                            1994 :    206 ( 0.2%)                       
+##                                            1995 :    368 ( 0.3%)                       
+##                                            1996 :    327 ( 0.3%)                       
+##                                            1997 :      1 ( 0.0%)                       
+## ---------------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<div id="dist_ext_upper_1-dist_ext_lower_1" class="section level2 tabset">
+<h2>dist_ext_upper_1, dist_ext_lower_1</h2>
+<pre class="r"><code>friList = c(1,2,3,4,5)
+casListUpper = c(25,50,75,95,100)
+casListLower = c(1,26,51,76,96)
+x = mutate(x, 
+    dist_ext_upper_1=case_when(
+    is.na(modext1) ~ as.integer(-8888),
+    modext1==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(modext1, friList, casListUpper))),
+    dist_ext_lower_1=case_when(
+    is.na(modext1) ~ as.integer(-8888),
+    modext1==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(modext1, friList, casListLower)))
+    )</code></pre>
+<div id="rawfri-2" class="section level3">
+<h3>RAWFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120468  
+## 
+## ----------------------------------------------------------------------------
+## No   Variable      Stats / Values   Freqs (% of Valid)   Valid     Missing  
+## ---- ------------- ---------------- -------------------- --------- ---------
+## 1    modext1       1.                  103 ( 0.1%)       120476    0        
+##      [character]   2. 0             111771 (92.8%)       (100%)    (0%)     
+##                    3. 1                282 ( 0.2%)                          
+##                    4. 2                371 ( 0.3%)                          
+##                    5. 3                467 ( 0.4%)                          
+##                    6. 4                966 ( 0.8%)                          
+##                    7. 5               6515 ( 5.4%)                          
+##                    8. 6                  1 ( 0.0%)                          
+## ----------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri-lower" class="section level3">
+<h3>CASFRI (lower)</h3>
+<pre><code>## Data Frame Summary  
+## x  
+## Dimensions: 120476 x 1  
+## Duplicates: 120468  
+## 
+## --------------------------------------------------------------------------------------
+## No   Variable    Stats / Values            Freqs (% of Valid)     Valid      Missing  
+## ---- ----------- ------------------------- ---------------------- ---------- ---------
+## 1    x           Mean (sd) : 6.1 (22.8)    0  : 111771 (92.8%)    120373     103      
+##      [integer]   min &lt; med &lt; max:          1  :    282 ( 0.2%)    (99.91%)   (0.09%)  
+##                  0 &lt; 0 &lt; 96                6  :      1 ( 0.0%)                        
+##                  IQR (CV) : 0 (3.7)        26 :    371 ( 0.3%)                        
+##                                            51 :    467 ( 0.4%)                        
+##                                            76 :    966 ( 0.8%)                        
+##                                            96 :   6515 ( 5.4%)                        
+## --------------------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri-upper" class="section level3">
+<h3>CASFRI (upper)</h3>
+<pre><code>## Data Frame Summary  
+## x  
+## Dimensions: 120476 x 1  
+## Duplicates: 120468  
+## 
+## ---------------------------------------------------------------------------------------
+## No   Variable    Stats / Values            Freqs (% of Valid)      Valid      Missing  
+## ---- ----------- ------------------------- ----------------------- ---------- ---------
+## 1    x           Mean (sd) : 6.7 (24.5)    0   : 111771 (92.8%)    120373     103      
+##      [integer]   min &lt; med &lt; max:          6   :      1 ( 0.0%)    (99.91%)   (0.09%)  
+##                  0 &lt; 0 &lt; 100               25  :    282 ( 0.2%)                        
+##                  IQR (CV) : 0 (3.7)        50  :    371 ( 0.3%)                        
+##                                            75  :    467 ( 0.4%)                        
+##                                            95  :    966 ( 0.8%)                        
+##                                            100 :   6515 ( 5.4%)                        
+## ---------------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<div id="dist_2" class="section level2 tabset">
+<h2>dist_2</h2>
+<ul>
+<li>Perl code has a list of illegal dist types that include “SL”, “SU” -&gt; “OT”</li>
+<li>Perl code also has a comment about “CU” -&gt; “CL”</li>
+<li>not clear why these have been labelled illegal</li>
+</ul>
+<pre class="r"><code>friList = c(&#39;BU&#39;,&#39;CC&#39;,&#39;CL&#39;,&#39;CU&#39;,&#39;DT&#39;,&#39;PL&#39;,&#39;SC&#39;,&#39;SL&#39;,&#39;SN&#39;,&#39;ST&#39;,&#39;SU&#39;,&#39;TH&#39;,&#39;UK&#39;,&#39;WF&#39;)
+casList = c(&#39;BU&#39;,&#39;CO&#39;,&#39;OT&#39;,&#39;CL&#39;,&#39;DT&#39;,&#39;SI&#39;,&#39;SI&#39;,&#39;OT&#39;,&#39;DT&#39;,&#39;OT&#39;,&#39;OT&#39;,&#39;SI&#39;,&#39;OT&#39;,&#39;WF&#39;)
+x = mutate(x, dist_2=case_when(
+    is.na(modcon2) ~ &quot;NULL_VALUE&quot;,
+    str_trim(modcon2)==&quot;&quot; ~ &quot;EMPTY_STRING&quot;,
+    !modcon2 %in% friList ~ &quot;NOT_IN_SET&quot;,
+    TRUE ~ mapvalues(modcon2, friList, casList)))</code></pre>
+<div id="rawfri-3" class="section level3">
+<h3>RAWFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120467  
+## 
+## ----------------------------------------------------------------------------
+## No   Variable      Stats / Values   Freqs (% of Valid)   Valid     Missing  
+## ---- ------------- ---------------- -------------------- --------- ---------
+## 1    modcon2       1.               120156 (99.7%)       120476    0        
+##      [character]   2. CC               109 ( 0.1%)       (100%)    (0%)     
+##                    3. CL                 1 ( 0.0%)                          
+##                    4. SC               136 ( 0.1%)                          
+##                    5. SI                 2 ( 0.0%)                          
+##                    6. SL                56 ( 0.0%)                          
+##                    7. SN                10 ( 0.0%)                          
+##                    8. SU                 4 ( 0.0%)                          
+##                    9. WF                 2 ( 0.0%)                          
+## ----------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri-2" class="section level3">
+<h3>CASFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120469  
+## 
+## -------------------------------------------------------------------------------
+## No   Variable      Stats / Values      Freqs (% of Valid)   Valid     Missing  
+## ---- ------------- ------------------- -------------------- --------- ---------
+## 1    dist_2        1. CO                  109 ( 0.1%)       120476    0        
+##      [character]   2. DT                   10 ( 0.0%)       (100%)    (0%)     
+##                    3. EMPTY_STRING     120156 (99.7%)                          
+##                    4. NOT_IN_SET            2 ( 0.0%)                          
+##                    5. OT                   61 ( 0.0%)                          
+##                    6. SI                  136 ( 0.1%)                          
+##                    7. WF                    2 ( 0.0%)                          
+## -------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<div id="dist_yr_2" class="section level2 tabset">
+<h2>dist_yr_2</h2>
+<ul>
+<li>what should a value of “0” be coded as?</li>
+</ul>
+<pre class="r"><code>x = mutate(x, dist_yr_2=case_when(
+    is.na(modyear2) ~ as.integer(-8888),
+    modyear2==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(modyear2)))</code></pre>
+<div id="rawfri-4" class="section level3">
+<h3>RAWFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120463  
+## 
+## ---------------------------------------------------------------------------------------
+## No   Variable    Stats / Values            Freqs (% of Valid)       Valid     Missing  
+## ---- ----------- ------------------------- ------------------------ --------- ---------
+## 1    modyear2    Mean (sd) : 1.8 (59.6)    0    : 120367 (99.9%)    120476    0        
+##      [numeric]   min &lt; med &lt; max:          1973 :      3 ( 0.0%)    (100%)    (0%)     
+##                  0 &lt; 0 &lt; 1991              1975 :      1 ( 0.0%)                       
+##                  IQR (CV) : 0 (33.2)       1976 :      2 ( 0.0%)                       
+##                                            1977 :     10 ( 0.0%)                       
+##                                            1978 :      3 ( 0.0%)                       
+##                                            1981 :      4 ( 0.0%)                       
+##                                            1982 :     18 ( 0.0%)                       
+##                                            1985 :     19 ( 0.0%)                       
+##                                            1986 :     12 ( 0.0%)                       
+##                                            1987 :     32 ( 0.0%)                       
+##                                            1988 :      3 ( 0.0%)                       
+##                                            1991 :      2 ( 0.0%)                       
+## ---------------------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri-3" class="section level3">
+<h3>CASFRI</h3>
+<pre><code>## Data Frame Summary  
+## x  
+## Dimensions: 120476 x 1  
+## Duplicates: 120463  
+## 
+## ---------------------------------------------------------------------------------------
+## No   Variable    Stats / Values            Freqs (% of Valid)       Valid     Missing  
+## ---- ----------- ------------------------- ------------------------ --------- ---------
+## 1    x           Mean (sd) : 1.8 (59.6)    0    : 120367 (99.9%)    120476    0        
+##      [integer]   min &lt; med &lt; max:          1973 :      3 ( 0.0%)    (100%)    (0%)     
+##                  0 &lt; 0 &lt; 1991              1975 :      1 ( 0.0%)                       
+##                  IQR (CV) : 0 (33.2)       1976 :      2 ( 0.0%)                       
+##                                            1977 :     10 ( 0.0%)                       
+##                                            1978 :      3 ( 0.0%)                       
+##                                            1981 :      4 ( 0.0%)                       
+##                                            1982 :     18 ( 0.0%)                       
+##                                            1985 :     19 ( 0.0%)                       
+##                                            1986 :     12 ( 0.0%)                       
+##                                            1987 :     32 ( 0.0%)                       
+##                                            1988 :      3 ( 0.0%)                       
+##                                            1991 :      2 ( 0.0%)                       
+## ---------------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<div id="dist_ext_upper_2-dist_ext_lower_2" class="section level2 tabset">
+<h2>dist_ext_upper_2, dist_ext_lower_2</h2>
+<pre class="r"><code>friList = c(1,2,3,4,5)
+casListUpper = c(25,50,75,95,100)
+casListLower = c(1,26,51,76,96)
+x = mutate(x, 
+    dist_ext_upper_2=case_when(
+    is.na(modext2) ~ as.integer(-8888),
+    modext2==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(modext2, friList, casListUpper))),
+    dist_ext_lower_2=case_when(
+    is.na(modext2) ~ as.integer(-8888),
+    modext2==0 ~ as.integer(0), # NOT SURE WHAT THIS SHOULD BE?
+    TRUE ~ as.integer(mapvalues(modext2, friList, casListLower)))
+    )</code></pre>
+<div id="rawfri-5" class="section level3">
+<h3>RAWFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120469  
+## 
+## ----------------------------------------------------------------------------
+## No   Variable      Stats / Values   Freqs (% of Valid)   Valid     Missing  
+## ---- ------------- ---------------- -------------------- --------- ---------
+## 1    modext2       1.                  126 ( 0.1%)       120476    0        
+##      [character]   2. 0             120053 (99.7%)       (100%)    (0%)     
+##                    3. 1                  3 ( 0.0%)                          
+##                    4. 2                 13 ( 0.0%)                          
+##                    5. 3                 14 ( 0.0%)                          
+##                    6. 4                 43 ( 0.0%)                          
+##                    7. 5                224 ( 0.2%)                          
+## ----------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri-lower-1" class="section level3">
+<h3>CASFRI (lower)</h3>
+<pre><code>## Data Frame Summary  
+## x  
+## Dimensions: 120476 x 1  
+## Duplicates: 120469  
+## 
+## ------------------------------------------------------------------------------------
+## No   Variable    Stats / Values           Freqs (% of Valid)     Valid     Missing  
+## ---- ----------- ------------------------ ---------------------- --------- ---------
+## 1    x           Mean (sd) : 0.2 (4.4)    0  : 120053 (99.8%)    120350    126      
+##      [integer]   min &lt; med &lt; max:         1  :      3 ( 0.0%)    (99.9%)   (0.1%)   
+##                  0 &lt; 0 &lt; 96               26 :     13 ( 0.0%)                       
+##                  IQR (CV) : 0 (20.6)      51 :     14 ( 0.0%)                       
+##                                           76 :     43 ( 0.0%)                       
+##                                           96 :    224 ( 0.2%)                       
+## ------------------------------------------------------------------------------------</code></pre>
+</div>
+<div id="casfri-upper-1" class="section level3">
+<h3>CASFRI (upper)</h3>
+<pre><code>## Data Frame Summary  
+## x  
+## Dimensions: 120476 x 1  
+## Duplicates: 120469  
+## 
+## -------------------------------------------------------------------------------------
+## No   Variable    Stats / Values           Freqs (% of Valid)      Valid     Missing  
+## ---- ----------- ------------------------ ----------------------- --------- ---------
+## 1    x           Mean (sd) : 0.2 (4.8)    0   : 120053 (99.8%)    120350    126      
+##      [integer]   min &lt; med &lt; max:         25  :      3 ( 0.0%)    (99.9%)   (0.1%)   
+##                  0 &lt; 0 &lt; 100              50  :     13 ( 0.0%)                       
+##                  IQR (CV) : 0 (20.3)      75  :     14 ( 0.0%)                       
+##                                           95  :     43 ( 0.0%)                       
+##                                           100 :    224 ( 0.2%)                       
+## -------------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<div id="dist_3" class="section level2 tabset">
+<h2>dist_3</h2>
+<ul>
+<li>value = "“-8888” in cas04</li>
+</ul>
+</div>
+<div id="dist_yr_3" class="section level2 tabset">
+<h2>dist_yr_3</h2>
+<ul>
+<li>value = -8888 in cas04</li>
+</ul>
+</div>
+<div id="dist_ext_upper_3-dist_ext_lower_3" class="section level2 tabset">
+<h2>dist_ext_upper_3, dist_ext_lower_3</h2>
+<ul>
+<li>value = -8888 in cas04</li>
+</ul>
+</div>
+<div id="layer" class="section level2 tabset">
+<h2>layer</h2>
+<ul>
+<li>value = 1 in cas04</li>
+</ul>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

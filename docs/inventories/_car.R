@@ -35,6 +35,8 @@ casRender = function(inv) {
         render("ab06_cas.Rmd")
         render("ab06_lyr.Rmd")
         render("ab06_nfl.Rmd")
+        render("ab06_dst.Rmd")
+        render("ab06_eco.Rmd")
     } else if (inv=="ab16") {
         # Select attributes from ab16 and save as a tibble
         render("ab16.Rmd")
@@ -42,6 +44,8 @@ casRender = function(inv) {
         render("ab16_cas.Rmd")
         render("ab16_lyr.Rmd")
         render("ab16_nfl.Rmd")
+        render("ab16_dst.Rmd")
+        render("ab16_eco.Rmd")
     } else if (inv=="bc08") {
         render("bc08.Rmd")
         render("bc08_hdr.Rmd")
@@ -58,8 +62,8 @@ casRender = function(inv) {
     }
 }
 
-render("index.Rmd")
-render("cas_specifications.Rmd")
+#render("index.Rmd")
+#render("cas_specifications.Rmd")
 
 x = friConnect("ab06")
 casRender("ab06")
