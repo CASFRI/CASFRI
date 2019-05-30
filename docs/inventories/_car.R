@@ -62,14 +62,14 @@ casRender = function(inv) {
     }
 }
 
-#render("index.Rmd")
-#render("cas_specifications.Rmd")
+render("index.Rmd")
+render("cas_specifications.Rmd")
 
-x = friConnect("ab06")
-casRender("ab06")
-x = friConnect("ab16")
-casRender("ab16")
-x = friConnect("bc08")
-casRender("bc08")
-x = friConnect("nb01")
-casRender("nb01")
+#x = friConnect("ab06")
+#casRender("ab06")
+#x = friConnect("ab16")
+#casRender("ab16")
+#x = friConnect("bc08")
+#casRender("bc08")
+#x = friConnect("nb01")
+#casRender("nb01")
