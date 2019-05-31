@@ -9,6 +9,8 @@ navbar:
     menu:
     - text: Specifications
       href: cas_specifications.html
+    - text: Workplan & Status
+      href: https://docs.google.com/spreadsheets/d/1MhboHhXlt2dfsuANwxj-RcczQR3r3YKg9E59HYESsHE/edit?usp=sharing
   - text: BC08
     menu:
     - text: Notes
