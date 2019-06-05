@@ -65,6 +65,14 @@ navbar:
       href: nb01.html
     - text: HDR Attributes
       href: nb01_hdr.html
+    - text: LYR Attributes
+      href: nb01_lyr.html
+    - text: NFL Attributes
+      href: nb01_nfl.html
+    - text: DST Attributes
+      href: nb01_dst.html
+    - text: ECO Attributes
+      href: nb01_eco.html
 output:
   html_document:
     highlight: textmate
