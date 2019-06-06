@@ -25,7 +25,7 @@ fi
 srcFileName=PhotoYear_Update
 srcFullPath="$friDir/AB/PhotoYear/$srcFileName.shp"
 
-prjFile="./canadaAlbersEqualAreaConic.prj"
+prjFile="../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.ab_photoYear
 
 if [ $overwriteFRI == True ]; then
