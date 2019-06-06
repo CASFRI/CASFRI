@@ -11,7 +11,7 @@
 
 
 
-<title>HDR Attributes</title>
+<title>ECO Attributes</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -553,7 +553,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">HDR Attributes</h1>
+<h1 class="title toc-ignore">ECO Attributes</h1>
 
 </div>
 
@@ -562,188 +562,140 @@ div.tocify {
 <div id="whats-new" class="section level1">
 <h1>What’s new</h1>
 <ul>
-<li>Added CAS_04 HDR records since they are different from CASFRI specs (2019-05-21)</li>
+<li>Version 1 created on 2019-05-30</li>
 </ul>
 <p><br></p>
 </div>
 <div id="overview" class="section level1">
 <h1>Overview</h1>
-<ul>
-<li>The CASFRI attribute names for CAS_04 are very different from the specifications.</li>
-<li>It might be easiest to create this table manually since there is no need to loop over all records</li>
-</ul>
 <p><br></p>
 </div>
-<div id="cas_04-attributes" class="section level1">
-<h1>CAS_04 Attributes</h1>
+<div id="attributes" class="section level1">
+<h1>Attributes</h1>
+<ul>
+<li>The first four attributes are created from several AB inventory attributes: crownclose, moisture, sp1, sp1_percntcnt, sp2, nonfor_veg, nat_nonveg</li>
+</ul>
+<pre class="r"><code>x = mutate(x, 
+
+  # Initialize CAS attributes
+  wetland_type=&quot;NULL_VALUE&quot;, wet_veg_cover=&quot;NULL_VALUE&quot;, wet_landform_mod=&quot;NULL_VALUE&quot;, wet_local_mod=&quot;NULL_VALUE&quot;,
+
+  wetland = case_when(
+    moisture==&quot;w&quot; &amp; !is.na(nonfor_veg) ~ &quot;NULL_VALUE&quot;,
+    moisture==&quot;w&quot; &amp; nonfor_veg %in% c(&quot;SO&quot;,&quot;SC&quot;) ~ &quot;SONS&quot;,
+    moisture==&quot;w&quot; &amp; nonfor_veg %in% c(&quot;HG&quot;,&quot;HF&quot;) ~ &quot;MONG&quot;,
+    moisture==&quot;w&quot; &amp; nonfor_veg==&quot;BR&quot; ~ &quot;FONG&quot;,
+    moisture==&quot;w&quot; &amp; nat_nonveg==&quot;NWB&quot; ~ &quot;SONS&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; (sp1==&quot;LT&quot; | sp2==&quot;LT&quot;) &amp; crownclose %in% c(&quot;A&quot;,&quot;B&quot;) ~ &quot;FTNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; (sp1==&quot;LT&quot; | sp2==&quot;LT&quot;) &amp; crownclose==&quot;C&quot; ~ &quot;STNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; (sp1==&quot;LT&quot; | sp2==&quot;LT&quot;) &amp; crownclose==&quot;D&quot; ~ &quot;SFNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; (sp1==&quot;SB&quot; &amp; sp1_percnt==100) &amp; crownclose %in% c(&quot;A&quot;,&quot;B&quot;) ~ &quot;BTNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; (sp1==&quot;SB&quot; &amp; sp1_percnt==100) &amp; crownclose==&quot;C&quot; ~ &quot;STNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; (sp1==&quot;SB&quot; &amp; sp1_percnt==100) &amp; crownclose==&quot;D&quot; ~ &quot;SFNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; ((sp1==&quot;SB&quot; | sp1==&quot;FB&quot;) &amp; !sp2==&quot;LT&quot;) &amp; crownclose %in% c(&quot;A&quot;,&quot;B&quot;,&quot;C&quot;) ~ &quot;STNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; ((sp1==&quot;SB&quot; | sp1==&quot;FB&quot;) &amp; !sp2==&quot;LT&quot;) &amp; crownclose==&quot;D&quot; ~ &quot;SFNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; sp1 %in% c(&quot;BW&quot;,&quot;PB&quot;) &amp; crownclose %in% c(&quot;A&quot;,&quot;B&quot;,&quot;C&quot;) ~ &quot;STNN&quot;,
+    moisture %in% c(&quot;a&quot;,&quot;d&quot;,&quot;m&quot;) &amp; sp1 %in% c(&quot;BW&quot;,&quot;PB&quot;) &amp; crownclose==&quot;D&quot; ~ &quot;SFNN&quot;,
+    TRUE ~ &quot;NULL_VALUE&quot;),
+  
+  # Extract from wetland:
+  wetland_type = if_else(wetland==&quot;NULL_VALUE&quot;, &quot;NULL_VALUE&quot;, substr(wetland,1,1)),
+  wet_veg_cover = if_else(wetland==&quot;NULL_VALUE&quot;, &quot;NULL_VALUE&quot;, substr(wetland,2,2)),
+  wet_landform_mod = if_else(wetland==&quot;NULL_VALUE&quot;, &quot;NULL_VALUE&quot;, substr(wetland,3,3)),
+  wet_local_mod = if_else(wetland==&quot;NULL_VALUE&quot;, &quot;NULL_VALUE&quot;, substr(wetland,4,4))
+
+)</code></pre>
+<div id="wetland_type" class="section level2 tabset">
+<h2>wetland_type</h2>
+<div id="rawfri" class="section level3">
+<h3>RAWFRI</h3>
+</div>
+<div id="casfri" class="section level3">
+<h3>CASFRI</h3>
 <pre><code>## Data Frame Summary  
-## z  
-## Dimensions: 1 x 19  
-## Duplicates: 0  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120475  
 ## 
-## --------------------------------------------------------------------------------------------
-## No   Variable                 Stats / Values                  Freqs (% of Valid)   Missing  
-## ---- ------------------------ ------------------------------- -------------------- ---------
-## 1    header_id                1. AB_0006                      1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 2    jurisdiction             1. AB                           1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 3    owner_type               1. PROV_GOV                     1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 4    owner_name               1. CROWN_GRODONBUCHANAN         1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 5    inventory_type           1. AVI                          1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 6    inventory_version        1. 2.1                          1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 7    inventory_manual         1. AVI 2.1 manual               1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 8    source_data_format       1. E00                          1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 9    acquisition_date         1. 2004                         1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 10   data_transfer            1. Missing                      1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 11   received_from            1. Harry Stelfox                1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 12   contact_info             Valid                           1 (100.0%)           0        
-##      [character]              Invalid                         0 (  0.0%)           (0%)     
-##      Emails                   Duplicates                      0 (  0.0%)                    
-## 
-## 13   data_availability        1. Alberta Sustainable Resou    1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 14   redistribution           1. Needs direct agreement fr    1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 15   permission               1. RESTRICTED                   1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 16   license_agreement        1. Expired                      1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 17   source_data_photoyear    1. Independent shapefile pro    1 (100.0%)           0        
-##      [character]                                                                   (0%)     
-## 
-## 18   photoyear_start          1 distinct value                1996 : 1 (100.0%)    0        
-##      [numeric]                                                                     (0%)     
-## 
-## 19   photoyear_end            1 distinct value                2000 : 1 (100.0%)    0        
-##      [numeric]                                                                     (0%)     
-## --------------------------------------------------------------------------------------------</code></pre>
-<p><br></p>
+## ------------------------------------------------------------------------------
+## No   Variable        Stats / Values   Freqs (% of Valid)   Valid     Missing  
+## ---- --------------- ---------------- -------------------- --------- ---------
+## 1    wetland_type    1. NULL_VALUE    120476 (100.0%)      120476    0        
+##      [character]                                           (100%)    (0%)     
+## ------------------------------------------------------------------------------</code></pre>
 </div>
-<div id="cas_05-attributes" class="section level1">
-<h1>CAS_05 Attributes</h1>
-<ul>
-<li>If the decision is to use the CAS_04 attributes rather than the attributes in the CASFRI specifications documents then the following sections can be deleted.</li>
-</ul>
-<div id="identification_id" class="section level2 tabset">
-<h2>identification_id</h2>
-<ul>
-<li>nothing()</li>
-</ul>
 </div>
-<div id="jurisdiction" class="section level2 tabset">
-<h2>jurisdiction</h2>
-<ul>
-<li>copyText(‘AB’)</li>
-</ul>
+<div id="wet_veg_cover" class="section level2 tabset">
+<h2>wet_veg_cover</h2>
+<div id="rawfri-1" class="section level3">
+<h3>RAWFRI</h3>
 </div>
-<div id="coordinate_sys" class="section level2 tabset">
-<h2>coordinate_sys</h2>
-<ul>
-<li>nothing()</li>
-</ul>
+<div id="casfri-1" class="section level3">
+<h3>CASFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120475  
+## 
+## -------------------------------------------------------------------------------
+## No   Variable         Stats / Values   Freqs (% of Valid)   Valid     Missing  
+## ---- ---------------- ---------------- -------------------- --------- ---------
+## 1    wet_veg_cover    1. NULL_VALUE    120476 (100.0%)      120476    0        
+##      [character]                                            (100%)    (0%)     
+## -------------------------------------------------------------------------------</code></pre>
 </div>
-<div id="projection" class="section level2 tabset">
-<h2>projection</h2>
-<ul>
-<li>nothing()</li>
-</ul>
 </div>
-<div id="datum" class="section level2 tabset">
-<h2>datum</h2>
-<ul>
-<li>nothing()</li>
-</ul>
+<div id="wet_landform_mod" class="section level2 tabset">
+<h2>wet_landform_mod</h2>
+<div id="rawfri-2" class="section level3">
+<h3>RAWFRI</h3>
 </div>
-<div id="inventory_owner" class="section level2 tabset">
-<h2>inventory_owner</h2>
-<ul>
-<li>copyText(‘CROWN_GRODONBUCHANAN’)</li>
-</ul>
+<div id="casfri-2" class="section level3">
+<h3>CASFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120475  
+## 
+## ----------------------------------------------------------------------------------
+## No   Variable            Stats / Values   Freqs (% of Valid)   Valid     Missing  
+## ---- ------------------- ---------------- -------------------- --------- ---------
+## 1    wet_landform_mod    1. NULL_VALUE    120476 (100.0%)      120476    0        
+##      [character]                                               (100%)    (0%)     
+## ----------------------------------------------------------------------------------</code></pre>
 </div>
-<div id="land_owner" class="section level2 tabset">
-<h2>land_owner</h2>
-<ul>
-<li>copyText(‘PROV_GOV’)</li>
-</ul>
 </div>
-<div id="permission" class="section level2 tabset">
-<h2>permission</h2>
-<ul>
-<li>nothing()</li>
-</ul>
+<div id="wet_local_mod" class="section level2 tabset">
+<h2>wet_local_mod</h2>
+<div id="rawfri-3" class="section level3">
+<h3>RAWFRI</h3>
 </div>
-<div id="tenure_type" class="section level2 tabset">
-<h2>tenure_type</h2>
-<ul>
-<li>nothing()</li>
-</ul>
+<div id="casfri-3" class="section level3">
+<h3>CASFRI</h3>
+<pre><code>## Data Frame Summary  
+##   
+## Dimensions: 120476 x 1  
+## Duplicates: 120475  
+## 
+## -------------------------------------------------------------------------------
+## No   Variable         Stats / Values   Freqs (% of Valid)   Valid     Missing  
+## ---- ---------------- ---------------- -------------------- --------- ---------
+## 1    wet_local_mod    1. NULL_VALUE    120476 (100.0%)      120476    0        
+##      [character]                                            (100%)    (0%)     
+## -------------------------------------------------------------------------------</code></pre>
 </div>
-<div id="inv_type" class="section level2 tabset">
-<h2>inv_type</h2>
-<ul>
-<li>copyText(‘AVI’)</li>
-</ul>
 </div>
-<div id="inv_version" class="section level2 tabset">
-<h2>inv_version</h2>
+<div id="eco_site" class="section level2 tabset">
+<h2>eco_site</h2>
 <ul>
-<li>nothing(‘2.1’)</li>
+<li>Is this used for this inventory</li>
 </ul>
+<div id="rawfri-4" class="section level3">
+<h3>RAWFRI</h3>
 </div>
-<div id="inv_start_yr" class="section level2 tabset">
-<h2>inv_start_yr</h2>
-<ul>
-<li>nothing()</li>
-</ul>
+<div id="casfri-4" class="section level3">
+<h3>CASFRI</h3>
 </div>
-<div id="inv_finish_yr" class="section level2 tabset">
-<h2>inv_finish_yr</h2>
-<ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_acq_id" class="section level2 tabset">
-<h2>inv_acq_id</h2>
-<ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_acq_yr" class="section level2 tabset">
-<h2>inv_acq_yr</h2>
-<ul>
-<li>nothing()</li>
-</ul>
-</div>
-<div id="inv_update_yr" class="section level2 tabset">
-<h2>inv_update_yr</h2>
-<ul>
-<li>nothing()</li>
-</ul>
 </div>
 </div>
 

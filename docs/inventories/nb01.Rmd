@@ -18,9 +18,15 @@ Last updated: 2019-05-21
 
 # Bookmarks
 
+  * http://www.snb.ca/geonb1/e/DC/catalogue-E.asp
+
 <br>
 
 # General
+
+From Description of most recent FRI:
+
+Forest - new schema Exported created on Nov 14-15, 2012 Using photo-interpretation, New Brunswick's provincial lands and water are classified into: non-forested land, wetland, water and forested land. All four classifications form a complete coverage of the entire province and are stored separattely. Every year, one-tenth of the province is interpretted and updated into the relevant classification layer. As a part of the classification, this layer represents New Brunswick's interpretted forest polygon features and is updated to and including the 2015 interpretation area.
 
 <br>
 

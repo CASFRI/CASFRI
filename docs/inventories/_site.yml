@@ -9,6 +9,8 @@ navbar:
     menu:
     - text: Specifications
       href: cas_specifications.html
+    - text: Workplan & Status
+      href: https://docs.google.com/spreadsheets/d/1MhboHhXlt2dfsuANwxj-RcczQR3r3YKg9E59HYESsHE/edit?usp=sharing
   - text: BC08
     menu:
     - text: Notes
@@ -37,6 +39,10 @@ navbar:
       href: ab06_lyr.html
     - text: NFL Attributes
       href: ab06_nfl.html
+    - text: DST Attributes
+      href: ab06_dst.html
+    - text: ECO Attributes
+      href: ab06_eco.html
   - text: AB16
     menu:
     - text: Notes
@@ -49,12 +55,24 @@ navbar:
       href: ab16_lyr.html
     - text: NFL Attributes
       href: ab16_nfl.html
+    - text: DST Attributes
+      href: ab16_dst.html
+    - text: ECO Attributes
+      href: ab16_eco.html
   - text: NB01
     menu:
     - text: Notes
       href: nb01.html
     - text: HDR Attributes
       href: nb01_hdr.html
+    - text: LYR Attributes
+      href: nb01_lyr.html
+    - text: NFL Attributes
+      href: nb01_nfl.html
+    - text: DST Attributes
+      href: nb01_dst.html
+    - text: ECO Attributes
+      href: nb01_eco.html
 output:
   html_document:
     highlight: textmate
