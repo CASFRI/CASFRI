@@ -27,12 +27,11 @@ output:
         NB_0001-xxFOREST_NONFOR-xxxxxxxxxx-0052412905-0508761
         NB_0001-xxFOREST_NONFOR-xxxxxxxxxx-0052422602-0512802
         NB_0001-xxFOREST_NONFOR-xxxxxxxxxx-0050408144-0515168
-    * fixed 3 records using rawfri
+    * partially fixed 3 records using rawfri
         NB_0001-xxFOREST_NONFOR-xxxxxxxxxx-0047375524-0357987 (layer 2)
         NB_0001-xxFOREST_NONFOR-xxxxxxxxxx-0052422602-0526925 (layer 2)
         NB_0001-xxFOREST_NONFOR-xxxxxxxxxx-0050405790-0530309 (layer 2)
-    * still leaves a discrepancy of 1 layer polygon
-  * This cleaned up the data so that there were no longer "mixed" columns e.g., species code and percent
+    * this still leaves a discrepancy of 1 layer 2 polygon
 
 <br>
 
@@ -50,6 +49,7 @@ x4 = read_csv("../../vernier/nb01/data/NB_0001_fixed.lyr")
 x = friConnect("nb01")
 x1 = x %>% mutate(lyr=1)
 x2 = filter(x, !is.na(l2s1)) %>% mutate(lyr=2)
+#x2 = filter(x, !is.na(l2s1) | l2cc>0) %>% mutate(lyr=2)
 x = bind_rows(x1, x2)
 ```
 
@@ -447,16 +447,24 @@ dfSummary(x4$SPECIES_PER_1[x4$LAYER==2], graph.col=FALSE, max.distinct.values=99
 dfSummary(x$species_per_1[x$lyr==2], graph.col=FALSE, max.distinct.values=99)
 ```
 
-## productive_for {.tabset}
+## productive_for (layer 1) {.tabset}
 
-  * This one needs to be done properly...
-  * Some obvious issues with CAS_04...
+  * Not well documented or coded... and CAS_04 and CAS_05 are far apart!
+  * We need to go over the rules carefully.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
-#x = mutate(x, productive_for=if_else(modcon1!="CC" & species_1=="EMPTY_STRING" & (crown_closure_upper!=-9998 | height_upper!=-9999), "PP", "PF"))
-x = mutate(x, structure_per = -8888, layer=1, layer_rank=1, productive_for = "PF" )
-x = mutate(x, productive_for=if_else((!is.na(l1s1) & str_trim(l1s1)=="") & (!is.na(l1cc) | !is.na(l1ht)), "PP", productive_for))
-x = mutate(x, productive_for=if_else(!is.na(l1trt) & l1trt=="CC","PF", productive_for))
+#x = mutate(x, productive_for=if_else(!is.na(l1trt) & l1trt=="CC","PF", productive_for))
+x = mutate(x,
+    productive_for=if_else(
+    lyr==1, 
+      case_when(
+        (crown_closure_lower %in% c(-8888,-9999) | height_lower==-9999) | (fst==0 & (!str_trim(l1trt)=="" | !l1trt=="CC")) ~ "PP",
+        TRUE ~ "PF"),
+      case_when(
+        (crown_closure_lower %in% c(-8888,-9999) | height_lower==-9999) | (fst==0 & (!str_trim(l2trt)=="" | !l2trt=="CC")) ~ "PP",
+        TRUE ~ "PF")
+    )
+)
 ```
 
 ### RAWFRI
@@ -468,14 +476,34 @@ x = mutate(x, productive_for=if_else(!is.na(l1trt) & l1trt=="CC","PF", productiv
 ### CAS_04
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x4["PRODUCTIVE_FOR"], graph.col=FALSE, max.distinct.values=99)
+dfSummary(x4$PRODUCTIVE_FOR[x4$LAYER==1], graph.col=FALSE, max.distinct.values=99)
 ```
 
 ### CAS_05
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x["productive_for"], graph.col=FALSE, max.distinct.values=99)
+dfSummary(x$productive_for[x$lyr==1], graph.col=FALSE, max.distinct.values=99)
+```
+
+## productive_for (layer 2) {.tabset}
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CAS_04
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x4$PRODUCTIVE_FOR[x4$LAYER==2], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CAS_05
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$productive_for[x$lyr==2], graph.col=FALSE, max.distinct.values=99)
 ```
 
 ## origin (layer 1) {.tabset}
@@ -559,32 +587,64 @@ dfSummary(x4$ORIGIN_UPPER[x4$LAYER==2], graph.col=FALSE, max.distinct.values=999
 dfSummary(x$origin_upper[x$lyr==2], graph.col=FALSE, max.distinct.values=999)
 ```
 
-## site_class {.tabset}
+## site_class (layer 1) {.tabset}
 
-  * CASFRI specs (appendix 11) states that there is no field for site, so why is there a "P" value in CAS_04
-  * CAS_04 again has mixed values in column
+  * CASFRI specs (appendix 11) states there is no field for site, however sitei exists and was used in CAS_04
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}  
-x = mutate(x, site_class=-8887)
+friList = c("D","F","P","W")
+casList = c("P","P","P","P")
+x = mutate(x,
+    site_class=if_else(
+    lyr==1, 
+      case_when(
+        is.na(sitei) ~ "NULL_VALUE",
+        !sitei %in% friList ~ "NOT_IN_SET",
+        TRUE ~ mapvalues(sitei, friList, casList)),
+      case_when(
+        is.na(sitei) ~ "NULL_VALUE",
+        !sitei %in% friList ~ "NOT_IN_SET",
+        TRUE ~ mapvalues(sitei, friList, casList))))
 ```
 
 ### RAWFRI
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-#dfSummary(x[""], graph.col=FALSE, max.distinct.values=99)
+dfSummary(x$sitei[x$lyr==2], graph.col=FALSE, max.distinct.values=99)
 ```
 
 ### CAS_04
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x4["SITE_CLASS"], graph.col=FALSE, max.distinct.values=99)
+dfSummary(x4$SITE_CLASS[x4$LAYER==1], graph.col=FALSE, max.distinct.values=99)
 ```
 
 ### CAS_05
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}  
-dfSummary(x["site_class"], graph.col=FALSE, max.distinct.values=99)
+dfSummary(x$site_class[x$lyr==1], graph.col=FALSE, max.distinct.values=99)
+```
+
+## site_class (layer 2) {.tabset}
+
+### RAWFRI
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$sitei[x$lyr==2], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CAS_04
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x4$SITE_CLASS[x4$LAYER==2], graph.col=FALSE, max.distinct.values=99)
+```
+
+### CAS_05
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}  
+dfSummary(x$site_class[x$lyr==2], graph.col=FALSE, max.distinct.values=99)
 ```
 
 ## site_index {.tabset}
