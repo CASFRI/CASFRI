@@ -4,28 +4,19 @@ The CASFRI Specifications document and accompanying tables reside in this folder
 
   * [CAS specifications (current version, markdown format)](cas_specifications.md)
   * [CAS specifications (current version, html format)](https://edwardsmarc.github.io/CASFRI/specifications/cas_specifications.html)
-  * [CAS inventories (current version)](cas_inventories.md)
-
-Archived documents:
-
-These documents were converted from the original Cosco 2011 document to markdown (main doc and appendices 9 & 15) and Excel formats (appendices). The Excel worksheet can be converted to individual csv files as needed.
-
-  * [Original CASFRI specifications document (Cosco 2011)](archive/cas_specifications_feb2011.md)
-  * [Original CASFRI specifications appendices (Cosco 2011)](archive/cas_appendices_feb2011.xlsx)
 
 # Directory structure
 
 <pre>
-./                    Main documents: cas_attributes, cas_appendices, cas_inventories
+./                    Main documents: cas_specifications.md
 
 ./appendices          Specifications appendices converted to csv files (incomplete)
 
-./archive             Original CASFRI specifications (md format) including appendices (xlsx format)
-
-./errors              Error and missing value specifications and codes (csv and xlsx files)
+./errors              Error and missing value specifications and codes (csv files)
 </pre>
 
 # Credit
+
 Pierre Racine
 
 Pierre Vernier
