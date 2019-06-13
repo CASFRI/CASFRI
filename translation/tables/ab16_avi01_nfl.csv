@@ -1,13 +1,13 @@
-targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(trm_1|-8888);notNull(poly_num|-8888);notNull(ogc_fid|-8888),"""casId('ab06', src_filename, trm_1, poly_num, ogc_fid)""",Concatenates five attributes to create CAS_ID,TRUE
-SOIL_MOIST_REG,text,"notNull(moist_reg|NULL_VALUE);match(moist_reg,'a,A,d,D,m,M,w,W'|-9998)","map(moist_reg, 'a,A,d,D,m,M,w,W', 'A,A,D,D,F,F,W,W')",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
-STRUCTURE_PER,integer,"notNull(struc_val|-8888);isInt(struc_val);between(struc_val,1,9|-9999)",copy(struc_val),Copy source value to STRUCTURE_PER,TRUE
-LAYER,integer,false(|-8887),copy(1),Copy value of 1 to LAYER,TRUE
-LAYER_RANK,integer,false(|-8887),copy(1),Copy value of 1 to LAYER_RANK,TRUE
-CROWN_CLOSURE_UPPER,integer,"notNull(density|-8888);match(density,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '30,50,70,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
-CROWN_CLOSURE_LOWER,integer,"notNull(density|-8888);match(density,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '6,31,51,71')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
-HEIGHT_UPPER,numeric,"notNull(height|-8888);isInt(height);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copy(height),Copies source value to HEIGHT_UPPER,TRUE
-HEIGHT_LOWER,numeric,"notNull(height|-8888);isInt(height);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copy(height),Copies source value to HEIGHT_LOWER,TRUE
-NAT_NON_VEG,text,"notNull(nat_non|NULL_VALUE);notEmpty(nat_non|EMPTY_STRING);match(nat_non,translation,ab_avi01_natnonveg|NOT_IN_SET)","lookup(nat_non, translation, ab_avi01_natnonveg, fri_val)",Maps source value to NAT_NON_VEG using lookup table,TRUE
-NON_FOR_ANTH,text,"notNull(anth_veg|NULL_VALUE);notEmpty(anth_veg|EMPTY_STRING);match(anth_veg,translation,ab_avi01_nonforanth|NOT_IN_SET)","lookup(anth_veg, translation, ab_avi01_nonforanth, fri_val)","Need function that take 2 attributes (anth_veg, anth_non)",TRUE
-NON_FOR_VEG,text,"notNull(nfl|NULL_VALUE);notEmpty(nfl|EMPTY_STRING);match(nfl,translation,ab_avi01_nonforveg|NOT_IN_SET)","lookup(nfl, translation, ab_avi01_nonforveg, fri_val)",Maps source value to NON_FOR_VEG using lookup table,TRUE
+rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(trm_1|-8888);notNull(poly_num|-8888);notNull(ogc_fid|-8888),"""casId('ab06', src_filename, trm_1, poly_num, ogc_fid)""",Concatenates five attributes to create CAS_ID,TRUE
+2,SOIL_MOIST_REG,text,"notNull(moist_reg|NULL_VALUE);match(moist_reg,'a,A,d,D,m,M,w,W'|-9998)","map(moist_reg, 'a,A,d,D,m,M,w,W', 'A,A,D,D,F,F,W,W')",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
+3,STRUCTURE_PER,integer,"notNull(struc_val|-8888);isInt(struc_val);between(struc_val,1,9|-9999)",copy(struc_val),Copy source value to STRUCTURE_PER,TRUE
+4,LAYER,integer,false(|-8887),copy(1),Copy value of 1 to LAYER,TRUE
+5,LAYER_RANK,integer,false(|-8887),copy(1),Copy value of 1 to LAYER_RANK,TRUE
+6,CROWN_CLOSURE_UPPER,integer,"notNull(density|-8888);match(density,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '30,50,70,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
+7,CROWN_CLOSURE_LOWER,integer,"notNull(density|-8888);match(density,'A,B,C,D'|-9998)","map(density, 'A,B,C,D', '6,31,51,71')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+8,HEIGHT_UPPER,numeric,"notNull(height|-8888);isInt(height);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copy(height),Copies source value to HEIGHT_UPPER,TRUE
+9,HEIGHT_LOWER,numeric,"notNull(height|-8888);isInt(height);greaterThan(height,1|-9999);lessThan(height,100|-9999)",copy(height),Copies source value to HEIGHT_LOWER,TRUE
+10,NAT_NON_VEG,text,"notNull(nat_non|NULL_VALUE);notEmpty(nat_non|EMPTY_STRING);match(nat_non,translation,ab_avi01_natnonveg|NOT_IN_SET)","lookup(nat_non, translation, ab_avi01_natnonveg, fri_val)",Maps source value to NAT_NON_VEG using lookup table,TRUE
+11,NON_FOR_ANTH,text,"notNull(anth_veg|NULL_VALUE);notEmpty(anth_veg|EMPTY_STRING);match(anth_veg,translation,ab_avi01_nonforanth|NOT_IN_SET)","lookup(anth_veg, translation, ab_avi01_nonforanth, fri_val)","Need function that take 2 attributes (anth_veg, anth_non)",TRUE
+12,NON_FOR_VEG,text,"notNull(nfl|NULL_VALUE);notEmpty(nfl|EMPTY_STRING);match(nfl,translation,ab_avi01_nonforveg|NOT_IN_SET)","lookup(nfl, translation, ab_avi01_nonforveg, fri_val)",Maps source value to NON_FOR_VEG using lookup table,TRUE
