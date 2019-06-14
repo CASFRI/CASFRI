@@ -1,14 +1,14 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(map_id|NULL_VALUE);notNull(feature_id|-8888);notNull(ogc_fid|-8888),"padConcat('bc08', src_filename, map_id, feature_id, ogc_fid, 4,15,10,10,7, 'x','x','x',0,0, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(soil_moisture_regime_1|NULL_VALUE);matchList(soil_moisture_regime_1,'0,1,2,3,4,5,6,7,8'|-9998)","mapText(soil_moisture_regime_1, '0,1,2,3,4,5,6,7,8', 'D,D,D,F,F,M,M,W,W')",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
-3,STRUCTURE_PER,integer,false(|-8887),nothing(),Copies NULL integer code to STRUCTURE_PER,TRUE
+1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(map_id|NULL_VALUE);notNull(feature_id|NOT_NULL);notNull(ogc_fid|NOT_NULL),"padConcat('bc08, src_filename, map_id, feature_id, ogc_fid', '4,15,10,10,7', 'x,x,x,0,0', '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+2,SOIL_MOIST_REG,text,"notNull(soil_moisture_regime_1|NULL_VALUE);matchList(soil_moisture_regime_1,'0,1,2,3,4,5,6,7,8'|NOT_IN_SET)","mapText(soil_moisture_regime_1, '0,1,2,3,4,5,6,7,8', 'D,D,D,F,F,M,M,W,W')",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
+3,STRUCTURE_PER,integer,false(|-8887),nothingInt(),Copies NULL integer code to STRUCTURE_PER,TRUE
 4,LAYER,integer,true(|1),copyInt(1),Copies 1 to LAYER,TRUE
 5,LAYER_RANK,integer,true(|1),copyInt(1),Copies 1 to LAYER_ID,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(crown_closure|-8888);isInt(crown_closure|-8889);between(crown_closure,0,100|-9999)",copyInt(crown_closure),Copies source value to CROWN_CLOSURE_UPPER,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(crown_closure|-8888);isInt(crown_closure|-8889);between(crown_closure,0,100|-9999)",copyInt(crown_closure),Copies source value to CROWN_CLOSURE_LOWER,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(proj_height_1|-8888);isNumeric(proj_height_1|-8889);greaterThan(proj_height_1,0.1|-9999);lessThan(proj_height_1,100|-9999)",copyDouble(proj_height_1),Copies source value to HEIGHT_UPPER,TRUE
 9,HEIGHT_LOWER,double precision,"notNull(proj_height_1|-8888);isNumeric(proj_height_1|-8889);greaterThan(proj_height_1,0.1|-9999);lessThan(proj_height_1,100|-9999)",copyDouble(proj_height_1),Copies source value to HEIGHT_LOWER,TRUE
-10,PRODUCTIVE_FOR,text,false(|NOT_APPLICABLE),nothing(),Waiting for a new helper function,TRUE
+10,PRODUCTIVE_FOR,text,false(|NOT_APPLICABLE),nothingText(),Waiting for a new helper function,TRUE
 11,SPECIES_1,text,"notNull(species_cd_1|NULL_VALUE);notEmpty(species_cd_1|EMPTY_STRING);matchTable(species_cd_1,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_1, translation, bc_vri01_species, spec1, TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
 12,SPECIES_PER_1,integer,"notNull(species_pct_1|-8888);isNumeric(species_pct_1|-8889);between(species_pct_1,0,100|-9999)",copyInt(species_pct_1),Copies source value to SPECIES_PER_1,TRUE
 13,SPECIES_2,text,"notNull(species_cd_2|NULL_VALUE);notEmpty(species_cd_2|EMPTY_STRING);matchTable(species_cd_2,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_2, translation, bc_vri01_species, spec2, TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
@@ -21,15 +21,15 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 20,SPECIES_PER_5,integer,"notNull(species_pct_5|-8888);isNumeric(species_pct_5|-8889);between(species_pct_5,0,100|-9999)",copyInt(species_pct_5),Copies source value to SPECIES_PER_5,TRUE
 21,SPECIES_6,text,"notNull(species_cd_6|NULL_VALUE);notEmpty(species_cd_6|EMPTY_STRING);matchTable(species_cd_6,translation,bc_vri01_species|NOT_IN_SET)","lookupText(species_cd_6, translation, bc_vri01_species, spec6, TRUE)",Maps source value to SPECIES_6 using lookup table,TRUE
 22,SPECIES_PER_6,integer,"notNull(species_pct_6|-8888);isNumeric(species_pct_6|-8889);between(species_pct_6,0,100|-9999)",copyInt(species_pct_6),Copies source value to SPECIES_PER_6,TRUE
-23,SPECIES_7,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
-24,SPECIES_PER_7,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
-25,SPECIES_8,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
-26,SPECIES_PER_8,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
-27,SPECIES_9,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
-28,SPECIES_PER_9,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
-29,SPECIES_10,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
-30,SPECIES_PER_10,integer,false(|-8887),nothing(),Attribute does not occur,TRUE
+23,SPECIES_7,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
+24,SPECIES_PER_7,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+25,SPECIES_8,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
+26,SPECIES_PER_8,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+27,SPECIES_9,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
+28,SPECIES_PER_9,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+29,SPECIES_10,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
+30,SPECIES_PER_10,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 31,ORIGIN_UPPER,integer,"notNull(proj_age_1|-8888);isInt(proj_age_1|-8889);greaterThan(proj_age_1,1|-9999);lessThan(proj_age_1,999|-9999)",copyInt(proj_age_1),Copies (2017-proj_age_1) to ORIGIN_UPPER,TRUE
 32,ORIGIN_LOWER,integer,"notNull(proj_age_1|-8888);isInt(proj_age_1|-8889);greaterThan(proj_age_1,1|-9999);lessThan(proj_age_1,999|-9999)",copyInt(proj_age_1),Copies (2017-proj_age_1) to ORIGIN_LOWER,TRUE
-33,SITE_CLASS,text,false(|NOT_APPLICABLE),nothing(),Attribute does not occur,TRUE
+33,SITE_CLASS,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
 34,SITE_INDEX,double precision,"notNull(site_index|-8888);isNumeric(site_index);between(site_index,0,99|-9999)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
