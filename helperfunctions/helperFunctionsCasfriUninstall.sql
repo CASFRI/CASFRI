@@ -14,4 +14,3 @@
 --
 --
 -------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_Casid(text,text,text,text,text);

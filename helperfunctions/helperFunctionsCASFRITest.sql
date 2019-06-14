@@ -39,7 +39,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'TT_CasId'::text function_tested, 1 maj_num, 4 nb_test
+    SELECT 'Dummy_table'::text function_tested, 1 maj_num, 1 nb_test
      
 
 
@@ -57,31 +57,16 @@ SELECT coalesce(maj_num || '.' || min_num, b.number) AS number,
 FROM test_series AS a FULL OUTER JOIN (
 
 ---------------------------------------------------------
----------------------------------------------------------
--- Test 1 - TT_CasId
----------------------------------------------------------
+
+
+
 SELECT '1.1'::text number,
-       'TT_CasId'::text function_tested,
-       'Test AB06'::text description,
-       TT_CasId('ab06', 'GB_S21_TWP', '81145', '811451038', '1') = 'AB06-xxxxxGB_S21_TWP-xxxxx81145-0811451038-0000001' passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.2'::text number,
-       'TT_CasId'::text function_tested,
-       'Test AB16'::text description,
-       TT_CasId('ab16', 'CANFOR', 't059R04M6', '109851', '1') = 'AB16-xxxxxxxxxCANFOR-xT059R04M6-0000109851-0000001' passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.3'::text number,
-       'TT_CasId'::text function_tested,
-       'Test NB01'::text description,
-       TT_CasId('nb01', 'waterbody', '', '', '1') = 'NB01-xxxxxxWATERBODY-xxxxxxxxxx-0000000000-0000001' passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.4'::text number,
-       'TT_CasId'::text function_tested,
-       'Test BC08'::text description,
-       TT_CasId('bc08', 'VEG_COMP_LYR_R1', '83D093', '2035902', '1') = 'BC08-VEG_COMP_LYR_R1-xxxx83D093-0002035902-0000001' passed
+       'Dummy_table'::text function_tested,
+       'Dummy table'::text description,
+       TRUE passed
+
+
+
 ---------------------------------------------------------
               
 ) AS b 
