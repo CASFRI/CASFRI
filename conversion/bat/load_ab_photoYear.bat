@@ -25,7 +25,7 @@ if exist "%~dp0\..\..\config.bat" (
 SET srcFileName=PhotoYear_Update
 SET srcFullPath="%friDir%/AB/PhotoYear/%srcFileName%.shp"
 
-SET prjFile="%~dp0\canadaAlbersEqualAreaConic.prj"
+SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab_photoYear
 
 
