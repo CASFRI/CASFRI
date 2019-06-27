@@ -29,7 +29,7 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 28,SPECIES_PER_9,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 29,SPECIES_10,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
 30,SPECIES_PER_10,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
-31,ORIGIN_UPPER,integer,"notNull(proj_age_1|-8888);isInt(proj_age_1|-8889);greaterThan(proj_age_1,1|-9999);lessThan(proj_age_1,999|-9999)",casfri(),Copies (2017-proj_age_1) to ORIGIN_UPPER,TRUE
-32,ORIGIN_LOWER,integer,"notNull(proj_age_1|-8888);isInt(proj_age_1|-8889);greaterThan(proj_age_1,1|-9999);lessThan(proj_age_1,999|-9999)",casfri(),Copies (2017-proj_age_1) to ORIGIN_LOWER,TRUE
+31,ORIGIN_UPPER,integer,"notNull(proj_age_1|-8888);isInt(proj_age_1|-8889);greaterThan(proj_age_1,1|-9999);lessThan(proj_age_1,999|-9999)",nothingInt(),Validate and translation functions to be written,TRUE
+32,ORIGIN_LOWER,integer,"notNull(proj_age_1|-8888);isInt(proj_age_1|-8889);greaterThan(proj_age_1,1|-9999);lessThan(proj_age_1,999|-9999)",nothingInt(),Validate and translation functions to be written,TRUE
 33,SITE_CLASS,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
-34,SITE_INDEX,double precision,"notNull(site_index|-8888);isNumeric(site_index);between(site_index,0,99|-9999)",casfri(),Copies source value to SITE_INDEX,TRUE
+34,SITE_INDEX,double precision,"notNull(site_index|-8888);isNumeric(site_index);between(site_index,0,99|-9999);notNull(est_site_index|-8888);isNumeric(est_site_index);between(est_site_index,0,99|-9999)",nothingDouble(),Translation function to be written,TRUE
