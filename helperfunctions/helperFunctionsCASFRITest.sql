@@ -40,8 +40,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- by returning nothing.
 WITH test_nb AS (
     SELECT 'TT_vri1_origin_validation'::text function_tested,        1 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_IsNotEqualToInt'::text function_tested,               2 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_vri1_site_class_validation'::text function_tested,    3 maj_num, 5 nb_test UNION ALL
+    SELECT 'TT_vri1_site_class_validation'::text function_tested,    3 maj_num, 9 nb_test UNION ALL
     SELECT 'TT_vri1_origin_translation'::text function_tested,       4 maj_num, 1 nb_test UNION ALL
     SELECT 'TT_vri1_site_class_translation'::text function_tested,   5 maj_num, 2 nb_test
      
@@ -73,19 +72,7 @@ SELECT '1.2'::text number,
        'Test that fails with an incorrect year value'::text description,
        TT_vri1_origin_validation('200-02-02') IS FALSE passed
 ---------------------------------------------------------
--- TT_IsNotEqualToInt
----------------------------------------------------------
-UNION ALL
-SELECT '2.1'::text number,
-       'TT_IsNotEqualToInt'::text function_tested,
-       'Test is not zero'::text description,
-       TT_IsNotEqualToInt('1','0') passed
----------------------------------------------------------
-UNION ALL
-SELECT '2.2'::text number,
-       'TT_IsNotEqualToInt'::text function_tested,
-       'Test is zero'::text description,
-       TT_IsNotEqualToInt('0','0') IS FALSE passed       
+-- 
 ---------------------------------------------------------
 -- TT_vri1_site_class_validation
 ---------------------------------------------------------
@@ -118,6 +105,30 @@ SELECT '3.5'::text number,
        'TT_vri1_site_class_validation'::text function_tested,
        'Both empty'::text description,
        TT_vri1_site_class_validation('','') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.6'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'First val not between 0-99'::text description,
+       TT_vri1_site_class_validation('123','22') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.7'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'Second val not between 0-99'::text description,
+       TT_vri1_site_class_validation('','222') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.8'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'First val not numeric'::text description,
+       TT_vri1_site_class_validation('12a','22') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.9'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'Second val not numeric'::text description,
+       TT_vri1_site_class_validation('','22a') IS FALSE passed
 ---------------------------------------------------------
 -- TT_vri1_origin_translation
 ---------------------------------------------------------

@@ -14,9 +14,8 @@
 --
 --
 -------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_vri1_origin_validation(text);
-DROP FUNCTION IF EXISTS TT_IsNotEqualToInt(text, text)
-DROP FUNCTION IF EXISTS TT_vri1_site_class_validation(text, text)
+DROP FUNCTION IF EXISTS TT_vri01_origin_validation(text);
+DROP FUNCTION IF EXISTS TT_vri01_site_index_validation(text, text);
 
-DROP FUNCTION IF EXISTS TT_vri1_origin_translation(text,text)
-DROP FUNCTION IF EXISTS TT_vri1_site_class_translation(text, text)
+DROP FUNCTION IF EXISTS TT_vri01_origin_translation(text,text);
+DROP FUNCTION IF EXISTS TT_vri01_site_index_translation(text, text);
