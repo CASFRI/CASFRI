@@ -39,7 +39,11 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'Dummy_table'::text function_tested, 1 maj_num, 1 nb_test
+    SELECT 'TT_vri1_origin_validation'::text function_tested,        1 maj_num, 2 nb_test UNION ALL
+    SELECT 'TT_IsNotEqualToInt'::text function_tested,               2 maj_num, 2 nb_test UNION ALL
+    SELECT 'TT_vri1_site_class_validation'::text function_tested,    3 maj_num, 5 nb_test UNION ALL
+    SELECT 'TT_vri1_origin_translation'::text function_tested,       4 maj_num, 1 nb_test UNION ALL
+    SELECT 'TT_vri1_site_class_translation'::text function_tested,   5 maj_num, 2 nb_test
      
 
 
@@ -57,18 +61,86 @@ SELECT coalesce(maj_num || '.' || min_num, b.number) AS number,
 FROM test_series AS a FULL OUTER JOIN (
 
 ---------------------------------------------------------
-
-
-
-SELECT '1.1'::text number,
-       'Dummy_table'::text function_tested,
-       'Dummy table'::text description,
-       TRUE passed
-
-
-
+-- TT_vri1_origin_validation
 ---------------------------------------------------------
-              
+SELECT '1.1'::text number,
+       'TT_vri1_origin_validation'::text function_tested,
+       'Test that passes with a year value'::text description,
+       TT_vri1_origin_validation('2001-02-02') passed
+UNION ALL
+SELECT '1.2'::text number,
+       'TT_vri1_origin_validation'::text function_tested,
+       'Test that fails with an incorrect year value'::text description,
+       TT_vri1_origin_validation('200-02-02') IS FALSE passed
+---------------------------------------------------------
+-- TT_IsNotEqualToInt
+---------------------------------------------------------
+UNION ALL
+SELECT '2.1'::text number,
+       'TT_IsNotEqualToInt'::text function_tested,
+       'Test is not zero'::text description,
+       TT_IsNotEqualToInt('1','0') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '2.2'::text number,
+       'TT_IsNotEqualToInt'::text function_tested,
+       'Test is zero'::text description,
+       TT_IsNotEqualToInt('0','0') IS FALSE passed       
+---------------------------------------------------------
+-- TT_vri1_site_class_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '3.1'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'Both not null'::text description,
+       TT_vri1_site_class_validation('12.1','10') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.2'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'One null'::text description,
+       TT_vri1_site_class_validation(NULL::text,'12.2') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.3'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'One empty'::text description,
+       TT_vri1_site_class_validation('1','') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.4'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'Both null'::text description,
+       TT_vri1_site_class_validation(NULL::text,NULL::text) IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.5'::text number,
+       'TT_vri1_site_class_validation'::text function_tested,
+       'Both empty'::text description,
+       TT_vri1_site_class_validation('','') IS FALSE passed
+---------------------------------------------------------
+-- TT_vri1_origin_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '4.1'::text number,
+       'TT_vri1_origin_translation'::text function_tested,
+       'Good year and age'::text description,
+       TT_vri1_origin_translation('2001-04-10','10') = 1991 passed
+---------------------------------------------------------
+-- TT_vri1_site_class_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '5.1'::text number,
+       'TT_vri1_site_class_translation'::text function_tested,
+       'site_index present'::text description,
+       TT_vri1_site_class_translation('12.1','10') = 12.1::double precision passed
+---------------------------------------------------------
+UNION ALL
+SELECT '5.2'::text number,
+       'TT_vri1_site_class_translation'::text function_tested,
+       'site_index null'::text description,
+       TT_vri1_site_class_translation(NULL::text,'10') = 10::double precision passed
+---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
