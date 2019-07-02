@@ -11,7 +11,7 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 10,DATA_TRANSFER,text,true(|1),copyText('Direct download'),Copies value 'Direct transfer' to DATA_TRANSFER,TRUE
 11,RECEIVED_FROM,text,true(|1),copyText('download from https://www2.gov.bc.ca/gov/content/industry/forestry/managing-our-forest-resources/forest-inventory/data-management-and-access'),Copies value 'Download from...' to RECEIVED_FROM,TRUE
 12,CONTACT_INFO,text,true(|1),copyText('Tim Salkeld. BCGOV FOR Forest Analysis and Inventory Branch. Email: Tim.Salkeld@gov.bc.ca. Phone number: 250 387-6736'),Copies value 'Tim Salked...' to CONTACT_INFO,TRUE
-13,DATA_AVAILABILITY,text,true(|1),"copyText(""Open access""",Copies value 'Open access' to DATA_AVAILABILITY,TRUE
+13,DATA_AVAILABILITY,text,true(|1),copyText('Open access'),Copies value 'Open access' to DATA_AVAILABILITY,TRUE
 14,REDISTRIBUTION,text,true(|1),copyText('Free with acknowledgment'),Copies value 'Free with acknowledgment' to REDISTRIBUTION,TRUE
 15,PERMISSION,text,true(|1),copyText('UNRESTRICTED'),Copies value 'UNRESTRICTED' to PERMISSION,TRUE
 16,LICENSE_AGREEMENT,text,true(|1),copyText('License agreements'),Copies value 'License agreements' to LICENSE_AGREEMENT,TRUE
