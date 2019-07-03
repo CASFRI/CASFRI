@@ -29,7 +29,7 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 28,SPECIES_PER_9,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 29,SPECIES_10,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
 30,SPECIES_PER_10,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
-31,ORIGIN_UPPER,integer,"notNull(origin|-8888);isInt(origin|-8889);between(origin,0,2020|-9999)",copyInt(origin),Copies (origin) to ORIGIN_UPPER,TRUE
-32,ORIGIN_LOWER,integer,"notNull(origin|-8888);isInt(origin|-8889);between(origin,0,2020|-9999)",copyInt(origin),Copies (origin) to ORIGIN_LOWER,TRUE
+31,ORIGIN_UPPER,integer,"notNull(origin|-8888);isInt(origin|-8889);between(origin,1500,2020|-9999)",copyInt(origin),Copies (origin) to ORIGIN_UPPER,TRUE
+32,ORIGIN_LOWER,integer,"notNull(origin|-8888);isInt(origin|-8889);between(origin,1500,2020|-9999)",copyInt(origin),Copies (origin) to ORIGIN_LOWER,TRUE
 33,SITE_CLASS,text,"notNull(tpr|NULL_VALUE);matchList(tpr,'U,F,M,G'|NOT_IN_SET)","mapText(tpr, 'U,F,M,G', 'U,P,M,G')",Maps source value to SITE_CLASS using lists of values,TRUE
 34,SITE_INDEX,double precision,false(|-8887),nothingDouble(),Attribute does not occur,TRUE
