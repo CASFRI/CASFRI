@@ -45,7 +45,7 @@ SET fullTargetTableName=%targetFRISchema%.ab16
 
 
 IF %overwriteFRI% == True (
-  SET ogr_options=-overwrite 
+  SET ogr_options=-overwrite -lco precision=NO
 )
 
 IF "%pgpassword4ab16%"=="" SET pgpassword4ab16=%pgpassword%
@@ -73,7 +73,7 @@ FOR /D %%F IN (%srcFullPath%\t*) DO (
   "%gdalFolder%/ogr2ogr" ^
   -f "PostgreSQL" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" ^
   -sql "SELECT *, '%%~nF' as src_filename, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
-  -nln %fullTargetTableName% -lco precision=NO -t_srs %prjFile% ^
+  -nln %fullTargetTableName% -t_srs %prjFile% ^
   !ogr_options! ^
   "%%F\forest"
   
