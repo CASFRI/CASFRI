@@ -1,24 +1,24 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(stdlab|NULL_VALUE);notNull(ogc_fid|NULL_VALUE),"padConcat('nb01, src_filename, ,stdlab, ogc_fid', '4,15,10,10,7', 'x,x,x,0,0', '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notNull({src_filename}|NULL_VALUE);notNull({stdlab}|NULL_VALUE);notNull({ogc_fid}|NULL_VALUE),"padConcat('nb01, {src_filename}, ,{stdlab}, {ogc_fid}', '4,15,10,10,7', 'x,x,x,0,0', '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,false(|-8887),nothingInt(),Copies NULL integer code to STRUCTURE_PER,TRUE
 4,LAYER,integer,true(|-8887),copyInt(1),Copies 1 to LAYER,TRUE
 5,LAYER_RANK,integer,true(|-8887),copyInt(1),Copies 1 to LAYER_ID,TRUE
-6,CROWN_CLOSURE_UPPER,integer,"notNull(l1cc|-8888);isNumeric(l1cc|-8889);matchList(l1cc,'1,2,3,4,5'|-9998)","mapInt(l1cc, '1,2,3,4,5', '30,50,70,90,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
-7,CROWN_CLOSURE_LOWER,integer,"notNull(l1cc|-8888);isNumeric(l1cc|-8889);matchList(l1cc,'1,2,3,4,5'|-9998)","mapInt(l1cc, '1,2,3,4,5', '10,31,51,71,91')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
-8,HEIGHT_UPPER,double precision,"notNull(l1ht|-8888);isNumeric(l1ht|-8889);greaterThan(l1ht,0.1|-9999);lessThan(l1ht,100|-9999)",copyDouble(l1ht),Copies source value to HEIGHT_UPPER,TRUE
-9,HEIGHT_LOWER,double precision,"notNull(l1ht|-8888);isNumeric(l1ht|-8889);greaterThan(l1ht,0.1|-9999);lessThan(l1ht,100|-9999)",copyDouble(l1ht),Copies source value to HEIGHT_LOWER,TRUE
+6,CROWN_CLOSURE_UPPER,integer,"notNull({l1cc}|-8888);isNumeric({l1cc}|-8889);matchList({l1cc},'1,2,3,4,5'|-9998)","mapInt({l1cc}, '1,2,3,4,5', '30,50,70,90,100')",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
+7,CROWN_CLOSURE_LOWER,integer,"notNull({l1cc}|-8888);isNumeric({l1cc}|-8889);matchList({l1cc},'1,2,3,4,5'|-9998)","mapInt({l1cc}, '1,2,3,4,5', '10,31,51,71,91')",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+8,HEIGHT_UPPER,double precision,"notNull({l1ht}|-8888);isNumeric({l1ht}|-8889);greaterThan({l1ht},0.1|-9999);lessThan({l1ht},100|-9999)",copyDouble({l1ht}),Copies source value to HEIGHT_UPPER,TRUE
+9,HEIGHT_LOWER,double precision,"notNull({l1ht}|-8888);isNumeric({l1ht}|-8889);greaterThan({l1ht},0.1|-9999);lessThan({l1ht},100|-9999)",copyDouble({l1ht}),Copies source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(|NOT_APPLICABLE),nothingText(),Waiting for a new helper function,TRUE
-11,SPECIES_1,text,"notNull(l1s1|NULL_VALUE);notEmpty(l1s1|EMPTY_STRING);matchTable(l1s1,translation,nb_nbi01_species|NOT_IN_SET)","lookupText(l1s1, translation, nb_nbi01_species, spec1, TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
-12,SPECIES_PER_1,integer,"notNull(l1pr1|-8888);isNumeric(l1pr1|-8889);between(l1pr1,0,100|-9999)",copyInt(l1pr1),Copies source value to SPECIES_PER_1,TRUE
-13,SPECIES_2,text,"notNull(l1s2|NULL_VALUE);notEmpty(l1s2|EMPTY_STRING);matchTable(l1s2,translation,nb_nbi01_species|NOT_IN_SET)","lookupText(l1s2, translation, nb_nbi01_species, spec2, TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
-14,SPECIES_PER_2,integer,"notNull(l1pr2|-8888);isNumeric(l1pr2|-8889);between(l1pr2,0,100|-9999)",copyInt(l1pr2),Copies source value to SPECIES_PER_2,TRUE
-15,SPECIES_3,text,"notNull(l1s3|NULL_VALUE);notEmpty(l1s3|EMPTY_STRING);matchTable(l1s3,translation,nb_nbi01_species|NOT_IN_SET)","lookupText(l1s3, translation, nb_nbi01_species, spec3, TRUE)",Maps source value to SPECIES_3 using lookup table,TRUE
-16,SPECIES_PER_3,integer,"notNull(l1pr3|-8888);isNumeric(l1pr3|-8889);between(l1pr3,0,100|-9999)",copyInt(l1pr3),Copies source value to SPECIES_PER_3,TRUE
-17,SPECIES_4,text,"notNull(l1s4|NULL_VALUE);notEmpty(l1s4|EMPTY_STRING);matchTable(l1s4,translation,nb_nbi01_species|NOT_IN_SET)","lookupText(l1s4, translation, nb_nbi01_species, spec4, TRUE)",Maps source value to SPECIES_4 using lookup table,TRUE
-18,SPECIES_PER_4,integer,"notNull(l1pr4|-8888);isNumeric(l1pr4|-8889);between(l1pr4,0,100|-9999)",copyInt(l1pr4),Copies source value to SPECIES_PER_4,TRUE
-19,SPECIES_5,text,"notNull(l1s5|NULL_VALUE);notEmpty(l1s5|EMPTY_STRING);matchTable(l1s5,translation,nb_nbi01_species|NOT_IN_SET)","lookupText(l1s5, translation, nb_nbi01_species, spec5, TRUE)",Maps source value to SPECIES_5 using lookup table,TRUE
-20,SPECIES_PER_5,integer,"notNull(l1pr5|-8888);isNumeric(l1pr5|-8889);between(l1pr5,0,100|-9999)",copyInt(l1pr5),Copies source value to SPECIES_PER_5,TRUE
+11,SPECIES_1,text,"notNull({l1s1}|NULL_VALUE);notEmpty({l1s1}|EMPTY_STRING);matchTable({l1s1},translation,nb_nbi01_species|NOT_IN_SET)","lookupText({l1s1}, translation, nb_nbi01_species, spec1, TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
+12,SPECIES_PER_1,integer,"notNull({l1pr1}|-8888);isNumeric({l1pr1}|-8889);between({l1pr1},0,100|-9999)",copyInt({l1pr1}),Copies source value to SPECIES_PER_1,TRUE
+13,SPECIES_2,text,"notNull({l1s2}|NULL_VALUE);notEmpty({l1s2}|EMPTY_STRING);matchTable({l1s2},translation,nb_nbi01_species|NOT_IN_SET)","lookupText({l1s2}, translation, nb_nbi01_species, spec2, TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
+14,SPECIES_PER_2,integer,"notNull({l1pr2}|-8888);isNumeric({l1pr2}|-8889);between({l1pr2},0,100|-9999)",copyInt({l1pr2}),Copies source value to SPECIES_PER_2,TRUE
+15,SPECIES_3,text,"notNull({l1s3}|NULL_VALUE);notEmpty({l1s3}|EMPTY_STRING);matchTable({l1s3},translation,nb_nbi01_species|NOT_IN_SET)","lookupText({l1s3}, translation, nb_nbi01_species, spec3, TRUE)",Maps source value to SPECIES_3 using lookup table,TRUE
+16,SPECIES_PER_3,integer,"notNull({l1pr3}|-8888);isNumeric({l1pr3}|-8889);between({l1pr3},0,100|-9999)",copyInt({l1pr3}),Copies source value to SPECIES_PER_3,TRUE
+17,SPECIES_4,text,"notNull({l1s4}|NULL_VALUE);notEmpty({l1s4}|EMPTY_STRING);matchTable({l1s4},translation,nb_nbi01_species|NOT_IN_SET)","lookupText({l1s4}, translation, nb_nbi01_species, spec4, TRUE)",Maps source value to SPECIES_4 using lookup table,TRUE
+18,SPECIES_PER_4,integer,"notNull({l1pr4}|-8888);isNumeric({l1pr4}|-8889);between({l1pr4},0,100|-9999)",copyInt({l1pr4}),Copies source value to SPECIES_PER_4,TRUE
+19,SPECIES_5,text,"notNull({l1s5}|NULL_VALUE);notEmpty({l1s5}|EMPTY_STRING);matchTable({l1s5},translation,nb_nbi01_species|NOT_IN_SET)","lookupText({l1s5}, translation, nb_nbi01_species, spec5, TRUE)",Maps source value to SPECIES_5 using lookup table,TRUE
+20,SPECIES_PER_5,integer,"notNull({l1pr5}|-8888);isNumeric({l1pr5}|-8889);between({l1pr5},0,100|-9999)",copyInt({l1pr5}),Copies source value to SPECIES_PER_5,TRUE
 21,SPECIES_6,text,false(|NOT_APPLICABLE),nothingText(),attribute does not occur,TRUE
 22,SPECIES_PER_6,integer,false(|-8887),nothingInt(),attribute does not occur,TRUE
 23,SPECIES_7,text,false(|NOT_APPLICABLE),nothingText(),attribute does not occur,TRUE
@@ -29,7 +29,7 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 28,SPECIES_PER_9,integer,false(|-8887),nothingInt(),attribute does not occur,TRUE
 29,SPECIES_10,text,false(|NOT_APPLICABLE),nothingText(),attribute does not occur,TRUE
 30,SPECIES_PER_10,integer,false(|-8887),nothingInt(),attribute does not occur,TRUE
-31,ORIGIN_UPPER,integer,"notNull(l1estyr|-8888);isInt(l1estyr|-8889);between(l1estyr,0,2020|-9999)",copyInt(l1estyr),Copies (l1estyr) to ORIGIN_UPPER,TRUE
-32,ORIGIN_LOWER,integer,"notNull(l1estyr|-8888);isInt(l1estyr|-8889);between(l1estyr,0,2020|-9999)",copyInt(l1estyr),Copies (l1estyr) to ORIGIN_LOWER,TRUE
+31,ORIGIN_UPPER,integer,"notNull({l1estyr}|-8888);isInt({l1estyr}|-8889);between({l1estyr},0,2020|-9999)",copyInt({l1estyr}),Copies (l1estyr) to ORIGIN_UPPER,TRUE
+32,ORIGIN_LOWER,integer,"notNull({l1estyr}|-8888);isInt({l1estyr}|-8889);between({l1estyr},0,2020|-9999)",copyInt({l1estyr}),Copies (l1estyr) to ORIGIN_LOWER,TRUE
 33,SITE_CLASS,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
 34,SITE_INDEX,double precision,false(|-8887),nothingDouble(),attribute does not occur,TRUE
