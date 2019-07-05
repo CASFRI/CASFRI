@@ -9,3 +9,4 @@ Invalid values,Out of range,Value is outside the range of values,TT_Between(); T
 ,Invalid value,Invalid value,NO FUNCTION,INVALID,-9997,-999999997,-2147483642
 ,Precision too high,Precision is greater than allowed,NO FUNCTION,WRONG_PRECISION,-9996,-999999996,-2147483641
 ,Wrong data type,Value is of the wrong data type,TT_IsInt(); TT_IsNumeric(); TT_IsString(),WRONG_TYPE,-9995,-999999995,-2147483640
+Generic,Translation error,Generic translation error,,TRANSLATION_ERROR,-3333,-3333,-3333
