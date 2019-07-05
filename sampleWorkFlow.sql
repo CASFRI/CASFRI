@@ -1,4 +1,4 @@
-﻿------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- CASFRI Sample workflow file for CASFRI v5 beta
 -- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
@@ -143,7 +143,7 @@ SELECT * FROM translation.ab06_avi01_lyr;
 
 -- Create a subset translation table if necessary
 DROP TABLE IF EXISTS translation.ab06_avi01_lyr_test;
-CREATE TABLE translation.ab06_avi01_lyr_test AS
+CREATE TABLE translation.ab06_avi01_lyr_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_lyr
 --WHERE ogc_fid = 1 OR 
 --ogc_fid = 2 OR ogc_fid = 3 OR 
@@ -162,7 +162,7 @@ SELECT * FROM translation.ab16_avi01_lyr;
 
 -- Create a subset translation table if necessary
 DROP TABLE IF EXISTS translation.ab16_avi01_lyr_test;
-CREATE TABLE translation.ab16_avi01_lyr_test AS
+CREATE TABLE translation.ab16_avi01_lyr_test WITH OIDS AS
 SELECT * FROM translation.ab16_avi01_lyr
 --WHERE ogc_fid = 1 OR 
 --ogc_fid = 2 OR ogc_fid = 3 OR 
@@ -181,7 +181,7 @@ SELECT * FROM translation.bc08_vri01_lyr;
 
 -- Create a subset translation table if necessary
 DROP TABLE IF EXISTS translation.bc08_vri01_lyr_test;
-CREATE TABLE translation.bc08_vri01_lyr_test AS
+CREATE TABLE translation.bc08_vri01_lyr_test WITH OIDS AS
 SELECT * FROM translation.bc08_vri01_lyr
 --WHERE ogc_fid = 1 OR 
 --ogc_fid = 2 OR ogc_fid = 3 OR 
@@ -200,7 +200,7 @@ SELECT * FROM translation.nb01_nbi01_lyr;
 
 -- Create a subset translation table if necessary
 DROP TABLE IF EXISTS translation.nb01_nbi01_lyr_test;
-CREATE TABLE translation.nb01_nbi01_lyr_test AS
+CREATE TABLE translation.nb01_nbi01_lyr_test WITH OIDS AS
 SELECT * FROM translation.nb01_nbi01_lyr
 --WHERE ogc_fid = 1 OR 
 --ogc_fid = 2 OR ogc_fid = 3 OR 
