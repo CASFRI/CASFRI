@@ -1,0 +1,11 @@
+rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+1,CAS_ID,text,notNull({src_filename}|NULL_VALUE);notNull({stdlab}|NULL_VALUE);notNull({ogc_fid}|NULL_VALUE),"padConcat('nb01, {src_filename}, ,{stdlab}, {ogc_fid}', '4,15,10,10,7', 'x,x,x,0,0', '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+2,ORIG_STAND_ID,text,false(|NOT_APPLICABLE),nothingText(),Copies source value to ORIG_STAND_ID,TRUE
+3,STAND_STRUCTURE,text,false(|NOT_APPLICABLE),nothingText(),Copies value S to STAND_STRUCTURE,TRUE
+4,NUM_OF_LAYERS,integer,false(|-8887),nothingInt(),Copies value 1 to NUM_OF_LAYERS,TRUE
+5,IDENTIFICATION_ID,integer,false(|-8887),nothingInt(),Maps source value to IDENTIFCATION_ID using list,TRUE
+6,MAP_SHEET_ID,text,false(|NOT_APPLICABLE),nothingText(),Copies source value to MAP_SHEET_ID,TRUE
+7,GIS_AREA,double precision,false(|-8886),nothingDouble(),Copies source value to GIS_AREA,TRUE
+8,GIS_PERIMETER,double precision,false(|-8886),nothingDouble(),Copies source value to GIS_PERIMETER,TRUE
+9,INVENTORY_AREA,double precision,false(|-8886),nothingDouble(),Copies source value to INVENTORY_AREA,TRUE
+10,PHOTO_YEAR,integer,false(|-8887),nothingInt(),Copies source value to PHOTO_YEAR,TRUE
