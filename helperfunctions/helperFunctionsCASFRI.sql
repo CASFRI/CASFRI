@@ -186,52 +186,34 @@ RETURNS text AS $$
     _non_productive_descriptor_cd boolean;
     return text;
   BEGIN
-    -- initialize return, and flag variables as empty if null or empty strings
+    -- initialize return
     return = 'NULL'; -- returns NULL if not naturally non-vegetated
-    IF land_cover_class_cd_1 IS NULL OR replace(land_cover_class_cd_1, ' ', '') = ''::text THEN
-      _land_cover_class_cd_1 = FALSE;
-    ELSE
-      _land_cover_class_cd_1 = TRUE;
-    END IF;
-    IF bclcs_level_4 IS NULL OR replace(bclcs_level_4, ' ', '') = ''::text THEN
-      _bclcs_level_4 = FALSE;
-    ELSE
-      _bclcs_level_4 = TRUE;
-    END IF;
-    IF non_productive_descriptor_cd IS NULL OR replace(non_productive_descriptor_cd, ' ', '') = ''::text THEN
-      _non_productive_descriptor_cd = FALSE;
-    ELSE
-      _non_productive_descriptor_cd = TRUE;
-    END IF;
     
     -- run if statements
-    IF inventory_standard_cd IN ('V','I') AND _land_cover_class_cd_1 THEN
+    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL THEN
       IF land_cover_class_cd_1 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
         return = TT_MapText(land_cover_class_cd_1, 'BL,BM,BY,HE,HF,HG,SL,ST', 'BR,BR,BR,HE,HF,HG,SL,ST');
       END IF;
     END IF;
     
-    IF inventory_standard_cd IN ('V','I') AND _bclcs_level_4 AND return = 'NULL' THEN
+    IF inventory_standard_cd IN ('V','I') AND bclcs_level_4 IS NOT NULL AND return = 'NULL' THEN
       IF bclcs_level_4 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
         return = TT_MapText(bclcs_level_4, 'BL,BM,BY,HE,HF,HG,SL,ST', 'BR,BR,BR,HE,HF,HG,SL,ST');
       END IF;
     END IF;
     
-    IF inventory_standard_cd='F' AND _non_productive_descriptor_cd THEN
+    IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd IN ('AF','M','NPBR','OR') THEN
         return = TT_MapText(non_productive_descriptor_cd, 'AF,M,NPBR,OR', 'AF,HG,ST,HG');
       END IF;
     END IF;
 
-    IF inventory_standard_cd='F' AND _bclcs_level_4 AND return = 'NULL' THEN
+    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND return = 'NULL' THEN
       IF bclcs_level_4 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
         return = TT_MapText(bclcs_level_4, 'BL,BM,BY,HE,HF,HG,SL,ST', 'BR,BR,BR,HE,HF,HG,SL,ST');
       END IF;
     END IF;
     RETURN return;
-  EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'TRANSLATION_ERROR';
-    RETURN 'TRANSLATION_ERROR';
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -262,63 +244,40 @@ RETURNS text AS $$
     _non_veg_cover_type_1 boolean;
     return text;
   BEGIN
-    -- initialize return, and flag variables as empty if null or empty strings
+    -- initialize return
     return = 'NULL'; -- returns NULL if not naturally non-vegetated
-    IF land_cover_class_cd_1 IS NULL OR replace(land_cover_class_cd_1, ' ', '') = ''::text THEN
-      _land_cover_class_cd_1 = FALSE;
-    ELSE
-      _land_cover_class_cd_1 = TRUE;
-    END IF;
-    IF bclcs_level_4 IS NULL OR replace(bclcs_level_4, ' ', '') = ''::text THEN
-      _bclcs_level_4 = FALSE;
-    ELSE
-      _bclcs_level_4 = TRUE;
-    END IF;
-    IF non_productive_descriptor_cd IS NULL OR replace(non_productive_descriptor_cd, ' ', '') = ''::text THEN
-      _non_productive_descriptor_cd = FALSE;
-    ELSE
-      _non_productive_descriptor_cd = TRUE;
-    END IF;
-    IF non_veg_cover_type_1 IS NULL OR replace(non_veg_cover_type_1, ' ', '') = ''::text THEN
-      _non_veg_cover_type_1 = FALSE;
-    ELSE
-      _non_veg_cover_type_1 = TRUE;
-    END IF;
 
     -- run if statements
-    IF inventory_standard_cd IN ('V','I') AND _non_veg_cover_type_1 THEN
+    IF inventory_standard_cd IN ('V','I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 IN ('BE','BI','BR','BU','CB','DW','ES','GL','LA','LB','LL','LS','MN','MU','OC','PN','RE','RI','RM','RS','TA') THEN
         return = TT_MapText(non_veg_cover_type_1, 'BE,BI,BR,BU,CB,DW,ES,GL,LA,LB,LL,LS,MN,MU,OC,PN,RE,RI,RM,RS,TA', 'BE,RK,RK,EX,EX,DW,EX,SI,LA,RK,EX,WS,EX,WS,OC,SI,LA,RI,EX,WS,RK');
       END IF;
     END IF;
 
-    IF inventory_standard_cd IN ('V','I') AND _land_cover_class_cd_1 AND return = 'NULL' THEN
+    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL AND return = 'NULL' THEN
       IF land_cover_class_cd_1 IN ('BE','BI','BR','BU','CB','EL','ES','GL','LA','LB','LL','LS','MN','MU','OC','PN','RE','RI','RM','RO','RS','SI','TA') THEN
         return = TT_MapText(land_cover_class_cd_1, 'BE,BI,BR,BU,CB,EL,ES,GL,LA,LB,LL,LS,MN,MU,OC,PN,RE,RI,RM,RO,RS,SI,TA', 'BE,RK,RK,EX,EX,EX,EX,SI,LA,RK,EX,WS,EX,WS,OC,SI,LA,RI,EX,RK,WS,SI,RK');
       END IF;
     END IF;
     
-    IF inventory_standard_cd IN ('V','I') AND _bclcs_level_4 AND return = 'NULL' THEN
+    IF inventory_standard_cd IN ('V','I') AND bclcs_level_4 IS NOT NULL AND return = 'NULL' THEN
       IF bclcs_level_4 IN ('EL','RO','SI') THEN
         return = TT_MapText(bclcs_level_4, 'EL,RO,SI', 'EX,RK,SI');
       END IF;
     END IF;
     
-    IF inventory_standard_cd='F' AND _non_productive_descriptor_cd THEN
+    IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd IN ('A','CL','G','ICE','L','MUD','R','RIV','S','SAND','TIDE') THEN
         return = TT_MapText(non_productive_descriptor_cd, 'A,CL,G,ICE,L,MUD,R,RIV,S,SAND,TIDE', 'AP,EX,WS,SI,LA,EX,RK,RI,SL,SA,TF');
       END IF;
     END IF;
 
-    IF inventory_standard_cd='F' AND _bclcs_level_4 AND return = 'NULL' THEN
+    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND return = 'NULL' THEN
       IF bclcs_level_4 IN ('EL','RO','SI') THEN
         return = TT_MapText(bclcs_level_4, 'EL,RO,SI', 'EX,RK,SI');
       END IF;
     END IF;
     RETURN return;
-  EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'TRANSLATION_ERROR';
-    RETURN 'TRANSLATION_ERROR';
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
@@ -345,46 +304,29 @@ RETURNS text AS $$
     _non_veg_cover_type_1 boolean;
     return text;
   BEGIN
-    -- initialize return, and flag variables as empty if null or empty strings
+    -- initialize return
     return = 'NULL'; -- returns NULL if not naturally non-vegetated
-    IF land_cover_class_cd_1 IS NULL OR replace(land_cover_class_cd_1, ' ', '') = ''::text THEN
-      _land_cover_class_cd_1 = FALSE;
-    ELSE
-      _land_cover_class_cd_1 = TRUE;
-    END IF;
-    IF non_productive_descriptor_cd IS NULL OR replace(non_productive_descriptor_cd, ' ', '') = ''::text THEN
-      _non_productive_descriptor_cd = FALSE;
-    ELSE
-      _non_productive_descriptor_cd = TRUE;
-    END IF;
-    IF non_veg_cover_type_1 IS NULL OR replace(non_veg_cover_type_1, ' ', '') = ''::text THEN
-      _non_veg_cover_type_1 = FALSE;
-    ELSE
-      _non_veg_cover_type_1 = TRUE;
-    END IF;
 
     -- run if statements
-    IF inventory_standard_cd IN ('V','I') AND _non_veg_cover_type_1 THEN
+    IF inventory_standard_cd IN ('V','I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 IN ('AP','GP','MI','MZ','OT','RN','RZ','TZ','UR') THEN
         return = TT_MapText(non_veg_cover_type_1, 'AP,GP,MI,MZ,OT,RN,RZ,TZ,UR', 'FA,IN,IN,IN,OT,FA,FA,IN,FA');
       END IF;
     END IF;
-
-    IF inventory_standard_cd IN ('V','I') AND _land_cover_class_cd_1 AND return = 'NULL' THEN
+        
+    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL AND return = 'NULL' THEN
       IF land_cover_class_cd_1 IN ('AP','GP','MI','MZ','OT','RN','RZ','TZ','UR') THEN
         return = TT_MapText(land_cover_class_cd_1, 'AP,GP,MI,MZ,OT,RN,RZ,TZ,UR', 'FA,IN,IN,IN,OT,FA,FA,IN,FA');
       END IF;
     END IF;
         
-    IF inventory_standard_cd='F' AND _non_productive_descriptor_cd THEN
+    IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd IN ('C','GR','P','U') THEN
         return = TT_MapText(non_productive_descriptor_cd, 'C,GR,P,U', 'CL,IN,CL,FA');
       END IF;
     END IF;
-
+    
     RETURN return;
-  EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'TRANSLATION_ERROR';
-    RETURN 'TRANSLATION_ERROR';
-  END;
+    END;
 $$ LANGUAGE plpgsql VOLATILE;
+
