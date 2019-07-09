@@ -1,0 +1,20 @@
+rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+1,HEADER_ID,text,true(|1),copyText('NB01'),Copies value 'NB01' to HEADER_ID,TRUE
+2,JURISDICTION,text,true(|1),copyText('NB'),Copies value 'NB' to JURISDICTION,TRUE
+3,OWNER_TYPE,text,true(|1),copyText('PROV_GOV'),Copies value 'PROV_GOV' to OWNER_TYPE,TRUE
+4,OWNER_NAME,text,true(|1),copyText('New Brunswick Natural Resources'),Copies value 'New Brunswick Natural Resources' to OWNER_NAME,TRUE
+5,INVENTORY_TYPE,text,true(|1),copyText('NA'),Copies value 'NA' to INVENTORY_TYPE,TRUE
+6,INVENTORY_VERSION,text,true(|1),copyText('With Revisions'),Copies value 'With Revisions' to INVENTORY_VERSION,TRUE
+7,INVENTORY_MANUAL,text,true(|1),copyText('NB Natural Resource data dictionary'),Copies value 'NB Natural Resource Data dictionary' to INVENTORY_MANUAL,TRUE
+8,SOURCE_DATA_FORMAT,text,true(|1),copyText('Shapefile'),Copies value 'Shapefile' to SOURCE_DATA_FORMAT,TRUE
+9,ACQUISITION_DATE,text,true(|1),copyText('21/03/2012'),Copies value '21/03/2012' to ACQUISITION_DATE,TRUE
+10,DATA_TRANSFER,text,true(|1),copyText('FTP site ( ftp://ftp.gnb.ca)'),Copies value 'FTP site ( ftp://ftp.gnb.ca)' to DATA_TRANSFER,TRUE
+11,RECEIVED_FROM,text,true(|1),copyText('email: Gisele Gaudet. Natural resources. Phone: 506 453-2183. email: gisele.gaudet@gnb.ca'),Copies value 'email: Gisele Gaudet...' to RECEIVED_FROM,TRUE
+12,CONTACT_INFO,text,true(|1),copyText('Gisele Gaudet. Natural resources. Phone: 506 453-2183. email: gisele.gaudet@gnb.ca'),Copies value 'Gisele Gaudet...' to CONTACT_INFO,TRUE
+13,DATA_AVAILABILITY,text,true(|1),copyText('Administration process'),Copies value 'Administration process' to DATA_AVAILABILITY,TRUE
+14,REDISTRIBUTION,text,true(|1),copyText('Needs direct agreement from the owner under point 2.5 of the license agreement'),Copies value 'Needs direct agreement...' to REDISTRIBUTION,TRUE
+15,PERMISSION,text,true(|1),copyText('RESTRICTED'),Copies value 'RESTRICTED' to PERMISSION,TRUE
+16,LICENSE_AGREEMENT,text,true(|1),copyText('License agreements'),Copies value 'License agreements' to LICENSE_AGREEMENT,TRUE
+17,SOURCE_DATA_PHOTOYEAR,text,true(|1),copyText('Included in SIDS'),Copies value 'Included in SIDS' to SOURCE_DATA_PHOTOYEAR,TRUE
+18,PHOTOYEAR_START,integer,true(|1),copyInt('1981'),Copies value '1981' to PHOTOYEAR_START,TRUE
+19,PHOTOYEAR_END,integer,true(|1),copyInt('2010'),Copies value '2010' to PHOTOYEAR_END,TRUE

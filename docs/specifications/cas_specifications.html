@@ -67,8 +67,6 @@ overflow: auto;
 margin-left: 2%;
 position: fixed;
 border: 1px solid #ccc;
-webkit-border-radius: 6px;
-moz-border-radius: 6px;
 border-radius: 6px;
 }
 
@@ -96,9 +94,14 @@ font-size: 12px;
 .tocify-subheader .tocify-subheader {
 text-indent: 30px;
 }
-
 .tocify-subheader .tocify-subheader .tocify-subheader {
 text-indent: 40px;
+}
+.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
+text-indent: 50px;
+}
+.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
+text-indent: 60px;
 }
 
 .tocify .tocify-item > a, .tocify .nav-list .nav-header {
@@ -502,13 +505,13 @@ float: none;
 
           item.append($("<a/>", {
 
-            "text": self.text()
+            "html": self.html()
 
           }));
 
         } else {
 
-          item.text(self.text());
+          item.html(self.html());
 
         }
 
@@ -1503,8 +1506,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -1547,7 +1548,7 @@ div.tocify {
 
 <p>COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA</p>
 <p>Prepared by: John A. Cosco, Chief Inventory Forester, February 2011<br></p>
-Revised by: The CASFRI Project Team, March 2019
+Revised by: The CASFRI Project Team, April 2019
 </center>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
@@ -1692,6 +1693,16 @@ common resolution or set of values.</p>
 <td align="right">-9995</td>
 <td align="right">-999999995</td>
 <td align="right">-2147483640</td>
+</tr>
+<tr class="odd">
+<td align="left">Generic</td>
+<td align="left">Translation error</td>
+<td align="left">Generic translation error</td>
+<td align="left"></td>
+<td align="left">TRANSLATION_ERROR</td>
+<td align="right">-3333</td>
+<td align="right">-3333</td>
+<td align="right">-3333</td>
 </tr>
 </tbody>
 </table>
@@ -1979,7 +1990,7 @@ datum specifying that coordinate system in which horizontal control points are l
 <td align="left">MILITARY</td>
 </tr>
 <tr class="even">
-<td align="left">First Nation or MÃ©tis Area</td>
+<td align="left">First Nation or Métis Area</td>
 <td align="left">FN</td>
 </tr>
 <tr class="odd">
@@ -2350,7 +2361,7 @@ perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are add
 <h3>Stand Structure</h3>
 <p>Structure is the physical arrangement or vertical pattern of organization of the vegetation within a polygon. A stand can be identified as single layered, multilayered, complex, or horizontal. A single layered stand has stem heights that do not vary significantly and the vegetation has only one main canopy layer.</p>
 <p>A multilayered stand can have several distinct layers and each layer is significant, has a distinct height difference, and is evenly<br />
-distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other. Layers can be treed or non-treed.Up to 9 layers are allowed; most inventories recognize only one or two layers. The largest number of layers recognized is in the British Columbia VRI with 9 followed by Saskatchewan SFVI with 7 and Manitoba FLI with 5. Each layer is assigned an independent description with the tallest layer described in the upper portion of the label. The number of layers and a ranking of the layers can also be assigned. Some inventories (e.g.Â Saskatchewan UTM, Quebec TIE, Prince Edward Island, and Nova Scotia) can imply that a second layer exists; however, the second layer is not described or only a species type is indicated.</p>
+distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other. Layers can be treed or non-treed.Up to 9 layers are allowed; most inventories recognize only one or two layers. The largest number of layers recognized is in the British Columbia VRI with 9 followed by Saskatchewan SFVI with 7 and Manitoba FLI with 5. Each layer is assigned an independent description with the tallest layer described in the upper portion of the label. The number of layers and a ranking of the layers can also be assigned. Some inventories (e.g. Saskatchewan UTM, Quebec TIE, Prince Edward Island, and Nova Scotia) can imply that a second layer exists; however, the second layer is not described or only a species type is indicated.</p>
 <p>Complex layered stands exhibit a high variation in tree heights. There is no single definitive forested layer as nearly all height classes (and frequently ages) are represented in the stand. The height is chosen from a stand midpoint usually followed by a height range.</p>
 <p>Horizontal structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi- label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. The detailed table for stand structure is presented in Appendix 3.</p>
 <p><br></p>
@@ -2388,8 +2399,8 @@ distributed. Generally the layers are intermixed and when viewed vertically, one
 </div>
 <div id="structure-percent-or-range" class="section level3">
 <h3>Structure Percent or Range</h3>
-<p>Stand Structure Percent or Range is assigned when a complex or horizontal structured polygon is identified. Stand structure percent is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.<br />
-Stand Structure Range is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.</p>
+<p>Stand Structure Percent or Range is assigned when a complex or horizontal structured polygon is identified. Stand structure percent is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.</p>
+<p>Stand Structure Range is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.</p>
 <table>
 <thead>
 <tr class="header">
@@ -2567,30 +2578,36 @@ Stand Structure Range is used with complex stands and represents the height rang
 <td align="right">-8888</td>
 </tr>
 <tr class="even">
+<td align="left">Empty string</td>
+<td align="left">Missing that is not null</td>
+<td align="right">-8885</td>
+<td align="right">-8885</td>
+</tr>
+<tr class="odd">
 <td align="left">Not applicable</td>
 <td align="left">Target attribute not in source table</td>
 <td align="right">-8886</td>
 <td align="right">-8886</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">Out of range</td>
 <td align="left">Value is outside the range of values</td>
 <td align="right">-9999</td>
 <td align="right">-9999</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Not in set</td>
 <td align="left">Value is not a member of a set or list</td>
 <td align="right">-9998</td>
 <td align="right">-9998</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">Invalid value</td>
 <td align="left">Invalid value</td>
 <td align="right">-9997</td>
 <td align="right">-9997</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Precision too high</td>
 <td align="left">Precision is greater than allowed</td>
 <td align="right">-9996</td>
@@ -3383,7 +3400,7 @@ strong cross-correlations. Two of the classes; fen and bog, are peat-forming wit
 </tbody>
 </table>
 <p><br></p>
-<p><sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No.Â 24.</p>
+<p><sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.</p>
 <p><sup>3</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.</p>
 <p><sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al. </p>
 <p><br></p>
@@ -3428,12 +3445,12 @@ Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.</p>
 <p>Ministry of Forests 1992. Forest Inventory Manual. Volumes 1 - 5.</p>
 <p>Resource Inventory Committee 2002. Vegetation Resources Inventory, Version 2.4. Photo Interpretation Procedures. Ministry of Sustainable<br />
 Resource Management. Terrestrial Information Branch (<a href="http://www.for.gov.bc.ca/risc" class="uri">http://www.for.gov.bc.ca/risc</a>).</p>
-<p>Sandvoss, M, B. McClymont and C. Farnden (compilers) 2005. A Userâ€™s Guide to the Vegetation Resources Inventory. Timberline Forest Inventory<br />
+<p>Sandvoss, M, B. McClymont and C. Farnden (compilers) 2005. A User’s Guide to the Vegetation Resources Inventory. Timberline Forest Inventory<br />
 Consultants.</p>
 <p><br></p>
 <p><b>Alberta</b></p>
-<p>Alberta Department of Energy and Nat. Res. 1985. Alberta Phase 3 Forest Inventory: An Overview. Rep.Â No.Â I/86.</p>
-<p>Alberta Department of Energy and Nat. Res. 1985. Alberta Phase 3 Inventory: Forest Cover Type Specifications. Rep.Â No.Â 58.</p>
+<p>Alberta Department of Energy and Nat. Res. 1985. Alberta Phase 3 Forest Inventory: An Overview. Rep. No. I/86.</p>
+<p>Alberta Department of Energy and Nat. Res. 1985. Alberta Phase 3 Inventory: Forest Cover Type Specifications. Rep. No. 58.</p>
 <p>Alberta Environmental Protection 1991. Alberta Vegetation Inventory Standards Manual, Version 2.1. Resource Data Division. Data Acquisition<br />
 Branch.</p>
 <p>Alberta Sustainable Resource development. 2005. Alberta Vegetation Inventory Standards. Version 2.1.1 March 2005. Chapter 3 - Vegetation<br />
@@ -3453,13 +3470,13 @@ Alberta Sustainable Resource Development, Resource Data Branch. Pub. No, T/031.<
 <p>Manitoba Conservation. 1992 - 1996. Forest Inventory Manual 1.2. Forest Inventory and Resource Analysis.</p>
 <p>Manitoba Conservation. 1996 - 1997. Forest Inventory Manual 1.3. Forest Inventory and Resource Analysis.</p>
 <p>Manitoba Conservation. 2001. Forest Lands Inventory Manual 1.1. Forest Inventory and Resource Analysis.</p>
-<p>Louisiana Pacific Canada Ltd.Â 2004. FLI User Guide (Draft). Prepared by The Forestry Corp.Â Ontario</p>
-<p>Ontario Ministry of Natural Resources. 1996. Specifications for Forest Resources Inventory Photo Interpretation. Updated Mar.Â 1996.</p>
-<p>Ontario Ministry of Natural Resources. 2001. Specifications for Forest Resources Inventory Photo Interpretation. Updated Sept.Â 2001.</p>
+<p>Louisiana Pacific Canada Ltd. 2004. FLI User Guide (Draft). Prepared by The Forestry Corp. Ontario</p>
+<p>Ontario Ministry of Natural Resources. 1996. Specifications for Forest Resources Inventory Photo Interpretation. Updated Mar. 1996.</p>
+<p>Ontario Ministry of Natural Resources. 2001. Specifications for Forest Resources Inventory Photo Interpretation. Updated Sept. 2001.</p>
 <p>Ontario Ministry of Natural Resources. 2007. Ontario Forest Resources Inventory Photo Interpretation Specifications. Updated Dec_2007.</p>
 <p>Ontario Ministry of Natural Resources. 2010. Ontario Forest Resources Inventory Photo Interpretation Specifications. Updated Dec_2010.</p>
-<p>OMNR, April 2001. Forest Information Manual. Toronto: Queenâ€™s Printer for Ontario. 400 pp. </p>
-<p>OMNR, April 2007. Forest Information Manual. Toronto: Queenâ€™s Printer for Ontario. 107 pp.<br />
+<p>OMNR, April 2001. Forest Information Manual. Toronto: Queen’s Printer for Ontario. 400 pp. </p>
+<p>OMNR, April 2007. Forest Information Manual. Toronto: Queen’s Printer for Ontario. 107 pp.<br />
 (<a href="http://ontariosforests.mnr.gov.on.ca/ontariosforests.cfm" class="uri">http://ontariosforests.mnr.gov.on.ca/ontariosforests.cfm</a>)</p>
 <p>Pikangikum First Nation. 2003. Whitefeather Forest FRI/FEC Procedures Manual. Internal Document prepared by Timberline Forest Inventory<br />
 Consultants Ltd. </p>
@@ -3509,9 +3526,9 @@ Institute of Pedology Publication S185, Saskatoon.</p>
 <p><b>General</b></p>
 <p>Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada.</p>
 <p>Petawawa National Forestry Institute, Information Report PI-X-114.</p>
-<p>Leckie D.G and Gillis M.D.Â 1995 Forest Inventory in Canada with emphasis on map production.</p>
+<p>Leckie D.G and Gillis M.D. 1995 Forest Inventory in Canada with emphasis on map production.</p>
 <p>The Forestry Chronicle 71 (1): 74 - 88.</p>
-<p>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No.Â 24.</p>
+<p>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.</p>
 <p><br></p>
 </div>
 <div id="appendices" class="section level1">

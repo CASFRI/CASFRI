@@ -1,0 +1,13 @@
+rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+1,CAS_ID,text,notNull({src_filename}|NULL_VALUE);notNull({map_id}|NULL_VALUE);notNull({feature_id}|NULL_VALUE);notNull({ogc_fid}|NULL_VALUE),"padConcat('bc08, {src_filename}, {map_id}, {feature_id}, {ogc_fid}', '4,15,10,10,7', 'x,x,x,0,0', '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+2,SOIL_MOIST_REG,text,false(|NOT_APPLICABLE),nothingText(),Needs custom helper function,TRUE
+3,STRUCTURE_PER,integer,false(|-8887),nothingInt(),Needs custom helper function,TRUE
+4,LAYER,integer,false(|-8887),nothingInt(),Needs custom helper function,TRUE
+5,LAYER_RANK,integer,false(|-8887),nothingInt(),Needs custom helper function,TRUE
+6,CROWN_CLOSURE_UPPER,integer,false(|-8887),nothingInt(),Needs custom helper function,TRUE
+7,CROWN_CLOSURE_LOWER,integer,false(|-8887),nothingInt(),Needs custom helper function,TRUE
+8,HEIGHT_UPPER,double precision,false(|-8886),nothingDouble(),Needs custom helper function,TRUE
+9,HEIGHT_LOWER,double precision,false(|-8886),nothingDouble(),Needs custom helper function,TRUE
+10,NAT_NON_VEG,text,false(|NOT_APPLICABLE),nothingText(),Needs custom helper function,TRUE
+11,NON_FOR_ANTH,text,false(|NOT_APPLICABLE),nothingText(),Needs custom helper function,TRUE
+12,NON_FOR_VEG,text,false(|NOT_APPLICABLE),nothingText(),Needs custom helper function,TRUE

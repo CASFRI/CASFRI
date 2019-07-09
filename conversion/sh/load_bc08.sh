@@ -26,7 +26,7 @@ else
 fi
 
 srcFileName=VEG_COMP_LYR_R1_POLY
-# srcFullPath="$friDir/BC/SourceDataset/v.00.05/VEG_COMP_LYR_R1_POLY/$srcFileName.gdb"
+#srcFullPath="$friDir/BC/SourceDataset/v.00.05/VEG_COMP_LYR_R1_POLY/$srcFileName.gdb"
 srcFullPath="$friDir/BC/SourceDataset/v.00.04/BCGOV/$srcFileName.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
