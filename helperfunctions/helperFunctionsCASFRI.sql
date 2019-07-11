@@ -32,7 +32,7 @@
 --    Cannot return specific error codes in translation table because failure of one column does not mean failure of the entire row.
 --    THIS IS AN EXAMPLE OF A TRANSLATION THAT COULD RETURN A VALUE FROM MULTIPLE COLUMNS.
 --    CANNOT VALIDATE EACH COLUMN SEPERATELY BECAUSE FAILURE WILL RETURN ERROR CODE, WE ONLY WANT AN ERROR CODE IF BOTH COLUMNS HAVE
---    INVALID VALUES. tHEREFORE NEED TO HARDCODE THESE CHECKS IN A SINGLE VALIDATION FUNCTION.
+--    INVALID VALUES. THEREFORE NEED TO HARDCODE THESE CHECKS IN A SINGLE VALIDATION FUNCTION.
 -- 
 -- e.g. TT_vri01_site_index_validation(1,1)
 ------------------------------------------------------------
@@ -78,6 +78,88 @@ RETURNS boolean AS $$
         RETURN TRUE;
       END IF;
     ELSE -- if both empty return FALSE
+      RETURN FALSE;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_avi01_non_for_anth_validation(text, text, text, text)
+--
+--  anth_veg text
+--  anth_non text
+--  lst text
+--  ignoreCase text
+--
+--  For two values, check that one of them is null or empty and the other is not null or empty.
+--  then check the one value is in a list.
+--
+-- e.g. TT_avi01_non_for_anth_validation(anth_veg, anth_non, lst, ignoreCase)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_validation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_avi01_non_for_anth_validation(
+  anth_veg text,
+  anth_non text,
+  lst text,
+  ignoreCase text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _lst text[];
+    _ignoreCase boolean := ignoreCase::boolean;
+    _anth_veg text;
+    _anth_non text;
+    _val text;
+  BEGIN
+    -- assign val1 and val 2 to either empty or not empty
+    RAISE NOTICE '_anth_veg:%, anth_non:%', anth_veg, anth_non;
+    IF anth_veg IS NULL OR replace(anth_veg, ' ', '') = ''::text THEN
+      _anth_veg = 'empty';
+    ELSE
+      _anth_veg = 'not_empty';
+    END IF;
+    RAISE NOTICE 'anth_veg: %', _anth_veg;    
+    IF anth_non IS NULL OR replace(anth_non, ' ', '') = ''::text THEN
+      _anth_non = 'empty';
+    ELSE
+      _anth_non = 'not_empty';
+    END IF;
+    RAISE NOTICE 'anth_non: %', _anth_non;
+    -- if one is empty and the other isn't, proceed...
+    IF (_anth_veg = 'empty' AND _anth_non = 'not_empty') OR (_anth_veg = 'not_empty' AND _anth_non = 'empty') THEN
+      -- assign anth_veg or anth_non to val.
+      IF _anth_veg = 'empty' THEN
+        _val = anth_non;
+      ELSE
+        _val = anth_veg;
+      END IF;
+      RAISE NOTICE 'val:%',_val;
+      -- match to list or return FALSE
+      IF _ignoreCase = FALSE THEN
+        _lst = string_to_array(lst, ',');
+        IF _val = ANY(array_remove(_lst, NULL)) THEN
+          RETURN TRUE;
+        ELSE
+          RAISE NOTICE 'NOT IN SET: %, %', _val, _lst;
+          RETURN FALSE;
+        END IF;
+      ELSE
+        _lst = string_to_array(upper(lst), ',');
+        IF upper(_val) = ANY(array_remove(_lst, NULL)) THEN
+          RETURN TRUE;
+        ELSE
+          RAISE NOTICE 'NOT IN SET: %, %', _val, _lst;
+          RETURN FALSE;
+        END IF;
+      END IF;
+    ELSE
+      IF _anth_veg = 'empty' THEN
+        RAISE NOTICE 'Both values are null or empty strings';
+      ELSE
+        RAISE NOTICE 'Both values are not null';        
+      END IF;
       RETURN FALSE;
     END IF;
   END;
@@ -330,3 +412,57 @@ RETURNS text AS $$
     END;
 $$ LANGUAGE plpgsql VOLATILE;
 
+
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- THIS COULD BECOME A GENERIC FUNCTION IF IT'S USEFUL IN OTHER FRIs
+--
+-- TT_avi01_non_for_anth_translation(text, text, text, text, text)
+--
+--  anth_veg text
+--  anth_non text
+--  lst1 text
+--  lst2 text
+--  ignoreCase text
+--
+--  For two values, if one of them is null or empty and the other is not null or empty.
+--  use the value that is not null or empty in mapText.
+--
+-- e.g. TT_avi01_non_for_anth_translation(val1, val2, lst1, lst2, ignoreCase)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_translation(text,text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_avi01_non_for_anth_translation(
+  val1 text,
+  val2 text,
+  lst1 text,
+  lst2 text,
+  ignoreCase text)
+RETURNS text AS $$
+  DECLARE
+    _val1 text;
+    _val2 text;
+  BEGIN
+    IF val1 IS NULL OR replace(val1, ' ', '') = ''::text THEN
+      _val1 = 'empty';
+    ELSE
+      _val1 = 'not_empty';
+    END IF;
+    
+    IF val2 IS NULL OR replace(val2, ' ', '') = ''::text THEN
+      _val2 = 'empty';
+    ELSE
+      _val2 = 'not_empty';
+    END IF;
+
+    IF _val1 = 'empty' AND _val2 = 'not_empty' THEN
+      RETURN TT_MapText(val2, lst1, lst2, ignoreCase);
+    ELSIF _val1 = 'not_empty' AND _val2 = 'empty' THEN
+      RETURN TT_MapText(val1, lst1, lst2, ignoreCase);
+    ELSIF _val1 = 'not_empty' AND _val2 = 'not_empty' THEN
+      RAISE EXCEPTION '2 values provided';
+    ELSIF _val1 = 'empty' AND _val2 = 'empty' THEN
+      RAISE EXCEPTION '2 NULLS provided';
+    END IF;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
