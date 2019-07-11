@@ -25,7 +25,7 @@ Note that forest resource inventories converted and translated by this package a
 
 CASFRI follows the [Semantic Versioning 2.0.0](https://semver.org/) versioning scheme (major.minor.revision) adapted for a dataset. Increments in revision version numbers are for bug fixes. Increment in minor version numbers are for new features, support for new inventories, additions to the schema (new attributes), and bug fixes. Increments in minor versions do not break backward compatibility with previous CASFRI schemas. Increments in major version number are for schema changes breaking backward compatibility in existing code manipulating the data (e.g. renaming attributes, removing attributes, and inventory support deprecation).
 
-The current version is 5.0.1-beta and is available for download at https://github.com/edwardsmarc/CASFRI/releases/tag/v5.0.1-beta
+The current version is 5.0.2-beta and is available for download at https://github.com/edwardsmarc/CASFRI/releases/tag/v5.0.2-beta
 
 # Directory structure
 <pre>
@@ -86,7 +86,7 @@ Currently supported FRI formats are:
 * Shapefile
 * Arc/Info Binary Coverage
 
-Arc/Info E00 files are not currently supported du to an incomplete support in GDAL/OGR. Source tables in this format should be converted into a supported format before loading, for example a file geodatabase.
+Arc/Info E00 files are not currently supported due to an incomplete support in GDAL/OGR. Source tables in this format should be converted into a supported format before loading, for example a file geodatabase.
 
 ### Projection
 All source tables are transformed to the Canada Albers Equal Area Conic projection during loading.
