@@ -1,5 +1,5 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-1,CAS_ID,text,notNull({src_filename}|NULL_VALUE);notNull({forest_id_2}|-8888);notNull({ogc_fid}|-8888),"padConcat('ab16, CANFOR, {src_filename}, {forest_id_2}, {ogc_fid}', '4,15,10,10,7', 'x,x,x,0,0', '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notNull({src_filename}|NULL_VALUE);notNull({forest_id_2}|NULL_VALUE);notNull({ogc_fid}|NULL_VALUE),"padConcat('ab16, CANFOR, {src_filename}, {forest_id_2}, {ogc_fid}', '4,15,10,10,7', 'x,x,x,0,0', '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
 2,ORIG_STAND_ID,text,"notNull({forest_id_2}|NULL_VALUE);isInt({forest_id_2}|WRONG_TYPE);greaterThan({forest_id_2},0|OUT_OF_RANGE)",copyText({forest_id_2}),Copies source value to ORIG_STAND_ID,TRUE
 3,STAND_STRUCTURE,text,"notNull({std_struct}|NULL_VALUE);notEmpty({std_struct}|EMPTY_STRING);matchList({std_struct},' 0,0,C4,C5,M,M0,MO'|NOT_IN_SET)","mapText({std_struct}, ' 0,0,C4,C5,M,M0,MO', '-9999,-9999,4,5,-9999,-9999,-9999')",Copies source value to STAND_STRUCTURE,TRUE
 4,NUM_OF_LAYERS,integer,true(|1),copyInt(1),Copies value 1 to NUM_OF_LAYERS,TRUE
