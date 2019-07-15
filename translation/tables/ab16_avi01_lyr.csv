@@ -1,5 +1,5 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(forest_id_2|-8888);notNull(ogc_fid|NULL_VALUE),"padConcat({'ab16', 'CANFOR', src_filename, forest_id_2, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(forest_id_2|NULL_VALUE);notNull(ogc_fid|NULL_VALUE),"padConcat({'ab16', 'CANFOR', src_filename, forest_id_2, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(moisture|NULL_VALUE);matchList(moisture,{'a','A','d','D','m','M','w','W'}|NOT_IN_SET)","mapText(moisture, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
 3,STRUCTURE_PER,integer,"notNull(std_struct|-8888);isInt(std_struct|-8889);matchList(std_struct,{' 0','0','C4','C5','M','M0','MO'}|-9998)","mapInt(std_struct, {' 0','0','C4','C5','M','M0','MO'}, {'-9999','-9999','4','5','-9999','-9999','-9999'})",Copy source value to STRUCTURE_PER,TRUE
 4,LAYER,integer,true(|-8887),copyInt('1'),Copy value of 1 to LAYER,TRUE
