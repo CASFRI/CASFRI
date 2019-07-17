@@ -8,4 +8,4 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 7,GIS_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-8889);greaterThan(shape_area,'0'|-9999)",copyDouble(shape_area),Copies source value to GIS_AREA,TRUE
 8,GIS_PERIMETER,double precision,"notNull(shape_length|-8888);isNumeric(shape_length|-8889);greaterThan(shape_length,'0'|-9999)",copyDouble(shape_length),Copies source value to GIS_PERIMETER,TRUE
 9,INVENTORY_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-8889);greaterThan(shape_area,'0'|-9999)",copyDouble(shape_area),Copies source value to INVENTORY_AREA,TRUE
-10,PHOTO_YEAR,integer,"notNull(reference_year|-8888);isInt(reference_year|-8889);between(reference_year,'1900','2020'|-9999)",copyInt(reference_year),Copies source value to PHOTO_YEAR,TRUE
+10,PHOTO_YEAR,text,"geoIsValid(wkb_geometry|-9997);geoIntersects(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry'|-9999)","geoIntersectionText(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry', 'photo_yr', 'GREATEST_AREA')",Copies source value to PHOTO_YEAR,TRUE
