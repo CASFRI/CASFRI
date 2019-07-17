@@ -1,0 +1,2 @@
+rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+1,SOURCE_VAL_UNIQUE,text,"isUnique(source_val, 'translation', 'nb_nbi01_species', '1'|NOT_UNIQUE)",copyText('PASS'),Does each SOURCE_VAL species code occur only once?,TRUE

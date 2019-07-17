@@ -9,6 +9,7 @@ pgpassword=postgres
 
 targetFRISchema=rawfri
 targetTranslationFileSchema=translation
+targetValidationFileSchema=validation
 
 friDir=E:/FRIs
 gdalFolder="C:/Program Files/GDAL"

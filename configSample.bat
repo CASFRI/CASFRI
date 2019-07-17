@@ -9,6 +9,7 @@ SET pgpassword=postgres
 
 SET targetFRISchema=rawfri
 SET targetTranslationFileSchema=translation
+SET targetValidationFileSchema=validation
 
 SET friDir=I://Fris
 SET gdalFolder=C:\Program Files\GDAL
