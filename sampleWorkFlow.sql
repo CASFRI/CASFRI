@@ -1,4 +1,4 @@
-------------------------------------------------------------------------------
+﻿------------------------------------------------------------------------------
 -- CASFRI Sample workflow file for CASFRI v5 beta
 -- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
@@ -210,6 +210,35 @@ SELECT * FROM translation.nb01_nbi01_lyr
 
 -- Display
 SELECT * FROM translation.nb01_nbi01_lyr_test;
+
+-------------------------------------------------------
+-------------------------------------------------------
+-- Validate dependency tables
+-------------------------------------------------------
+-------------------------------------------------------
+-------------------------------------------------------
+-- AB species table
+-------------------------------------------------------
+SELECT TT_Prepare('validation', 'ab_avi01_species_validation', '_ab_species_val');
+SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species', 'validation', 'ab_avi01_species_validation');
+
+-------------------------------------------------------
+-- BC species table
+-------------------------------------------------------
+SELECT TT_Prepare('validation', 'bc_vri01_species_validation', '_bc_species_val');
+SELECT * FROM TT_Translate_bc_species_val('translation', 'bc_vri01_species', 'validation', 'bc_vri01_species_validation');
+
+-------------------------------------------------------
+-- NB species table
+-------------------------------------------------------
+SELECT TT_Prepare('validation', 'nb_nbi01_species_validation', '_nb_species_val');
+SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species', 'validation', 'nb_nbi01_species_validation');
+
+-------------------------------------------------------
+-- AB photo year
+-------------------------------------------------------
+SELECT TT_Prepare('validation', 'ab_photoyear_validation', '_ab_photo_val');
+SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear', 'validation', 'ab_photoyear_validation');
 
 -------------------------------------------------------
 -------------------------------------------------------
