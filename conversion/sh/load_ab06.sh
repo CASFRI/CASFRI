@@ -41,11 +41,11 @@ fi
 ########################################## Process ######################################
 
 #Create schema if it doesn't exist
-"$gdalFolder/ogrinfo" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
+"$gdalFolder/ogrinfo" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
 
 #Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" \
+-f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcFullPath" \
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -sql "SELECT *, '$srcFileName' as src_filename FROM '$srcFileName'" \
