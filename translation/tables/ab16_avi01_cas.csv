@@ -4,8 +4,8 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 3,STAND_STRUCTURE,text,"notNull(std_struct|NULL_VALUE);notEmpty(std_struct|EMPTY_STRING);matchList(std_struct,{' 0','0','C4','C5','M','M0','MO'}|NOT_IN_SET)","mapText(std_struct, {' 0','0','C4','C5','M','M0','MO'}, {'-9999','-9999','4','5','-9999','-9999','-9999'})",Copies source value to STAND_STRUCTURE,TRUE
 4,NUM_OF_LAYERS,integer,true(|1),copyInt('1'),Copies value 1 to NUM_OF_LAYERS,TRUE
 5,IDENTIFICATION_ID,integer,true(|1),copyInt('6'),Copies value 6 to IDENTIFICATION_ID,TRUE
-6,MAP_SHEET_ID,text,notNull(trm|NULL_VALUE);isInt(trm|WRONG_TYPE),copyText(trm),Copies source value to MAP_SHEET_ID,TRUE
-7,GIS_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-8889);greaterThan(shape_area,'0'|-9999)",copyDouble(shape_area),Copies source value to GIS_AREA,TRUE
-8,GIS_PERIMETER,double precision,"notNull(shape_length|-8888);isNumeric(shape_length|-8889);greaterThan(shape_length,'0'|-9999)",copyDouble(shape_length),Copies source value to GIS_PERIMETER,TRUE
-9,INVENTORY_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-8889);greaterThan(shape_area,'0'|-9999)",copyDouble(shape_area),Copies source value to INVENTORY_AREA,TRUE
+6,MAP_SHEET_ID,text,notNull(src_filename|NULL_VALUE);isInt(src_filename|WRONG_TYPE),copyText(src_filename),Copies source value to MAP_SHEET_ID,TRUE
+7,GIS_AREA,double precision,"notNull(area|-8888);isNumeric(area|-9995);greaterThan(area,'0'|-9999)",copyDouble(area),Copies source value to GIS_AREA,TRUE
+8,GIS_PERIMETER,double precision,"notNull(perimeter|-8888);isNumeric(perimeter|-9995);greaterThan(perimeter,'0'|-9999)",copyDouble(perimeter),Copies source value to GIS_PERIMETER,TRUE
+9,INVENTORY_AREA,double precision,"notNull(area|-8888);isNumeric(area|-9995);greaterThan(area,'0'|-9999)",copyDouble(area),Copies source value to INVENTORY_AREA,TRUE
 10,PHOTO_YEAR,text,"geoIsValid(wkb_geometry|-9997);geoIntersects(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry'|-9999)","geoIntersectionText(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry', 'photo_yr', 'GREATEST_AREA')",Copies source value to PHOTO_YEAR,TRUE
