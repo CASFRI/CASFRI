@@ -1,4 +1,4 @@
-﻿------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- CASFRI Helper functions installation file for CASFR v5 beta
 -- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
@@ -114,8 +114,8 @@ RETURNS boolean AS $$
     _val text;
   BEGIN
     PERFORM TT_ValidateParams('TT_avi01_non_for_anth_validation',
-                                ARRAY['lst', lst, 'TT_stringListDef', 
-                                      'ignoreCase', ignoreCase, 'boolean']);
+                              ARRAY['lst', lst, 'stringlist', 
+                                    'ignoreCase', ignoreCase, 'boolean']);
     _ignoreCase = ignoreCase::boolean;
     
     -- assign val1 and val 2 to either empty or not empty
@@ -448,8 +448,8 @@ RETURNS text AS $$
     _val2 text;
   BEGIN
     PERFORM TT_ValidateParams('TT_avi01_non_for_anth_translation',
-                              ARRAY['lst1', lst1, 'TT_stringListDef',
-                                    'lst2', lst2, 'TT_stringListDef',  
+                              ARRAY['lst1', lst1, 'stringlist',
+                                    'lst2', lst2, 'stringlist',  
                                     'ignoreCase', ignoreCase, 'boolean']);
 
     IF val1 IS NULL OR replace(val1, ' ', '') = ''::text THEN

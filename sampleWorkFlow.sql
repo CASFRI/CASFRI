@@ -1,4 +1,4 @@
-﻿------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- CASFRI Sample workflow file for CASFRI v5 beta
 -- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
@@ -250,7 +250,7 @@ SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear', 'validation', 
 -- Create translation function
 SELECT TT_Prepare('translation', 'ab06_avi01_lyr_test', '_ab06');
 
--- Translate the sample!
+-- Translate the sample! (5 sec.)
 SELECT * FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi01_lyr_test');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
