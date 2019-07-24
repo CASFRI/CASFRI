@@ -337,7 +337,7 @@ SELECT * FROM casfri50.all;
 -------------------------------------------------------
 -- AB16 - 14 minutes
 -------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab16_avi01_lyr', '_ab16');
+SELECT TT_Prepare('translation', 'ab16_avi01_lyr', '_ab16', 'ab06_avi01_lyr');
 
 INSERT INTO casfri50.all
 SELECT * FROM TT_Translate_ab16('rawfri', 'ab16');
@@ -347,7 +347,7 @@ SELECT * FROM casfri50.all;
 -------------------------------------------------------
 -- BC08 - XX minutes
 -------------------------------------------------------
-SELECT TT_Prepare('translation', 'bc08_vri01_lyr', '_bc08');
+SELECT TT_Prepare('translation', 'bc08_vri01_lyr', '_bc08', 'ab06_avi01_lyr');
 
 INSERT INTO casfri50.all
 SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test');
@@ -357,7 +357,7 @@ SELECT * FROM casfri50.all;
 -------------------------------------------------------
 -- NB01 - XX minutes
 -------------------------------------------------------
-SELECT TT_Prepare('translation', 'nb01_nbi01_lyr', '_nb01');
+SELECT TT_Prepare('translation', 'nb01_nbi01_lyr', '_nb01', 'ab06_avi01_lyr');
 
 INSERT INTO casfri50.all
 SELECT * FROM TT_Translate_nb01('rawfri', 'nb01');
