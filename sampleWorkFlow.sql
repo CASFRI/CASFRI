@@ -57,15 +57,15 @@ SELECT count(*)
 FROM rawfri.ab06;
 
 -- Create a smaller test inventory table
-DROP TABLE IF EXISTS rawfri.ab06_test;
-CREATE TABLE rawfri.ab06_test AS
+DROP TABLE IF EXISTS rawfri.ab06_test_200;
+CREATE TABLE rawfri.ab06_test_200 AS
 SELECT * FROM rawfri.ab06
 --WHERE ogc_fid = 2
 LIMIT 200;
 
 -- Display
 SELECT src_filename, trm_1, poly_num, ogc_fid, density, height, sp1, sp1_per
-FROM rawfri.ab06_test;
+FROM rawfri.ab06_test_200;
 
 -------------------------------------------------------
 -- AB16
@@ -78,15 +78,15 @@ SELECT count(*)
 FROM rawfri.ab16;
 
 -- Create a smaller test inventory table
-DROP TABLE IF EXISTS rawfri.ab16_test;
-CREATE TABLE rawfri.ab16_test AS
+DROP TABLE IF EXISTS rawfri.ab16_test_200;
+CREATE TABLE rawfri.ab16_test_200 AS
 SELECT * FROM rawfri.ab16
 --WHERE ogc_fid = 18317
 LIMIT 200;
 
 -- Display
 SELECT src_filename, forest_id, ogc_fid, crownclose, height, sp1, sp1_percnt
-FROM rawfri.ab16_test;
+FROM rawfri.ab16_test_200;
 
 -------------------------------------------------------
 -- BC08
@@ -99,8 +99,8 @@ SELECT count(*)
 FROM rawfri.bc08;
 
 -- Create a smaller test inventory table
-DROP TABLE IF EXISTS rawfri.bc08_test;
-CREATE TABLE rawfri.bc08_test AS
+DROP TABLE IF EXISTS rawfri.bc08_test_200;
+CREATE TABLE rawfri.bc08_test_200 AS
 SELECT * FROM rawfri.bc08
 WHERE crown_closure > 0
 --WHERE ogc_fid = 424344
@@ -108,7 +108,7 @@ LIMIT 200;
 
 -- Display
 SELECT src_filename, map_id, feature_id, ogc_fid, crown_closure, proj_height_1, species_cd_1, species_pct_1
-FROM rawfri.bc08_test;
+FROM rawfri.bc08_test_200;
 
 -------------------------------------------------------
 -- NB01
@@ -121,8 +121,8 @@ SELECT count(*)
 FROM rawfri.nb01;
 
 -- Create a smaller test inventory table
-DROP TABLE IF EXISTS rawfri.nb01_test;
-CREATE TABLE rawfri.nb01_test AS
+DROP TABLE IF EXISTS rawfri.nb01_test_200;
+CREATE TABLE rawfri.nb01_test_200 AS
 SELECT * FROM rawfri.nb01 
 WHERE stdlab > 0
 --WHERE ogc_fid = 811451038
@@ -130,7 +130,7 @@ LIMIT 200;
 
 -- Display
 SELECT src_filename, stdlab, ogc_fid, l1cc, l1ht, l1s1, l1pr1
-FROM rawfri.nb01_test;
+FROM rawfri.nb01_test_200;
 -------------------------------------------------------
 -------------------------------------------------------
 -- Work on translation file
@@ -220,25 +220,25 @@ SELECT * FROM translation.nb01_nbi01_lyr_test;
 -- AB species table
 -------------------------------------------------------
 SELECT TT_Prepare('validation', 'ab_avi01_species_validation', '_ab_species_val');
-SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species', 'validation', 'ab_avi01_species_validation');
+SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species');
 
 -------------------------------------------------------
 -- BC species table
 -------------------------------------------------------
 SELECT TT_Prepare('validation', 'bc_vri01_species_validation', '_bc_species_val');
-SELECT * FROM TT_Translate_bc_species_val('translation', 'bc_vri01_species', 'validation', 'bc_vri01_species_validation');
+SELECT * FROM TT_Translate_bc_species_val('translation', 'bc_vri01_species');
 
 -------------------------------------------------------
 -- NB species table
 -------------------------------------------------------
 SELECT TT_Prepare('validation', 'nb_nbi01_species_validation', '_nb_species_val');
-SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species', 'validation', 'nb_nbi01_species_validation');
+SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species');
 
 -------------------------------------------------------
 -- AB photo year
 -------------------------------------------------------
 SELECT TT_Prepare('validation', 'ab_photoyear_validation', '_ab_photo_val');
-SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear', 'validation', 'ab_photoyear_validation');
+SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear');
 
 -------------------------------------------------------
 -------------------------------------------------------
@@ -251,7 +251,7 @@ SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear', 'validation', 
 SELECT TT_Prepare('translation', 'ab06_avi01_lyr_test', '_ab06');
 
 -- Translate the sample! (5 sec.)
-SELECT * FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi01_lyr_test');
+SELECT * FROM TT_Translate_ab06('rawfri', 'ab06_test_200');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, trm_1, poly_num, ogc_fid, cas_id, 
@@ -259,7 +259,7 @@ SELECT src_filename, trm_1, poly_num, ogc_fid, cas_id,
        height, height_upper, height_lower,
        sp1, species_1,
        sp1_per, species_per_1
-FROM TT_Translate_ab06('rawfri', 'ab06_test', 'translation', 'ab06_avi01_lyr_test'), rawfri.ab06_test
+FROM TT_Translate_ab06('rawfri', 'ab06_test_200'), rawfri.ab06_test_200
 WHERE poly_num = substr(cas_id, 33, 10)::int;
 
 -------------------------------------------------------
@@ -269,7 +269,7 @@ WHERE poly_num = substr(cas_id, 33, 10)::int;
 SELECT TT_Prepare('translation', 'ab16_avi01_lyr_test', '_ab16');
 
 -- Translate the sample!
-SELECT * FROM TT_Translate_ab16('rawfri', 'ab16_test', 'translation', 'ab16_avi01_lyr_test');
+SELECT * FROM TT_Translate_ab16('rawfri', 'ab16_test_200');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, forest_id, ogc_fid, cas_id, 
@@ -277,7 +277,7 @@ SELECT src_filename, forest_id, ogc_fid, cas_id,
        height, height_upper, height_lower,
        sp1, species_1,
        sp1_percnt, species_per_1
-FROM TT_Translate_ab16('rawfri', 'ab16_test', 'translation', 'ab16_avi01_lyr_test'), rawfri.ab16_test
+FROM TT_Translate_ab16('rawfri', 'ab16_test_200'), rawfri.ab16_test_200
 WHERE ogc_fid = right(cas_id, 7)::int;
 
 -------------------------------------------------------
@@ -287,7 +287,7 @@ WHERE ogc_fid = right(cas_id, 7)::int;
 SELECT TT_Prepare('translation', 'bc08_vri01_lyr_test', '_bc08');
 
 -- Translate the sample!
-SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri01_lyr_test');
+SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test_200');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, map_id, ogc_fid, cas_id, 
@@ -295,7 +295,7 @@ SELECT src_filename, map_id, ogc_fid, cas_id,
        proj_height_1, height_upper, height_lower,
        species_cd_1, species_1,
        species_pct_1, species_per_1
-FROM TT_Translate_bc08('rawfri', 'bc08_test', 'translation', 'bc08_vri01_lyr_test'), rawfri.bc08_test
+FROM TT_Translate_bc08('rawfri', 'bc08_test_200'), rawfri.bc08_test_200
 WHERE ogc_fid = right(cas_id, 7)::int;
 
 -------------------------------------------------------
@@ -305,7 +305,7 @@ WHERE ogc_fid = right(cas_id, 7)::int;
 SELECT TT_Prepare('translation', 'nb01_nbi01_lyr_test', '_nb01');
 
 -- Translate the sample!
-SELECT * FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi01_lyr_test');
+SELECT * FROM TT_Translate_nb01('rawfri', 'nb01_test_200');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, stdlab, ogc_fid, cas_id, 
@@ -313,50 +313,56 @@ SELECT src_filename, stdlab, ogc_fid, cas_id,
        l1ht, height_upper, height_lower, 
        l1s1, species_1,
        l1pr1, species_per_1
-FROM TT_Translate_nb01('rawfri', 'nb01_test', 'translation', 'nb01_nbi01_lyr_test'), rawfri.nb01_test
+FROM TT_Translate_nb01('rawfri', 'nb01_test_200'), rawfri.nb01_test_200
 WHERE ogc_fid = right(cas_id, 7)::int;
 
 -------------------------------------------------------
 -------------------------------------------------------
--- Translate the big thing!
+-- Translate the big thing by appending all translated 
+-- table to the same big table!
 -------------------------------------------------------
 -------------------------------------------------------
 CREATE SCHEMA casfri50;
 -------------------------------------------------------
--- AB06 - 55 seconds
+-- AB06 - 4 minutes
 -------------------------------------------------------
---DROP TABLE IF EXISTS casfri50.ab06;
-CREATE TABLE casfri50.ab06 AS
-SELECT * FROM TT_Translate_ab06('rawfri', 'ab06', 'translation', 'ab06_avi01_lyr_test');
+--DROP TABLE IF EXISTS casfri50.all;
+SELECT TT_Prepare('translation', 'ab06_avi01_lyr', '_ab06');
 
-SELECT * FROM casfri50.ab06;
+CREATE TABLE casfri50.all AS
+SELECT * FROM TT_Translate_ab06('rawfri', 'ab06');
+
+SELECT * FROM casfri50.all;
 
 -------------------------------------------------------
 -- AB16 - 14 minutes
 -------------------------------------------------------
---DROP TABLE IF EXISTS casfri50.ab16;
-CREATE TABLE casfri50.ab16 AS
-SELECT * FROM TT_Translate_ab16('rawfri', 'ab16', 'translation', 'ab16_avi01_lyr_test');
+SELECT TT_Prepare('translation', 'ab16_avi01_lyr', '_ab16');
 
-SELECT * FROM casfri50.ab16;
+INSERT INTO casfri50.all
+SELECT * FROM TT_Translate_ab16('rawfri', 'ab16');
+
+SELECT * FROM casfri50.all;
 
 -------------------------------------------------------
 -- BC08 - XX minutes
 -------------------------------------------------------
---DROP TABLE IF EXISTS casfri50.ab16;
-CREATE TABLE casfri50.bc08 AS
-SELECT * FROM TT_Translate_bc08('rawfri', 'bc08', 'translation', 'bc08_vri01_lyr_test');
+SELECT TT_Prepare('translation', 'bc08_vri01_lyr', '_bc08');
 
-SELECT * FROM casfri50.bc08;
+INSERT INTO casfri50.all
+SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test');
+
+SELECT * FROM casfri50.all;
 
 -------------------------------------------------------
 -- NB01 - XX minutes
 -------------------------------------------------------
---DROP TABLE IF EXISTS casfri50.nb01;
-CREATE TABLE casfri50.nb01 AS
-SELECT * FROM TT_Translate_nb01('rawfri', 'nb01', 'translation', 'nb01_nbi01_lyr_test');
+SELECT TT_Prepare('translation', 'nb01_nbi01_lyr', '_nb01');
 
-SELECT * FROM casfri50.nb01;
+INSERT INTO casfri50.all
+SELECT * FROM TT_Translate_nb01('rawfri', 'nb01');
+
+SELECT * FROM casfri50.all;
 
 
 
