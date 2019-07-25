@@ -1,4 +1,4 @@
-﻿------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- PostgreSQL Table Tranlation Engine - Test file
 -- Version 0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
@@ -12,22 +12,6 @@
 --
 -------------------------------------------------------------------------------
 SET lc_messages TO 'en_US.UTF-8';
-
--- IsError(text)
--- function to test if helper functions return errors
-CREATE OR REPLACE FUNCTION IsError(
-  functionString text
-)
-RETURNS boolean AS $$
-  DECLARE
-    result boolean;
-  BEGIN
-    EXECUTE functionString INTO result;
-    RETURN FALSE;
-  EXCEPTION WHEN OTHERS THEN
-    RETURN TRUE;
-  END;
-$$ LANGUAGE plpgsql VOLATILE;
 
 -----------------------------------------------------------
 -- Comment out the following line and the last one of the file to display 
@@ -51,14 +35,17 @@ WITH test_nb AS (
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
-SELECT function_tested, maj_num, generate_series(1, nb_test)::text min_num
+SELECT function_tested, maj_num, nb_test, generate_series(1, nb_test)::text min_num
 FROM test_nb
+ORDER BY maj_num, min_num
 )
 SELECT coalesce(maj_num || '.' || min_num, b.number) AS number,
-       coalesce(a.function_tested, 'ERROR: Insufficient number of test for ' || 
+       coalesce(a.function_tested, 'ERROR: Insufficient number of tests for ' || 
                 b.function_tested || ' in the initial table...') AS function_tested,
-       description, 
-       NOT passed IS NULL AND (regexp_split_to_array(number, '\.'))[2] = min_num AND passed passed
+       coalesce(description, 'ERROR: Too many tests (' || nb_test || ') for ' || a.function_tested || ' in the initial table...') description, 
+       NOT passed IS NULL AND 
+          (regexp_split_to_array(number, '\.'))[1] = maj_num::text AND 
+          (regexp_split_to_array(number, '\.'))[2] = min_num AND passed passed
 FROM test_series AS a FULL OUTER JOIN (
 
 
@@ -188,55 +175,55 @@ UNION ALL
 SELECT '7.1'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'Two empty strings'::text description,
-       TT_avi01_non_for_anth_validation(''::text, ''::text, 'A,B,C'::text, TRUE::text) IS FALSE passed
+       TT_avi01_non_for_anth_validation(''::text, ''::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '7.2'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'Two NULL'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, NULL::text, 'A,B,C'::text, TRUE::text) IS FALSE passed
-       UNION ALL
+       TT_avi01_non_for_anth_validation(NULL::text, NULL::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) IS FALSE passed
 ---------------------------------------------------------
+UNION ALL
 SELECT '7.3'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'Pass with an empty string'::text description,
-       TT_avi01_non_for_anth_validation('C'::text, ''::text, 'A,B,C'::text, TRUE::text) passed
+       TT_avi01_non_for_anth_validation('C'::text, ''::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) IS TRUE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '7.4'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'Pass with a NULL'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, 'C'::text, 'A,B,C'::text, TRUE::text) passed
+       TT_avi01_non_for_anth_validation(NULL::text, 'C'::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '7.5'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'Two values'::text description,
-       TT_avi01_non_for_anth_validation('A'::text, 'C'::text, 'A,B,C'::text, TRUE::text) IS FALSE passed
+       TT_avi01_non_for_anth_validation('A'::text, 'C'::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '7.6'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'Not in set'::text description,
-       TT_avi01_non_for_anth_validation('C'::text, NULL::text, 'A,B,S'::text, TRUE::text) IS FALSE passed
+       TT_avi01_non_for_anth_validation('C'::text, NULL::text, '{''A'', ''B'', ''S''}'::text, TRUE::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '7.7'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'Not in set'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, 'x'::text, 'A,B,S'::text, TRUE::text) IS FALSE passed
+       TT_avi01_non_for_anth_validation(NULL::text, 'x'::text, '{''A'', ''B'', ''S''}'::text, TRUE::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '7.8'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'Not in set, ignoreCase = false'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, 'a'::text, 'A,B,S'::text, FALSE::text) IS FALSE passed
+       TT_avi01_non_for_anth_validation(NULL::text, 'a'::text, '{''A'', ''B'', ''S''}'::text, FALSE::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '7.9'::text number,
        'TT_avi01_non_for_anth_validation'::text function_tested,
        'In set with ignoreCase = true'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, 'a'::text, 'A,B,S'::text, TRUE::text) passed
+       TT_avi01_non_for_anth_validation(NULL::text, 'a'::text, '{''A'', ''B'', ''S''}'::text, TRUE::text) passed
 ---------------------------------------------------------
 -- TT_avi01_non_for_anth_translation
 ---------------------------------------------------------
@@ -244,55 +231,64 @@ UNION ALL
 SELECT '8.1'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Pass with one empty string'::text description,
-       TT_avi01_non_for_anth_translation('D'::text, ''::text, 'A,B,C,D,E,F,G,H'::text, 'aa,bb,cc,dd,ee,ff,gg,hh'::text, TRUE::text) = 'dd' passed
+       TT_avi01_non_for_anth_translation('D'::text, ''::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                                              '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, TRUE::text) = 'dd' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.2'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Pass with one null'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, 'H'::text, 'A,B,C,D,E,F,G,H'::text, 'aa,bb,cc,dd,ee,ff,gg,hh'::text, TRUE::text) = 'hh' passed
+       TT_avi01_non_for_anth_translation(NULL::text, 'H'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                                                '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, TRUE::text) = 'hh' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.3'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Pass with ignore case true'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, 'h'::text, 'A,B,C,D,E,F,G,H'::text, 'aa,bb,cc,dd,ee,ff,gg,hh'::text, TRUE::text) = 'hh' passed
+       TT_avi01_non_for_anth_translation(NULL::text, 'h'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                                                '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, TRUE::text) = 'hh' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.4'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Fail with ignore case false'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, 'h'::text, 'A,B,C,D,E,F,G,H'::text, 'aa,bb,cc,dd,ee,ff,gg,hh'::text, FALSE::text) IS NULL passed
+       TT_avi01_non_for_anth_translation(NULL::text, 'h'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                                                '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, FALSE::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.5'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Not in set'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, 'x'::text, 'A,B,C,D,E,F,G,H'::text, 'aa,bb,cc,dd,ee,ff,gg,hh'::text, TRUE::text) IS NULL passed
+       TT_avi01_non_for_anth_translation(NULL::text, 'x'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                                                '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, TRUE::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.6'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Two nulls'::text description,
-       TT_IsError('SELECT TT_avi01_non_for_anth_translation(NULL::text, NULL::text, ''A,B,C,D,E,F,G,H''::text, ''aa,bb,cc,dd,ee,ff,gg,hh''::text, TRUE::text) passed')
+       TT_IsError('SELECT TT_avi01_non_for_anth_translation(NULL::text, NULL::text, ''{''''A'''', ''''B'''', ''''C'''', ''''D'''', ''''E'''', ''''F'''', ''''G'''', ''''H''''}''::text, 
+                                                                                    ''{''''aa'''', ''''bb'''', ''''cc'''', ''''dd'''', ''''ee'''', ''''ff'''', ''''gg'''', ''''hh''''}''::text, TRUE::text);') = '2 NULLS provided' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.7'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Two empty'::text description,
-       TT_IsError('SELECT TT_avi01_non_for_anth_translation(''::text, ''::text, ''A,B,C,D,E,F,G,H''::text, ''aa,bb,cc,dd,ee,ff,gg,hh''::text, TRUE::text) passed')
+       TT_IsError('SELECT TT_avi01_non_for_anth_translation(''''::text, ''''::text, ''{''''A'''', ''''B'''', ''''C'''', ''''D'''', ''''E'''', ''''F'''', ''''G'''', ''''H''''}''::text, 
+                                                                                ''{''''aa'''', ''''bb'''', ''''cc'''', ''''dd'''', ''''ee'''', ''''ff'''', ''''gg'''', ''''hh''''}''::text, TRUE::text);') = '2 NULLS provided' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.8'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'One Null one empty'::text description,
-       TT_IsError('SELECT TT_avi01_non_for_anth_translation(NULL::text, ''::text, ''A,B,C,D,E,F,G,H''::text, ''aa,bb,cc,dd,ee,ff,gg,hh''::text, TRUE::text) passed')
+       TT_IsError('SELECT TT_avi01_non_for_anth_translation(NULL::text, ''''::text, ''{''''A'''', ''''B'''', ''''C'''', ''''D'''', ''''E'''', ''''F'''', ''''G'''', ''''H''''}''::text, 
+                                                                                    ''{''''aa'''', ''''bb'''', ''''cc'''', ''''dd'''', ''''ee'''', ''''ff'''', ''''gg'''', ''''hh''''}''::text, TRUE::text);') = '2 NULLS provided' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.9'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Two values'::text description,
-       TT_IsError('SELECT TT_avi01_non_for_anth_translation(''a''::text, ''b''::text, ''A,B,C,D,E,F,G,H''::text, ''aa,bb,cc,dd,ee,ff,gg,hh''::text, TRUE::text) passed')
+       TT_IsError('SELECT TT_avi01_non_for_anth_translation(''a''::text, ''b''::text, ''{''''A'''', ''''B'''', ''''C'''', ''''D'''', ''''E'''', ''''F'''', ''''G'''', ''''H''''}''::text, 
+                                                                                    ''{''''aa'''', ''''bb'''', ''''cc'''', ''''dd'''', ''''ee'''', ''''ff'''', ''''gg'''', ''''hh''''}''::text, TRUE::text);') = '2 values provided' passed
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
