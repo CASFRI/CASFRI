@@ -196,8 +196,7 @@ RETURNS integer AS $$
   BEGIN
     RETURN substring(proj_date from 1 for 4)::int - proj_age::int;
   EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'TRANSLATION_ERROR';
-    RETURN '-3333';
+    RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -473,5 +472,53 @@ RETURNS text AS $$
     ELSIF _val1 = 'empty' AND _val2 = 'empty' THEN
       RAISE EXCEPTION '2 NULLS provided';
     END IF;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nbi01_stand_structure_translation(text, text, text)
+--
+--  src_filename text
+--  l1vs text
+--  l2vs text
+--
+-- If src_filename=“Forest” and l2vs=0, then stand_structure=“S”
+-- If src_filename=“Forest” and (l1vs>0 and l2vs>0) then stand_structure=“M”
+-- If src_filename=“Forest” and (l1vs>1 and l2vs>1) then stand_structure=“C”
+--
+-- e.g. TT_nbi01_stand_structure_translation(src_filename, l1vs, l2vs)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text,text,text);
+CREATE OR REPLACE FUNCTION TT_nbi01_stand_structure_translation(
+  src_filename text,
+  l1vs text,
+  l2vs text
+)
+RETURNS text AS $$
+  DECLARE
+    _l1vs int;
+    _l2vs int;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_nbi01_stand_structure_translation',
+                              ARRAY['src_filename', src_filename, 'text',
+                                    'l1vs', l1vs, 'int',  
+                                    'l2vs', l2vs, 'int']);
+    _l1vs = l1vs::int;
+    _l2vs = l2vs::int;
+		
+		IF src_filename = 'Forest' THEN
+		  IF _l2vs = 0 THEN
+		    RETURN 'S';
+			ELSIF _l1vs > 1 AND _l2vs > 1 THEN
+			  RETURN 'C';
+		  ELSIF _l1vs > 0 AND _l2vs > 0 THEN
+			  RETURN 'M';
+			ELSE
+			  RETURN NULL;
+		  END IF;
+	  ELSE
+		  RETURN NULL;
+		END IF;				
   END;
 $$ LANGUAGE plpgsql VOLATILE;
