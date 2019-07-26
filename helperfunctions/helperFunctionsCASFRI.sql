@@ -522,3 +522,46 @@ RETURNS text AS $$
 		END IF;				
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nbi01_num_of_layers_translation(text, text, text)
+--
+--  src_filename text
+--  l1vs text
+--  l2vs text
+--
+-- If src_filename=“Forest” stand_structure = S, num_of_layers = 1.
+-- If src_filename=“Forest” stand_structure = M or C, then stand_structure=“M”
+--
+-- e.g. TT_nbi01_num_of_layers_translation(src_filename, l1vs, l2vs)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nbi01_num_of_layers_translation(text,text,text);
+CREATE OR REPLACE FUNCTION TT_nbi01_num_of_layers_translation(
+  src_filename text,
+  l1vs text,
+  l2vs text
+)
+RETURNS int AS $$
+  DECLARE
+    _l1vs int;
+    _l2vs int;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_nbi01_num_of_layers_translation',
+                              ARRAY['src_filename', src_filename, 'text',
+                                    'l1vs', l1vs, 'int',  
+                                    'l2vs', l2vs, 'int']);
+		
+		IF src_filename = 'Forest' THEN
+		  IF TT_nbi01_stand_structure_translation(src_filename, l1vs, l2vs) = 'S' THEN
+			  RETURN 1;
+			ELSIF TT_nbi01_stand_structure_translation(src_filename, l1vs, l2vs) IN ('M', 'C') THEN
+			  RETURN 2;
+			ELSE
+			  RETURN NULL;
+		  END IF;
+	  ELSE
+		  RETURN NULL;
+		END IF;				
+  END;
+$$ LANGUAGE plpgsql VOLATILE;

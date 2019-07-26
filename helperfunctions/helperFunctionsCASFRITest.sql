@@ -32,7 +32,7 @@ WITH test_nb AS (
     SELECT 'TT_avi01_non_for_anth_validation'::text function_tested,     7 maj_num, 9 nb_test UNION ALL
     SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,    8 maj_num, 9 nb_test UNION ALL
 	  SELECT 'TT_nbi01_stand_structure_translation'::text function_tested, 9 maj_num, 5 nb_test UNION ALL
-		SELECT 'TT_nbi01_num_of_layers'::text function_tested,        10 maj_num, 4 nb_test
+		SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,        10 maj_num, 4 nb_test
 
 
 ),
@@ -329,27 +329,27 @@ SELECT '9.5'::text number,
 ---------------------------------------------------------
 UNION ALL
 SELECT '10.1'::text number,
-       'TT_nbi01_num_of_layers'::text function_tested,
+       'TT_nbi01_num_of_layers_translation'::text function_tested,
        'Wrong source dataset'::text description,
-       TT_nbi01_num_of_layers('Wetland'::text, '0'::text, '0'::text) IS NULL passed
+       TT_nbi01_num_of_layers_translation('Wetland'::text, '0'::text, '0'::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '10.2'::text number,
-       'TT_nbi01_num_of_layers'::text function_tested,
+       'TT_nbi01_num_of_layers_translation'::text function_tested,
        '1 layer, S'::text description,
-       TT_nbi01_num_of_layers('Forest'::text, '0'::text, '0'::text) = 1 passed
+       TT_nbi01_num_of_layers_translation('Forest'::text, '0'::text, '0'::text) = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '10.3'::text number,
-       'TT_nbi01_num_of_layers'::text function_tested,
+       'TT_nbi01_num_of_layers_translation'::text function_tested,
        '2 layer, M'::text description,
-       TT_nbi01_num_of_layers('Forest'::text, '1'::text, '1'::text) = 2 passed
+       TT_nbi01_num_of_layers_translation('Forest'::text, '1'::text, '1'::text) = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '10.4'::text number,
-       'TT_nbi01_num_of_layers'::text function_tested,
+       'TT_nbi01_num_of_layers_translation'::text function_tested,
        '2 layer, C'::text description,
-       TT_nbi01_num_of_layers('Forest'::text, '2'::text, '2'::text) = 2 passed
+       TT_nbi01_num_of_layers_translation('Forest'::text, '2'::text, '2'::text) = 2 passed
 
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
