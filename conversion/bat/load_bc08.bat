@@ -27,12 +27,12 @@ IF EXIST "%~dp0\..\..\config.bat" (
 :: Set unvariable variables
 
 SET srcFileName=VEG_COMP_LYR_R1_POLY
-::SET srcFullPath="%friDir%\BC\SourceDataset\v.00.05\VEG_COMP_LYR_R1_POLY\%srcFileName%.gdb"
-SET srcFullPath="%friDir%\BC\SourceDataset\v.00.04\BCGOV\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\BC\SourceDataset\v.00.05\VEG_COMP_LYR_R1_POLY\%srcFileName%.gdb"
+::SET srcFullPath="%friDir%\BC\SourceDataset\v.00.04\BCGOV\%srcFileName%.gdb"
 
 SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
-::SET fullTargetTableName=%targetFRISchema%.bc08
-SET fullTargetTableName=%targetFRISchema%.bc04
+SET fullTargetTableName=%targetFRISchema%.bc08
+::SET fullTargetTableName=%targetFRISchema%.bc04
 
 
 IF %overwriteFRI% == True (
