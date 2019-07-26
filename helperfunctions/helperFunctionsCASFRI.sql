@@ -239,10 +239,9 @@ RETURNS double precision AS $$
       RETURN site_index::double precision;
     ELSIF _site_index = 'empty' AND _site_index_est = 'not_empty' THEN
       RETURN site_index_est::double precision;
+	  ELSE
+		  RETURN NULL;
     END IF;
-  EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'TRANSLATION_ERROR';
-    RETURN '-3333';
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
