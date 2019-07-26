@@ -17,4 +17,4 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 16,LICENSE_AGREEMENT,text,true(|1),copyText('License agreements'),Copies value 'License agreements' to LICENSE_AGREEMENT,TRUE
 17,SOURCE_DATA_PHOTOYEAR,text,true(|1),copyText('Included in SIDS'),Copies value 'Included in SIDS' to SOURCE_DATA_PHOTOYEAR,TRUE
 18,PHOTOYEAR_START,integer,"notNull(inventory_standard_cd|-8888);matchList(inventory_standard_cd,{'F','V','I','L'}|-9998)","mapInt(inventory_standard_cd, {'F','V','I','L'}, {'1953','1954','1905','1997'})",Maps source value to PHOTOYEAR_START using list,TRUE
-19,PHOTOYEAR_END,integer,"notNull(inventory_standard_cd|-8888);matchList(inventory_standard_cd,{'F','V','I','L'}|-9998)","mapInt(inventory_standard_cd, {'F','V','I','L'}, {'2017','2017,'2017','2017'})",Maps source value to PHOTOYEAR_END using list,TRUE
+19,PHOTOYEAR_END,integer,"notNull(inventory_standard_cd|-8888);matchList(inventory_standard_cd,{'F','V','I','L'}|-9998)","mapInt(inventory_standard_cd, {'F','V','I','L'}, {'2017','2017','2017','2017'})",Maps source value to PHOTOYEAR_END using list,TRUE
