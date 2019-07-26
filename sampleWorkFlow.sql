@@ -49,167 +49,362 @@ SET tt.debug TO FALSE;
 -------------------------------------------------------
 -- AB06
 -------------------------------------------------------
--- Have a look at one of the source inventory table
+-- display one of the source inventory table
 SELECT * FROM rawfri.ab06 LIMIT 10;
 
--- Count the number of rows
+-- count the number of rows
 SELECT count(*)
 FROM rawfri.ab06;
 
--- Create a smaller test inventory table
+-- create a smaller test inventory table
 DROP TABLE IF EXISTS rawfri.ab06_test_200;
 CREATE TABLE rawfri.ab06_test_200 AS
 SELECT * FROM rawfri.ab06
---WHERE ogc_fid = 2
+--WHERE rule_id = 2
 LIMIT 200;
 
--- Display
-SELECT src_filename, trm_1, poly_num, ogc_fid, density, height, sp1, sp1_per
+-- display
+SELECT src_filename, trm_1, poly_num, rule_id, density, height, sp1, sp1_per
 FROM rawfri.ab06_test_200;
 
 -------------------------------------------------------
 -- AB16
 -------------------------------------------------------
--- Have a look at one of the source inventory table
+-- display one of the source inventory table
 SELECT * FROM rawfri.ab16 LIMIT 10;
 
--- Count the number of rows
+-- count the number of rows
 SELECT count(*)
 FROM rawfri.ab16;
 
--- Create a smaller test inventory table
+-- create a smaller test inventory table
 DROP TABLE IF EXISTS rawfri.ab16_test_200;
 CREATE TABLE rawfri.ab16_test_200 AS
 SELECT * FROM rawfri.ab16
---WHERE ogc_fid = 18317
+--WHERE rule_id = 18317
 LIMIT 200;
 
--- Display
-SELECT src_filename, forest_id, ogc_fid, crownclose, height, sp1, sp1_percnt
+-- display
+SELECT src_filename, forest_id, rule_id, crownclose, height, sp1, sp1_percnt
 FROM rawfri.ab16_test_200;
-
--------------------------------------------------------
--- BC08
--------------------------------------------------------
--- Have a look at one of the source inventory table
-SELECT * FROM rawfri.bc08 LIMIT 10;
-
--- Count the number of rows
-SELECT count(*)
-FROM rawfri.bc08;
-
--- Create a smaller test inventory table
-DROP TABLE IF EXISTS rawfri.bc08_test_200;
-CREATE TABLE rawfri.bc08_test_200 AS
-SELECT * FROM rawfri.bc08
-WHERE crown_closure > 0
---WHERE ogc_fid = 424344
-LIMIT 200;
-
--- Display
-SELECT src_filename, map_id, feature_id, ogc_fid, crown_closure, proj_height_1, species_cd_1, species_pct_1
-FROM rawfri.bc08_test_200;
 
 -------------------------------------------------------
 -- NB01
 -------------------------------------------------------
--- Have a look at one of the source inventory table
+-- have a look at one of the source inventory table
 SELECT * FROM rawfri.nb01 LIMIT 10;
 
--- Count the number of rows
+-- count the number of rows
 SELECT count(*)
 FROM rawfri.nb01;
 
--- Create a smaller test inventory table
+-- create a smaller test inventory table
 DROP TABLE IF EXISTS rawfri.nb01_test_200;
 CREATE TABLE rawfri.nb01_test_200 AS
 SELECT * FROM rawfri.nb01 
 WHERE stdlab > 0
---WHERE ogc_fid = 811451038
+--WHERE rule_id = 811451038
 LIMIT 200;
 
--- Display
-SELECT src_filename, stdlab, ogc_fid, l1cc, l1ht, l1s1, l1pr1
+-- display
+SELECT src_filename, stdlab, rule_id, l1cc, l1ht, l1s1, l1pr1
 FROM rawfri.nb01_test_200;
--------------------------------------------------------
--------------------------------------------------------
--- Work on translation file
--------------------------------------------------------
--------------------------------------------------------
--- AB06
--------------------------------------------------------
--- Display the translation table of interest
-SELECT * FROM translation.ab06_avi01_lyr; 
-
--- Create a subset translation table if necessary
-DROP TABLE IF EXISTS translation.ab06_avi01_lyr_test;
-CREATE TABLE translation.ab06_avi01_lyr_test WITH OIDS AS
-SELECT * FROM translation.ab06_avi01_lyr
---WHERE ogc_fid = 1 OR 
---ogc_fid = 2 OR ogc_fid = 3 OR 
---ogc_fid = 4 OR ogc_fid = 5 OR 
---ogc_fid = 6 OR ogc_fid = 7
-;
-
--- Display
-SELECT * FROM translation.ab06_avi01_lyr_test;
-
--------------------------------------------------------
--- AB16
--------------------------------------------------------
--- Display the translation table of interest
-SELECT * FROM translation.ab16_avi01_lyr; 
-
--- Create a subset translation table if necessary
-DROP TABLE IF EXISTS translation.ab16_avi01_lyr_test;
-CREATE TABLE translation.ab16_avi01_lyr_test WITH OIDS AS
-SELECT * FROM translation.ab16_avi01_lyr
---WHERE ogc_fid = 1 OR 
---ogc_fid = 2 OR ogc_fid = 3 OR 
---ogc_fid = 4 OR ogc_fid = 5 OR
---ogc_fid = 6 OR ogc_fid = 7
-;
-
--- Display
-SELECT * FROM translation.ab16_avi01_lyr_test;
 
 -------------------------------------------------------
 -- BC08
 -------------------------------------------------------
--- Display the translation table of interest
-SELECT * FROM translation.bc08_vri01_lyr; 
+-- display one of the source inventory table
+SELECT * FROM rawfri.bc08 LIMIT 10;
 
--- Create a subset translation table if necessary
-DROP TABLE IF EXISTS translation.bc08_vri01_lyr_test;
-CREATE TABLE translation.bc08_vri01_lyr_test WITH OIDS AS
-SELECT * FROM translation.bc08_vri01_lyr
---WHERE ogc_fid = 1 OR 
---ogc_fid = 2 OR ogc_fid = 3 OR 
---ogc_fid = 4 OR ogc_fid = 5 OR
---ogc_fid = 6 OR ogc_fid = 7
+-- count the number of rows
+SELECT count(*)
+FROM rawfri.bc08;
+
+-- create a smaller test inventory table
+DROP TABLE IF EXISTS rawfri.bc08_test_200;
+CREATE TABLE rawfri.bc08_test_200 AS
+SELECT * FROM rawfri.bc08
+WHERE crown_closure > 0
+--WHERE rule_id = 424344
+LIMIT 200;
+
+-- display
+SELECT src_filename, map_id, feature_id, rule_id, crown_closure, proj_height_1, species_cd_1, species_pct_1
+FROM rawfri.bc08_test_200;
+
+-------------------------------------------------------
+-------------------------------------------------------
+-- Create test translation tables
+-------------------------------------------------------
+CREATE SCHEMA translation_test;
+
+-------------------------------------------------------
+-- AB06
+-------------------------------------------------------
+-- display translation tables
+SELECT * FROM translation.ab06_avi01_cas; 
+SELECT * FROM translation.ab06_avi01_dst; 
+SELECT * FROM translation.ab06_avi01_eco; 
+SELECT * FROM translation.ab06_avi01_hdr; 
+SELECT * FROM translation.ab06_avi01_lyr; 
+SELECT * FROM translation.ab06_avi01_nfl; 
+----------------------------
+-- create subsets of translation tables if necessary
+----------------------------
+-- cas
+DROP TABLE IF EXISTS translation_test.ab06_avi01_cas_test;
+CREATE TABLE translation_test.ab06_avi01_cas_test WITH OIDS AS
+SELECT * FROM translation.ab06_avi01_cas
+--WHERE rule_id = 1
 ;
+-- display
+SELECT * FROM translation_test.ab06_avi01_cas_test;
+----------------------------
+-- dst
+DROP TABLE IF EXISTS translation_test.ab06_avi01_dst_test;
+CREATE TABLE translation_test.ab06_avi01_dst_test WITH OIDS AS
+SELECT * FROM translation.ab06_avi01_dst
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab06_avi01_dst_test;
+----------------------------
+-- eco
+DROP TABLE IF EXISTS translation_test.ab06_avi01_eco_test;
+CREATE TABLE translation_test.ab06_avi01_eco_test WITH OIDS AS
+SELECT * FROM translation.ab06_avi01_eco
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab06_avi01_eco_test;
+----------------------------
+-- hdr
+DROP TABLE IF EXISTS translation_test.ab06_avi01_hdr_test;
+CREATE TABLE translation_test.ab06_avi01_hdr_test WITH OIDS AS
+SELECT * FROM translation.ab06_avi01_hdr
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab06_avi01_hdr_test;
+----------------------------
+-- lyr
+DROP TABLE IF EXISTS translation_test.ab06_avi01_lyr_test;
+CREATE TABLE translation_test.ab06_avi01_lyr_test WITH OIDS AS
+SELECT * FROM translation.ab06_avi01_lyr
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab06_avi01_lyr_test;
+----------------------------
+-- nfl
+DROP TABLE IF EXISTS translation_test.ab06_avi01_nfl_test;
+CREATE TABLE translation_test.ab06_avi01_nfl_test WITH OIDS AS
+SELECT * FROM translation.ab06_avi01_nfl
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab06_avi01_nfl_test;
 
--- Display
-SELECT * FROM translation.bc08_vri01_lyr_test;
+-------------------------------------------------------
+-- AB16
+-------------------------------------------------------
+-- display translation tables
+SELECT * FROM translation.ab16_avi01_cas; 
+SELECT * FROM translation.ab16_avi01_dst; 
+SELECT * FROM translation.ab16_avi01_eco; 
+SELECT * FROM translation.ab16_avi01_hdr; 
+SELECT * FROM translation.ab16_avi01_lyr; 
+SELECT * FROM translation.ab16_avi01_nfl; 
+----------------------------
+-- create subsets of translation tables if necessary
+----------------------------
+-- cas
+DROP TABLE IF EXISTS translation_test.ab16_avi01_cas_test;
+CREATE TABLE translation_test.ab16_avi01_cas_test WITH OIDS AS
+SELECT * FROM translation.ab16_avi01_cas
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab16_avi01_cas_test;
+----------------------------
+-- dst
+DROP TABLE IF EXISTS translation_test.ab16_avi01_dst_test;
+CREATE TABLE translation_test.ab16_avi01_dst_test WITH OIDS AS
+SELECT * FROM translation.ab16_avi01_dst
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab16_avi01_dst_test;
+----------------------------
+-- eco
+DROP TABLE IF EXISTS translation_test.ab16_avi01_eco_test;
+CREATE TABLE translation_test.ab16_avi01_eco_test WITH OIDS AS
+SELECT * FROM translation.ab16_avi01_eco
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab16_avi01_eco_test;
+----------------------------
+-- hdr
+DROP TABLE IF EXISTS translation_test.ab16_avi01_hdr_test;
+CREATE TABLE translation_test.ab16_avi01_hdr_test WITH OIDS AS
+SELECT * FROM translation.ab16_avi01_hdr
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab16_avi01_hdr_test;
+----------------------------
+-- lyr
+DROP TABLE IF EXISTS translation_test.ab16_avi01_lyr_test;
+CREATE TABLE translation_test.ab16_avi01_lyr_test WITH OIDS AS
+SELECT * FROM translation.ab16_avi01_lyr
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab16_avi01_lyr_test;
+----------------------------
+-- nfl
+DROP TABLE IF EXISTS translation_test.ab16_avi01_nfl_test;
+CREATE TABLE translation_test.ab16_avi01_nfl_test WITH OIDS AS
+SELECT * FROM translation.ab16_avi01_nfl
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.ab16_avi01_nfl_test;
 
 -------------------------------------------------------
 -- NB01
 -------------------------------------------------------
--- Display the translation table of interest
+-- display translation tables
+SELECT * FROM translation.nb01_nbi01_cas; 
+SELECT * FROM translation.nb01_nbi01_dst; 
+SELECT * FROM translation.nb01_nbi01_eco; 
+SELECT * FROM translation.nb01_nbi01_hdr; 
 SELECT * FROM translation.nb01_nbi01_lyr; 
-
--- Create a subset translation table if necessary
-DROP TABLE IF EXISTS translation.nb01_nbi01_lyr_test;
-CREATE TABLE translation.nb01_nbi01_lyr_test WITH OIDS AS
-SELECT * FROM translation.nb01_nbi01_lyr
---WHERE ogc_fid = 1 OR 
---ogc_fid = 2 OR ogc_fid = 3 OR 
---ogc_fid = 4 OR ogc_fid = 5 OR
---ogc_fid = 6 OR ogc_fid = 7
+SELECT * FROM translation.nb01_nbi01_nfl; 
+----------------------------
+-- create subsets of translation tables if necessary
+----------------------------
+-- cas
+DROP TABLE IF EXISTS translation_test.nb01_nbi01_cas_test;
+CREATE TABLE translation_test.nb01_nbi01_cas_test WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_cas
+--WHERE rule_id = 1
 ;
+-- display
+SELECT * FROM translation_test.nb01_nbi01_cas_test;
+----------------------------
+-- dst
+DROP TABLE IF EXISTS translation_test.nb01_nbi01_dst_test;
+CREATE TABLE translation_test.nb01_nbi01_dst_test WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_dst
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.nb01_nbi01_dst_test;
+----------------------------
+-- eco
+DROP TABLE IF EXISTS translation_test.nb01_nbi01_eco_test;
+CREATE TABLE translation_test.nb01_nbi01_eco_test WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_eco
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.nb01_nbi01_eco_test;
+----------------------------
+-- hdr
+DROP TABLE IF EXISTS translation_test.nb01_nbi01_hdr_test;
+CREATE TABLE translation_test.nb01_nbi01_hdr_test WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_hdr
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.nb01_nbi01_hdr_test;
+----------------------------
+-- lyr
+DROP TABLE IF EXISTS translation_test.nb01_nbi01_lyr_test;
+CREATE TABLE translation_test.nb01_nbi01_lyr_test WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_lyr
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.nb01_nbi01_lyr_test;
+----------------------------
+-- nfl
+DROP TABLE IF EXISTS translation_test.nb01_nbi01_nfl_test;
+CREATE TABLE translation_test.nb01_nbi01_nfl_test WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_nfl
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.nb01_nbi01_nfl_test;
 
--- Display
-SELECT * FROM translation.nb01_nbi01_lyr_test;
+-------------------------------------------------------
+-- BC08
+-------------------------------------------------------
+-- display translation tables
+SELECT * FROM translation.bc08_vri01_cas; 
+SELECT * FROM translation.bc08_vri01_dst; 
+SELECT * FROM translation.bc08_vri01_eco; 
+SELECT * FROM translation.bc08_vri01_hdr; 
+SELECT * FROM translation.bc08_vri01_lyr; 
+SELECT * FROM translation.bc08_vri01_nfl; 
+----------------------------
+-- create subsets of translation tables if necessary
+----------------------------
+-- cas
+DROP TABLE IF EXISTS translation_test.bc08_vri01_cas_test;
+CREATE TABLE translation_test.bc08_vri01_cas_test WITH OIDS AS
+SELECT * FROM translation.bc08_vri01_cas
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.bc08_vri01_cas_test;
+----------------------------
+-- dst
+DROP TABLE IF EXISTS translation_test.bc08_vri01_dst_test;
+CREATE TABLE translation_test.bc08_vri01_dst_test WITH OIDS AS
+SELECT * FROM translation.bc08_vri01_dst
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.bc08_vri01_dst_test;
+----------------------------
+-- eco
+DROP TABLE IF EXISTS translation_test.bc08_vri01_eco_test;
+CREATE TABLE translation_test.bc08_vri01_eco_test WITH OIDS AS
+SELECT * FROM translation.bc08_vri01_eco
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.bc08_vri01_eco_test;
+----------------------------
+-- hdr
+DROP TABLE IF EXISTS translation_test.bc08_vri01_hdr_test;
+CREATE TABLE translation_test.bc08_vri01_hdr_test WITH OIDS AS
+SELECT * FROM translation.bc08_vri01_hdr
+WHERE rule_id::int = 18
+;
+-- display
+SELECT * FROM translation_test.bc08_vri01_hdr_test;
+----------------------------
+-- lyr
+DROP TABLE IF EXISTS translation_test.bc08_vri01_lyr_test;
+CREATE TABLE translation_test.bc08_vri01_lyr_test WITH OIDS AS
+SELECT * FROM translation.bc08_vri01_lyr
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.bc08_vri01_lyr_test;
+----------------------------
+-- nfl
+DROP TABLE IF EXISTS translation_test.bc08_vri01_nfl_test;
+CREATE TABLE translation_test.bc08_vri01_nfl_test WITH OIDS AS
+SELECT * FROM translation.bc08_vri01_nfl
+--WHERE rule_id = 1
+;
+-- display
+SELECT * FROM translation_test.bc08_vri01_nfl_test;
 
 -------------------------------------------------------
 -------------------------------------------------------
@@ -247,14 +442,24 @@ SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear');
 -------------------------------------------------------
 -- AB06
 -------------------------------------------------------
--- Create translation function
-SELECT TT_Prepare('translation', 'ab06_avi01_lyr_test', '_ab06');
+-- create translation functions
+SELECT TT_Prepare('translation_test', 'ab06_avi01_cas_test', '_ab06_cas');
+SELECT TT_Prepare('translation_test', 'ab06_avi01_dst_test', '_ab06_dst');
+SELECT TT_Prepare('translation_test', 'ab06_avi01_eco_test', '_ab06_eco');
+SELECT TT_Prepare('translation_test', 'ab06_avi01_hdr_test', '_ab06_hdr');
+SELECT TT_Prepare('translation_test', 'ab06_avi01_lyr_test', '_ab06_lyr');
+SELECT TT_Prepare('translation_test', 'ab06_avi01_nfl_test', '_ab06_nfl');
 
--- Translate the sample! (5 sec.)
-SELECT * FROM TT_Translate_ab06('rawfri', 'ab06_test_200');
+-- translate the samples (5 sec.)
+SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06_test_200');
+SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06_test_200');
+SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200');
+SELECT * FROM TT_Translate_ab06_hdr('rawfri', 'ab06_test_200');
+SELECT * FROM TT_Translate_ab06_lyr('rawfri', 'ab06_test_200');
+SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200');
 
--- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, trm_1, poly_num, ogc_fid, cas_id, 
+-- display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, trm_1, poly_num, rule_id, cas_id, 
        density, crown_closure_lower, crown_closure_upper, 
        height, height_upper, height_lower,
        sp1, species_1,
@@ -265,104 +470,220 @@ WHERE poly_num = substr(cas_id, 33, 10)::int;
 -------------------------------------------------------
 -- AB16
 -------------------------------------------------------
--- Create translation function
-SELECT TT_Prepare('translation', 'ab16_avi01_lyr_test', '_ab16');
+-- create translation functions
+SELECT TT_Prepare('translation_test', 'ab16_avi01_cas_test', '_ab16_cas');
+SELECT TT_Prepare('translation_test', 'ab16_avi01_dst_test', '_ab16_dst');
+SELECT TT_Prepare('translation_test', 'ab16_avi01_eco_test', '_ab16_eco');
+SELECT TT_Prepare('translation_test', 'ab16_avi01_hdr_test', '_ab16_hdr');
+SELECT TT_Prepare('translation_test', 'ab16_avi01_lyr_test', '_ab16_lyr');
+SELECT TT_Prepare('translation_test', 'ab16_avi01_nfl_test', '_ab16_nfl');
 
--- Translate the sample!
-SELECT * FROM TT_Translate_ab16('rawfri', 'ab16_test_200');
+-- translate the samples
+SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16_test_200');
+SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16_test_200');
+SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16_test_200');
+SELECT * FROM TT_Translate_ab16_hdr('rawfri', 'ab16_test_200');
+SELECT * FROM TT_Translate_ab16_lyr('rawfri', 'ab16_test_200');
+SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_test_200');
 
--- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, forest_id, ogc_fid, cas_id, 
+-- display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, forest_id, rule_id, cas_id, 
        crownclose, crown_closure_lower, crown_closure_upper, 
        height, height_upper, height_lower,
        sp1, species_1,
        sp1_percnt, species_per_1
 FROM TT_Translate_ab16('rawfri', 'ab16_test_200'), rawfri.ab16_test_200
-WHERE ogc_fid = right(cas_id, 7)::int;
-
--------------------------------------------------------
--- BC08
--------------------------------------------------------
--- Create translation function
-SELECT TT_Prepare('translation', 'bc08_vri01_lyr_test', '_bc08');
-
--- Translate the sample!
-SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test_200');
-
--- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, map_id, ogc_fid, cas_id, 
-       crown_closure, crown_closure_lower, crown_closure_upper, 
-       proj_height_1, height_upper, height_lower,
-       species_cd_1, species_1,
-       species_pct_1, species_per_1
-FROM TT_Translate_bc08('rawfri', 'bc08_test_200'), rawfri.bc08_test_200
-WHERE ogc_fid = right(cas_id, 7)::int;
-
+WHERE rule_id = right(cas_id, 7)::int;
 -------------------------------------------------------
 -- NB01
 -------------------------------------------------------
--- Create translation function
-SELECT TT_Prepare('translation', 'nb01_nbi01_lyr_test', '_nb01');
+-- create translation function
+SELECT TT_Prepare('translation_test', 'nb01_nbi01_cas_test', '_nb01_cas');
+SELECT TT_Prepare('translation_test', 'nb01_nbi01_dst_test', '_nb01_dst');
+SELECT TT_Prepare('translation_test', 'nb01_nbi01_eco_test', '_nb01_eco');
+SELECT TT_Prepare('translation_test', 'nb01_nbi01_hdr_test', '_nb01_hdr');
+SELECT TT_Prepare('translation_test', 'nb01_nbi01_lyr_test', '_nb01_lyr');
+SELECT TT_Prepare('translation_test', 'nb01_nbi01_nfl_test', '_nb01_nfl');
 
--- Translate the sample!
-SELECT * FROM TT_Translate_nb01('rawfri', 'nb01_test_200');
+-- translate the samples
+SELECT * FROM TT_Translate_nb01_cas('rawfri', 'nb01_test_200');
+SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01_test_200');
+SELECT * FROM TT_Translate_nb01_eco('rawfri', 'nb01_test_200');
+SELECT * FROM TT_Translate_nb01_hdr('rawfri', 'nb01_test_200');
+SELECT * FROM TT_Translate_nb01_lyr('rawfri', 'nb01_test_200');
+SELECT * FROM TT_Translate_nb01_nfl('rawfri', 'nb01_test_200');
 
--- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, stdlab, ogc_fid, cas_id, 
+-- display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, stdlab, rule_id, cas_id, 
        l1cc, crown_closure_lower, crown_closure_upper, 
        l1ht, height_upper, height_lower, 
        l1s1, species_1,
        l1pr1, species_per_1
 FROM TT_Translate_nb01('rawfri', 'nb01_test_200'), rawfri.nb01_test_200
-WHERE ogc_fid = right(cas_id, 7)::int;
+WHERE rule_id = right(cas_id, 7)::int;
+
+-------------------------------------------------------
+-- BC08
+-------------------------------------------------------
+-- create translation functions
+SELECT TT_Prepare('translation_test', 'bc08_vri01_cas_test', '_bc08_cas');
+SELECT TT_Prepare('translation_test', 'bc08_vri01_dst_test', '_bc08_dst');
+SELECT TT_Prepare('translation_test', 'bc08_vri01_eco_test', '_bc08_eco');
+SELECT TT_Prepare('translation_test', 'bc08_vri01_hdr_test', '_bc08_hdr');
+SELECT TT_Prepare('translation_test', 'bc08_vri01_lyr_test', '_bc08_lyr');
+SELECT TT_Prepare('translation_test', 'bc08_vri01_nfl_test', '_bc08_nfl');
+
+-- translate the samples
+SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08_test_200');
+SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08_test_200');
+SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08_test_200');
+SELECT * FROM TT_Translate_bc08_hdr('rawfri', 'bc08_test_200');
+SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08_test_200');
+SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_test_200');
+
+-- display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, map_id, rule_id, cas_id, 
+       crown_closure, crown_closure_lower, crown_closure_upper, 
+       proj_height_1, height_upper, height_lower,
+       species_cd_1, species_1,
+       species_pct_1, species_per_1
+FROM TT_Translate_bc08('rawfri', 'bc08_test_200'), rawfri.bc08_test_200
+WHERE rule_id = right(cas_id, 7)::int;
 
 -------------------------------------------------------
 -------------------------------------------------------
--- Translate the big thing by appending all translated 
--- table to the same big table!
+-- Translate the tables by appending all translated 
+-- table to the same big table
 -------------------------------------------------------
 -------------------------------------------------------
 CREATE SCHEMA casfri50;
 -------------------------------------------------------
--- AB06 - 4 minutes
+-- Translate all CAS tables into a common table
 -------------------------------------------------------
---DROP TABLE IF EXISTS casfri50.all;
-SELECT TT_Prepare('translation', 'ab06_avi01_lyr', '_ab06');
+SELECT TT_Prepare('translation', 'ab06_avi01_cas', '_ab06_cas');
+SELECT TT_Prepare('translation', 'ab16_avi01_cas', '_ab16_cas', 'ab06_avi01_cas');
+SELECT TT_Prepare('translation', 'nb01_nbi01_cas', '_nb01_cas', 'ab06_avi01_cas');
+SELECT TT_Prepare('translation', 'bc08_vri01_cas', '_bc08_cas', 'ab06_avi01_cas');
+------------------------
+--DROP TABLE IF EXISTS casfri50.cas_all;
+CREATE TABLE casfri50.cas_all AS -- 10 min
+SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06');
 
-CREATE TABLE casfri50.all AS
-SELECT * FROM TT_Translate_ab06('rawfri', 'ab06');
-
-SELECT * FROM casfri50.all;
-
--------------------------------------------------------
--- AB16 - 14 minutes
--------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab16_avi01_lyr', '_ab16', 'ab06_avi01_lyr');
-
-INSERT INTO casfri50.all
-SELECT * FROM TT_Translate_ab16('rawfri', 'ab16');
-
-SELECT * FROM casfri50.all;
-
--------------------------------------------------------
--- BC08 - XX minutes
--------------------------------------------------------
-SELECT TT_Prepare('translation', 'bc08_vri01_lyr', '_bc08', 'ab06_avi01_lyr');
-
-INSERT INTO casfri50.all
-SELECT * FROM TT_Translate_bc08('rawfri', 'bc08_test');
-
-SELECT * FROM casfri50.all;
+SELECT * FROM casfri50.cas_all;
+------------------------
+INSERT INTO casfri50.cas_all -- XX min
+SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16');
+------------------------
+INSERT INTO casfri50.cas_all -- XX min
+SELECT * FROM TT_Translate_nb01_cas('rawfri', 'nb01');
+------------------------
+INSERT INTO casfri50.cas_all -- XX min
+SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08');
 
 -------------------------------------------------------
--- NB01 - XX minutes
+-- Translate all DST tables into a common table
 -------------------------------------------------------
-SELECT TT_Prepare('translation', 'nb01_nbi01_lyr', '_nb01', 'ab06_avi01_lyr');
+SELECT TT_Prepare('translation', 'ab06_avi01_dst', '_ab06_dst');
+SELECT TT_Prepare('translation', 'ab16_avi01_dst', '_ab16_dst', 'ab06_avi01_dst');
+SELECT TT_Prepare('translation', 'nb01_nbi01_dst', '_nb01_dst', 'ab06_avi01_dst');
+SELECT TT_Prepare('translation', 'bc08_vri01_dst', '_bc08_dst', 'ab06_avi01_dst');
+------------------------
+--DROP TABLE IF EXISTS casfri50.dst_all;
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06');
+------------------------
+INSERT INTO casfri50.dst_all -- 20 min
+SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16');
+------------------------
+INSERT INTO casfri50.dst_all -- XX min
+SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01');
+------------------------
+INSERT INTO casfri50.dst_all -- XX min
+SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08');
 
-INSERT INTO casfri50.all
-SELECT * FROM TT_Translate_nb01('rawfri', 'nb01');
+-------------------------------------------------------
+-- Translate all ECO tables into a common table
+-------------------------------------------------------
+SELECT TT_Prepare('translation', 'ab06_avi01_eco', '_ab06_eco');
+SELECT TT_Prepare('translation', 'ab16_avi01_eco', '_ab16_eco', 'ab06_avi01_eco');
+SELECT TT_Prepare('translation', 'nb01_nbi01_eco', '_nb01_eco', 'ab06_avi01_eco');
+SELECT TT_Prepare('translation', 'bc08_vri01_eco', '_bc08_eco', 'ab06_avi01_eco');
+------------------------
+--DROP TABLE IF EXISTS casfri50.eco_all;
+CREATE TABLE casfri50.eco_all AS
+SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06');
+------------------------
+INSERT INTO casfri50.eco_all -- XX min
+SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16');
+------------------------
+INSERT INTO casfri50.eco_all -- XX min
+SELECT * FROM TT_Translate_nb01_eco('rawfri', 'nb01');
+------------------------
+INSERT INTO casfri50.eco_all -- XX min
+SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08');
 
-SELECT * FROM casfri50.all;
+-------------------------------------------------------
+-- Translate all HDR tables into a common table
+-------------------------------------------------------
+SELECT TT_Prepare('translation', 'ab06_avi01_hdr', '_ab06_hdr');
+SELECT TT_Prepare('translation', 'ab16_avi01_hdr', '_ab16_hdr', 'ab06_avi01_hdr');
+SELECT TT_Prepare('translation', 'nb01_nbi01_hdr', '_nb01_hdr', 'ab06_avi01_hdr');
+SELECT TT_Prepare('translation', 'bc08_vri01_hdr', '_bc08_hdr', 'ab06_avi01_hdr');
+-----------------------
+--DROP TABLE IF EXISTS casfri50.hdr_all;
+CREATE TABLE casfri50.hdr_all AS
+SELECT * FROM TT_Translate_ab06_hdr('rawfri', 'ab06');
+------------------------
+INSERT INTO casfri50.hdr_all -- XX min
+SELECT * FROM TT_Translate_ab16_hdr('rawfri', 'ab16');
+------------------------
+INSERT INTO casfri50.hdr_all -- XX min
+SELECT * FROM TT_Translate_nb01_hdr('rawfri', 'nb01');
+------------------------
+INSERT INTO casfri50.hdr_all -- XX min
+SELECT * FROM TT_Translate_bc08_hdr('rawfri', 'bc08');
+
+-------------------------------------------------------
+-- Translate all LYR tables into a common table
+-------------------------------------------------------
+SELECT TT_Prepare('translation', 'ab06_avi01_lyr', '_ab06_lyr');
+SELECT TT_Prepare('translation', 'ab16_avi01_lyr', '_ab16_lyr', 'ab06_avi01_lyr');
+SELECT TT_Prepare('translation', 'nb01_nbi01_lyr', '_nb01_lyr', 'ab06_avi01_lyr');
+SELECT TT_Prepare('translation', 'bc08_vri01_lyr', '_bc08_lyr', 'ab06_avi01_lyr');
+-------------------------
+--DROP TABLE IF EXISTS casfri50.lyr_all;
+CREATE TABLE casfri50.lyr_all AS
+SELECT * FROM TT_Translate_ab06_lyr('rawfri', 'ab06');
+------------------------
+INSERT INTO casfri50.lyr_all -- XX min
+SELECT * FROM TT_Translate_ab16_lyr('rawfri', 'ab16');
+------------------------
+INSERT INTO casfri50.lyr_all -- XX min
+SELECT * FROM TT_Translate_nb01_lyr('rawfri', 'nb01');
+------------------------
+INSERT INTO casfri50.lyr_all -- XX min
+SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08');
+
+-------------------------------------------------------
+-- Translate all NFL tables into a common table
+-------------------------------------------------------
+SELECT TT_Prepare('translation', 'ab06_avi01_nfl', '_ab06_nfl');
+SELECT TT_Prepare('translation', 'ab16_avi01_nfl', '_ab16_nfl', 'ab06_avi01_nfl');
+SELECT TT_Prepare('translation', 'nb01_nbi01_nfl', '_nb01_nfl', 'ab06_avi01_nfl');
+SELECT TT_Prepare('translation', 'bc08_vri01_nfl', '_bc08_nfl', 'ab06_avi01_nfl');
+------------------------
+--DROP TABLE IF EXISTS casfri50.nfl_all;
+CREATE TABLE casfri50.nfl_all AS
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06');
+------------------------
+INSERT INTO casfri50.nfl_all -- XX min
+SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16');
+------------------------
+INSERT INTO casfri50.nfl_all -- XX min
+SELECT * FROM TT_Translate_nb01_nfl('rawfri', 'nb01');
+------------------------
+INSERT INTO casfri50.nfl_all -- XX min
+SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08');
 
 
 
