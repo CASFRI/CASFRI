@@ -61,7 +61,7 @@ RETURNS boolean AS $$
       IF NOT TT_IsNumeric(site_index) THEN -- check for numeric
         RAISE NOTICE 'site_index: %, is not numeric', site_index;
         RETURN FALSE;
-      ELSIF NOT TT_Between(site_index,'0'::text,'99'::text) THEN -- check for between
+      ELSIF NOT TT_isBetween(site_index,'0'::text,'99'::text) THEN -- check for between
         RAISE NOTICE 'site_index: %, is not between 0 - 99', site_index;
         RETURN FALSE;
       ELSE
@@ -71,7 +71,7 @@ RETURNS boolean AS $$
       IF NOT TT_IsNumeric(site_index_est) THEN -- check for numeric
         RAISE NOTICE 'est_site_index: %, is not numeric', site_index_est;
         RETURN FALSE;
-      ELSIF NOT TT_Between(site_index_est,'0'::text,'99'::text) THEN -- check for between
+      ELSIF NOT TT_isBetween(site_index_est,'0'::text,'99'::text) THEN -- check for between
         RAISE NOTICE 'est_site_index: %, is not between 0 - 99', site_index_est;
         RETURN FALSE;
       ELSE
