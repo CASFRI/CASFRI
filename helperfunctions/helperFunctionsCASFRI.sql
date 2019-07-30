@@ -168,7 +168,80 @@ RETURNS boolean AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
+-- TT_nbi01_wetland_validation(text, text, text, text)
+--
+--  wc text
+--  vt text
+--  im text
+--  return_character text
+--
+-- Assign 4 letter wetland character code, then return true if the requested character (1-4)
+-- is not null and not -.
+--
+-- e.g. TT_nbi01_wetland_translation(wt, vt, im, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_nbi01_wetland_validation(
+  wc text,
+  vt text,
+  im text,
+	return_character text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _return_character integer := return_character::int;
+		wetland_code text;
+    _return text;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_nbi01_wetland_translation',
+                              ARRAY['return_character', return_character, 'int']);
+		CASE
+      WHEN wc='BO' AND vt='EV' AND im='BP' THEN wetland_code = 'BO-B';
+      WHEN wc='FE' AND vt='EV' AND im='BP' THEN wetland_code = 'FO-B';
+      WHEN wc='BO' AND vt='EV' AND im='DI' THEN wetland_code = 'BO--';
+      WHEN wc='BO' AND vt='AW' AND im='BP' THEN wetland_code = 'BT-B';
+      WHEN wc='BO' AND vt='OV' AND im='BP' THEN wetland_code = 'OO-B';
+      WHEN wc='FE' AND vt='EV' AND im IN ('MI','DI') THEN wetland_code = 'FO--';
+      WHEN wc='FE' AND vt='OV' AND im='MI' THEN wetland_code = 'OO--';
+      WHEN wc='BO' AND vt='FS' THEN wetland_code = 'BTNN';
+			WHEN wc='BO' AND vt='SV' THEN wetland_code = 'BONS';
+			WHEN wc='FE' AND vt IN ('FH','FS') THEN wetland_code = 'FTNN';
+			WHEN wc='FE' AND vt IN ('AW','SV') THEN wetland_code = 'FONS';
+			WHEN wc='FW' AND im='BP' THEN wetland_code = 'OF-B';
+      WHEN wc='FE' AND vt='EV' THEN wetland_code = 'FO--';
+      WHEN wc IN ('FE','BO') AND vt='OV' THEN wetland_code = 'OO--';
+      WHEN wc IN ('FE','BO') AND vt='OW' THEN wetland_code = 'O---';
+      WHEN wc='BO' AND vt='EV' THEN wetland_code = 'BP--';
+      WHEN wc='BO' AND vt='AW' THEN wetland_code = 'BT--';
+      WHEN wc='AB' THEN wetland_code = 'OONN';
+			WHEN wc='FM' THEN wetland_code = 'MONG';
+			WHEN wc='FW' THEN wetland_code = 'STNN';
+			WHEN wc='SB' THEN wetland_code = 'SONS';
+			WHEN wc='CM' THEN wetland_code = 'MCNG';
+			WHEN wc='TF' THEN wetland_code = 'TMNN';
+      WHEN wc IN ('NP','WL') THEN wetland_code = 'W---';
+      ELSE
+        wetland_code = NULL;
+		END CASE;
+    
+    -- substring wetland_code 
+    IF wetland_code IS NOT NULL THEN
+      _return = substring(wetland_code from _return_character for 1);
+    END IF;
+    
+    -- return true or false
+    IF wetland_code IS NULL THEN
+      RETURN FALSE;
+    ELSIF _return = '-' THEN
+      RETURN FALSE;
+    ELSE
+      RETURN TRUE;
+		END IF;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Translation Function Definitions...
@@ -562,5 +635,78 @@ RETURNS int AS $$
 	  ELSE
 		  RETURN NULL;
 		END IF;				
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nbi01_wetland_translation(text, text, text, text)
+--
+--  wc text
+--  vt text
+--  im text
+--  return_character text
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_nbi01_wetland_translation(wt, vt, im, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_nbi01_wetland_translation(
+  wc text,
+  vt text,
+  im text,
+	return_character text
+)
+RETURNS text AS $$
+  DECLARE
+    _return_character integer := return_character::int;
+		wetland_code text;
+    _return text;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_nbi01_wetland_translation',
+                              ARRAY['return_character', return_character, 'int']);
+		CASE
+      WHEN wc='BO' AND vt='EV' AND im='BP' THEN wetland_code = 'BO-B';
+      WHEN wc='FE' AND vt='EV' AND im='BP' THEN wetland_code = 'FO-B';
+      WHEN wc='BO' AND vt='EV' AND im='DI' THEN wetland_code = 'BO--';
+      WHEN wc='BO' AND vt='AW' AND im='BP' THEN wetland_code = 'BT-B';
+      WHEN wc='BO' AND vt='OV' AND im='BP' THEN wetland_code = 'OO-B';
+      WHEN wc='FE' AND vt='EV' AND im IN ('MI','DI') THEN wetland_code = 'FO--';
+      WHEN wc='FE' AND vt='OV' AND im='MI' THEN wetland_code = 'OO--';
+      WHEN wc='BO' AND vt='FS' THEN wetland_code = 'BTNN';
+			WHEN wc='BO' AND vt='SV' THEN wetland_code = 'BONS';
+			WHEN wc='FE' AND vt IN ('FH','FS') THEN wetland_code = 'FTNN';
+			WHEN wc='FE' AND vt IN ('AW','SV') THEN wetland_code = 'FONS';
+			WHEN wc='FW' AND im='BP' THEN wetland_code = 'OF-B';
+      WHEN wc='FE' AND vt='EV' THEN wetland_code = 'FO--';
+      WHEN wc IN ('FE','BO') AND vt='OV' THEN wetland_code = 'OO--';
+      WHEN wc IN ('FE','BO') AND vt='OW' THEN wetland_code = 'O---';
+      WHEN wc='BO' AND vt='EV' THEN wetland_code = 'BP--';
+      WHEN wc='BO' AND vt='AW' THEN wetland_code = 'BT--';
+      WHEN wc='AB' THEN wetland_code = 'OONN';
+			WHEN wc='FM' THEN wetland_code = 'MONG';
+			WHEN wc='FW' THEN wetland_code = 'STNN';
+			WHEN wc='SB' THEN wetland_code = 'SONS';
+			WHEN wc='CM' THEN wetland_code = 'MCNG';
+			WHEN wc='TF' THEN wetland_code = 'TMNN';
+      WHEN wc IN ('NP','WL') THEN wetland_code = 'W---';
+      ELSE
+        wetland_code = NULL;
+		END CASE;
+    
+    -- substring wetland_code 
+    IF wetland_code IS NOT NULL THEN
+      _return = substring(wetland_code from _return_character for 1);
+    END IF;
+    
+    -- return value or null
+    IF wetland_code IS NULL THEN
+      RETURN NULL;
+    ELSIF _return = '-' THEN
+      RETURN NULL;
+    ELSE
+      RETURN _return;
+		END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
