@@ -710,3 +710,53 @@ RETURNS text AS $$
 		END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nbi01_productive_for_translation(text, text, text, text, text)
+--
+--  l1cc text
+--  l1ht text
+--  l1trt text
+--  l2trt text
+--  fst text
+--
+-- If no valid crown closure value, or no valid height value. Assign PP.
+-- Or if forest stand type is 0, and l1 or l2 trt is neither CC or empty string. Assign PP.
+-- Otherwise assign PF (productive forest).
+--
+-- e.g. TT_nbi01_productive_for_translation(l1cc, l1ht, l1trt, l2trt, fst)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nbi01_productive_for_translation(text,text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_nbi01_productive_for_translation(
+  l1cc text,
+  l1ht text,
+  l1trt text,
+	l2trt text,
+  fst text
+)
+RETURNS text AS $$
+  DECLARE
+    
+  BEGIN
+    IF NOT TT_notNull(l1cc) THEN
+      RETURN 'PP';
+    ELSIF NOT TT_matchList(l1cc, '{''1'',''2'',''3'',''4'',''5''}') THEN
+      RETURN 'PP';
+    ELSEIF NOT TT_notNull(l1ht) THEN
+      RETURN 'PP';
+    ELSIF NOT TT_isGreaterThan(l1ht,'0.1') THEN
+      RETURN 'PP';
+    ELSIF NOT TT_isLessThan(l1ht,'100') THEN
+      RETURN 'PP';
+    ELSIF fst = '0'::text AND l1trt != 'CC' AND btrim(l1trt, ' ') != '' THEN
+      RETURN 'PP';
+    ELSIF fst = '0'::text AND l2trt != 'CC' AND btrim(l2trt, ' ') != '' THEN
+      RETURN 'PP';
+    ELSE
+      RETURN 'PF';
+    END IF;
+    
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
