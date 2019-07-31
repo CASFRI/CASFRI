@@ -32,8 +32,9 @@ WITH test_nb AS (
     SELECT 'TT_avi01_non_for_anth_validation'::text function_tested,     7 maj_num, 9 nb_test UNION ALL
     SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,    8 maj_num, 9 nb_test UNION ALL
 	  SELECT 'TT_nbi01_stand_structure_translation'::text function_tested, 9 maj_num, 5 nb_test UNION ALL
-		SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,        10 maj_num, 4 nb_test
-
+		SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,  10 maj_num, 4 nb_test UNION ALL
+    SELECT 'TT_nbi01_wetland_validation'::text function_tested,         11 maj_num, 4 nb_test UNION ALL
+    SELECT 'TT_nbi01_wetland_translation'::text function_tested,        12 maj_num, 4 nb_test 
 
 ),
 test_series AS (
@@ -350,6 +351,58 @@ SELECT '10.4'::text number,
        'TT_nbi01_num_of_layers_translation'::text function_tested,
        '2 layer, C'::text description,
        TT_nbi01_num_of_layers_translation('Forest'::text, '2'::text, '2'::text) = 2 passed
+---------------------------------------------------------
+  -- TT_nbi01_wetland_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '11.1'::text number,
+       'TT_nbi01_wetland_validation'::text function_tested,
+       'pass 1'::text description,
+       TT_nbi01_wetland_validation('FE'::text, 'EV'::text, 'BP'::text, '1'::text) passed
+---------------------------------------------------------
+UNION ALL
+SELECT '11.2'::text number,
+       'TT_nbi01_wetland_validation'::text function_tested,
+       'pass 2'::text description,
+       TT_nbi01_wetland_validation('BO'::text, 'OV'::text, 'MI'::text, '2'::text)  passed
+---------------------------------------------------------
+UNION ALL
+SELECT '11.3'::text number,
+       'TT_nbi01_wetland_validation'::text function_tested,
+       'Fail due to dash'::text description,
+       TT_nbi01_wetland_validation('BO'::text, 'OV'::text, 'MI'::text, '3'::text) IS FALSE  passed
+---------------------------------------------------------
+UNION ALL
+SELECT '11.4'::text number,
+       'TT_nbi01_wetland_validation'::text function_tested,
+       'Fail due to no case'::text description,
+       TT_nbi01_wetland_validation('XX'::text, 'OV'::text, 'MI'::text, '3'::text) IS FALSE  passed
+---------------------------------------------------------
+  -- TT_nbi01_wetland_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '12.1'::text number,
+       'TT_nbi01_wetland_translation'::text function_tested,
+       'pass 1'::text description,
+       TT_nbi01_wetland_translation('FE'::text, 'EV'::text, 'BP'::text, '1'::text) = 'F' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '12.2'::text number,
+       'TT_nbi01_wetland_translation'::text function_tested,
+       'pass 2'::text description,
+       TT_nbi01_wetland_translation('BO'::text, 'OV'::text, 'MI'::text, '2'::text) = 'O'  passed
+---------------------------------------------------------
+UNION ALL
+SELECT '12.3'::text number,
+       'TT_nbi01_wetland_translation'::text function_tested,
+       'Null due to dash'::text description,
+       TT_nbi01_wetland_translation('BO'::text, 'OV'::text, 'MI'::text, '3'::text) IS NULL  passed
+---------------------------------------------------------
+UNION ALL
+SELECT '12.4'::text number,
+       'TT_nbi01_wetland_translation'::text function_tested,
+       'Null due to no case'::text description,
+       TT_nbi01_wetland_translation('XX'::text, 'OV'::text, 'MI'::text, '3'::text) IS NULL  passed
 
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
