@@ -60,7 +60,7 @@ FROM rawfri.ab06;
 DROP TABLE IF EXISTS rawfri.ab06_test_200;
 CREATE TABLE rawfri.ab06_test_200 AS
 SELECT * FROM rawfri.ab06
---WHERE rule_id = 2
+--WHERE ogc_fid = 2
 LIMIT 200;
 
 -- display
@@ -81,7 +81,7 @@ FROM rawfri.ab16;
 DROP TABLE IF EXISTS rawfri.ab16_test_200;
 CREATE TABLE rawfri.ab16_test_200 AS
 SELECT * FROM rawfri.ab16
---WHERE rule_id = 18317
+--WHERE ogc_fid = 18317
 LIMIT 200;
 
 -- display
@@ -103,7 +103,7 @@ DROP TABLE IF EXISTS rawfri.nb01_test_200;
 CREATE TABLE rawfri.nb01_test_200 AS
 SELECT * FROM rawfri.nb01 
 WHERE stdlab > 0
---WHERE rule_id = 811451038
+--WHERE ogc_fid = 811451038
 LIMIT 200;
 
 -- display
@@ -125,7 +125,7 @@ DROP TABLE IF EXISTS rawfri.bc08_test_200;
 CREATE TABLE rawfri.bc08_test_200 AS
 SELECT * FROM rawfri.bc08
 WHERE crown_closure > 0
---WHERE rule_id = 424344
+--WHERE ogc_fid = 424344
 LIMIT 200;
 
 -- display
@@ -155,7 +155,7 @@ SELECT * FROM translation.ab06_avi01_nfl;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_cas_test;
 CREATE TABLE translation_test.ab06_avi01_cas_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_cas
---WHERE rule_id = 1
+WHERE rule_id::int = 10
 ;
 -- display
 SELECT * FROM translation_test.ab06_avi01_cas_test;
@@ -164,7 +164,7 @@ SELECT * FROM translation_test.ab06_avi01_cas_test;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_dst_test;
 CREATE TABLE translation_test.ab06_avi01_dst_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_dst
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab06_avi01_dst_test;
@@ -173,7 +173,7 @@ SELECT * FROM translation_test.ab06_avi01_dst_test;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_eco_test;
 CREATE TABLE translation_test.ab06_avi01_eco_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_eco
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab06_avi01_eco_test;
@@ -182,7 +182,7 @@ SELECT * FROM translation_test.ab06_avi01_eco_test;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_hdr_test;
 CREATE TABLE translation_test.ab06_avi01_hdr_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_hdr
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab06_avi01_hdr_test;
@@ -191,7 +191,7 @@ SELECT * FROM translation_test.ab06_avi01_hdr_test;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_lyr_test;
 CREATE TABLE translation_test.ab06_avi01_lyr_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_lyr
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab06_avi01_lyr_test;
@@ -200,7 +200,7 @@ SELECT * FROM translation_test.ab06_avi01_lyr_test;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_nfl_test;
 CREATE TABLE translation_test.ab06_avi01_nfl_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_nfl
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab06_avi01_nfl_test;
@@ -222,7 +222,7 @@ SELECT * FROM translation.ab16_avi01_nfl;
 DROP TABLE IF EXISTS translation_test.ab16_avi01_cas_test;
 CREATE TABLE translation_test.ab16_avi01_cas_test WITH OIDS AS
 SELECT * FROM translation.ab16_avi01_cas
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab16_avi01_cas_test;
@@ -231,7 +231,7 @@ SELECT * FROM translation_test.ab16_avi01_cas_test;
 DROP TABLE IF EXISTS translation_test.ab16_avi01_dst_test;
 CREATE TABLE translation_test.ab16_avi01_dst_test WITH OIDS AS
 SELECT * FROM translation.ab16_avi01_dst
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab16_avi01_dst_test;
@@ -240,7 +240,7 @@ SELECT * FROM translation_test.ab16_avi01_dst_test;
 DROP TABLE IF EXISTS translation_test.ab16_avi01_eco_test;
 CREATE TABLE translation_test.ab16_avi01_eco_test WITH OIDS AS
 SELECT * FROM translation.ab16_avi01_eco
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab16_avi01_eco_test;
@@ -249,7 +249,7 @@ SELECT * FROM translation_test.ab16_avi01_eco_test;
 DROP TABLE IF EXISTS translation_test.ab16_avi01_hdr_test;
 CREATE TABLE translation_test.ab16_avi01_hdr_test WITH OIDS AS
 SELECT * FROM translation.ab16_avi01_hdr
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab16_avi01_hdr_test;
@@ -258,7 +258,7 @@ SELECT * FROM translation_test.ab16_avi01_hdr_test;
 DROP TABLE IF EXISTS translation_test.ab16_avi01_lyr_test;
 CREATE TABLE translation_test.ab16_avi01_lyr_test WITH OIDS AS
 SELECT * FROM translation.ab16_avi01_lyr
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab16_avi01_lyr_test;
@@ -267,7 +267,7 @@ SELECT * FROM translation_test.ab16_avi01_lyr_test;
 DROP TABLE IF EXISTS translation_test.ab16_avi01_nfl_test;
 CREATE TABLE translation_test.ab16_avi01_nfl_test WITH OIDS AS
 SELECT * FROM translation.ab16_avi01_nfl
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.ab16_avi01_nfl_test;
@@ -289,7 +289,7 @@ SELECT * FROM translation.nb01_nbi01_nfl;
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_cas_test;
 CREATE TABLE translation_test.nb01_nbi01_cas_test WITH OIDS AS
 SELECT * FROM translation.nb01_nbi01_cas
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.nb01_nbi01_cas_test;
@@ -298,7 +298,7 @@ SELECT * FROM translation_test.nb01_nbi01_cas_test;
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_dst_test;
 CREATE TABLE translation_test.nb01_nbi01_dst_test WITH OIDS AS
 SELECT * FROM translation.nb01_nbi01_dst
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.nb01_nbi01_dst_test;
@@ -307,7 +307,7 @@ SELECT * FROM translation_test.nb01_nbi01_dst_test;
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_eco_test;
 CREATE TABLE translation_test.nb01_nbi01_eco_test WITH OIDS AS
 SELECT * FROM translation.nb01_nbi01_eco
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.nb01_nbi01_eco_test;
@@ -316,7 +316,7 @@ SELECT * FROM translation_test.nb01_nbi01_eco_test;
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_hdr_test;
 CREATE TABLE translation_test.nb01_nbi01_hdr_test WITH OIDS AS
 SELECT * FROM translation.nb01_nbi01_hdr
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.nb01_nbi01_hdr_test;
@@ -325,7 +325,7 @@ SELECT * FROM translation_test.nb01_nbi01_hdr_test;
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_lyr_test;
 CREATE TABLE translation_test.nb01_nbi01_lyr_test WITH OIDS AS
 SELECT * FROM translation.nb01_nbi01_lyr
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.nb01_nbi01_lyr_test;
@@ -334,7 +334,7 @@ SELECT * FROM translation_test.nb01_nbi01_lyr_test;
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_nfl_test;
 CREATE TABLE translation_test.nb01_nbi01_nfl_test WITH OIDS AS
 SELECT * FROM translation.nb01_nbi01_nfl
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.nb01_nbi01_nfl_test;
@@ -356,7 +356,7 @@ SELECT * FROM translation.bc08_vri01_nfl;
 DROP TABLE IF EXISTS translation_test.bc08_vri01_cas_test;
 CREATE TABLE translation_test.bc08_vri01_cas_test WITH OIDS AS
 SELECT * FROM translation.bc08_vri01_cas
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.bc08_vri01_cas_test;
@@ -365,7 +365,7 @@ SELECT * FROM translation_test.bc08_vri01_cas_test;
 DROP TABLE IF EXISTS translation_test.bc08_vri01_dst_test;
 CREATE TABLE translation_test.bc08_vri01_dst_test WITH OIDS AS
 SELECT * FROM translation.bc08_vri01_dst
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.bc08_vri01_dst_test;
@@ -374,7 +374,7 @@ SELECT * FROM translation_test.bc08_vri01_dst_test;
 DROP TABLE IF EXISTS translation_test.bc08_vri01_eco_test;
 CREATE TABLE translation_test.bc08_vri01_eco_test WITH OIDS AS
 SELECT * FROM translation.bc08_vri01_eco
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.bc08_vri01_eco_test;
@@ -392,7 +392,7 @@ SELECT * FROM translation_test.bc08_vri01_hdr_test;
 DROP TABLE IF EXISTS translation_test.bc08_vri01_lyr_test;
 CREATE TABLE translation_test.bc08_vri01_lyr_test WITH OIDS AS
 SELECT * FROM translation.bc08_vri01_lyr
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.bc08_vri01_lyr_test;
@@ -401,7 +401,7 @@ SELECT * FROM translation_test.bc08_vri01_lyr_test;
 DROP TABLE IF EXISTS translation_test.bc08_vri01_nfl_test;
 CREATE TABLE translation_test.bc08_vri01_nfl_test WITH OIDS AS
 SELECT * FROM translation.bc08_vri01_nfl
---WHERE rule_id = 1
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.bc08_vri01_nfl_test;
@@ -493,7 +493,7 @@ SELECT src_filename, forest_id, rule_id, cas_id,
        sp1, species_1,
        sp1_percnt, species_per_1
 FROM TT_Translate_ab16('rawfri', 'ab16_test_200'), rawfri.ab16_test_200
-WHERE rule_id = right(cas_id, 7)::int;
+WHERE rule_id::int = right(cas_id, 7)::int;
 -------------------------------------------------------
 -- NB01
 -------------------------------------------------------
@@ -520,7 +520,7 @@ SELECT src_filename, stdlab, rule_id, cas_id,
        l1s1, species_1,
        l1pr1, species_per_1
 FROM TT_Translate_nb01('rawfri', 'nb01_test_200'), rawfri.nb01_test_200
-WHERE rule_id = right(cas_id, 7)::int;
+WHERE rule_id::int = right(cas_id, 7)::int;
 
 -------------------------------------------------------
 -- BC08
@@ -548,7 +548,7 @@ SELECT src_filename, map_id, rule_id, cas_id,
        species_cd_1, species_1,
        species_pct_1, species_per_1
 FROM TT_Translate_bc08('rawfri', 'bc08_test_200'), rawfri.bc08_test_200
-WHERE rule_id = right(cas_id, 7)::int;
+WHERE rule_id::int = right(cas_id, 7)::int;
 
 -------------------------------------------------------
 -------------------------------------------------------
@@ -601,6 +601,7 @@ SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01');
 INSERT INTO casfri50.dst_all -- XX min
 SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08');
 
+SELECT count(*) FROM casfri50.dst_all; -- 5736548
 -------------------------------------------------------
 -- Translate all ECO tables into a common table
 -------------------------------------------------------
@@ -622,6 +623,7 @@ SELECT * FROM TT_Translate_nb01_eco('rawfri', 'nb01');
 INSERT INTO casfri50.eco_all -- XX min
 SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08');
 
+SELECT count(*) FROM casfri50.eco_all; -- 5736548
 -------------------------------------------------------
 -- Translate all HDR tables into a common table
 -------------------------------------------------------
@@ -643,6 +645,7 @@ SELECT * FROM TT_Translate_nb01_hdr('rawfri', 'nb01');
 INSERT INTO casfri50.hdr_all -- XX min
 SELECT * FROM TT_Translate_bc08_hdr('rawfri', 'bc08');
 
+SELECT count(*) FROM casfri50.hdr_all; -- 5736548
 -------------------------------------------------------
 -- Translate all LYR tables into a common table
 -------------------------------------------------------
@@ -664,6 +667,7 @@ SELECT * FROM TT_Translate_nb01_lyr('rawfri', 'nb01');
 INSERT INTO casfri50.lyr_all -- XX min
 SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08');
 
+SELECT count(*) FROM casfri50.lyr_all; -- xx
 -------------------------------------------------------
 -- Translate all NFL tables into a common table
 -------------------------------------------------------
@@ -685,5 +689,6 @@ SELECT * FROM TT_Translate_nb01_nfl('rawfri', 'nb01');
 INSERT INTO casfri50.nfl_all -- XX min
 SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08');
 
+SELECT count(*) FROM casfri50.nfl_all; -- xx
 
 
