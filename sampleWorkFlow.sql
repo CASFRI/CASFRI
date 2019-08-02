@@ -64,7 +64,7 @@ SELECT * FROM rawfri.ab06
 LIMIT 200;
 
 -- display
-SELECT src_filename, trm_1, poly_num, rule_id, density, height, sp1, sp1_per
+SELECT src_filename, trm_1, poly_num, ogc_fid, density, height, sp1, sp1_per
 FROM rawfri.ab06_test_200;
 
 -------------------------------------------------------
@@ -85,7 +85,7 @@ SELECT * FROM rawfri.ab16
 LIMIT 200;
 
 -- display
-SELECT src_filename, forest_id, rule_id, crownclose, height, sp1, sp1_percnt
+SELECT src_filename, forest_id, ogc_fid, crownclose, height, sp1, sp1_percnt
 FROM rawfri.ab16_test_200;
 
 -------------------------------------------------------
@@ -107,7 +107,7 @@ WHERE stdlab > 0
 LIMIT 200;
 
 -- display
-SELECT src_filename, stdlab, rule_id, l1cc, l1ht, l1s1, l1pr1
+SELECT src_filename, stdlab, ogc_fid, l1cc, l1ht, l1s1, l1pr1
 FROM rawfri.nb01_test_200;
 
 -------------------------------------------------------
@@ -129,7 +129,7 @@ WHERE crown_closure > 0
 LIMIT 200;
 
 -- display
-SELECT src_filename, map_id, feature_id, rule_id, crown_closure, proj_height_1, species_cd_1, species_pct_1
+SELECT src_filename, map_id, feature_id, ogc_fid, crown_closure, proj_height_1, species_cd_1, species_pct_1
 FROM rawfri.bc08_test_200;
 
 -------------------------------------------------------
@@ -383,7 +383,7 @@ SELECT * FROM translation_test.bc08_vri01_eco_test;
 DROP TABLE IF EXISTS translation_test.bc08_vri01_hdr_test;
 CREATE TABLE translation_test.bc08_vri01_hdr_test WITH OIDS AS
 SELECT * FROM translation.bc08_vri01_hdr
-WHERE rule_id::int = 18
+--WHERE rule_id::int = 18
 ;
 -- display
 SELECT * FROM translation_test.bc08_vri01_hdr_test;
@@ -434,6 +434,7 @@ SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species');
 -------------------------------------------------------
 SELECT TT_Prepare('validation', 'ab_photoyear_validation', '_ab_photo_val');
 SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear');
+SELECT * FROM rawfri.ab_photoyear;
 
 -------------------------------------------------------
 -------------------------------------------------------
@@ -451,12 +452,12 @@ SELECT TT_Prepare('translation_test', 'ab06_avi01_lyr_test', '_ab06_lyr');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_nfl_test', '_ab06_nfl');
 
 -- translate the samples (5 sec.)
-SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06_test_200');
-SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06_test_200');
-SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200');
-SELECT * FROM TT_Translate_ab06_hdr('rawfri', 'ab06_test_200');
-SELECT * FROM TT_Translate_ab06_lyr('rawfri', 'ab06_test_200');
-SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200');
+SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06_test_200'); -- 29 s.
+SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06_test_200'); -- 5 s.
+SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200'); -- 1 s.
+SELECT * FROM TT_Translate_ab06_hdr('rawfri', 'ab06_test_200'); -- 4 s.
+SELECT * FROM TT_Translate_ab06_lyr('rawfri', 'ab06_test_200'); -- 7 s.
+SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200'); -- 2 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, trm_1, poly_num, rule_id, cas_id, 
@@ -479,12 +480,12 @@ SELECT TT_Prepare('translation_test', 'ab16_avi01_lyr_test', '_ab16_lyr');
 SELECT TT_Prepare('translation_test', 'ab16_avi01_nfl_test', '_ab16_nfl');
 
 -- translate the samples
-SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16_test_200');
-SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16_test_200');
-SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16_test_200');
-SELECT * FROM TT_Translate_ab16_hdr('rawfri', 'ab16_test_200');
-SELECT * FROM TT_Translate_ab16_lyr('rawfri', 'ab16_test_200');
-SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_test_200');
+SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16_test_200'); -- 13 s.
+SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16_test_200'); -- 5 s.
+SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16_test_200'); -- 3 s.
+SELECT * FROM TT_Translate_ab16_hdr('rawfri', 'ab16_test_200'); -- 4 s.
+SELECT * FROM TT_Translate_ab16_lyr('rawfri', 'ab16_test_200'); -- 7 s.
+SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_test_200'); -- 5 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, forest_id, rule_id, cas_id, 
@@ -506,12 +507,12 @@ SELECT TT_Prepare('translation_test', 'nb01_nbi01_lyr_test', '_nb01_lyr');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_nfl_test', '_nb01_nfl');
 
 -- translate the samples
-SELECT * FROM TT_Translate_nb01_cas('rawfri', 'nb01_test_200');
-SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01_test_200');
-SELECT * FROM TT_Translate_nb01_eco('rawfri', 'nb01_test_200');
-SELECT * FROM TT_Translate_nb01_hdr('rawfri', 'nb01_test_200');
-SELECT * FROM TT_Translate_nb01_lyr('rawfri', 'nb01_test_200');
-SELECT * FROM TT_Translate_nb01_nfl('rawfri', 'nb01_test_200');
+SELECT * FROM TT_Translate_nb01_cas('rawfri', 'nb01_test_200'); -- 5 s.
+SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01_test_200'); -- 4 s.
+SELECT * FROM TT_Translate_nb01_eco('rawfri', 'nb01_test_200'); -- 2 s.
+SELECT * FROM TT_Translate_nb01_hdr('rawfri', 'nb01_test_200'); -- 4 s.
+SELECT * FROM TT_Translate_nb01_lyr('rawfri', 'nb01_test_200'); -- 7 s.
+SELECT * FROM TT_Translate_nb01_nfl('rawfri', 'nb01_test_200'); -- 3 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, stdlab, rule_id, cas_id, 
@@ -534,12 +535,12 @@ SELECT TT_Prepare('translation_test', 'bc08_vri01_lyr_test', '_bc08_lyr');
 SELECT TT_Prepare('translation_test', 'bc08_vri01_nfl_test', '_bc08_nfl');
 
 -- translate the samples
-SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08_test_200');
-SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08_test_200');
-SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08_test_200');
-SELECT * FROM TT_Translate_bc08_hdr('rawfri', 'bc08_test_200');
-SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08_test_200');
-SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_test_200');
+SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08_test_200'); -- 4 s.
+SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08_test_200'); -- 4 s.
+SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08_test_200'); -- 2 s.
+SELECT * FROM TT_Translate_bc08_hdr('rawfri', 'bc08_test_200'); -- 5 s.
+SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08_test_200'); -- 7 s.
+SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_test_200'); -- 4 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, map_id, rule_id, cas_id, 
@@ -566,18 +567,16 @@ SELECT TT_Prepare('translation', 'nb01_nbi01_cas', '_nb01_cas', 'ab06_avi01_cas'
 SELECT TT_Prepare('translation', 'bc08_vri01_cas', '_bc08_cas', 'ab06_avi01_cas');
 ------------------------
 --DROP TABLE IF EXISTS casfri50.cas_all;
-CREATE TABLE casfri50.cas_all AS -- 10 min
+CREATE TABLE casfri50.cas_all AS -- 25m28s
 SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06');
-
-SELECT * FROM casfri50.cas_all;
 ------------------------
-INSERT INTO casfri50.cas_all -- XX min
+INSERT INTO casfri50.cas_all -- 2h11m
 SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16');
 ------------------------
-INSERT INTO casfri50.cas_all -- XX min
+INSERT INTO casfri50.cas_all -- 2h9m
 SELECT * FROM TT_Translate_nb01_cas('rawfri', 'nb01');
 ------------------------
-INSERT INTO casfri50.cas_all -- XX min
+INSERT INTO casfri50.cas_all -- 9h13m
 SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08');
 
 -------------------------------------------------------
@@ -589,16 +588,16 @@ SELECT TT_Prepare('translation', 'nb01_nbi01_dst', '_nb01_dst', 'ab06_avi01_dst'
 SELECT TT_Prepare('translation', 'bc08_vri01_dst', '_bc08_dst', 'ab06_avi01_dst');
 ------------------------
 --DROP TABLE IF EXISTS casfri50.dst_all;
-CREATE TABLE casfri50.dst_all AS
+CREATE TABLE casfri50.dst_all AS -- 2m
 SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06');
 ------------------------
-INSERT INTO casfri50.dst_all -- 20 min
+INSERT INTO casfri50.dst_all -- 21m54s
 SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16');
 ------------------------
-INSERT INTO casfri50.dst_all -- XX min
+INSERT INTO casfri50.dst_all -- 1h49m
 SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01');
 ------------------------
-INSERT INTO casfri50.dst_all -- XX min
+INSERT INTO casfri50.dst_all -- 8h43m
 SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08');
 
 SELECT count(*) FROM casfri50.dst_all; -- 5736548
@@ -611,16 +610,16 @@ SELECT TT_Prepare('translation', 'nb01_nbi01_eco', '_nb01_eco', 'ab06_avi01_eco'
 SELECT TT_Prepare('translation', 'bc08_vri01_eco', '_bc08_eco', 'ab06_avi01_eco');
 ------------------------
 --DROP TABLE IF EXISTS casfri50.eco_all;
-CREATE TABLE casfri50.eco_all AS
+CREATE TABLE casfri50.eco_all AS -- 44s
 SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06');
 ------------------------
-INSERT INTO casfri50.eco_all -- XX min
+INSERT INTO casfri50.eco_all -- 7m13s
 SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16');
 ------------------------
-INSERT INTO casfri50.eco_all -- XX min
+INSERT INTO casfri50.eco_all -- 51m31s
 SELECT * FROM TT_Translate_nb01_eco('rawfri', 'nb01');
 ------------------------
-INSERT INTO casfri50.eco_all -- XX min
+INSERT INTO casfri50.eco_all -- 4h37m
 SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08');
 
 SELECT count(*) FROM casfri50.eco_all; -- 5736548
@@ -633,16 +632,16 @@ SELECT TT_Prepare('translation', 'nb01_nbi01_hdr', '_nb01_hdr', 'ab06_avi01_hdr'
 SELECT TT_Prepare('translation', 'bc08_vri01_hdr', '_bc08_hdr', 'ab06_avi01_hdr');
 -----------------------
 --DROP TABLE IF EXISTS casfri50.hdr_all;
-CREATE TABLE casfri50.hdr_all AS
+CREATE TABLE casfri50.hdr_all AS -- 1m35s
 SELECT * FROM TT_Translate_ab06_hdr('rawfri', 'ab06');
 ------------------------
-INSERT INTO casfri50.hdr_all -- XX min
+INSERT INTO casfri50.hdr_all -- 15m47s
 SELECT * FROM TT_Translate_ab16_hdr('rawfri', 'ab16');
 ------------------------
-INSERT INTO casfri50.hdr_all -- XX min
+INSERT INTO casfri50.hdr_all -- 1h54m
 SELECT * FROM TT_Translate_nb01_hdr('rawfri', 'nb01');
 ------------------------
-INSERT INTO casfri50.hdr_all -- XX min
+INSERT INTO casfri50.hdr_all -- 13h42m
 SELECT * FROM TT_Translate_bc08_hdr('rawfri', 'bc08');
 
 SELECT count(*) FROM casfri50.hdr_all; -- 5736548
@@ -655,13 +654,13 @@ SELECT TT_Prepare('translation', 'nb01_nbi01_lyr', '_nb01_lyr', 'ab06_avi01_lyr'
 SELECT TT_Prepare('translation', 'bc08_vri01_lyr', '_bc08_lyr', 'ab06_avi01_lyr');
 -------------------------
 --DROP TABLE IF EXISTS casfri50.lyr_all;
-CREATE TABLE casfri50.lyr_all AS
+CREATE TABLE casfri50.lyr_all AS -- 4m9s
 SELECT * FROM TT_Translate_ab06_lyr('rawfri', 'ab06');
 ------------------------
-INSERT INTO casfri50.lyr_all -- XX min
+INSERT INTO casfri50.lyr_all -- 45m34s
 SELECT * FROM TT_Translate_ab16_lyr('rawfri', 'ab16');
 ------------------------
-INSERT INTO casfri50.lyr_all -- XX min
+INSERT INTO casfri50.lyr_all -- 4h50m
 SELECT * FROM TT_Translate_nb01_lyr('rawfri', 'nb01');
 ------------------------
 INSERT INTO casfri50.lyr_all -- XX min
@@ -677,18 +676,18 @@ SELECT TT_Prepare('translation', 'nb01_nbi01_nfl', '_nb01_nfl', 'ab06_avi01_nfl'
 SELECT TT_Prepare('translation', 'bc08_vri01_nfl', '_bc08_nfl', 'ab06_avi01_nfl');
 ------------------------
 --DROP TABLE IF EXISTS casfri50.nfl_all;
-CREATE TABLE casfri50.nfl_all AS
+CREATE TABLE casfri50.nfl_all AS -- 2m 14s
 SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06');
 ------------------------
-INSERT INTO casfri50.nfl_all -- XX min
+INSERT INTO casfri50.nfl_all -- 23m3s
 SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16');
 ------------------------
-INSERT INTO casfri50.nfl_all -- XX min
+INSERT INTO casfri50.nfl_all -- 1h21m
 SELECT * FROM TT_Translate_nb01_nfl('rawfri', 'nb01');
 ------------------------
-INSERT INTO casfri50.nfl_all -- XX min
+INSERT INTO casfri50.nfl_all -- 13h43m
 SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08');
 
-SELECT count(*) FROM casfri50.nfl_all; -- xx
+SELECT count(*) FROM casfri50.nfl_all; -- 5736548
 
 
