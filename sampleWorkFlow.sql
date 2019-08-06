@@ -386,7 +386,7 @@ SELECT * FROM translation_test.bc08_vri01_eco_test;
 DROP TABLE IF EXISTS translation_test.bc08_vri01_hdr_test;
 CREATE TABLE translation_test.bc08_vri01_hdr_test WITH OIDS AS
 SELECT * FROM translation.bc08_vri01_hdr
---WHERE rule_id::int = 18
+--WHERE rule_id::int = 1
 ;
 -- display
 SELECT * FROM translation_test.bc08_vri01_hdr_test;
@@ -584,6 +584,7 @@ SELECT * FROM TT_Translate_nb01_cas('rawfri', 'nb01');
 INSERT INTO casfri50.cas_all -- 9h13m
 SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08');
 
+SELECT count(*) FROM casfri50.cas_all; -- 5736548
 -------------------------------------------------------
 -- Translate all DST tables into a common table
 -------------------------------------------------------
