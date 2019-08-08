@@ -1,0 +1,16 @@
+Class,Type,Description,Example,Function,Text code,Numeric code
+Special values,-Infinity,Negative infinity,,NO FUNCTION,MINUS_INF,-2222
+,+Infinity,Positive infinity,,NO FUNCTION,PLUS_INF,-2221
+Missing values,Empty string,Missing that is not null,,TT_NotEmpty(),EMPTY_STRING,-8889
+,Null,Undefined value - true null value,,TT_NotNull(),NULL_VALUE,-8888
+,Not applicable,Target attribute not in source table,,TT_False(),NOT_APPLICABLE,-8887
+,Unknown value,,PHOTO_YEAR in AB,,UNKNOWN_VALUE,-8886
+,Unused value,Non-null value that is not used in CAS,DIST_EXT_UPPER_1 in ab16,,UNUSED_VALUE,-8885
+Invalid values,Out of range,Value is outside the range of values,,TT_Between(); TT_GreaterThan(); TT_LesserThan(),OUT_OF_RANGE,-9999
+,Not member of set,Value is not a member of a set or list,,TT_Match(),NOT_IN_SET,-9998
+,Invalid value,Invalid value,,NO FUNCTION,INVALID_VALUE,-9997
+,Precision too high,Precision is greater than allowed,,NO FUNCTION,WRONG_PRECISION,-9996
+,Wrong data type,Value is of the wrong data type,,TT_IsInt(); TT_IsNumeric(); TT_IsString(),WRONG_TYPE,-9995
+Generic,Translation error,Generic translation error,,,TRANSLATION_ERROR,-3333
+Geometry,Invalid geometry,Invalid geometry in one or more polygons,,,INVALID_GEOMETRY,-7779
+,No intersect,FRI does not intersect any polygons,,,NO_INTERSECT,-7778
