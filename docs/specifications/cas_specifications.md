@@ -48,7 +48,7 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 
 ### 1.2 Error and Missing Value Codes  
 
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  [Click here to view specific error codes for individual attritubes](https://edwardsmarc.github.io/CASFRI/specifications/errors/errors_specific.csv).
 
 | Class          | Type               | Description                              | Text code         | Numeric code |
 | -------------- | ------------------ | ---------------------------------------- | ----------------- | ------------ |
@@ -72,17 +72,17 @@ Error codes are needed during translation if source values are invalid, null, or
 
 ## 2.0 HDR Attributes 
 
-Updated: 2019-08-08
+Updated: 2019-08-09
 
-Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, spatial reference [**why are we not including this anymore?**], ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are described below.
+Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are described below.
 
 
 
-### header_id
+### inventory_id
 
-The attribute **header_id** is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **jurisdiction** attribute plus an integer that increments with newer inventories within a jurisdiction.
+The attribute **inventory_id** is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **jurisdiction** attribute plus an integer that increments with newer inventories within a jurisdiction.
 
-| header_id | values |
+| inventory_id | values |
 | :-------------------------- | :-------------- |
 | jurisdiction plus 2 digits | e.g., BC08, AB06, AB16, NB01 |
 
@@ -130,7 +130,7 @@ The attribute **owner_type** identifies who owns the inventory data. Ownership o
 
 The attribute **owner_name** identifies who owns the land that the inventory covers, and degree of permission to which the data can be used. Ownership of the land is identified as being crown, private, military, or First Nation.
 
-| owner_name | permitted values |
+| owner_name | values   |
 | :-------------------------- | :-------------- |
 | Crown | CROWN |
 | Private | PRIVATE |
@@ -139,21 +139,21 @@ The attribute **owner_name** identifies who owns the land that the inventory cov
 
 
 
-### inventory_type
+### standard_type
 
-The attribute **inventory_type** identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation Inventory or AVI. The inventory type along with a version number usually identifies an inventory.
+The attribute **standard_type** identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation Inventory or AVI. The inventory type along with a version number usually identifies an inventory.
 
-| inventory_type | permitted values |
+| standard_type | values        |
 | :-------------------------- | :-------------- |
 | Inventory name or type of inventory | Alpha numeric    |
 
 
 
-### inventory_version
+### standard_version
 
-The attribute **inventory_version** identifies the standards used to produce a consistent inventory, usually across large landbases and for a relatively long period of time. The inventory type along with a version number usually identifies an inventory.
+The attribute **standard_version** identifies the standards used to produce a consistent inventory, usually across large land bases and for a relatively long period of time. The inventory type along with a version number usually identifies an inventory.
 
-| inventory_version | values        |
+| standard_version | values        |
 | :-------------------------- | :-------------- |
 | The standard and version of the standard used to create the inventory | Alpha numeric |
 
@@ -169,11 +169,11 @@ The attribute **inventory_manual** identifies the documentation associated with 
 
 
 
-### source_data_format
+### src_data_format
 
-The attribute **source_data_format** identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file.
+The attribute **src_data_format** identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file.
 
-| source_data_format | values      |
+| src_data_format | values      |
 | :-------------------------- | :-------------- |
 | ESRI file geodatabase     | Geodatabase |
 | ESRI shapefile            | Shapefile   |
@@ -264,11 +264,11 @@ The attribute **license_agreement** identifies the type of license associated wi
 
 
 
-### source_data_photoyear
+### photo_year_src
 
-The attribute **source_data_photoyear** identifies the source data type that is used to define the photo year i.e., the year in which the inventory was considered initiated and completed.
+The attribute **photo_year_src** identifies the source data type that is used to define the photo year i.e., the year in which the inventory was considered initiated and completed.
 
-| source_data_photoyear | values |
+| photo_year_src | values |
 | :-------------------------- | :-------------- |
 | Source data type that is used to define the photo year | Text |
 
@@ -296,7 +296,7 @@ The attribute **photo_year_end** identifies the year in which the inventory was 
 
 ## 3.0 CAS Attributes
 
-Updated: 2019-08-08
+Updated: 2019-08-09
 
 The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
@@ -372,41 +372,41 @@ Map sheet identification according to original naming convention for an inventor
 
 
 
-### gis_area
+### casfri_area
 
-The attribute **gis_area** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places.
+The attribute **casfri_area** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places.
 
-| gis_area                              | values        |
+| casfri_area                           | values        |
 | :------------------------------------ | :------------ |
 | Polygon (stand) area in hectares (ha) | 0.01 - 10,000 |
 
 
 
-### gis_perimeter
+### casfri_perimeter
 
-The attribute **gis_perimeter** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places.
+The attribute **casfri_perimeter** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places.
 
-| gis_perimeter                           | values          |
+| casfri_perimeter                        | values          |
 | :-------------------------------------- | :-------------- |
 | Polygon (stand) perimeter in metres (m) | 0.01 - infinity |
 
 
 
-### inventory_area
+### src_inv_area
 
-The attribute **inventory_area** measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is measured to 2 decimal places.
+The attribute **src_inv_area** measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is measured to 2 decimal places.
 
-| inventory_area                        | values        |
+| src_inv_area                          | values        |
 | :------------------------------------ | :------------ |
 | Polygon (stand) area in hectares (ha) | 0.01 - 10,000 |
 
 
 
-### photo_year
+### stand_photo_year
 
-The attribute **photo_year** is a identifies the year in which the aerial photography was conducted for a particular polygon. This is in contrast to photo_year_start and photo_year_end which identify the interval for when the inventory was completed.
+The attribute **stand_photo_year** is a identifies the year in which the aerial photography was conducted for a particular polygon. This is in contrast to photo_year_start and photo_year_end which identify the interval for when the inventory was completed.
 
-| photo_year                                                   | values      |
+| stand_photo_year                                             | values      |
 | :----------------------------------------------------------- | :---------- |
 | Identifies the year in which the aerial photography was conducted | 1900 - 2020 |
 
@@ -726,7 +726,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 ## 6.0 DST Attributes
 
-Updated: 2019-08-08
+Updated: 2019-08-09
 
 
 
@@ -740,13 +740,13 @@ The attribute cas_id is an alpha-numeric identifier that is unique for each poly
 
 
 
-### dist_1 - dist_3
+### dist_type_1 - dist_type_3
 
 Disturbance identifies the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human -caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 13.  
 
 <br>  
 
-| dist_1, dist_2, dist_3 | values |
+| dist_type_1, dist_type_2, dist_type_3 | values |
 | :------------------------------------------------------------------------ | :-------------- |
 | Cut - logging with known extent | CO |
 | Partial Cut - portion of forest has been removed, extent known or unknown | PC |
@@ -763,11 +763,11 @@ Disturbance identifies the type of disturbance history that has occurred or is o
 
 
 
-### dist_yr_1 - dist_yr_3  
+### dist_year_1 - dist_year_3  
 
 Disturbance year is the year a disturbance event occurred. The disturbance year may be unknown. Three disturbance years can be identified, one for each disturbance event.    
 
-| dist_yr_1, dist_yr_2, dist_yr_3                            | values      |
+| dist_year_1, dist_year_2, dist_year_3                      | values      |
 | :--------------------------------------------------------- | :---------- |
 | Disturbance Year - year that a disturbance event occurred. | 1900 - 2020 |
 
@@ -906,8 +906,6 @@ Ecosites are site-level descriptions that provide a linkage between vegetation a
 | :----------------------------------------------------------- | :---------- |
 | Ecosite - an area defined by a specific combination of site, soil, and | A-Z / 0-199 |
 | vegetation characteristics as influenced by environmental factors. | NA          |
-
-  
 
 
 
