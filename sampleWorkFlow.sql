@@ -383,19 +383,19 @@ SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species');
 -------------------------------------------------------
 -- BC species table
 -------------------------------------------------------
-SELECT TT_Prepare('validation', 'bc_vri01_species_validation', '_bc_species_val');
+SELECT TT_Prepare('translation', 'bc_vri01_species_validation', '_bc_species_val');
 SELECT * FROM TT_Translate_bc_species_val('translation', 'bc_vri01_species');
 
 -------------------------------------------------------
 -- NB species table
 -------------------------------------------------------
-SELECT TT_Prepare('validation', 'nb_nbi01_species_validation', '_nb_species_val');
+SELECT TT_Prepare('translation', 'nb_nbi01_species_validation', '_nb_species_val');
 SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species');
 
 -------------------------------------------------------
 -- AB photo year
 -------------------------------------------------------
-SELECT TT_Prepare('validation', 'ab_photoyear_validation', '_ab_photo_val');
+SELECT TT_Prepare('translation', 'ab_photoyear_validation', '_ab_photo_val');
 SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear'); -- 5s
 SELECT * FROM rawfri.ab_photoyear;
 --------------------------------------------------------------------------
