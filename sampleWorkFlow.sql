@@ -148,7 +148,6 @@ CREATE SCHEMA translation_test;
 SELECT * FROM translation.ab06_avi01_cas; 
 SELECT * FROM translation.ab06_avi01_dst; 
 SELECT * FROM translation.ab06_avi01_eco; 
-SELECT * FROM translation.ab06_avi01_hdr; 
 SELECT * FROM translation.ab06_avi01_lyr; 
 SELECT * FROM translation.ab06_avi01_nfl; 
 ----------------------------
@@ -181,15 +180,6 @@ SELECT * FROM translation.ab06_avi01_eco
 -- display
 SELECT * FROM translation_test.ab06_avi01_eco_test;
 ----------------------------
--- hdr
-DROP TABLE IF EXISTS translation_test.ab06_avi01_hdr_test;
-CREATE TABLE translation_test.ab06_avi01_hdr_test WITH OIDS AS
-SELECT * FROM translation.ab06_avi01_hdr
---WHERE rule_id::int = 1
-;
--- display
-SELECT * FROM translation_test.ab06_avi01_hdr_test;
-----------------------------
 -- lyr
 DROP TABLE IF EXISTS translation_test.ab06_avi01_lyr_test;
 CREATE TABLE translation_test.ab06_avi01_lyr_test WITH OIDS AS
@@ -215,7 +205,6 @@ SELECT * FROM translation_test.ab06_avi01_nfl_test;
 SELECT * FROM translation.ab16_avi01_cas; 
 SELECT * FROM translation.ab16_avi01_dst; 
 SELECT * FROM translation.ab16_avi01_eco; 
-SELECT * FROM translation.ab16_avi01_hdr; 
 SELECT * FROM translation.ab16_avi01_lyr; 
 SELECT * FROM translation.ab16_avi01_nfl; 
 ----------------------------
@@ -248,15 +237,6 @@ SELECT * FROM translation.ab16_avi01_eco
 -- display
 SELECT * FROM translation_test.ab16_avi01_eco_test;
 ----------------------------
--- hdr
-DROP TABLE IF EXISTS translation_test.ab16_avi01_hdr_test;
-CREATE TABLE translation_test.ab16_avi01_hdr_test WITH OIDS AS
-SELECT * FROM translation.ab16_avi01_hdr
---WHERE rule_id::int = 1
-;
--- display
-SELECT * FROM translation_test.ab16_avi01_hdr_test;
-----------------------------
 -- lyr
 DROP TABLE IF EXISTS translation_test.ab16_avi01_lyr_test;
 CREATE TABLE translation_test.ab16_avi01_lyr_test WITH OIDS AS
@@ -282,7 +262,6 @@ SELECT * FROM translation_test.ab16_avi01_nfl_test;
 SELECT * FROM translation.nb01_nbi01_cas; 
 SELECT * FROM translation.nb01_nbi01_dst; 
 SELECT * FROM translation.nb01_nbi01_eco; 
-SELECT * FROM translation.nb01_nbi01_hdr; 
 SELECT * FROM translation.nb01_nbi01_lyr; 
 SELECT * FROM translation.nb01_nbi01_nfl; 
 ----------------------------
@@ -315,15 +294,6 @@ SELECT * FROM translation.nb01_nbi01_eco
 -- display
 SELECT * FROM translation_test.nb01_nbi01_eco_test;
 ----------------------------
--- hdr
-DROP TABLE IF EXISTS translation_test.nb01_nbi01_hdr_test;
-CREATE TABLE translation_test.nb01_nbi01_hdr_test WITH OIDS AS
-SELECT * FROM translation.nb01_nbi01_hdr
---WHERE rule_id::int = 1
-;
--- display
-SELECT * FROM translation_test.nb01_nbi01_hdr_test;
-----------------------------
 -- lyr
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_lyr_test;
 CREATE TABLE translation_test.nb01_nbi01_lyr_test WITH OIDS AS
@@ -349,7 +319,6 @@ SELECT * FROM translation_test.nb01_nbi01_nfl_test;
 SELECT * FROM translation.bc08_vri01_cas; 
 SELECT * FROM translation.bc08_vri01_dst; 
 SELECT * FROM translation.bc08_vri01_eco; 
-SELECT * FROM translation.bc08_vri01_hdr; 
 SELECT * FROM translation.bc08_vri01_lyr; 
 SELECT * FROM translation.bc08_vri01_nfl; 
 ----------------------------
@@ -381,15 +350,6 @@ SELECT * FROM translation.bc08_vri01_eco
 ;
 -- display
 SELECT * FROM translation_test.bc08_vri01_eco_test;
-----------------------------
--- hdr
-DROP TABLE IF EXISTS translation_test.bc08_vri01_hdr_test;
-CREATE TABLE translation_test.bc08_vri01_hdr_test WITH OIDS AS
-SELECT * FROM translation.bc08_vri01_hdr
---WHERE rule_id::int = 1
-;
--- display
-SELECT * FROM translation_test.bc08_vri01_hdr_test;
 ----------------------------
 -- lyr
 DROP TABLE IF EXISTS translation_test.bc08_vri01_lyr_test;
@@ -451,7 +411,6 @@ SELECT * FROM rawfri.ab_photoyear;
 SELECT TT_Prepare('translation_test', 'ab06_avi01_cas_test', '_ab06_cas');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_dst_test', '_ab06_dst');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_eco_test', '_ab06_eco');
-SELECT TT_Prepare('translation_test', 'ab06_avi01_hdr_test', '_ab06_hdr');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_lyr_test', '_ab06_lyr');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_nfl_test', '_ab06_nfl');
 
@@ -459,7 +418,6 @@ SELECT TT_Prepare('translation_test', 'ab06_avi01_nfl_test', '_ab06_nfl');
 SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06_test_200'); -- 29 s.
 SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06_test_200'); -- 5 s.
 SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200'); -- 1 s.
-SELECT * FROM TT_Translate_ab06_hdr('rawfri', 'ab06_test_200'); -- 4 s.
 SELECT * FROM TT_Translate_ab06_lyr('rawfri', 'ab06_test_200'); -- 7 s.
 SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200'); -- 2 s.
 
@@ -479,7 +437,6 @@ WHERE poly_num = substr(cas_id, 33, 10)::int;
 SELECT TT_Prepare('translation_test', 'ab16_avi01_cas_test', '_ab16_cas');
 SELECT TT_Prepare('translation_test', 'ab16_avi01_dst_test', '_ab16_dst');
 SELECT TT_Prepare('translation_test', 'ab16_avi01_eco_test', '_ab16_eco');
-SELECT TT_Prepare('translation_test', 'ab16_avi01_hdr_test', '_ab16_hdr');
 SELECT TT_Prepare('translation_test', 'ab16_avi01_lyr_test', '_ab16_lyr');
 SELECT TT_Prepare('translation_test', 'ab16_avi01_nfl_test', '_ab16_nfl');
 
@@ -487,7 +444,6 @@ SELECT TT_Prepare('translation_test', 'ab16_avi01_nfl_test', '_ab16_nfl');
 SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16_test_200'); -- 13 s.
 SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16_test_200'); -- 5 s.
 SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16_test_200'); -- 3 s.
-SELECT * FROM TT_Translate_ab16_hdr('rawfri', 'ab16_test_200'); -- 4 s.
 SELECT * FROM TT_Translate_ab16_lyr('rawfri', 'ab16_test_200'); -- 7 s.
 SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_test_200'); -- 5 s.
 
@@ -506,7 +462,6 @@ WHERE rule_id::int = right(cas_id, 7)::int;
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_cas_test', '_nb01_cas');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_dst_test', '_nb01_dst');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_eco_test', '_nb01_eco');
-SELECT TT_Prepare('translation_test', 'nb01_nbi01_hdr_test', '_nb01_hdr');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_lyr_test', '_nb01_lyr');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_nfl_test', '_nb01_nfl');
 
@@ -514,7 +469,6 @@ SELECT TT_Prepare('translation_test', 'nb01_nbi01_nfl_test', '_nb01_nfl');
 SELECT * FROM TT_Translate_nb01_cas('rawfri', 'nb01_test_200'); -- 5 s.
 SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01_test_200'); -- 4 s.
 SELECT * FROM TT_Translate_nb01_eco('rawfri', 'nb01_test_200'); -- 2 s.
-SELECT * FROM TT_Translate_nb01_hdr('rawfri', 'nb01_test_200'); -- 4 s.
 SELECT * FROM TT_Translate_nb01_lyr('rawfri', 'nb01_test_200'); -- 7 s.
 SELECT * FROM TT_Translate_nb01_nfl('rawfri', 'nb01_test_200'); -- 3 s.
 
@@ -534,7 +488,6 @@ WHERE rule_id::int = right(cas_id, 7)::int;
 SELECT TT_Prepare('translation_test', 'bc08_vri01_cas_test', '_bc08_cas');
 SELECT TT_Prepare('translation_test', 'bc08_vri01_dst_test', '_bc08_dst');
 SELECT TT_Prepare('translation_test', 'bc08_vri01_eco_test', '_bc08_eco');
-SELECT TT_Prepare('translation_test', 'bc08_vri01_hdr_test', '_bc08_hdr');
 SELECT TT_Prepare('translation_test', 'bc08_vri01_lyr_test', '_bc08_lyr');
 SELECT TT_Prepare('translation_test', 'bc08_vri01_nfl_test', '_bc08_nfl');
 
@@ -542,7 +495,6 @@ SELECT TT_Prepare('translation_test', 'bc08_vri01_nfl_test', '_bc08_nfl');
 SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08_test_200'); -- 4 s.
 SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08_test_200'); -- 4 s.
 SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08_test_200'); -- 2 s.
-SELECT * FROM TT_Translate_bc08_hdr('rawfri', 'bc08_test_200'); -- 5 s.
 SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08_test_200'); -- 7 s.
 SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_test_200'); -- 4 s.
 
