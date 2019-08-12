@@ -1,15 +1,15 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
 1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(forest_id_2|NULL_VALUE);notNull(ogc_fid|NULL_VALUE),"padConcat({'ab16', 'CANFOR', src_filename, forest_id_2, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,DIST_TYPE_1,text,"notNull(modcon1|NULL_VALUE);matchList(modcon1,{'BU','CC','CL','CU','DT','PL','SC','SL','SN','ST','SU','TH','UK','WF'}|NOT_IN_SET)","mapText(modcon1, {'BU','CC','CL','CU','DT','PL','SC','SL','SN','ST','SU','TH','UK','WF'}, {'BU','CO','OT','CL','DT','SI','SI','OT','DT','OT','OT','SI','OT','WF'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
-3,DIST_YEAR_1,integer,"notNull(modyear1|-8888);isInt(modyear1|-9995);isBetween(modyear1,'0','2020'|-9999)",copyInt(modyear1),Copies (line_7b_disturbance_history) to DIST_YEAR_1,TRUE
+2,DIST_1,text,"notNull(modcon1|NULL_VALUE);matchList(modcon1,{'BU','CC','CL','CU','DT','PL','SC','SL','SN','ST','SU','TH','UK','WF'}|NOT_IN_SET)","mapText(modcon1, {'BU','CC','CL','CU','DT','PL','SC','SL','SN','ST','SU','TH','UK','WF'}, {'BU','CO','OT','CL','DT','SI','SI','OT','DT','OT','OT','SI','OT','WF'})",Maps source value to DIST_1 using lists of values,TRUE
+3,DIST_YR_1,integer,"notNull(modyear1|-8888);isInt(modyear1|-9995);isBetween(modyear1,'0','2020'|-9999)",copyInt(modyear1),Copies (line_7b_disturbance_history) to DIST_YR_1,TRUE
 4,DIST_EXT_UPPER_1,integer,"notNull(modext1|-8888);notEmpty(modext1|-8889);isGreaterThan(modext1,'0','FALSE'|-9999);matchList(modext1,{'1','2','3','4','5'}|-9998)","mapInt(modext1, {'1','2','3','4','5'}, {'25','50','75','95','100'})",Attribute does not occur,TRUE
 5,DIST_EXT_LOWER_1,integer,"notNull(modext1|-8888);notEmpty(modext1|-8889);isGreaterThan(modext1,'0','FALSE'|-9999);matchList(modext1,{'1','2','3','4','5'}|-9998)","mapInt(modext1, {'1','2','3','4','5'}, {'1','26','51','76','96'})",Attribute does not occur,TRUE
-6,DIST_TYPE_2,text,"notNull(modcon2|NULL_VALUE);matchList(modcon2,{'BU','CC','CL','PL','SC','SN','ST','TH'}|NOT_IN_SET)","mapText(modcon2, {'BU','CC','CL','PL','SC','SN','ST','TH'}, {'BU','CO','OT','SI','SI','DT','OT','SI'})",Attribute does not occur,TRUE
-7,DIST_YEAR_2,integer,"notNull(modyear2|-8888);isInt(modyear2|-9995);isBetween(modyear2,'0','2020'|-9999)",copyInt(modyear2),Attribute does not occur,TRUE
+6,DIST_2,text,"notNull(modcon2|NULL_VALUE);matchList(modcon2,{'BU','CC','CL','PL','SC','SN','ST','TH'}|NOT_IN_SET)","mapText(modcon2, {'BU','CC','CL','PL','SC','SN','ST','TH'}, {'BU','CO','OT','SI','SI','DT','OT','SI'})",Attribute does not occur,TRUE
+7,DIST_YR_2,integer,"notNull(modyear2|-8888);isInt(modyear2|-9995);isBetween(modyear2,'0','2020'|-9999)",copyInt(modyear2),Attribute does not occur,TRUE
 8,DIST_EXT_UPPER_2,integer,"notNull(modext2|-8888);notEmpty(modext2|-8889);isGreaterThan(modext2,'0','FALSE'|-9999);matchList(modext2,{'1','2','3','4','5'}|-9998)","mapInt(modext2, {'1','2','3','4','5'}, {'25','50','75','95','100'})",Attribute does not occur,TRUE
 9,DIST_EXT_LOWER_2,integer,"notNull(modext2|-8888);notEmpty(modext2|-8889);isGreaterThan(modext2,'0','FALSE'|-9999);matchList(modext2,{'1','2','3','4','5'}|-9998)","mapInt(modext2, {'1','2','3','4','5'}, {'1','26','51','76','96'})",Attribute does not occur,TRUE
-10,DIST_TYPE_3,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
-11,DIST_YEAR_3,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+10,DIST_3,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
+11,DIST_YR_3,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 12,DIST_EXT_UPPER_3,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 13,DIST_EXT_LOWER_3,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 14,LAYER,integer,true(|-8887),copyInt('1'),Copy value of 1 to LAYER,TRUE

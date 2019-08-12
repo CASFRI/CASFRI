@@ -1,17 +1,3 @@
----  
-title: "CASFRI Specifications"  
-author: "CASFRI Project Team"
-date: "Updated: 12 August 2019"
-output:  
-  html_document:  
-    toc: true  
-    toc_float: true  
-    css: styles.css
-    keep_md: true
----  
-
-
-
 # COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA  
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011

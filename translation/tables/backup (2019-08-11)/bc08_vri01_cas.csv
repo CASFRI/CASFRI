@@ -5,7 +5,7 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 4,NUM_OF_LAYERS,integer,true(|1),copyInt('1'),Copies value 1 to NUM_OF_LAYERS,TRUE
 5,IDENTIFICATION_ID,integer,"notNull(inventory_standard_cd|-8888);matchList(inventory_standard_cd, {'F','V','I','L'}|-9998)","mapInt(inventory_standard_cd, {'F','V','I','L'}, {'4','5','6','7'})",Maps source value to IDENTIFCATION_ID using list,TRUE
 6,MAP_SHEET_ID,text,notNull(map_id|NULL_VALUE),copyText(map_id),Copies source value to MAP_SHEET_ID,TRUE
-7,CASFRI_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-9995);isGreaterThan(shape_area, '0'|-9999)",copyDouble(shape_area),Copies source value to CASFRI_AREA,TRUE
-8,CASFRI_PERIMETER,double precision,"notNull(shape_length|-8888);isNumeric(shape_length|-9995);isGreaterThan(shape_length, '0'|-9999)",copyDouble(shape_length),Copies source value to CASFRI_PERIMETER,TRUE
-9,SRC_INV_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-9995);isGreaterThan(shape_area, '0'|-9999)",copyDouble(shape_area),Copies source value to SRC_INV_AREA,TRUE
-10,STAND_PHOTO_YEAR,integer,"notNull(reference_year|-8888);isInt(reference_year|-9995);isBetween(reference_year, '1900', '2020'|-9999)",copyInt(reference_year),Copies source value to STAND_PHOTO_YEAR,TRUE
+7,GIS_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-9995);isGreaterThan(shape_area, '0'|-9999)",copyDouble(shape_area),Copies source value to GIS_AREA,TRUE
+8,GIS_PERIMETER,double precision,"notNull(shape_length|-8888);isNumeric(shape_length|-9995);isGreaterThan(shape_length, '0'|-9999)",copyDouble(shape_length),Copies source value to GIS_PERIMETER,TRUE
+9,INVENTORY_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-9995);isGreaterThan(shape_area, '0'|-9999)",copyDouble(shape_area),Copies source value to INVENTORY_AREA,TRUE
+10,PHOTO_YEAR,integer,"notNull(reference_year|-8888);isInt(reference_year|-9995);isBetween(reference_year, '1900', '2020'|-9999)",copyInt(reference_year),Copies source value to PHOTO_YEAR,TRUE
