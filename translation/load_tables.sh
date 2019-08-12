@@ -18,8 +18,8 @@ else
   exit 1
 fi
 
-# Folder containing translation file to be loaded:
-load_folders='tables/ tables/lookup'
+# Folder containing translation files to be loaded:
+load_folders='tables/ tables/lookup ../docs/'
 
 #####################################################################################################################################################################
 
