@@ -632,25 +632,16 @@ SELECT count(*) FROM casfri50.eco_all; -- 5736548
 -------------------------------------------------------
 -- Translate all HDR tables into a common table
 -------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab06_avi01_hdr', '_ab06_hdr');
-SELECT TT_Prepare('translation', 'ab16_avi01_hdr', '_ab16_hdr', 'ab06_avi01_hdr');
-SELECT TT_Prepare('translation', 'nb01_nbi01_hdr', '_nb01_hdr', 'ab06_avi01_hdr');
-SELECT TT_Prepare('translation', 'bc08_vri01_hdr', '_bc08_hdr', 'ab06_avi01_hdr');
------------------------
 --DROP TABLE IF EXISTS casfri50.hdr_all;
-CREATE TABLE casfri50.hdr_all AS -- 1m35s -- 1m7s
-SELECT * FROM TT_Translate_ab06_hdr('rawfri', 'ab06');
+CREATE TABLE casfri50.hdr_all AS -- <1 sec
+SELECT inventory_id, jurisdiction, owner_name, standard_type, standard_version, standard_id, standard_revision, inventory_manual, src_data_format, 
+acquisition_date, data_transfer, received_from, contact_info, data_availability, redistribution, permission, license_agreement, 
+photo_year_start, photo_year_end	, photo_year_src 
+FROM translation.inventory_list_cas05
+WHERE inventory_id IN ('AB06', 'AB16', 'BC08', 'NB01');
 ------------------------
-INSERT INTO casfri50.hdr_all -- 15m47s -- 10m52s
-SELECT * FROM TT_Translate_ab16_hdr('rawfri', 'ab16');
-------------------------
-INSERT INTO casfri50.hdr_all -- 1h54m -- 1h21m
-SELECT * FROM TT_Translate_nb01_hdr('rawfri', 'nb01');
-------------------------
-INSERT INTO casfri50.hdr_all -- 13h42m -- 10h7m
-SELECT * FROM TT_Translate_bc08_hdr('rawfri', 'bc08');
 
-SELECT count(*) FROM casfri50.hdr_all; -- 5736548
+SELECT count(*) FROM casfri50.hdr_all; -- 4
 -------------------------------------------------------
 -- Translate all LYR tables into a common table
 -------------------------------------------------------
