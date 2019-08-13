@@ -157,7 +157,7 @@ SELECT * FROM translation.ab06_avi01_nfl;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_cas_test;
 CREATE TABLE translation_test.ab06_avi01_cas_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_cas
-WHERE rule_id::int = 10
+--WHERE rule_id::int = 10
 ;
 -- display
 SELECT * FROM translation_test.ab06_avi01_cas_test;
@@ -397,7 +397,19 @@ SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species');
 -------------------------------------------------------
 SELECT TT_Prepare('translation', 'ab_photoyear_validation', '_ab_photo_val');
 SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear'); -- 5s
-SELECT * FROM rawfri.ab_photoyear;
+
+-- make table valid and subset by rows with valid photo years
+CREATE TABLE rawfri.new_photo_year AS
+SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photo_yr
+FROM rawfri.ab_photoyear
+WHERE TT_IsInt(photo_yr);
+
+CREATE INDEX ab_photoyear_idx 
+ ON rawfri.new_photo_year
+ USING GIST(wkb_geometry);
+
+DROP TABLE rawfri.ab_photoyear;
+ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -419,7 +431,7 @@ SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06_test_200'); -- 29 s.
 SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06_test_200'); -- 5 s.
 SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200'); -- 1 s.
 SELECT * FROM TT_Translate_ab06_lyr('rawfri', 'ab06_test_200'); -- 7 s.
-SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_test_200'); -- 2 s.
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_test_200'); -- 2 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, trm_1, poly_num, rule_id, cas_id, 
