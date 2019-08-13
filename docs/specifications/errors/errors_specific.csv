@@ -68,3 +68,5 @@ ECO,cas_id,text,alpha-numeric,,,NULL_VALUE,,,,,,
 ,wet_landform_mod,text,"X,P,N,A",,,,,,NOT_APPLICABLE,,,
 ,wet_local_mod,text,"C,R,I,N,S,G",,,,,,NOT_APPLICABLE,,,
 ,eco_site,text,A-Z / 0-199,,,,,,NOT_APPLICABLE,,,
+GEO,cas_id,text,alpha-numeric,,,NULL_VALUE,,,,,,
+,geometry,geometry,geometries,,,,,,,,,POLYGON EMPTY
