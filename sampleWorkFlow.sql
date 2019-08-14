@@ -203,7 +203,7 @@ SELECT * FROM translation_test.ab06_avi01_nfl_test;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_geo_test;
 CREATE TABLE translation_test.ab06_avi01_geo_test WITH OIDS AS
 SELECT * FROM translation.ab06_avi01_geo
---WHERE rule_id::int = 1
+--WHERE rule_id::int = 2
 ;
 -- display
 SELECT * FROM translation_test.ab06_avi01_geo_test;
@@ -714,16 +714,18 @@ SELECT TT_Prepare('translation', 'bc08_vri01_geo', '_bc08_geo', 'ab06_avi01_geo'
 ------------------------
 --DROP TABLE IF EXISTS casfri50.geo_all;
 CREATE TABLE casfri50.geo_all AS
-SELECT * FROM TT_Translate_ab06_geo('rawfri', 'ab06');
+SELECT * FROM TT_Translate_ab06_geo('rawfri', 'ab06'); -- 54 secs
 ------------------------
 INSERT INTO casfri50.geo_all 
-SELECT * FROM TT_Translate_ab16_geo('rawfri', 'ab16');
+SELECT * FROM TT_Translate_ab16_geo('rawfri', 'ab16'); -- 7 mins 54 secs
 ------------------------
 INSERT INTO casfri50.geo_all 
-SELECT * FROM TT_Translate_nb01_geo('rawfri', 'nb01');
+SELECT * FROM TT_Translate_nb01_geo('rawfri', 'nb01'); -- 50 mins 21 secs
 ------------------------
 INSERT INTO casfri50.geo_all 
-SELECT * FROM TT_Translate_bc08_geo('rawfri', 'bc08');
+SELECT * FROM TT_Translate_bc08_geo('rawfri', 'bc08'); -- 5 hrs 25 mins
 
-SELECT count(*) FROM casfri50.geo_all;
+SELECT count(*) FROM casfri50.geo_all; --5736548
+SELECT count(*) FROM casfri50.geo_all WHERE geometry = '010300000000000000'; -- 0
+
 
