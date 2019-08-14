@@ -418,7 +418,7 @@ SELECT * FROM translation_test.bc08_vri01_geo_test;
 --------------------------------------------------------------------------
 -- AB species table
 -------------------------------------------------------
-SELECT TT_Prepare('validation', 'ab_avi01_species_validation', '_ab_species_val');
+SELECT TT_Prepare('translation', 'ab_avi01_species_validation', '_ab_species_val');
 SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species');
 
 -------------------------------------------------------
@@ -477,12 +477,12 @@ SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_test_200'); -- 2 s.
 SELECT * FROM TT_Translate_ab06_geo('rawfri', 'ab06_test_200'); -- 2 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, trm_1, poly_num, rule_id, cas_id, 
+SELECT src_filename, trm_1, poly_num, cas_id, 
        density, crown_closure_lower, crown_closure_upper, 
        height, height_upper, height_lower,
        sp1, species_1,
        sp1_per, species_per_1
-FROM TT_Translate_ab06('rawfri', 'ab06_test_200'), rawfri.ab06_test_200
+FROM TT_Translate_ab06_lyr('rawfri', 'ab06_test_200'), rawfri.ab06_test_200
 WHERE poly_num = substr(cas_id, 33, 10)::int;
 
 -------------------------------------------------------
@@ -505,13 +505,13 @@ SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_test_200'); -- 5 s.
 SELECT * FROM TT_Translate_ab16_geo('rawfri', 'ab16_test_200'); -- 5 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, forest_id, rule_id, cas_id, 
+SELECT src_filename, forest_id, ogc_fid, cas_id, 
        crownclose, crown_closure_lower, crown_closure_upper, 
        height, height_upper, height_lower,
        sp1, species_1,
        sp1_percnt, species_per_1
-FROM TT_Translate_ab16('rawfri', 'ab16_test_200'), rawfri.ab16_test_200
-WHERE rule_id::int = right(cas_id, 7)::int;
+FROM TT_Translate_ab16_lyr('rawfri', 'ab16_test_200'), rawfri.ab16_test_200
+WHERE ogc_fid::int = right(cas_id, 7)::int;
 -------------------------------------------------------
 -- NB01
 -------------------------------------------------------
@@ -532,13 +532,13 @@ SELECT * FROM TT_Translate_nb01_nfl('rawfri', 'nb01_test_200'); -- 3 s.
 SELECT * FROM TT_Translate_nb01_geo('rawfri', 'nb01_test_200'); -- 2 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, stdlab, rule_id, cas_id, 
+SELECT src_filename, stdlab, ogc_fid, cas_id, 
        l1cc, crown_closure_lower, crown_closure_upper, 
        l1ht, height_upper, height_lower, 
        l1s1, species_1,
        l1pr1, species_per_1
-FROM TT_Translate_nb01('rawfri', 'nb01_test_200'), rawfri.nb01_test_200
-WHERE rule_id::int = right(cas_id, 7)::int;
+FROM TT_Translate_nb01_lyr('rawfri', 'nb01_test_200'), rawfri.nb01_test_200
+WHERE ogc_fid::int = right(cas_id, 7)::int;
 
 -------------------------------------------------------
 -- BC08
@@ -560,13 +560,13 @@ SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_test_200'); -- 4 s.
 SELECT * FROM TT_Translate_bc08_geo('rawfri', 'bc08_test_200'); -- 2 s.
 
 -- display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, map_id, rule_id, cas_id, 
+SELECT src_filename, map_id, ogc_fid, cas_id, 
        crown_closure, crown_closure_lower, crown_closure_upper, 
        proj_height_1, height_upper, height_lower,
        species_cd_1, species_1,
        species_pct_1, species_per_1
-FROM TT_Translate_bc08('rawfri', 'bc08_test_200'), rawfri.bc08_test_200
-WHERE rule_id::int = right(cas_id, 7)::int;
+FROM TT_Translate_bc08_lyr('rawfri', 'bc08_test_200'), rawfri.bc08_test_200
+WHERE ogc_fid::int = right(cas_id, 7)::int;
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
