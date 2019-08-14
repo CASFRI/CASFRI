@@ -19,7 +19,7 @@ if exist "%~dp0\..\config.bat" (
 
 :: Folder containing translation file to be loaded:
 ::SET load_folder="%~dp0tables"
-SET load_folders=%~dp0tables %~dp0tables\lookup
+SET load_folders=%~dp0tables %~dp0tables\lookup %~dp0..\docs
 
 ::######################################################################################################
 

@@ -1,11 +1,11 @@
 rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
-1,CAS_ID,text,notNull({src_filename}|NULL_VALUE);notNull({forest_id_2}|-8888);notNull({ogc_fid}|-8888),"padConcat('ab16, CANFOR, {src_filename}, {forest_id_2}, {ogc_fid}', '4,15,10,10,7', 'x,x,x,0,0', '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
-2,ORIG_STAND_ID,text,"notNull({forest_id_2}|NULL_VALUE);isInt({forest_id_2}|WRONG_TYPE);greaterThan({forest_id_2},0|OUT_OF_RANGE)",copyText({forest_id_2}),Copies source value to ORIG_STAND_ID,TRUE
-3,STAND_STRUCTURE,text,"notNull({std_struct}|NULL_VALUE);notEmpty({std_struct}|EMPTY_STRING);matchList({std_struct},' 0,0,C4,C5,M,M0,MO'|NOT_IN_SET)","mapText({std_struct}, ' 0,0,C4,C5,M,M0,MO', '-9999,-9999,4,5,-9999,-9999,-9999')",Copies source value to STAND_STRUCTURE,TRUE
-4,NUM_OF_LAYERS,integer,true(|1),copyInt(1),Copies value 1 to NUM_OF_LAYERS,TRUE
-5,IDENTIFICATION_ID,integer,true(|1),copyInt(6),Copies value 6 to IDENTIFICATION_ID,TRUE
-6,MAP_SHEET_ID,text,notNull({trm}|NULL_VALUE);isInt({trm}|WRONG_TYPE),copyText({trm}),Copies source value to MAP_SHEET_ID,TRUE
-7,GIS_AREA,double precision,"notNull({shape_area}|-8888);isNumeric({shape_area}|-8889);greaterThan({shape_area},0|-9999)",copyDouble({shape_area}),Copies source value to GIS_AREA,TRUE
-8,GIS_PERIMETER,double precision,"notNull({shape_length}|-8888);isNumeric({shape_length}|-8889);greaterThan({shape_length},0|-9999)",copyDouble({shape_length}),Copies source value to GIS_PERIMETER,TRUE
-9,INVENTORY_AREA,double precision,"notNull({shape_area}|-8888);isNumeric({shape_area}|-8889);greaterThan({shape_area},0|-9999)",copyDouble({shape_area}),Copies source value to INVENTORY_AREA,TRUE
-10,PHOTO_YEAR,integer,"notNull({reference_year}|-8888);isInt({reference_year}|-8889);between({reference_year},1900,2020|-9999)",copyInt({reference_year}),Copies source value to PHOTO_YEAR,TRUE
+1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(forest_id_2|NULL_VALUE);notNull(ogc_fid|NULL_VALUE),"padConcat({'ab16', 'CANFOR', src_filename, forest_id_2, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+2,ORIG_STAND_ID,text,"notNull(forest_id_2|NULL_VALUE);isInt(forest_id_2|WRONG_TYPE);isGreaterThan(forest_id_2,'0'|OUT_OF_RANGE)",copyText(forest_id_2),Copies source value to ORIG_STAND_ID,TRUE
+3,STAND_STRUCTURE,text,"notNull(std_struct|NULL_VALUE);notEmpty(std_struct|EMPTY_STRING);matchList(std_struct,{' 0','0','C4','C5','M','M0','MO'}|NOT_IN_SET)","mapText(std_struct, {' 0','0','C4','C5','M','M0','MO'}, {'-9999','-9999','4','5','-9999','-9999','-9999'})",Copies source value to STAND_STRUCTURE,TRUE
+4,NUM_OF_LAYERS,integer,true(|1),copyInt('1'),Copies value 1 to NUM_OF_LAYERS,TRUE
+5,IDENTIFICATION_ID,integer,true(|1),copyInt('6'),Copies value 6 to IDENTIFICATION_ID,TRUE
+6,MAP_SHEET_ID,text,notNull(src_filename|NULL_VALUE);isInt(src_filename|WRONG_TYPE),copyText(src_filename),Copies source value to MAP_SHEET_ID,TRUE
+7,CASFRI_AREA,double precision,"notNull(area|-8888);isNumeric(area|-9995);isGreaterThan(area,'0'|-9999)",copyDouble(area),Copies source value to CASFRI_AREA,TRUE
+8,CASFRI_PERIMETER,double precision,"notNull(perimeter|-8888);isNumeric(perimeter|-9995);isGreaterThan(perimeter,'0'|-9999)",copyDouble(perimeter),Copies source value to CASFRI_PERIMETER,TRUE
+9,SRC_INV_AREA,double precision,"notNull(area|-8888);isNumeric(area|-9995);isGreaterThan(area,'0'|-9999)",copyDouble(area),Copies source value to SRC_INV_AREA,TRUE
+10,STAND_PHOTO_YEAR,integer,"geoIsValid(wkb_geometry|-9997);geoIntersects(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry'|-9999)","geoIntersectionInt(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry', 'photo_yr', 'GREATEST_AREA')",Copies source value to STAND_PHOTO_YEAR,TRUE

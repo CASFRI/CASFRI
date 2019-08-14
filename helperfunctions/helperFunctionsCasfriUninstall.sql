@@ -1,4 +1,4 @@
-﻿------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- CASFRI Helper functions uninstall file for CASFR v5 beta
 -- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
@@ -15,9 +15,16 @@
 --
 -------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_vri01_site_index_validation(text, text);
+DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_validation(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text,text,text,text);
 
 DROP FUNCTION IF EXISTS TT_vri01_origin_translation(text,text);
 DROP FUNCTION IF EXISTS TT_vri01_site_index_translation(text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_translation(text, text, text, text,text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_translation(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_translation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text,text,text);
+DROP FUNCTION IF EXISTS TT_nbi01_num_of_layers_translation(text,text,text);
+DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text,text,text,text);
+DROP FUNCTION IF EXISTS TT_nbi01_productive_for_translation(text,text,text,text,text);
