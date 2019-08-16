@@ -1,14 +1,3 @@
----  
-title: "CASFRI Specifications"  
-author: "CASFRI Project Team"
-date: "Updated: 12 August 2019"
-output:  
-  html_document:  
-    toc: true  
-    toc_float: true  
-    css: styles.css
-    keep_md: true
----  
 
 
 
@@ -169,6 +158,26 @@ The attribute **standard_version** identifies the standards used to produce a co
 
 | standard_version | values        |
 | :-------------------------- | :-------------- |
+| The standard and version of the standard used to create the inventory | Alpha numeric |
+
+
+
+### standard_id
+
+The attribute **standard_id** identifies...
+
+| standard_id                                                  | values        |
+| :----------------------------------------------------------- | :------------ |
+| The standard and version of the standard used to create the inventory | Alpha numeric |
+
+
+
+### standard_revision
+
+The attribute **standard_revision** identifies...
+
+| standard_revision                                            | values        |
+| :----------------------------------------------------------- | :------------ |
 | The standard and version of the standard used to create the inventory | Alpha numeric |
 
 
@@ -736,8 +745,6 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 
 
-  
-
 ## 6.0 DST Attributes
 
 Updated: 2019-08-09
@@ -820,7 +827,7 @@ The maximum number of layers recognized is nine. The uppermost layer may also be
 
 
 
-## 7.0 Ecological Attributes (ECO)  
+## 7.0 ECO Attributes
 
 Updated: 2019-08-08
 
@@ -923,7 +930,34 @@ Ecosites are site-level descriptions that provide a linkage between vegetation a
 
 
 
-## 8.0 Bibliography  
+## 8.0 GEO Attributes 
+
+Updated: 2019-08-16
+
+
+### cas_id
+
+The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database.
+
+| cas_id                                                       | values        |
+| :----------------------------------------------------------- | :------------ |
+| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+
+
+
+### geometry
+
+The attribute **geometry** returns the geometry and validates if necessary. If valid geometry cannot be made error code is returned.
+
+
+| geometry             | values      |
+| :------------------- | :---------- |
+| Returns the geometry | coords etc. |
+
+
+
+
+## 9.0 Bibliography  
 
 
 
