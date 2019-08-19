@@ -1,12 +1,5 @@
 .gitignore
-Rgui.lnk
 config.bat
 config.sh
-style.css
-.Rhistory
 sampleWorkFlow_pv.sql
-specifications.Rproj
-.Rproj.user
-testEngine/
-vernier*.*
-casfri.eeproj
+pvCode/
