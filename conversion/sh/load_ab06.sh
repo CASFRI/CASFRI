@@ -27,7 +27,7 @@ else
 fi
 
 srcFileName=GB_S21_TWP
-srcFullPath="$friDir/AB/SourceDataset/v00.04/CROWNFMA/GordonBuchananTolko/S21_Gordon_Buchanan_Tolko/GB_S21_TWP/gdb/$srcFileName.gdb"
+srcFullPath="$friDir/AB/AB06/$srcFileName.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.ab06

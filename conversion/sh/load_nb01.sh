@@ -32,7 +32,7 @@ else
   exit 1
 fi
 
-NB_subFolder=NB/SourceDataset/v.00.03-v.00.04/
+NB_subFolder=NB/NB01/
 
 srcNameWater=Waterbody
 ogrTabWater=$srcNameWater
