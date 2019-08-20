@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script loads the British Columbia VRI forest inventory (BC09) into PostgreSQL
+# This script loads the British Columbia VRI forest inventory BC09 into PostgreSQL
 
 # The format of the source dataset is a geodatabase
 
@@ -22,6 +22,7 @@ else
 fi
 
 srcFileName=VEG_COMP_LYR_R1_POLY
+gdbFileName=WHSE_FOREST_VEGETATION_2018_VEG_COMP_LYR_R1_POLY
 srcFullPath="$friDir/BC/BC09/$srcFileName.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
@@ -43,5 +44,5 @@ fi
 -f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcFullPath" \
 -nln $fullTargetTableName \
 -t_srs $prjFile \
--sql "SELECT *, '$srcFileName' as src_filename FROM '$srcFileName'" \
+-sql "SELECT *, '$srcFileName' as src_filename FROM '$gdbFileName'" \
 -progress $overwrite_tab
