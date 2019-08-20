@@ -26,6 +26,7 @@ else
 fi
 
 srcFileName=VEG_COMP_LYR_R1_POLY
+gdbFileName=$srcFileName
 srcFullPath="$friDir/BC/BC08/$srcFileName.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
@@ -47,5 +48,5 @@ fi
 -f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcFullPath" \
 -nln $fullTargetTableName \
 -t_srs $prjFile \
--sql "SELECT *, '$srcFileName' as src_filename FROM '$srcFileName'" \
+-sql "SELECT *, '$srcFileName' as src_filename FROM '$gdbFileName'" \
 -progress $overwrite_tab
