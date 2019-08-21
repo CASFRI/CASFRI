@@ -144,7 +144,7 @@ UNION ALL
 SELECT '4.2'::text number,
        'TT_vri01_non_for_veg_translation'::text function_tested,
        'No matches test'::text description,
-       TT_vri01_non_for_veg_translation('V'::text,''::text,''::text,''::text) = 'NULL' passed
+       TT_vri01_non_for_veg_translation('V'::text,''::text,''::text,''::text) IS NULL passed
 ---------------------------------------------------------
 -- TT_vri01_nat_non_veg_translation
 ---------------------------------------------------------
@@ -158,7 +158,7 @@ UNION ALL
 SELECT '5.2'::text number,
        'TT_vri01_nat_non_veg_translation'::text function_tested,
        'No matches test'::text description,
-       TT_vri01_nat_non_veg_translation('V'::text,''::text,''::text,''::text, ''::text) = 'NULL' passed
+       TT_vri01_nat_non_veg_translation('V'::text,''::text,''::text,''::text, ''::text) IS NULL passed
 ---------------------------------------------------------
 -- TT_vri01_non_for_anth_translation
 ---------------------------------------------------------
@@ -172,7 +172,7 @@ UNION ALL
 SELECT '6.2'::text number,
        'TT_vri01_non_for_anth_translation'::text function_tested,
        'No matches test'::text description,
-       TT_vri01_non_for_anth_translation('V'::text,''::text,''::text,''::text) = 'NULL' passed
+       TT_vri01_non_for_anth_translation('V'::text, ''::text, ''::text, ''::text) IS NULL passed
 ---------------------------------------------------------
 -- TT_avi01_non_for_anth_validation
 ---------------------------------------------------------
@@ -271,29 +271,33 @@ UNION ALL
 SELECT '8.6'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Two nulls'::text description,
-       TT_IsError('SELECT TT_avi01_non_for_anth_translation(NULL::text, NULL::text, ''{''''A'''', ''''B'''', ''''C'''', ''''D'''', ''''E'''', ''''F'''', ''''G'''', ''''H''''}''::text, 
-                                                                                    ''{''''aa'''', ''''bb'''', ''''cc'''', ''''dd'''', ''''ee'''', ''''ff'''', ''''gg'''', ''''hh''''}''::text, TRUE::text);') = '2 NULLS provided' passed
+       TT_avi01_non_for_anth_translation(NULL::text, NULL::text, 
+                                         '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                         '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.7'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Two empty'::text description,
-       TT_IsError('SELECT TT_avi01_non_for_anth_translation(''''::text, ''''::text, ''{''''A'''', ''''B'''', ''''C'''', ''''D'''', ''''E'''', ''''F'''', ''''G'''', ''''H''''}''::text, 
-                                                                                ''{''''aa'''', ''''bb'''', ''''cc'''', ''''dd'''', ''''ee'''', ''''ff'''', ''''gg'''', ''''hh''''}''::text, TRUE::text);') = '2 NULLS provided' passed
+       TT_avi01_non_for_anth_translation(''::text, ''::text, 
+                                         '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                         '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.8'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'One Null one empty'::text description,
-       TT_IsError('SELECT TT_avi01_non_for_anth_translation(NULL::text, ''''::text, ''{''''A'''', ''''B'''', ''''C'''', ''''D'''', ''''E'''', ''''F'''', ''''G'''', ''''H''''}''::text, 
-                                                                                    ''{''''aa'''', ''''bb'''', ''''cc'''', ''''dd'''', ''''ee'''', ''''ff'''', ''''gg'''', ''''hh''''}''::text, TRUE::text);') = '2 NULLS provided' passed
+       TT_avi01_non_for_anth_translation(NULL::text, ''::text, 
+                                         '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                         '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.9'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Two values'::text description,
-       TT_IsError('SELECT TT_avi01_non_for_anth_translation(''a''::text, ''b''::text, ''{''''A'''', ''''B'''', ''''C'''', ''''D'''', ''''E'''', ''''F'''', ''''G'''', ''''H''''}''::text, 
-                                                                                    ''{''''aa'''', ''''bb'''', ''''cc'''', ''''dd'''', ''''ee'''', ''''ff'''', ''''gg'''', ''''hh''''}''::text, TRUE::text);') = '2 values provided' passed
+       TT_avi01_non_for_anth_translation('a'::text, 'b'::text, 
+                                         '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
+                                         '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
 ---------------------------------------------------------
 -- TT_nbi01_stand_structure_translation
 ---------------------------------------------------------

@@ -25,7 +25,7 @@
 --  site_index text
 --  site_index_est text
 --
--- Return TRUE one of the vals is not null. If both are null return FALSE.
+-- Return TRUE if one of the vals is not null. If both are null return FALSE.
 -- Translation rule will return site_class if present, if not returns site_class_est.
 -- If both null returns error code during validation. 
 -- Should also return error messages if not numeric, and not between 0 and 99. 
@@ -34,7 +34,7 @@
 --    CANNOT VALIDATE EACH COLUMN SEPERATELY BECAUSE FAILURE WILL RETURN ERROR CODE, WE ONLY WANT AN ERROR CODE IF BOTH COLUMNS HAVE
 --    INVALID VALUES. THEREFORE NEED TO HARDCODE THESE CHECKS IN A SINGLE VALIDATION FUNCTION.
 -- 
--- e.g. TT_vri01_site_index_validation(1,1)
+-- e.g. TT_vri01_site_index_validation(1, 1)
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_vri01_site_index_validation(text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_site_index_validation(
@@ -42,47 +42,21 @@ CREATE OR REPLACE FUNCTION TT_vri01_site_index_validation(
   site_index_est text
 )
 RETURNS boolean AS $$
-  DECLARE
-    _site_index text;
-    _site_index_est text;
   BEGIN
-    IF site_index IS NULL OR replace(site_index, ' ', '') = ''::text THEN
-      _site_index = 'empty';
-    ELSE
-      _site_index = 'not_empty';
-    END IF;    
-    IF site_index_est IS NULL OR replace(site_index_est, ' ', '') = ''::text THEN
-      _site_index_est = 'empty';
-    ELSE
-      _site_index_est = 'not_empty';
-    END IF;
-    
-    IF _site_index = 'not_empty' THEN -- if site_index is not null, return it after running checks.
-      IF NOT TT_IsNumeric(site_index) THEN -- check for numeric
-        RAISE NOTICE 'site_index: %, is not numeric', site_index;
+     IF TT_NotEmpty(site_index) THEN -- if site_index is not null, return it after running checks.
+      IF NOT TT_IsNumeric(site_index) OR NOT TT_isBetween(site_index,'0'::text,'99'::text) THEN
         RETURN FALSE;
-      ELSIF NOT TT_isBetween(site_index,'0'::text,'99'::text) THEN -- check for between
-        RAISE NOTICE 'site_index: %, is not between 0 - 99', site_index;
-        RETURN FALSE;
-      ELSE
-        RETURN TRUE;
       END IF;
-    ELSIF _site_index_est = 'not_empty' THEN -- otherwise return est_site_index if not null, after running checks
-      IF NOT TT_IsNumeric(site_index_est) THEN -- check for numeric
-        RAISE NOTICE 'est_site_index: %, is not numeric', site_index_est;
+      RETURN TRUE;
+    ELSIF TT_NotEmpty(site_index_est) THEN -- otherwise return est_site_index if not null, after running checks
+      IF NOT TT_IsNumeric(site_index_est) OR NOT TT_isBetween(site_index_est,'0'::text,'99'::text) THEN
         RETURN FALSE;
-      ELSIF NOT TT_isBetween(site_index_est,'0'::text,'99'::text) THEN -- check for between
-        RAISE NOTICE 'est_site_index: %, is not between 0 - 99', site_index_est;
-        RETURN FALSE;
-      ELSE
-        RETURN TRUE;
       END IF;
-    ELSE -- if both empty return FALSE
-      RETURN FALSE;
+        RETURN TRUE;
     END IF;
+    RETURN FALSE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
-
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -96,7 +70,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --  For two values, check that one of them is null or empty and the other is not null or empty.
 --  then check the one value is in a list.
 --
--- e.g. TT_avi01_non_for_anth_validation(anth_veg, anth_non, lst, ignoreCase)
+-- e.g. TT_avi01_non_for_anth_validation(anth_veg, anth_non, {'AIG','AIH','CIP','CIW'}, 'TRUE')
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_validation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_avi01_non_for_anth_validation(
@@ -108,66 +82,82 @@ CREATE OR REPLACE FUNCTION TT_avi01_non_for_anth_validation(
 RETURNS boolean AS $$
   DECLARE
     _lst text[];
-    _ignoreCase boolean;
-    _anth_veg text;
-    _anth_non text;
     _val text;
   BEGIN
     PERFORM TT_ValidateParams('TT_avi01_non_for_anth_validation',
                               ARRAY['lst', lst, 'stringlist', 
                                     'ignoreCase', ignoreCase, 'boolean']);
-    _ignoreCase = ignoreCase::boolean;
-    
-    -- assign val1 and val 2 to either empty or not empty
-    IF anth_veg IS NULL OR replace(anth_veg, ' ', '') = ''::text THEN
-      _anth_veg = 'empty';
-    ELSE
-      _anth_veg = 'not_empty';
+
+    -- check if both values are provided
+    IF TT_NotEmpty(anth_veg) AND TT_NotEmpty(anth_non) THEN
+      RETURN FALSE;
+    END IF;
+    -- check if both values are empty
+    IF NOT TT_NotEmpty(anth_veg) AND NOT TT_NotEmpty(anth_non) THEN
+      RETURN FALSE;
     END IF;
     
-    IF anth_non IS NULL OR replace(anth_non, ' ', '') = ''::text THEN
-      _anth_non = 'empty';
+    IF TT_NotEmpty(anth_veg) THEN
+      _val = anth_veg;
     ELSE
-      _anth_non = 'not_empty';
+      _val = anth_non;
     END IF;
     
-    -- if one is empty and the other isn't, proceed...
-    IF (_anth_veg = 'empty' AND _anth_non = 'not_empty') OR (_anth_veg = 'not_empty' AND _anth_non = 'empty') THEN
-      -- assign anth_veg or anth_non to val.
-      IF _anth_veg = 'empty' THEN
-        _val = anth_non;
-      ELSE
-        _val = anth_veg;
-      END IF;
-      
-      -- match to list or return FALSE
-      IF _ignoreCase = FALSE THEN
-        _lst = TT_ParseStringList(lst, TRUE);
-        IF _val = ANY(array_remove(_lst, NULL)) THEN
-          RETURN TRUE;
-        ELSE
-          RAISE NOTICE 'NOT IN SET: %, %', _val, _lst;
-          RETURN FALSE;
-        END IF;
-      ELSE
+    -- match to list or return FALSE
+    IF ignoreCase::boolean THEN
         _lst = TT_ParseStringList(upper(lst), TRUE);
         IF upper(_val) = ANY(array_remove(_lst, NULL)) THEN
           RETURN TRUE;
-        ELSE
-          RAISE NOTICE 'NOT IN SET: %, %', _val, _lst;
-          RETURN FALSE;
         END IF;
-      END IF;
-    ELSE
-      IF _anth_veg = 'empty' THEN
-        RAISE NOTICE 'Both values are null or empty strings';
-      ELSE
-        RAISE NOTICE 'Both values are not null';        
-      END IF;
-      RETURN FALSE;
+        RETURN FALSE;
     END IF;
+    _lst = TT_ParseStringList(lst, TRUE);
+    IF _val = ANY(array_remove(_lst, NULL)) THEN
+      RETURN TRUE;
+    END IF;
+    RETURN FALSE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nbi01_wetland_code(text, text, text)
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nbi01_wetland_code(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nbi01_wetland_code(
+  wc text,
+  vt text,
+  im text
+)
+RETURNS text AS $$
+  SELECT CASE
+           WHEN wc='BO' AND vt='EV' AND im='BP' THEN 'BO-B'
+           WHEN wc='FE' AND vt='EV' AND im='BP' THEN 'FO-B'
+           WHEN wc='BO' AND vt='EV' AND im='DI' THEN 'BO--'
+           WHEN wc='BO' AND vt='AW' AND im='BP' THEN 'BT-B'
+           WHEN wc='BO' AND vt='OV' AND im='BP' THEN 'OO-B'
+           WHEN wc='FE' AND vt='EV' AND im IN ('MI','DI') THEN 'FO--'
+           WHEN wc='FE' AND vt='OV' AND im='MI' THEN 'OO--'
+           WHEN wc='BO' AND vt='FS' THEN 'BTNN'
+           WHEN wc='BO' AND vt='SV' THEN 'BONS'
+           WHEN wc='FE' AND vt IN ('FH','FS') THEN 'FTNN'
+           WHEN wc='FE' AND vt IN ('AW','SV') THEN 'FONS'
+           WHEN wc='FW' AND im='BP' THEN 'OF-B'
+           WHEN wc='FE' AND vt='EV' THEN 'FO--'
+           WHEN wc IN ('FE','BO') AND vt='OV' THEN 'OO--'
+           WHEN wc IN ('FE','BO') AND vt='OW' THEN 'O---'
+           WHEN wc='BO' AND vt='EV' THEN 'BP--'
+           WHEN wc='BO' AND vt='AW' THEN 'BT--'
+           WHEN wc='AB' THEN 'OONN'
+           WHEN wc='FM' THEN 'MONG'
+           WHEN wc='FW' THEN 'STNN'
+           WHEN wc='SB' THEN 'SONS'
+           WHEN wc='CM' THEN 'MCNG'
+           WHEN wc='TF' THEN 'TMNN'
+           WHEN wc IN ('NP','WL') THEN 'W---'
+           ELSE NULL
+         END;
+$$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -176,70 +166,33 @@ $$ LANGUAGE plpgsql VOLATILE;
 --  wc text
 --  vt text
 --  im text
---  return_character text
+--  ret_char_pos text
 --
 -- Assign 4 letter wetland character code, then return true if the requested character (1-4)
 -- is not null and not -.
 --
--- e.g. TT_nbi01_wetland_translation(wt, vt, im, '1')
+-- e.g. TT_nbi01_wetland_validation(wt, vt, im, '1')
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text,text,text,text);
+--DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_nbi01_wetland_validation(
   wc text,
   vt text,
   im text,
-	return_character text
+	ret_char_pos text
 )
 RETURNS boolean AS $$
   DECLARE
-    _return_character integer := return_character::int;
 		wetland_code text;
-    _return text;
   BEGIN
-    PERFORM TT_ValidateParams('TT_nbi01_wetland_translation',
-                              ARRAY['return_character', return_character, 'int']);
-		CASE
-      WHEN wc='BO' AND vt='EV' AND im='BP' THEN wetland_code = 'BO-B';
-      WHEN wc='FE' AND vt='EV' AND im='BP' THEN wetland_code = 'FO-B';
-      WHEN wc='BO' AND vt='EV' AND im='DI' THEN wetland_code = 'BO--';
-      WHEN wc='BO' AND vt='AW' AND im='BP' THEN wetland_code = 'BT-B';
-      WHEN wc='BO' AND vt='OV' AND im='BP' THEN wetland_code = 'OO-B';
-      WHEN wc='FE' AND vt='EV' AND im IN ('MI','DI') THEN wetland_code = 'FO--';
-      WHEN wc='FE' AND vt='OV' AND im='MI' THEN wetland_code = 'OO--';
-      WHEN wc='BO' AND vt='FS' THEN wetland_code = 'BTNN';
-			WHEN wc='BO' AND vt='SV' THEN wetland_code = 'BONS';
-			WHEN wc='FE' AND vt IN ('FH','FS') THEN wetland_code = 'FTNN';
-			WHEN wc='FE' AND vt IN ('AW','SV') THEN wetland_code = 'FONS';
-			WHEN wc='FW' AND im='BP' THEN wetland_code = 'OF-B';
-      WHEN wc='FE' AND vt='EV' THEN wetland_code = 'FO--';
-      WHEN wc IN ('FE','BO') AND vt='OV' THEN wetland_code = 'OO--';
-      WHEN wc IN ('FE','BO') AND vt='OW' THEN wetland_code = 'O---';
-      WHEN wc='BO' AND vt='EV' THEN wetland_code = 'BP--';
-      WHEN wc='BO' AND vt='AW' THEN wetland_code = 'BT--';
-      WHEN wc='AB' THEN wetland_code = 'OONN';
-			WHEN wc='FM' THEN wetland_code = 'MONG';
-			WHEN wc='FW' THEN wetland_code = 'STNN';
-			WHEN wc='SB' THEN wetland_code = 'SONS';
-			WHEN wc='CM' THEN wetland_code = 'MCNG';
-			WHEN wc='TF' THEN wetland_code = 'TMNN';
-      WHEN wc IN ('NP','WL') THEN wetland_code = 'W---';
-      ELSE
-        wetland_code = NULL;
-		END CASE;
-    
-    -- substring wetland_code 
-    IF wetland_code IS NOT NULL THEN
-      _return = substring(wetland_code from _return_character for 1);
-    END IF;
-    
+    PERFORM TT_ValidateParams('TT_nbi01_wetland_validation',
+                              ARRAY['ret_char_pos', ret_char_pos, 'int']);
+		wetland_code = TT_nbi01_wetland_code(wc, vt, im);
+
     -- return true or false
-    IF wetland_code IS NULL THEN
+    IF wetland_code IS NULL OR substring(wetland_code from ret_char_pos::int for 1) = '-' THEN
       RETURN FALSE;
-    ELSIF _return = '-' THEN
-      RETURN FALSE;
-    ELSE
-      RETURN TRUE;
 		END IF;
+    RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
@@ -272,7 +225,6 @@ RETURNS integer AS $$
     RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
-
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -293,28 +245,13 @@ CREATE OR REPLACE FUNCTION TT_vri01_site_index_translation(
   site_index_est text
 )
 RETURNS double precision AS $$
-  DECLARE
-    _site_index text;
-    _site_index_est text;
   BEGIN
-    IF site_index IS NULL OR replace(site_index, ' ', '') = ''::text THEN
-      _site_index = 'empty';
-    ELSE
-      _site_index = 'not_empty';
-    END IF;    
-    IF site_index_est IS NULL OR replace(site_index_est, ' ', '') = ''::text THEN
-      _site_index_est = 'empty';
-    ELSE
-      _site_index_est = 'not_empty';
-    END IF;
-    
-    IF _site_index = 'not_empty' THEN
+    IF TT_NotEmpty(site_index) THEN
       RETURN site_index::double precision;
-    ELSIF _site_index = 'empty' AND _site_index_est = 'not_empty' THEN
+    ELSIF NOT TT_NotEmpty(site_index) AND TT_NotEmpty(site_index_est) THEN
       RETURN site_index_est::double precision;
-	  ELSE
-		  RETURN NULL;
-    END IF;
+	  END IF;
+		RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
@@ -338,42 +275,35 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_veg_translation(
 )
 RETURNS text AS $$
   DECLARE
-    _land_cover_class_cd_1 boolean;
-    _bclcs_level_4 boolean;
-    _non_productive_descriptor_cd boolean;
-    return text;
+    result text = NULL;
   BEGIN
-    -- initialize return
-    return = 'NULL'; -- returns NULL if not naturally non-vegetated
-    
     -- run if statements
     IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL THEN
       IF land_cover_class_cd_1 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
-        return = TT_MapText(land_cover_class_cd_1, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
+        result = TT_MapText(land_cover_class_cd_1, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
       END IF;
     END IF;
     
-    IF inventory_standard_cd IN ('V','I') AND bclcs_level_4 IS NOT NULL AND return = 'NULL' THEN
+    IF inventory_standard_cd IN ('V','I') AND bclcs_level_4 IS NOT NULL AND result = 'NULL' THEN
       IF bclcs_level_4 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
-        return = TT_MapText(bclcs_level_4, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
+        result = TT_MapText(bclcs_level_4, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
       END IF;
     END IF;
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd IN ('AF','M','NPBR','OR') THEN
-        return = TT_MapText(non_productive_descriptor_cd, '{''AF'',''M'',''NPBR'',''OR''}', '{''AF'',''HG'',''ST'',''HG''}');
+        result = TT_MapText(non_productive_descriptor_cd, '{''AF'',''M'',''NPBR'',''OR''}', '{''AF'',''HG'',''ST'',''HG''}');
       END IF;
     END IF;
 
-    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND return = 'NULL' THEN
+    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result = 'NULL' THEN
       IF bclcs_level_4 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
-        return = TT_MapText(bclcs_level_4, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
+        result = TT_MapText(bclcs_level_4, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
       END IF;
     END IF;
-    RETURN return;
+    RETURN result;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
-
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -395,52 +325,45 @@ CREATE OR REPLACE FUNCTION TT_vri01_nat_non_veg_translation(
 )
 RETURNS text AS $$
   DECLARE
-    _land_cover_class_cd_1 boolean;
-    _bclcs_level_4 boolean;
-    _non_productive_descriptor_cd boolean;
-    _non_veg_cover_type_1 boolean;
-    return text;
+    result text = NULL;
   BEGIN
-    -- initialize return
-    return = 'NULL'; -- returns NULL if not naturally non-vegetated
-
     -- run if statements
-    IF inventory_standard_cd IN ('V','I') AND non_veg_cover_type_1 IS NOT NULL THEN
+    IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 IN ('BE','BI','BR','BU','CB','DW','ES','GL','LA','LB','LL','LS','MN','MU','OC','PN','RE','RI','RM','RS','TA') THEN
-        return = TT_MapText(non_veg_cover_type_1, '{''BE'',''BI'',''BR'',''BU'',''CB'',''DW'',''ES'',''GL'',''LA'',''LB'',''LL'',''LS'',''MN'',''MU'',''OC'',''PN'',''RE'',''RI'',''RM'',''RS'',''TA''}', '{''BE'',''RK'',''RK'',''EX'',''EX'',''DW'',''EX'',''SI'',''LA'',''RK'',''EX'',''WS'',''EX'',''WS'',''OC'',''SI'',''LA'',''RI'',''EX'',''WS'',''RK''}');
+        result = TT_MapText(non_veg_cover_type_1, '{''BE'',''BI'',''BR'',''BU'',''CB'',''DW'',''ES'',''GL'',''LA'',''LB'',''LL'',''LS'',''MN'',''MU'',''OC'',''PN'',''RE'',''RI'',''RM'',''RS'',''TA''}', '{''BE'',''RK'',''RK'',''EX'',''EX'',''DW'',''EX'',''SI'',''LA'',''RK'',''EX'',''WS'',''EX'',''WS'',''OC'',''SI'',''LA'',''RI'',''EX'',''WS'',''RK''}');
       END IF;
     END IF;
 
-    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL AND return = 'NULL' THEN
+    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
       IF land_cover_class_cd_1 IN ('BE','BI','BR','BU','CB','EL','ES','GL','LA','LB','LL','LS','MN','MU','OC','PN','RE','RI','RM','RO','RS','SI','TA') THEN
-        return = TT_MapText(land_cover_class_cd_1, '{''BE'',''BI'',''BR'',''BU'',''CB'',''EL'',''ES'',''GL'',''LA'',''LB'',''LL'',''LS'',''MN'',''MU'',''OC'',''PN'',''RE'',''RI'',''RM'',''RO'',''RS'',''SI'',''TA''}', '{''BE'',''RK'',''RK'',''EX'',''EX'',''EX'',''EX'',''SI'',''LA'',''RK'',''EX'',''WS'',''EX'',''WS'',''OC'',''SI'',''LA'',''RI'',''EX'',''RK'',''WS'',''SI'',''RK''}');
+        result = TT_MapText(land_cover_class_cd_1, '{''BE'',''BI'',''BR'',''BU'',''CB'',''EL'',''ES'',''GL'',''LA'',''LB'',''LL'',''LS'',''MN'',''MU'',''OC'',''PN'',''RE'',''RI'',''RM'',''RO'',''RS'',''SI'',''TA''}', '{''BE'',''RK'',''RK'',''EX'',''EX'',''EX'',''EX'',''SI'',''LA'',''RK'',''EX'',''WS'',''EX'',''WS'',''OC'',''SI'',''LA'',''RI'',''EX'',''RK'',''WS'',''SI'',''RK''}');
       END IF;
     END IF;
     
-    IF inventory_standard_cd IN ('V','I') AND bclcs_level_4 IS NOT NULL AND return = 'NULL' THEN
+    IF inventory_standard_cd IN ('V','I') AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
       IF bclcs_level_4 IN ('EL','RO','SI') THEN
-        return = TT_MapText(bclcs_level_4, '{''EL'',''RO'',''SI''}', '{''EX'',''RK'',''SI''}');
+        result = TT_MapText(bclcs_level_4, '{''EL'',''RO'',''SI''}', '{''EX'',''RK'',''SI''}');
       END IF;
     END IF;
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd IN ('A','CL','G','ICE','L','MUD','R','RIV','S','SAND','TIDE') THEN
-        return = TT_MapText(non_productive_descriptor_cd, '{''A'',''CL'',''G'',''ICE'',''L'',''MUD'',''R'',''RIV'',''S'',''SAND'',''TIDE''}', '{''AP'',''EX'',''WS'',''SI'',''LA'',''EX'',''RK'',''RI'',''SL'',''SA'',''TF''}');
+        result = TT_MapText(non_productive_descriptor_cd, '{''A'',''CL'',''G'',''ICE'',''L'',''MUD'',''R'',''RIV'',''S'',''SAND'',''TIDE''}', '{''AP'',''EX'',''WS'',''SI'',''LA'',''EX'',''RK'',''RI'',''SL'',''SA'',''TF''}');
       END IF;
     END IF;
 
-    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND return = 'NULL' THEN
+    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
       IF bclcs_level_4 IN ('EL','RO','SI') THEN
-        return = TT_MapText(bclcs_level_4, '{''EL'',''RO'',''SI''}', '{''EX'',''RK'',''SI''}');
+        result = TT_MapText(bclcs_level_4, '{''EL'',''RO'',''SI''}', '{''EX'',''RK'',''SI''}');
       END IF;
     END IF;
-    RETURN return;
+    RETURN result;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_vri01_non_for_anth_translation(text, text, text, text
+-- TT_vri01_non_for_anth_translation(text, text, text, text)
 --  
 -- inventory_standard_cd text
 -- land_cover_class_cd_1 text
@@ -456,38 +379,30 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_anth_translation(
 )
 RETURNS text AS $$
   DECLARE
-    _land_cover_class_cd_1 boolean;
-    _non_productive_descriptor_cd boolean;
-    _non_veg_cover_type_1 boolean;
-    return text;
+    result text = NULL;
   BEGIN
-    -- initialize return
-    return = 'NULL'; -- returns NULL if not naturally non-vegetated
-
     -- run if statements
     IF inventory_standard_cd IN ('V','I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 IN ('AP','GP','MI','MZ','OT','RN','RZ','TZ','UR') THEN
-        return = TT_MapText(non_veg_cover_type_1, '{''AP'',''GP'',''MI'',''MZ'',''OT'',''RN'',''RZ'',''TZ'',''UR''}', '{''FA'',''IN'',''IN'',''IN'',''OT'',''FA'',''FA'',''IN'',''FA''}');
+        result = TT_MapText(non_veg_cover_type_1, '{''AP'',''GP'',''MI'',''MZ'',''OT'',''RN'',''RZ'',''TZ'',''UR''}', '{''FA'',''IN'',''IN'',''IN'',''OT'',''FA'',''FA'',''IN'',''FA''}');
       END IF;
     END IF;
         
-    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL AND return = 'NULL' THEN
+    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
       IF land_cover_class_cd_1 IN ('AP','GP','MI','MZ','OT','RN','RZ','TZ','UR') THEN
-        return = TT_MapText(land_cover_class_cd_1, '{''AP'',''GP'',''MI'',''MZ'',''OT'',''RN'',''RZ'',''TZ'',''UR''}', '{''FA'',''IN'',''IN'',''IN'',''OT'',''FA'',''FA'',''IN'',''FA''}');
+        result = TT_MapText(land_cover_class_cd_1, '{''AP'',''GP'',''MI'',''MZ'',''OT'',''RN'',''RZ'',''TZ'',''UR''}', '{''FA'',''IN'',''IN'',''IN'',''OT'',''FA'',''FA'',''IN'',''FA''}');
       END IF;
     END IF;
         
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd IN ('C','GR','P','U') THEN
-        return = TT_MapText(non_productive_descriptor_cd, '{''C'',''GR'',''P'',''U''}', '{''CL'',''IN'',''CL'',''FA''}');
+        result = TT_MapText(non_productive_descriptor_cd, '{''C'',''GR'',''P'',''U''}', '{''CL'',''IN'',''CL'',''FA''}');
       END IF;
     END IF;
     
-    RETURN return;
-    END;
+    RETURN result;
+  END;
 $$ LANGUAGE plpgsql VOLATILE;
-
-
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -514,36 +429,18 @@ CREATE OR REPLACE FUNCTION TT_avi01_non_for_anth_translation(
   lst2 text,
   ignoreCase text)
 RETURNS text AS $$
-  DECLARE
-    _val1 text;
-    _val2 text;
   BEGIN
     PERFORM TT_ValidateParams('TT_avi01_non_for_anth_translation',
                               ARRAY['lst1', lst1, 'stringlist',
                                     'lst2', lst2, 'stringlist',  
                                     'ignoreCase', ignoreCase, 'boolean']);
 
-    IF val1 IS NULL OR replace(val1, ' ', '') = ''::text THEN
-      _val1 = 'empty';
-    ELSE
-      _val1 = 'not_empty';
-    END IF;
-    
-    IF val2 IS NULL OR replace(val2, ' ', '') = ''::text THEN
-      _val2 = 'empty';
-    ELSE
-      _val2 = 'not_empty';
-    END IF;
-
-    IF _val1 = 'empty' AND _val2 = 'not_empty' THEN
+    IF NOT TT_NotEmpty(val1) AND TT_NotEmpty(val2) THEN
       RETURN TT_MapText(val2, lst1, lst2, ignoreCase);
-    ELSIF _val1 = 'not_empty' AND _val2 = 'empty' THEN
+    ELSIF TT_NotEmpty(val1) AND NOT TT_NotEmpty(val2) THEN
       RETURN TT_MapText(val1, lst1, lst2, ignoreCase);
-    ELSIF _val1 = 'not_empty' AND _val2 = 'not_empty' THEN
-      RAISE EXCEPTION '2 values provided';
-    ELSIF _val1 = 'empty' AND _val2 = 'empty' THEN
-      RAISE EXCEPTION '2 NULLS provided';
     END IF;
+    RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
@@ -586,12 +483,9 @@ RETURNS text AS $$
 			  RETURN 'C';
 		  ELSIF _l1vs > 0 AND _l2vs > 0 THEN
 			  RETURN 'M';
-			ELSE
-			  RETURN NULL;
 		  END IF;
-	  ELSE
-		  RETURN NULL;
 		END IF;				
+		RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
@@ -608,7 +502,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --
 -- e.g. TT_nbi01_num_of_layers_translation(src_filename, l1vs, l2vs)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_num_of_layers_translation(text,text,text);
+--DROP FUNCTION IF EXISTS TT_nbi01_num_of_layers_translation(text, text, text);
 CREATE OR REPLACE FUNCTION TT_nbi01_num_of_layers_translation(
   src_filename text,
   l1vs text,
@@ -629,12 +523,9 @@ RETURNS int AS $$
 			  RETURN 1;
 			ELSIF TT_nbi01_stand_structure_translation(src_filename, l1vs, l2vs) IN ('M', 'C') THEN
 			  RETURN 2;
-			ELSE
-			  RETURN NULL;
 		  END IF;
-	  ELSE
-		  RETURN NULL;
 		END IF;				
+		RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
@@ -645,7 +536,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --  wc text
 --  vt text
 --  im text
---  return_character text
+--  ret_char_pos text
 --
 -- Assign 4 letter wetland character code, then return the requested character (1-4)
 --
@@ -656,61 +547,29 @@ CREATE OR REPLACE FUNCTION TT_nbi01_wetland_translation(
   wc text,
   vt text,
   im text,
-	return_character text
+	ret_char_pos text
 )
 RETURNS text AS $$
   DECLARE
-    _return_character integer := return_character::int;
 		wetland_code text;
-    _return text;
+    result text;
   BEGIN
     PERFORM TT_ValidateParams('TT_nbi01_wetland_translation',
-                              ARRAY['return_character', return_character, 'int']);
-		CASE
-      WHEN wc='BO' AND vt='EV' AND im='BP' THEN wetland_code = 'BO-B';
-      WHEN wc='FE' AND vt='EV' AND im='BP' THEN wetland_code = 'FO-B';
-      WHEN wc='BO' AND vt='EV' AND im='DI' THEN wetland_code = 'BO--';
-      WHEN wc='BO' AND vt='AW' AND im='BP' THEN wetland_code = 'BT-B';
-      WHEN wc='BO' AND vt='OV' AND im='BP' THEN wetland_code = 'OO-B';
-      WHEN wc='FE' AND vt='EV' AND im IN ('MI','DI') THEN wetland_code = 'FO--';
-      WHEN wc='FE' AND vt='OV' AND im='MI' THEN wetland_code = 'OO--';
-      WHEN wc='BO' AND vt='FS' THEN wetland_code = 'BTNN';
-			WHEN wc='BO' AND vt='SV' THEN wetland_code = 'BONS';
-			WHEN wc='FE' AND vt IN ('FH','FS') THEN wetland_code = 'FTNN';
-			WHEN wc='FE' AND vt IN ('AW','SV') THEN wetland_code = 'FONS';
-			WHEN wc='FW' AND im='BP' THEN wetland_code = 'OF-B';
-      WHEN wc='FE' AND vt='EV' THEN wetland_code = 'FO--';
-      WHEN wc IN ('FE','BO') AND vt='OV' THEN wetland_code = 'OO--';
-      WHEN wc IN ('FE','BO') AND vt='OW' THEN wetland_code = 'O---';
-      WHEN wc='BO' AND vt='EV' THEN wetland_code = 'BP--';
-      WHEN wc='BO' AND vt='AW' THEN wetland_code = 'BT--';
-      WHEN wc='AB' THEN wetland_code = 'OONN';
-			WHEN wc='FM' THEN wetland_code = 'MONG';
-			WHEN wc='FW' THEN wetland_code = 'STNN';
-			WHEN wc='SB' THEN wetland_code = 'SONS';
-			WHEN wc='CM' THEN wetland_code = 'MCNG';
-			WHEN wc='TF' THEN wetland_code = 'TMNN';
-      WHEN wc IN ('NP','WL') THEN wetland_code = 'W---';
-      ELSE
-        wetland_code = NULL;
-		END CASE;
-    
-    -- substring wetland_code 
+                              ARRAY['ret_char_pos', ret_char_pos, 'int']);
+		wetland_code = TT_nbi01_wetland_code(wc, vt, im);
+
+    -- substring wetland_code
     IF wetland_code IS NOT NULL THEN
-      _return = substring(wetland_code from _return_character for 1);
+      result = substring(wetland_code from ret_char_pos::int for 1);
     END IF;
     
     -- return value or null
-    IF wetland_code IS NULL THEN
+    IF wetland_code IS NULL OR result = '-' THEN
       RETURN NULL;
-    ELSIF _return = '-' THEN
-      RETURN NULL;
-    ELSE
-      RETURN _return;
-		END IF;
+    END IF;
+    RETURN result;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
-
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -728,7 +587,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --
 -- e.g. TT_nbi01_productive_for_translation(l1cc, l1ht, l1trt, l2trt, fst)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_productive_for_translation(text,text,text,text,text);
+--DROP FUNCTION IF EXISTS TT_nbi01_productive_for_translation(text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_nbi01_productive_for_translation(
   l1cc text,
   l1ht text,
@@ -737,26 +596,22 @@ CREATE OR REPLACE FUNCTION TT_nbi01_productive_for_translation(
   fst text
 )
 RETURNS text AS $$
-  DECLARE
-    
   BEGIN
-    IF NOT TT_notNull(l1cc) THEN
+    IF NOT TT_NotNull(l1cc) THEN
       RETURN 'PP';
-    ELSIF NOT TT_matchList(l1cc, '{''1'',''2'',''3'',''4'',''5''}') THEN
+    ELSIF NOT TT_MatchList(l1cc, '{''1'',''2'',''3'',''4'',''5''}') THEN
       RETURN 'PP';
-    ELSEIF NOT TT_notNull(l1ht) THEN
+    ELSEIF NOT TT_NotNull(l1ht) THEN
       RETURN 'PP';
-    ELSIF NOT TT_isGreaterThan(l1ht,'0.1') THEN
+    ELSIF NOT TT_IsGreaterThan(l1ht,'0.1') THEN
       RETURN 'PP';
-    ELSIF NOT TT_isLessThan(l1ht,'100') THEN
+    ELSIF NOT TT_IsLessThan(l1ht,'100') THEN
       RETURN 'PP';
     ELSIF fst = '0'::text AND l1trt != 'CC' AND btrim(l1trt, ' ') != '' THEN
       RETURN 'PP';
     ELSIF fst = '0'::text AND l2trt != 'CC' AND btrim(l2trt, ' ') != '' THEN
       RETURN 'PP';
-    ELSE
-      RETURN 'PF';
     END IF;
-    
+    RETURN 'PF';
   END;
 $$ LANGUAGE plpgsql VOLATILE;
