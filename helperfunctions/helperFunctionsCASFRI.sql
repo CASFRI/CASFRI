@@ -44,12 +44,12 @@ CREATE OR REPLACE FUNCTION TT_vri01_site_index_validation(
 RETURNS boolean AS $$
   BEGIN
      IF TT_NotEmpty(site_index) THEN -- if site_index is not null, return it after running checks.
-      IF NOT TT_IsNumeric(site_index) OR NOT TT_isBetween(site_index,'0'::text,'99'::text) THEN
+      IF NOT TT_IsNumeric(site_index) OR NOT TT_isBetween(site_index, '0'::text, '99'::text) THEN
         RETURN FALSE;
       END IF;
       RETURN TRUE;
     ELSIF TT_NotEmpty(site_index_est) THEN -- otherwise return est_site_index if not null, after running checks
-      IF NOT TT_IsNumeric(site_index_est) OR NOT TT_isBetween(site_index_est,'0'::text,'99'::text) THEN
+      IF NOT TT_IsNumeric(site_index_est) OR NOT TT_isBetween(site_index_est, '0'::text, '99'::text) THEN
         RETURN FALSE;
       END IF;
         RETURN TRUE;
@@ -70,7 +70,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --  For two values, check that one of them is null or empty and the other is not null or empty.
 --  then check the one value is in a list.
 --
--- e.g. TT_avi01_non_for_anth_validation(anth_veg, anth_non, {'AIG','AIH','CIP','CIW'}, 'TRUE')
+-- e.g. TT_avi01_non_for_anth_validation(anth_veg, anth_non, {'AIG', 'AIH', 'CIP', 'CIW'}, 'TRUE')
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_validation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_avi01_non_for_anth_validation(
@@ -136,16 +136,16 @@ RETURNS text AS $$
            WHEN wc='BO' AND vt='EV' AND im='DI' THEN 'BO--'
            WHEN wc='BO' AND vt='AW' AND im='BP' THEN 'BT-B'
            WHEN wc='BO' AND vt='OV' AND im='BP' THEN 'OO-B'
-           WHEN wc='FE' AND vt='EV' AND im IN ('MI','DI') THEN 'FO--'
+           WHEN wc='FE' AND vt='EV' AND im IN ('MI', 'DI') THEN 'FO--'
            WHEN wc='FE' AND vt='OV' AND im='MI' THEN 'OO--'
            WHEN wc='BO' AND vt='FS' THEN 'BTNN'
            WHEN wc='BO' AND vt='SV' THEN 'BONS'
-           WHEN wc='FE' AND vt IN ('FH','FS') THEN 'FTNN'
-           WHEN wc='FE' AND vt IN ('AW','SV') THEN 'FONS'
+           WHEN wc='FE' AND vt IN ('FH', 'FS') THEN 'FTNN'
+           WHEN wc='FE' AND vt IN ('AW', 'SV') THEN 'FONS'
            WHEN wc='FW' AND im='BP' THEN 'OF-B'
            WHEN wc='FE' AND vt='EV' THEN 'FO--'
-           WHEN wc IN ('FE','BO') AND vt='OV' THEN 'OO--'
-           WHEN wc IN ('FE','BO') AND vt='OW' THEN 'O---'
+           WHEN wc IN ('FE', 'BO') AND vt='OV' THEN 'OO--'
+           WHEN wc IN ('FE', 'BO') AND vt='OW' THEN 'O---'
            WHEN wc='BO' AND vt='EV' THEN 'BP--'
            WHEN wc='BO' AND vt='AW' THEN 'BT--'
            WHEN wc='AB' THEN 'OONN'
@@ -154,7 +154,7 @@ RETURNS text AS $$
            WHEN wc='SB' THEN 'SONS'
            WHEN wc='CM' THEN 'MCNG'
            WHEN wc='TF' THEN 'TMNN'
-           WHEN wc IN ('NP','WL') THEN 'W---'
+           WHEN wc IN ('NP', 'WL') THEN 'W---'
            ELSE NULL
          END;
 $$ LANGUAGE sql VOLATILE;
@@ -213,7 +213,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- 
 -- e.g. TT_vri01_origin_translation(proj_date, proj_age)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_vri01_origin_translation(text,text);
+--DROP FUNCTION IF EXISTS TT_vri01_origin_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_origin_translation(
   proj_date text,
   proj_age text
@@ -278,27 +278,27 @@ RETURNS text AS $$
     result text = NULL;
   BEGIN
     -- run if statements
-    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL THEN
-      IF land_cover_class_cd_1 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
-        result = TT_MapText(land_cover_class_cd_1, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
+    IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
+      IF land_cover_class_cd_1 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
+        result = TT_MapText(land_cover_class_cd_1, '{''BL'', ''BM'', ''BY'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}', '{''BR'', ''BR'', ''BR'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}');
       END IF;
     END IF;
     
-    IF inventory_standard_cd IN ('V','I') AND bclcs_level_4 IS NOT NULL AND result = 'NULL' THEN
-      IF bclcs_level_4 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
-        result = TT_MapText(bclcs_level_4, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
+    IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL AND result = 'NULL' THEN
+      IF bclcs_level_4 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
+        result = TT_MapText(bclcs_level_4, '{''BL'', ''BM'', ''BY'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}', '{''BR'', ''BR'', ''BR'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}');
       END IF;
     END IF;
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd IN ('AF','M','NPBR','OR') THEN
-        result = TT_MapText(non_productive_descriptor_cd, '{''AF'',''M'',''NPBR'',''OR''}', '{''AF'',''HG'',''ST'',''HG''}');
+      IF non_productive_descriptor_cd IN ('AF', 'M', 'NPBR', 'OR') THEN
+        result = TT_MapText(non_productive_descriptor_cd, '{''AF'', ''M'', ''NPBR'', ''OR''}', '{''AF'', ''HG'', ''ST'', ''HG''}');
       END IF;
     END IF;
 
     IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result = 'NULL' THEN
-      IF bclcs_level_4 IN ('BL','BM','BY','HE','HF','HG','SL','ST') THEN
-        result = TT_MapText(bclcs_level_4, '{''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}', '{''BR'',''BR'',''BR'',''HE'',''HF'',''HG'',''SL'',''ST''}');
+      IF bclcs_level_4 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
+        result = TT_MapText(bclcs_level_4, '{''BL'', ''BM'', ''BY'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}', '{''BR'', ''BR'', ''BR'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}');
       END IF;
     END IF;
     RETURN result;
@@ -329,32 +329,32 @@ RETURNS text AS $$
   BEGIN
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
-      IF non_veg_cover_type_1 IN ('BE','BI','BR','BU','CB','DW','ES','GL','LA','LB','LL','LS','MN','MU','OC','PN','RE','RI','RM','RS','TA') THEN
-        result = TT_MapText(non_veg_cover_type_1, '{''BE'',''BI'',''BR'',''BU'',''CB'',''DW'',''ES'',''GL'',''LA'',''LB'',''LL'',''LS'',''MN'',''MU'',''OC'',''PN'',''RE'',''RI'',''RM'',''RS'',''TA''}', '{''BE'',''RK'',''RK'',''EX'',''EX'',''DW'',''EX'',''SI'',''LA'',''RK'',''EX'',''WS'',''EX'',''WS'',''OC'',''SI'',''LA'',''RI'',''EX'',''WS'',''RK''}');
+      IF non_veg_cover_type_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'DW', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RS', 'TA') THEN
+        result = TT_MapText(non_veg_cover_type_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''DW'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RS'', ''TA''}', '{''BE'', ''RK'', ''RK'', ''EX'', ''EX'', ''DW'', ''EX'', ''SI'', ''LA'', ''RK'', ''EX'', ''WS'', ''EX'', ''WS'', ''OC'', ''SI'', ''LA'', ''RI'', ''EX'', ''WS'', ''RK''}');
       END IF;
     END IF;
 
-    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
-      IF land_cover_class_cd_1 IN ('BE','BI','BR','BU','CB','EL','ES','GL','LA','LB','LL','LS','MN','MU','OC','PN','RE','RI','RM','RO','RS','SI','TA') THEN
-        result = TT_MapText(land_cover_class_cd_1, '{''BE'',''BI'',''BR'',''BU'',''CB'',''EL'',''ES'',''GL'',''LA'',''LB'',''LL'',''LS'',''MN'',''MU'',''OC'',''PN'',''RE'',''RI'',''RM'',''RO'',''RS'',''SI'',''TA''}', '{''BE'',''RK'',''RK'',''EX'',''EX'',''EX'',''EX'',''SI'',''LA'',''RK'',''EX'',''WS'',''EX'',''WS'',''OC'',''SI'',''LA'',''RI'',''EX'',''RK'',''WS'',''SI'',''RK''}');
+    IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
+      IF land_cover_class_cd_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'EL', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RO', 'RS', 'SI', 'TA') THEN
+        result = TT_MapText(land_cover_class_cd_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''EL'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RO'', ''RS'', ''SI'', ''TA''}', '{''BE'', ''RK'', ''RK'', ''EX'', ''EX'', ''EX'', ''EX'', ''SI'', ''LA'', ''RK'', ''EX'', ''WS'', ''EX'', ''WS'', ''OC'', ''SI'', ''LA'', ''RI'', ''EX'', ''RK'', ''WS'', ''SI'', ''RK''}');
       END IF;
     END IF;
     
-    IF inventory_standard_cd IN ('V','I') AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
-      IF bclcs_level_4 IN ('EL','RO','SI') THEN
-        result = TT_MapText(bclcs_level_4, '{''EL'',''RO'',''SI''}', '{''EX'',''RK'',''SI''}');
+    IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
+      IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
+        result = TT_MapText(bclcs_level_4, '{''EL'', ''RO'', ''SI''}', '{''EX'', ''RK'', ''SI''}');
       END IF;
     END IF;
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd IN ('A','CL','G','ICE','L','MUD','R','RIV','S','SAND','TIDE') THEN
-        result = TT_MapText(non_productive_descriptor_cd, '{''A'',''CL'',''G'',''ICE'',''L'',''MUD'',''R'',''RIV'',''S'',''SAND'',''TIDE''}', '{''AP'',''EX'',''WS'',''SI'',''LA'',''EX'',''RK'',''RI'',''SL'',''SA'',''TF''}');
+      IF non_productive_descriptor_cd IN ('A', 'CL', 'G', 'ICE', 'L', 'MUD', 'R', 'RIV', 'S', 'SAND', 'TIDE') THEN
+        result = TT_MapText(non_productive_descriptor_cd, '{''A'', ''CL'', ''G'', ''ICE'', ''L'', ''MUD'', ''R'', ''RIV'', ''S'', ''SAND'', ''TIDE''}', '{''AP'', ''EX'', ''WS'', ''SI'', ''LA'', ''EX'', ''RK'', ''RI'', ''SL'', ''SA'', ''TF''}');
       END IF;
     END IF;
 
     IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
-      IF bclcs_level_4 IN ('EL','RO','SI') THEN
-        result = TT_MapText(bclcs_level_4, '{''EL'',''RO'',''SI''}', '{''EX'',''RK'',''SI''}');
+      IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
+        result = TT_MapText(bclcs_level_4, '{''EL'', ''RO'', ''SI''}', '{''EX'', ''RK'', ''SI''}');
       END IF;
     END IF;
     RETURN result;
@@ -382,21 +382,21 @@ RETURNS text AS $$
     result text = NULL;
   BEGIN
     -- run if statements
-    IF inventory_standard_cd IN ('V','I') AND non_veg_cover_type_1 IS NOT NULL THEN
-      IF non_veg_cover_type_1 IN ('AP','GP','MI','MZ','OT','RN','RZ','TZ','UR') THEN
-        result = TT_MapText(non_veg_cover_type_1, '{''AP'',''GP'',''MI'',''MZ'',''OT'',''RN'',''RZ'',''TZ'',''UR''}', '{''FA'',''IN'',''IN'',''IN'',''OT'',''FA'',''FA'',''IN'',''FA''}');
+    IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
+      IF non_veg_cover_type_1 IN ('AP', 'GP', 'MI', 'MZ', 'OT', 'RN', 'RZ', 'TZ', 'UR') THEN
+        result = TT_MapText(non_veg_cover_type_1, '{''AP'', ''GP'', ''MI'', ''MZ'', ''OT'', ''RN'', ''RZ'', ''TZ'', ''UR''}', '{''FA'', ''IN'', ''IN'', ''IN'', ''OT'', ''FA'', ''FA'', ''IN'', ''FA''}');
       END IF;
     END IF;
         
-    IF inventory_standard_cd IN ('V','I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
-      IF land_cover_class_cd_1 IN ('AP','GP','MI','MZ','OT','RN','RZ','TZ','UR') THEN
-        result = TT_MapText(land_cover_class_cd_1, '{''AP'',''GP'',''MI'',''MZ'',''OT'',''RN'',''RZ'',''TZ'',''UR''}', '{''FA'',''IN'',''IN'',''IN'',''OT'',''FA'',''FA'',''IN'',''FA''}');
+    IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
+      IF land_cover_class_cd_1 IN ('AP', 'GP', 'MI', 'MZ', 'OT', 'RN', 'RZ', 'TZ', 'UR') THEN
+        result = TT_MapText(land_cover_class_cd_1, '{''AP'', ''GP'', ''MI'', ''MZ'', ''OT'', ''RN'', ''RZ'', ''TZ'', ''UR''}', '{''FA'', ''IN'', ''IN'', ''IN'', ''OT'', ''FA'', ''FA'', ''IN'', ''FA''}');
       END IF;
     END IF;
         
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd IN ('C','GR','P','U') THEN
-        result = TT_MapText(non_productive_descriptor_cd, '{''C'',''GR'',''P'',''U''}', '{''CL'',''IN'',''CL'',''FA''}');
+      IF non_productive_descriptor_cd IN ('C', 'GR', 'P', 'U') THEN
+        result = TT_MapText(non_productive_descriptor_cd, '{''C'', ''GR'', ''P'', ''U''}', '{''CL'', ''IN'', ''CL'', ''FA''}');
       END IF;
     END IF;
     
@@ -421,7 +421,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --
 -- e.g. TT_avi01_non_for_anth_translation(val1, val2, lst1, lst2, ignoreCase)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_translation(text,text,text,text,text);
+--DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_translation(text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_avi01_non_for_anth_translation(
   val1 text,
   val2 text,
@@ -458,7 +458,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --
 -- e.g. TT_nbi01_stand_structure_translation(src_filename, l1vs, l2vs)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text,text,text);
+--DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text, text, text);
 CREATE OR REPLACE FUNCTION TT_nbi01_stand_structure_translation(
   src_filename text,
   l1vs text,
@@ -542,7 +542,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --
 -- e.g. TT_nbi01_wetland_translation(wt, vt, im, '1')
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text,text,text,text);
+--DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_nbi01_wetland_translation(
   wc text,
   vt text,
@@ -599,13 +599,13 @@ RETURNS text AS $$
   BEGIN
     IF NOT TT_NotNull(l1cc) THEN
       RETURN 'PP';
-    ELSIF NOT TT_MatchList(l1cc, '{''1'',''2'',''3'',''4'',''5''}') THEN
+    ELSIF NOT TT_MatchList(l1cc, '{''1'', ''2'', ''3'', ''4'', ''5''}') THEN
       RETURN 'PP';
     ELSEIF NOT TT_NotNull(l1ht) THEN
       RETURN 'PP';
-    ELSIF NOT TT_IsGreaterThan(l1ht,'0.1') THEN
+    ELSIF NOT TT_IsGreaterThan(l1ht, '0.1') THEN
       RETURN 'PP';
-    ELSIF NOT TT_IsLessThan(l1ht,'100') THEN
+    ELSIF NOT TT_IsLessThan(l1ht, '100') THEN
       RETURN 'PP';
     ELSIF fst = '0'::text AND l1trt != 'CC' AND btrim(l1trt, ' ') != '' THEN
       RETURN 'PP';

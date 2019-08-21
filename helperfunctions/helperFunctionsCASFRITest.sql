@@ -6,7 +6,7 @@
 -- This is free software; you can redistribute and/or modify it under
 -- the terms of the GNU General Public Licence. See the COPYING file.
 --
--- Copyright (C) 2018-2020 Pierre Racine <pierre.racine@sbf.ulaval.ca>, 
+-- Copyright (C) 2018-2020 Pierre Racine <pierre.racine@sbf.ulaval.ca>,
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 --
@@ -60,55 +60,55 @@ FROM test_series AS a FULL OUTER JOIN (
 SELECT '1.1'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'Both not null'::text description,
-       TT_vri01_site_index_validation('12.1','10') passed
+       TT_vri01_site_index_validation('12.1', '10') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'One null'::text description,
-       TT_vri01_site_index_validation(NULL::text,'12.2') passed
+       TT_vri01_site_index_validation(NULL::text, '12.2') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.3'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'One empty'::text description,
-       TT_vri01_site_index_validation('1','') passed
+       TT_vri01_site_index_validation('1', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.4'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'Both null'::text description,
-       TT_vri01_site_index_validation(NULL::text,NULL::text) IS FALSE passed
+       TT_vri01_site_index_validation(NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.5'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'Both empty'::text description,
-       TT_vri01_site_index_validation('','') IS FALSE passed
+       TT_vri01_site_index_validation('', '') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.6'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'First val not between 0-99'::text description,
-       TT_vri01_site_index_validation('123','22') IS FALSE passed
+       TT_vri01_site_index_validation('123', '22') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.7'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'Second val not between 0-99'::text description,
-       TT_vri01_site_index_validation('','222') IS FALSE passed
+       TT_vri01_site_index_validation('', '222') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.8'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'First val not numeric'::text description,
-       TT_vri01_site_index_validation('12a','22') IS FALSE passed
+       TT_vri01_site_index_validation('12a', '22') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.9'::text number,
        'TT_vri01_site_index_validation'::text function_tested,
        'Second val not numeric'::text description,
-       TT_vri01_site_index_validation('','22a') IS FALSE passed
+       TT_vri01_site_index_validation('', '22a') IS FALSE passed
 ---------------------------------------------------------
 -- TT_vri01_origin_translation
 ---------------------------------------------------------
@@ -116,7 +116,7 @@ UNION ALL
 SELECT '2.1'::text number,
        'TT_vri01_origin_translation'::text function_tested,
        'Good year and age'::text description,
-       TT_vri01_origin_translation('2001-04-10','10') = 1991 passed
+       TT_vri01_origin_translation('2001-04-10', '10') = 1991 passed
 ---------------------------------------------------------
 -- TT_vri01_site_index_translation
 ---------------------------------------------------------
@@ -124,13 +124,13 @@ UNION ALL
 SELECT '3.1'::text number,
        'TT_vri01_site_index_translation'::text function_tested,
        'site_index present'::text description,
-       TT_vri01_site_index_translation('12.1','10') = 12.1::double precision passed
+       TT_vri01_site_index_translation('12.1', '10') = 12.1::double precision passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.2'::text number,
        'TT_vri01_site_index_translation'::text function_tested,
        'site_index null'::text description,
-       TT_vri01_site_index_translation(NULL::text,'10') = 10::double precision passed
+       TT_vri01_site_index_translation(NULL::text, '10') = 10::double precision passed
 ---------------------------------------------------------
 -- TT_vri01_non_for_veg_translation
 ---------------------------------------------------------
@@ -138,13 +138,13 @@ UNION ALL
 SELECT '4.1'::text number,
        'TT_vri01_non_for_veg_translation'::text function_tested,
        'Good test'::text description,
-       TT_vri01_non_for_veg_translation('V'::text,'BL'::text,''::text,''::text) = 'BR' passed
+       TT_vri01_non_for_veg_translation('V'::text, 'BL'::text, ''::text, ''::text) = 'BR' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.2'::text number,
        'TT_vri01_non_for_veg_translation'::text function_tested,
        'No matches test'::text description,
-       TT_vri01_non_for_veg_translation('V'::text,''::text,''::text,''::text) IS NULL passed
+       TT_vri01_non_for_veg_translation('V'::text, ''::text, ''::text, ''::text) IS NULL passed
 ---------------------------------------------------------
 -- TT_vri01_nat_non_veg_translation
 ---------------------------------------------------------
@@ -152,13 +152,13 @@ UNION ALL
 SELECT '5.1'::text number,
        'TT_vri01_nat_non_veg_translation'::text function_tested,
        'Good test'::text description,
-       TT_vri01_nat_non_veg_translation('V'::text,'BE'::text,''::text,''::text, ''::text) = 'BE' passed
+       TT_vri01_nat_non_veg_translation('V'::text, 'BE'::text, ''::text, ''::text, ''::text) = 'BE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '5.2'::text number,
        'TT_vri01_nat_non_veg_translation'::text function_tested,
        'No matches test'::text description,
-       TT_vri01_nat_non_veg_translation('V'::text,''::text,''::text,''::text, ''::text) IS NULL passed
+       TT_vri01_nat_non_veg_translation('V'::text, ''::text, ''::text, ''::text, ''::text) IS NULL passed
 ---------------------------------------------------------
 -- TT_vri01_non_for_anth_translation
 ---------------------------------------------------------
@@ -166,7 +166,7 @@ UNION ALL
 SELECT '6.1'::text number,
        'TT_vri01_non_for_anth_translation'::text function_tested,
        'Good test'::text description,
-       TT_vri01_non_for_anth_translation('V'::text,'AP'::text,''::text,''::text) = 'FA' passed
+       TT_vri01_non_for_anth_translation('V'::text, 'AP'::text, ''::text, ''::text) = 'FA' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '6.2'::text number,
@@ -237,35 +237,35 @@ SELECT '8.1'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Pass with one empty string'::text description,
        TT_avi01_non_for_anth_translation('D'::text, ''::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                              '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, TRUE::text) = 'dd' passed
+                                                              '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) = 'dd' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.2'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Pass with one null'::text description,
        TT_avi01_non_for_anth_translation(NULL::text, 'H'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                                '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, TRUE::text) = 'hh' passed
+                                                                '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) = 'hh' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.3'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Pass with ignore case true'::text description,
        TT_avi01_non_for_anth_translation(NULL::text, 'h'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                                '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, TRUE::text) = 'hh' passed
+                                                                '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) = 'hh' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.4'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Fail with ignore case false'::text description,
        TT_avi01_non_for_anth_translation(NULL::text, 'h'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                                '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, FALSE::text) IS NULL passed
+                                                                '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, FALSE::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.5'::text number,
        'TT_avi01_non_for_anth_translation'::text function_tested,
        'Not in set'::text description,
        TT_avi01_non_for_anth_translation(NULL::text, 'x'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                                '{''aa'',''bb'',''cc'',''dd'',''ee'',''ff'',''gg'',''hh''}'::text, TRUE::text) IS NULL passed
+                                                                '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.6'::text number,
