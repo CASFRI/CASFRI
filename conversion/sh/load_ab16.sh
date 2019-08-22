@@ -29,7 +29,7 @@ else
 fi
 
 srcFirstFileName=t059r04m6
-srcFullPath=$friDir/AB/SourceDataset/v00.04/NONGOV/Canfor
+srcFullPath=$friDir/AB/AB16
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.ab16

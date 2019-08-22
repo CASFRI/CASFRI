@@ -3,14 +3,15 @@
 # This script loads the New Brunswick FRI data into PostgreSQL
 
 # The format of the source dataset is four shapefiles named 
-# Forest.shp, Non Forest.shp, Waterbody.shp, and wetland.shp
+# geonb_forest-foret.shp, geonb_nonforest-nonforet.shp, NBHN_0000_02_Wb.shp, and NBHN_0000_03_wl.shp
 
 # These four files are combined into a single PostgreSQL table
 # This is done using the -append argument. Note that -update is also 
 # needed in order to append in PostgreSQL. -addfields is also needed 
 # because columns do not match between tables.
 
-# The year of photography is included in the attributes table (DATAYR)
+# The year of photography is included in the geonb_nonforest-nonforet.shp and NBHN_0000_03_wl.shp
+# table as DATAYR, and in the geonb_forest-foret.shp table as L1DATAYR and L2DATAYR.
 
 # Load into a target table in the schema defined in the config file.
 
@@ -32,26 +33,26 @@ else
   exit 1
 fi
 
-NB_subFolder=NB/NB01/
+NB_subFolder=NB/NB02/
 
-srcNameWater=Waterbody
-ogrTabWater=$srcNameWater
-srcWaterFullPath="$friDir/$NB_subFolder$ogrTabWater.shp"
+srcNameWater=NBHN_0000_02_Wb
+#ogrTabWater=$srcNameWater
+srcWaterFullPath="$friDir/$NB_subFolder$srcNameWater.shp"
 
-srcNameNonForest=NonForest
-ogrTabNonForest="Non Forest"
-srcNonForestFullPath="$friDir/$NB_subFolder$ogrTabNonForest.shp"
+srcNameNonForest=geonb_nonforest-nonforet
+#ogrTabNonForest=$srcNameNonForest
+srcNonForestFullPath="$friDir/$NB_subFolder$srcNameNonForest.shp"
 
-srcNameWetland=wetland
-ogrTabWetland=$srcNameWetland
-srcWetlandFullPath="$friDir/$NB_subFolder$ogrTabWetland.shp"
+srcNameWetland=NBHN_0000_03_wl
+#ogrTabWetland=$srcNameWetland
+srcWetlandFullPath="$friDir/$NB_subFolder$srcNameWetland.shp"
 
-srcNameForest=Forest
-ogrTabForest=$srcNameForest
-srcForestFullPath="$friDir/$NB_subFolder$ogrTabForest.shp"
+srcNameForest=geonb_forest-foret
+#ogrTabForest=$srcNameForest
+srcForestFullPath="$friDir/$NB_subFolder$srcNameForest.shp"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
-fullTargetTableName=$targetFRISchema.nb01
+fullTargetTableName=$targetFRISchema.nb02
 
 if [ $overwriteFRI == True ]; then
   overwrite_tab=-overwrite
@@ -73,7 +74,7 @@ fi
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWater' as src_filename, 0 as stdlab FROM '$ogrTabWater'" \
+-sql "SELECT *, '$srcNameWater' as src_filename, 0 as stdlab FROM '$srcNameWater'" \
 -progress $overwrite_tab
 
 ### FILE 2 ###
@@ -83,7 +84,7 @@ fi
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameNonForest' as src_filename, 0 as stdlab FROM '$ogrTabNonForest'" \
+-sql "SELECT *, '$srcNameNonForest' as src_filename, 0 as stdlab FROM '$srcNameNonForest'" \
 -progress
 
 ### FILE 3 ###
@@ -93,7 +94,7 @@ fi
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWetland' as src_filename, 0 as stdlab FROM '$ogrTabWetland'" \
+-sql "SELECT *, '$srcNameWetland' as src_filename, 0 as stdlab FROM '$srcNameWetland'" \
 -progress
 
 ## File 4 ###
@@ -103,5 +104,5 @@ fi
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameForest' as src_filename FROM '$ogrTabForest'" \
+-sql "SELECT *, '$srcNameForest' as src_filename FROM '$srcNameForest'" \
 -progress

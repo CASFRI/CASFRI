@@ -1,24 +1,19 @@
 #!/bin/bash
 
-# This script loads the Alberta Gordon Buchanan Tolko FRI into PostgreSQL
+# This script loads the British Columbia VRI forest inventory BC09 into PostgreSQL
 
-# The format of the source dataset is a E00 file
+# The format of the source dataset is a geodatabase
 
-# The year of photography is included as a shapefile. Photo year will be joined to the 
-# loaded table in PostgreSQL
+# The year of photography is included in the attributes table (REFERENCE_YEAR)
 
 # Load into a target table in the schema defined in the config file.
 
 # If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
 # in the configuration file.
 
-# Alberta Gordon Buchanan Tolko FRI was delivered as E00 which can not be loaded 
-# successfully without using ESRI tools, so it was coverted to geodatabase in ArcGIS. This script 
-# will load the resulting geodatabase.
-
 ######################################## Set variables #######################################
 
-# load config variables
+# Load config variables from local config file
 if [ -f ../../config.sh ]; then 
   source ../../config.sh
 else
@@ -26,12 +21,12 @@ else
   exit 1
 fi
 
-srcFileName=GB_S21_TWP
-gdbFileName=$srcFileName
-srcFullPath="$friDir/AB/AB06/$srcFileName.gdb"
+srcFileName=VEG_COMP_LYR_R1_POLY
+gdbFileName=WHSE_FOREST_VEGETATION_2018_VEG_COMP_LYR_R1_POLY
+srcFullPath="$friDir/BC/BC09/$srcFileName.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
-fullTargetTableName=$targetFRISchema.ab06
+fullTargetTableName=$targetFRISchema.bc09
 
 if [ $overwriteFRI == True ]; then
   overwrite_tab=-overwrite
