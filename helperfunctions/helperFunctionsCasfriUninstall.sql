@@ -15,6 +15,9 @@
 --
 -------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_validation(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_validation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_validation(text, text, text, text);
 
 DROP FUNCTION IF EXISTS TT_vri01_origin_translation(text, text);
 DROP FUNCTION IF EXISTS TT_vri01_site_index_translation(text, text);

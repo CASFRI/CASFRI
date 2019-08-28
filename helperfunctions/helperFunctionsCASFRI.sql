@@ -20,6 +20,152 @@
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_vri01_non_for_veg_validation(text, text, text, text)
+--  
+-- inventory_standard_cd text
+-- land_cover_class_cd_1 text
+-- bclcs_level_4 text
+-- non_productive_descriptor_cd text
+--
+-- Check the correct combination of values exists based on the translation rules.
+-- If not return FALSE
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_validation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_vri01_non_for_veg_validation(
+  inventory_standard_cd text,
+  land_cover_class_cd_1 text,
+  bclcs_level_4 text,
+  non_productive_descriptor_cd text
+)
+RETURNS boolean AS $$
+  BEGIN
+    -- run if statements
+    IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
+      IF land_cover_class_cd_1 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+    
+    IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL THEN
+      IF bclcs_level_4 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+    
+    IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
+      IF non_productive_descriptor_cd IN ('AF', 'M', 'NPBR', 'OR') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+
+    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL THEN
+      IF bclcs_level_4 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+    RETURN FALSE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_vri01_nat_non_veg_validation(text, text, text, text, text)
+--  
+-- inventory_standard_cd text
+-- land_cover_class_cd_1 text
+-- bclcs_level_4 text
+-- non_productive_descriptor_cd text
+-- non_veg_cover_type_1
+--
+-- Check the correct combination of values exists based on the translation rules.
+-- If not return FALSE
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_validation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_vri01_nat_non_veg_validation(
+  inventory_standard_cd text,
+  land_cover_class_cd_1 text,
+  bclcs_level_4 text,
+  non_productive_descriptor_cd text,
+  non_veg_cover_type_1 text
+)
+RETURNS boolean AS $$
+  BEGIN
+    -- run if statements
+    IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
+      IF non_veg_cover_type_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'DW', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RS', 'TA') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+
+    IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
+      IF land_cover_class_cd_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'EL', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RO', 'RS', 'SI', 'TA') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+    
+    IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL THEN
+      IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+    
+    IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
+      IF non_productive_descriptor_cd IN ('A', 'CL', 'G', 'ICE', 'L', 'MUD', 'R', 'RIV', 'S', 'SAND', 'TIDE') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+
+    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL THEN
+      IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+    RETURN FALSE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_vri01_non_for_anth_validation(text, text, text, text)
+--  
+-- inventory_standard_cd text
+-- land_cover_class_cd_1 text
+-- non_productive_descriptor_cd text
+-- non_veg_cover_type_1
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_validation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_vri01_non_for_anth_validation(
+  inventory_standard_cd text,
+  land_cover_class_cd_1 text,
+  non_productive_descriptor_cd text,
+  non_veg_cover_type_1 text
+)
+RETURNS boolean AS $$
+  BEGIN
+    -- run if statements
+    IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
+      IF non_veg_cover_type_1 IN ('AP', 'GP', 'MI', 'MZ', 'OT', 'RN', 'RZ', 'TZ', 'UR') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+        
+    IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
+      IF land_cover_class_cd_1 IN ('AP', 'GP', 'MI', 'MZ', 'OT', 'RN', 'RZ', 'TZ', 'UR') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+        
+    IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
+      IF non_productive_descriptor_cd IN ('C', 'GR', 'P', 'U') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;    
+    RETURN FALSE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_nbi01_wetland_code(text, text, text)
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_nbi01_wetland_code(text, text, text);
@@ -100,7 +246,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
--- TT_vri01_origin_translation(text)
+-- TT_vri01_origin_translation(text, text)
 --
 -- proj_date text
 -- proj_age text
@@ -156,9 +302,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_vri01_non_for_veg_translation(text, text)
---
--- inputs - inventory_standard_cd, land_cover_class_cd_1
+-- TT_vri01_non_for_veg_translation(text, text, text, text)
 --  
 -- inventory_standard_cd text
 -- land_cover_class_cd_1 text
@@ -183,7 +327,7 @@ RETURNS text AS $$
       END IF;
     END IF;
     
-    IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL AND result = 'NULL' THEN
+    IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
       IF bclcs_level_4 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
         result = TT_MapText(bclcs_level_4, '{''BL'', ''BM'', ''BY'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}', '{''BR'', ''BR'', ''BR'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}');
       END IF;
@@ -195,7 +339,7 @@ RETURNS text AS $$
       END IF;
     END IF;
 
-    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result = 'NULL' THEN
+    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
       IF bclcs_level_4 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
         result = TT_MapText(bclcs_level_4, '{''BL'', ''BM'', ''BY'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}', '{''BR'', ''BR'', ''BR'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}');
       END IF;
