@@ -23,13 +23,11 @@ SET lc_messages TO 'en_US.UTF-8';
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'TT_vri01_site_index_validation'::text function_tested,       1 maj_num, 9 nb_test UNION ALL
     SELECT 'TT_vri01_origin_translation'::text function_tested,          2 maj_num, 1 nb_test UNION ALL
     SELECT 'TT_vri01_site_index_translation'::text function_tested,      3 maj_num, 2 nb_test UNION ALL
     SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,     4 maj_num, 2 nb_test UNION ALL
     SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,     5 maj_num, 2 nb_test UNION ALL
     SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,    6 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_avi01_non_for_anth_validation'::text function_tested,     7 maj_num, 9 nb_test UNION ALL
     SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,    8 maj_num, 9 nb_test UNION ALL
 	  SELECT 'TT_nbi01_stand_structure_translation'::text function_tested, 9 maj_num, 5 nb_test UNION ALL
 		SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,  10 maj_num, 4 nb_test UNION ALL
@@ -55,64 +53,8 @@ FROM test_series AS a FULL OUTER JOIN (
 
 
 ---------------------------------------------------------
--- TT_vri01_site_index_validation
----------------------------------------------------------
-SELECT '1.1'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'Both not null'::text description,
-       TT_vri01_site_index_validation('12.1', '10') passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.2'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'One null'::text description,
-       TT_vri01_site_index_validation(NULL::text, '12.2') passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.3'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'One empty'::text description,
-       TT_vri01_site_index_validation('1', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.4'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'Both null'::text description,
-       TT_vri01_site_index_validation(NULL::text, NULL::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.5'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'Both empty'::text description,
-       TT_vri01_site_index_validation('', '') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.6'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'First val not between 0-99'::text description,
-       TT_vri01_site_index_validation('123', '22') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.7'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'Second val not between 0-99'::text description,
-       TT_vri01_site_index_validation('', '222') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.8'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'First val not numeric'::text description,
-       TT_vri01_site_index_validation('12a', '22') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '1.9'::text number,
-       'TT_vri01_site_index_validation'::text function_tested,
-       'Second val not numeric'::text description,
-       TT_vri01_site_index_validation('', '22a') IS FALSE passed
----------------------------------------------------------
 -- TT_vri01_origin_translation
 ---------------------------------------------------------
-UNION ALL
 SELECT '2.1'::text number,
        'TT_vri01_origin_translation'::text function_tested,
        'Good year and age'::text description,
@@ -173,62 +115,6 @@ SELECT '6.2'::text number,
        'TT_vri01_non_for_anth_translation'::text function_tested,
        'No matches test'::text description,
        TT_vri01_non_for_anth_translation('V'::text, ''::text, ''::text, ''::text) IS NULL passed
----------------------------------------------------------
--- TT_avi01_non_for_anth_validation
----------------------------------------------------------
-UNION ALL
-SELECT '7.1'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'Two empty strings'::text description,
-       TT_avi01_non_for_anth_validation(''::text, ''::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '7.2'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'Two NULL'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, NULL::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '7.3'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'Pass with an empty string'::text description,
-       TT_avi01_non_for_anth_validation('C'::text, ''::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) IS TRUE passed
----------------------------------------------------------
-UNION ALL
-SELECT '7.4'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'Pass with a NULL'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, 'C'::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) passed
----------------------------------------------------------
-UNION ALL
-SELECT '7.5'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'Two values'::text description,
-       TT_avi01_non_for_anth_validation('A'::text, 'C'::text, '{''A'', ''B'', ''C''}'::text, TRUE::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '7.6'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'Not in set'::text description,
-       TT_avi01_non_for_anth_validation('C'::text, NULL::text, '{''A'', ''B'', ''S''}'::text, TRUE::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '7.7'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'Not in set'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, 'x'::text, '{''A'', ''B'', ''S''}'::text, TRUE::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '7.8'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'Not in set, ignoreCase = false'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, 'a'::text, '{''A'', ''B'', ''S''}'::text, FALSE::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '7.9'::text number,
-       'TT_avi01_non_for_anth_validation'::text function_tested,
-       'In set with ignoreCase = true'::text description,
-       TT_avi01_non_for_anth_validation(NULL::text, 'a'::text, '{''A'', ''B'', ''S''}'::text, TRUE::text) passed
 ---------------------------------------------------------
 -- TT_avi01_non_for_anth_translation
 ---------------------------------------------------------
