@@ -1,0 +1,15 @@
+rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(stdlab|NULL_VALUE);notNull(ogc_fid|NULL_VALUE),"padConcat({'nb02', src_filename, '', stdlab, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+2,DIST_TYPE_1,text,"notNull(trt|NULL_VALUE);matchList(trt,{'BB','CC','CL','CT','CV','FP','FT','FW','IT','PA','PB','PC','PL','PT','RC','RR','SA','SC','SH','SR','ST','TI','TP'}|NOT_IN_SET)","mapText(trt, {'BB','CC','CL','CT','CV','FP','FT','FW','IT','PA','PB','PC','PL','PT','RC','RR','SA','SC','SH','SR','ST','TI','TP'}, {'BU','CO','SI','PC','PC','SI','OT','PC','PC','PC','BU','PC','SI','OT','PC','OT','PC','PC','PC','PC','PC','SI','PC'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
+3,DIST_YEAR_1,integer,"notNull(trtyr|-8888);isInt(trtyr|-8889);isBetween(trtyr, '0', '2020'|-9999)",copyInt(trtyr),Copies (line_7b_disturbance_history) to DIST_YEAR_1,TRUE
+4,DIST_EXT_UPPER_1,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+5,DIST_EXT_LOWER_1,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+6,DIST_TYPE_2,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
+7,DIST_YEAR_2,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+8,DIST_EXT_UPPER_2,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+9,DIST_EXT_LOWER_2,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+10,DIST_TYPE_3,text,false(|NOT_APPLICABLE),nothingText(),Attribute does not occur,TRUE
+11,DIST_YEAR_3,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+12,DIST_EXT_UPPER_3,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+13,DIST_EXT_LOWER_3,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+14,LAYER,integer,true(|-8887),copyInt('1'),Copy value of 1 to LAYER,TRUE
