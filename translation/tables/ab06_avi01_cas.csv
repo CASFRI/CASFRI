@@ -5,7 +5,7 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 4,NUM_OF_LAYERS,integer,true(|1),copyInt('1'),Copies value 1 to NUM_OF_LAYERS,TRUE
 5,IDENTIFICATION_ID,integer,true(|1),copyInt('6'),Copies value 6 to IDENTIFICATION_ID,TRUE
 6,MAP_SHEET_ID,text,notNull(trm|NULL_VALUE);isInt(trm|WRONG_TYPE),copyText(trm),Copies source value to MAP_SHEET_ID,TRUE
-7,CASFRI_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-9995);isGreaterThan(shape_area,'0'|-9999)",copyDouble(shape_area),Copies source value to CASFRI_AREA,TRUE
-8,CASFRI_PERIMETER,double precision,"notNull(shape_length|-8888);isNumeric(shape_length|-9995);isGreaterThan(shape_length,'0'|-9999)",copyDouble(shape_length),Copies source value to CASFRI_PERIMETER,TRUE
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-9997)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-9997)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,"notNull(shape_area|-8888);isNumeric(shape_area|-9995);isGreaterThan(shape_area,'0'|-9999)",copyDouble(shape_area),Copies source value to SRC_INV_AREA,TRUE
-10,STAND_PHOTO_YEAR,integer,"geoIsValid(wkb_geometry|-9997);geoIntersects(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry'|-9999)","geoIntersectionInt(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry', 'photo_yr', 'GREATEST_AREA')",Copies source value to STAND_PHOTO_YEAR,TRUE
+10,STAND_PHOTO_YEAR,integer,"geoIsValid(wkb_geometry, TRUE|-9997);geoIntersects(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry'|-9999)","geoIntersectionInt(wkb_geometry, 'rawfri', 'ab_photoyear', 'wkb_geometry', 'photo_yr', 'GREATEST_AREA')",Copies source value to STAND_PHOTO_YEAR,TRUE

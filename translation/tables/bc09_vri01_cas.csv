@@ -5,7 +5,7 @@ rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,des
 4,NUM_OF_LAYERS,integer,true(|1),copyInt('1'),Copies value 1 to NUM_OF_LAYERS,TRUE
 5,IDENTIFICATION_ID,integer,"notNull(inventory_standard_cd|-8888);matchList(inventory_standard_cd, {'F','V','I','L'}|-9998)","mapInt(inventory_standard_cd, {'F','V','I','L'}, {'4','5','6','7'})",Maps source value to IDENTIFCATION_ID using list,TRUE
 6,MAP_SHEET_ID,text,notNull(map_id|NULL_VALUE),copyText(map_id),Copies source value to MAP_SHEET_ID,TRUE
-7,CASFRI_AREA,double precision,"notNull(feature_area_sqm|-8888);isNumeric(feature_area_sqm|-9995);isGreaterThan(feature_area_sqm, '0'|-9999)",copyDouble(feature_area_sqm),Copies source value to CASFRI_AREA,TRUE
-8,CASFRI_PERIMETER,double precision,"notNull(feature_length_m|-8888);isNumeric(feature_length_m|-9995);isGreaterThan(feature_length_m, '0'|-9999)",copyDouble(feature_length_m),Copies source value to CASFRI_PERIMETER,TRUE
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-9997)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-9997)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,"notNull(feature_area_sqm|-8888);isNumeric(feature_area_sqm|-9995);isGreaterThan(feature_area_sqm, '0'|-9999)",copyDouble(feature_area_sqm),Copies source value to SRC_INV_AREA,TRUE
 10,STAND_PHOTO_YEAR,integer,"notNull(reference_year|-8888);isInt(reference_year|-9995);isBetween(reference_year, '1900', '2020'|-9999)",copyInt(reference_year),Copies source value to STAND_PHOTO_YEAR,TRUE
