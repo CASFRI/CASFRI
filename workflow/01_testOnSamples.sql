@@ -449,7 +449,7 @@ SELECT * FROM translation_test.bc09_vri01_eco_test;
 DROP TABLE IF EXISTS translation_test.bc09_vri01_lyr_test;
 CREATE TABLE translation_test.bc09_vri01_lyr_test WITH OIDS AS
 SELECT * FROM translation.bc09_vri01_lyr
-WHERE rule_id::int = 34
+--WHERE rule_id::int = 34
 ;
 -- display
 SELECT * FROM translation_test.bc09_vri01_lyr_test;
