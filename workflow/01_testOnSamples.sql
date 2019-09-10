@@ -106,6 +106,28 @@ LIMIT 200;
 SELECT src_filename, map_id, feature_id, ogc_fid, crown_closure, proj_height_1, species_cd_1, species_pct_1
 FROM rawfri.bc08_test_200;
 
+-------------------------------------------------------
+-- BC09
+-------------------------------------------------------
+-- display one of the source inventory table
+SELECT * FROM rawfri.bc09 LIMIT 10;
+
+-- count the number of rows
+SELECT count(*)
+FROM rawfri.bc09;
+
+-- create a smaller test inventory table
+DROP TABLE IF EXISTS rawfri.bc09_test_200;
+CREATE TABLE rawfri.bc09_test_200 AS
+SELECT * FROM rawfri.bc09
+WHERE crown_closure > 0
+--WHERE ogc_fid = 424344
+LIMIT 200;
+
+-- display
+SELECT src_filename, map_id, feature_id, ogc_fid, crown_closure, proj_height_1, species_cd_1, species_pct_1, site_index, est_site_index
+FROM rawfri.bc09_test_200;
+
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -383,6 +405,72 @@ SELECT * FROM translation.bc08_vri01_geo
 -- display
 SELECT * FROM translation_test.bc08_vri01_geo_test;
 
+-------------------------------------------------------
+-- BC09
+-------------------------------------------------------
+-- display translation tables
+SELECT * FROM translation.bc09_vri01_cas; 
+SELECT * FROM translation.bc09_vri01_dst; 
+SELECT * FROM translation.bc09_vri01_eco; 
+SELECT * FROM translation.bc09_vri01_lyr; 
+SELECT * FROM translation.bc09_vri01_nfl;
+SELECT * FROM translation.bc09_vri01_geo;
+----------------------------
+-- create subsets of translation tables if necessary
+----------------------------
+-- cas
+DROP TABLE IF EXISTS translation_test.bc09_vri01_cas_test;
+CREATE TABLE translation_test.bc09_vri01_cas_test WITH OIDS AS
+SELECT * FROM translation.bc09_vri01_cas
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.bc09_vri01_cas_test;
+----------------------------
+-- dst
+DROP TABLE IF EXISTS translation_test.bc09_vri01_dst_test;
+CREATE TABLE translation_test.bc09_vri01_dst_test WITH OIDS AS
+SELECT * FROM translation.bc09_vri01_dst
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.bc09_vri01_dst_test;
+----------------------------
+-- eco
+DROP TABLE IF EXISTS translation_test.bc09_vri01_eco_test;
+CREATE TABLE translation_test.bc09_vri01_eco_test WITH OIDS AS
+SELECT * FROM translation.bc09_vri01_eco
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.bc09_vri01_eco_test;
+----------------------------
+-- lyr
+DROP TABLE IF EXISTS translation_test.bc09_vri01_lyr_test;
+CREATE TABLE translation_test.bc09_vri01_lyr_test WITH OIDS AS
+SELECT * FROM translation.bc09_vri01_lyr
+WHERE rule_id::int = 34
+;
+-- display
+SELECT * FROM translation_test.bc09_vri01_lyr_test;
+----------------------------
+-- nfl
+DROP TABLE IF EXISTS translation_test.bc09_vri01_nfl_test;
+CREATE TABLE translation_test.bc09_vri01_nfl_test WITH OIDS AS
+SELECT * FROM translation.bc09_vri01_nfl
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.bc09_vri01_nfl_test;
+----------------------------
+-- geo
+DROP TABLE IF EXISTS translation_test.bc09_vri01_geo_test;
+CREATE TABLE translation_test.bc09_vri01_geo_test WITH OIDS AS
+SELECT * FROM translation.bc09_vri01_geo
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.bc09_vri01_geo_test;
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -584,6 +672,45 @@ SELECT src_filename, map_id, ogc_fid, cas_id,
        species_cd_1, species_1,
        species_pct_1, species_per_1
 FROM TT_Translate_bc08_lyr('rawfri', 'bc08_test_200'), rawfri.bc08_test_200
+WHERE ogc_fid::int = right(cas_id, 7)::int;
+
+-------------------------------------------------------
+-- BC09
+-------------------------------------------------------
+-- create translation functions
+SELECT TT_Prepare('translation_test', 'bc09_vri01_cas_test', '_bc09_cas');
+SELECT TT_Prepare('translation_test', 'bc09_vri01_dst_test', '_bc09_dst');
+SELECT TT_Prepare('translation_test', 'bc09_vri01_eco_test', '_bc09_eco');
+SELECT TT_Prepare('translation_test', 'bc09_vri01_lyr_test', '_bc09_lyr');
+SELECT TT_Prepare('translation_test', 'bc09_vri01_nfl_test', '_bc09_nfl');
+SELECT TT_Prepare('translation_test', 'bc09_vri01_geo_test', '_bc09_geo');
+
+-- translate the samples
+SELECT * FROM TT_Translate_bc09_cas('rawfri', 'bc09_test_200', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_cas_test');
+
+SELECT * FROM TT_Translate_bc09_dst('rawfri', 'bc09_test_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_dst_test');
+
+SELECT * FROM TT_Translate_bc09_eco('rawfri', 'bc09_test_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_eco_test');
+
+SELECT * FROM TT_Translate_bc09_lyr('rawfri', 'bc09_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_lyr_test');
+
+SELECT * FROM TT_Translate_bc09_nfl('rawfri', 'bc09_test_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_nfl_test');
+
+SELECT * FROM TT_Translate_bc09_geo('rawfri', 'bc09_test_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_geo_test');
+
+-- display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, map_id, ogc_fid, cas_id, 
+       crown_closure, crown_closure_lower, crown_closure_upper, 
+       proj_height_1, height_upper, height_lower,
+       species_cd_1, species_1,
+       species_pct_1, species_per_1
+FROM TT_Translate_bc09_lyr('rawfri', 'bc09_test_200'), rawfri.bc09_test_200
 WHERE ogc_fid::int = right(cas_id, 7)::int;
 
 --------------------------------------------------------------------------
