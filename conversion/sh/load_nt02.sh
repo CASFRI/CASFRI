@@ -2,20 +2,32 @@
 
 # This script loads the NWT FVI forest inventory (NT02) into PostgreSQL
 
-# Many polygons have FC_ID values of 10000000 and do not have any associated attributes.
+# The format of the source dataset is a geodatabase, which contains three files that
+# need to be joined: geometries, attributes, photo year.
 
-# The format of the source dataset is a geodatabase
+# 719 geometry polygons have FC_ID values of 1000000 and do not have any associated attributes.
+# Email chain in the readMe suggests these could be pre-digital inventories from Fort Liard 
+# and Buffalo River. This was not confirmed by the data provider based on the notes we have.
+
+# 2,573 geometry polygons contain duplicate FC_ID values. We assume these are cases where a single
+# polygon has been split into multiple polygons during processing.
+
+# 31,617 rows in the attributes table have duplicate FC_IDs. Some of these appear to be errors where
+# the same data is duplicated in multiple rows. In other cases the rows have different values.
+
+# 31,547 rows in the attribute table have no FC_ID value.
+
+
+
 
 # The year of photography is included the Inventory_Extent table in the gdb.
-
-# Attributes are found in a separate table in the gdb.
 
 # Load into a target table in the schema defined in the config file.
 
 # Load the geometries, attributes, and Inventory_Extent tables separately.
 # Then use ogrinfo to join them using the FC_ID attribute and a left join.
 # Add a new unique ogc_fid column
-# Finally delete the attributes and Inventory_Extent tables from the database.
+# Finally delete the attributes, geometries and Inventory_Extent tables from the database.
 
 # Some polygons have multiple attributes rows in the attributes table, this
 # results in duplication of these polygons after the join is complete.
