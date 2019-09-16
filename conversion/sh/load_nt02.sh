@@ -6,8 +6,7 @@
 # need to be joined: geometries, attributes, photo year.
 
 # 719 geometry polygons have FC_ID values of 1000000 and do not have any associated attributes.
-# Email chain in the readMe suggests these could be pre-digital inventories from Fort Liard 
-# and Buffalo River. This was not confirmed by the data provider based on the notes we have.
+# These are slivers are were removed before loading in cas03.
 
 # 2,573 geometry polygons contain duplicate FC_ID values. We assume these are cases where a single
 # polygon has been split into multiple polygons during processing.
