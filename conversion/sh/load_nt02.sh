@@ -57,6 +57,7 @@ prjFile="./../canadaAlbersEqualAreaConic.prj"
 geometryTableName=$targetFRISchema.nt02geometry
 attributeTableName=$targetFRISchema.nt02attributes
 photoyearTableName=$targetFRISchema.nt02photoyear
+targetTableName=$targetFRISchema.nt02
 
 if [ $overwriteFRI == True ]; then
   overwrite_tab=-overwrite
@@ -96,26 +97,26 @@ fi
 # original tables are deleted
 "$gdalFolder/ogrinfo" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" \
 -sql "
-ALTER TABLE rawfri.nt02attributes DROP COLUMN ogc_fid;
-ALTER TABLE rawfri.nt02attributes DROP COLUMN invproj_id;
-ALTER TABLE rawfri.nt02attributes DROP COLUMN seam_id;
-ALTER TABLE rawfri.nt02geometry DROP COLUMN ogc_fid;
+ALTER TABLE $attributeTableName DROP COLUMN ogc_fid;
+ALTER TABLE $attributeTableName DROP COLUMN invproj_id;
+ALTER TABLE $attributeTableName DROP COLUMN seam_id;
+ALTER TABLE $geometryTableName DROP COLUMN ogc_fid;
 
-DROP TABLE IF EXISTS rawfri.nt02; 
-CREATE TABLE rawfri.nt02 AS
+DROP TABLE IF EXISTS $targetTableName; 
+CREATE TABLE $targetTableName AS
 SELECT *
-FROM rawfri.nt02geometry a
-LEFT JOIN (SELECT project_id, project_label FROM rawfri.nt02photoyear) b ON a.invproj_id=b.project_id
-LEFT JOIN rawfri.nt02attributes USING (FC_ID);
+FROM $geometryTableName a
+LEFT JOIN (SELECT project_id, project_label FROM $photoyearTableName) b ON a.invproj_id=b.project_id
+LEFT JOIN $attributeTableName USING (FC_ID);
 
-ALTER TABLE rawfri.nt02 ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
-ALTER TABLE rawfri.nt02 ADD COLUMN ogc_fid INT;
-UPDATE rawfri.nt02 SET ogc_fid=temp_key;
-ALTER TABLE rawfri.nt02 DROP column temp_key;
+ALTER TABLE $targetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
+ALTER TABLE $targetTableName ADD COLUMN ogc_fid INT;
+UPDATE $targetTableName SET ogc_fid=temp_key;
+ALTER TABLE $targetTableName DROP column temp_key;
 
-DROP TABLE rawfri.nt02attributes;
-DROP TABLE rawfri.nt02photoyear;
-DROP TABLE rawfri.nt02geometry;
+DROP TABLE $attributeTableName;
+DROP TABLE $photoyearTableName;
+DROP TABLE $geometryTableName;
 ";
 
 
