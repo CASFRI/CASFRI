@@ -38,7 +38,7 @@ IF EXIST "%~dp0\..\..\config.bat" (
 :: Set unvariable variables
 
 SET srcFirstFileName=t059r04m6
-SET srcFullPath=%friDir%\AB\SourceDataset\v00.04\NONGOV\Canfor\
+SET srcFullPath=%friDir%\AB\AB16\
 
 SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab16
@@ -59,7 +59,7 @@ SET ogrTab=PAL
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 ::Create schema if it doesn't exist
-"%gdalFolder%/ogrinfo" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%"
+"%gdalFolder%/ogrinfo" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%"
 
 :: Loop through all mapsheets.
 :: For first load, set -lco precision=NO to avoid type errors on import. Remove for following loads.
@@ -71,7 +71,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 FOR /D %%F IN (%srcFullPath%\t*) DO (
   "%gdalFolder%/ogr2ogr" ^
-  -f "PostgreSQL" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" ^
+  -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" ^
   -sql "SELECT *, '%%~nF' as src_filename, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
   -nln %fullTargetTableName% -t_srs %prjFile% ^
   !ogr_options! ^

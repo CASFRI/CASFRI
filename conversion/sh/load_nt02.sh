@@ -80,13 +80,13 @@ fi
 
 #Run ogr2ogr for attributes
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcFullPath" "$gdbFileName_attributes" \
+-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_attributes" \
 -nln $attributeTableName \
 -progress $overwrite_tab
 
 #Run ogr2ogr for photo year
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcFullPath" "$gdbFileName_photoyear" \
+-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_photoyear" \
 -nln $photoyearTableName \
 -t_srs $prjFile \
 -progress $overwrite_tab
@@ -95,7 +95,7 @@ fi
 # some columns need to be dropped before joining
 # the ogc_fid attributes are no longer unique identifiers after the join so a new ogc_fid is created
 # original tables are deleted
-"$gdalFolder/ogrinfo" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" \
+"$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" \
 -sql "
 ALTER TABLE $attributeTableName DROP COLUMN ogc_fid;
 ALTER TABLE $attributeTableName DROP COLUMN invproj_id;

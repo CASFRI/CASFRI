@@ -36,19 +36,15 @@ fi
 NB_subFolder=NB/NB02/
 
 srcNameWater=NBHN_0000_02_Wb
-#ogrTabWater=$srcNameWater
 srcWaterFullPath="$friDir/$NB_subFolder$srcNameWater.shp"
 
 srcNameNonForest=geonb_nonforest-nonforet
-#ogrTabNonForest=$srcNameNonForest
 srcNonForestFullPath="$friDir/$NB_subFolder$srcNameNonForest.shp"
 
 srcNameWetland=NBHN_0000_03_wl
-#ogrTabWetland=$srcNameWetland
 srcWetlandFullPath="$friDir/$NB_subFolder$srcNameWetland.shp"
 
 srcNameForest=geonb_forest-foret
-#ogrTabForest=$srcNameForest
 srcForestFullPath="$friDir/$NB_subFolder$srcNameForest.shp"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
