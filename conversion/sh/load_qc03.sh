@@ -23,7 +23,7 @@ fi
 
 srcFileName=PEE_MAJ_PROV
 gdbFileName=$srcFileName
-srcFullPath="$friDir/QC/SourceDataset/v.00.05/CARTE_ECO_MAJ_PROV_10.gdb"
+srcFullPath="$friDir/QC/QC03/CARTE_ECO_MAJ_PROV_10.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.qc03
