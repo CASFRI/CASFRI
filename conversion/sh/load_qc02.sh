@@ -2,6 +2,9 @@
 
 # This script loads the Quebec (QC02) into PostgreSQL
 
+# There is a updated version of this dataset: QC/SourceDataset/v.00.04/PEE_ORI_PROV.gdb
+# However here we load the original to match the CASFRI04 loading script
+
 # The format of the source dataset is a geodatabase
 
 # The year of photography is in a photo year shapefile that needs to loaded separately
@@ -23,7 +26,7 @@ fi
 
 srcFileName=DDE_20K_PEU_ECOFOR_ORI_VUE_SE
 gdbFileName=$srcFileName
-srcFullPath="$friDir/QC/SourceDataset/v.00.04/PEE_ORI_PROV.gdb"
+srcFullPath="$friDir/QC/QC02/PEE_ORI_PROV.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.qc02
