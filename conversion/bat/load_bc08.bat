@@ -28,7 +28,6 @@ IF EXIST "%~dp0\..\..\config.bat" (
 
 SET srcFileName=VEG_COMP_LYR_R1_POLY
 SET srcFullPath="%friDir%\BC\SourceDataset\v.00.05\VEG_COMP_LYR_R1_POLY\%srcFileName%.gdb"
-::SET srcFullPath="%friDir%\BC\SourceDataset\v.00.04\BCGOV\%srcFileName%.gdb"
 
 SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.bc08
@@ -44,11 +43,11 @@ IF %overwriteFRI% == True (
 :: ########################################## Process ######################################
 
 :: Create schema if it doesn't exist
-"%gdalFolder%/ogrinfo" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
+"%gdalFolder%/ogrinfo" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
 
 :: Run ogr2ogr
 "%gdalFolder%/ogr2ogr" ^
--f "PostgreSQL" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% ^
+-f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% ^
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%srcFileName%""" ^

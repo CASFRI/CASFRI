@@ -35,26 +35,22 @@ IF EXIST "%~dp0\..\..\config.bat" (
 
 :: Set unvariable variables
 
-SET NB_subFolder=NB\NB01\
+SET NB_subFolder=NB\NB02\
 
-SET srcNameWater=Waterbody
-SET ogrTabWater=%srcNameWater%
-SET srcWaterFullPath="%friDir%\%NB_subFolder%%ogrTabWater%.shp"
+SET srcNameWater=NBHN_0000_02_Wb
+SET srcWaterFullPath="%friDir%\%NB_subFolder%%srcNameWater%.shp"
 
-SET srcNameNonForest=NonForest
-SET ogrTabNonForest=Non Forest
-SET srcNonForestFullPath="%friDir%\%NB_subFolder%%ogrTabNonForest%.shp"
+SET srcNameNonForest=geonb_nonforest-nonforet
+SET srcNonForestFullPath="%friDir%\%NB_subFolder%%srcNameNonForest%.shp"
 
-SET srcNameWetland=wetland
-SET ogrTabWetland=%srcNameWetland%
-SET srcWetlandFullPath="%friDir%\%NB_subFolder%%ogrTabWetland%.shp"
+SET srcNameWetland=NBHN_0000_03_wl
+SET srcWetlandFullPath="%friDir%\%NB_subFolder%%srcNameWetland%.shp"
 
-SET srcNameForest=Forest
-SET ogrTabForest=%srcNameForest%
-SET srcForestFullPath="%friDir%\%NB_subFolder%%ogrTabForest%.shp"
+SET srcNameForest=geonb_forest-foret
+SET srcForestFullPath="%friDir%\%NB_subFolder%%srcNameForest%.shp"
 
 SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
-SET fullTargetTableName=%targetFRISchema%.nb01
+SET fullTargetTableName=%targetFRISchema%.nb02
 
 
 IF %overwriteFRI% == True (
@@ -77,7 +73,7 @@ IF %overwriteFRI% == True (
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWater%' AS src_filename, 0 AS stdlab FROM ""%ogrTabWater%""" ^
+-sql "SELECT *, '%srcNameWater%' AS src_filename, 0 AS stdlab FROM ""%srcNameWater%""" ^
 -progress %overwrite_tab%
 
 ::### FILE 2 ###
@@ -87,7 +83,7 @@ IF %overwriteFRI% == True (
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameNonForest%' AS src_filename, 0 AS stdlab FROM ""%ogrTabNonForest%""" ^
+-sql "SELECT *, '%srcNameNonForest%' AS src_filename, 0 AS stdlab FROM ""%srcNameNonForest%""" ^
 -progress
 
 ::### FILE 3 ###
@@ -97,7 +93,7 @@ IF %overwriteFRI% == True (
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWetland%' AS src_filename, 0 AS stdlab FROM ""%ogrTabWetland%""" ^
+-sql "SELECT *, '%srcNameWetland%' AS src_filename, 0 AS stdlab FROM ""%srcNameWetland%""" ^
 -progress
 
 ::## File 4 ###
@@ -107,7 +103,7 @@ IF %overwriteFRI% == True (
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameForest%' AS src_filename FROM ""%ogrTabForest%""" ^
+-sql "SELECT *, '%srcNameForest%' AS src_filename FROM ""%srcNameForest%""" ^
 -progress
 
 ENDLOCAL
