@@ -40,12 +40,12 @@ fi
 ########################################## Process ######################################
 
 #Create schema if it doesn't exist
-"$gdalFolder/ogrinfo" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
+"$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
 
 #Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "gdbFileName" \
+-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "gdbFileName" \
 -nln $fullTargetTableName \
 -t_srs $prjFile \
--sql "SELECT *, '$srcFileName' as src_filename FROM '$gdbFileName'" \
+-sql "SELECT *, '$srcFileName' AS src_filename FROM '$gdbFileName'" \
 -progress $overwrite_tab

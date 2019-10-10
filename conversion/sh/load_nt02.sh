@@ -68,14 +68,14 @@ fi
 ########################################## Process ######################################
 
 #Create schema if it doesn't exist
-"$gdalFolder/ogrinfo" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
+"$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
 
 #Run ogr2ogr for geometries
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcFullPath" "$gdbFileName_geometry" \
+-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_geometry" \
 -nln $geometryTableName \
 -t_srs $prjFile \
--sql "SELECT *, '$srcFileName' as src_filename FROM '$gdbFileName_geometry'" \
+-sql "SELECT *, '$srcFileName' AS src_filename FROM '$gdbFileName_geometry'" \
 -progress $overwrite_tab
 
 #Run ogr2ogr for attributes
@@ -97,10 +97,10 @@ fi
 # original tables are deleted
 "$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" \
 -sql "
-ALTER TABLE $attributeTableName DROP COLUMN ogc_fid;
-ALTER TABLE $attributeTableName DROP COLUMN invproj_id;
-ALTER TABLE $attributeTableName DROP COLUMN seam_id;
-ALTER TABLE $geometryTableName DROP COLUMN ogc_fid;
+ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS ogc_fid;
+ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS invproj_id;
+ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS seam_id;
+ALTER TABLE $geometryTableName DROP COLUMN IF EXISTS ogc_fid;
 
 DROP TABLE IF EXISTS $targetTableName; 
 CREATE TABLE $targetTableName AS
@@ -112,11 +112,11 @@ LEFT JOIN $attributeTableName USING (FC_ID);
 ALTER TABLE $targetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
 ALTER TABLE $targetTableName ADD COLUMN ogc_fid INT;
 UPDATE $targetTableName SET ogc_fid=temp_key;
-ALTER TABLE $targetTableName DROP column temp_key;
+ALTER TABLE $targetTableName DROP COLUMN IF EXISTS temp_key;
 
-DROP TABLE $attributeTableName;
-DROP TABLE $photoyearTableName;
-DROP TABLE $geometryTableName;
+DROP TABLE IF EXISTS $attributeTableName;
+DROP TABLE IF EXISTS $photoyearTableName;
+DROP TABLE IF EXISTS $geometryTableName;
 ";
 
 
