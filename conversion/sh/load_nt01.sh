@@ -29,7 +29,7 @@ else
   exit 1
 fi
 
-nt_subfolder="$friDir/NT/SourceDataset/v.00.03/"
+nt_subfolder="$friDir/NT/NT01/"
 srcFileName=NT_FORCOV_update2003
 srcFullPath="$nt_subfolder$srcFileName.shp"
 
