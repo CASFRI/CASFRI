@@ -623,7 +623,7 @@ SELECT TT_Prepare('translation_test', 'ab06_avi01_nfl_test', '_ab06_nfl');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_geo_test', '_ab06_geo');
 
 -- translate the samples (5 sec.)
-SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06_test_200', 'ogc_fid'); -- 29 s.
+SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06_test_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_cas_test');
 
 SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06_test_200', 'ogc_fid'); -- 5 s.
@@ -662,7 +662,7 @@ SELECT TT_Prepare('translation_test', 'ab16_avi01_nfl_test', '_ab16_nfl');
 SELECT TT_Prepare('translation_test', 'ab16_avi01_geo_test', '_ab16_geo');
 
 -- translate the samples
-SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16_test_200', 'ogc_fid'); -- 13 s.
+SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16_test_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab16_avi01_cas_test');
 
 SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16_test_200', 'ogc_fid'); -- 5 s.

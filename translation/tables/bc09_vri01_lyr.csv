@@ -1,4 +1,4 @@
-rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(map_id|NULL_VALUE);notNull(feature_id|NULL_VALUE);notNull(ogc_fid|NULL_VALUE),"padConcat({'bc09', src_filename, map_id, feature_id, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(soil_moisture_regime_1|NULL_VALUE);matchList(soil_moisture_regime_1,{'0','1','2','3','4','5','6','7','8'}|NOT_IN_SET)","mapText(soil_moisture_regime_1, {'0','1','2','3','4','5','6','7','8'}, {'D','D','D','F','F','M','M','W','W'})",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
 3,STRUCTURE_PER,integer,false(|-8887),nothingInt(),Copies NULL integer code to STRUCTURE_PER,TRUE

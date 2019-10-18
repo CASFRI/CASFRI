@@ -1,3 +1,3 @@
-rule_id,targetAttribute,targetAttributeType,validationRules,translationRules,description,descUpToDateWithRules
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notNull(src_filename|NULL_VALUE);notNull(stdlab|NULL_VALUE);notNull(ogc_fid|NULL_VALUE),"padConcat({'nb02', src_filename, '', stdlab, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,GEOMETRY,geometry,"geoIsValid(wkb_geometry, TRUE|POLYGON EMPTY)",geoMakeValid(wkb_geometry),Returns the geometry and validates if necessary. If valid geometry cannot be made error code is returned.,TRUE
