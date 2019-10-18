@@ -51,7 +51,8 @@ srcFileName=NT_FORCOV
 gdbFileName_geometry=$srcFileName
 gdbFileName_attributes=NT_FORCOV_ATT
 gdbFileName_photoyear=Inventory_Extents
-srcFullPath="$friDir/NT/SourceDataset/v.00.04/NT_FORCOV.gdb"
+#srcFullPath="$friDir/NT/SourceDataset/v.00.04/NT_FORCOV.gdb"
+srcFullPath="$friDir/NT/NT02/NT_FORCOV.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
 geometryTableName=$targetFRISchema.nt02geometry
