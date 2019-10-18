@@ -34,7 +34,7 @@ SELECT TT_Prepare('translation', 'nb01_nbi01_cas', '_nb01_cas', 'ab06_avi01_cas'
 SELECT TT_Prepare('translation', 'bc08_vri01_cas', '_bc08_cas', 'ab06_avi01_cas');
 ------------------------
 --DROP TABLE IF EXISTS casfri50.cas_all;
-CREATE TABLE casfri50.cas_all AS -- 25m28s
+CREATE TABLE casfri50.cas_all AS -- 3m40s
 SELECT * FROM TT_Translate_ab06_cas('rawfri', 'ab06', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_cas');
