@@ -67,6 +67,7 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcWaterFullPath" \
 -lco precision=NO \
+-lco GEOMETRY_NAME="wkb_geometry" \
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \

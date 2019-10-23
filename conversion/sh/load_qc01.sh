@@ -66,6 +66,7 @@ do
 		"$gdalFolder/ogr2ogr" \
 		-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$F/$ogrTab.shp" \
 		-nln $fullTargetTableName \
+		-lco GEOMETRY_NAME="wkb_geometry" \
 		-t_srs $prjFile \
 		-sql "SELECT *, '${F##*/}' as src_filename FROM $ogrTab" \
 		-progress $update

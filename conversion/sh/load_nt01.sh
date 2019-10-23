@@ -53,6 +53,7 @@ fi
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" \
 -nln $TargetTableName \
 -lco precision=NO \
+-lco GEOMETRY_NAME="wkb_geometry" \
 -nlt PROMOTE_TO_MULTI \
 -t_srs $prjFile \
 -sql "SELECT *, '$srcFileName' as src_filename FROM '$srcFileName'" \
