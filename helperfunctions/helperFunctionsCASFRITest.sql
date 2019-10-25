@@ -32,8 +32,8 @@ WITH test_nb AS (
     SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,     7 maj_num, 2 nb_test UNION ALL
     SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,    8 maj_num, 2 nb_test UNION ALL
     SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,    9 maj_num, 9 nb_test UNION ALL
-	  SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,10 maj_num, 5 nb_test UNION ALL
-		SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,  11 maj_num, 4 nb_test UNION ALL
+	SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,10 maj_num, 5 nb_test UNION ALL
+	SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,  11 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_wetland_validation'::text function_tested,         12 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_wetland_translation'::text function_tested,        13 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test
@@ -284,7 +284,7 @@ UNION ALL
 SELECT '10.3'::text number,
        'TT_nbi01_stand_structure_translation'::text function_tested,
        'Single layer l1vs > 0'::text description,
-       TT_nbi01_stand_structure_translation('Forest'::text, '2'::text, '0'::text) = 'S' passed
+       TT_nbi01_stand_structure_translation('geonb_forest-foret'::text, '2'::text, '0'::text) = 'S' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '10.4'::text number,
@@ -296,7 +296,7 @@ UNION ALL
 SELECT '10.5'::text number,
        'TT_nbi01_stand_structure_translation'::text function_tested,
        'Complex layer'::text description,
-       TT_nbi01_stand_structure_translation('Forest'::text, '2'::text, '2'::text) = 'C' passed
+       TT_nbi01_stand_structure_translation('geonb_forest-foret'::text, '2'::text, '2'::text) = 'C' passed
 ---------------------------------------------------------
 -- TT_nbi01_num_of_layers
 ---------------------------------------------------------
