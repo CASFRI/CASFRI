@@ -75,6 +75,7 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_geometry" \
 -nln $geometryTableName \
+-lco GEOMETRY_NAME="wkb_geometry" \
 -t_srs $prjFile \
 -sql "SELECT *, '$srcFileName' AS src_filename FROM '$gdbFileName_geometry'" \
 -progress $overwrite_tab
@@ -83,12 +84,14 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_attributes" \
 -nln $attributeTableName \
+-lco GEOMETRY_NAME="wkb_geometry" \
 -progress $overwrite_tab
 
 #Run ogr2ogr for photo year
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_photoyear" \
 -nln $photoyearTableName \
+-lco GEOMETRY_NAME="wkb_geometry" \
 -t_srs $prjFile \
 -progress $overwrite_tab
 

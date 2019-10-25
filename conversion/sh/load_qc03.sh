@@ -43,6 +43,7 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:port=$pgport host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "gdbFileName" \
 -nln $fullTargetTableName \
+-lco GEOMETRY_NAME="wkb_geometry" \
 -t_srs $prjFile \
 -sql "SELECT *, '$srcFileName' as src_filename FROM '$gdbFileName'" \
 -progress $overwrite_tab

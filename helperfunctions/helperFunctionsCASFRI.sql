@@ -231,7 +231,7 @@ RETURNS boolean AS $$
   BEGIN
     PERFORM TT_ValidateParams('TT_nbi01_wetland_validation',
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
-		wetland_code = TT_nbi01_wetland_code(wc, vt, im);
+	wetland_code = TT_nbi01_wetland_code(wc, vt, im);
 
     -- return true or false
     IF wetland_code IS NULL OR substring(wetland_code from ret_char_pos::int for 1) = '-' THEN
@@ -499,6 +499,9 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- If src_filename=“Forest” and (l1vs>0 and l2vs>0) then stand_structure=“M”
 -- If src_filename=“Forest” and (l1vs>1 and l2vs>1) then stand_structure=“C”
 --
+-- For NB01 src_filename should match 'Forest'.
+-- For NB02 src_filename should match 'geonb_forest-foret'.
+--
 -- e.g. TT_nbi01_stand_structure_translation(src_filename, l1vs, l2vs)
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text, text, text);
@@ -519,16 +522,16 @@ RETURNS text AS $$
     _l1vs = l1vs::int;
     _l2vs = l2vs::int;
 		
-		IF src_filename = 'Forest' THEN
-		  IF _l2vs = 0 THEN
-		    RETURN 'S';
-			ELSIF _l1vs > 1 AND _l2vs > 1 THEN
-			  RETURN 'C';
-		  ELSIF _l1vs > 0 AND _l2vs > 0 THEN
-			  RETURN 'M';
-		  END IF;
-		END IF;				
-		RETURN NULL;
+	IF src_filename IN ('Forest', 'geonb_forest-foret') THEN
+	  IF _l2vs = 0 THEN
+		RETURN 'S';
+	  ELSIF _l1vs > 1 AND _l2vs > 1 THEN
+		  RETURN 'C';
+	  ELSIF _l1vs > 0 AND _l2vs > 0 THEN
+		  RETURN 'M';
+	  END IF;
+	END IF;				
+	RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
@@ -542,6 +545,9 @@ $$ LANGUAGE plpgsql VOLATILE;
 --
 -- If src_filename=“Forest” stand_structure = S, num_of_layers = 1.
 -- If src_filename=“Forest” stand_structure = M or C, then stand_structure=“M”
+--
+-- For NB01 src_filename should match 'Forest'.
+-- For NB02 src_filename should match 'geonb_forest-foret'.
 --
 -- e.g. TT_nbi01_num_of_layers_translation(src_filename, l1vs, l2vs)
 ------------------------------------------------------------
@@ -561,7 +567,7 @@ RETURNS int AS $$
                                     'l1vs', l1vs, 'int',  
                                     'l2vs', l2vs, 'int']);
 		
-		IF src_filename = 'Forest' THEN
+		IF src_filename IN ('Forest', 'geonb_forest-foret') THEN
 		  IF TT_nbi01_stand_structure_translation(src_filename, l1vs, l2vs) = 'S' THEN
 			  RETURN 1;
 			ELSIF TT_nbi01_stand_structure_translation(src_filename, l1vs, l2vs) IN ('M', 'C') THEN
@@ -590,16 +596,16 @@ CREATE OR REPLACE FUNCTION TT_nbi01_wetland_translation(
   wc text,
   vt text,
   im text,
-	ret_char_pos text
+  ret_char_pos text
 )
 RETURNS text AS $$
   DECLARE
-		wetland_code text;
+	wetland_code text;
     result text;
   BEGIN
     PERFORM TT_ValidateParams('TT_nbi01_wetland_translation',
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
-		wetland_code = TT_nbi01_wetland_code(wc, vt, im);
+	wetland_code = TT_nbi01_wetland_code(wc, vt, im);
 
     -- substring wetland_code
     IF wetland_code IS NOT NULL THEN
@@ -635,7 +641,7 @@ CREATE OR REPLACE FUNCTION TT_nbi01_productive_for_translation(
   l1cc text,
   l1ht text,
   l1trt text,
-	l2trt text,
+  l2trt text,
   fst text
 )
 RETURNS text AS $$

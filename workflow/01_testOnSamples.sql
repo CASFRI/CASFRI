@@ -214,7 +214,7 @@ species_cd_5, species_pct_5, species_cd_6, species_pct_6,
 proj_age_1, proj_age_class_cd_1, proj_age_2, proj_age_class_cd_2, 
 proj_height_1, proj_height_class_cd_1, proj_height_2, proj_height_class_cd_2, 
 feature_area_sqm, feature_length_m, src_filename
-FROM rawfri.bc09 TABLESAMPLE SYSTEM (300.0*100/4677411) REPEATABLE (1.0)
+FROM rawfri.bc09 TABLESAMPLE SYSTEM (300.0*100/5151772) REPEATABLE (1.0)
 --WHERE ogc_fid = 2
 LIMIT 200;
 
