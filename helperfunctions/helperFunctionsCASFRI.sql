@@ -645,7 +645,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_nbi01_productive_for_translation(text, text, text, text, text)
+-- TT_nbi01_nb01_productive_for_translation(text, text, text, text, text)
 --
 --  l1cc text
 --  l1ht text
@@ -657,10 +657,10 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- Or if forest stand type is 0, and l1 or l2 trt is neither CC or empty string. Assign PP.
 -- Otherwise assign PF (productive forest).
 --
--- e.g. TT_nbi01_productive_for_translation(l1cc, l1ht, l1trt, l2trt, fst)
+-- e.g. TT_nbi01_nb01_productive_for_translation(l1cc, l1ht, l1trt, l2trt, fst)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_productive_for_translation(text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_nbi01_productive_for_translation(
+--DROP FUNCTION IF EXISTS TT_nbi01_nb01_productive_for_translation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nbi01_nb01_productive_for_translation(
   l1cc text,
   l1ht text,
   l1trt text,
@@ -685,5 +685,39 @@ RETURNS text AS $$
       RETURN 'PP';
     END IF;
     RETURN 'PF';
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+-------------------------------------------------------------------------------
+-- TT_nbi01_nb02_productive_for_translation(text, text, text, text, text)
+--
+--  2 options for PRODUCTIVE_FOR, replicating NB02 using trt, l1cc, l1ht, l1s1.
+--  Or using fst.
+--  Here I`m using the simpler fst method until issue #181
+--
+--  fst text
+--
+-- If no valid crown closure value, or no valid height value. Assign PP.
+-- Or if forest stand type is 0, and l1 or l2 trt is neither CC or empty string. Assign PP.
+-- Otherwise assign PF (productive forest).
+--
+-- e.g. TT_nbi01_nb02_productive_for_translation(fst)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nbi01_nb02_productive_for_translation(text);
+CREATE OR REPLACE FUNCTION TT_nbi01_nb02_productive_for_translation(
+  fst text
+)
+RETURNS text AS $$
+  DECLARE
+    _fst int;
+  BEGIN
+    _fst = fst::int;
+	
+    IF _fst IN (1, 2) THEN
+	  RETURN 'PF';
+	ELSIF _fst = 3 THEN
+	  RETURN 'PP';
+	END IF;
+	RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;

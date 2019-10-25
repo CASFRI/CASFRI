@@ -23,21 +23,21 @@ SET lc_messages TO 'en_US.UTF-8';
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'TT_vri01_non_for_veg_validation'::text function_tested,      1 maj_num, 4 nb_test UNION ALL
-    SELECT 'TT_vri01_nat_non_veg_validation'::text function_tested,      2 maj_num, 5 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_anth_validation'::text function_tested,     3 maj_num, 3 nb_test UNION ALL
-    SELECT 'TT_vri01_origin_translation'::text function_tested,          4 maj_num, 1 nb_test UNION ALL
-    SELECT 'TT_vri01_site_index_translation'::text function_tested,      5 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,     6 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,     7 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,    8 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,    9 maj_num, 9 nb_test UNION ALL
-	SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,10 maj_num, 5 nb_test UNION ALL
-	SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,  11 maj_num, 4 nb_test UNION ALL
-    SELECT 'TT_nbi01_wetland_validation'::text function_tested,         12 maj_num, 4 nb_test UNION ALL
-    SELECT 'TT_nbi01_wetland_translation'::text function_tested,        13 maj_num, 4 nb_test UNION ALL
-    SELECT 'TT_nbi01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test
-
+    SELECT 'TT_vri01_non_for_veg_validation'::text function_tested,           1 maj_num, 4 nb_test UNION ALL
+    SELECT 'TT_vri01_nat_non_veg_validation'::text function_tested,           2 maj_num, 5 nb_test UNION ALL
+    SELECT 'TT_vri01_non_for_anth_validation'::text function_tested,          3 maj_num, 3 nb_test UNION ALL
+    SELECT 'TT_vri01_origin_translation'::text function_tested,               4 maj_num, 1 nb_test UNION ALL
+    SELECT 'TT_vri01_site_index_translation'::text function_tested,           5 maj_num, 2 nb_test UNION ALL
+    SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,          6 maj_num, 2 nb_test UNION ALL
+    SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,          7 maj_num, 2 nb_test UNION ALL
+    SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,         8 maj_num, 2 nb_test UNION ALL
+    SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,         9 maj_num, 9 nb_test UNION ALL
+	SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,     10 maj_num, 5 nb_test UNION ALL
+	SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,       11 maj_num, 4 nb_test UNION ALL
+    SELECT 'TT_nbi01_wetland_validation'::text function_tested,              12 maj_num, 4 nb_test UNION ALL
+    SELECT 'TT_nbi01_wetland_translation'::text function_tested,             13 maj_num, 4 nb_test UNION ALL
+    SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
+    SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num, 5 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -376,74 +376,107 @@ SELECT '13.4'::text number,
        'Null due to no case'::text description,
        TT_nbi01_wetland_translation('XX'::text, 'OV'::text, 'MI'::text, '3'::text) IS NULL
 ---------------------------------------------------------
-  -- TT_nbi01_productive_for_translation
+  -- TT_nbi01_nb01_productive_for_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.1'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 1'::text description,
-       TT_nbi01_productive_for_translation(NULL::text, '10'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation(NULL::text, '10'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.2'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 2'::text description,
-       TT_nbi01_productive_for_translation('6'::text, '10'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('6'::text, '10'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.3'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 3'::text description,
-       TT_nbi01_productive_for_translation('5'::text, NULL::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, NULL::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.4'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 4'::text description,
-       TT_nbi01_productive_for_translation('5'::text, '0.05'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '0.05'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.5'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 5'::text description,
-       TT_nbi01_productive_for_translation('5'::text, '101'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '101'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.6'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 6a'::text description,
-       TT_nbi01_productive_for_translation('5'::text, '100'::text, ''::text, 'CC'::text, '0'::text) = 'PF' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, ''::text, 'CC'::text, '0'::text) = 'PF' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.7'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 6b'::text description,
-       TT_nbi01_productive_for_translation('5'::text, '100'::text, 'CC'::text, 'CC'::text, '0'::text) = 'PF' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, 'CC'::text, '0'::text) = 'PF' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.8'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 6c'::text description,
-       TT_nbi01_productive_for_translation('5'::text, '100'::text, 'F'::text, 'CC'::text, '1'::text) = 'PF' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'F'::text, 'CC'::text, '1'::text) = 'PF' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.9'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 6d'::text description,
-       TT_nbi01_productive_for_translation('5'::text, '100'::text, 'F'::text, 'CC'::text, '0'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'F'::text, 'CC'::text, '0'::text) = 'PP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.10'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 7a'::text description,
-       TT_nbi01_productive_for_translation('5'::text, '100'::text, 'CC'::text, ''::text, '0'::text) = 'PF' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, ''::text, '0'::text) = 'PF' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.11'::text number,
-       'TT_nbi01_productive_for_translation'::text function_tested,
+       'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 7b'::text description,
-       TT_nbi01_productive_for_translation('5'::text, '100'::text, 'CC'::text, 'F'::text, '0'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, 'F'::text, '0'::text) = 'PP' passed
 ---------------------------------------------------------
+  -- TT_nbi01_nb02_productive_for_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '15.1'::text number,
+       'TT_nbi01_nb02_productive_for_translation'::text function_tested,
+       'Test fst = 1'::text description,
+       TT_nbi01_nb02_productive_for_translation(1::text) = 'PF' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '15.2'::text number,
+       'TT_nbi01_nb02_productive_for_translation'::text function_tested,
+       'Test fst = 2'::text description,
+       TT_nbi01_nb02_productive_for_translation(2::text) = 'PF' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '15.3'::text number,
+       'TT_nbi01_nb02_productive_for_translation'::text function_tested,
+       'Test fst = 3'::text description,
+       TT_nbi01_nb02_productive_for_translation(3::text) = 'PP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '15.4'::text number,
+       'TT_nbi01_nb02_productive_for_translation'::text function_tested,
+       'Test fst = 0'::text description,
+       TT_nbi01_nb02_productive_for_translation(0::text) IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '15.5'::text number,
+       'TT_nbi01_nb02_productive_for_translation'::text function_tested,
+       'Test fst is null'::text description,
+       TT_nbi01_nb02_productive_for_translation(NULL::text) IS NULL passed
+---------------------------------------------------------
+	
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
