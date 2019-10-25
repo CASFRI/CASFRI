@@ -15,10 +15,16 @@
 --
 -- 1) Load the test tables from a command window:
 --    >load_test_tables.bat 
--- 2) Execute the test in PostgreSQL (this file)
+-- 2) Execute "test_translation.sql" in PostgreSQL (this file)
 -- 3) If undesirable changes show up, fix your translation tables.
 --    If desirable changes occurs, dump them as new test tables and commit:
---    >dump_test_tables.bat 
+--    >dump_test_tables.bat
+--
+-- Whole test takes about 3 minutes. You can execute only part of it depending 
+-- on what translation file was modified.
+--
+-- You can get a detailled summary of the different between new translated tables
+-- and test tables by copying and executing the "check_query" query for a specific table.
 ------------------------------------------------------------------------------- 
 -- TT_TableColumnType 
 -- 
@@ -30,7 +36,7 @@
 -- 
 -- Return the column names for the speficied table. 
 ------------------------------------------------------------ 
---DROP FUNCTION IF EXISTS TT_TableColumnType(name, name, name); 
+--DROP FUNCTION IF EXISTS TT_TableColumnType(name, name, name);
 CREATE OR REPLACE FUNCTION TT_TableColumnType( 
   schemaName name, 
   tableName name,
@@ -52,7 +58,7 @@ $$ LANGUAGE sql VOLATILE;
 -- 
 -- Return the column names for the speficied table. 
 ------------------------------------------------------------ 
---DROP FUNCTION IF EXISTS TT_TableColumnNames(name, name); 
+--DROP FUNCTION IF EXISTS TT_TableColumnNames(name, name);
 CREATE OR REPLACE FUNCTION TT_TableColumnNames( 
   schemaName name, 
   tableName name 
@@ -90,17 +96,17 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- SELECT ST_ColumnExists('public', 'spatial_ref_sys', 'srid') ;
 -----------------------------------------------------------
 CREATE OR REPLACE FUNCTION ST_ColumnExists(
-    schemaname name,
-    tablename name,
-    columnname name
+  schemaname name,
+  tablename name,
+  columnname name
 )
 RETURNS BOOLEAN AS $$
-    DECLARE
-    BEGIN
-        PERFORM 1 FROM information_schema.COLUMNS
-        WHERE lower(table_schema) = lower(schemaname) AND lower(table_name) = lower(tablename) AND lower(column_name) = lower(columnname);
-        RETURN FOUND;
-    END;
+  DECLARE
+  BEGIN
+    PERFORM 1 FROM information_schema.COLUMNS
+    WHERE lower(table_schema) = lower(schemaname) AND lower(table_name) = lower(tablename) AND lower(column_name) = lower(columnname);
+    RETURN FOUND;
+  END;
 $$ LANGUAGE plpgsql VOLATILE STRICT;
 -------------------------------------------------------------------------------
 
@@ -149,13 +155,6 @@ RETURNS TABLE (attribute text,
     RETURN;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
-
--- test
---SELECT (TT_CompareRows(to_jsonb(ROW(1, 'c', 2)), to_jsonb(ROW(1, 'x', 3)))).*
-
---SELECT coalesce(a.id1, b.id1) id1, (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
---FROM temp.table01 a 
---FULL OUTER JOIN temp.table05 b USING (id1);
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -294,7 +293,7 @@ SELECT * FROM TT_Translate_bc08_cas_test('casfri50_test', 'bc08_test', 'ogc_fid'
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_bc09_cas_test('casfri50_test', 'bc09_test', 'ogc_fid');
 ------------------------
-SELECT count(*) FROM casfri50_test.cas_all_new; -- 1000
+SELECT count(*) FROM casfri50_test.cas_all_new; -- 3200
 -------------------------------------------------------
 -- Translate all DST tables into a common table
 -------------------------------------------------------
@@ -320,7 +319,7 @@ SELECT * FROM TT_Translate_bc08_dst_test('casfri50_test', 'bc08_test', 'ogc_fid'
 INSERT INTO casfri50_test.dst_all_new
 SELECT * FROM TT_Translate_bc09_dst_test('casfri50_test', 'bc09_test', 'ogc_fid');
 ------------------------
-SELECT count(*) FROM casfri50_test.dst_all_new;
+SELECT count(*) FROM casfri50_test.dst_all_new; -- 3200
 -------------------------------------------------------
 -- Translate all ECO tables into a common table
 -------------------------------------------------------
@@ -346,7 +345,7 @@ SELECT * FROM TT_Translate_bc08_eco_test('casfri50_test', 'bc08_test', 'ogc_fid'
 INSERT INTO casfri50_test.eco_all_new
 SELECT * FROM TT_Translate_bc09_eco_test('casfri50_test', 'bc09_test', 'ogc_fid');
 ------------------------
-SELECT count(*) FROM casfri50_test.eco_all_new; -- 1000
+SELECT count(*) FROM casfri50_test.eco_all_new; -- 3200
 -------------------------------------------------------
 -- Translate all LYR tables into a common table
 -------------------------------------------------------
@@ -414,7 +413,7 @@ UNION ALL
 SELECT '2.0' number, 
        'Compare "dst_all_new" and "dst_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''dstfri50_test'' , ''dst_all_new'', ''dstfri50_test'' , ''dst_all_test'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''dst_all_test'', ''casfri50_test'' , ''dst_all_new'', ''cas_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.dst_all_new a 
       FULL OUTER JOIN casfri50_test.dst_all_test b USING (cas_id)) foo
@@ -423,7 +422,7 @@ UNION ALL
 SELECT '3.0' number, 
        'Compare "eco_all_new" and "eco_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''ecofri50_test'' , ''eco_all_new'', ''ecofri50_test'' , ''eco_all_test'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''eco_all_test'', ''casfri50_test'' , ''eco_all_new'', ''cas_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.eco_all_new a 
       FULL OUTER JOIN casfri50_test.eco_all_test b USING (cas_id)) foo
@@ -432,7 +431,7 @@ UNION ALL
 SELECT '4.0' number, 
        'Compare "lyr_all_new" and "lyr_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''lyrfri50_test'' , ''lyr_all_new'', ''lyrfri50_test'' , ''lyr_all_test'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''lyr_all_test'', ''casfri50_test'' , ''lyr_all_new'', ''cas_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.lyr_all_new a 
       FULL OUTER JOIN casfri50_test.lyr_all_test b USING (cas_id)) foo
@@ -441,7 +440,7 @@ UNION ALL
 SELECT '5.0' number, 
        'Compare "nfl_all_new" and "nfl_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''nflfri50_test'' , ''nfl_all_new'', ''nflfri50_test'' , ''nfl_all_test'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''nfl_all_test'', ''casfri50_test'' , ''nfl_all_new'', ''cas_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.nfl_all_new a 
       FULL OUTER JOIN casfri50_test.nfl_all_test b USING (cas_id)) foo
