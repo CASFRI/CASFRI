@@ -431,6 +431,93 @@ SELECT * FROM translation.nb01_nbi01_geo
 SELECT * FROM translation_test.nb01_nbi01_geo_test;
 
 -------------------------------------------------------
+-- NB02
+-------------------------------------------------------
+-- display translation tables
+SELECT * FROM translation.nb02_nbi01_cas; 
+SELECT * FROM translation.nb02_nbi01_dst1;
+SELECT * FROM translation.nb02_nbi01_dst2;
+SELECT * FROM translation.nb02_nbi01_eco; 
+SELECT * FROM translation.nb02_nbi01_lyr1; 
+SELECT * FROM translation.nb02_nbi01_lyr2; 
+SELECT * FROM translation.nb02_nbi01_nfl;
+SELECT * FROM translation.nb02_nbi01_geo;
+----------------------------
+-- create subsets of translation tables if necessary
+----------------------------
+-- cas
+DROP TABLE IF EXISTS translation_test.nb02_nbi01_cas_test;
+CREATE TABLE translation_test.nb02_nbi01_cas_test WITH OIDS AS
+SELECT * FROM translation.nb02_nbi01_cas
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.nb02_nbi01_cas_test;
+----------------------------
+-- dst1
+DROP TABLE IF EXISTS translation_test.nb02_nbi01_dst1_test;
+CREATE TABLE translation_test.nb02_nbi01_dst1_test WITH OIDS AS
+SELECT * FROM translation.nb02_nbi01_dst1
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.nb02_nbi01_dst1_test;
+----------------------------
+-- dst2
+DROP TABLE IF EXISTS translation_test.nb02_nbi01_dst2_test;
+CREATE TABLE translation_test.nb02_nbi01_dst2_test WITH OIDS AS
+SELECT * FROM translation.nb02_nbi01_dst2
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.nb02_nbi01_dst2_test;
+----------------------------
+-- eco
+DROP TABLE IF EXISTS translation_test.nb02_nbi01_eco_test;
+CREATE TABLE translation_test.nb02_nbi01_eco_test WITH OIDS AS
+SELECT * FROM translation.nb02_nbi01_eco
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.nb02_nbi01_eco_test;
+----------------------------
+-- lyr1
+DROP TABLE IF EXISTS translation_test.nb02_nbi01_lyr1_test;
+CREATE TABLE translation_test.nb02_nbi01_lyr1_test WITH OIDS AS
+SELECT * FROM translation.nb02_nbi01_lyr1
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.nb02_nbi01_lyr1_test;
+----------------------------
+-- lyr2
+DROP TABLE IF EXISTS translation_test.nb02_nbi01_lyr2_test;
+CREATE TABLE translation_test.nb02_nbi01_lyr2_test WITH OIDS AS
+SELECT * FROM translation.nb02_nbi01_lyr2
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.nb02_nbi01_lyr2_test;
+----------------------------
+-- nfl
+DROP TABLE IF EXISTS translation_test.nb02_nbi01_nfl_test;
+CREATE TABLE translation_test.nb02_nbi01_nfl_test WITH OIDS AS
+SELECT * FROM translation.nb02_nbi01_nfl
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.nb02_nbi01_nfl_test;
+----------------------------
+-- geo
+DROP TABLE IF EXISTS translation_test.nb02_nbi01_geo_test;
+CREATE TABLE translation_test.nb02_nbi01_geo_test WITH OIDS AS
+SELECT * FROM translation.nb02_nbi01_geo
+--WHERE rule_id::int = 1
+;
+-- display
+SELECT * FROM translation_test.nb02_nbi01_geo_test;
+
+-------------------------------------------------------
 -- BC08
 -------------------------------------------------------
 -- display translation tables
@@ -725,6 +812,53 @@ SELECT src_filename, stdlab, ogc_fid, cas_id,
        l1s1, species_1,
        l1pr1, species_per_1
 FROM TT_Translate_nb01_lyr('rawfri', 'nb01_test_200'), rawfri.nb01_test_200
+WHERE ogc_fid::int = right(cas_id, 7)::int;
+
+-------------------------------------------------------
+-- NB02
+-------------------------------------------------------
+-- create translation function
+SELECT TT_Prepare('translation_test', 'nb02_nbi01_cas_test', '_nb02_cas');
+SELECT TT_Prepare('translation_test', 'nb02_nbi01_dst1_test', '_nb02_dst1');
+SELECT TT_Prepare('translation_test', 'nb02_nbi01_dst2_test', '_nb02_dst2');
+SELECT TT_Prepare('translation_test', 'nb02_nbi01_eco_test', '_nb02_eco');
+SELECT TT_Prepare('translation_test', 'nb02_nbi01_lyr1_test', '_nb02_lyr1');
+SELECT TT_Prepare('translation_test', 'nb02_nbi01_lyr2_test', '_nb02_lyr2');
+SELECT TT_Prepare('translation_test', 'nb02_nbi01_nfl_test', '_nb02_nfl');
+SELECT TT_Prepare('translation_test', 'nb02_nbi01_geo_test', '_nb02_geo');
+
+-- translate the samples
+SELECT * FROM TT_Translate_nb02_cas('rawfri', 'nb02_test_200', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb02_nbi01_cas_test');
+
+SELECT * FROM TT_Translate_nb02_dst1('rawfri', 'nb02_test_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb02_nbi01_dst1_test');
+
+SELECT * FROM TT_Translate_nb02_dst2('rawfri', 'nb02_test_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb02_nbi01_dst2_test');
+
+SELECT * FROM TT_Translate_nb02_eco('rawfri', 'nb02_test_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb02_nbi01_eco_test');
+
+SELECT * FROM TT_Translate_nb02_lyr1('rawfri', 'nb02_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb02_nbi01_lyr1_test');
+
+SELECT * FROM TT_Translate_nb02_lyr2('rawfri', 'nb02_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb02_nbi01_lyr2_test');
+
+SELECT * FROM TT_Translate_nb02_nfl('rawfri', 'nb02_test_200', 'ogc_fid'); -- 3 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb02_nbi01_nfl_test');
+
+SELECT * FROM TT_Translate_nb02_geo('rawfri', 'nb02_test_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb02_nbi01_geo_test');
+
+-- display original values and translated values side-by-side to compare and debug the translation table
+SELECT src_filename, stdlab, ogc_fid, cas_id, 
+       l1cc, crown_closure_lower, crown_closure_upper, 
+       l1ht, height_upper, height_lower, 
+       l1s1, species_1,
+       l1pr1, species_per_1
+FROM TT_Translate_nb02_lyr1('rawfri', 'nb02_test_200'), rawfri.nb02_test_200
 WHERE ogc_fid::int = right(cas_id, 7)::int;
 
 -------------------------------------------------------
