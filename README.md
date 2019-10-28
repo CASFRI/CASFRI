@@ -31,15 +31,15 @@ The current version is 5.0.2-beta and is available for download at https://githu
 <pre>
 ./                      Sample files for configuring and running scripts
 
-./conversion            Scripts for converting and loading FRI datasets using either .bat or .sh
+./conversion            Scripts for converting and loading FRI datasets using either .bat or .sh. (1st step)
 
 ./docs                  Documentation including CASFRI specifications
 
 ./helperfunctions       CASFRI specific helper functions used for table translation
 
-./translation           Translation tables and associated loading scripts
+./translation           Translation tables and associated loading scripts (2nd step)
 
-./dependencyvalidation  Translation tables that allow validation of input dependency tables
+./workflow              Actual SQL translation workflow (3rd step)
 </pre>
 
 # Requirements
