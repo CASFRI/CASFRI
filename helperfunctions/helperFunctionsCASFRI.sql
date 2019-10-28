@@ -14,26 +14,30 @@
 --
 --
 -------------------------------------------------------------------------------
--- Define default error codes for these helper functions...
+-- Overwrrite the TT_DefaultProjectErrorCode() function to define default error 
+-- codes for these helper functions...
 -------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION TT_DefaultProjectErrorCode(
   rule text, 
-  type text
+  targetType text
 )
 RETURNS text AS $$
   DECLARE
     rulelc text = lower(rule);
-    typelc text = lower(type);
+    targetTypelc text = lower(targetType);
   BEGIN
-    IF typelc = 'integer' OR typelc = 'int' OR typelc = 'double precision' THEN 
+    IF targetTypelc = 'integer' OR targetTypelc = 'int' OR targetTypelc = 'double precision' THEN 
       RETURN CASE WHEN rulelc = 'projectrule1' THEN '-9999'
-                  ELSE TT_DefaultErrorCode(rulelc, typelc) END;
+                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
+    ELSIF targetTypelc = 'geometry' THEN
+      RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
+                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSE
       RETURN CASE WHEN rulelc = 'nbi01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'vri01_nat_non_veg_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'vri01_non_for_anth_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'vri01_non_for_veg_validation' THEN 'INVALID_VALUE'
-                  ELSE TT_DefaultErrorCode(rulelc, typelc) END;
+                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
 $$ LANGUAGE plpgsql;
