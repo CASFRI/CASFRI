@@ -394,6 +394,17 @@ SELECT * FROM translation.nb01_nbi01_dst
 -- display
 SELECT * FROM translation_test.nb01_nbi01_dst_test;
 ----------------------------
+-- dst2
+DROP TABLE IF EXISTS translation_test.nb01_nbi01_dst2_test;
+CREATE TABLE translation_test.nb01_nbi01_dst2_test WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_dst;
+-- update layer and layer_rank translation rules
+UPDATE translation_test.nb01_nbi01_dst2_test
+SET translation_rules = 'copyInt(''2'')'
+WHERE rule_id = '14';
+-- display
+SELECT * FROM translation_test.nb01_nbi01_dst2_test;
+----------------------------
 -- eco
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_eco_test;
 CREATE TABLE translation_test.nb01_nbi01_eco_test WITH OIDS AS
@@ -411,6 +422,17 @@ SELECT * FROM translation.nb01_nbi01_lyr
 ;
 -- display
 SELECT * FROM translation_test.nb01_nbi01_lyr_test;
+----------------------------
+-- lyr2
+DROP TABLE IF EXISTS translation_test.nb01_nbi01_lyr2_test;
+CREATE TABLE translation_test.nb01_nbi01_lyr2_test WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_lyr;
+-- update layer and layer_rank translation rules
+UPDATE translation_test.nb01_nbi01_lyr2_test
+SET translation_rules = 'copyInt(''2'')'
+WHERE rule_id = '4' OR rule_id = '5';
+-- display
+SELECT * FROM translation_test.nb01_nbi01_lyr2_test;
 ----------------------------
 -- nfl
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_nfl_test;
@@ -781,8 +803,10 @@ WHERE ogc_fid::int = right(cas_id, 7)::int;
 -- create translation function
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_cas_test', '_nb01_cas');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_dst_test', '_nb01_dst');
+SELECT TT_Prepare('translation_test', 'nb01_nbi01_dst2_test', '_nb01_dst2');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_eco_test', '_nb01_eco');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_lyr_test', '_nb01_lyr');
+SELECT TT_Prepare('translation_test', 'nb01_nbi01_lyr2_test', '_nb01_lyr2');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_nfl_test', '_nb01_nfl');
 SELECT TT_Prepare('translation_test', 'nb01_nbi01_geo_test', '_nb01_geo');
 
@@ -804,6 +828,33 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_nfl_test');
 
 SELECT * FROM TT_Translate_nb01_geo('rawfri', 'nb01_test_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_geo_test');
+
+-- Create a view mapping the layer 2 attribute to the layer 1 attributes
+CREATE OR REPLACE VIEW rawfri.nb01_lyr2 AS
+SELECT src_filename, stdlab, ogc_fid,
+l2estyr l1estyr,	
+l2cc l1cc, l2ht l1ht,
+l2s1 l1s1, l2pr1 l1pr1,
+l2s2 l1s2, l2pr2 l1pr2,
+l2s3 l1s3, l2pr3 l1pr3,
+l2s4 l1s4, l2pr4 l1pr4,
+l2s5 l1s5, l2pr5 l1pr5
+FROM rawfri.nb01_test_200;
+
+-- Translate layer 2 using the view and the edited translation table
+SELECT * FROM TT_Translate_nb01_lyr2('rawfri', 'nb01_lyr2', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_lyr2_test');
+
+-- Create a view mapping the dst 2 attribute to the dst 1 attributes
+CREATE OR REPLACE VIEW rawfri.nb01_dst2 AS
+SELECT src_filename, stdlab, ogc_fid,
+l2trt l1trt,	
+l2trtyr l1trtyr
+FROM rawfri.nb01_test_200;
+
+-- Translate layer 2 using the view and the edited translation table
+SELECT * FROM TT_Translate_nb01_dst2('rawfri', 'nb01_dst2', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_dst2_test');
 
 -- display original values and translated values side-by-side to compare and debug the translation table
 SELECT src_filename, stdlab, ogc_fid, cas_id, 
