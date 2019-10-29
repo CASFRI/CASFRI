@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # This script loads the Quebec (QC02) into PostgreSQL
 
@@ -46,7 +46,8 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "gdbFileName" \
 -nln $fullTargetTableName \
--lco GEOMETRY_NAME="wkb_geometry" \
+-lco PRECISION=NO \
+-lco GEOMETRY_NAME=wkb_geometry \
 -t_srs $prjFile \
 -sql "SELECT *, '$srcFileName' AS src_filename FROM '$gdbFileName'" \
 -progress $overwrite_tab

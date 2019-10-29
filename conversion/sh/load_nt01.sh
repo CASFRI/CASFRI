@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # This script loads the NWT FVI forest inventory (NT01) into PostgreSQL
 
@@ -52,8 +52,8 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" \
 -nln $TargetTableName \
--lco precision=NO \
--lco GEOMETRY_NAME="wkb_geometry" \
+-lco PRECISION=NO \
+-lco GEOMETRY_NAME=wkb_geometry \
 -nlt PROMOTE_TO_MULTI \
 -t_srs $prjFile \
 -sql "SELECT *, '$srcFileName' as src_filename FROM '$srcFileName'" \

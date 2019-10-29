@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # This script loads the British Columbia VRI forest inventory (BC08) into PostgreSQL
 
@@ -47,7 +47,8 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" \
 -nln $fullTargetTableName \
--lco GEOMETRY_NAME="wkb_geometry" \
+-lco PRECISION=NO \
+-lco GEOMETRY_NAME=wkb_geometry \
 -t_srs $prjFile \
 -sql "SELECT *, '$srcFileName' as src_filename FROM '$gdbFileName'" \
 -progress $overwrite_tab
