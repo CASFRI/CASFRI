@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #This script loads the AB_0016 FRI data into PostgreSQL
 
@@ -43,17 +43,16 @@ ogrTab='PAL'
 "$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
 
 # Loop through all mapsheets.
-# For first load, set -lco precision=NO to avoid type errors on import. Remove for following loads.
+# For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
 # Set -overwrite for first load if requested in config
 # After first load, remove -overwrite and add -update -append
 # Two fields (FOREST# and FOREST-ID) don't load correctly because field names are not valid in PostgreSQL. Create two new columns (forest_id_1 and forest_id_2) with valid field names to hold these variables.
 # Original columns will be loaded as forest_ and forest_id, they will be NULL because ogr2ogr cannot append the values from the invalid field names.
 # New fields will be added to the right of the table
 
+update="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry"
 if [ $overwriteFRI == True ]; then
-  update="-overwrite -lco precision=NO"
-else 
-  update="-lco precision=NO"
+  update="-overwrite $update"
 fi
 
 for F in "$srcFullPath/t"* 
@@ -61,10 +60,9 @@ do
 	"$gdalFolder/ogr2ogr" \
 	-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$F/forest" \
 	-nln $fullTargetTableName \
-	-lco GEOMETRY_NAME="wkb_geometry" \
 	-t_srs $prjFile \
 	-sql "SELECT *, '${F##*/}' as src_filename, 'FOREST#' as 'forest_id_1', 'FOREST-ID' as 'forest_id_2' FROM $ogrTab" \
-	-progress $update
+	$update
 	
 	update="-update -append"  
 done

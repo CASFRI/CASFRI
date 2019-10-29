@@ -54,9 +54,9 @@ SET gdbFileName_photoyear=Inventory_Extents
 SET srcFullPath="%friDir%\NT\NT02\%srcFileName%.gdb"
 
 SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
-SET geometryTableName=%targetFRISchema%.nt02geometry
-SET attributeTableName=%targetFRISchema%.nt02attributes
-SET photoyearTableName=%targetFRISchema%.nt02photoyear
+SET geometryTableName=%targetFRISchema%.nt02_geometry
+SET attributeTableName=%targetFRISchema%.nt02_attributes
+SET photoyearTableName=%targetFRISchema%.nt02_photoyear
 
 SET query=ALTER TABLE %attributeTableName% DROP COLUMN IF EXISTS invproj_id; ^
 ALTER TABLE %attributeTableName% DROP COLUMN IF EXISTS seam_id; ^
@@ -93,6 +93,8 @@ IF %overwriteFRI% == True (
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% "%gdbFileName_geometry%" ^
 -nln %geometryTableName% ^
+-lco PRECISION=NO ^
+-lco GEOMETRY_NAME=wkb_geometry ^
 -t_srs %prjFile% ^
 -sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%gdbFileName_geometry%""" ^
 -progress %overwrite_tab%
@@ -107,6 +109,8 @@ IF %overwriteFRI% == True (
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% "%gdbFileName_photoyear%" ^
 -nln %photoyearTableName% ^
+-lco PRECISION=NO ^
+-lco GEOMETRY_NAME=wkb_geometry ^
 -t_srs %prjFile% ^
 -progress %overwrite_tab%
 

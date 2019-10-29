@@ -27,7 +27,8 @@ IF EXIST "%~dp0\..\..\config.bat" (
 :: Set unvariable variables
 
 SET srcFileName=VEG_COMP_LYR_R1_POLY
-SET srcFullPath="%friDir%\BC\SourceDataset\v.00.05\VEG_COMP_LYR_R1_POLY\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\BC\BC08\%srcFileName%.gdb"
+
 
 SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.bc08
@@ -49,6 +50,8 @@ IF %overwriteFRI% == True (
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% ^
 -nln %fullTargetTableName% ^
+-lco PRECISION=NO ^
+-lco GEOMETRY_NAME=wkb_geometry ^
 -t_srs %prjFile% ^
 -sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%srcFileName%""" ^
 -progress %overwrite_tab%

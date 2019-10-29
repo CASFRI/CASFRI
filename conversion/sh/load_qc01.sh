@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # This script loads the QC_01 FRI data into PostgreSQL
 
@@ -47,14 +47,13 @@ ogrTab='c08peefo'
 "$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
 
 # Loop through all tiles.
-# For first load, set -lco precision=NO to avoid type errors on import. Remove for following loads.
+# For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
 # Set -overwrite for first load if requested in config
 # After first load, remove -overwrite and add -update -append
 
+  update="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry"
 if [ $overwriteFRI == True ]; then
-  update="-overwrite -lco precision=NO"
-else 
-  update="-lco precision=NO"
+  update="-overwrite $update" 
 fi
 
 for F in "$srcFullPath/"* 
@@ -66,7 +65,6 @@ do
 		"$gdalFolder/ogr2ogr" \
 		-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$F/$ogrTab.shp" \
 		-nln $fullTargetTableName \
-		-lco GEOMETRY_NAME="wkb_geometry" \
 		-t_srs $prjFile \
 		-sql "SELECT *, '${F##*/}' as src_filename FROM $ogrTab" \
 		-progress $update

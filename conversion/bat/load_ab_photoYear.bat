@@ -44,6 +44,8 @@ if %overwriteFRI% == True (
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% ^
 -nln %fullTargetTableName% ^
+-lco PRECISION=NO ^
+-lco GEOMETRY_NAME=wkb_geometry ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
 -progress %overwrite_tab%

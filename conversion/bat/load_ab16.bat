@@ -43,9 +43,9 @@ SET srcFullPath=%friDir%\AB\AB16\
 SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab16
 
-
+SET ogr_options=-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry
 IF %overwriteFRI% == True (
-  SET ogr_options=-overwrite -lco precision=NO
+  SET ogr_options=-overwrite %ogr_options%
 )
 
 IF "%pgpassword4ab16%"=="" SET pgpassword4ab16=%pgpassword%
@@ -62,7 +62,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 "%gdalFolder%/ogrinfo" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%"
 
 :: Loop through all mapsheets.
-:: For first load, set -lco precision=NO to avoid type errors on import. Remove for following loads.
+:: For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
 :: Set -overwrite for first load if requested in config
 :: After first load, remove -overwrite and add -update -append
 :: Two fields (FOREST# and FOREST-ID) don't load correctly because field names are not valid in PostgreSQL. Create two new columns (forest_id_1 and forest_id_2) with valid field names to hold these variables.
@@ -74,7 +74,7 @@ FOR /D %%F IN (%srcFullPath%\t*) DO (
   -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" ^
   -sql "SELECT *, '%%~nF' as src_filename, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
   -nln %fullTargetTableName% -t_srs %prjFile% ^
-  !ogr_options! ^
+  %ogr_options! ^
   "%%F\forest"
   
   SET ogr_options=-update -append

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # This script loads the New Brunswick FRI data into PostgreSQL
 
@@ -66,12 +66,12 @@ fi
 
 ### FILE 1 ###
 #Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
-#Solution is to load the Waterbody table first with -lco precision=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
+#Solution is to load the Waterbody table first with -lco PRECISION=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcWaterFullPath" \
--lco precision=NO \
--lco GEOMETRY_NAME="wkb_geometry" \
 -nln $fullTargetTableName \
+-lco PRECISION=NO \
+-lco GEOMETRY_NAME=wkb_geometry \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcNameWater' as src_filename, 0 as stdlab FROM '$ogrTabWater'" \

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # This script loads the Alberta photo year file into PostgreSQL
 
@@ -43,7 +43,8 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcFullPath" \
 -nln $fullTargetTableName \
--lco GEOMETRY_NAME="wkb_geometry" \
+-lco PRECISION=NO \
+-lco GEOMETRY_NAME=wkb_geometry \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab

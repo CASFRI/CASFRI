@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # This script loads the NWT FVI forest inventory (NT02) into PostgreSQL
 
@@ -55,9 +55,9 @@ gdbFileName_photoyear=Inventory_Extents
 srcFullPath="$friDir/NT/NT02/NT_FORCOV.gdb"
 
 prjFile="./../canadaAlbersEqualAreaConic.prj"
-geometryTableName=$targetFRISchema.nt02geometry
-attributeTableName=$targetFRISchema.nt02attributes
-photoyearTableName=$targetFRISchema.nt02photoyear
+geometryTableName=$targetFRISchema.nt02_geometry
+attributeTableName=$targetFRISchema.nt02_attributes
+photoyearTableName=$targetFRISchema.nt02_photoyear
 targetTableName=$targetFRISchema.nt02
 
 if [ $overwriteFRI == True ]; then
@@ -75,7 +75,8 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_geometry" \
 -nln $geometryTableName \
--lco GEOMETRY_NAME="wkb_geometry" \
+-lco PRECISION=NO \
+-lco GEOMETRY_NAME=wkb_geometry \
 -t_srs $prjFile \
 -sql "SELECT *, '$srcFileName' AS src_filename FROM '$gdbFileName_geometry'" \
 -progress $overwrite_tab
@@ -83,15 +84,16 @@ fi
 #Run ogr2ogr for attributes
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_attributes" \
+-lco PRECISION=NO \
 -nln $attributeTableName \
--lco GEOMETRY_NAME="wkb_geometry" \
 -progress $overwrite_tab
 
 #Run ogr2ogr for photo year
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" "$gdbFileName_photoyear" \
 -nln $photoyearTableName \
--lco GEOMETRY_NAME="wkb_geometry" \
+-lco PRECISION=NO \
+-lco GEOMETRY_NAME=wkb_geometry \
 -t_srs $prjFile \
 -progress $overwrite_tab
 
