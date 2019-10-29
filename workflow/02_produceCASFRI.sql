@@ -58,9 +58,26 @@ SELECT count(*) FROM casfri50.cas_all; -- 5736548
 -------------------------------------------------------
 -- Translate all DST tables into a common table
 -------------------------------------------------------
+-- make table edits and copies as needed for use with VIEWs
+-- NB01_dst2 translations table
+DROP TABLE IF EXISTS translation.nb01_nbi01_dst2;
+CREATE TABLE translation.nb01_nbi01_dst2 WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_dst;
+UPDATE translation.nb01_nbi01_dst2
+SET translation_rules = 'copyInt(''2'')'
+WHERE rule_id = '14';
+
+-- Make VIEWs
+CREATE OR REPLACE VIEW rawfri.nb01_dst2 AS
+SELECT src_filename, stdlab, ogc_fid,
+l2trt l1trt,	
+l2trtyr l1trtyr
+FROM rawfri.nb01;
+
 SELECT TT_Prepare('translation', 'ab06_avi01_dst', '_ab06_dst');
 SELECT TT_Prepare('translation', 'ab16_avi01_dst', '_ab16_dst', 'ab06_avi01_dst');
 SELECT TT_Prepare('translation', 'nb01_nbi01_dst', '_nb01_dst', 'ab06_avi01_dst');
+SELECT TT_Prepare('translation', 'nb01_nbi01_dst2', '_nb01_dst2', 'ab06_avi01_dst');
 SELECT TT_Prepare('translation', 'bc08_vri01_dst', '_bc08_dst', 'ab06_avi01_dst');
 ------------------------
 --DROP TABLE IF EXISTS casfri50.dst_all;
@@ -78,6 +95,11 @@ INSERT INTO casfri50.dst_all -- 1h32m
 SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_dst');
+------------------------
+INSERT INTO casfri50.dst_all -- 1h11m
+SELECT * FROM TT_Translate_nb01_dst2('rawfri', 'nb01_dst2', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_dst2');
 ------------------------
 INSERT INTO casfri50.dst_all -- 7h3m
 SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08', 'ogc_fid');
@@ -134,9 +156,31 @@ SELECT count(*) FROM casfri50.hdr_all; -- 4
 -------------------------------------------------------
 -- Translate all LYR tables into a common table
 -------------------------------------------------------
+-- make table edits and copies as needed for use with VIEWs
+-- NB01_lyr2 translations table
+DROP TABLE IF EXISTS translation.nb01_nbi01_lyr2;
+CREATE TABLE translation.nb01_nbi01_lyr2 WITH OIDS AS
+SELECT * FROM translation.nb01_nbi01_lyr;
+UPDATE translation.nb01_nbi01_lyr2
+SET translation_rules = 'copyInt(''2'')'
+WHERE rule_id = '4' OR rule_id = '5';
+
+-- Make VIEWs
+CREATE OR REPLACE VIEW rawfri.nb01_lyr2 AS
+SELECT src_filename, stdlab, ogc_fid,
+l2estyr l1estyr,	
+l2cc l1cc, l2ht l1ht,
+l2s1 l1s1, l2pr1 l1pr1,
+l2s2 l1s2, l2pr2 l1pr2,
+l2s3 l1s3, l2pr3 l1pr3,
+l2s4 l1s4, l2pr4 l1pr4,
+l2s5 l1s5, l2pr5 l1pr5
+FROM rawfri.nb01;
+
 SELECT TT_Prepare('translation', 'ab06_avi01_lyr', '_ab06_lyr');
 SELECT TT_Prepare('translation', 'ab16_avi01_lyr', '_ab16_lyr', 'ab06_avi01_lyr');
 SELECT TT_Prepare('translation', 'nb01_nbi01_lyr', '_nb01_lyr', 'ab06_avi01_lyr');
+SELECT TT_Prepare('translation', 'nb01_nbi01_lyr2', '_nb01_lyr2', 'ab06_avi01_lyr');
 SELECT TT_Prepare('translation', 'bc08_vri01_lyr', '_bc08_lyr', 'ab06_avi01_lyr');
 -------------------------
 --DROP TABLE IF EXISTS casfri50.lyr_all;
@@ -154,6 +198,11 @@ INSERT INTO casfri50.lyr_all -- 5h32m
 SELECT * FROM TT_Translate_nb01_lyr('rawfri', 'nb01', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_lyr');
+------------------------
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_nb01_lyr2('rawfri', 'nb01', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_lyr2');
 ------------------------
 INSERT INTO casfri50.lyr_all -- 30h19m
 SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08', 'ogc_fid');
