@@ -1,23 +1,22 @@
-source_val,spec1,spec2,spec3,spec4,spec5
-*UN,Spec unkn,Spec unkn,Spec unkn,Spec unkn,Spec unkn
-A,Popu spp.,Popu spp.,Popu spp.,Popu spp.,Popu spp.
-AW,Popu trem,Popu trem,Popu trem,Popu trem,Popu trem
-BW,Betu papy,Betu papy,Betu papy,Betu papy,Betu papy
-FA,Abie lasi,Abie lasi,Abie lasi,Abie lasi,Abie lasi
-FB,Abie bals,Abie bals,Abie bals,Abie bals,Abie bals
-FD,Pseu menz,Pseu menz,Pseu menz,Pseu menz,Pseu menz
-LA,Lari lyal,Lari lyal,Lari lyal,Lari lyal,Lari lyal
-LT,Lari lari,Lari lari,Lari lari,Lari lari,Lari lari
-LW,Lari occi,Lari occi,Lari occi,Lari occi,Lari occi
-P,Pinu spp.,Pinu spp.,Pinu spp.,Pinu spp.,Pinu spp.
-PA,Pinu albi,Pinu albi,Pinu albi,Pinu albi,Pinu albi
-PB,Popu balb,Popu balb,Popu balb,Popu balb,Popu balb
-PF,Pinu flex,Pinu flex,Pinu flex,Pinu flex,Pinu flex
-PJ,Pinu bank,Pinu bank,Pinu bank,Pinu bank,Pinu bank
-PL,Pinu cont,Pinu cont,Pinu cont,Pinu cont,Pinu cont
-SB,Pice mari,Pice mari,Pice mari,Pice mari,Pice mari
-SE,Pice enge,Pice enge,Pice enge,Pice enge,Pice enge
-SW,Pice glau,Pice glau,Pice glau,Pice glau,Pice glau
-BP,Betu papy,Betu papy,Betu papy,Betu papy,Betu papy
-WI,Sali spp.,Sali spp.,Sali spp.,Sali spp.,Sali spp.
-AL,Alnu spp.,Alnu spp.,Alnu spp.,Alnu spp.,Alnu spp.
+source_val,spec1,spec2,spec3,spec4
+A,Popu trem,Spec unkn,Spec unkn,Spec unkn
+BW,Betu papy,Popu spp.,Popu spp.,Popu spp.
+SW,Pice glau,Popu trem,Popu trem,Popu trem
+SB,Pice mari,Betu papy,Betu papy,Betu papy
+PL,Pinu cont,Abie lasi,Abie lasi,Abie lasi
+PJ,Pinu bank,Abie bals,Abie bals,Abie bals
+F,Abie lasi,Pseu menz,Pseu menz,Pseu menz
+L,Lari lari,Lari lyal,Lari lyal,Lari lyal
+PO,Popu balb,Lari lari,Lari lari,Lari lari
+SA,Sali spp.,Lari occi,Lari occi,Lari occi
+AL,Alnu spp.,Pinu spp.,Pinu spp.,Pinu spp.
+S,Pice spp.,Pinu albi,Pinu albi,Pinu albi
+AW,Popu trem,Popu balb,Popu balb,Popu balb
+LW,Lari lari,Pinu flex,Pinu flex,Pinu flex
+PB,Popu bals,Pinu bank,Pinu bank,Pinu bank
+AB,Abies spp.,Pinu cont,Pinu cont,Pinu cont
+BG,Uncl spp.,Pice mari,Pice mari,Pice mari
+BS,Pice mari,Pice enge,Pice enge,Pice enge
+PB,Popu bals,Pice glau,Pice glau,Pice glau
+P,Pinu spp.,Betu papy,Betu papy,Betu papy
+XX,Uncl spp.,Sali spp.,Sali spp.,Sali spp.
