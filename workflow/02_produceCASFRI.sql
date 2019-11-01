@@ -74,6 +74,8 @@ SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_cas');
 ------------------------
 SELECT count(*) FROM casfri50.cas_all; -- 5736548
+
+ALTER TABLE casfri50.cas_all ADD PRIMARY KEY (cas_id);
 -------------------------------------------------------
 -- Translate all DST tables into a common table
 -------------------------------------------------------
@@ -149,6 +151,8 @@ SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_dst');
 ------------------------
 SELECT count(*) FROM casfri50.dst_all; -- 5736548
+
+ALTER TABLE casfri50.dst_all ADD PRIMARY KEY (cas_id, layer);
 -------------------------------------------------------
 -- Translate all ECO tables into a common table
 -------------------------------------------------------
@@ -195,6 +199,8 @@ SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_eco');
 ------------------------
 SELECT count(*) FROM casfri50.eco_all; -- 5736548
+
+ALTER TABLE casfri50.eco_all ADD PRIMARY KEY (cas_id);
 -------------------------------------------------------
 -- Translate all HDR tables into a common table
 -- HDR tables only need one row per inventory, they
@@ -211,6 +217,8 @@ FROM translation.inventory_list_cas05
 WHERE inventory_id IN ('AB06', 'AB16', 'BC08', 'NB01', 'NB02');
 ------------------------
 SELECT count(*) FROM casfri50.hdr_all; -- 5
+
+ALTER TABLE casfri50.hdr_all ADD PRIMARY KEY (inventory_id);
 -------------------------------------------------------
 -- Translate all LYR tables into a common table
 -------------------------------------------------------
@@ -316,6 +324,8 @@ SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_lyr');
 ------------------------
 SELECT count(*) FROM casfri50.lyr_all; -- 5736548
+
+ALTER TABLE casfri50.lyr_all ADD PRIMARY KEY (cas_id, layer);
 -------------------------------------------------------
 -- Translate all NFL tables into a common table
 -------------------------------------------------------
@@ -362,6 +372,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_nfl');
 ------------------------
 SELECT count(*) FROM casfri50.nfl_all; -- 5736548
 
+ALTER TABLE casfri50.nfl_all ADD PRIMARY KEY (cas_id, layer);
 -------------------------------------------------------
 -- Translate all GEO tables into a common table
 -------------------------------------------------------
@@ -408,4 +419,6 @@ SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_geo');
 ------------------------
 SELECT count(*) FROM casfri50.geo_all; --5736548
 SELECT count(*) FROM casfri50.geo_all WHERE geometry = '010300000000000000'; -- 0
+
+ALTER TABLE casfri50.geo_all ADD PRIMARY KEY (cas_id);
 ------------------------
