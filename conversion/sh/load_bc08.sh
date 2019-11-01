@@ -17,38 +17,18 @@
 
 ######################################## Set variables #######################################
 
-# Load config variables from local config file
-if [ -f ../../config.sh ]; then 
-  source ../../config.sh
-else
-  echo ERROR: NO config.sh FILE
-  exit 1
-fi
+source ./common.sh
 
 srcFileName=VEG_COMP_LYR_R1_POLY
-gdbFileName=$srcFileName
 srcFullPath="$friDir/BC/BC08/$srcFileName.gdb"
 
-prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.bc08
-
-if [ $overwriteFRI == True ]; then
-  overwrite_tab=-overwrite
-else 
-  overwrite_tab=
-fi
 
 ########################################## Process ######################################
 
-#Create schema if it doesn't exist
-"$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
-
-#Run ogr2ogr
+# Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$srcFullPath" \
--nln $fullTargetTableName \
--lco PRECISION=NO \
--lco GEOMETRY_NAME=wkb_geometry \
--t_srs $prjFile \
--sql "SELECT *, '$srcFileName' as src_filename FROM '$gdbFileName'" \
+-f PostgreSQL "$pg_connection_string" "$srcFullPath" \
+-nln $fullTargetTableName $layer_creation_option \
+-sql "SELECT *, '$srcFileName' as src_filename FROM '$srcFileName'" \
 -progress $overwrite_tab

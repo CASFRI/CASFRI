@@ -14,37 +14,18 @@
 
 ######################################## Set variables #######################################
 
-# load config variables
-if [ -f ../../config.sh ]; then 
-  source ../../config.sh
-else
-  echo ERROR: NO config.sh FILE
-  exit 1
-fi
+source ./common.sh
 
 srcFileName=PhotoYear_Update
 srcFullPath="$friDir/AB/PhotoYear/$srcFileName.shp"
 
-prjFile="../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.ab_photoYear
-
-if [ $overwriteFRI == True ]; then
-  overwrite_tab=-overwrite
-else 
-  overwrite_tab=
-fi
 
 ########################################## Process ######################################
 
-#Create schema if it doesn't exist
-"$gdalFolder/ogrinfo" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
-
-#Run ogr2ogr
+# Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "PG:host=$pghost dbname=$pgdbname user=$pguser password=$pgpassword port=$pgport" "$srcFullPath" \
--nln $fullTargetTableName \
--lco PRECISION=NO \
--lco GEOMETRY_NAME=wkb_geometry \
--t_srs $prjFile \
+-f PostgreSQL "$pg_connection_string" "$srcFullPath" \
+-nln $fullTargetTableName $layer_creation_option \
 -nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab

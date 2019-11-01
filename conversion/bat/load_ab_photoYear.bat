@@ -14,39 +14,19 @@
 
 SETLOCAL
 
-:: load config variables
-if exist "%~dp0\..\..\config.bat" ( 
-  call "%~dp0\..\..\config.bat"
-) else (
-  echo ERROR: NO config.bat FILE
-  exit /b
-)
+CALL .\common.bat
 
 SET srcFileName=PhotoYear_Update
 SET srcFullPath="%friDir%/AB/PhotoYear/%srcFileName%.shp"
 
-SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab_photoYear
-
-
-if %overwriteFRI% == True (
-  SET overwrite_tab=-overwrite 
-) else (
-  SET overwrite_tab=
-)
 
 ::############################ Script - shouldn't need editing #############################
 
-:: Create schema if it doesn't exist
-"%gdalFolder%/ogrinfo" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
-
-::Run ogr2ogr
+:: Run ogr2ogr
 "%gdalFolder%/ogr2ogr" ^
--f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% ^
--nln %fullTargetTableName% ^
--lco PRECISION=NO ^
--lco GEOMETRY_NAME=wkb_geometry ^
--t_srs %prjFile% ^
+-f "PostgreSQL" %pg_connection_string% %srcFullPath% ^
+-nln %fullTargetTableName% %layer_creation_option% ^
 -nlt PROMOTE_TO_MULTI ^
 -progress %overwrite_tab%
 

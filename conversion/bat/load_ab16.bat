@@ -27,26 +27,14 @@
 
 SETLOCAL
 
-:: Load config variables from local config file
-IF EXIST "%~dp0\..\..\config.bat" ( 
-  CALL "%~dp0\..\..\config.bat"
-) ELSE (
-  ECHO ERROR: NO config.bat FILE
-  EXIT /b
-)
-
-:: Set unvariable variables
+CALL .\common.bat
 
 SET srcFirstFileName=t059r04m6
 SET srcFullPath=%friDir%\AB\AB16\
 
-SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.ab16
 
-SET ogr_options=-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry
-IF %overwriteFRI% == True (
-  SET ogr_options=-overwrite %ogr_options%
-)
+SET ogr_options=-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry %overwrite_tab%
 
 IF "%pgpassword4ab16%"=="" SET pgpassword4ab16=%pgpassword%
 
@@ -71,11 +59,11 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 FOR /D %%F IN (%srcFullPath%\t*) DO (
   "%gdalFolder%/ogr2ogr" ^
-  -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" ^
+  -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" "%%F\forest" ^
+  -nln %fullTargetTableName% ^
+  -t_srs %prjFile% ^
   -sql "SELECT *, '%%~nF' as src_filename, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
-  -nln %fullTargetTableName% -t_srs %prjFile% ^
-  %ogr_options! ^
-  "%%F\forest"
+  !ogr_options!
   
   SET ogr_options=-update -append
 )

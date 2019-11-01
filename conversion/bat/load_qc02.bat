@@ -16,43 +16,20 @@
 
 SETLOCAL
 
-:: Load config variables from local config file
-IF EXIST "%~dp0\..\..\config.bat" ( 
-  CALL "%~dp0\..\..\config.bat"
-) ELSE (
-  ECHO ERROR: NO config.bat FILE
-  EXIT /b
-)
-
-:: Set unvariable variables
+CALL .\common.bat
 
 SET srcFileName=DDE_20K_PEU_ECOFOR_ORI_VUE_SE
-SET gdbFileName=%srcFileName%
 SET srcFullPath="%friDir%\QC\QC02\PEE_ORI_PROV.gdb"
 
-SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.qc02
-
-
-IF %overwriteFRI% == True (
-  SET overwrite_tab=-overwrite 
-) ELSE (
-  SET overwrite_tab=
-)
 
 :: ########################################## Process ######################################
 
-::Create schema if it doesn't exist
-"%gdalFolder%/ogrinfo" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
-
-::Run ogr2ogr
+:: Run ogr2ogr
 "%gdalFolder%/ogr2ogr" ^
--f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcFullPath% "%gdbFileName%" ^
--nln %fullTargetTableName% ^
--lco PRECISION=NO ^
--lco GEOMETRY_NAME=wkb_geometry ^
--t_srs %prjFile% ^
--sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%gdbFileName%""" ^
+-f "PostgreSQL" %pg_connection_string% %srcFullPath% ^
+-nln %fullTargetTableName% %layer_creation_option% ^
+-sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%srcFileName%""" ^
 -progress %overwrite_tab%
 
 ENDLOCAL

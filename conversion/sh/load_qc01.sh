@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # This script loads the QC_01 FRI data into PostgreSQL
 
@@ -12,9 +12,8 @@
 # Note that -update is also needed in order to append in PostgreSQL. 
 # -addfields is not needed here as columns match in all tables.
 
-########################################################################################################
-####### 13 tiles beginning in 11 have do not have matching attributes. Leaving these out for now #######
-######################################################################################################## 
+# Sheets starting with '11' do not have all matching attributes. They are loaded as 
+# a second step. 
 
 # The year of photography is included as a shapefile. 
 
@@ -25,50 +24,56 @@
 
 ######################################## Set variables #######################################
 
-# load config variables
-if [ -f ../../config.sh ]; then 
-  source ../../config.sh
-else
-  echo ERROR: NO config.sh FILE
-  exit 1
-fi
+source ./common.sh
 
 srcFullPath=$friDir/QC/QC01
-
-prjFile="./../canadaAlbersEqualAreaConic.prj"
-fullTargetTableName=$targetFRISchema.qc01
+fullTargetTableName=$targetFRISchema.qc01_testsh
 
 # PostgreSQL variables
 ogrTab='c08peefo'
 
 ########################################## Process ######################################
 
-#Create schema if it doesn't exist
-"$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
-
 # Loop through all tiles.
 # For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
 # Set -overwrite for first load if requested in config
 # After first load, remove -overwrite and add -update -append
 
-  update="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry"
-if [ $overwriteFRI == True ]; then
-  update="-overwrite $update" 
-fi
+ogr_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry $overwrite_tab"
 
-for F in "$srcFullPath/"* 
-do	
-	if ! [[ $F == *"/11"* ]]
-		then
-		echo $F
-	
-		"$gdalFolder/ogr2ogr" \
-		-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$F/$ogrTab.shp" \
-		-nln $fullTargetTableName \
-		-t_srs $prjFile \
-		-sql "SELECT *, '${F##*/}' as src_filename FROM $ogrTab" \
-		-progress $update
-	
-		update="-update -append"  
-	fi
+for F in "$srcFullPath/"*
+do
+  if ! [[ ${F##*/} == 11* ]]
+    then
+    echo '***********************************************************************'
+    echo '*********************** Loading '${F##*/}'... ***********************'
+    echo ' '
+
+    "$gdalFolder/ogr2ogr" \
+    -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
+    -nln $fullTargetTableName \
+    -t_srs $prjFile \
+    -sql "SELECT *, '${F##*/}' as src_filename FROM $ogrTab" \
+    -progress $ogr_options
+
+    ogr_options="-update -append"
+  else
+    echo '***********************************************************************'
+    echo '*********************** Skipping '${F##*/}'... ****************************'
+    echo ' '
+  fi
+done
+
+for F in "$srcFullPath/"11*
+do
+    echo '***********************************************************************'
+    echo '*********************** Loading '${F##*/}'... ***********************'
+    echo ' '
+
+    "$gdalFolder/ogr2ogr" \
+    -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
+    -nln $fullTargetTableName \
+    -t_srs $prjFile \
+    -sql "SELECT *, '${F##*/}' as src_filename FROM $ogrTab" \
+    -progress $ogr_options
 done

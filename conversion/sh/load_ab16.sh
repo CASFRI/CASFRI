@@ -20,27 +20,17 @@
 
 ######################################## Set variables #######################################
 
-# load config variables
-if [ -f ../../config.sh ]; then 
-  source ../../config.sh
-else
-  echo ERROR: NO config.sh FILE
-  exit 1
-fi
+source ./common.sh
 
 srcFirstFileName=t059r04m6
 srcFullPath=$friDir/AB/AB16
 
-prjFile="./../canadaAlbersEqualAreaConic.prj"
 fullTargetTableName=$targetFRISchema.ab16
 
 # PostgreSQL variables
 ogrTab='PAL'
 
 ########################################## Process ######################################
-
-#Create schema if it doesn't exist
-"$gdalFolder/ogrinfo" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
 
 # Loop through all mapsheets.
 # For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
@@ -50,19 +40,16 @@ ogrTab='PAL'
 # Original columns will be loaded as forest_ and forest_id, they will be NULL because ogr2ogr cannot append the values from the invalid field names.
 # New fields will be added to the right of the table
 
-update="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry"
-if [ $overwriteFRI == True ]; then
-  update="-overwrite $update"
-fi
+ogr_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry $overwrite_tab"
 
 for F in "$srcFullPath/t"* 
-do	
-	"$gdalFolder/ogr2ogr" \
-	-f "PostgreSQL" "PG:host=$pghost port=$pgport dbname=$pgdbname user=$pguser password=$pgpassword" "$F/forest" \
-	-nln $fullTargetTableName \
-	-t_srs $prjFile \
-	-sql "SELECT *, '${F##*/}' as src_filename, 'FOREST#' as 'forest_id_1', 'FOREST-ID' as 'forest_id_2' FROM $ogrTab" \
-	$update
-	
-	update="-update -append"  
+do
+  "$gdalFolder/ogr2ogr" \
+  -f PostgreSQL "$pg_connection_string" "$F/forest" \
+  -nln $fullTargetTableName \
+  -t_srs $prjFile \
+  -sql "SELECT *, '${F##*/}' as src_filename, 'FOREST#' as 'forest_id_1', 'FOREST-ID' as 'forest_id_2' FROM $ogrTab" \
+  $ogr_options
+
+  ogr_options="-update -append"  
 done

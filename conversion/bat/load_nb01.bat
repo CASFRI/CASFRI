@@ -25,15 +25,7 @@
 
 SETLOCAL
 
-:: Load config variables from local config file
-IF EXIST "%~dp0\..\..\config.bat" ( 
-  CALL "%~dp0\..\..\config.bat"
-) ELSE (
-  ECHO ERROR: NO config.bat FILE
-  EXIT /b
-)
-
-:: Set unvariable variables
+CALL .\common.bat
 
 SET NB_subFolder=NB\NB01\
 
@@ -53,30 +45,16 @@ SET srcNameForest=Forest
 SET ogrTabForest=%srcNameForest%
 SET srcForestFullPath="%friDir%\%NB_subFolder%%ogrTabForest%.shp"
 
-SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 SET fullTargetTableName=%targetFRISchema%.nb01
 
-
-IF %overwriteFRI% == True (
-  SET overwrite_tab=-overwrite 
-) ELSE (
-  SET overwrite_tab=
-)
-
 :: ########################################## Process ######################################
-
-::Create schema if it doesn't exist
-"%gdalFolder%/ogrinfo" PG:"port=%pgport% host=%pghost% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetFRISchema%";
 
 ::### FILE 1 ###
 ::Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
 ::Solution is to load the Waterbody table first with -lco PRECISION=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
 "%gdalFolder%/ogr2ogr" ^
--f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWaterFullPath% ^
--nln %fullTargetTableName% ^
--lco PRECISION=NO ^
--lco GEOMETRY_NAME=wkb_geometry ^
--t_srs %prjFile% ^
+-f "PostgreSQL" %pg_connection_string% %srcWaterFullPath% ^
+-nln %fullTargetTableName% %layer_creation_option% ^
 -nlt PROMOTE_TO_MULTI ^
 -sql "SELECT *, '%srcNameWater%' AS src_filename, 0 AS stdlab FROM ""%ogrTabWater%""" ^
 -progress %overwrite_tab%
@@ -84,7 +62,7 @@ IF %overwriteFRI% == True (
 ::### FILE 2 ###
 "%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcNonForestFullPath% ^
+-f "PostgreSQL" %pg_connection_string% %srcNonForestFullPath% ^
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
@@ -94,7 +72,7 @@ IF %overwriteFRI% == True (
 ::### FILE 3 ###
 "%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcWetlandFullPath% ^
+-f "PostgreSQL" %pg_connection_string% %srcWetlandFullPath% ^
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
@@ -104,7 +82,7 @@ IF %overwriteFRI% == True (
 ::## File 4 ###
 "%gdalFolder%/ogr2ogr" ^
 -update -append -addfields ^
--f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" %srcForestFullPath% ^
+-f "PostgreSQL" %pg_connection_string% %srcForestFullPath% ^
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
