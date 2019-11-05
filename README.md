@@ -99,8 +99,8 @@ Translation of loaded source tables into target tables formatted to the CASFRI s
 ### Error Codes
 Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI 5.x, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the rule being invalidated. A full description of possible error codes can be found in the [CASFRI 5.x specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
 
-### Validating dependency tables
-Some translations require dependency tables. Examples are species lookup tables used for mapping source species to target species, and photo year geometries used to intersect source geometries and assign photo year values. These tables need to be validated before being used in the translations. We can do this by using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) and some pseudo-translation tables (stored in the dependencyvalidation/tables folder). These pseudo-translation tables are run on the dependency tables themselves and serve only to run validation rules on each dependency table row. We don't save the output tables and no translation is required. We are simply using the engine for its validation properties. If any rows fail a validation rule, the dependency table needs to be fixed before using it in a translation process.
+### Validating Dependency Tables
+Some translations require dependency tables. Examples are species lookup tables used for mapping source species to target species, and photo year geometries used to intersect source geometries and assign photo year values. These tables need to be validated before being used in the translations. This is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) and some pseudo-translation tables (stored in the dependencyvalidation/tables folder). These pseudo-translation tables are run on the dependency tables themselves and run only validation rules. The engine is therefore only used for its validation capacities and since no real translation is performed, the output of the translation is not saved to tables. If any rows fail a validation rule, the dependency table needs to be fixed before using it in a translation process.
 
 # Workflow
 
@@ -119,16 +119,10 @@ Conversion and loading scripts are written so that FRIs to convert and load must
 ### Loading Translation Tables
 * Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
 * In an operating system command window, load the translation files by executing the load_tables (.bat or .sh) script located in the translation folder. 
-* The script will load all translation tables stored in the "translation/tables" folder and subfolder into the specified schema ("translation" by default).
-
-### Validate dependency tables
-* Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
-* In an operating system command window, load the validation files by executing the load_tables (.bat or .sh) script located in the dependencyvalidation folder. 
-* The script will load all validation tables stored in the "dependencyvalidation/tables" folder into the specified schema ("validation" by default).
-* Run the validation table for each dependency table.
-* Refer to the sampleWorkFlow.sql file located in the CASFRI root directory for an example of how to run the validation tables using the translation engine.
+* The script will load all translation tables and validation tables stored in the "translation/tables" folder and subfolder into the specified schema ("translation" by default).
 
 ### Translating
+* Validate dependency tables using the loaded validation tables.
 * Run the translation engine for each FRI using the loaded source FRI table and the translation table.
 * Refer to the sampleWorkFlow.sql file located in the CASFRI root directory for an example of how to run the translation engine.
 
