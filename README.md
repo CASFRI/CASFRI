@@ -116,12 +116,13 @@ Some translations require dependency tables. Examples are species lookup tables 
 
 Conversion and loading scripts are written so that FRIs to convert and load must be stored in a specific folder hierarchy. TO BE PROPERLY EXPLAINED AFTER FIX FOR [ISSUE #40](https://github.com/edwardsmarc/CASFRI/issues/40).
 
-### Loading Translation and Validate dependency Tables
+### Loading Translation Tables
 * Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
 * In an operating system command window, load the translation files by executing the load_tables (.bat or .sh) script located in the translation folder. 
-* The script will load all translation tables stored in the "translation/tables" folder and subfolder into the specified schema ("translation" by default).
+* The script will load all translation tables and validation tables stored in the "translation/tables" folder and subfolder into the specified schema ("translation" by default).
 
 ### Translating
+* Validate dependency tables using the loaded validation tables.
 * Run the translation engine for each FRI using the loaded source FRI table and the translation table.
 * Refer to the sampleWorkFlow.sql file located in the CASFRI root directory for an example of how to run the translation engine.
 
