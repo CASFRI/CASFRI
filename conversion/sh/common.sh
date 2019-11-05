@@ -2,9 +2,11 @@
 
 # Common setting and command for all bash scripts
 
+scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 # Load config variables from local config file
-if [ -f ../../config.sh ]; then 
-  source ../../config.sh
+if [ -f $scriptDir/../../config.sh ]; then 
+  source $scriptDir/../../config.sh
 else
   echo ERROR: NO config.sh FILE
   exit 1
@@ -16,7 +18,7 @@ else
   overwrite_tab=
 fi
 
-prjFile="./../canadaAlbersEqualAreaConic.prj"
+prjFile="$scriptDir/../canadaAlbersEqualAreaConic.prj"
 
 pg_connection_string="PG:host=$pghost port=$pgport dbname=${pgdbname} user=${pguser} password=${pgpassword}"
 

@@ -9,40 +9,27 @@
 
 :: #################################### Set variables ######################################
 
-:: Load config variables from local config file
-if exist "%~dp0\..\config.bat" ( 
-  call "%~dp0\..\config.bat"
-) else (
-  echo ERROR: NO config.bat FILE
-  exit /b
-)
+CALL ..\conversion\bat\common.bat
+
 
 :: Folder containing translation file to be loaded:
-::SET load_folder="%~dp0tables"
 SET load_folders=%~dp0tables %~dp0tables\lookup %~dp0..\docs
 
-::######################################################################################################
-
-:: Do not edit...
-if %overwriteTTables% == True (
-  SET overwrite_tab=-overwrite
-) else (
-  SET overwrite_tab=
-)
+::##################################### Process ############################################
 
 :: Make schema if it doesn't exist
-"%gdalFolder%/ogrinfo" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" -sql "CREATE SCHEMA IF NOT EXISTS %targetTranslationFileSchema%";
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "CREATE SCHEMA IF NOT EXISTS %targetTranslationFileSchema%";
 
 :: load all files in the folder
 (for %%f IN (%load_folders%) DO (
-	if exist %%f (
-		for %%g IN (%%f\*.csv) DO (
-			echo loading %%~ng
-			"%gdalFolder%/ogr2ogr" ^
-			-f "PostgreSQL" "PG:host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%" "%%g" ^
-			-nln %targetTranslationFileSchema%.%%~ng ^
-			%overwrite_tab% -progress
-	)) else (
-		echo FOLDER DOESN'T EXIST: %%g
-	)
+  if exist %%f (
+    for %%g IN (%%f\*.csv) DO (
+      echo loading %%~ng
+      "%gdalFolder%/ogr2ogr" ^
+      -f "PostgreSQL" %pg_connection_string% "%%g" ^
+      -nln %targetTranslationFileSchema%.%%~ng ^
+      %overwrite_tab%
+  )) else (
+    echo FOLDER DOESN'T EXIST: %%g
+  )
 ))
