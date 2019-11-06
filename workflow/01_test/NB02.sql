@@ -55,7 +55,7 @@ SELECT * FROM rawfri.nb02_test_200;
 --------------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS translation_test;
 -------------------------------------------------------
--- NB02 reuse most of NB01 translation tables except 
+-- NB02 reuse most of NB01 translation tables 
 ----------------------------
 -- lyr_layer2
 DROP TABLE IF EXISTS translation_test.nb02_nbi01_lyr_layer2_test;
