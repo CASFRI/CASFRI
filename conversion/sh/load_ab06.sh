@@ -20,8 +20,9 @@
 
 source ./common.sh
 
+inventoryID=AB06
 srcFileName=GB_S21_TWP
-srcFullPath="$friDir/AB/AB06/$srcFileName.gdb"
+srcFullPath="$friDir/AB/$inventoryID/$srcFileName.gdb"
 
 fullTargetTableName=$targetFRISchema.ab06
 
@@ -31,5 +32,5 @@ fullTargetTableName=$targetFRISchema.ab06
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
 -nln $fullTargetTableName $layer_creation_option \
--sql "SELECT *, '$srcFileName' as src_filename FROM '$srcFileName'" \
+-sql "SELECT *, '$srcFileName' as src_filename, '$inventoryID' AS inventory_id FROM '$srcFileName'" \
 -progress $overwrite_tab

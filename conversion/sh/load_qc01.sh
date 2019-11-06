@@ -26,7 +26,8 @@
 
 source ./common.sh
 
-srcFullPath=$friDir/QC/QC01
+inventoryID=QC01
+srcFullPath=$friDir/QC/$inventoryID
 fullTargetTableName=$targetFRISchema.qc01_testsh
 
 # PostgreSQL variables
@@ -53,7 +54,7 @@ do
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
     -nln $fullTargetTableName \
     -t_srs $prjFile \
-    -sql "SELECT *, '${F##*/}' as src_filename FROM $ogrTab" \
+    -sql "SELECT *, '${F##*/}' as src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
     -progress $ogr_options
 
     ogr_options="-update -append"
@@ -74,6 +75,6 @@ do
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
     -nln $fullTargetTableName \
     -t_srs $prjFile \
-    -sql "SELECT *, '${F##*/}' as src_filename FROM $ogrTab" \
+    -sql "SELECT *, '${F##*/}' as src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
     -progress $ogr_options
 done

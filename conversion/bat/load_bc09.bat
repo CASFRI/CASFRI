@@ -18,9 +18,10 @@ SETLOCAL
 
 CALL .\common.bat
 
+SET inventoryID=BC09
 SET srcFileName=VEG_COMP_LYR_R1_POLY
 SET gdbFileName=WHSE_FOREST_VEGETATION_2018_VEG_COMP_LYR_R1_POLY
-SET srcFullPath="%friDir%\BC\BC09\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\BC\%inventoryID%\%srcFileName%.gdb"
 
 SET fullTargetTableName=%targetFRISchema%.bc09
 
@@ -30,7 +31,7 @@ SET fullTargetTableName=%targetFRISchema%.bc09
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% ^
 -nln %fullTargetTableName% %layer_creation_option% ^
--sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%gdbFileName%""" ^
+-sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%gdbFileName%""" ^
 -progress %overwrite_tab%
 
 ENDLOCAL
