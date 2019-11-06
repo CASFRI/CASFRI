@@ -22,8 +22,8 @@
 
 source ./common.sh
 
-srcFirstFileName=t059r04m6
-srcFullPath=$friDir/AB/AB16
+inventoryID=AB16
+srcFullPath=$friDir/AB/$inventoryID
 
 fullTargetTableName=$targetFRISchema.ab16
 
@@ -48,7 +48,7 @@ do
   -f PostgreSQL "$pg_connection_string" "$F/forest" \
   -nln $fullTargetTableName \
   -t_srs $prjFile \
-  -sql "SELECT *, '${F##*/}' as src_filename, 'FOREST#' as 'forest_id_1', 'FOREST-ID' as 'forest_id_2' FROM $ogrTab" \
+  -sql "SELECT *, '${F##*/}' as src_filename, '$inventoryID' AS inventory_id, 'FOREST#' as 'forest_id_1', 'FOREST-ID' as 'forest_id_2' FROM $ogrTab" \
   $ogr_options
 
   ogr_options="-update -append"  

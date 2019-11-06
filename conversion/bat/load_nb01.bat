@@ -27,7 +27,8 @@ SETLOCAL
 
 CALL .\common.bat
 
-SET NB_subFolder=NB\NB01\
+SET inventoryID=NB01
+SET NB_subFolder=NB\%inventoryID%\
 
 SET srcNameWater=Waterbody
 SET ogrTabWater=%srcNameWater%
@@ -56,7 +57,7 @@ SET fullTargetTableName=%targetFRISchema%.nb01
 -f "PostgreSQL" %pg_connection_string% %srcWaterFullPath% ^
 -nln %fullTargetTableName% %layer_creation_option% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWater%' AS src_filename, 0 AS stdlab FROM ""%ogrTabWater%""" ^
+-sql "SELECT *, '%srcNameWater%' AS src_filename, '%inventoryID%' AS inventory_id, 0 AS stdlab FROM ""%ogrTabWater%""" ^
 -progress %overwrite_tab%
 
 ::### FILE 2 ###
@@ -66,7 +67,7 @@ SET fullTargetTableName=%targetFRISchema%.nb01
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameNonForest%' AS src_filename, 0 AS stdlab FROM ""%ogrTabNonForest%""" ^
+-sql "SELECT *, '%srcNameNonForest%' AS src_filename, '%inventoryID%' AS inventory_id, 0 AS stdlab FROM ""%ogrTabNonForest%""" ^
 -progress
 
 ::### FILE 3 ###
@@ -76,7 +77,7 @@ SET fullTargetTableName=%targetFRISchema%.nb01
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWetland%' AS src_filename, 0 AS stdlab FROM ""%ogrTabWetland%""" ^
+-sql "SELECT *, '%srcNameWetland%' AS src_filename, '%inventoryID%' AS inventory_id, 0 AS stdlab FROM ""%ogrTabWetland%""" ^
 -progress
 
 ::## File 4 ###
@@ -86,7 +87,7 @@ SET fullTargetTableName=%targetFRISchema%.nb01
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameForest%' AS src_filename FROM ""%ogrTabForest%""" ^
+-sql "SELECT *, '%srcNameForest%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%ogrTabForest%""" ^
 -progress
 
 ENDLOCAL

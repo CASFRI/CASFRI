@@ -20,8 +20,9 @@ SETLOCAL
 
 CALL .\common.bat
 
+SET inventoryID=AB06
 SET srcFileName=GB_S21_TWP
-SET srcFullPath="%friDir%\AB\AB06\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\AB\%inventoryID%\%srcFileName%.gdb"
 
 SET fullTargetTableName=%targetFRISchema%.ab06
 
@@ -31,7 +32,7 @@ SET fullTargetTableName=%targetFRISchema%.ab06
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% ^
 -nln %fullTargetTableName% %layer_creation_option% ^
--sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%srcFileName%""" ^
+-sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcFileName%""" ^
 -progress %overwrite_tab%
 
 ENDLOCAL

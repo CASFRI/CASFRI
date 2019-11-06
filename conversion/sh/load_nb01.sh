@@ -26,6 +26,7 @@
 
 source ./common.sh
 
+inventoryID=NB01
 NB_subFolder=NB/NB01/
 
 srcNameWater=Waterbody
@@ -55,7 +56,7 @@ fullTargetTableName=$targetFRISchema.nb01
 -f PostgreSQL "$pg_connection_string" "$srcWaterFullPath" \
 -nln $fullTargetTableName $layer_creation_option \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWater' as src_filename, 0 as stdlab FROM '$ogrTabWater'" \
+-sql "SELECT *, '$srcNameWater' as src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM '$ogrTabWater'" \
 -progress $overwrite_tab
 
 ### FILE 2 ###
@@ -65,7 +66,7 @@ fullTargetTableName=$targetFRISchema.nb01
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameNonForest' as src_filename, 0 as stdlab FROM '$ogrTabNonForest'" \
+-sql "SELECT *, '$srcNameNonForest' as src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM '$ogrTabNonForest'" \
 -progress
 
 ### FILE 3 ###
@@ -75,7 +76,7 @@ fullTargetTableName=$targetFRISchema.nb01
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWetland' as src_filename, 0 as stdlab FROM '$ogrTabWetland'" \
+-sql "SELECT *, '$srcNameWetland' as src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM '$ogrTabWetland'" \
 -progress
 
 ## File 4 ###
@@ -85,5 +86,5 @@ fullTargetTableName=$targetFRISchema.nb01
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameForest' as src_filename FROM '$ogrTabForest'" \
+-sql "SELECT *, '$srcNameForest' as src_filename, '$inventoryID' AS inventory_id FROM '$ogrTabForest'" \
 -progress

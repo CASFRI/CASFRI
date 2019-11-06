@@ -38,11 +38,12 @@ SETLOCAL
 
 CALL .\common.bat
 
+SET inventoryID=NT02
 SET srcFileName=NT_FORCOV
 SET gdbFileName_geometry=%srcFileName%
 SET gdbFileName_attributes=NT_FORCOV_ATT
 SET gdbFileName_photoyear=Inventory_Extents
-SET srcFullPath="%friDir%\NT\NT02\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\NT\%inventoryID%\%srcFileName%.gdb"
 
 SET targetTableName=%targetFRISchema%.nt02
 SET geometryTableName=%targetTableName%_geometry
@@ -66,7 +67,8 @@ WITH dup AS ( ^
 SELECT a.fc_id::int, ^
        min(invproj_id) invproj_id, ^
        sum(areaha) areaha, ^
-       ST_Union(wkb_geometry) geom, ^
+       ST_Union(wkb_geometry) wkb_geometry, ^
+       min(inventory_id) inventory_id, ^
        min(src_filename) src_filename ^
 FROM dup a, %geometryTableName% b ^
 WHERE a.fc_id::int = b.fc_id::int ^
@@ -75,7 +77,8 @@ UNION ALL ^
 SELECT fc_id::int, ^
        min(invproj_id) invproj_id, ^
        sum(areaha) areaha, ^
-       ST_Union(wkb_geometry) geom, ^
+       ST_Union(wkb_geometry) wkb_geometry, ^
+       min(inventory_id) inventory_id, ^
        min(src_filename) src_filename ^
 FROM %geometryTableName% ^
 GROUP BY fc_id::int ^
@@ -90,7 +93,7 @@ CREATE INDEX ON %targetTableName%_unique_att (fc_id) ^
 ; ^
 DROP TABLE IF EXISTS %targetTableName%_geom_att; ^
 CREATE TABLE %targetTableName%_geom_att AS ^
-SELECT a.fc_id afc_id, a.invproj_id, a.geom, a.areaha, a.src_filename, b.* ^
+SELECT a.fc_id afc_id, a.invproj_id, a.wkb_geometry, a.areaha, a.inventory_id, a.src_filename, b.* ^
 FROM %targetTableName%_geom_merged a ^
 LEFT OUTER JOIN %targetTableName%_unique_att b USING (fc_id) ^
 ; ^
@@ -118,7 +121,7 @@ DROP TABLE IF EXISTS %targetTableName%_geom_att;
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% ^
 -nln %geometryTableName% %layer_creation_option% ^
--sql "SELECT *, '%srcFileName%' AS src_filename FROM ""%gdbFileName_geometry%""" ^
+-sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%gdbFileName_geometry%""" ^
 -progress %overwrite_tab%
 
 ::Run ogr2ogr for attributes

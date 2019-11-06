@@ -36,11 +36,12 @@
 
 source ./common.sh
 
+inventoryID=NT02
 srcFileName=NT_FORCOV
 gdbFileName_geometry=$srcFileName
 gdbFileName_attributes=NT_FORCOV_ATT
 gdbFileName_photoyear=Inventory_Extents
-srcFullPath="$friDir/NT/NT02/NT_FORCOV.gdb"
+srcFullPath="$friDir/NT/$inventoryID/NT_FORCOV.gdb"
 
 targetTableName=$targetFRISchema.nt02
 geometryTableName=${targetTableName}_geometry
@@ -53,7 +54,7 @@ photoyearTableName=${targetTableName}_photoyear
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_geometry" \
 -nln $geometryTableName $layer_creation_option \
--sql "SELECT *, '$srcFileName' AS src_filename FROM '$gdbFileName_geometry'" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_geometry'" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for attributes
@@ -92,8 +93,9 @@ WITH dup AS (
 )
 SELECT a.fc_id::int, 
        min(invproj_id) invproj_id,
-       sum(areaha) areaha, 
-       ST_Union(wkb_geometry) geom, 
+       sum(areaha) areaha,
+       ST_Union(wkb_geometry) wkb_geometry,
+       min(inventoryID) inventoryID,
        min(src_filename) src_filename
 FROM dup a, $geometryTableName b 
 WHERE a.fc_id::int = b.fc_id::int
@@ -101,8 +103,9 @@ GROUP BY a.fc_id::int
 UNION ALL
 SELECT fc_id::int, 
        min(invproj_id) invproj_id,
-       sum(areaha) areaha, 
-       ST_Union(wkb_geometry) geom, 
+       sum(areaha) areaha,
+       ST_Union(wkb_geometry) wkb_geometry,
+       min(inventoryID) inventoryID,
        min(src_filename) src_filename
 FROM $geometryTableName
 GROUP BY fc_id::int
@@ -117,7 +120,7 @@ CREATE INDEX ON ${targetTableName}_unique_att (fc_id);
 
 DROP TABLE IF EXISTS ${targetTableName}_geom_att;
 CREATE TABLE ${targetTableName}_geom_att AS
-SELECT a.fc_id afc_id, a.invproj_id, a.geom, a.areaha, a.src_filename, b.*
+SELECT a.fc_id afc_id, a.invproj_id, a.wkb_geometry, a.areaha, a.inventoryID, a.src_filename, b.*
 FROM ${targetTableName}_geom_merged a 
 LEFT OUTER JOIN ${targetTableName}_unique_att b USING (fc_id);
 

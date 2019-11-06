@@ -27,7 +27,8 @@ SETLOCAL
 
 CALL .\common.bat
 
-SET NB_subFolder=NB\NB02\
+SET inventoryID=NB02
+SET NB_subFolder=NB\%inventoryID%\
 
 SET srcNameWater=NBHN_0000_02_Wb
 SET srcWaterFullPath="%friDir%\%NB_subFolder%%srcNameWater%.shp"
@@ -52,7 +53,7 @@ SET fullTargetTableName=%targetFRISchema%.nb02
 -f "PostgreSQL" %pg_connection_string% %srcWaterFullPath% ^
 -nln %fullTargetTableName% %layer_creation_option% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWater%' AS src_filename, 0 AS stdlab FROM ""%srcNameWater%""" ^
+-sql "SELECT *, '%srcNameWater%' AS src_filename, '%inventoryID%' AS inventory_id, 0 AS stdlab FROM ""%srcNameWater%""" ^
 -progress %overwrite_tab%
 
 ::### FILE 2 ###
@@ -62,7 +63,7 @@ SET fullTargetTableName=%targetFRISchema%.nb02
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameNonForest%' AS src_filename, 0 AS stdlab FROM ""%srcNameNonForest%""" ^
+-sql "SELECT *, '%srcNameNonForest%' AS src_filename, '%inventoryID%' AS inventory_id, 0 AS stdlab FROM ""%srcNameNonForest%""" ^
 -progress
 
 ::### FILE 3 ###
@@ -72,7 +73,7 @@ SET fullTargetTableName=%targetFRISchema%.nb02
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameWetland%' AS src_filename, 0 AS stdlab FROM ""%srcNameWetland%""" ^
+-sql "SELECT *, '%srcNameWetland%' AS src_filename, '%inventoryID%' AS inventory_id, 0 AS stdlab FROM ""%srcNameWetland%""" ^
 -progress
 
 ::## File 4 ###
@@ -82,7 +83,7 @@ SET fullTargetTableName=%targetFRISchema%.nb02
 -nln %fullTargetTableName% ^
 -t_srs %prjFile% ^
 -nlt PROMOTE_TO_MULTI ^
--sql "SELECT *, '%srcNameForest%' AS src_filename FROM ""%srcNameForest%""" ^
+-sql "SELECT *, '%srcNameForest%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcNameForest%""" ^
 -progress
 
 ENDLOCAL

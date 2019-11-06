@@ -29,8 +29,8 @@ SETLOCAL
 
 CALL .\common.bat
 
-SET srcFirstFileName=t059r04m6
-SET srcFullPath=%friDir%\AB\AB16\
+SET inventoryID=AB16
+SET srcFullPath=%friDir%\AB\%inventoryID%\
 
 SET fullTargetTableName=%targetFRISchema%.ab16
 
@@ -62,7 +62,7 @@ FOR /D %%F IN (%srcFullPath%\t*) DO (
   -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" "%%F\forest" ^
   -nln %fullTargetTableName% ^
   -t_srs %prjFile% ^
-  -sql "SELECT *, '%%~nF' as src_filename, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
+  -sql "SELECT *, '%%~nF' as src_filename, '%inventoryID%' AS inventory_id, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
   !ogr_options!
   
   SET ogr_options=-update -append
