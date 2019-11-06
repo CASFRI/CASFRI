@@ -34,10 +34,10 @@ FROM rawfri.nt01;
 --DROP VIEW IF EXISTS rawfri.nt01_test_200;
 CREATE OR REPLACE VIEW rawfri.nt01_test_200 AS
 SELECT invproj_id, fc_id_1, ogc_fid, wkb_geometry, areaha, 
-       moisture, crownclos, height, 
+       moisture, crownclos, height, siteclass, si_50, 
        sp1, sp1_per, sp2, sp2per, sp3, sp3per, sp4, sp4per, 
        structur, strc_per, origin, typeclas, 
-       dis1code, dis1year, dis1ext
+       dis1code, dis1year, dis1ext, ref_year
 FROM rawfri.nt01 TABLESAMPLE SYSTEM (300.0*100/11484) REPEATABLE (1.0)
 --WHERE ogc_fid = 2
 LIMIT 200;
@@ -51,7 +51,7 @@ SELECT * FROM rawfri.nt01_test_200;
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-CREATE SCHEMA translation_test;
+--CREATE SCHEMA translation_test;
 
 -------------------------------------------------------
 -- NT01
@@ -59,7 +59,7 @@ CREATE SCHEMA translation_test;
 -- display translation tables
 SELECT * FROM translation.nt01_fvi01_cas; 
 SELECT * FROM translation.nt01_fvi01_dst; 
-SELECT * FROM translation.nt01_fvi01_eco; 
+--SELECT * FROM translation.nt01_fvi01_eco; 
 SELECT * FROM translation.nt01_fvi01_lyr; 
 SELECT * FROM translation.nt01_fvi01_nfl;
 SELECT * FROM translation.nt01_fvi01_geo;
@@ -70,7 +70,7 @@ SELECT * FROM translation.nt01_fvi01_geo;
 DROP TABLE IF EXISTS translation_test.nt01_fvi01_cas_test;
 CREATE TABLE translation_test.nt01_fvi01_cas_test WITH OIDS AS
 SELECT * FROM translation.nt01_fvi01_cas
-WHERE rule_id::int < 10
+--WHERE rule_id::int < 10
 ;
 -- display
 SELECT * FROM translation_test.nt01_fvi01_cas_test;
@@ -85,13 +85,13 @@ SELECT * FROM translation.nt01_fvi01_dst
 SELECT * FROM translation_test.nt01_fvi01_dst_test;
 ----------------------------
 -- eco
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_eco_test;
-CREATE TABLE translation_test.nt01_fvi01_eco_test WITH OIDS AS
-SELECT * FROM translation.nt01_fvi01_eco
+--DROP TABLE IF EXISTS translation_test.nt01_fvi01_eco_test;
+--CREATE TABLE translation_test.nt01_fvi01_eco_test WITH OIDS AS
+--SELECT * FROM translation.nt01_fvi01_eco
 --WHERE rule_id::int = 1
-;
+--;
 -- display
-SELECT * FROM translation_test.nt01_fvi01_eco_test;
+--SELECT * FROM translation_test.nt01_fvi01_eco_test;
 ----------------------------
 -- lyr
 DROP TABLE IF EXISTS translation_test.nt01_fvi01_lyr_test;
@@ -101,7 +101,7 @@ SELECT * FROM translation.nt01_fvi01_lyr
 ;
 -- display
 SELECT * FROM translation_test.nt01_fvi01_lyr_test;
-----------------------------
+
 -- nfl
 DROP TABLE IF EXISTS translation_test.nt01_fvi01_nfl_test;
 CREATE TABLE translation_test.nt01_fvi01_nfl_test WITH OIDS AS
@@ -119,6 +119,7 @@ SELECT * FROM translation.nt01_fvi01_geo
 ;
 -- display
 SELECT * FROM translation_test.nt01_fvi01_geo_test;
+----------------------------
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -143,7 +144,7 @@ SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_fvi01_species');
 -- create translation functions
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_cas_test', '_nt01_cas');
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_dst_test', '_nt01_dst');
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_eco_test', '_nt01_eco');
+--SELECT TT_Prepare('translation_test', 'nt01_fvi01_eco_test', '_nt01_eco');
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_lyr_test', '_nt01_lyr');
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_nfl_test', '_nt01_nfl');
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_geo_test', '_nt01_geo');
@@ -152,17 +153,20 @@ SELECT TT_Prepare('translation_test', 'nt01_fvi01_geo_test', '_nt01_geo');
 SELECT * FROM TT_Translate_nt01_cas('rawfri', 'nt01_test_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_cas_test');
 
--- display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, trm_1, poly_num, cas_id, 
-       density, crown_closure_lower, crown_closure_upper, 
-       height, height_upper, height_lower,
-       sp1, species_1,
-       sp1_per, species_per_1
-FROM TT_Translate_nt01_lyr('rawfri', 'nt01_test_200'), rawfri.nt01_test_200
-WHERE poly_num = substr(cas_id, 33, 10)::int;
+SELECT * FROM TT_Translate_nt01_dst('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_dst_test');
 
---------------------------------------------------------------------------
-SELECT TT_DeleteAllLogs('translation_test');
+--SELECT * FROM TT_Translate_nt01_eco('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+--SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_eco_test');
+
+SELECT * FROM TT_Translate_nt01_lyr('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
+
+SELECT * FROM TT_Translate_nt01_nfl('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
+
+SELECT * FROM TT_Translate_nt01_geo('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_geo_test');
 
 
 -------------------------------------------------------
