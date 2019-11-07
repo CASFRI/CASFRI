@@ -95,7 +95,7 @@ SELECT a.fc_id::int,
        min(invproj_id) invproj_id,
        sum(areaha) areaha,
        ST_Union(wkb_geometry) wkb_geometry,
-       min(inventoryID) inventoryID,
+       min(inventory_id) inventory_id,
        min(src_filename) src_filename
 FROM dup a, $geometryTableName b 
 WHERE a.fc_id::int = b.fc_id::int
@@ -105,7 +105,7 @@ SELECT fc_id::int,
        min(invproj_id) invproj_id,
        sum(areaha) areaha,
        ST_Union(wkb_geometry) wkb_geometry,
-       min(inventoryID) inventoryID,
+       min(inventory_id) inventory_id,
        min(src_filename) src_filename
 FROM $geometryTableName
 GROUP BY fc_id::int
@@ -120,7 +120,7 @@ CREATE INDEX ON ${targetTableName}_unique_att (fc_id);
 
 DROP TABLE IF EXISTS ${targetTableName}_geom_att;
 CREATE TABLE ${targetTableName}_geom_att AS
-SELECT a.fc_id afc_id, a.invproj_id, a.wkb_geometry, a.areaha, a.inventoryID, a.src_filename, b.*
+SELECT a.fc_id afc_id, a.invproj_id, a.wkb_geometry, a.areaha, a.inventory_id, a.src_filename, b.*
 FROM ${targetTableName}_geom_merged a 
 LEFT OUTER JOIN ${targetTableName}_unique_att b USING (fc_id);
 
