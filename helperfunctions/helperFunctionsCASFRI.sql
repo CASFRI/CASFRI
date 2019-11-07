@@ -14,9 +14,291 @@
 --
 --
 -------------------------------------------------------------------------------
+-- Begin Tools Function Definitions...
+-------------------------------------------------------------------------------
+-- TT_TableColumnType 
+-- 
+--   tableSchema name - Name of the schema containing the table. 
+--   table name       - Name of the table. 
+--   column name      - Name of the column. 
+-- 
+--   RETURNS text     - Type. 
+-- 
+-- Return the column names for the speficied table. 
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_TableColumnType(name, name, name);
+CREATE OR REPLACE FUNCTION TT_TableColumnType( 
+  schemaName name, 
+  tableName name,
+  columnName name
+) 
+RETURNS text AS $$ 
+  SELECT data_type FROM information_schema.columns
+  WHERE table_schema = schemaName AND table_name = tableName AND column_name = columnName;
+$$ LANGUAGE sql VOLATILE; 
+-------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------- 
+-- TT_TableColumnNames 
+-- 
+--   tableSchema name - Name of the schema containing the table. 
+--   table name       - Name of the table. 
+-- 
+--   RETURNS text[]   - ARRAY of column names. 
+-- 
+-- Return the column names for the speficied table. 
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_TableColumnNames(name, name);
+CREATE OR REPLACE FUNCTION TT_TableColumnNames( 
+  schemaName name, 
+  tableName name 
+) 
+RETURNS text[] AS $$ 
+  DECLARE 
+    colNames text[]; 
+  BEGIN 
+    SELECT array_agg(column_name::text) 
+    FROM information_schema.columns 
+    WHERE table_schema = schemaName AND table_name = tableName 
+    INTO STRICT colNames; 
+
+    RETURN colNames; 
+  END; 
+$$ LANGUAGE plpgsql VOLATILE; 
+------------------------------------------------------------------------------- 
+
+-------------------------------------------------------------------------------
+-- TT_ColumnExists
+--
+-- Returns true if a column exist in a table. Mainly defined to be used by 
+-- ST_AddUniqueID().
+-----------------------------------------------------------
+-- Self contained example:
+--
+-- SELECT TT_ColumnExists('public', 'spatial_ref_sys', 'srid') ;
+-----------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ColumnExists(name, name, name);
+CREATE OR REPLACE FUNCTION TT_ColumnExists(
+  schemaname name,
+  tablename name,
+  columnname name
+)
+RETURNS BOOLEAN AS $$
+  DECLARE
+  BEGIN
+    PERFORM 1 FROM information_schema.COLUMNS
+    WHERE lower(table_schema) = lower(schemaname) AND lower(table_name) = lower(tablename) AND lower(column_name) = lower(columnname);
+    RETURN FOUND;
+  END;
+$$ LANGUAGE plpgsql VOLATILE STRICT;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_CompareRows 
+-- 
+-- Return all different attribute values with values from row1 and row2.
+-- Does not return anything when rows are identical.
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb);
+CREATE OR REPLACE FUNCTION TT_CompareRows(
+  row1 jsonb,
+  row2 jsonb
+)
+RETURNS TABLE (attribute text, 
+               row_1 text, 
+               row_2 text) AS $$ 
+  DECLARE
+    i int = 0;
+    keys text[];
+    row1val text;
+    row2val text;
+  BEGIN
+    attribute = 'row';
+
+    IF row1 IS NULL THEN
+        row_1 = 'do not exist';
+        row_2 = 'exists';
+        RETURN NEXT;
+        RETURN;
+    END IF;
+    IF row2 IS NULL THEN
+        row_1 = 'exists';
+        row_2 = 'do not exist';
+        RETURN NEXT;
+        RETURN;
+    END IF;
+    SELECT array_agg(k) INTO keys
+    FROM (SELECT jsonb_object_keys(row1) k) foo;
+
+    FOR i IN 1..cardinality(keys) LOOP
+      row1val = row1 -> keys[i];
+      row2val = row2 -> keys[i];
+      IF row1val != row2val THEN
+        attribute = keys[i];
+        row_1 = row1val::text;
+        row_2 = row2val::text;
+        RETURN NEXT;
+      END IF;
+    END LOOP;
+    RETURN;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_CompareTables 
+-- 
+-- Return all different attribute values with values from table 1 and table 2.
+-- Does not return anything when tables are identical.
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean);
+CREATE OR REPLACE FUNCTION TT_CompareTables(
+  schemaName1 name,
+  tableName1 name,
+  schemaName2 name,
+  tableName2 name,
+  uniqueIDCol name DEFAULT NULL,
+  ignoreColumnOrder boolean DEFAULT TRUE
+)
+RETURNS TABLE (row_id text, 
+               attribute text, 
+               value_table_1 text, 
+               value_table_2 text) AS $$
+  DECLARE
+    columnName text;
+    cols1 text[];
+    cols2 text[];
+    type1 text;
+    type2 text;
+    stop boolean := FALSE;
+    query text;
+  BEGIN
+    IF NOT TT_TableExists(schemaName1, tableName1) THEN
+      RAISE EXCEPTION 'Table %.% does not exists...', schemaName1, tableName1;
+    END IF;
+    IF NOT TT_TableExists(schemaName2, tableName2) THEN
+      RAISE EXCEPTION 'Table %.% does not exists...', schemaName2, tableName2;
+    END IF;
+    cols1 = TT_TableColumnNames(schemaName1, tableName1);
+    cols2 = TT_TableColumnNames(schemaName2, tableName2);
+    -- Check that every column in table1 exists in table2
+    FOREACH columnName IN ARRAY cols1 LOOP
+      IF columnName != ALL(cols2) THEN
+        RAISE EXCEPTION 'Column ''%'' does not exist in %.%...', columnName, schemaName2, tableName2;
+        stop = TRUE;
+      ELSE
+        type1 = TT_TableColumnType(schemaName1, tableName1, columnName);
+        type2 = TT_TableColumnType(schemaName2, tableName2, columnName);
+        IF type1 != type2 THEN
+          RAISE EXCEPTION 'Column ''%'' is of type ''%'' in %.% and of type ''%'' in table %.%...', columnName, type1, schemaName1, tableName1, type2, schemaName2, tableName2;
+          stop = TRUE;
+        END IF;
+      END IF;
+    END LOOP;
+    -- Check that every column in table2 exists in table1
+    FOREACH columnName IN ARRAY cols2 LOOP
+      IF columnName != ALL(cols1) THEN
+        RAISE EXCEPTION 'Column ''%'' does not exist in %.%...', columnName, schemaName1, tableName1;
+        stop = TRUE;
+      END IF;
+    END LOOP;
+    -- Stop for now
+    IF stop THEN
+      RETURN;
+    END IF;
+    -- Now that we know both tables have the same columns, check that they are in the same order
+    IF NOT ignoreColumnOrder AND cols1 != cols2 THEN
+      RAISE EXCEPTION 'Columns with the same names and types exist in both tables but are not in the same order...';
+      RETURN;
+    END IF;
+    
+    -- Check that uniqueIDCol is not NULL and exists
+    IF uniqueIDCol IS NULL OR uniqueIDCol = '' THEN
+      RAISE EXCEPTION 'Table have same structure. In order to report different rows, uniqueIDCol should not be NULL...';
+    END IF;
+    IF NOT TT_ColumnExists(schemaName1, tableName1, uniqueIDCol) THEN
+      RAISE EXCEPTION 'Table have same structure. In order to report different rows, uniqueIDCol (%) should exist in both tables...', uniqueIDCol;
+    END IF;
+    query = 'SELECT ' || uniqueIDCol || '::text row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b))).* ' ||
+            'FROM ' || schemaName1 || '.' || tableName1 || ' a ' ||
+            'FULL OUTER JOIN ' || schemaName2 || '.' || tableName2 || ' b USING (' || uniqueIDCol || ')' ||
+            'WHERE NOT coalesce(ROW(a.*) = ROW(b.*), FALSE);';
+    RETURN QUERY EXECUTE query;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_RandomInt 
+-- 
+-- Return a list of random nb integer from val_min to val_max (both inclusives).
+-- Seed can be set to get always the same repeated list.
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int, double precision);
+CREATE OR REPLACE FUNCTION TT_RandomInt(
+  nb int, 
+  val_min int,
+  val_max int,
+  seed double precision
+)
+RETURNS TABLE (id int) AS $$
+  DECLARE
+    newnb int = nb * (1 + 3 * nb::double precision / (val_max - val_min + 1));
+  BEGIN
+--RAISE NOTICE 'newnb = %', newnb;
+    IF nb < 0 THEN
+      RAISE EXCEPTION 'ERROR random_int_id(): nb (%) must be greater than 0...', nb;
+    END IF;
+    IF nb = 0 THEN
+      RETURN;
+    END IF;
+    IF val_max < val_min THEN
+      RAISE EXCEPTION 'ERROR TT_RandomInt(): val_max (%) must be greater or equal to val_min (%)...', val_max, val_min;
+    END IF;
+    IF nb > (val_max - val_min + 1) THEN
+      RAISE EXCEPTION 'ERROR TT_RandomInt(): nb (%) must be smaller or equal to the range of values (%)...', nb, val_max - val_min + 1;
+    END IF;
+    IF nb = (val_max - val_min + 1) THEN
+       RAISE NOTICE 'nb is equal to the range of requested values. Returning a series from % to %...', val_min, val_min + nb - 1;
+       RETURN QUERY SELECT val_min + generate_series(0, nb - 1);
+       RETURN;
+    END IF;
+    IF nb > (val_max - val_min + 1) / 2 THEN
+       RAISE NOTICE 'nb is greater than half the range of requested values. Returning a % to % series EXCEPT TT_RandomInt(%, %, %, %)...', val_min, val_min + val_max - val_min, (val_max - val_min + 1) - nb, val_min, val_max, seed;
+       RETURN QUERY SELECT * FROM (
+                      SELECT val_min + generate_series(0, val_max - val_min) id
+                      EXCEPT 
+                      SELECT TT_RandomInt((val_max - val_min + 1) - nb, val_min, val_max, seed)
+                    ) foo ORDER BY id;
+       RETURN;
+    END IF;
+--RAISE NOTICE 'seed = %', nb / (nb + abs(seed) + 1);
+    PERFORM setseed(nb / (nb + abs(seed) + 1));
+    RETURN QUERY WITH rd AS (
+                   SELECT (val_min + floor((val_max - val_min + 1) * foo.rd))::int id, foo.rd
+                   FROM (SELECT generate_series(1, newnb), random() rd) foo
+                 ), list AS (
+                   SELECT DISTINCT rd.id 
+                   FROM rd LIMIT nb
+                 ) SELECT * FROM list ORDER BY id;
+  END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
+CREATE OR REPLACE FUNCTION TT_RandomInt(
+  nb int, 
+  val_min int,
+  val_max int
+)
+RETURNS SETOF int AS $$
+  SELECT TT_RandomInt(nb, val_min, val_max, random());
+$$ LANGUAGE sql;
+
+-------------------------------------------------------------------------------
 -- Overwrrite the TT_DefaultProjectErrorCode() function to define default error 
 -- codes for these helper functions...
 -------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_DefaultProjectErrorCode(text, text);
 CREATE OR REPLACE FUNCTION TT_DefaultProjectErrorCode(
   rule text, 
   targetType text
@@ -41,18 +323,11 @@ RETURNS text AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql;
+
 -------------------------------------------------------------------------------
 -- Begin Validation Function Definitions...
 -------------------------------------------------------------------------------
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
 -- TT_vri01_non_for_veg_validation(text, text, text, text)
---  
--- inventory_standard_cd text
--- land_cover_class_cd_1 text
--- bclcs_level_4 text
--- non_productive_descriptor_cd text
 --
 -- Check the correct combination of values exists based on the translation rules.
 -- If not return FALSE
@@ -97,12 +372,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_vri01_nat_non_veg_validation(text, text, text, text, text)
---  
--- inventory_standard_cd text
--- land_cover_class_cd_1 text
--- bclcs_level_4 text
--- non_productive_descriptor_cd text
--- non_veg_cover_type_1
 --
 -- Check the correct combination of values exists based on the translation rules.
 -- If not return FALSE
@@ -154,11 +423,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_vri01_non_for_anth_validation(text, text, text, text)
---  
--- inventory_standard_cd text
--- land_cover_class_cd_1 text
--- non_productive_descriptor_cd text
--- non_veg_cover_type_1
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_validation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_non_for_anth_validation(
@@ -235,11 +499,6 @@ $$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_nbi01_wetland_validation(text, text, text, text)
 --
---  wc text
---  vt text
---  im text
---  ret_char_pos text
---
 -- Assign 4 letter wetland character code, then return true if the requested character (1-4)
 -- is not null and not -.
 --
@@ -272,11 +531,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- Begin Translation Function Definitions...
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
-
 -- TT_vri01_origin_translation(text, text)
---
--- proj_date text
--- proj_age text
 --
 -- get projected year as first 4 characters of proj_date  
 -- return projected year minus projected age
@@ -301,9 +556,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_vri01_site_index_translation(text, text)
---
---  site_index text
---  site_index_est text
 --
 -- If site_index not null, return it.
 -- Otherwise return site_index_est.
@@ -330,11 +582,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_vri01_non_for_veg_translation(text, text, text, text)
---  
--- inventory_standard_cd text
--- land_cover_class_cd_1 text
--- bclcs_level_4 text
--- non_productive_descriptor_cd text
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_translation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_non_for_veg_translation(
@@ -378,12 +625,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_vri01_nat_non_veg_translation(text, text, text, text, text)
---  
--- inventory_standard_cd text
--- land_cover_class_cd_1 text
--- bclcs_level_4 text
--- non_productive_descriptor_cd text
--- non_veg_cover_type_1
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_translation(text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_nat_non_veg_translation(
@@ -434,11 +675,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_vri01_non_for_anth_translation(text, text, text, text)
---  
--- inventory_standard_cd text
--- land_cover_class_cd_1 text
--- non_productive_descriptor_cd text
--- non_veg_cover_type_1
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_translation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_non_for_anth_translation(
@@ -480,12 +716,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 --
 -- TT_avi01_non_for_anth_translation(text, text, text, text, text)
 --
---  anth_veg text
---  anth_non text
---  lst1 text
---  lst2 text
---  ignoreCase text
---
 --  For two values, if one of them is null or empty and the other is not null or empty.
 --  use the value that is not null or empty in mapText.
 --
@@ -517,10 +747,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_nbi01_stand_structure_translation(text, text, text)
---
---  src_filename text
---  l1vs text
---  l2vs text
 --
 -- If src_filename=“Forest” and l2vs=0, then stand_structure=“S”
 -- If src_filename=“Forest” and (l1vs>0 and l2vs>0) then stand_structure=“M”
@@ -566,10 +792,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_nbi01_num_of_layers_translation(text, text, text)
 --
---  src_filename text
---  l1vs text
---  l2vs text
---
 -- If src_filename=“Forest” stand_structure = S, num_of_layers = 1.
 -- If src_filename=“Forest” stand_structure = M or C, then stand_structure=“M”
 --
@@ -609,11 +831,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_nbi01_wetland_translation(text, text, text, text)
 --
---  wc text
---  vt text
---  im text
---  ret_char_pos text
---
 -- Assign 4 letter wetland character code, then return the requested character (1-4)
 --
 -- e.g. TT_nbi01_wetland_translation(wt, vt, im, '1')
@@ -650,12 +867,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_nbi01_nb01_productive_for_translation(text, text, text, text, text)
---
---  l1cc text
---  l1ht text
---  l1trt text
---  l2trt text
---  fst text
 --
 -- If no valid crown closure value, or no valid height value. Assign PP.
 -- Or if forest stand type is 0, and l1 or l2 trt is neither CC or empty string. Assign PP.
@@ -698,8 +909,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 --  2 options for PRODUCTIVE_FOR, replicating NB02 using trt, l1cc, l1ht, l1s1.
 --  Or using fst.
 --  Here I`m using the simpler fst method until issue #181
---
---  fst text
 --
 -- If no valid crown closure value, or no valid height value. Assign PP.
 -- Or if forest stand type is 0, and l1 or l2 trt is neither CC or empty string. Assign PP.
