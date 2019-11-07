@@ -14,11 +14,15 @@
 --
 --
 -------------------------------------------------------------------------------
+-- Validation functions
+-------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_validation(text, text, text, text);
-
+-------------------------------------------------------------------------------
+-- Translation functions
+-------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_vri01_origin_translation(text, text);
 DROP FUNCTION IF EXISTS TT_vri01_site_index_translation(text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_translation(text, text, text, text);
@@ -30,5 +34,17 @@ DROP FUNCTION IF EXISTS TT_nbi01_num_of_layers_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_nb01_productive_for_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_nb02_productive_for_translation(text);
-
+-------------------------------------------------------------------------------
+-- Generic functions
+-------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_code(text, text, text);
+-------------------------------------------------------------------------------
+-- Tools functions
+-------------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS TT_TableColumnType(name, name, name);
+DROP FUNCTION IF EXISTS TT_TableColumnNames(name, name);
+DROP FUNCTION IF EXISTS TT_ColumnExists(name, name, name);
+DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb);
+DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean);
+DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int, double precision);
+DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
