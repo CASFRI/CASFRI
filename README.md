@@ -124,7 +124,7 @@ Conversion and loading scripts are written so that FRIs to convert and load must
 ### Translating
 * Validate dependency tables using the loaded validation tables.
 * Run the translation engine for each FRI using the loaded source FRI table and the translation table.
-* Refer to the sampleWorkFlow.sql file located in the CASFRI root directory for an example of how to run the translation engine.
+* Refer to the files located in the CASFRI/workflow folder for an example of how to run the translation engine. 
 
 # Credits
 **Steve Cumming**, Center for forest research, University Laval.
