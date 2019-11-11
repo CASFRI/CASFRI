@@ -30,7 +30,7 @@ FROM rawfri.nt02;
 -- create a 200 rows test inventory table
 --DROP VIEW IF EXISTS rawfri.nt02_test_200;
 CREATE OR REPLACE VIEW rawfri.nt02_test_200 AS
-SELECT invproj_id, fc_id, ogc_fid, wkb_geometry, areaha, 
+SELECT invproj_id, fc_id, ogc_fid, wkb_geometry, areaha, inventory_id, 
        moisture, crownclos, height, siteclass, si_50, 
        sp1, sp1_per, sp2, sp2per, sp3, sp3per, sp4, sp4per, 
        structur, strc_per, origin, typeclas, 
@@ -45,63 +45,121 @@ SELECT * FROM rawfri.nt02_test_200;
 --------------------------------------------------------------------------
 -- Create test translation tables
 --------------------------------------------------------------------------
---------------------------------------------------------------------------
+
 CREATE SCHEMA IF NOT EXISTS translation_test;
--------------------------------------------------------
--- NT02 reuse most of NT01 translation tables 
-----------------------------
--- cas
-DROP TABLE IF EXISTS translation_test.nt02_fvi01_cas_test;
-CREATE TABLE translation_test.nt02_fvi01_cas_test WITH OIDS AS
-SELECT * FROM translation.nt01_fvi01_cas;
 
--- Update cas_id translation rules
---UPDATE translation_test.nt02_fvi01_cas_test
---SET translation_rules = 'copyInt(''2'')'
---WHERE target_attribute = 'LAYER' OR target_attribute = 'LAYER_RANK';
-
--- Update cas_id
-UPDATE translation_test.nt02_fvi01_cas_test
-SET translation_rules = regexp_replace(translation_rules, 'nt01', 'nt02')
-WHERE rule_id = '1';
-
--- change 'fc_id_1' to 'fc_id' in validation rules
---UPDATE translation_test.nt02_fvi01_cas_test
---SET validation_rules = regexp_replace(validation_rules, 'fc_id_1', 'fc_id', 'g')
---WHERE rule_id IN ('1','2');
-
--- Display
-SELECT * FROM translation_test.nt02_fvi01_cas_test;
-
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Validate dependency tables
---------------------------------------------------------------------------
---------------------------------------------------------------------------
 -- NB species table
--------------------------------------------------------
 SELECT TT_Prepare('translation', 'nt_fvi01_species_validation', '_nt_species_val');
 SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_fvi01_species');
 
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Translate the sample table
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Create translation function
---SELECT TT_Prepare('translation_test', 'nt02_fvi02_cas_test', '_nt02_cas_test');
+-- NT02 CAS 
 
--- Create a view mapping the nb02 dst attributes to the nb01 dst attributes
+--reuse most of NT01 translation tables 
+DROP TABLE IF EXISTS translation_test.nt02_fvi01_cas_test;
+CREATE TABLE translation_test.nt02_fvi01_cas_test WITH OIDS AS
+SELECT * FROM translation.nt01_fvi01_cas;
+SELECT * FROM translation_test.nt02_fvi01_cas_test;
+
+-- Create a view mapping the nb02 cas attributes to the nb01 cas attributes
+DROP VIEW IF EXISTS rawfri.nt02_cas_test_200;
 CREATE OR REPLACE VIEW rawfri.nt02_cas_test_200 AS
-SELECT invproj_id, ogc_fid, wkb_geometry, areaha, ref_year, 
+SELECT invproj_id, inventory_id, ogc_fid, wkb_geometry, areaha, ref_year, structur, 
 fc_id fc_id_1 
 FROM rawfri.nt02_test_200;
---SELECT * FROM rawfri.nt02_test_200;
+SELECT * FROM rawfri.nt02_cas_test_200;
 
 -- Translate the samples (reuse most of NT01 translation functions)
-SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt02_test_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt02_cas_test_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_cas_test');
 
+-- NT02 LYR
+
+-- Reuse most of NT01 translation tables 
+DROP TABLE IF EXISTS translation_test.nt02_fvi01_lyr_test;
+CREATE TABLE translation_test.nt02_fvi01_lyr_test WITH OIDS AS
+SELECT * FROM translation.nt01_fvi01_lyr;
+SELECT * FROM translation_test.nt02_fvi01_lyr_test;
+
+-- Create a view mapping the nb02 lyr attributes to the nb01 lyr attributes
+DROP VIEW IF EXISTS rawfri.nt02_lyr_test_200;
+CREATE OR REPLACE VIEW rawfri.nt02_lyr_test_200 AS
+SELECT invproj_id, inventory_id, ogc_fid, wkb_geometry, 
+moisture, strc_per, crownclos, height, 
+sp1, sp1_per, sp2, sp2per, sp3, sp3per, sp4, sp4per,
+origin, siteclass, si_50,
+fc_id fc_id_1 
+FROM rawfri.nt02_test_200;
+SELECT * FROM rawfri.nt02_lyr_test_200;
+
+-- Translate the samples (reuse most of NT01 translation functions)
+SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt02_lyr_test_200', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
+
+-- NT02 NFL
+
+-- Reuse most of NT01 translation tables 
+DROP TABLE IF EXISTS translation_test.nt02_fvi01_nfl_test;
+CREATE TABLE translation_test.nt02_fvi01_nfl_test WITH OIDS AS
+SELECT * FROM translation.nt01_fvi01_nfl;
+SELECT * FROM translation_test.nt02_fvi01_nfl_test;
+
+-- Create a view mapping the nb02 nfl attributes to the nb01 nfl attributes
+DROP VIEW IF EXISTS rawfri.nt02_nfl_test_200;
+CREATE OR REPLACE VIEW rawfri.nt02_nfl_test_200 AS
+SELECT invproj_id, inventory_id, ogc_fid, wkb_geometry, 
+moisture, strc_per, crownclos, height, typeclas, 
+sp1, sp1_per, sp2, sp2per, sp3, sp3per, sp4, sp4per,
+origin, siteclass, si_50,
+fc_id fc_id_1 
+FROM rawfri.nt02_test_200;
+SELECT * FROM rawfri.nt02_nfl_test_200;
+
+-- Translate the samples (reuse most of NT01 translation functions)
+SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt02_nfl_test_200', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
+
+-- NT02 DST
+
+-- Reuse most of NT01 translation tables 
+DROP TABLE IF EXISTS translation_test.nt02_fvi01_dst_test;
+CREATE TABLE translation_test.nt02_fvi01_dst_test WITH OIDS AS
+SELECT * FROM translation.nt01_fvi01_dst;
+SELECT * FROM translation_test.nt02_fvi01_dst_test;
+
+-- Create a view mapping the nb02 dst attributes to the nb01 dst attributes
+DROP VIEW IF EXISTS rawfri.nt02_dst_test_200;
+CREATE OR REPLACE VIEW rawfri.nt02_dst_test_200 AS
+SELECT invproj_id, inventory_id, ogc_fid, wkb_geometry, 
+dis1code, dis1year, dis1ext,
+fc_id fc_id_1 
+FROM rawfri.nt02_test_200;
+SELECT * FROM rawfri.nt02_dst_test_200;
+
+-- Translate the samples (reuse most of NT01 translation functions)
+SELECT * FROM TT_Translate_nt01_dst_test('rawfri', 'nt02_dst_test_200', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_dst_test');
+
+-- NT02 GEO
+
+-- Reuse most of NT01 translation tables 
+DROP TABLE IF EXISTS translation_test.nt02_fvi01_geo_test;
+CREATE TABLE translation_test.nt02_fvi01_geo_test WITH OIDS AS
+SELECT * FROM translation.nt01_fvi01_geo;
+SELECT * FROM translation_test.nt02_fvi01_geo_test;
+
+-- Create a view mapping the nb02 geo attributes to the nb01 geo attributes
+DROP VIEW IF EXISTS rawfri.nt02_geo_test_200;
+CREATE OR REPLACE VIEW rawfri.nt02_geo_test_200 AS
+SELECT invproj_id, inventory_id, ogc_fid, wkb_geometry, 
+fc_id fc_id_1 
+FROM rawfri.nt02_test_200;
+SELECT * FROM rawfri.nt02_geo_test_200;
+
+-- Translate the samples (reuse most of NT01 translation functions)
+SELECT * FROM TT_Translate_nt01_geo_test('rawfri', 'nt02_geo_test_200', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_geo_test');
+
+-- CHECK FULL TEST RESULTS
 -- Display original values and translated values side-by-side to compare and debug the translation table
 --SELECT src_filename, inventory_id, stdlab, ogc_fid, cas_id, 
 --       l1cc, crown_closure_lower, crown_closure_upper, 
@@ -113,3 +171,10 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_cas_test');
 
 --------------------------------------------------------------------------
 --SELECT TT_DeleteAllLogs('translation_test');
+
+
+-- change 'fc_id_1' to 'fc_id' in validation rules
+--UPDATE translation_test.nt02_fvi01_cas_test
+--SET validation_rules = regexp_replace(validation_rules, 'fc_id_1', 'fc_id', 'g')
+--WHERE rule_id IN ('1','2');
+
