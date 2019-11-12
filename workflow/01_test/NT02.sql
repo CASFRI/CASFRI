@@ -56,7 +56,7 @@ SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_fvi01_species');
 
 --reuse most of NT01 translation tables 
 DROP TABLE IF EXISTS translation_test.nt02_fvi01_cas_test;
-CREATE TABLE translation_test.nt02_fvi01_cas_test WITH OIDS AS
+CREATE TABLE translation_test.nt02_fvi01_cas_test AS
 SELECT * FROM translation.nt01_fvi01_cas;
 SELECT * FROM translation_test.nt02_fvi01_cas_test;
 
@@ -76,7 +76,7 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_cas_test');
 
 -- Reuse most of NT01 translation tables 
 DROP TABLE IF EXISTS translation_test.nt02_fvi01_lyr_test;
-CREATE TABLE translation_test.nt02_fvi01_lyr_test WITH OIDS AS
+CREATE TABLE translation_test.nt02_fvi01_lyr_test AS
 SELECT * FROM translation.nt01_fvi01_lyr;
 SELECT * FROM translation_test.nt02_fvi01_lyr_test;
 
@@ -99,7 +99,7 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
 
 -- Reuse most of NT01 translation tables 
 DROP TABLE IF EXISTS translation_test.nt02_fvi01_nfl_test;
-CREATE TABLE translation_test.nt02_fvi01_nfl_test WITH OIDS AS
+CREATE TABLE translation_test.nt02_fvi01_nfl_test AS
 SELECT * FROM translation.nt01_fvi01_nfl;
 SELECT * FROM translation_test.nt02_fvi01_nfl_test;
 
@@ -122,7 +122,7 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
 
 -- Reuse most of NT01 translation tables 
 DROP TABLE IF EXISTS translation_test.nt02_fvi01_dst_test;
-CREATE TABLE translation_test.nt02_fvi01_dst_test WITH OIDS AS
+CREATE TABLE translation_test.nt02_fvi01_dst_test AS
 SELECT * FROM translation.nt01_fvi01_dst;
 SELECT * FROM translation_test.nt02_fvi01_dst_test;
 
@@ -143,7 +143,7 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_dst_test');
 
 -- Reuse most of NT01 translation tables 
 DROP TABLE IF EXISTS translation_test.nt02_fvi01_geo_test;
-CREATE TABLE translation_test.nt02_fvi01_geo_test WITH OIDS AS
+CREATE TABLE translation_test.nt02_fvi01_geo_test AS
 SELECT * FROM translation.nt01_fvi01_geo;
 SELECT * FROM translation_test.nt02_fvi01_geo_test;
 

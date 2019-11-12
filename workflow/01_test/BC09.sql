@@ -78,7 +78,7 @@ SELECT * FROM translation.bc09_vri01_geo;
 ----------------------------
 -- cas
 DROP TABLE IF EXISTS translation_test.bc09_vri01_cas_test;
-CREATE TABLE translation_test.bc09_vri01_cas_test WITH OIDS AS
+CREATE TABLE translation_test.bc09_vri01_cas_test AS
 SELECT * FROM translation.bc09_vri01_cas
 --WHERE rule_id::int = 1
 ;
@@ -87,7 +87,7 @@ SELECT * FROM translation_test.bc09_vri01_cas_test;
 ----------------------------
 -- dst
 DROP TABLE IF EXISTS translation_test.bc09_vri01_dst_test;
-CREATE TABLE translation_test.bc09_vri01_dst_test WITH OIDS AS
+CREATE TABLE translation_test.bc09_vri01_dst_test AS
 SELECT * FROM translation.bc09_vri01_dst
 --WHERE rule_id::int = 1
 ;
@@ -96,7 +96,7 @@ SELECT * FROM translation_test.bc09_vri01_dst_test;
 ----------------------------
 -- eco
 DROP TABLE IF EXISTS translation_test.bc09_vri01_eco_test;
-CREATE TABLE translation_test.bc09_vri01_eco_test WITH OIDS AS
+CREATE TABLE translation_test.bc09_vri01_eco_test AS
 SELECT * FROM translation.bc09_vri01_eco
 --WHERE rule_id::int = 1
 ;
@@ -105,7 +105,7 @@ SELECT * FROM translation_test.bc09_vri01_eco_test;
 ----------------------------
 -- lyr
 DROP TABLE IF EXISTS translation_test.bc09_vri01_lyr_test;
-CREATE TABLE translation_test.bc09_vri01_lyr_test WITH OIDS AS
+CREATE TABLE translation_test.bc09_vri01_lyr_test AS
 SELECT * FROM translation.bc09_vri01_lyr
 --WHERE rule_id::int = 34
 ;
@@ -114,7 +114,7 @@ SELECT * FROM translation_test.bc09_vri01_lyr_test;
 ----------------------------
 -- nfl
 DROP TABLE IF EXISTS translation_test.bc09_vri01_nfl_test;
-CREATE TABLE translation_test.bc09_vri01_nfl_test WITH OIDS AS
+CREATE TABLE translation_test.bc09_vri01_nfl_test AS
 SELECT * FROM translation.bc09_vri01_nfl
 --WHERE rule_id::int = 1
 ;
@@ -123,7 +123,7 @@ SELECT * FROM translation_test.bc09_vri01_nfl_test;
 ----------------------------
 -- geo
 DROP TABLE IF EXISTS translation_test.bc09_vri01_geo_test;
-CREATE TABLE translation_test.bc09_vri01_geo_test WITH OIDS AS
+CREATE TABLE translation_test.bc09_vri01_geo_test AS
 SELECT * FROM translation.bc09_vri01_geo
 --WHERE rule_id::int = 1
 ;

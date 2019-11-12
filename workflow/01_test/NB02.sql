@@ -59,7 +59,7 @@ CREATE SCHEMA IF NOT EXISTS translation_test;
 ----------------------------
 -- lyr_layer2
 DROP TABLE IF EXISTS translation_test.nb02_nbi01_lyr_layer2_test;
-CREATE TABLE translation_test.nb02_nbi01_lyr_layer2_test WITH OIDS AS
+CREATE TABLE translation_test.nb02_nbi01_lyr_layer2_test AS
 SELECT * FROM translation_test.nb01_nbi01_lyr_test;
 
 -- Update layer and layer_rank translation rules
