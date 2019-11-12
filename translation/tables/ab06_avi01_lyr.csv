@@ -1,5 +1,5 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-1,CAS_ID,text,notNull(src_filename);notNull(trm_1);notNull(poly_num);notNull(ogc_fid),"padConcat({'ab06', src_filename, trm_1, poly_num, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(trm_1);notNull(poly_num);notNull(ogc_fid),"padConcat({inventory_id, src_filename, trm_1, poly_num, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(moist_reg);matchList(moist_reg,{'a','A','d','D','m','M','w','W'})","mapText(moist_reg, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
 3,STRUCTURE_PER,integer,"notNull(struc_val);isInt(struc_val);isBetween(struc_val,'1','9')",copyInt(struc_val),Copy source value to STRUCTURE_PER,TRUE
 4,LAYER,integer,true(),copyInt('1'),Copy value of 1 to LAYER,TRUE

@@ -1,5 +1,5 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-1,CAS_ID,text,notNull(src_filename);notNull(trm_1);notNull(poly_num);notNull(ogc_fid),"padConcat({'ab06', src_filename, trm_1, poly_num, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(trm_1);notNull(poly_num);notNull(ogc_fid),"padConcat({inventory_id, src_filename, trm_1, poly_num, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,WETLAND_TYPE,text,false(),nothingText(),Attribute does not occur,TRUE
 3,WET_VEG_COVER,text,false(),nothingText(),Attribute does not occur,TRUE
 4,WET_LANDFORM_MOD,text,false(),nothingText(),Attribute does not occur,TRUE
