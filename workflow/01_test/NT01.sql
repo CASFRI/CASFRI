@@ -153,17 +153,17 @@ SELECT TT_Prepare('translation_test', 'nt01_fvi01_geo_test', '_nt01_geo_test');
 SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt01_test_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_cas_test');
 
-SELECT * FROM TT_Translate_nt01_dst('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_nt01_dst_test('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_dst_test');
 
 --SELECT * FROM TT_Translate_nt01_eco('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
 --SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_eco_test');
 
-SELECT * FROM TT_Translate_nt01_lyr('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
 
-SELECT * FROM TT_Translate_nt01_nfl('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
 
-SELECT * FROM TT_Translate_nt01_geo('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_nt01_geo_test('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_geo_test');
