@@ -11,7 +11,36 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
-
+----------------------------------------
+-- Which translation tables to use?
+----------------------------------------
+-- CAS - nt01_fvi01_cas.csv
+-- DST - nt01_fvi01_dst.csv
+-- GEO - nt01_fvi01_geo.csv
+-- LYR1 - nt01_fvi01_lyr.csv
+-- LYR2 - nt01_fvi01_lyr.csv
+-- NFL1 - nt01_fvi01_nfl.csv
+-- NFL2 - nt01_fvi01_nfl.csv
+----------------------------------------
+-- Mappings for VIEWs
+----------------------------------------
+-- LYR 2 table requires VIEW mapping:
+  -- minmoist to moisture
+  -- mincrowncl to crownclos
+  -- minheight to height
+  -- minsp1 to sp1
+  -- minsp1per to sp1_per
+  -- minsp2 to sp2
+  -- minsp2per to sp2per
+  -- minsp3 to sp3
+  -- minsp3per to sp3per
+  -- minsp4 to sp4
+  -- minsp4per to sp4per
+  -- minorigin to origin
+  -- minsitecla to siteclass
+-- NFL 2 table requires VIEW mapping:
+  -- mintypecla to typeclas
+  
 -- No not display debug messages.
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
