@@ -27,27 +27,6 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 -------------------------------------------------------
 -------------------------------------------------------
--- Translate all HDR tables into a common table
--- HDR tables only need one row per inventory, they
--- do not need to be made using translation, we can just
--- select the required row and columns from the
--- inventory_list_cas05 table.
--------------------------------------------------------
--------------------------------------------------------
-DROP TABLE IF EXISTS casfri50.hdr_all CASCADE;
-
-CREATE TABLE casfri50.hdr_all AS -- 1 s
-SELECT inventory_id, jurisdiction, owner_name, standard_type, standard_version, standard_id, standard_revision, inventory_manual, src_data_format, 
-acquisition_date, data_transfer, received_from, contact_info, data_availability, redistribution, permission, license_agreement, 
-photo_year_start, photo_year_end, photo_year_src 
-FROM translation.inventory_list_cas05
-WHERE inventory_id IN ('AB06', 'AB16', 'BC08', 'NB01', 'NB02');
-------------------------
-SELECT count(*) FROM casfri50.hdr_all; -- 5
-
-ALTER TABLE casfri50.hdr_all ADD PRIMARY KEY (inventory_id);
--------------------------------------------------------
--------------------------------------------------------
 -- Translate all GEO tables into a common table
 -------------------------------------------------------
 -- Prepare the translation functions
@@ -88,7 +67,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_geo');
 -- Check processed inventories and count
 SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.geo_all; 
 
-SELECT count(*) FROM casfri50.geo_all; --5736548
+SELECT count(*) FROM casfri50.geo_all; -- 6860441
 SELECT count(*) FROM casfri50.geo_all WHERE geometry = '010300000000000000'; -- 0
 
 -- Add primary and foreign key constraints

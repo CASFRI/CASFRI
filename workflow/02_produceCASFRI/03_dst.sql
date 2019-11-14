@@ -33,7 +33,7 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -- Reuse nb01_nbi01_dst for dst layer 2
 DROP TABLE IF EXISTS translation.nb01_nbi01_dst_layer2;
 
-CREATE TABLE translation.nb01_nbi01_dst_layer2 WITH OIDS AS
+CREATE TABLE translation.nb01_nbi01_dst_layer2 AS
 SELECT * FROM translation.nb01_nbi01_dst;
 
 UPDATE translation.nb01_nbi01_dst_layer2
@@ -93,7 +93,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_dst_layer2');
 INSERT INTO casfri50.dst_all -- 
 SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb02_dst', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb02_nbi01_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_dst');
 ------------------------
 INSERT INTO casfri50.dst_all -- 7h3m
 SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08', 'ogc_fid');
@@ -101,9 +101,13 @@ SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_dst');
 ------------------------
 -- Check processed inventories and count
-SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.dst_all; 
+SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.dst_all;
 
-SELECT count(*) FROM casfri50.dst_all; -- 5736548
+SELECT left(cas_id, 4) inv, layer, count(*) nb
+FROM casfri50.dst_all
+GROUP BY left(cas_id, 4), layer;
+
+SELECT count(*) FROM casfri50.dst_all; -- 7787618
 
 -- Add primary and foreign key constraints
 ALTER TABLE casfri50.dst_all 

@@ -66,9 +66,9 @@ SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_nfl');
 ------------------------
 -- Check processed inventories and count
-SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.nfl_all; 
+SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.nfl_all;
 
-SELECT count(*) FROM casfri50.nfl_all; -- 5736548
+SELECT count(*) FROM casfri50.nfl_all; -- 6860441
 
 -- Add primary and foreign key constraints
 ALTER TABLE casfri50.nfl_all ADD PRIMARY KEY (cas_id, layer);

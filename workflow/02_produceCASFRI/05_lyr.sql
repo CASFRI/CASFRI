@@ -122,9 +122,13 @@ SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_lyr');
 ------------------------
 -- Check processed inventories and count
-SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.lyr_all; 
+SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.lyr_all;
 
-SELECT count(*) FROM casfri50.lyr_all; -- 5736548
+SELECT left(cas_id, 4) inv, layer, count(*) nb
+FROM casfri50.lyr_all
+GROUP BY left(cas_id, 4), layer;
+
+SELECT count(*) FROM casfri50.lyr_all; -- 8911511
 
 -- Add primary and foreign key constraints
 ALTER TABLE casfri50.lyr_all ADD PRIMARY KEY (cas_id, layer);
