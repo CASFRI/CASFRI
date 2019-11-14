@@ -68,7 +68,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_cas');
 -- Check processed inventories and count
 SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.cas_all; 
 
-SELECT count(*) FROM casfri50.cas_all; -- 5736548
+SELECT count(*) FROM casfri50.cas_all; -- 6860441
 
 -- Add primary and foreign key constraints
 ALTER TABLE casfri50.cas_all 
