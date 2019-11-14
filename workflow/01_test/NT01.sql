@@ -142,11 +142,11 @@ SELECT * FROM translation.nt01_fvi01_lyr
 SELECT * FROM translation_test.nt01_fvi01_lyr_test;
 
 -- lyr2
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_lyr2_test;
-CREATE TABLE translation_test.nt01_fvi01_lyr2_test AS
+DROP TABLE IF EXISTS translation_test.nt01_fvi01_lyr_layer2_test;
+CREATE TABLE translation_test.nt01_fvi01_lyr_layer2_test AS
 SELECT * FROM translation.nt01_fvi01_lyr;
 -- Update layer and layer_rank translation rules
-UPDATE translation_test.nt01_fvi01_lyr2_test
+UPDATE translation_test.nt01_fvi01_lyr_layer2_test
 SET translation_rules = 'copyInt(''2'')'
 WHERE target_attribute = 'LAYER' OR target_attribute = 'LAYER_RANK';
 
@@ -160,11 +160,11 @@ SELECT * FROM translation.nt01_fvi01_nfl
 SELECT * FROM translation_test.nt01_fvi01_nfl_test;
 
 -- nfl2
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_nfl2_test;
-CREATE TABLE translation_test.nt01_fvi01_nfl2_test AS
+DROP TABLE IF EXISTS translation_test.nt01_fvi01_nfl_layer2_test;
+CREATE TABLE translation_test.nt01_fvi01_nfl_layer2_test AS
 SELECT * FROM translation.nt01_fvi01_nfl;
 -- Update layer and layer_rank translation rules
-UPDATE translation_test.nt01_fvi01_nfl2_test
+UPDATE translation_test.nt01_fvi01_nfl_layer2_test
 SET translation_rules = 'copyInt(''2'')'
 WHERE target_attribute = 'LAYER' OR target_attribute = 'LAYER_RANK';
 
@@ -203,9 +203,9 @@ SELECT TT_Prepare('translation_test', 'nt01_fvi01_cas_test', '_nt01_cas_test');
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_dst_test', '_nt01_dst_test');
 --SELECT TT_Prepare('translation_test', 'nt01_fvi01_eco_test', '_nt01_eco_test');
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_lyr_test', '_nt01_lyr_test');
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_lyr2_test', '_nt01_lyr2_test');
+SELECT TT_Prepare('translation_test', 'nt01_fvi01_lyr_layer2_test', '_nt01_lyr_layer2_test');
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_nfl_test', '_nt01_nfl_test');
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_nfl2_test', '_nt01_nfl2_test');
+SELECT TT_Prepare('translation_test', 'nt01_fvi01_nfl_layer2_test', '_nt01_nfl_layer2_test');
 SELECT TT_Prepare('translation_test', 'nt01_fvi01_geo_test', '_nt01_geo_test');
 
 -- Create a view mapping the layer 2 attributes to the layer 1 attributes
@@ -239,14 +239,14 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_dst_test');
 SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
 
-SELECT * FROM TT_Translate_nt01_lyr2_test('rawfri', 'nt01_lyr_layer2_test_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr2_test');
+SELECT * FROM TT_Translate_nt01_lyr_layer2_test('rawfri', 'nt01_lyr_layer2_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_layer2_test');
 
 SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
 
-SELECT * FROM TT_Translate_nt01_nfl2_test('rawfri', 'nt01_nfl_layer2_test_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl2_test');
+SELECT * FROM TT_Translate_nt01_nfl_layer2_test('rawfri', 'nt01_nfl_layer2_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_layer2_test');
 
 SELECT * FROM TT_Translate_nt01_geo_test('rawfri', 'nt01_test_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_geo_test');
