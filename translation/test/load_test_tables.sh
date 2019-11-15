@@ -17,7 +17,7 @@ source ../../conversion/sh/common.sh
 
 # Run ogr2ogr
 
-"$gdalFolder/ogr2ogr" -f "PostgreSQL" "$pg_connection_string" "data/cas_all_test.csv" -nln "casfri50_test.cas_all_test" $overwrite_tab -lco COLUMN_TYPES="cas_id=text,inventory_id=text,orig_stand_id=text,stand_structure=text,num_of_layers=int,identification_id=int,map_sheet_id=text,casfri_area=double precision,casfri_perimeter=double precision,src_inv_area=double precision,stand_photo_year=int"
+"$gdalFolder/ogr2ogr" -f "PostgreSQL" "$pg_connection_string" "data/cas_all_test.csv" -nln "casfri50_test.cas_all_test" $overwrite_tab -lco COLUMN_TYPES="cas_id=text,inventory_id=text,orig_stand_id=text,stand_structure=text,num_of_layers=int,map_sheet_id=text,casfri_area=double precision,casfri_perimeter=double precision,src_inv_area=double precision,stand_photo_year=int"
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" -sql "ALTER TABLE casfri50_test.cas_all_test DROP COLUMN ogc_fid"
 
