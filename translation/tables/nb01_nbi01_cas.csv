@@ -1,11 +1,11 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(stdlab);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', stdlab, ogc_fid}, {'4','15','10','10','7'}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(stdlab);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', stdlab, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
-3,ORIG_STAND_ID,text,"notNull(stdlab);isInt(stdlab);isGreaterThan(stdlab, '0')",copyText(stdlab),Copies source value to ORIG_STAND_ID,TRUE
+3,ORIG_STAND_ID,text,"notNull(stdlab);isInt(stdlab);isGreaterThan(stdlab, 0)",copyText(stdlab),Copies source value to ORIG_STAND_ID,TRUE
 4,STAND_STRUCTURE,text,"notNull(src_filename);matchList(src_filename, {'Forest', 'geonb_forest-foret'}|INVALID_VALUE);notNull(l1vs);notNull(l2vs);isInt(l1vs);isInt(l2vs)","nbi01_stand_structure_translation(src_filename, l1vs, l2vs)","If src_filename=Forest and l2vs=0, then stand_structure=S. If src_filename=Forest and (l1vs>0 and l2vs>0) then stand_structure=M. If src_filename=Forest and (l1vs>1 and l2vs>1) then stand_structure=C. Validation should check for null and that l1vs and l2vs are integers.",TRUE
 5,NUM_OF_LAYERS,integer,"notNull(src_filename);matchList(src_filename, {'Forest', 'geonb_forest-foret'}|-9997);notNull(l1vs);notNull(l2vs);isInt(l1vs);isInt(l2vs)","nbi01_num_of_layers_translation(src_filename, l1vs, l2vs)","If src_filename is Forest and stand_structure is S, then num_of_layers is 1. If stand_structure is M or C, num_of_layers = 2. Validation should check for null and that l1vs and l2vs are integers.",TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Copies source value to MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
-9,SRC_INV_AREA,double precision,"notNull(shape_area);isNumeric(shape_area);isGreaterThan(shape_area, '0')",copyDouble(shape_area),Copies source value to SRC_INV_AREA,TRUE
-10,STAND_PHOTO_YEAR,integer,"notNull(datayr);isInt(datayr);isBetween(datayr, '1900', '2020')",copyInt(datayr),Copies source value to STAND_PHOTO_YEAR,TRUE
+9,SRC_INV_AREA,double precision,"notNull(shape_area);isNumeric(shape_area);isGreaterThan(shape_area, 0)",copyDouble(shape_area),Copies source value to SRC_INV_AREA,TRUE
+10,STAND_PHOTO_YEAR,integer,"notNull(datayr);isInt(datayr);isBetween(datayr, 1900, 2020)",copyInt(datayr),Copies source value to STAND_PHOTO_YEAR,TRUE
