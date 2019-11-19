@@ -438,7 +438,7 @@ The attribute **stand_photo_year** is a identifies the year in which the aerial 
 
 ## 4.0 LYR Attributes
 
-Updated: 2019-08-08
+Updated: 2019-11-18
 
 
 
@@ -452,17 +452,39 @@ The attribute **cas_id** is an alpha-numeric identifier that is unique for each 
 
 
 
-### structure_per  
+### structure_per
 
-The attribute **structure_per** is assigned when a complex or horizontal structured polygon is identified. Stand structure percent is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
+The attribute **structure_per** is assigned when a horizontal structured polygon is identified. It is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
 
-| structure_per                                                | values |
+| structure_per                                                | values  |
+| :----------------------------------------------------------- | :------ |
+| Used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 100 |
+
+Notes:
+
+- Only occurs when **stand_structure** = "H"
+- Applies to the following inventories: AB, NB, NT
+- How does this attribute differ for non-forested (NFL) polygons?
+
+
+
+### structure_range
+
+The attribute **structure_range** is assigned when a complex structured polygon is identified. It is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
+
+| structure_range                                              | values |
 | :----------------------------------------------------------- | :----- |
-| Used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 9  |
+| Measures the height range (m) around the midpoint height of the stand. It is calculated as the difference between the mean or median heights of the upper and lower layers within the complex stand. | 1 - 9  |
+
+Notes:
+
+- Only occurs when **stand_structure** = "C"
+- Applies to the following inventories: AB, NB, NT
+- How does this attribute differ for non-forested (NFL) polygons?
 
 
 
-### layer  
+### layer
 
 Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on.  
 
@@ -474,14 +496,13 @@ The maximum number of layers recognized is nine. The uppermost layer may also be
 
 
 
-### layer_rank  
+### layer_rank
 
 Layer Rank value is an attribute related to stand structure and refers to layer importance for forest management planning, operational, or silvicultural purposes. When a Layer Rank is not specified, layers can be sorted in order of importance by layer number.  
 
 | layer_rank                                                   | values |
 | :----------------------------------------------------------- | :----- |
 | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc. | 1 - 9  |
-| Blank - no value                                             | NA     |
 
   
 
@@ -496,11 +517,10 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration. |  M |
 | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water. | W |
 | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water. | A |
-| Blank - no value                                              | NA |
 
 
 
-### crown_closure _upper, crown_closure_lower 
+### crown_closure 
 
 Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer.Crown closure is commonly represented by classes and differs across Canada therefore, CAS recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.  
 
@@ -508,11 +528,10 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 | :------------------------------------------------- | :-------------- |
 | Upper Bound - upper bound of a crown closure class | 0 - 100         |
 | Lower Bound - lower bound of a crown closure class | 0 - 100         |
-| Blank - no value                                   | NA              |
 
 
 
-### height_upper, height_lower  
+### height  
 
 Stand height is based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6. 
 
@@ -530,17 +549,15 @@ Unproductive forest is forest land not capable of producing trees for forest ope
 | productive_for | values |
 | :-------------------------------------------------------------- | :-------------- |
 | Treed Muskeg - treed wetland sites| TM |
-| Open Muskeg - open (<10% trees) wetland sites | OM |
 | Alpine forest - high elevation forest usually above 1800 m | AL |
 | Scrub Deciduous - scrub deciduous trees on poor sites | SD |
 | Scrub Coniferous - scrub coniferous trees on poor sites | SC |
 | Non Productive Forest - poor forest types on rocky or wet sites | NP |
 | Productive Forest - any other forest | P|
-| Blank - no value | NA |
 
 
 
-### species_1-10, species_per_1-10
+### species
 
 Species composition is the percentage of each tree species represented within a forested polygon by layer. Species are listed in descending order according to their contribution based on crown closure, basal area, or volume depending on the province or territory. A total of ten species can be used in one label. The CAS attribute will capture estimation to the nearest percent; however, most inventories across Canada describe species to the nearest 10% (in actual percent value or multiples of 10). Species composition for each forest stand and layer must sum to 100%.  
 
@@ -554,16 +571,16 @@ CAS species codes are derived from the species' Latin name using the first four 
 
 
 
-### species_per_1 - 10
+### species_per
 
 | species_per_1 - species_per_10                                                                                                                                      | values |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%. | NA              |
+| Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%. | 1-100          |
 
 
 
 
-### origin_upper, origin_lower  
+### origin
 
 Stand origin is the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CAS origin. The detailed stand origin table is presented in Appendix 10. 
 
@@ -584,7 +601,6 @@ Site class is an estimate of the potential productivity of land for tree growth.
 | Poor - poor tree growth based on age height relationship     | P               |
 | Medium - medium tree growth based on age height relationship | M               |
 | Good - medium tree growth based on age height relationship   | G               |
-| Blank - no value                                             | NA              |
 
 
 
