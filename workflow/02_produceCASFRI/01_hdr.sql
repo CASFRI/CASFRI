@@ -41,7 +41,7 @@ SELECT inventory_id, jurisdiction, owner_name, standard_type, standard_version, 
 acquisition_date, data_transfer, received_from, contact_info, data_availability, redistribution, permission, license_agreement, 
 photo_year_start, photo_year_end, photo_year_src 
 FROM translation.inventory_list_cas05
-WHERE inventory_id IN ('AB06', 'AB16', 'BC08', 'NB01', 'NB02');
+WHERE inventory_id IN ('AB06', 'AB16', 'BC08', 'NB01', 'NB02', 'NT01', 'NT02');
 ------------------------
 SELECT count(*) FROM casfri50.hdr_all; -- 5
 

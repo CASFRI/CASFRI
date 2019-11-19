@@ -29,6 +29,9 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -------------------------------------------------------
 -- Translate all DST tables into a common table
 -------------------------------------------------------
+
+-------------------------------------------------------
+-- Prepare translation tables
 -------------------------------------------------------
 -- Reuse nb01_nbi01_dst for dst layer 2
 DROP TABLE IF EXISTS translation.nb01_nbi01_dst_layer2;
@@ -65,6 +68,7 @@ SELECT TT_Prepare('translation', 'ab16_avi01_dst', '_ab16_dst', 'ab06_avi01_dst'
 SELECT TT_Prepare('translation', 'nb01_nbi01_dst', '_nb01_dst', 'ab06_avi01_dst');
 SELECT TT_Prepare('translation', 'nb01_nbi01_dst_layer2', '_nb01_dst_layer2', 'ab06_avi01_dst');
 SELECT TT_Prepare('translation', 'bc08_vri01_dst', '_bc08_dst', 'ab06_avi01_dst');
+SELECT TT_Prepare('translation', 'nt01_fvi01_dst', '_nt_dst', 'ab06_avi01_dst'); -- can use the same function for NT01 and NT02
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 ------------------------
@@ -99,6 +103,16 @@ INSERT INTO casfri50.dst_all -- 7h3m
 SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_dst');
+------------------------
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt01', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_dst');
+------------------------
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt02', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_dst');
 ------------------------
 -- Check processed inventories and count
 SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.dst_all;

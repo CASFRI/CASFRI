@@ -34,6 +34,8 @@ SELECT TT_Prepare('translation', 'ab06_avi01_geo', '_ab06_geo');
 SELECT TT_Prepare('translation', 'ab16_avi01_geo', '_ab16_geo', 'ab06_avi01_geo');
 SELECT TT_Prepare('translation', 'nb01_nbi01_geo', '_nb01_geo', 'ab06_avi01_geo');
 SELECT TT_Prepare('translation', 'bc08_vri01_geo', '_bc08_geo', 'ab06_avi01_geo');
+SELECT TT_Prepare('translation', 'nt01_fvi01_geo', '_nt01_geo', 'ab06_avi01_geo');
+SELECT TT_Prepare('translation', 'nt02_fvi01_geo', '_nt02_geo', 'ab06_avi01_geo');
 ------------------------
 DROP TABLE IF EXISTS casfri50.geo_all CASCADE;
 ------------------------
@@ -63,6 +65,16 @@ INSERT INTO casfri50.geo_all --4h59m
 SELECT * FROM TT_Translate_bc08_geo('rawfri', 'bc08', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_geo');
+------------------------
+INSERT INTO casfri50.geo_all --
+SELECT * FROM TT_Translate_nt01_geo('rawfri', 'nt01', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_geo');
+------------------------
+INSERT INTO casfri50.geo_all --
+SELECT * FROM TT_Translate_nt02_geo('rawfri', 'nt02', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'nt02_fvi01_geo');
 ------------------------
 -- Check processed inventories and count
 SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.geo_all; 

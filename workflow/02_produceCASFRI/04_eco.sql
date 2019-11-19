@@ -35,6 +35,7 @@ SELECT TT_Prepare('translation', 'ab06_avi01_eco', '_ab06_eco');
 SELECT TT_Prepare('translation', 'ab16_avi01_eco', '_ab16_eco', 'ab06_avi01_eco');
 SELECT TT_Prepare('translation', 'nb01_nbi01_eco', '_nb01_eco', 'ab06_avi01_eco');
 SELECT TT_Prepare('translation', 'bc08_vri01_eco', '_bc08_eco', 'ab06_avi01_eco');
+SELECT TT_Prepare('translation', 'nt01_fvi01_eco', '_nt_eco', 'ab06_avi01_eco'); -- can use the same function for NT01 and NT02
 ------------------------
 DROP TABLE IF EXISTS casfri50.eco_all CASCADE;
 ------------------------
@@ -64,6 +65,16 @@ INSERT INTO casfri50.eco_all -- 4h05m
 SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_eco');
+------------------------
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt01', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_eco');
+------------------------
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt02', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_eco');
 ------------------------
 -- Check processed inventories and count
 SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.eco_all;
