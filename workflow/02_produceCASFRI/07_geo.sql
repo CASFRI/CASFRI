@@ -87,4 +87,8 @@ ALTER TABLE casfri50.geo_all ADD PRIMARY KEY (cas_id);
 
 ALTER TABLE casfri50.geo_all
 ADD FOREIGN KEY (cas_id) REFERENCES casfri50.cas_all (cas_id) MATCH FULL;
+
+-- Set the geometry type to be able to diaply in some GIS
+ALTER TABLE casfri50.geo_all
+ALTER COLUMN geometry TYPE geometry(multipolygon, 900914);
 ------------------------
