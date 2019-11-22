@@ -185,7 +185,7 @@ fc_id fc_id_1
 FROM rawfri.nt02_test_200;
 SELECT * FROM rawfri.nt02_nfl_layer2_test_200;
 
--- Create a view mapping the nb02 geo attributes to the nb01 geo attributes
+-- Create a view mapping the nt02 geo attributes to the nt01 geo attributes
 DROP VIEW IF EXISTS rawfri.nt02_geo_test_200;
 CREATE OR REPLACE VIEW rawfri.nt02_geo_test_200 AS
 SELECT src_filename, inventory_id, ogc_fid, wkb_geometry, invproj_id,
