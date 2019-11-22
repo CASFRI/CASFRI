@@ -15,7 +15,52 @@
 --
 -------------------------------------------------------------------------------
 -- Begin Tools Function Definitions...
+------------------------------------------------------------------------------- 
+-- TT_TableColumnIsUnique
+--
+-- Return TRUE if the column values are unique. 
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name, name);
+CREATE OR REPLACE FUNCTION TT_TableColumnIsUnique(
+  schemaName name,
+  tableName name,
+  columnName name
+)
+RETURNS boolean AS $$
+  DECLARE 
+    isUnique boolean; 
+  BEGIN
+    EXECUTE 'SELECT (SELECT ' || columnName || 
+           ' FROM ' || TT_FullTableName(schemaName, tableName) ||
+           ' GROUP BY ' || columnName || 
+           ' HAVING count(*) > 1
+             LIMIT 1) IS NULL;'
+    INTO isUnique;
+    RETURN isUnique; 
+  END;
+$$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------- 
+-- TT_TableColumnIsUnique 
+--
+-- Return the list of column for a table and their uniqueness. 
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name);
+CREATE OR REPLACE FUNCTION TT_TableColumnIsUnique(
+  schemaName name,
+  tableName name
+)
+RETURNS TABLE (col_name text, is_unique boolean) AS $$
+  WITH column_names AS (
+    SELECT unnest(TT_TableColumnNames(schemaName, tableName)) cname
+  )
+  SELECT cname, TT_TableColumnIsUnique(schemaName, tableName, cname) is_unique
+FROM column_names;
+$$ LANGUAGE sql;
+-------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------- 
 -- TT_TableColumnType 
 -- 
 --   tableSchema name - Name of the schema containing the table. 
@@ -283,7 +328,7 @@ RETURNS TABLE (id int) AS $$
                  ) SELECT * FROM list ORDER BY id;
   END;
 $$ LANGUAGE plpgsql;
-
+------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
 CREATE OR REPLACE FUNCTION TT_RandomInt(
   nb int, 
@@ -293,7 +338,149 @@ CREATE OR REPLACE FUNCTION TT_RandomInt(
 RETURNS SETOF int AS $$
   SELECT TT_RandomInt(nb, val_min, val_max, random());
 $$ LANGUAGE sql;
+-------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
+-- TT_CreateMappingView 
+-- 
+-- Return a view mapping attributes of fromTableName to attributes of toTableName
+-- according to the translation.attribute_dependencies table.
+-- Can also be used to create a view selecting the minimal set of useful attribute
+-- and to get a random sample of the source table when randomNb is provided.
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, int, name, int, int); 
+CREATE OR REPLACE FUNCTION TT_CreateMappingView( 
+  schemaName name, 
+  fromTableName name,
+  fromLayer int,
+  toTableName name,
+  toLayer int,
+  randomNb int DEFAULT NULL
+) 
+RETURNS text AS $$ 
+  DECLARE
+      queryStr text;
+      attribute_map text;
+      nb int;
+      viewName text;
+  BEGIN
+    -- Check if table 'attribute_dependencies' exists
+    IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''translation.dependencies''...';
+      RETURN 'ERROR: Could not find table ''translation.dependencies''...';
+    END IF;
+
+    -- Check if table fromTableName exists
+    IF NOT TT_TableExists(schemaName, fromTableName) THEN
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''translation.%''...', fromTableName;
+      RETURN 'ERROR: Could not find table ''translation..' || fromTableName || '''...';
+    END IF;
+
+    -- Check if table fromTableName exists
+    IF NOT TT_TableExists(schemaName, toTableName) THEN
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''translation.%''...', toTableName;
+      RETURN 'ERROR: Could not find table ''translation.' || toTableName || '''...';
+    END IF;
+
+    -- Check if an entry for fromTableName, fromLayer exists in table 'attribute_dependencies'
+    SELECT count(*) FROM translation.attribute_dependencies
+    WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(fromTableName) AND layer = fromLayer::text
+    INTO nb;
+    IF nb = 0 THEN
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): No entry found for inventory_id ''%'' layer % in table ''translation.dependencies''...', fromTableName, fromLayer;
+      RETURN 'ERROR: No entry could be found for inventory_id '''  || fromTableName || ''' layer ' || fromLayer || ' in table ''translation.dependencies''...';
+    ELSIF nb > 1 THEN
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): More than one entry match inventory_id ''%'' layer % in table ''translation.dependencies''...', fromTableName, fromLayer;
+      RETURN 'ERROR: More than one entry match inventory_id '''  || fromTableName || ''' layer ' || fromLayer || ' in table ''translation.dependencies''...';
+    END IF;
+
+    -- Check if an entry for toTableName, toLayer exists in table 'attribute_dependencies'
+    SELECT count(*) FROM translation.attribute_dependencies
+    WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(toTableName) AND layer = toLayer::text
+    INTO nb;
+    IF nb = 0 THEN
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): No entry found for inventory_id ''%'' layer % in table ''translation.dependencies''...', toTableName, toLayer;
+      RETURN 'ERROR: No entry could be found for inventory_id '''  || toTableName || ''' layer ' || toLayer || ' in table ''translation.dependencies''...';
+    ELSIF nb > 1 THEN
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): More than one entry match inventory_id ''%'' layer % in table ''translation.dependencies''...', toTableName, toLayer;
+      RETURN 'ERROR: More than one entry match inventory_id '''  || toTableName || ''' layer ' || toLayer || ' in table ''translation.dependencies''...';
+    END IF;
+
+    -- Build the attribute mapping
+    WITH from_att AS (
+      SELECT (jsonb_each(to_jsonb(a.*))).*
+      FROM translation.attribute_dependencies a
+      WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(fromTableName) AND layer = fromLayer::text
+    ), to_att AS (
+      SELECT (jsonb_each(to_jsonb(a.*))).*
+      FROM translation.attribute_dependencies a
+      WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(toTableName) AND layer = toLayer::text
+    ), splitted AS (
+      SELECT from_att.key, 
+         trim(regexp_split_to_table(btrim(from_att.value::text, '"'), E',')) from_att, 
+         trim(regexp_split_to_table(btrim(to_att.value::text, '"'), E',')) to_att
+      FROM from_att, to_att
+      WHERE from_att.key = to_att.key AND from_att.key != 'ogc_fid' AND from_att.key != 'ttable_exists'
+    ), mapping AS (
+      SELECT DISTINCT ON (to_att)
+         --key, from_att orig_from_att, TT_IsName(from_att), to_att orig_to_att, TT_IsName(to_att),
+         CASE WHEN TT_IsName(from_att) THEN from_att
+              ELSE '''' || btrim(from_att, '''') || ''''
+         END from_att,
+         CASE WHEN TT_IsName(to_att) THEN to_att
+              WHEN TT_IsName(from_att) THEN from_att
+              ELSE key
+         END to_att
+      FROM splitted
+      WHERE TT_NotEmpty(from_att)
+      ORDER BY to_att, from_att
+    )
+    SELECT string_agg(from_att || CASE WHEN from_att = to_att THEN '' ELSE ' ' || to_att END, ', ')
+    FROM mapping INTO attribute_map;
+--RAISE NOTICE 'attribute_map=%', attribute_map;
+
+    viewName = TT_FullTableName(schemaName, fromTableName || 
+               CASE WHEN fromTableName = toTableName AND fromLayer = toLayer THEN '_min' 
+                    ELSE '_l' || fromLayer || '_to_' || toTableName || '_l' || toLayer || '_map' 
+               END || coalesce('_' || randomNb, ''));
+    -- Build the VIEW query
+    queryStr = 'DROP VIEW IF EXISTS ' || viewName || ' CASCADE;CREATE OR REPLACE VIEW ' || viewName || ' AS' ||
+              ' SELECT ' || attribute_map || 
+              ' FROM ' || TT_FullTableName(schemaName, fromTableName) || ' r';
+
+    -- Make it random if requested
+    IF randomNb IS NULL THEN
+      queryStr = queryStr || ';';
+    ELSE
+      EXECUTE 'SELECT count(*) FROM ' || TT_FullTableName(schemaName, fromTableName) INTO nb;
+      queryStr = queryStr || ', TT_RandomInt(' || randomNb || ', 1, ' || nb || ', 1.0) rd WHERE rd.id = r.ogc_fid;';
+    END IF;
+    RAISE NOTICE 'TT_CreateMappingView(): Creating VIEW ''%''...', viewName;
+    EXECUTE queryStr;
+    RETURN queryStr;
+  END; 
+$$ LANGUAGE plpgsql VOLATILE;
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, name, int); 
+CREATE OR REPLACE FUNCTION TT_CreateMappingView( 
+  schemaName name, 
+  fromTableName name,
+  toTableName name,
+  randomNb int DEFAULt NULL
+) 
+RETURNS text AS $$ 
+  SELECT TT_CreateMappingView(schemaName, fromTableName, 1, toTableName, 1, randomNb);
+$$ LANGUAGE sql VOLATILE;
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, int); 
+CREATE OR REPLACE FUNCTION TT_CreateMappingView( 
+  schemaName name, 
+  tableName name,
+  randomNb int DEFAULt NULL
+) 
+RETURNS text AS $$ 
+  SELECT TT_CreateMappingView(schemaName, tableName, 1, tableName, 1, randomNb);
+$$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 -- Overwrrite the TT_DefaultProjectErrorCode() function to define default error 
 -- codes for these helper functions...

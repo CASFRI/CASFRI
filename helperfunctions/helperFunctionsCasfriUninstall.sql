@@ -48,3 +48,8 @@ DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb);
 DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean);
 DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int, double precision);
 DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
+DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, int);
+DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, name, int); 
+DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, int, name, int, int);
+
+
