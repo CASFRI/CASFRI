@@ -12,4 +12,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 11,DIST_YEAR_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 12,DIST_EXT_UPPER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 13,DIST_EXT_LOWER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
-14,LAYER,integer,true(),copyInt(1),Copy value of 1 to LAYER,TRUE
+14,LAYER,integer,true(),copyInt(layer),Copy value of 1 to LAYER,TRUE

@@ -2,8 +2,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(invproj_id);notNull(fc_id_1);notNull(ogc_fid),"padConcat({inventory_id, src_filename, invproj_id, fc_id_1, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(moisture);matchList(moisture,{'vx','x','sx','sm','m','sg','hg','sd','hd'})","mapText(moisture, {'vx','x','sx','sm','m','sg','hg','sd','hd'}, {'D','D','D','F','F','M','M','W','W'})",Maps source value to SOIL_moisture using lists of values,TRUE
 3,STRUCTURE_PER,integer,"notNull(strc_per);isInt(strc_per);isBetween(strc_per,1,9)",copyInt(strc_per),Copy source value to STRUCTURE_PER,TRUE
-4,LAYER,integer,true(),copyInt(1),Copy value of 1 to LAYER,TRUE
-5,LAYER_RANK,integer,true(),copyInt(1),Copy value of 1 to LAYER_RANK,TRUE
+4,LAYER,integer,true(),copyInt(layer),Copy value of 1 to LAYER,TRUE
+5,LAYER_RANK,integer,true(),copyInt(layer_rank),Copy value of 1 to LAYER_RANK,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(crownclos);isInt(crownclos);isBetween(crownclos,0,100)",copyInt(crownclos),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(crownclos);isInt(crownclos);isBetween(crownclos,0,100)",copyInt(crownclos),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(height);isNumeric(height);isGreaterThan(height,1);isLessThan(height,100)",copyDouble(height),Copies source value to HEIGHT_UPPER,TRUE
