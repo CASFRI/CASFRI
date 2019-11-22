@@ -185,22 +185,22 @@ SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_lyr');
 ------------------------
-INSERT INTO casfri50.lyr_all -- 
+INSERT INTO casfri50.lyr_all -- 1h49m
 SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt01', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_lyr');
 ------------------------
-INSERT INTO casfri50.lyr_all -- 
+INSERT INTO casfri50.lyr_all -- 1h24m
 SELECT * FROM TT_Translate_nt_lyr_layer2('rawfri', 'nt01_lyr_layer2', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_lyr_layer2');
 ------------------------
-INSERT INTO casfri50.lyr_all -- 
+INSERT INTO casfri50.lyr_all -- 1h45m
 SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_lyr', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_lyr');
 ------------------------
-INSERT INTO casfri50.lyr_all -- 
+INSERT INTO casfri50.lyr_all -- 1h34m
 SELECT * FROM TT_Translate_nt_lyr_layer2('rawfri', 'nt02_lyr_layer2', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_lyr_layer2');

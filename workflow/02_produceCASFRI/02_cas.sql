@@ -30,6 +30,19 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -- Translate all CAS tables into a common table
 -------------------------------------------------------
 -------------------------------------------------------
+
+-------------------------------------------------------
+-- NT02 prep
+-- can reuse the nt01 translation tables
+-- needs a VIEW for both layer 1 and layer 2
+-------------------------------------------------------
+-- Create a view mapping the nt02 cas attributes to the nt01 cas attributes
+DROP VIEW IF EXISTS rawfri.nt02_cas;
+CREATE OR REPLACE VIEW rawfri.nt02_cas AS
+SELECT src_filename, invproj_id, inventory_id, ogc_fid, wkb_geometry, areaha, ref_year, structur, 
+fc_id fc_id_1 
+FROM rawfri.nt02;
+
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab06_avi01_cas', '_ab06_cas');
 SELECT TT_Prepare('translation', 'ab16_avi01_cas', '_ab16_cas', 'ab06_avi01_cas');
@@ -66,13 +79,13 @@ SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_cas');
 ------------------------
-INSERT INTO casfri50.cas_all -- 
+INSERT INTO casfri50.cas_all -- 43m
 SELECT * FROM TT_Translate_nt_cas('rawfri', 'nt01', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_cas');
 ------------------------
-INSERT INTO casfri50.cas_all -- 
-SELECT * FROM TT_Translate_nt_cas('rawfri', 'nt02', 'ogc_fid');
+INSERT INTO casfri50.cas_all -- 57m
+SELECT * FROM TT_Translate_nt_cas('rawfri', 'nt02_cas', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_cas');
 ------------------------
