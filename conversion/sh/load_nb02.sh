@@ -35,13 +35,13 @@ NB_subFolder=NB/NB02/
 srcNameWater=NBHN_0000_02_Wb
 srcWaterFullPath="$friDir/$NB_subFolder$srcNameWater.shp"
 
-srcNameNonForest=geonb_nonforest-nonforet
+srcNameNonForest=geonb_nonforest_nonforet
 srcNonForestFullPath="$friDir/$NB_subFolder$srcNameNonForest.shp"
 
 srcNameWetland=NBHN_0000_03_wl
 srcWetlandFullPath="$friDir/$NB_subFolder$srcNameWetland.shp"
 
-srcNameForest=geonb_forest-foret
+srcNameForest=geonb_forest_foret
 srcForestFullPath="$friDir/$NB_subFolder$srcNameForest.shp"
 
 fullTargetTableName=$targetFRISchema.nb02
