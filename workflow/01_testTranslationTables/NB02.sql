@@ -80,7 +80,7 @@ SELECT * FROM TT_Translate_nb01_geo_test('rawfri', 'nb02_l1_to_nb01_l1_map_200',
 SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_geo_test');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT b.src_filename, b.inventory_id, b.stdlab, b.ogc_fid, a.cas_id, 
+SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id, 
        b.l1cc, a.crown_closure_lower, a.crown_closure_upper, 
        b.l1ht, a.height_upper, a.height_lower, 
        b.l1s1, a.species_1,
