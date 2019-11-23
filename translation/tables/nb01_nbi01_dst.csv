@@ -1,5 +1,5 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(stdlab);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', stdlab, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,DIST_TYPE_1,text,"notNull(l1trt);matchList(l1trt,{'BB','CC','CL','CT','CV','FP','FT','FW','IT','PA','PB','PC','PL','PT','RC','RR','SA','SC','SH','SR','ST','TI','TP'})","mapText(l1trt, {'BB','CC','CL','CT','CV','FP','FT','FW','IT','PA','PB','PC','PL','PT','RC','RR','SA','SC','SH','SR','ST','TI','TP'}, {'BU','CO','SI','PC','PC','SI','OT','PC','PC','PC','BU','PC','SI','OT','PC','OT','PC','PC','PC','PC','PC','SI','PC'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
 3,DIST_YEAR_1,integer,"notNull(l1trtyr);isInt(l1trtyr);isBetween(l1trtyr, 0, 2020)",copyInt(l1trtyr),Copies (line_7b_disturbance_history) to DIST_YEAR_1,TRUE
 4,DIST_EXT_UPPER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE

@@ -20,8 +20,12 @@
 # Workflow is to load the first table normally, then append the others
 # Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
 
-# stdlab attribute needed to make cas id. Only present in forest.shp.
-# add as attribute with 0 for other files
+# there is no unique id across all 4 tables that we can use in the cas_id to trace back 
+# to the original source polygons.
+# We will add a unique ID (poly_id) to each shapefile before loading.
+
+# Note that the name of the Nonforest.shp was originally 'Non Forest.shp'.
+# The space was removed to avoid loading issues.
 ######################################## Set variables #######################################
 
 source ./common.sh
@@ -30,24 +34,50 @@ inventoryID=NB01
 NB_subFolder=NB/NB01/
 
 srcNameWater=Waterbody
-ogrTabWater=$srcNameWater
-srcWaterFullPath="$friDir/$NB_subFolder$ogrTabWater.shp"
+#ogrTabWater=$srcNameWater
+srcWaterFullPath="$friDir/$NB_subFolder$srcNameWater.shp"
 
-srcNameNonForest=NonForest
-ogrTabNonForest="Non Forest"
-srcNonForestFullPath="$friDir/$NB_subFolder$ogrTabNonForest.shp"
+srcNameNonForest=Nonforest
+#ogrTabNonForest="Non Forest"
+srcNonForestFullPath="$friDir/$NB_subFolder$srcNameNonForest.shp"
 
 srcNameWetland=wetland
-ogrTabWetland=$srcNameWetland
-srcWetlandFullPath="$friDir/$NB_subFolder$ogrTabWetland.shp"
+#ogrTabWetland=$srcNameWetland
+srcWetlandFullPath="$friDir/$NB_subFolder$srcNameWetland.shp"
 
 srcNameForest=Forest
-ogrTabForest=$srcNameForest
-srcForestFullPath="$friDir/$NB_subFolder$ogrTabForest.shp"
+#ogrTabForest=$srcNameForest
+srcForestFullPath="$friDir/$NB_subFolder$srcNameForest.shp"
 
 fullTargetTableName=$targetFRISchema.nb01
 
 ########################################## Process ######################################
+
+### Add unique srcpoly_id to each shp ###
+# Standard SQL code used to add and drop columns in shapefiles. If column is not present the DROP command
+# will return an error which can be ignored.
+# SQLite is needed to add the id based on rowid.
+
+# Waterbody
+"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater DROP COLUMN poly_id"
+"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater ADD COLUMN poly_id integer"
+"$gdalFolder/ogrinfo" $srcWaterFullPath -dialect SQLite -sql "UPDATE $srcNameWater set poly_id = rowid+1"
+
+# Non forest
+"$gdalFolder/ogrinfo" $srcNonForestFullPath -sql "ALTER TABLE $srcNameNonForest DROP COLUMN poly_id"
+"$gdalFolder/ogrinfo" $srcNonForestFullPath -sql "ALTER TABLE $srcNameNonForest ADD COLUMN poly_id integer"
+"$gdalFolder/ogrinfo" $srcNonForestFullPath -dialect SQLite -sql "UPDATE $srcNameNonForest set poly_id = rowid+1"
+
+# wetland
+"$gdalFolder/ogrinfo" $srcWetlandFullPath -sql "ALTER TABLE $srcNameWetland DROP COLUMN poly_id"
+"$gdalFolder/ogrinfo" $srcWetlandFullPath -sql "ALTER TABLE $srcNameWetland ADD COLUMN poly_id integer"
+"$gdalFolder/ogrinfo" $srcWetlandFullPath -dialect SQLite -sql "UPDATE $srcNameWetland set poly_id = rowid+1"
+
+# Forest
+"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE $srcNameForest DROP COLUMN poly_id"
+"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE $srcNameForest ADD COLUMN poly_id integer"
+"$gdalFolder/ogrinfo" $srcForestFullPath -dialect SQLite -sql "UPDATE $srcNameForest set poly_id = rowid+1"
+
 
 ### FILE 1 ###
 #Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
@@ -56,7 +86,7 @@ fullTargetTableName=$targetFRISchema.nb01
 -f PostgreSQL "$pg_connection_string" "$srcWaterFullPath" \
 -nln $fullTargetTableName $layer_creation_option \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWater' as src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM '$ogrTabWater'" \
+-sql "SELECT *, '$srcNameWater' as src_filename, '$inventoryID' AS inventory_id FROM '$srcNameWater'" \
 -progress $overwrite_tab
 
 ### FILE 2 ###
@@ -66,7 +96,7 @@ fullTargetTableName=$targetFRISchema.nb01
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameNonForest' as src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM '$ogrTabNonForest'" \
+-sql "SELECT *, '$srcNameNonForest' as src_filename, '$inventoryID' AS inventory_id FROM '$srcNameNonForest'" \
 -progress
 
 ### FILE 3 ###
@@ -76,7 +106,7 @@ fullTargetTableName=$targetFRISchema.nb01
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWetland' as src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM '$ogrTabWetland'" \
+-sql "SELECT *, '$srcNameWetland' as src_filename, '$inventoryID' AS inventory_id FROM '$srcNameWetland'" \
 -progress
 
 ## File 4 ###
@@ -86,5 +116,5 @@ fullTargetTableName=$targetFRISchema.nb01
 -nln $fullTargetTableName \
 -t_srs $prjFile \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameForest' as src_filename, '$inventoryID' AS inventory_id FROM '$ogrTabForest'" \
+-sql "SELECT *, '$srcNameForest' as src_filename, '$inventoryID' AS inventory_id FROM '$srcNameForest'" \
 -progress
