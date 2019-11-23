@@ -11,38 +11,32 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
-
 -- No not display debug messages.
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
+
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Create a 200 random rows views on the source inventory
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- AB06
--------------------------------------------------------
--- Display one of the source inventory table
+-- Have a look at the source inventory table
 SELECT * FROM rawfri.ab06 LIMIT 10;
 
--- Count the number of rows
-SELECT count(*)
-FROM rawfri.ab06;
-
--- Create a 200 rows test inventory table
---DROP VIEW IF EXISTS rawfri.ab06_test_200;
-CREATE OR REPLACE VIEW rawfri.ab06_test_200 AS
-SELECT src_filename, inventory_id, ogc_fid, wkb_geometry, shape_area, area, perimeter, poly_num, 
-       trm, moist_reg, density, height, 
-       sp1, sp1_per, sp2, sp2_per, sp3, sp3_per, sp4, sp4_per, sp5, sp5_per, 
-       struc, struc_val, origin, tpr, nfl, nfl_per, nat_non, anth_veg, anth_non, 
-       mod1, mod1_ext, mod1_yr, mod2, mod2_ext, mod2_yr, trm_1
-FROM rawfri.ab06 TABLESAMPLE SYSTEM (300.0*100/11484) REPEATABLE (1.0)
---WHERE ogc_fid = 2
-LIMIT 200;
+-- Create a 200 rows test view on the inventory table
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200);
 
 -- Display
-SELECT * FROM rawfri.ab06_test_200;
+SELECT * FROM rawfri.ab06_min_200;
+
+-- Refine the view to test with one row if necessary
+DROP VIEW IF EXISTS rawfri.ab06_min_200_test;
+CREATE VIEW rawfri.ab06_min_200_test AS
+SELECT * FROM rawfri.ab06_min_200
+WHERE ogc_fid = 5;
+
+-- Display
+SELECT * FROM rawfri.ab06_min_200_test;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -65,7 +59,7 @@ SELECT * FROM translation.ab06_avi01_geo;
 DROP TABLE IF EXISTS translation_test.ab06_avi01_cas_test;
 CREATE TABLE translation_test.ab06_avi01_cas_test AS
 SELECT * FROM translation.ab06_avi01_cas
---WHERE rule_id::int = 10
+--WHERE rule_id::int = 1
 ;
 -- Display
 SELECT * FROM translation_test.ab06_avi01_cas_test;
@@ -158,33 +152,33 @@ SELECT TT_Prepare('translation_test', 'ab06_avi01_lyr_test', '_ab06_lyr_test');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_nfl_test', '_ab06_nfl_test');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_geo_test', '_ab06_geo_test');
 
--- translate the samples (5 sec.)
-SELECT * FROM TT_Translate_ab06_cas_test('rawfri', 'ab06_test_200', 'ogc_fid'); -- 6 s.
+-- Translate the samples
+SELECT * FROM TT_Translate_ab06_cas_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_cas_test');
 
-SELECT * FROM TT_Translate_ab06_dst_test('rawfri', 'ab06_test_200', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_Translate_ab06_dst_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_dst_test');
 
-SELECT * FROM TT_Translate_ab06_eco_test('rawfri', 'ab06_test_200', 'ogc_fid'); -- 1 s.
+SELECT * FROM TT_Translate_ab06_eco_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 1 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_eco_test');
 
-SELECT * FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_test_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_lyr_test');
 
-SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_test_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_nfl_test');
 
-SELECT * FROM TT_Translate_ab06_geo_test('rawfri', 'ab06_test_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_ab06_geo_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_geo_test');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT src_filename, trm_1, poly_num, cas_id, 
-       density, crown_closure_lower, crown_closure_upper, 
-       height, height_upper, height_lower,
-       sp1, species_1,
-       sp1_per, species_per_1
-FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_test_200'), rawfri.ab06_test_200
-WHERE poly_num = substr(cas_id, 33, 10)::int;
+SELECT b.src_filename, b.trm_1, b.poly_num, a.cas_id, 
+       b.density, a.crown_closure_lower, a.crown_closure_upper, 
+       b.height, a.height_upper, a.height_lower,
+       b.sp1, a.species_1,
+       b.sp1_per, a.species_per_1
+FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_min_200') a, rawfri.ab06_min_200 b
+WHERE b.poly_num = substr(a.cas_id, 33, 10)::int;
 
 --------------------------------------------------------------------------
 SELECT TT_DeleteAllLogs('translation_test');
