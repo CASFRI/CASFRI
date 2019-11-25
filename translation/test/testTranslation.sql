@@ -47,6 +47,8 @@ SELECT TT_CreateMappingView('rawfri', 'nt01', 500);
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt01', 1, 500);
 
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01', 500);
+
 ------------------------------------------------------------------------------
 -- Translate all CAS tables into a common table
 -------------------------------------------------------
@@ -74,6 +76,9 @@ SELECT * FROM TT_Translate_bc08_cas_test('rawfri', 'bc08_min_1000', 'ogc_fid');
 ------------------------
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt01_min_500', 'ogc_fid');
+------------------------
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt02_l1_to_nt01_l1_map_500', 'ogc_fid');
 ------------------------
 SELECT count(*) FROM casfri50_test.cas_all_new; -- 3300
 -------------------------------------------------------
@@ -107,6 +112,9 @@ SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc08_min_1000', 'ogc_fid');
 INSERT INTO casfri50_test.dst_all_new
 SELECT * FROM TT_Translate_nt01_dst_test('rawfri', 'nt01_min_500', 'ogc_fid');
 ------------------------
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_nt01_dst_test('rawfri', 'nt02_l1_to_nt01_l1_map_500', 'ogc_fid');
+------------------------
 SELECT count(*) FROM casfri50_test.dst_all_new; -- 3900
 -------------------------------------------------------
 -- Translate all ECO tables into a common table
@@ -135,6 +143,9 @@ SELECT * FROM TT_Translate_bc08_eco_test('rawfri', 'bc08_min_1000', 'ogc_fid');
 ------------------------
 INSERT INTO casfri50_test.eco_all_new
 SELECT * FROM TT_Translate_nt01_eco_test('rawfri', 'nt01_min_500', 'ogc_fid');
+------------------------
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_nt01_eco_test('rawfri', 'nt02_l1_to_nt01_l1_map_500', 'ogc_fid');
 ------------------------
 SELECT count(*) FROM casfri50_test.eco_all_new; -- 3300
 -------------------------------------------------------
@@ -174,6 +185,9 @@ SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_min_500', 'ogc_fid');
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_l2_to_nt01_l1_map_500', 'ogc_fid');
 ------------------------
+INSERT INTO casfri50_test.lyr_all_new 
+SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt02_l1_to_nt01_l1_map_500', 'ogc_fid');
+------------------------
 SELECT count(*) FROM casfri50_test.lyr_all_new; -- 5000
 -------------------------------------------------------
 -- Translate all NFL tables into a common table
@@ -205,6 +219,9 @@ SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_min_500', 'ogc_fid');
 ------------------------
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_l2_to_nt01_l1_map_500', 'ogc_fid');
+------------------------
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt02_l1_to_nt01_l1_map_500', 'ogc_fid');
 ------------------------
 SELECT count(*) FROM casfri50_test.nfl_all_new; -- 3800
 ---------------------------------------------------------
