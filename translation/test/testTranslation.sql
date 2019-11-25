@@ -215,7 +215,7 @@ ORDER BY cas_id;
 
 CREATE OR REPLACE VIEW casfri50_test.dst_all_new_ordered AS
 SELECT * FROM casfri50_test.dst_all_new
-ORDER BY cas_id;
+ORDER BY cas_id, layer;
 
 CREATE OR REPLACE VIEW casfri50_test.eco_all_new_ordered AS
 SELECT * FROM casfri50_test.eco_all_new
@@ -223,11 +223,11 @@ ORDER BY cas_id;
 
 CREATE OR REPLACE VIEW casfri50_test.lyr_all_new_ordered AS
 SELECT * FROM casfri50_test.lyr_all_new
-ORDER BY cas_id;
+ORDER BY cas_id, layer;
 
 CREATE OR REPLACE VIEW casfri50_test.nfl_all_new_ordered AS
 SELECT * FROM casfri50_test.nfl_all_new
-ORDER BY cas_id;
+ORDER BY cas_id, layer;
 ---------------------------------------------------------
 -- Compare new with old tables
 ---------------------------------------------------------
