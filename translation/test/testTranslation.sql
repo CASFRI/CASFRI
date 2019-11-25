@@ -35,7 +35,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab16', 400);
 
 SELECT TT_CreateMappingView('rawfri', 'nb01', 600);
 
---SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb01', 1, 600);
+SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb01', 1, 600);
 
 --SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb01', 600);
 
@@ -95,8 +95,8 @@ SELECT * FROM TT_Translate_ab16_dst_test('rawfri', 'ab16_min_400', 'ogc_fid');
 INSERT INTO casfri50_test.dst_all_new
 SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb01_min_600', 'ogc_fid');
 ------------------------
---INSERT INTO casfri50_test.dst_all_new
---SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb01_l2_to_nb01_l1_map_600', 'ogc_fid');
+INSERT INTO casfri50_test.dst_all_new
+SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb01_l2_to_nb01_l1_map_600', 'ogc_fid');
 ------------------------
 --INSERT INTO casfri50_test.dst_all_new
 --SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb02_l1_to_nb01_l1_map_600', 'ogc_fid');
