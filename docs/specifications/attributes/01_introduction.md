@@ -2,7 +2,7 @@
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
-Revised by: The CASFRI Project Team, August 2019
+Revised by: The CASFRI Project Team, November 2019
 
   
 
@@ -37,6 +37,7 @@ Attributes for CAS are stored in six attribute files to facilitate conversion an
 4. Non-Forest Land (NFL) attributes - values that pertain to naturally non-vegetated, non-forest anthropogenic, and non-forest vegetated land;  
 5. Disturbance history (DST) attributes - values that pertain to any disturbance that has occurred in a polygon including type, year, and extent; and  
 6. Ecological specific (ECO) attributes - values representing ecosites and wetlands.  
+7. Geometry attributes - values pertaining to polygon geometry.
 
 The main body of this report (Sections 2.1 through 2.3 and Section 3) defines each of the six attribute categories and tabulates the attributes and their characteristics. A summary of the data structure and data dictionary is presented in Appendix 2.  
 
@@ -45,6 +46,32 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 <sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.  
 
 
+
+Table 1. CASFRI schema.
+
+| HDR               | CAS               | LYR                 | NFL                 | DST              | ECO              | GEO      |
+| ----------------- | ----------------- | ------------------- | ------------------- | ---------------- | ---------------- | -------- |
+| INVENTORY_ID      | CAS_ID            | CAS_ID              | CAS_ID              | CAS_ID           | CAS_ID           | CAS_ID   |
+| JURISDICTION      | ORIG_STAND_ID     | SOIL_MOIST_REG      | SOIL_MOIST_REG      | DIST_TYPE_1      | WETLAND_TYPE     | GEOMETRY |
+| OWNER_TYPE        | STAND_STRUCTURE   | STRUCTURE_PER       | STRUCTURE_PER       | DIST_YEAR_1      | WET_VEG_COVER    |          |
+| OWNER_NAME        | NUM_OF_LAYERS     | LAYER               | LAYER               | DIST_EXT_UPPER_1 | WET_LANDFORM_MOD |          |
+| STANDARD_TYPE     | IDENTIFICATION_ID | LAYER_RANK          | LAYER_RANK          | DIST_EXT_LOWER_1 | WET_LOCAL_MOD    |          |
+| STANDARD_VERSION  | MAP_SHEET_ID      | CROWN_CLOSURE_UPPER | CROWN_CLOSURE_UPPER | DIST_TYPE_2      | ECO_SITE         |          |
+| STANDARD_ID       | CASFRI_AREA       | CROWN_CLOSURE_LOWER | CROWN_CLOSURE_LOWER | DIST_YEAR_2      |                  |          |
+| STANDARD_REVISION | CASFRI_PERIMETER  | HEIGHT_UPPER        | HEIGHT_UPPER        | DIST_EXT_UPPER_2 |                  |          |
+| INVENTORY_MANUAL  | SRC_INV_AREA      | HEIGHT_LOWER        | HEIGHT_LOWER        | DIST_EXT_LOWER_2 |                  |          |
+| SRC_DATA_FORMAT   | STAND_PHOTO_YEAR  | PRODUCTIVE_FOR      | NAT_NON_VEG         | DIST_TYPE_3      |                  |          |
+| ACQUISITION_DATE  |                   | SPECIES_1 - 10      | NON_FOR_ANTH        | DIST_YEAR_3      |                  |          |
+| DATA_TRANSFER     |                   | SPECIES_PER_1 - 10  | NON_FOR_VEG         | DIST_EXT_UPPER_3 |                  |          |
+| RECEIVED_FROM     |                   | ORIGIN_UPPER        |                     | DIST_EXT_LOWER_3 |                  |          |
+| CONTACT_INFO      |                   | ORIGIN_LOWER        |                     | LAYER            |                  |          |
+| DATA_AVAILABILITY |                   | SITE_CLASS          |                     |                  |                  |          |
+| REDISTRIBUTION    |                   | SITE_INDEX          |                     |                  |                  |          |
+| PERMISSION        |                   |                     |                     |                  |                  |          |
+| LICENSE_AGREEMENT |                   |                     |                     |                  |                  |          |
+| PHOTO_YEAR_SRC    |                   |                     |                     |                  |                  |          |
+| PHOTO_YEAR_START  |                   |                     |                     |                  |                  |          |
+| PHOTO_YEAR_END    |                   |                     |                     |                  |                  |          |
 
 ### 1.2 Error and Missing Value Codes  
 
