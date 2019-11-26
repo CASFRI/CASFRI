@@ -5,16 +5,16 @@ The CASFRI Specifications document and accompanying tables reside in this folder
 CASFRI Specifications:
 
   * [Full document](cas_specifications.md)
-  * [Section 1: Introduction](sections/01_introduction.md)
-  * [Section 2: HDR attributes](sections/02_hdr_attributes.md)
-  * [Section 3: CAS attributes](sections/03_cas_attributes.md)
-  * [Section 4: LYR attributes](sections/04_lyr_attributes.md)
-  * [Section 5: NFL attributes](sections/05_nfl_attributes.md)
-  * [Section 6: DST attributes](sections/06_dst_attributes.md)
-  * [Section 7: ECO attributes](sections/07_eco_attributes.md)
-  * [Section 8: ECO attributes](sections/08_geo_attributes.md)
-  * [Section 9: Bibliography](sections/09_bibliography.md)
-  * [Section 10: Appendices](sections/10_appendices.md)
+  * [Section 1: Introduction](attributes/01_introduction.md)
+  * [Section 2: HDR attributes](attributes/02_hdr_attributes.md)
+  * [Section 3: CAS attributes](attributes/03_cas_attributes.md)
+  * [Section 4: LYR attributes](attributes/04_lyr_attributes.md)
+  * [Section 5: NFL attributes](attributes/05_nfl_attributes.md)
+  * [Section 6: DST attributes](attributes/06_dst_attributes.md)
+  * [Section 7: ECO attributes](attributes/07_eco_attributes.md)
+  * [Section 8: ECO attributes](attributes/08_geo_attributes.md)
+  * [Section 9: Bibliography](attributes/09_bibliography.md)
+  * [Section 10: Appendices](attributes/10_appendices.md)
 
 # Directory structure
 
@@ -23,11 +23,11 @@ CASFRI Specifications:
 
 ./appendices          Specifications appendices converted to csv files (incomplete)
 
-./attributes          CAS attribute values (incomplete)
+./attributes          CASFRI specifications document separated into sections
 
 ./errors              Error and missing value specifications and codes (csv files)
 
-./sections            CASFRI specifications document separated into sections
+./inventories         Inventory-specific information and notes grouped by Province or Territory
 </pre>
 
 # Credit
