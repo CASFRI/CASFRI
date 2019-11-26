@@ -21,11 +21,15 @@
 # Workflow is to load the first table normally, then append the others
 # Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
 
-# stdlab attribute needed to make cas id. Only present in forest.shp.
-# add as attribute with 0 for other files
+# there is no unique id across all 4 tables that we can use in the cas_id to trace back 
+# to the original source polygons.
+# We will add a unique ID (poly_id) to each shapefile before loading.
+
 ######################################## Set variables #######################################
 
 source ./common.sh
+
+add_unique_source_id=true
 
 inventoryID=NB02
 NB_subFolder=NB/NB02/
@@ -33,18 +37,48 @@ NB_subFolder=NB/NB02/
 srcNameWater=NBHN_0000_02_Wb
 srcWaterFullPath="$friDir/$NB_subFolder$srcNameWater.shp"
 
-srcNameNonForest=geonb_nonforest-nonforet
+srcNameNonForest=geonb_nonforest_nonforet
 srcNonForestFullPath="$friDir/$NB_subFolder$srcNameNonForest.shp"
 
 srcNameWetland=NBHN_0000_03_wl
 srcWetlandFullPath="$friDir/$NB_subFolder$srcNameWetland.shp"
 
-srcNameForest=geonb_forest-foret
+srcNameForest=geonb_forest_foret
 srcForestFullPath="$friDir/$NB_subFolder$srcNameForest.shp"
 
 fullTargetTableName=$targetFRISchema.nb02
 
 ########################################## Process ######################################
+
+### Add unique poly_id to each shp ###
+# Standard SQL code used to add and drop columns in shapefiles. If column is not present the DROP command
+# will return an error which can be ignored.
+# SQLite is needed to add the id based on rowid.
+# Only needed the first time data is loaded. No need to re-add the id on every load. 
+# Use add_unique_source_id = true to add the source poly_id.
+
+if [ "$add_unique_source_id" = true ]
+then
+	# Waterbody
+	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater DROP COLUMN poly_id"
+	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater ADD COLUMN poly_id integer"
+	"$gdalFolder/ogrinfo" $srcWaterFullPath -dialect SQLite -sql "UPDATE $srcNameWater set poly_id = rowid+1"
+
+	# Non forest
+	"$gdalFolder/ogrinfo" $srcNonForestFullPath -sql "ALTER TABLE $srcNameNonForest DROP COLUMN poly_id"
+	"$gdalFolder/ogrinfo" $srcNonForestFullPath -sql "ALTER TABLE $srcNameNonForest ADD COLUMN poly_id integer"
+	"$gdalFolder/ogrinfo" $srcNonForestFullPath -dialect SQLite -sql "UPDATE $srcNameNonForest set poly_id = rowid+1"
+
+	# wetland
+	"$gdalFolder/ogrinfo" $srcWetlandFullPath -sql "ALTER TABLE $srcNameWetland DROP COLUMN poly_id"
+	"$gdalFolder/ogrinfo" $srcWetlandFullPath -sql "ALTER TABLE $srcNameWetland ADD COLUMN poly_id integer"
+	"$gdalFolder/ogrinfo" $srcWetlandFullPath -dialect SQLite -sql "UPDATE $srcNameWetland set poly_id = rowid+1"
+
+	# Forest
+	"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE $srcNameForest DROP COLUMN poly_id"
+	"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE $srcNameForest ADD COLUMN poly_id integer"
+	"$gdalFolder/ogrinfo" $srcForestFullPath -dialect SQLite -sql "UPDATE $srcNameForest set poly_id = rowid+1"
+fi
 
 ### FILE 1 ###
 #Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
