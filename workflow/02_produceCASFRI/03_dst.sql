@@ -23,9 +23,9 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab06_avi01_dst', '_ab06_dst');
 SELECT TT_Prepare('translation', 'ab16_avi01_dst', '_ab16_dst', 'ab06_avi01_dst');
-SELECT TT_Prepare('translation', 'nb01_nbi01_dst', '_nb01_dst', 'ab06_avi01_dst'); -- used for both NB01 and NB02
-SELECT TT_Prepare('translation', 'bc08_vri01_dst', '_bc08_dst', 'ab06_avi01_dst');
-SELECT TT_Prepare('translation', 'nt01_fvi01_dst', '_nt_dst',   'ab06_avi01_dst'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nbi01_dst', '_nb_dst', 'ab06_avi01_dst'); -- used for both NB01 and NB02
+SELECT TT_Prepare('translation', 'vri01_dst', '_bc_dst', 'ab06_avi01_dst');
+SELECT TT_Prepare('translation', 'fvi01_dst', '_nt_dst',   'ab06_avi01_dst'); -- used for both NT01 and NT02
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 ------------------------
@@ -45,31 +45,31 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_dst');
 SELECT TT_CreateMappingView('rawfri', 'nb01'); -- needed to assign layer and layer_rank
 
 INSERT INTO casfri50.dst_all -- 1h32m
-SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01_min', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_min', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 ------------------------
 -- Translate NB01 layer 2 reusing NB01 layer 1 translation table
 SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb01', 1);
 
 INSERT INTO casfri50.dst_all -- 1h11m
-SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb01_l2_to_nb01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_l2_to_nb01_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 ------------------------
 -- Translate NB02 reusing NB01 translation table
 SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb01');
 
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_nb01_dst('rawfri', 'nb02_l1_to_nb01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb02_l1_to_nb01_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb01_nbi01_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 ------------------------
 -- Translate BC08
 INSERT INTO casfri50.dst_all -- 7h3m
-SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08', 'ogc_fid');
+SELECT * FROM TT_Translate_bc_dst('rawfri', 'bc08', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc08_vri01_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'vri01_dst');
 ------------------------
 -- Translate NT01
 SELECT TT_CreateMappingView('rawfri', 'nt01'); -- needed to assign layer and layer_rank
@@ -77,7 +77,7 @@ SELECT TT_CreateMappingView('rawfri', 'nt01'); -- needed to assign layer and lay
 INSERT INTO casfri50.dst_all -- 36m
 SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt01_min', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'fvi01_dst');
 ------------------------
 -- Translate NT02 reusing NT01 translation table
 SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01');
@@ -85,7 +85,7 @@ SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01');
 INSERT INTO casfri50.dst_all -- 51m
 SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt02_l1_to_nt01_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt01_fvi01_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'fvi01_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

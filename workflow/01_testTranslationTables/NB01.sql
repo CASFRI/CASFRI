@@ -46,19 +46,19 @@ SELECT * FROM rawfri.nb01_min_200_test;
 CREATE SCHEMA IF NOT EXISTS translation_test;
 ------------------------------------------------------
 -- Display translation tables
-SELECT * FROM translation.nb01_nbi01_cas; 
-SELECT * FROM translation.nb01_nbi01_dst; 
-SELECT * FROM translation.nb01_nbi01_eco; 
-SELECT * FROM translation.nb01_nbi01_lyr; 
-SELECT * FROM translation.nb01_nbi01_nfl;
-SELECT * FROM translation.nb01_nbi01_geo;
+SELECT * FROM translation.nbi01_cas; 
+SELECT * FROM translation.nbi01_dst; 
+SELECT * FROM translation.nbi01_eco; 
+SELECT * FROM translation.nbi01_lyr; 
+SELECT * FROM translation.nbi01_nfl;
+SELECT * FROM translation.nbi01_geo;
 ----------------------------
 -- Create subsets of translation tables if necessary
 ----------------------------
 -- cas
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_cas_test;
 CREATE TABLE translation_test.nb01_nbi01_cas_test AS
-SELECT * FROM translation.nb01_nbi01_cas
+SELECT * FROM translation.nbi01_cas
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -67,7 +67,7 @@ SELECT * FROM translation_test.nb01_nbi01_cas_test;
 -- dst
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_dst_test;
 CREATE TABLE translation_test.nb01_nbi01_dst_test AS
-SELECT * FROM translation.nb01_nbi01_dst
+SELECT * FROM translation.nbi01_dst
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -76,7 +76,7 @@ SELECT * FROM translation_test.nb01_nbi01_dst_test;
 -- eco
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_eco_test;
 CREATE TABLE translation_test.nb01_nbi01_eco_test AS
-SELECT * FROM translation.nb01_nbi01_eco
+SELECT * FROM translation.nbi01_eco
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -85,7 +85,7 @@ SELECT * FROM translation_test.nb01_nbi01_eco_test;
 -- lyr
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_lyr_test;
 CREATE TABLE translation_test.nb01_nbi01_lyr_test AS
-SELECT * FROM translation.nb01_nbi01_lyr
+SELECT * FROM translation.nbi01_lyr
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -94,7 +94,7 @@ SELECT * FROM translation_test.nb01_nbi01_lyr_test;
 -- nfl
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_nfl_test;
 CREATE TABLE translation_test.nb01_nbi01_nfl_test AS
-SELECT * FROM translation.nb01_nbi01_nfl
+SELECT * FROM translation.nbi01_nfl
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -103,7 +103,7 @@ SELECT * FROM translation_test.nb01_nbi01_nfl_test;
 -- geo
 DROP TABLE IF EXISTS translation_test.nb01_nbi01_geo_test;
 CREATE TABLE translation_test.nb01_nbi01_geo_test AS
-SELECT * FROM translation.nb01_nbi01_geo
+SELECT * FROM translation.nbi01_geo
 --WHERE rule_id::int = 1
 ;
 -- Display

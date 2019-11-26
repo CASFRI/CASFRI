@@ -30,7 +30,7 @@
 
 source ./common.sh
 
-add_unique_source_id=false
+add_unique_source_id=true
 
 inventoryID=NB01
 NB_subFolder=NB/NB01/
@@ -58,7 +58,7 @@ fullTargetTableName=$targetFRISchema.nb01
 # Only needed the first time data is loaded. No need to re-add the id on every load. 
 # Use add_unique_source_id = true to add the source poly_id.
 
-if [$add_unique_source_id = true]
+if [ "$add_unique_source_id" = true ]
 then
 	# Waterbody
 	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater DROP COLUMN poly_id"
