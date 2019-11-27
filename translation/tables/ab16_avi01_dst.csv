@@ -4,7 +4,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 3,DIST_YEAR_1,integer,"notNull(modyear1);isInt(modyear1);isBetween(modyear1,0,2020)",copyInt(modyear1),Copies (line_7b_disturbance_history) to DIST_YEAR_1,TRUE
 4,DIST_EXT_UPPER_1,integer,"notNull(modext1);notEmpty(modext1);isGreaterThan(modext1,0,'FALSE');matchList(modext1,{1,2,3,4,5})","mapInt(modext1, {1,2,3,4,5}, {25,50,75,95,100})",Attribute does not occur,TRUE
 5,DIST_EXT_LOWER_1,integer,"notNull(modext1);notEmpty(modext1);isGreaterThan(modext1,0,'FALSE');matchList(modext1,{1,2,3,4,5})","mapInt(modext1, {1,2,3,4,5}, {1,26,51,76,96})",Attribute does not occur,TRUE
-6,DIST_TYPE_2,text,"notNull(modcon2);matchList(modcon2,{'BU','CC','CL','PL','SC','SN','ST','TH'})","mapText(modcon2, {'BU','CC','CL','PL','SC','SN','ST','TH'}, {'BU','CO','OT','SI','SI','DT','OT','SI'})",Attribute does not occur,TRUE
+6,DIST_TYPE_2,text,"notNull(modcon2);matchList(modcon2,{'BU','CC','CL','CU','DT','PL','SC','SL','SN','ST','SU','TH','UK','WF'})","mapText(modcon2, {'BU','CC','CL','CU','DT','PL','SC','SL','SN','ST','SU','TH','UK','WF'}, {'BU','CO','OT','CL','DT','SI','SI','OT','DT','OT','OT','SI','OT','WF'})",Attribute does not occur,TRUE
 7,DIST_YEAR_2,integer,"notNull(modyear2);isInt(modyear2);isBetween(modyear2,0,2020)",copyInt(modyear2),Attribute does not occur,TRUE
 8,DIST_EXT_UPPER_2,integer,"notNull(modext2);notEmpty(modext2);isGreaterThan(modext2,0,'FALSE');matchList(modext2,{1,2,3,4,5})","mapInt(modext2, {1,2,3,4,5}, {25,50,75,95,100})",Attribute does not occur,TRUE
 9,DIST_EXT_LOWER_2,integer,"notNull(modext2);notEmpty(modext2);isGreaterThan(modext2,0,'FALSE');matchList(modext2,{1,2,3,4,5})","mapInt(modext2, {1,2,3,4,5}, {1,26,51,76,96})",Attribute does not occur,TRUE
