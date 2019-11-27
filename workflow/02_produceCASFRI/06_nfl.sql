@@ -23,21 +23,41 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab06_avi01_nfl', '_ab06_nfl');
 SELECT TT_Prepare('translation', 'ab16_avi01_nfl', '_ab16_nfl', 'ab06_avi01_nfl');
-SELECT TT_Prepare('translation', 'nbi01_nfl', '_nb_nfl',   'ab06_avi01_nfl'); -- reused for both NB01 and NB02
+SELECT TT_Prepare('translation', 'nbi01_nfl', '_nb_nfl', 'ab06_avi01_nfl'); -- reused for both NB01 and NB02
 SELECT TT_Prepare('translation', 'vri01_nfl', '_bc_nfl', 'ab06_avi01_nfl');
-SELECT TT_Prepare('translation', 'fvi01_nfl', '_nt_nfl',   'ab06_avi01_nfl'); -- reused for both NT01 and NT02, layer 1 and 2
+SELECT TT_Prepare('translation', 'fvi01_nfl', '_nt_nfl', 'ab06_avi01_nfl'); -- reused for both NT01 and NT02, layer 1 and 2
 ------------------------
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 ------------------------
 -- Translate AB06
+SELECT TT_CreateMappingView('rawfri', 'ab06'); -- needed to assign layer and layer_rank
+
 CREATE TABLE casfri50.nfl_all AS -- 2m24s
 SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 ------------------------
+-- Translate AB06 layer 2 reusing AB06 layer 1 translation table
+SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1);
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'ab06_l2_to_ab06_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
+------------------------
 -- Translate AB16
+SELECT TT_CreateMappingView('rawfri', 'ab16'); -- needed to assign layer and layer_rank
+
 INSERT INTO casfri50.nfl_all -- 23m43s
 SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_nfl');
+------------------------
+-- Translate AB16 layer 2 reusing AB16 layer 1 translation table
+SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab16', 1);
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'ab16_l2_to_ab16_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_nfl');
 ------------------------

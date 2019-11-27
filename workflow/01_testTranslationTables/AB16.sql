@@ -151,6 +151,10 @@ SELECT TT_Prepare('translation_test', 'ab16_avi01_lyr_test', '_ab16_lyr_test');
 SELECT TT_Prepare('translation_test', 'ab16_avi01_nfl_test', '_ab16_nfl_test');
 SELECT TT_Prepare('translation_test', 'ab16_avi01_geo_test', '_ab16_geo_test');
 
+-- Create VIEW 'ab16_l2_to_ab16_l1_map_200' mapping the AB16 layer 2 
+-- attributes to the AB16 layer 1 attributes
+SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab16', 1, 200);
+
 -- Translate the samples
 SELECT * FROM TT_Translate_ab16_cas_test('rawfri', 'ab16_min_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab16_avi01_cas_test');
@@ -164,7 +168,13 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'ab16_avi01_eco_test');
 SELECT * FROM TT_Translate_ab16_lyr_test('rawfri', 'ab16_min_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab16_avi01_lyr_test');
 
+SELECT * FROM TT_Translate_ab16_lyr_test('rawfri', 'ab16_l2_to_ab16_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'ab16_avi01_lyr_test');
+
 SELECT * FROM TT_Translate_ab16_nfl_test('rawfri', 'ab16_min_200', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'ab16_avi01_nfl_test');
+
+SELECT * FROM TT_Translate_ab16_nfl_test('rawfri', 'ab16_l2_to_ab16_l1_map_200', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab16_avi01_nfl_test');
 
 SELECT * FROM TT_Translate_ab16_geo_test('rawfri', 'ab16_min_200', 'ogc_fid'); -- 5 s.
