@@ -9,11 +9,21 @@ The CAS base polygon data provides polygon specific information and links the or
 
 ### cas_id
 
-The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
+
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
 | cas_id                                             | values |
 | :----------------------------------------------------------- | :-------------- |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric           |
+| CAS stand identification - unique string for each polygon within CAS | alpha numeric           |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 
@@ -78,7 +88,7 @@ Map sheet identification according to original naming convention for an inventor
 
 ### casfri_area
 
-The attribute **casfri_area** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places.
+The attribute **casfri_area** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
 | casfri_area                           | values        |
 | :------------------------------------ | :------------ |
@@ -88,7 +98,7 @@ The attribute **casfri_area** measures the area of each polygon in hectares (ha)
 
 ### casfri_perimeter
 
-The attribute **casfri_perimeter** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places.
+The attribute **casfri_perimeter** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
 | casfri_perimeter                        | values          |
 | :-------------------------------------- | :-------------- |

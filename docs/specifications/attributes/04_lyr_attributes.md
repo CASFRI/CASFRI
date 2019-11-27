@@ -1,16 +1,26 @@
 ## 4.0 LYR Attributes
 
-Updated: 2019-11-18
+Updated: 2019-11-28
 
 
 
 ### cas_id  
 
-The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
+
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
 | cas_id                                                       | values        |
 | :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+| CAS stand identification - unique string for each polygon within CAS | alpha numeric |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 
@@ -28,6 +38,7 @@ Notes:
 - When **stand_structure** != "H", then **structure_per** = 100
 - Applies to the following inventories: AB, NB, NT
 - How does this attribute differ for non-forested (NFL) polygons?
+- See issue: https://github.com/edwardsmarc/CASFRI/issues/178 
 
 
 
@@ -49,9 +60,7 @@ Notes:
 
 ### layer
 
-Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on.  
-
-The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.  
+Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.
 
 | layer                                                        | values   |
 | :----------------------------------------------------------- | :------- |
@@ -71,7 +80,7 @@ Layer Rank value is an attribute related to stand structure and refers to layer 
 
 ### soil_moist_reg  
 
-Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. The detailed soil moisture regime table and CAS conversion is presented in Appendix 4.  
+Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. *The detailed soil moisture regime table and CAS conversion is presented in Appendix 4*.  
 
 | soil_moist_reg                                                   | values |
 | :----------------------------------------------------------- | :----- |
@@ -117,6 +126,10 @@ Unproductive forest is forest land not capable of producing trees for forest ope
 | Scrub Coniferous - scrub coniferous trees on poor sites | SC |
 | Non Productive Forest - poor forest types on rocky or wet sites | NP |
 | Productive Forest - any other forest | P|
+
+Notes:
+
+- This attribute needs an overhaul.
 
 
 
