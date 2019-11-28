@@ -12,7 +12,7 @@ CASFRI Specifications:
   * [Section 5: NFL attributes](attributes/05_nfl_attributes.md)
   * [Section 6: DST attributes](attributes/06_dst_attributes.md)
   * [Section 7: ECO attributes](attributes/07_eco_attributes.md)
-  * [Section 8: ECO attributes](attributes/08_geo_attributes.md)
+  * [Section 8: GEO attributes](attributes/08_geo_attributes.md)
   * [Section 9: Bibliography](attributes/09_bibliography.md)
   * [Section 10: Appendices](attributes/10_appendices.md)
 
