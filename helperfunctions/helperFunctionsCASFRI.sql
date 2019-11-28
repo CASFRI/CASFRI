@@ -341,6 +341,129 @@ $$ LANGUAGE sql;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_Histogram 
+-- 
+-- Set function returnings a table representing an histogram of the values
+-- for the specifed column.
+--
+-- The return table contains 3 columns:
+--
+--   'intervals' is a text column specifiing the lower and upper bounds of the
+--               intervals (or bins). Start with '[' when the lower bound is
+--               included in the interval and with ']' when the lowerbound is
+--               not included in the interval. Complementarily ends with ']'
+--               when the upper bound is included in the interval and with '['
+--               when the upper bound is not included in the interval.
+--
+--   'cnt' is a integer column specifying the number of occurrence of the value
+--         in this interval (or bin).
+--
+--   'query' is the query you can use to generate the rows accounted for in this
+--           interval.
+--
+-- Self contained and typical example:
+--
+-- CREATE TABLE histogramtest AS
+-- SELECT * FROM (VALUES (1), (2), (2), (3), (4), (5), (6), (7), (8), (9), (10)) AS t (val);
+--
+-- SELECT * FROM TT_Histogram('test', 'histogramtest1', 'val');
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_Histogram(text, text, text, int, text);
+CREATE OR REPLACE FUNCTION TT_Histogram(
+    schemaname text,
+    tablename text,
+    columnname text,
+    nbinterval int DEFAULT 10, -- number of bins
+    whereclause text DEFAULT NULL -- additional where clause
+)
+RETURNS TABLE (intervals text, cnt int, query text) AS $$
+    DECLARE
+    fqtn text;
+    query text;
+    newschemaname name;
+    findnewcolumnname boolean := FALSE;
+    newcolumnname text;
+    columnnamecnt int := 0;
+    whereclausewithwhere text := '';
+    minval double precision := 0;
+    maxval double precision := 0;
+    columntype text;
+    BEGIN
+        IF nbinterval IS NULL THEN
+            nbinterval = 10;
+        END IF;
+        IF nbinterval <= 0 THEN
+            RAISE NOTICE 'nbinterval is smaller or equal to zero. Returning nothing...';
+            RETURN;
+        END IF;
+        IF whereclause IS NULL OR whereclause = '' THEN
+            whereclause = '';
+        ELSE
+            whereclausewithwhere = ' WHERE ' || whereclause || ' ';
+            whereclause = ' AND (' || whereclause || ')';
+        END IF;
+        newschemaname := '';
+        IF length(schemaname) > 0 THEN
+            newschemaname := schemaname;
+        ELSE
+            newschemaname := 'public';
+        END IF;
+        fqtn := quote_ident(newschemaname) || '.' || quote_ident(tablename);
+
+        -- Build an histogram with the column values.
+        IF TT_ColumnExists(newschemaname, tablename, columnname) THEN
+
+            -- Precompute the min and max values so we can set the number of interval to 1 if they are equal
+            query = 'SELECT min(' || columnname || '), max(' || columnname || ') FROM ' || fqtn || whereclausewithwhere;
+            EXECUTE QUERY query INTO minval, maxval;
+            IF maxval IS NULL AND minval IS NULL THEN
+                query = 'WITH values AS (SELECT ' || columnname || ' val FROM ' || fqtn || whereclausewithwhere || '),
+                              histo  AS (SELECT count(*) cnt FROM values)
+                         SELECT ''NULL''::text intervals,
+                                cnt::int,
+                                ''SELECT * FROM ' || fqtn || ' WHERE ' || columnname || ' IS NULL' || whereclause || ';''::text query
+                         FROM histo;';
+                RETURN QUERY EXECUTE query;
+            ELSE
+                IF maxval - minval = 0 THEN
+                    RAISE NOTICE 'maximum value - minimum value = 0. Will create only 1 interval instead of %...', nbinterval;
+                    nbinterval = 1;
+                END IF;
+
+                -- We make sure double precision values are converted to text using the maximum number of digits before computing summaries involving this type of values
+                query = 'SELECT pg_typeof(' || columnname || ')::text FROM ' || fqtn || ' LIMIT 1';
+                EXECUTE query INTO columntype;
+                IF left(columntype, 3) != 'int' THEN
+                    SET extra_float_digits = 3;
+                END IF;
+
+                -- Compute the histogram
+                query = 'WITH values AS (SELECT ' || columnname || ' val FROM ' || fqtn || whereclausewithwhere || '),
+                              bins   AS (SELECT val, CASE WHEN val IS NULL THEN -1 ELSE least(floor((val - ' || minval || ')*' || nbinterval || '::numeric/(' || (CASE WHEN maxval - minval = 0 THEN maxval + 0.000000001 ELSE maxval END) - minval || ')), ' || nbinterval || ' - 1) END bin, ' || (maxval - minval) || '/' || nbinterval || '.0 binrange FROM values),
+                              histo  AS (SELECT bin, count(*) cnt FROM bins GROUP BY bin)
+                         SELECT CASE WHEN serie = -1 THEN ''NULL''::text ELSE ''['' || (' || minval || ' + serie * binrange)::float8::text || '' - '' || (CASE WHEN serie = ' || nbinterval || ' - 1 THEN ' || maxval || '::float8::text || '']'' ELSE (' || minval || ' + (serie + 1) * binrange)::float8::text || ''['' END) END intervals,
+                                coalesce(cnt, 0)::int cnt,
+                                (''SELECT * FROM ' || fqtn || ' WHERE ' || columnname || ''' || (CASE WHEN serie = -1 THEN '' IS NULL'' || ''' || whereclause || ''' ELSE ('' >= '' || (' || minval || ' + serie * binrange)::float8::text || '' AND ' || columnname || ' <'' || (CASE WHEN serie = ' || nbinterval || ' - 1 THEN ''= '' || ' || maxval || '::float8::text ELSE '' '' || (' || minval || ' + (serie + 1) * binrange)::float8::text END) || ''' || whereclause || ''' || '' ORDER BY ' || columnname || ''') END) || '';'')::text query
+                         FROM generate_series(-1, ' || nbinterval || ' - 1) serie
+                              LEFT OUTER JOIN histo ON (serie = histo.bin),
+                              (SELECT * FROM bins LIMIT 1) foo
+                         ORDER BY serie;';
+                RETURN QUERY EXECUTE query;
+                IF left(columntype, 3) != 'int' THEN
+                    RESET extra_float_digits;
+                END IF;
+            END IF;
+        ELSE
+            RAISE NOTICE '''%'' does not exists. Returning nothing...',columnname::text;
+            RETURN;
+        END IF;
+
+        RETURN;
+    END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_CreateMappingView 
 -- 
 -- Return a view mapping attributes of fromTableName to attributes of toTableName
@@ -374,12 +497,6 @@ RETURNS text AS $$
     IF NOT TT_TableExists(schemaName, fromTableName) THEN
       RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''translation.%''...', fromTableName;
       RETURN 'ERROR: Could not find table ''translation..' || fromTableName || '''...';
-    END IF;
-
-    -- Check if table fromTableName exists
-    IF NOT TT_TableExists(schemaName, toTableName) THEN
-      RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''translation.%''...', toTableName;
-      RETURN 'ERROR: Could not find table ''translation.' || toTableName || '''...';
     END IF;
 
     -- Check if an entry for fromTableName, fromLayer exists in table 'attribute_dependencies'
