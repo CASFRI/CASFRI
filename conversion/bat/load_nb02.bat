@@ -39,13 +39,13 @@ SET NB_subFolder=NB\%inventoryID%\
 SET srcNameWater=NBHN_0000_02_Wb
 SET srcWaterFullPath="%friDir%\%NB_subFolder%%srcNameWater%.shp"
 
-SET srcNameNonForest=geonb_nonforest-nonforet
+SET srcNameNonForest=geonb_nonforest_nonforet
 SET srcNonForestFullPath="%friDir%\%NB_subFolder%%srcNameNonForest%.shp"
 
 SET srcNameWetland=NBHN_0000_03_wl
 SET srcWetlandFullPath="%friDir%\%NB_subFolder%%srcNameWetland%.shp"
 
-SET srcNameForest=geonb_forest-foret
+SET srcNameForest=geonb_forest_foret
 SET srcForestFullPath="%friDir%\%NB_subFolder%%srcNameForest%.shp"
 
 SET fullTargetTableName=%targetFRISchema%.nb02
