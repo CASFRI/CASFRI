@@ -19,7 +19,7 @@ CALL .\common.bat
 
 SET inventoryID=QC03
 SET srcFileName=PEE_MAJ_PROV
-SET srcFullPath="%friDir%\QC\%inventoryID%\CARTE_ECO_MAJ_PROV_10.gdb"
+SET srcFullPath="%friDir%\QC\%inventoryID%\data\inventory\CARTE_ECO_MAJ_PROV_10.gdb"
 
 SET fullTargetTableName=%targetFRISchema%.qc03
 

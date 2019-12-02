@@ -21,7 +21,7 @@ source ./common.sh
 
 inventoryID=BC08
 srcFileName=VEG_COMP_LYR_R1_POLY
-srcFullPath="$friDir/BC/$inventoryID/$srcFileName.gdb"
+srcFullPath="$friDir/BC/$inventoryID/data/inventory/$srcFileName.gdb"
 
 fullTargetTableName=$targetFRISchema.bc08
 

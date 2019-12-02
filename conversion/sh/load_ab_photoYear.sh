@@ -17,7 +17,7 @@
 source ./common.sh
 
 srcFileName=PhotoYear_Update
-srcFullPath="$friDir/AB/PhotoYear/$srcFileName.shp"
+srcFullPath="$friDir/AB/AB06/data/photoyear/$srcFileName.shp"
 
 fullTargetTableName=$targetFRISchema.ab_photoYear
 

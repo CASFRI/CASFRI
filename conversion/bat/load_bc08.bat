@@ -20,7 +20,7 @@ CALL .\common.bat
 
 SET inventoryID=BC08
 SET srcFileName=VEG_COMP_LYR_R1_POLY
-SET srcFullPath="%friDir%\BC\%inventoryID%\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\BC\%inventoryID%\data\inventory\%srcFileName%.gdb"
 
 SET fullTargetTableName=%targetFRISchema%.bc08
 

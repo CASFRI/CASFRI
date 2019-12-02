@@ -18,7 +18,7 @@ source ./common.sh
 inventoryID=BC09
 srcFileName=VEG_COMP_LYR_R1_POLY
 gdbFileName=WHSE_FOREST_VEGETATION_2018_VEG_COMP_LYR_R1_POLY
-srcFullPath="$friDir/BC/$inventoryID/$srcFileName.gdb"
+srcFullPath="$friDir/BC/$inventoryID/data/inventory/$srcFileName.gdb"
 
 fullTargetTableName=$targetFRISchema.bc09
 

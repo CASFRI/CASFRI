@@ -23,7 +23,7 @@
 source ./common.sh
 
 inventoryID=AB16
-srcFullPath=$friDir/AB/$inventoryID
+srcFullPath=$friDir/AB/$inventoryID/data/inventory
 
 fullTargetTableName=$targetFRISchema.ab16
 

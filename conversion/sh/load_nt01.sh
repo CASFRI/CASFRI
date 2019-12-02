@@ -25,7 +25,7 @@ source ./common.sh
 
 inventoryID=NT01
 srcFileName=NT_FORCOV_update2003
-srcFullPath="$friDir/NT/$inventoryID/$srcFileName.shp"
+srcFullPath="$friDir/NT/$inventoryID/data/inventory/$srcFileName.shp"
 
 fullTargetTableName=$targetFRISchema.nt01
 

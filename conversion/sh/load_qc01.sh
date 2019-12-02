@@ -27,7 +27,7 @@
 source ./common.sh
 
 inventoryID=QC01
-srcFullPath=$friDir/QC/$inventoryID
+srcFullPath=$friDir/QC/$inventoryID/data/inventory/
 fullTargetTableName=$targetFRISchema.qc01
 
 # PostgreSQL variables

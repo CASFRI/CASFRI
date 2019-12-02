@@ -43,7 +43,7 @@ SET srcFileName=NT_FORCOV
 SET gdbFileName_geometry=%srcFileName%
 SET gdbFileName_attributes=NT_FORCOV_ATT
 SET gdbFileName_photoyear=Inventory_Extents
-SET srcFullPath="%friDir%\NT\%inventoryID%\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\NT\%inventoryID%\data\inventory\%srcFileName%.gdb"
 
 SET targetTableName=%targetFRISchema%.nt02
 SET geometryTableName=%targetTableName%_geometry

@@ -20,7 +20,7 @@ CALL .\common.bat
 
 SET inventoryID=QC02
 SET srcFileName=DDE_20K_PEU_ECOFOR_ORI_VUE_SE
-SET srcFullPath="%friDir%\QC\%inventoryID%\PEE_ORI_PROV.gdb"
+SET srcFullPath="%friDir%\QC\%inventoryID%\data\inventory\PEE_ORI_PROV.gdb"
 
 SET fullTargetTableName=%targetFRISchema%.qc02
 

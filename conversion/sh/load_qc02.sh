@@ -20,7 +20,7 @@ source ./common.sh
 
 inventoryID=QC02
 srcFileName=DDE_20K_PEU_ECOFOR_ORI_VUE_SE
-srcFullPath="$friDir/QC/$inventoryID/PEE_ORI_PROV.gdb"
+srcFullPath="$friDir/QC/$inventoryID/data/inventory/PEE_ORI_PROV.gdb"
 
 fullTargetTableName=$targetFRISchema.qc02
 

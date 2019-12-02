@@ -21,7 +21,7 @@ CALL .\common.bat
 SET inventoryID=BC09
 SET srcFileName=VEG_COMP_LYR_R1_POLY
 SET gdbFileName=WHSE_FOREST_VEGETATION_2018_VEG_COMP_LYR_R1_POLY
-SET srcFullPath="%friDir%\BC\%inventoryID%\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\BC\%inventoryID%\data\inventory\%srcFileName%.gdb"
 
 SET fullTargetTableName=%targetFRISchema%.bc09
 

@@ -17,7 +17,7 @@ SETLOCAL
 CALL .\common.bat
 
 SET srcFileName=PhotoYear_Update
-SET srcFullPath="%friDir%/AB/PhotoYear/%srcFileName%.shp"
+SET srcFullPath="%friDir%/AB/AB06/data/photoyear/%srcFileName%.shp"
 
 SET fullTargetTableName=%targetFRISchema%.ab_photoYear
 

@@ -22,7 +22,7 @@ source ./common.sh
 
 inventoryID=AB06
 srcFileName=GB_S21_TWP
-srcFullPath="$friDir/AB/$inventoryID/$srcFileName.gdb"
+srcFullPath="$friDir/AB/$inventoryID/data/inventory/$srcFileName.gdb"
 
 fullTargetTableName=$targetFRISchema.ab06
 

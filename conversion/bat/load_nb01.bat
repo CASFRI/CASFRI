@@ -34,7 +34,7 @@ CALL .\common.bat
 SET add_unique_source_id=false
 
 SET inventoryID=NB01
-SET NB_subFolder=NB\%inventoryID%\
+SET NB_subFolder=NB\%inventoryID%\data\inventory\
 
 SET srcNameWater=Waterbody
 SET srcWaterFullPath="%friDir%\%NB_subFolder%%srcNameWater%.shp"

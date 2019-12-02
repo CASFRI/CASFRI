@@ -22,7 +22,7 @@ CALL .\common.bat
 
 SET inventoryID=AB06
 SET srcFileName=GB_S21_TWP
-SET srcFullPath="%friDir%\AB\%inventoryID%\%srcFileName%.gdb"
+SET srcFullPath="%friDir%\AB\%inventoryID%\data\inventory\%srcFileName%.gdb"
 
 SET fullTargetTableName=%targetFRISchema%.ab06
 

@@ -30,7 +30,7 @@ SETLOCAL
 CALL .\common.bat
 
 SET inventoryID=AB16
-SET srcFullPath=%friDir%\AB\%inventoryID%\
+SET srcFullPath=%friDir%\AB\%inventoryID%\data\inventory
 
 SET fullTargetTableName=%targetFRISchema%.ab16
 

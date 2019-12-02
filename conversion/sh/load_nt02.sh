@@ -41,7 +41,7 @@ srcFileName=NT_FORCOV
 gdbFileName_geometry=$srcFileName
 gdbFileName_attributes=NT_FORCOV_ATT
 gdbFileName_photoyear=Inventory_Extents
-srcFullPath="$friDir/NT/$inventoryID/NT_FORCOV.gdb"
+srcFullPath="$friDir/NT/$inventoryID/data/inventory/NT_FORCOV.gdb"
 
 targetTableName=$targetFRISchema.nt02
 geometryTableName=${targetTableName}_geometry

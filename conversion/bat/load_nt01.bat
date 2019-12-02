@@ -25,7 +25,7 @@ CALL .\common.bat
 
 SET inventoryID=NT01
 SET srcFileName=NT_FORCOV_update2003
-SET srcFullPath="%friDir%\NT\%inventoryID%\%srcFileName%.shp"
+SET srcFullPath="%friDir%\NT\%inventoryID%\data\inventory\%srcFileName%.shp"
 
 SET fullTargetTableName=%targetFRISchema%.nt01
 

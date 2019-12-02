@@ -33,7 +33,7 @@ source ./common.sh
 add_unique_source_id=true
 
 inventoryID=NB01
-NB_subFolder=NB/NB01/
+NB_subFolder=NB/$inventoryID/data/inventory/
 
 srcNameWater=Waterbody
 srcWaterFullPath="$friDir/$NB_subFolder$srcNameWater.shp"
