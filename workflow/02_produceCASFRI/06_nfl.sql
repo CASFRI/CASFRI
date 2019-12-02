@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 SELECT TT_CreateMappingView('rawfri', 'ab06'); -- needed to assign layer and layer_rank
 
 CREATE TABLE casfri50.nfl_all AS -- 2m24s
-SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06', 'ogc_fid');
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_min', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 ------------------------
@@ -49,7 +49,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 SELECT TT_CreateMappingView('rawfri', 'ab16'); -- needed to assign layer and layer_rank
 
 INSERT INTO casfri50.nfl_all -- 23m43s
-SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16', 'ogc_fid');
+SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_min', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_nfl');
 ------------------------
