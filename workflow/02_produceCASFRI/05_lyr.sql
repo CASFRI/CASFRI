@@ -70,26 +70,26 @@ SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb01_min', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_lyr');
 ------------------------
 -- Translate NB01 layer 2 reusing NB01 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb01', 1);
+SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1);
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb01_l2_to_nb01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb01_l2_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_lyr');
 ------------------------
 -- Translate NB02 reusing NB01 translation table
-SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb01');
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb02_l1_to_nb01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb02_l1_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_lyr');
 ------------------------
 -- Translate NB02 layer 2 reusing NB01 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb01', 1);
+SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb', 1);
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb02_l2_to_nb01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb02_l2_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_lyr');
 ------------------------
@@ -108,26 +108,26 @@ SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt01_min', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_lyr');
 ------------------------
 -- Translate NT01 layer 2 reusing NT01 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt01', 1);
+SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt', 1);
 
 INSERT INTO casfri50.lyr_all -- 1h24m
-SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt01_l2_to_nt01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt01_l2_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_lyr');
 ------------------------
 -- Translate NT02 reusing NT01 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt');
 
 INSERT INTO casfri50.lyr_all -- 1h45m
-SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_l1_to_nt01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_l1_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_lyr');
 ------------------------
 -- Translate NT02 layer 2 reusing NT01 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt01', 1);
+SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1);
 
 INSERT INTO casfri50.lyr_all -- 1h34m
-SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_l2_to_nt01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_l2_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_lyr');
 --------------------------------------------------------------------------

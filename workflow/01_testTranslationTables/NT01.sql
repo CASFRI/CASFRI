@@ -132,7 +132,7 @@ SELECT TT_Prepare('translation_test', 'nt01_fvi01_geo_test', '_nt01_geo_test');
 
 -- Create VIEW 'nt01_l2_to_nt01_l1_map_200' mapping the NT01 layer 2 
 -- attributes to the NT01 layer 1 attributes
-SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt01', 1, 200);
+SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt', 1, 200);
 
 -- Translate the samples
 SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt01_min_200', 'ogc_fid'); -- 6 s.
@@ -147,13 +147,13 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_eco_test');
 SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_min_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
 
-SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_l2_to_nt01_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
 
 SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_min_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
 
-SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_l2_to_nt01_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
 
 SELECT * FROM TT_Translate_nt01_geo_test('rawfri', 'nt01_min_200', 'ogc_fid'); -- 7 s.

@@ -50,18 +50,18 @@ SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_min', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 ------------------------
 -- Translate NB01 layer 2 reusing NB01 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb01', 1);
+SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1);
 
 INSERT INTO casfri50.dst_all -- 1h11m
-SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_l2_to_nb01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_l2_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 ------------------------
 -- Translate NB02 reusing NB01 translation table
-SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb01');
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb');
 
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb02_l1_to_nb01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb02_l1_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 ------------------------
@@ -80,10 +80,10 @@ SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt01_min', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_dst');
 ------------------------
 -- Translate NT02 reusing NT01 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt');
 
 INSERT INTO casfri50.dst_all -- 51m
-SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt02_l1_to_nt01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt02_l1_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_dst');
 --------------------------------------------------------------------------

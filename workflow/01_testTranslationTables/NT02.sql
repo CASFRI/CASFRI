@@ -26,7 +26,7 @@ SELECT * FROM rawfri.nt02 LIMIT 10;
 -- Create a 200 rows test view of the inventory table 
 -- mapping the NT02 attributes on the NT01 attributes
 -- in order to reuse the NT01 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01', 200);
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200);
 
 -- Display
 SELECT * FROM rawfri.nt02_l1_to_nt01_l1_map_200;
@@ -55,31 +55,31 @@ SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_fvi01_species');
 --------------------------------------------------------------------------
 -- Create VIEW 'nt02_l2_to_nt01_l1_map_200' mapping the NT02 layer 2 
 -- attributes to the NT01 layer 1 attributes
-SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt01', 1, 200);
+SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1, 200);
 
 -- Translate the samples (reusing NT01 translation functions prepared by NT01.sql)
-SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt02_l1_to_nt01_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt02_l1_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_cas_test');
 
-SELECT * FROM TT_Translate_nt01_dst_test('rawfri', 'nt02_l1_to_nt01_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_dst_test('rawfri', 'nt02_l1_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_dst_test');
 
-SELECT * FROM TT_Translate_nt01_eco_test('rawfri', 'nt02_l1_to_nt01_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_eco_test('rawfri', 'nt02_l1_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_eco_test');
 
-SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt02_l1_to_nt01_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt02_l1_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
 
-SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt02_l2_to_nt01_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt02_l2_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
 
-SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt02_l1_to_nt01_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt02_l1_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
 
-SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt02_l2_to_nt01_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt02_l2_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
 
-SELECT * FROM TT_Translate_nt01_geo_test('rawfri', 'nt02_l1_to_nt01_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_geo_test('rawfri', 'nt02_l1_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_geo_test');
 
 --------------------------------------------------------------------------
