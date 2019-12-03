@@ -160,4 +160,4 @@ SELECT * FROM TT_Translate_nt01_geo_test('rawfri', 'nt01_min_200', 'ogc_fid'); -
 SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_geo_test');
 
 --------------------------------------------------------------------------
---SELECT TT_DeleteAllLogs('translation_test');
+SELECT TT_DeleteAllLogs('translation_test');
