@@ -10,56 +10,8 @@
 -- Copyright (C) 2018-2020 Pierre Racine <pierre.racine@sbf.ulaval.ca>, 
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
---
---
---
 -------------------------------------------------------------------------------
 -- Begin Tools Function Definitions...
-------------------------------------------------------------------------------- 
--- TT_TableColumnIsUnique
---
--- Return TRUE if the column values are unique. 
------------------------------------------------------------- 
---DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name, name);
-CREATE OR REPLACE FUNCTION TT_TableColumnIsUnique(
-  schemaName name,
-  tableName name,
-  columnName name
-)
-RETURNS boolean AS $$
-  DECLARE 
-    isUnique boolean; 
-  BEGIN
-    EXECUTE 'SELECT (SELECT ' || columnName || 
-           ' FROM ' || TT_FullTableName(schemaName, tableName) ||
-           ' GROUP BY ' || columnName || 
-           ' HAVING count(*) > 1
-             LIMIT 1) IS NULL;'
-    INTO isUnique;
-    RETURN isUnique; 
-  END;
-$$ LANGUAGE plpgsql;
--------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------- 
--- TT_TableColumnIsUnique 
---
--- Return the list of column for a table and their uniqueness. 
------------------------------------------------------------- 
---DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name);
-CREATE OR REPLACE FUNCTION TT_TableColumnIsUnique(
-  schemaName name,
-  tableName name
-)
-RETURNS TABLE (col_name text, is_unique boolean) AS $$
-  WITH column_names AS (
-    SELECT unnest(TT_TableColumnNames(schemaName, tableName)) cname
-  )
-  SELECT cname, TT_TableColumnIsUnique(schemaName, tableName, cname) is_unique
-FROM column_names;
-$$ LANGUAGE sql;
--------------------------------------------------------------------------------
-
 ------------------------------------------------------------------------------- 
 -- TT_TableColumnType 
 -- 
@@ -111,6 +63,51 @@ RETURNS text[] AS $$
   END; 
 $$ LANGUAGE plpgsql VOLATILE; 
 ------------------------------------------------------------------------------- 
+
+------------------------------------------------------------------------------- 
+-- TT_TableColumnIsUnique
+--
+-- Return TRUE if the column values are unique. 
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name, name);
+CREATE OR REPLACE FUNCTION TT_TableColumnIsUnique(
+  schemaName name,
+  tableName name,
+  columnName name
+)
+RETURNS boolean AS $$
+  DECLARE 
+    isUnique boolean; 
+  BEGIN
+    EXECUTE 'SELECT (SELECT ' || columnName || 
+           ' FROM ' || TT_FullTableName(schemaName, tableName) ||
+           ' GROUP BY ' || columnName || 
+           ' HAVING count(*) > 1
+             LIMIT 1) IS NULL;'
+    INTO isUnique;
+    RETURN isUnique; 
+  END;
+$$ LANGUAGE plpgsql;
+-------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------- 
+-- TT_TableColumnIsUnique 
+--
+-- Return the list of column for a table and their uniqueness. 
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name);
+CREATE OR REPLACE FUNCTION TT_TableColumnIsUnique(
+  schemaName name,
+  tableName name
+)
+RETURNS TABLE (col_name text, is_unique boolean) AS $$
+  WITH column_names AS (
+    SELECT unnest(TT_TableColumnNames(schemaName, tableName)) cname
+  )
+  SELECT cname, TT_TableColumnIsUnique(schemaName, tableName, cname) is_unique
+FROM column_names;
+$$ LANGUAGE sql;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_ColumnExists
