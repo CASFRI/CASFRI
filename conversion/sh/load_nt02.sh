@@ -120,7 +120,7 @@ CREATE INDEX ON ${targetTableName}_unique_att (fc_id);
 
 DROP TABLE IF EXISTS ${targetTableName}_geom_att;
 CREATE TABLE ${targetTableName}_geom_att AS
-SELECT a.fc_id afc_id, a.invproj_id, a.wkb_geometry, a.areaha, a.inventory_id, a.src_filename, b.*
+SELECT a.fc_id afc_id, a.invproj_id ainvproj_id, a.wkb_geometry, a.areaha, a.inventory_id, a.src_filename, b.*
 FROM ${targetTableName}_geom_merged a 
 LEFT OUTER JOIN ${targetTableName}_unique_att b USING (fc_id);
 
@@ -128,12 +128,17 @@ DROP TABLE IF EXISTS $targetTableName;
 CREATE TABLE $targetTableName AS
 SELECT *
 FROM ${targetTableName}_geom_att a
-LEFT JOIN (SELECT project_id, project_label FROM $photoyearTableName) b ON a.invproj_id=b.project_id;
+LEFT JOIN (SELECT project_id, project_label FROM $photoyearTableName) b ON a.ainvproj_id=b.project_id;
 
 ALTER TABLE $targetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
 ALTER TABLE $targetTableName ADD COLUMN ogc_fid INT;
 UPDATE $targetTableName SET ogc_fid=temp_key;
 ALTER TABLE $targetTableName DROP COLUMN IF EXISTS temp_key;
+
+ALTER TABLE IF EXISTS $targetTableName DROP COLUMN IF EXISTS fc_id;
+ALTER TABLE IF EXISTS $targetTableName RENAME COLUMN afc_id TO fc_id;
+ALTER TABLE IF EXISTS $targetTableName DROP COLUMN IF EXISTS invproj_id;
+ALTER TABLE IF EXISTS $targetTableName RENAME COLUMN ainvproj_id TO invproj_id
 
 DROP TABLE IF EXISTS $photoyearTableName;
 DROP TABLE IF EXISTS $geometryTableName;
