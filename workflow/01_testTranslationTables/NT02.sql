@@ -29,7 +29,7 @@ SELECT * FROM rawfri.nt02 LIMIT 10;
 SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200);
 
 -- Display
-SELECT * FROM rawfri.nt02_l1_to_nt01_l1_map_200;
+SELECT * FROM rawfri.nt02_l1_to_nt_l1_map_200;
 
 -- Refine the view to test with one row if necessary
 DROP VIEW IF EXISTS rawfri.nt02_l1_to_nt01_l1_map_200_test;
