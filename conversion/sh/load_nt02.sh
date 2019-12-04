@@ -138,7 +138,7 @@ ALTER TABLE $targetTableName DROP COLUMN IF EXISTS temp_key;
 ALTER TABLE IF EXISTS $targetTableName DROP COLUMN IF EXISTS fc_id;
 ALTER TABLE IF EXISTS $targetTableName RENAME COLUMN afc_id TO fc_id;
 ALTER TABLE IF EXISTS $targetTableName DROP COLUMN IF EXISTS invproj_id;
-ALTER TABLE IF EXISTS $targetTableName RENAME COLUMN ainvproj_id TO invproj_id
+ALTER TABLE IF EXISTS $targetTableName RENAME COLUMN ainvproj_id TO invproj_id;
 
 DROP TABLE IF EXISTS $photoyearTableName;
 DROP TABLE IF EXISTS $geometryTableName;
