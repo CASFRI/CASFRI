@@ -16,29 +16,6 @@ SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 
 --------------------------------------------------------------------------
--------------------------------------------------------
--- Create a 200 random rows views on the source inventory
---------------------------------------------------------------------------
--------------------------------------------------------
--- Have a look at the source inventory table
-SELECT * FROM rawfri.bc09 LIMIT 10;
-
--- Create a 200 rows test view on the inventory table
-SELECT TT_CreateMappingView('rawfri', 'bc09', 200);
-
--- Display
-SELECT * FROM rawfri.bc09_min_200;
-
--- Refine the view to test with one row if necessary
-DROP VIEW IF EXISTS rawfri.bc09_min_200_test;
-CREATE VIEW rawfri.bc09_min_200_test AS
-SELECT * FROM rawfri.bc09_min_200
-WHERE ogc_fid = 1879;
-
--- Display
-SELECT * FROM rawfri.bc09_min_200_test;
-
---------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Create test translation tables
 --------------------------------------------------------------------------
@@ -46,19 +23,19 @@ SELECT * FROM rawfri.bc09_min_200_test;
 CREATE SCHEMA IF NOT EXISTS translation_test;
 -------------------------------------------------------
 -- Display translation tables
-SELECT * FROM translation.bc09_vri01_cas; 
-SELECT * FROM translation.bc09_vri01_dst; 
-SELECT * FROM translation.bc09_vri01_eco; 
-SELECT * FROM translation.bc09_vri01_lyr; 
-SELECT * FROM translation.bc09_vri01_nfl;
-SELECT * FROM translation.bc09_vri01_geo;
+SELECT * FROM translation.vri01_cas; 
+SELECT * FROM translation.vri01_dst; 
+SELECT * FROM translation.vri01_eco; 
+SELECT * FROM translation.vri01_lyr; 
+SELECT * FROM translation.vri01_nfl;
+SELECT * FROM translation.vri01_geo;
 ----------------------------
 -- Create subsets of translation tables if necessary
 ----------------------------
 -- cas
 DROP TABLE IF EXISTS translation_test.bc09_vri01_cas_test;
 CREATE TABLE translation_test.bc09_vri01_cas_test AS
-SELECT * FROM translation.bc09_vri01_cas
+SELECT * FROM translation.vri01_cas
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -67,7 +44,7 @@ SELECT * FROM translation_test.bc09_vri01_cas_test;
 -- dst
 DROP TABLE IF EXISTS translation_test.bc09_vri01_dst_test;
 CREATE TABLE translation_test.bc09_vri01_dst_test AS
-SELECT * FROM translation.bc09_vri01_dst
+SELECT * FROM translation.vri01_dst
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -76,7 +53,7 @@ SELECT * FROM translation_test.bc09_vri01_dst_test;
 -- eco
 DROP TABLE IF EXISTS translation_test.bc09_vri01_eco_test;
 CREATE TABLE translation_test.bc09_vri01_eco_test AS
-SELECT * FROM translation.bc09_vri01_eco
+SELECT * FROM translation.vri01_eco
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -85,7 +62,7 @@ SELECT * FROM translation_test.bc09_vri01_eco_test;
 -- lyr
 DROP TABLE IF EXISTS translation_test.bc09_vri01_lyr_test;
 CREATE TABLE translation_test.bc09_vri01_lyr_test AS
-SELECT * FROM translation.bc09_vri01_lyr
+SELECT * FROM translation.vri01_lyr
 --WHERE rule_id::int = 34
 ;
 -- Display
@@ -94,7 +71,7 @@ SELECT * FROM translation_test.bc09_vri01_lyr_test;
 -- nfl
 DROP TABLE IF EXISTS translation_test.bc09_vri01_nfl_test;
 CREATE TABLE translation_test.bc09_vri01_nfl_test AS
-SELECT * FROM translation.bc09_vri01_nfl
+SELECT * FROM translation.vri01_nfl
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -103,7 +80,7 @@ SELECT * FROM translation_test.bc09_vri01_nfl_test;
 -- geo
 DROP TABLE IF EXISTS translation_test.bc09_vri01_geo_test;
 CREATE TABLE translation_test.bc09_vri01_geo_test AS
-SELECT * FROM translation.bc09_vri01_geo
+SELECT * FROM translation.vri01_geo
 --WHERE rule_id::int = 1
 ;
 -- Display
@@ -131,22 +108,27 @@ SELECT TT_Prepare('translation_test', 'bc09_vri01_nfl_test', '_bc09_nfl_test');
 SELECT TT_Prepare('translation_test', 'bc09_vri01_geo_test', '_bc09_geo_test');
 
 -- Translate the samples
-SELECT * FROM TT_Translate_bc09_cas_test('rawfri', 'bc09_min_200', 'ogc_fid'); -- 5 s.
+SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200);
+SELECT * FROM TT_Translate_bc09_cas_test('rawfri', 'bc09_l1_to_bc08_l1_map_200', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_cas_test');
 
-SELECT * FROM TT_Translate_bc09_dst_test('rawfri', 'bc09_min_200', 'ogc_fid'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200, 'dst');
+SELECT * FROM TT_Translate_bc09_dst_test('rawfri', 'bc09_l1_to_bc08_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_dst_test');
 
-SELECT * FROM TT_Translate_bc09_eco_test('rawfri', 'bc09_min_200', 'ogc_fid'); -- 2 s.
+SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200, 'eco');
+SELECT * FROM TT_Translate_bc09_eco_test('rawfri', 'bc09_l1_to_bc08_l1_map_200_eco', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_eco_test');
 
-SELECT * FROM TT_Translate_bc09_lyr_test('rawfri', 'bc09_min_200', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200, 'lyr');
+SELECT * FROM TT_Translate_bc09_lyr_test('rawfri', 'bc09_l1_to_bc08_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_lyr_test');
 
-SELECT * FROM TT_Translate_bc09_nfl_test('rawfri', 'bc09_min_200', 'ogc_fid'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200, 'bclcs_level_4, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1', 'bc09_nfl');
+SELECT * FROM TT_Translate_bc09_nfl_test('rawfri', 'bc09_l1_to_bc08_l1_map_200_bc09_nfl', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_nfl_test');
 
-SELECT * FROM TT_Translate_bc09_geo_test('rawfri', 'bc09_min_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_bc09_geo_test('rawfri', 'bc09_l1_to_bc08_l1_map_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'bc09_vri01_geo_test');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
@@ -155,7 +137,7 @@ SELECT b.src_filename, b.inventory_id, b.map_id, b.ogc_fid, a.cas_id,
        b.proj_height_1, a.height_upper, a.height_lower,
        b.species_cd_1, a.species_1,
        b.species_pct_1, a.species_per_1
-FROM TT_Translate_bc09_lyr_test('rawfri', 'bc09_min_200') a, rawfri.bc09_min_200 b
+FROM TT_Translate_bc09_lyr_test('rawfri', 'bc09_l1_to_bc08_l1_map_200') a, rawfri.bc09_l1_to_bc08_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------

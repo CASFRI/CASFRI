@@ -30,84 +30,90 @@ SELECT TT_Prepare('translation', 'fvi01_nfl', '_nt_nfl', 'ab06_avi01_nfl'); -- r
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 ------------------------
 -- Translate AB06
-SELECT TT_CreateMappingView('rawfri', 'ab06'); -- needed to assign layer and layer_rank
+SELECT TT_CreateMappingView('rawfri', 'ab06', 'NFL');
 
 CREATE TABLE casfri50.nfl_all AS -- 2m24s
-SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_min', 'ogc_fid');
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_min_n', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 ------------------------
 -- Translate AB06 layer 2 reusing AB06 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1);
+SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 2m1s
-SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_l2_to_ab06_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_l2_to_ab06_l1_map_n', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 ------------------------
 -- Translate AB16
-SELECT TT_CreateMappingView('rawfri', 'ab16'); -- needed to assign layer and layer_rank
+SELECT TT_CreateMappingView('rawfri', 'ab16', 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 23m43s
-SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_min', 'ogc_fid');
+SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_min_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_nfl');
 ------------------------
 -- Translate AB16 layer 2 reusing AB16 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab16', 1);
+SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab16', 1, 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_l2_to_ab16_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_l2_to_ab16_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_nfl');
 ------------------------
 -- Translate NB01
+SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 'NFL');
+
 INSERT INTO casfri50.nfl_all -- 1h4m
-SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb01', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb01_l1_to_nb_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_nfl');
 ------------------------
--- Translate NB02 reusing NB01 translation table - no attribute mapping needed
+-- Translate NB02 using NB generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 'NFL');
+
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02_l1_to_nb_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_nfl');
 ------------------------
 -- Translate BC08
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'NFL');
+
 INSERT INTO casfri50.nfl_all -- 16h38m
-SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08', 'ogc_fid');
+SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_min_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_nfl');
 ------------------------
--- Translate NT01
-SELECT TT_CreateMappingView('rawfri', 'nt01'); -- needed to assign layer and layer_rank
+-- Translate NT01 using NT generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 'NFL'); 
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_min', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l1_to_nt_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_nfl');
 ------------------------
--- Translate NT01 layer 2 reusing NT layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt', 1);
+-- Translate NT01 layer 2 using NT layer 1 generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt', 1, 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l2_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l2_to_nt_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_nfl');
 ------------------------
 -- Translate NT02 reusing NT translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l1_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l1_to_nt_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_nfl');
 ------------------------
 -- Translate NT02 layer 2 reusing NT01 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1);
+SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1, 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l2_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l2_to_nt_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_nfl');
 --------------------------------------------------------------------------

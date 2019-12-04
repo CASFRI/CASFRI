@@ -17,29 +17,6 @@ SET tt.debug TO FALSE;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Create a 200 random rows views on the source inventory
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Have a look at the source inventory table
-SELECT * FROM rawfri.ab06 LIMIT 10;
-
--- Create a 200 rows test view on the inventory table
-SELECT TT_CreateMappingView('rawfri', 'ab06', 200);
-
--- Display
-SELECT * FROM rawfri.ab06_min_200;
-
--- Refine the view to test with one row if necessary
-DROP VIEW IF EXISTS rawfri.ab06_min_200_test;
-CREATE VIEW rawfri.ab06_min_200_test AS
-SELECT * FROM rawfri.ab06_min_200
-WHERE ogc_fid = 5;
-
--- Display
-SELECT * FROM rawfri.ab06_min_200_test;
-
---------------------------------------------------------------------------
---------------------------------------------------------------------------
 -- Create test translation tables
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -152,30 +129,33 @@ SELECT TT_Prepare('translation_test', 'ab06_avi01_lyr_test', '_ab06_lyr_test');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_nfl_test', '_ab06_nfl_test');
 SELECT TT_Prepare('translation_test', 'ab06_avi01_geo_test', '_ab06_geo_test');
 
--- Create VIEW 'ab06_l2_to_ab06_l1_map_200' mapping the AB06 layer 2 
--- attributes to the AB06 layer 1 attributes
-SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 200);
-
 -- Translate the samples
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200);
 SELECT * FROM TT_Translate_ab06_cas_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_cas_test');
 
-SELECT * FROM TT_Translate_ab06_dst_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 5 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'DST'); -- Only rows with a dst
+SELECT * FROM TT_Translate_ab06_dst_test('rawfri', 'ab06_min_200_dst', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_dst_test');
 
-SELECT * FROM TT_Translate_ab06_eco_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 1 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'ECO'); -- Only rows with eco (none in this case)
+SELECT * FROM TT_Translate_ab06_eco_test('rawfri', 'ab06_min_200_eco', 'ogc_fid'); -- 1 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_eco_test');
 
-SELECT * FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'LYR');
+SELECT * FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_min_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_lyr_test');
 
-SELECT * FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_l2_to_ab06_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 200, 'LYR');
+SELECT * FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_l2_to_ab06_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_lyr_test');
 
-SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 2 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'NFL');
+SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_min_200_nfl', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_nfl_test');
 
-SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_l2_to_ab06_l1_map_200', 'ogc_fid'); -- 2 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 200, 'NFL');
+SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_l2_to_ab06_l1_map_200_nfl', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_nfl_test');
 
 SELECT * FROM TT_Translate_ab06_geo_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 2 s.

@@ -23,9 +23,9 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab06_avi01_cas', '_ab06_cas');
 SELECT TT_Prepare('translation', 'ab16_avi01_cas', '_ab16_cas', 'ab06_avi01_cas');
-SELECT TT_Prepare('translation', 'nbi01_cas', '_nb_cas',   'ab06_avi01_cas'); -- used for both NB01 and NB02
-SELECT TT_Prepare('translation', 'vri01_cas', '_bc_cas', 'ab06_avi01_cas');
-SELECT TT_Prepare('translation', 'fvi01_cas', '_nt_cas',   'ab06_avi01_cas'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nbi01_cas', '_nb_cas', 'ab06_avi01_cas'); -- used for both NB01 and NB02
+SELECT TT_Prepare('translation', 'vri01_cas', '_bc_cas', 'ab06_avi01_cas'); 
+SELECT TT_Prepare('translation', 'fvi01_cas', '_nt_cas', 'ab06_avi01_cas'); -- used for both NT01 and NT02
 ------------------------
 DROP TABLE IF EXISTS casfri50.cas_all CASCADE;
 ------------------------
@@ -69,7 +69,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'fvi01_cas');
 SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01');
 
 INSERT INTO casfri50.cas_all -- 57m
-SELECT * FROM TT_Translate_nt_cas('rawfri', 'nt02_cas', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_cas('rawfri', 'nt02_l1_to_nt01_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_cas');
 --------------------------------------------------------------------------

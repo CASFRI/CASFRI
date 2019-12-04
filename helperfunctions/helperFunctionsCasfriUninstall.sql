@@ -46,10 +46,17 @@ DROP FUNCTION IF EXISTS TT_TableColumnNames(name, name);
 DROP FUNCTION IF EXISTS TT_ColumnExists(name, name, name);
 DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb);
 DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean);
-DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int, double precision);
+DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int, double precision) CASCADE;
 DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
-DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, int);
-DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, name, int); 
-DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, int, name, int, int);
+DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name, name);
+DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name);
+DROP FUNCTION IF EXISTS TT_Histogram(text, text, text, int, text);
+DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, text);
+DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, text, text); 
+DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, int, text, text);
+DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, text, text);
+DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, int, text, text);
+DROP FUNCTION IF EXISTS TT_CreateMapping(text, text, int, text, int);
+DROP FUNCTION IF EXISTS TT_DeleteAllViews(text);
 
 

@@ -17,31 +17,6 @@ SET tt.debug TO FALSE;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Create a 200 random rows views on the source inventory
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Have a look at the source inventory table
-SELECT * FROM rawfri.nb02 LIMIT 10;
-
--- Create a 200 rows test view of the inventory table 
--- mapping the NB02 attributes on the NB01 attributes
--- in order to reuse the NB01 translation table
-SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 200);
-
--- Display
-SELECT * FROM rawfri.nb02_l1_to_nb01_l1_map_200;
-
--- Refine the view to test with one row if necessary
-DROP VIEW IF EXISTS rawfri.nb02_l1_to_nb01_l1_map_200_test;
-CREATE VIEW rawfri.nb02_l1_to_nb01_l1_map_200_test AS
-SELECT * FROM rawfri.nb02_l1_to_nb01_l1_map_200
-WHERE ogc_fid = 452;
-
--- Display
-SELECT * FROM rawfri.nb02_l1_to_nb01_l1_map_200_test;
-
---------------------------------------------------------------------------
---------------------------------------------------------------------------
 -- Validate NB species dependency tables
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -53,27 +28,29 @@ SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species');
 -- Translate the sample table
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Create VIEW 'nb02_l2_to_nb01_l1_map_200' mapping the NB02 layer 2 
--- attributes to the NB01 layer 1 attributes
-SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb', 1, 200);
-
 -- Translate the samples (reusing NB01 translation functions prepared by NB01.sql)
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 200);
 SELECT * FROM TT_Translate_nb01_cas_test('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_cas_test');
 
-SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 200, 'dst');
+SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb02_l1_to_nb_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_dst_test');
 
-SELECT * FROM TT_Translate_nb01_eco_test('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 2 s.
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 200, 'eco');
+SELECT * FROM TT_Translate_nb01_eco_test('rawfri', 'nb02_l1_to_nb_l1_map_200_eco', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_eco_test');
 
-SELECT * FROM TT_Translate_nb01_lyr_test('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 200, 'lyr');
+SELECT * FROM TT_Translate_nb01_lyr_test('rawfri', 'nb02_l1_to_nb_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_lyr_test');
 
-SELECT * FROM TT_Translate_nb01_lyr_test('rawfri', 'nb02_l2_to_nb_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb', 1, 200, 'lyr');
+SELECT * FROM TT_Translate_nb01_lyr_test('rawfri', 'nb02_l2_to_nb_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_lyr_test');
 
-SELECT * FROM TT_Translate_nb01_nfl_test('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 3 s.
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 200, 'nfl');
+SELECT * FROM TT_Translate_nb01_nfl_test('rawfri', 'nb02_l1_to_nb_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'nb01_nbi01_nfl_test');
 
 SELECT * FROM TT_Translate_nb01_geo_test('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 2 s.
@@ -85,7 +62,7 @@ SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id,
        b.l1ht, a.height_upper, a.height_lower, 
        b.l1s1, a.species_1,
        b.l1pr1, a.species_per_1
-FROM TT_Translate_nb01_lyr_test('rawfri', 'nb02_l1_to_nb01_l1_map_200') a, rawfri.nb02_l1_to_nb01_l1_map_200 b
+FROM TT_Translate_nb01_lyr_test('rawfri', 'nb02_l1_to_nb_l1_map_200') a, rawfri.nb02_l1_to_nb_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------

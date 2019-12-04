@@ -30,46 +30,58 @@ SELECT TT_Prepare('translation', 'fvi01_eco', '_nt_eco',   'ab06_avi01_eco'); --
 DROP TABLE IF EXISTS casfri50.eco_all CASCADE;
 ------------------------
 -- Translate AB06
+SELECT TT_CreateMappingView('rawfri', 'ab06', 'ECO'); -- only rows with eco attributes
+
 CREATE TABLE casfri50.eco_all AS -- 36s
-SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06', 'ogc_fid');
+SELECT * FROM TT_Translate_ab06_eco('rawfri', 'ab06_min_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_eco');
 ------------------------
 -- Translate AB16
+SELECT TT_CreateMappingView('rawfri', 'ab16', 'ECO'); -- only rows with eco attributes
+
 INSERT INTO casfri50.eco_all -- 6m2s
-SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16', 'ogc_fid');
+SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16_min_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_eco');
 ------------------------
 -- Translate NB01
+SELECT TT_CreateMappingView('rawfri', 'nb01', 'ECO'); -- only rows with eco attributes
+
 INSERT INTO casfri50.eco_all -- 1h27m
-SELECT * FROM TT_Translate_nb_eco('rawfri', 'nb01', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_eco('rawfri', 'nb01_min_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_eco');
 ------------------------
--- Translate NB02 reusing NB01 translation table - no attribute mapping needed
+-- Translate NB02 using NB generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb01', 'ECO'); -- only rows with eco attributes
+
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_nb_eco('rawfri', 'nb02', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_eco('rawfri', 'nb02_l1_to_nb01_l1_map_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi02_eco');
 ------------------------
 -- Translate BC08
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'ECO'); -- only rows with eco attributes
+
 INSERT INTO casfri50.eco_all -- 4h05m
-SELECT * FROM TT_Translate_bc_eco('rawfri', 'bc08', 'ogc_fid');
+SELECT * FROM TT_Translate_bc_eco('rawfri', 'bc08_min_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_eco');
 ------------------------
--- Translate TN01
+-- Translate TN01 using NT generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 'ECO'); -- only rows with eco attributes
+
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt01', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt01_l1_to_nt_l1_map_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_eco');
 ------------------------
--- Translate NT02 reusing NT01 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01');
+-- Translate NT02 using NT generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 'ECO');
 
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt02_l1_to_nt01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt02_l1_to_nt_l1_map_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_eco');
 --------------------------------------------------------------------------
