@@ -602,9 +602,11 @@ RETURNS text AS $$
 
     -- Support a variant where rowSubset is the third parameter (not toTableName)
     attributeMapArr = TT_TableColumnNames(schemaName, fromTableName);
-    IF fromLayer = 1 AND toLayer = 1 AND randomNb IS NULL AND rowSubset IS NULL AND
+    IF fromLayer = 1 AND toLayer = 1 AND randomNb IS NULL AND viewNameSuffix IS NULL AND
        (lower(toTableName) IN ('lyr', 'nfl', 'dst', 'eco') OR
         strpos(toTableName, ',') != 0 OR btrim(toTableName, ' ') = ANY (attributeMapArr)) THEN
+      RAISE NOTICE 'TT_CreateMappingView(): Switching viewNameSuffix, rowSubset and toTableName...';
+      viewNameSuffix = rowSubset;
       rowSubset = toTableName;
       toTableName = fromTableName;
     END IF;
