@@ -17,10 +17,10 @@ SET tt.debug TO FALSE;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Create test translation tables
+-- Create devel translation tables
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS translation_test;
+CREATE SCHEMA IF NOT EXISTS translation_devel;
 -------------------------------------------------------
 -- Display translation tables
 SELECT * FROM translation.fvi01_cas; 
@@ -33,58 +33,58 @@ SELECT * FROM translation.fvi01_geo;
 -- Create subsets of translation tables if necessary
 ----------------------------
 -- cas
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_cas_test;
-CREATE TABLE translation_test.nt01_fvi01_cas_test AS
+DROP TABLE IF EXISTS translation_devel.nt01_fvi01_cas_devel;
+CREATE TABLE translation_devel.nt01_fvi01_cas_devel AS
 SELECT * FROM translation.fvi01_cas
 --WHERE rule_id::int < 1
 ;
 -- display
-SELECT * FROM translation_test.nt01_fvi01_cas_test;
+SELECT * FROM translation_devel.nt01_fvi01_cas_devel;
 ----------------------------
 -- dst
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_dst_test;
-CREATE TABLE translation_test.nt01_fvi01_dst_test AS
+DROP TABLE IF EXISTS translation_devel.nt01_fvi01_dst_devel;
+CREATE TABLE translation_devel.nt01_fvi01_dst_devel AS
 SELECT * FROM translation.fvi01_dst
 --WHERE rule_id::int = 1
 ;
 -- display
-SELECT * FROM translation_test.nt01_fvi01_dst_test;
+SELECT * FROM translation_devel.nt01_fvi01_dst_devel;
 ----------------------------
 -- eco
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_eco_test;
-CREATE TABLE translation_test.nt01_fvi01_eco_test AS
+DROP TABLE IF EXISTS translation_devel.nt01_fvi01_eco_devel;
+CREATE TABLE translation_devel.nt01_fvi01_eco_devel AS
 SELECT * FROM translation.fvi01_eco
 --WHERE rule_id::int = 1
 ;
 -- display
-SELECT * FROM translation_test.nt01_fvi01_eco_test;
+SELECT * FROM translation_devel.nt01_fvi01_eco_devel;
 ----------------------------
 -- lyr
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_lyr_test;
-CREATE TABLE translation_test.nt01_fvi01_lyr_test AS
+DROP TABLE IF EXISTS translation_devel.nt01_fvi01_lyr_devel;
+CREATE TABLE translation_devel.nt01_fvi01_lyr_devel AS
 SELECT * FROM translation.fvi01_lyr
 --WHERE rule_id::int = 1
 ;
 -- display
-SELECT * FROM translation_test.nt01_fvi01_lyr_test;
+SELECT * FROM translation_devel.nt01_fvi01_lyr_devel;
 ----------------------------
 -- nfl
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_nfl_test;
-CREATE TABLE translation_test.nt01_fvi01_nfl_test AS
+DROP TABLE IF EXISTS translation_devel.nt01_fvi01_nfl_devel;
+CREATE TABLE translation_devel.nt01_fvi01_nfl_devel AS
 SELECT * FROM translation.fvi01_nfl
 --WHERE rule_id::int = 1
 ;
 -- display
-SELECT * FROM translation_test.nt01_fvi01_nfl_test;
+SELECT * FROM translation_devel.nt01_fvi01_nfl_devel;
 ----------------------------
 -- geo
-DROP TABLE IF EXISTS translation_test.nt01_fvi01_geo_test;
-CREATE TABLE translation_test.nt01_fvi01_geo_test AS
+DROP TABLE IF EXISTS translation_devel.nt01_fvi01_geo_devel;
+CREATE TABLE translation_devel.nt01_fvi01_geo_devel AS
 SELECT * FROM translation.fvi01_geo
 --WHERE rule_id::int = 2
 ;
 -- display
-SELECT * FROM translation_test.nt01_fvi01_geo_test;
+SELECT * FROM translation_devel.nt01_fvi01_geo_devel;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -100,44 +100,44 @@ SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_fvi01_species');
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Create translation functions
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_cas_test', '_nt01_cas_test');
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_dst_test', '_nt01_dst_test');
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_eco_test', '_nt01_eco_test');
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_lyr_test', '_nt01_lyr_test');
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_nfl_test', '_nt01_nfl_test');
-SELECT TT_Prepare('translation_test', 'nt01_fvi01_geo_test', '_nt01_geo_test');
+SELECT TT_Prepare('translation_devel', 'nt01_fvi01_cas_devel', '_nt01_cas_devel');
+SELECT TT_Prepare('translation_devel', 'nt01_fvi01_dst_devel', '_nt01_dst_devel');
+SELECT TT_Prepare('translation_devel', 'nt01_fvi01_eco_devel', '_nt01_eco_devel');
+SELECT TT_Prepare('translation_devel', 'nt01_fvi01_lyr_devel', '_nt01_lyr_devel');
+SELECT TT_Prepare('translation_devel', 'nt01_fvi01_nfl_devel', '_nt01_nfl_devel');
+SELECT TT_Prepare('translation_devel', 'nt01_fvi01_geo_devel', '_nt01_geo_devel');
 
 -- Translate the samples
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 200);
-SELECT * FROM TT_Translate_nt01_cas_test('rawfri', 'nt01_l1_to_nt_l1_map_200', 'ogc_fid'); -- 6 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_cas_test');
+SELECT * FROM TT_Translate_nt01_cas_devel('rawfri', 'nt01_l1_to_nt_l1_map_200', 'ogc_fid'); -- 6 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_cas_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 200, 'dst');
-SELECT * FROM TT_Translate_nt01_dst_test('rawfri', 'nt01_l1_to_nt_l1_map_200_dst', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_dst_test');
+SELECT * FROM TT_Translate_nt01_dst_devel('rawfri', 'nt01_l1_to_nt_l1_map_200_dst', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_dst_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 200, 'eco');
-SELECT * FROM TT_Translate_nt01_eco_test('rawfri', 'nt01_l1_to_nt_l1_map_200_eco', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_eco_test');
+SELECT * FROM TT_Translate_nt01_eco_devel('rawfri', 'nt01_l1_to_nt_l1_map_200_eco', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_eco_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 200, 'lyr');
-SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_l1_to_nt_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
+SELECT * FROM TT_Translate_nt01_lyr_devel('rawfri', 'nt01_l1_to_nt_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_lyr_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt', 1, 200);
-SELECT * FROM TT_Translate_nt01_lyr_test('rawfri', 'nt01_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_lyr_test');
+SELECT * FROM TT_Translate_nt01_lyr_devel('rawfri', 'nt01_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_lyr_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 200, 'nfl');
-SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_l1_to_nt_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
+SELECT * FROM TT_Translate_nt01_nfl_devel('rawfri', 'nt01_l1_to_nt_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_nfl_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt', 1, 200, 'nfl');
-SELECT * FROM TT_Translate_nt01_nfl_test('rawfri', 'nt01_l2_to_nt_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_nfl_test');
+SELECT * FROM TT_Translate_nt01_nfl_devel('rawfri', 'nt01_l2_to_nt_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_nfl_devel');
 
-SELECT * FROM TT_Translate_nt01_geo_test('rawfri', 'nt01_l1_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'nt01_fvi01_geo_test');
+SELECT * FROM TT_Translate_nt01_geo_devel('rawfri', 'nt01_l1_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_geo_devel');
 
 --------------------------------------------------------------------------
-SELECT TT_DeleteAllLogs('translation_test');
+SELECT TT_DeleteAllLogs('translation_devel');
