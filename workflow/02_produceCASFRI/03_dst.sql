@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 -- Translate AB06
 SELECT TT_CreateMappingView('rawfri', 'ab06', 'DST'); -- Only rows with a disturbance
 
-CREATE TABLE casfri50.dst_all AS -- 2m12s
+CREATE TABLE casfri50.dst_all AS -- 26s
 SELECT * FROM TT_Translate_ab06_dst('rawfri', 'ab06_min_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_dst');
@@ -40,16 +40,16 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_dst');
 -- Translate AB16
 SELECT TT_CreateMappingView('rawfri', 'ab16', 'DST'); -- Only rows with a disturbance
 
-INSERT INTO casfri50.dst_all -- 24m46s
+INSERT INTO casfri50.dst_all -- 1m50s
 SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16_min_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_dst');
 ------------------------
 -- Translate NB01 using NB generic translation table
-SELECT TT_CreateMappingView('rawfri', 'nb01', 'nt', 'DST'); -- Only rows with a disturbance
+SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 'DST'); -- Only rows with a disturbance
 
 INSERT INTO casfri50.dst_all -- 1h32m
-SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_l1_to_nt_l1_map_dst', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_l1_to_nb_l1_map_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 ------------------------

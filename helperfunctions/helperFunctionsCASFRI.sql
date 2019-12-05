@@ -466,7 +466,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 CREATE OR REPLACE FUNCTION TT_ArrayDistinct(anyarray) 
 RETURNS anyarray AS $$
   SELECT array_agg(DISTINCT x) FROM unnest($1) t(x);
-$$ LANGUAGE SQL IMMUTABLE;
+$$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
