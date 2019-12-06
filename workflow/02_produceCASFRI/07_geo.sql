@@ -41,15 +41,19 @@ SELECT * FROM TT_Translate_ab16_geo('rawfri', 'ab16', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_geo');
 ------------------------
--- Translate NB01
+-- Translate NB01 using the NB generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb');
+
 INSERT INTO casfri50.geo_all -- 48m52s
-SELECT * FROM TT_Translate_nb_geo('rawfri', 'nb01', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_geo('rawfri', 'nb01_l1_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_geo');
 ------------------------
--- Translate NB02 reusing NB01 translation table - no attribute mapping needed
+-- Translate NB02 using the NB generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb');
+
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_nb_geo('rawfri', 'nb02_l1_to_nb01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_geo('rawfri', 'nb02_l1_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_geo');
 ------------------------
@@ -59,17 +63,19 @@ SELECT * FROM TT_Translate_bc_geo('rawfri', 'bc08', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_geo');
 ------------------------
--- Translate NT01
+-- Translate NT01 using the NT generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt');
+
 INSERT INTO casfri50.geo_all -- 20m
-SELECT * FROM TT_Translate_nt_geo('rawfri', 'nt01', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_geo('rawfri', 'nt01_l1_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_geo');
 ------------------------
--- Translate NT02 reusing NT01 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt01');
+-- Translate NT02 using NT generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt');
 
 INSERT INTO casfri50.geo_all -- 22m
-SELECT * FROM TT_Translate_nt_geo('rawfri', 'nt02_l1_to_nt01_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_geo('rawfri', 'nt02_l1_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_geo');
 --------------------------------------------------------------------------

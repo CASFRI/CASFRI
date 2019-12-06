@@ -326,7 +326,7 @@ RETURNS TABLE (id int) AS $$
   END;
 $$ LANGUAGE plpgsql;
 ------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
+--DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
 CREATE OR REPLACE FUNCTION TT_RandomInt(
   nb int, 
   val_min int,
@@ -461,6 +461,82 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_ArrayDistinct
+-------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_ArrayDistinct(anyarray) 
+RETURNS anyarray AS $$
+  SELECT array_agg(DISTINCT x) FROM unnest($1) t(x);
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_DeleteAllViews
+--
+-- schemaName text
+--
+-- Delete all view in the specified schema.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_DeleteAllViews(text);
+CREATE OR REPLACE FUNCTION TT_DeleteAllViews(
+  schemaName text
+)
+RETURNS SETOF text AS $$
+  DECLARE
+    res RECORD;
+  BEGIN
+    FOR res IN SELECT 'DROP VIEW IF EXISTS ' || TT_FullTableName(schemaName, table_name) || ';' query
+               FROM information_schema.tables 
+               WHERE lower(table_schema) = lower(schemaName) AND table_type = 'VIEW'
+               ORDER BY table_name LOOP
+      EXECUTE res.query;
+      RETURN NEXT res.query;
+    END LOOP;
+    RETURN;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_CreateMapping
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CreateMapping(text, text, int, name, int); 
+CREATE OR REPLACE FUNCTION TT_CreateMapping( 
+  schemaName text, 
+  fromTableName text,
+  fromLayer int,
+  toTableName text,
+  toLayer int
+) 
+RETURNS TABLE (num int, key text, from_att text, to_att text) AS $$
+  WITH colnames AS (
+    SELECT TT_TableColumnNames('translation', 'attribute_dependencies') col_name_arr
+  ), colnames_num AS (
+    SELECT generate_series(1, cardinality(col_name_arr)) num, unnest(col_name_arr) colname
+    FROM colnames
+  ), from_att AS (
+    -- Vertical table of all 'from' attribute mapping
+    SELECT (jsonb_each(to_jsonb(a.*))).*
+    FROM translation.attribute_dependencies a
+    WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(fromTableName) AND layer = fromLayer::text
+  ), to_att AS (
+    -- Vertical table of all 'to' attribute mapping
+    SELECT (jsonb_each(to_jsonb(a.*))).*
+    FROM translation.attribute_dependencies a
+    WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(toTableName) AND layer = toLayer::text
+  )
+  -- Splitted by comma, still vertically
+  SELECT colnames_num.num, from_att.key, 
+         trim(regexp_split_to_table(btrim(from_att.value::text, '"'), E',')) from_att, 
+         trim(regexp_split_to_table(btrim(to_att.value::text, '"'), E',')) to_att
+  FROM from_att, to_att, colnames_num
+  WHERE colnames_num.colname = from_att.key AND 
+        from_att.key = to_att.key AND 
+        from_att.key != 'ogc_fid' AND 
+        from_att.key != 'ttable_exists';
+$$ LANGUAGE sql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_CreateMappingView 
 -- 
 -- Return a view mapping attributes of fromTableName to attributes of toTableName
@@ -468,21 +544,37 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- Can also be used to create a view selecting the minimal set of useful attribute
 -- and to get a random sample of the source table when randomNb is provided.
 ------------------------------------------------------------ 
---DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, int, name, int, int); 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, int, text, text); 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, int, text); 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, int);
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int); 
 CREATE OR REPLACE FUNCTION TT_CreateMappingView( 
-  schemaName name, 
-  fromTableName name,
+  schemaName text, 
+  fromTableName text,
   fromLayer int,
-  toTableName name,
+  toTableName text,
   toLayer int,
-  randomNb int DEFAULT NULL
+  randomNb int DEFAULT NULL,
+  rowSubset text DEFAULT NULL,
+  viewNameSuffix text DEFAULT NULL
 ) 
 RETURNS text AS $$ 
   DECLARE
-      queryStr text;
-      attribute_map text;
-      nb int;
-      viewName text;
+    queryStr text;
+    viewName text;
+    mappingRec RECORD;
+    attributeMapArr text[] = '{}';
+    attributeMapStr text;
+    attributeArr text[] = '{}';
+    whereExpArr text[] = '{}';
+    whereExpStr text = '';
+    nb int;
+    attName text;
+    filteredTableName text;
+    filteredNbColName text;
+    attributeList boolean = FALSE;
+    validRowSubset boolean = FALSE;
+    attListViewName text = '';
   BEGIN
     -- Check if table 'attribute_dependencies' exists
     IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
@@ -496,7 +588,7 @@ RETURNS text AS $$
       RETURN 'ERROR: Could not find table ''translation..' || fromTableName || '''...';
     END IF;
 
-    -- Check if an entry for fromTableName, fromLayer exists in table 'attribute_dependencies'
+    -- Check if an entry for (fromTableName, fromLayer) exists in table 'attribute_dependencies'
     SELECT count(*) FROM translation.attribute_dependencies
     WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(fromTableName) AND layer = fromLayer::text
     INTO nb;
@@ -508,7 +600,52 @@ RETURNS text AS $$
       RETURN 'ERROR: More than one entry match inventory_id '''  || fromTableName || ''' layer ' || fromLayer || ' in table ''translation.dependencies''...';
     END IF;
 
-    -- Check if an entry for toTableName, toLayer exists in table 'attribute_dependencies'
+    -- Support a variant where rowSubset is the third parameter (not toTableName)
+    attributeMapArr = TT_TableColumnNames(schemaName, fromTableName);
+    IF fromLayer = 1 AND toLayer = 1 AND randomNb IS NULL AND viewNameSuffix IS NULL AND
+       (lower(toTableName) IN ('lyr', 'nfl', 'dst', 'eco') OR
+        strpos(toTableName, ',') != 0 OR btrim(toTableName, ' ') = ANY (attributeMapArr)) THEN
+      RAISE NOTICE 'TT_CreateMappingView(): Switching viewNameSuffix, rowSubset and toTableName...';
+      viewNameSuffix = rowSubset;
+      rowSubset = toTableName;
+      toTableName = fromTableName;
+    END IF;
+    rowSubset = lower(btrim(rowSubset, ' '));
+
+    -- Check rowSubset is a valid value
+    IF NOT rowSubset IS NULL THEN
+      -- If rowSubset is a list of attributes
+      IF (strpos(rowSubset, ',') != 0 OR rowSubset = ANY (attributeMapArr)) THEN
+        attributeArr = string_to_array(rowSubset, ',');
+        FOREACH attName IN ARRAY attributeArr LOOP
+          attName = btrim(attName, ' ');
+          IF NOT attName = ANY (attributeMapArr) THEN
+            RAISE NOTICE 'ERROR TT_CreateMappingView(): Attribute ''%'' in ''rowSubset'' not found in table ''translation.%''...', attName, fromTableName;
+            RETURN 'ERROR: Attribute ''' || attName || ''' in ''rowSubset'' not found in table ''translation.''' || fromTableName || '''...';
+          END IF;
+          whereExpArr = array_append(whereExpArr, '(TT_NotEmpty(' || attName || '::text) AND ' || attName || '::text != ''0'')');
+          attListViewName = attListViewName || lower(left(attName, 1));
+        END LOOP;
+        IF viewNameSuffix IS NULL THEN
+          viewNameSuffix = attListViewName;
+        END IF;
+        attributeList = TRUE;
+        validRowSubset = TRUE;
+      ELSIF rowSubset IN ('lyr', 'nfl', 'dst', 'eco') THEN
+        IF viewNameSuffix IS NULL THEN
+          viewNameSuffix = rowSubset;
+        ELSE
+          viewNameSuffix = rowSubset || '_' || viewNameSuffix;
+        END IF;
+        validRowSubset = TRUE;
+      ELSE
+        RAISE NOTICE 'ERROR TT_CreateMappingView(): Invalid rowSubset value (%)...', rowSubset;
+        RETURN 'ERROR: Invalid rowSubset value (' || rowSubset || ')...';
+      END IF;
+    END IF;
+    attributeMapArr = '{}';
+
+    -- Check if an entry for (toTableName, toLayer) exists in table 'attribute_dependencies'
     SELECT count(*) FROM translation.attribute_dependencies
     WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(toTableName) AND layer = toLayer::text
     INTO nb;
@@ -520,54 +657,92 @@ RETURNS text AS $$
       RETURN 'ERROR: More than one entry match inventory_id '''  || toTableName || ''' layer ' || toLayer || ' in table ''translation.dependencies''...';
     END IF;
 
-    -- Build the attribute mapping
-    WITH from_att AS (
-      SELECT (jsonb_each(to_jsonb(a.*))).*
-      FROM translation.attribute_dependencies a
-      WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(fromTableName) AND layer = fromLayer::text
-    ), to_att AS (
-      SELECT (jsonb_each(to_jsonb(a.*))).*
-      FROM translation.attribute_dependencies a
-      WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(toTableName) AND layer = toLayer::text
-    ), splitted AS (
-      SELECT from_att.key, 
-         trim(regexp_split_to_table(btrim(from_att.value::text, '"'), E',')) from_att, 
-         trim(regexp_split_to_table(btrim(to_att.value::text, '"'), E',')) to_att
-      FROM from_att, to_att
-      WHERE from_att.key = to_att.key AND from_att.key != 'ogc_fid' AND from_att.key != 'ttable_exists'
-    ), mapping AS (
+    -- Build the attribute mapping string
+    FOR mappingRec IN
+      WITH mapping AS (
+        SELECT * FROM TT_CreateMapping(schemaName, fromTableName, fromLayer, toTableName, toLayer)
+      ), unique_att AS (
+      -- Create only one map for each 'to' attribute (there can not be more than one)
       SELECT DISTINCT ON (to_att)
-         --key, from_att orig_from_att, TT_IsName(from_att), to_att orig_to_att, TT_IsName(to_att),
+         num, key,
+         -- Make sure to quote the 'from' part if it is a constant
          CASE WHEN TT_IsName(from_att) THEN from_att
               ELSE '''' || btrim(from_att, '''') || ''''
          END from_att,
+         -- If the 'to' part is a contant, map the 'from' attribute to itself. They will be fixed later.
          CASE WHEN TT_IsName(to_att) THEN to_att
               WHEN TT_IsName(from_att) THEN from_att
               ELSE key
          END to_att
-      FROM splitted
+      FROM mapping
       WHERE TT_NotEmpty(from_att)
       ORDER BY to_att, from_att
     )
-    SELECT string_agg(from_att || CASE WHEN from_att = to_att THEN '' ELSE ' ' || to_att END, ', ')
-    FROM mapping INTO attribute_map;
---RAISE NOTICE 'attribute_map=%', attribute_map;
+    SELECT * FROM unique_att ORDER BY num
+    LOOP
+      attributeMapArr = array_append(attributeMapArr, mappingRec.from_att || 
+                                                      CASE WHEN mappingRec.from_att = mappingRec.to_att THEN '' 
+                                                           ELSE ' ' || mappingRec.to_att 
+                                                      END);
+    END LOOP;
+    -- Concatenate the attribute map array into a string
+    attributeMapStr = array_to_string(attributeMapArr, ', ' || chr(10));
+    
+    -- Build the WHERE string
+    IF validRowSubset AND NOT attributeList THEN
+      FOR mappingRec IN SELECT * 
+                        FROM TT_CreateMapping(schemaName, fromTableName, fromLayer, toTableName, toLayer)
+                        WHERE TT_NotEmpty(from_att) LOOP
+        IF (rowSubset = 'lyr' AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
+           (rowSubset = 'nfl' AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg')) OR
+           (rowSubset = 'dst' AND (mappingRec.key = 'dist_type_1' OR mappingRec.key = 'dist_year_1' OR mappingRec.key = 'dist_type_2' OR mappingRec.key = 'dist_year_2' OR mappingRec.key = 'dist_type_3' OR mappingRec.key = 'dist_year_3')) OR
+           (rowSubset = 'eco' AND mappingRec.key = 'wetland_type')
+        THEN
+          whereExpArr = array_append(whereExpArr, '(TT_NotEmpty(' || mappingRec.from_att || '::text) AND ' || mappingRec.from_att || '::text != ''0'')');
+        END IF;
+      END LOOP;
+    END IF;
 
+    -- Concatenate the WHERE attribute into a string
+    IF cardinality(whereExpArr) = 0 AND validRowSubset THEN
+      whereExpStr = '  WHERE FALSE = TRUE';
+    ELSIF cardinality(whereExpArr) > 0 THEN
+      whereExpStr = '  WHERE ' || array_to_string(TT_ArrayDistinct(whereExpArr), ' OR ' || chr(10) || '        ');
+    END IF;
+
+    -- Contruct the name of the VIEW
     viewName = TT_FullTableName(schemaName, fromTableName || 
                CASE WHEN fromTableName = toTableName AND fromLayer = toLayer THEN '_min' 
                     ELSE '_l' || fromLayer || '_to_' || toTableName || '_l' || toLayer || '_map' 
-               END || coalesce('_' || randomNb, ''));
+               END || coalesce('_' || randomNb, '') || coalesce('_' || viewNameSuffix, ''));
+
     -- Build the VIEW query
-    queryStr = 'DROP VIEW IF EXISTS ' || viewName || ' CASCADE;CREATE OR REPLACE VIEW ' || viewName || ' AS' ||
-              ' SELECT ' || attribute_map || 
-              ' FROM ' || TT_FullTableName(schemaName, fromTableName) || ' r';
+    queryStr = 'DROP VIEW IF EXISTS ' || viewName || ' CASCADE;' || chr(10) ||
+               'CREATE OR REPLACE VIEW ' || viewName || ' AS' || chr(10);
+    
+    filteredTableName = TT_FullTableName(schemaName, fromTableName);
+    filteredNbColName = 'ogc_fid';
+    IF TT_NotEmpty(whereExpStr) THEN
+      filteredTableName = 'filtered_rows_nb';
+      filteredNbColName = 'rownb';
+      queryStr = queryStr ||
+                 'WITH filtered_rows AS (' || chr(10) ||
+                 '  SELECT *' || chr(10) ||
+                 '  FROM ' || TT_FullTableName(schemaName, fromTableName) || chr(10) ||
+                 whereExpStr || chr(10) ||
+                 '), filtered_rows_nb AS (' || chr(10) ||
+                 '  SELECT ROW_NUMBER() OVER(ORDER BY ogc_fid) ' || filteredNbColName || ', filtered_rows.*' || chr(10) ||
+                 '  FROM filtered_rows' || chr(10) ||
+                 ')' || chr(10);
+    END IF;
+    queryStr = queryStr ||
+               'SELECT ' || attributeMapStr || chr(10) ||
+               'FROM ' || filteredTableName || ' fr';
 
     -- Make it random if requested
-    IF randomNb IS NULL THEN
-      queryStr = queryStr || ';';
-    ELSE
-      EXECUTE 'SELECT count(*) FROM ' || TT_FullTableName(schemaName, fromTableName) INTO nb;
-      queryStr = queryStr || ', TT_RandomInt(' || randomNb || ', 1, ' || nb || ', 1.0) rd WHERE rd.id = r.ogc_fid;';
+    IF NOT randomNb IS NULL THEN
+      queryStr = queryStr || ', TT_RandomInt(' || randomNb || ', 1, (SELECT count(*) FROM ' || filteredTableName || ')::int, 1.0) rd' || chr(10) ||
+                'WHERE rd.id = fr.' || filteredNbColName || ';';
     END IF;
     RAISE NOTICE 'TT_CreateMappingView(): Creating VIEW ''%''...', viewName;
     EXECUTE queryStr;
@@ -575,25 +750,63 @@ RETURNS text AS $$
   END; 
 $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, name, int); 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, name, int, text, text);
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, name, int, text);
 CREATE OR REPLACE FUNCTION TT_CreateMappingView( 
-  schemaName name, 
-  fromTableName name,
-  toTableName name,
-  randomNb int DEFAULt NULL
+  schemaName text,
+  fromTableName text,
+  fromLayer int, 
+  toTableName text,
+  toLayer int,
+  rowSubset text,
+  viewNameSuffix text DEFAULT NULL
 ) 
 RETURNS text AS $$ 
-  SELECT TT_CreateMappingView(schemaName, fromTableName, 1, toTableName, 1, randomNb);
+  SELECT TT_CreateMappingView(schemaName, fromTableName, fromLayer, toTableName, toLayer, NULL, rowSubset, viewNameSuffix);
 $$ LANGUAGE sql VOLATILE;
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_CreateMappingView(name, name, int); 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, int, text, text);
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, int, text);
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, int); 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text); 
 CREATE OR REPLACE FUNCTION TT_CreateMappingView( 
-  schemaName name, 
-  tableName name,
-  randomNb int DEFAULt NULL
+  schemaName text,
+  fromTableName text,
+  toTableName text,
+  randomNb int DEFAULT NULL,
+  rowSubset text DEFAULT NULL,
+  viewNameSuffix text DEFAULT NULL
 ) 
 RETURNS text AS $$ 
-  SELECT TT_CreateMappingView(schemaName, tableName, 1, tableName, 1, randomNb);
+  SELECT TT_CreateMappingView(schemaName, fromTableName, 1, toTableName, 1, randomNb, rowSubset, viewNameSuffix);
+$$ LANGUAGE sql VOLATILE;
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, text, text); 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, text); 
+CREATE OR REPLACE FUNCTION TT_CreateMappingView( 
+  schemaName text, 
+  fromTableName text,
+  toTableName text,
+  rowSubset text,
+  viewNameSuffix text DEFAULT NULL
+) 
+RETURNS text AS $$ 
+  SELECT TT_CreateMappingView(schemaName, fromTableName, 1, toTableName, 1, NULL, rowSubset, viewNameSuffix);
+$$ LANGUAGE sql VOLATILE;
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, text);
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text);
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int); 
+--DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text); 
+CREATE OR REPLACE FUNCTION TT_CreateMappingView( 
+  schemaName text,
+  fromTableName text,
+  randomNb int DEFAULT NULL,
+  rowSubset text DEFAULT NULL,
+  viewNameSuffix text DEFAULT NULL
+) 
+RETURNS text AS $$ 
+  SELECT TT_CreateMappingView(schemaName, fromTableName, 1, fromTableName, 1, randomNb, rowSubset, viewNameSuffix);
 $$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 -- Overwrrite the TT_DefaultProjectErrorCode() function to define default error 

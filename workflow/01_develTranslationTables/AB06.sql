@@ -17,33 +17,10 @@ SET tt.debug TO FALSE;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Create a 200 random rows views on the source inventory
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Have a look at the source inventory table
-SELECT * FROM rawfri.ab06 LIMIT 10;
-
--- Create a 200 rows test view on the inventory table
-SELECT TT_CreateMappingView('rawfri', 'ab06', 200);
-
--- Display
-SELECT * FROM rawfri.ab06_min_200;
-
--- Refine the view to test with one row if necessary
-DROP VIEW IF EXISTS rawfri.ab06_min_200_test;
-CREATE VIEW rawfri.ab06_min_200_test AS
-SELECT * FROM rawfri.ab06_min_200
-WHERE ogc_fid = 5;
-
--- Display
-SELECT * FROM rawfri.ab06_min_200_test;
-
---------------------------------------------------------------------------
---------------------------------------------------------------------------
 -- Create test translation tables
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS translation_test;
+CREATE SCHEMA IF NOT EXISTS translation_devel;
 -------------------------------------------------------
 -- Display translation tables
 SELECT * FROM translation.ab06_avi01_cas; 
@@ -56,58 +33,58 @@ SELECT * FROM translation.ab06_avi01_geo;
 -- Create subsets of translation tables if necessary
 ----------------------------
 -- cas
-DROP TABLE IF EXISTS translation_test.ab06_avi01_cas_test;
-CREATE TABLE translation_test.ab06_avi01_cas_test AS
+DROP TABLE IF EXISTS translation_devel.ab06_avi01_cas_devel;
+CREATE TABLE translation_devel.ab06_avi01_cas_devel AS
 SELECT * FROM translation.ab06_avi01_cas
 --WHERE rule_id::int = 1
 ;
 -- Display
-SELECT * FROM translation_test.ab06_avi01_cas_test;
+SELECT * FROM translation_devel.ab06_avi01_cas_devel;
 ----------------------------
 -- dst
-DROP TABLE IF EXISTS translation_test.ab06_avi01_dst_test;
-CREATE TABLE translation_test.ab06_avi01_dst_test AS
+DROP TABLE IF EXISTS translation_devel.ab06_avi01_dst_devel;
+CREATE TABLE translation_devel.ab06_avi01_dst_devel AS
 SELECT * FROM translation.ab06_avi01_dst
 --WHERE rule_id::int = 1
 ;
 -- Display
-SELECT * FROM translation_test.ab06_avi01_dst_test;
+SELECT * FROM translation_devel.ab06_avi01_dst_devel;
 ----------------------------
 -- eco
-DROP TABLE IF EXISTS translation_test.ab06_avi01_eco_test;
-CREATE TABLE translation_test.ab06_avi01_eco_test AS
+DROP TABLE IF EXISTS translation_devel.ab06_avi01_eco_devel;
+CREATE TABLE translation_devel.ab06_avi01_eco_devel AS
 SELECT * FROM translation.ab06_avi01_eco
 --WHERE rule_id::int = 1
 ;
 -- Display
-SELECT * FROM translation_test.ab06_avi01_eco_test;
+SELECT * FROM translation_devel.ab06_avi01_eco_devel;
 ----------------------------
 -- lyr
-DROP TABLE IF EXISTS translation_test.ab06_avi01_lyr_test;
-CREATE TABLE translation_test.ab06_avi01_lyr_test AS
+DROP TABLE IF EXISTS translation_devel.ab06_avi01_lyr_devel;
+CREATE TABLE translation_devel.ab06_avi01_lyr_devel AS
 SELECT * FROM translation.ab06_avi01_lyr
 --WHERE rule_id::int = 1
 ;
 -- Display
-SELECT * FROM translation_test.ab06_avi01_lyr_test;
+SELECT * FROM translation_devel.ab06_avi01_lyr_devel;
 ----------------------------
 -- nfl
-DROP TABLE IF EXISTS translation_test.ab06_avi01_nfl_test;
-CREATE TABLE translation_test.ab06_avi01_nfl_test AS
+DROP TABLE IF EXISTS translation_devel.ab06_avi01_nfl_devel;
+CREATE TABLE translation_devel.ab06_avi01_nfl_devel AS
 SELECT * FROM translation.ab06_avi01_nfl
 --WHERE rule_id::int = 1
 ;
 -- Display
-SELECT * FROM translation_test.ab06_avi01_nfl_test;
+SELECT * FROM translation_devel.ab06_avi01_nfl_devel;
 ----------------------------
 -- geo
-DROP TABLE IF EXISTS translation_test.ab06_avi01_geo_test;
-CREATE TABLE translation_test.ab06_avi01_geo_test AS
+DROP TABLE IF EXISTS translation_devel.ab06_avi01_geo_devel;
+CREATE TABLE translation_devel.ab06_avi01_geo_devel AS
 SELECT * FROM translation.ab06_avi01_geo
 --WHERE rule_id::int = 2
 ;
 -- Display
-SELECT * FROM translation_test.ab06_avi01_geo_test;
+SELECT * FROM translation_devel.ab06_avi01_geo_devel;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -145,41 +122,44 @@ ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Create translation functions
-SELECT TT_Prepare('translation_test', 'ab06_avi01_cas_test', '_ab06_cas_test');
-SELECT TT_Prepare('translation_test', 'ab06_avi01_dst_test', '_ab06_dst_test');
-SELECT TT_Prepare('translation_test', 'ab06_avi01_eco_test', '_ab06_eco_test');
-SELECT TT_Prepare('translation_test', 'ab06_avi01_lyr_test', '_ab06_lyr_test');
-SELECT TT_Prepare('translation_test', 'ab06_avi01_nfl_test', '_ab06_nfl_test');
-SELECT TT_Prepare('translation_test', 'ab06_avi01_geo_test', '_ab06_geo_test');
-
--- Create VIEW 'ab06_l2_to_ab06_l1_map_200' mapping the AB06 layer 2 
--- attributes to the AB06 layer 1 attributes
-SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 200);
+SELECT TT_Prepare('translation_devel', 'ab06_avi01_cas_devel', '_ab06_cas_devel');
+SELECT TT_Prepare('translation_devel', 'ab06_avi01_dst_devel', '_ab06_dst_devel');
+SELECT TT_Prepare('translation_devel', 'ab06_avi01_eco_devel', '_ab06_eco_devel');
+SELECT TT_Prepare('translation_devel', 'ab06_avi01_lyr_devel', '_ab06_lyr_devel');
+SELECT TT_Prepare('translation_devel', 'ab06_avi01_nfl_devel', '_ab06_nfl_devel');
+SELECT TT_Prepare('translation_devel', 'ab06_avi01_geo_devel', '_ab06_geo_devel');
 
 -- Translate the samples
-SELECT * FROM TT_Translate_ab06_cas_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 6 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_cas_test');
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200);
+SELECT * FROM TT_Translate_ab06_cas_devel('rawfri', 'ab06_min_200', 'ogc_fid'); -- 6 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_cas_devel');
 
-SELECT * FROM TT_Translate_ab06_dst_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 5 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_dst_test');
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'DST'); -- Only rows with a dst
+SELECT * FROM TT_Translate_ab06_dst_devel('rawfri', 'ab06_min_200_dst', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_dst_devel');
 
-SELECT * FROM TT_Translate_ab06_eco_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 1 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_eco_test');
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'ECO'); -- Only rows with eco (none in this case)
+SELECT * FROM TT_Translate_ab06_eco_devel('rawfri', 'ab06_min_200_eco', 'ogc_fid'); -- 1 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_eco_devel');
 
-SELECT * FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_lyr_test');
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'LYR');
+SELECT * FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_min_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_lyr_devel');
 
-SELECT * FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_l2_to_ab06_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_lyr_test');
+SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 200, 'LYR');
+SELECT * FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l2_to_ab06_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_lyr_devel');
 
-SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_nfl_test');
+SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'NFL');
+SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_min_200_n', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_nfl_devel');
 
-SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_l2_to_ab06_l1_map_200', 'ogc_fid'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_nfl_test');
+SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 200, 'NFL');
+SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_l2_to_ab06_l1_map_200_n', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_nfl_devel');
 
-SELECT * FROM TT_Translate_ab06_geo_test('rawfri', 'ab06_min_200', 'ogc_fid'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'ab06_avi01_geo_test');
+SELECT * FROM TT_Translate_ab06_geo_devel('rawfri', 'ab06_min_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_geo_devel');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT b.src_filename, b.trm_1, b.poly_num, a.cas_id, 
@@ -187,8 +167,8 @@ SELECT b.src_filename, b.trm_1, b.poly_num, a.cas_id,
        b.height, a.height_upper, a.height_lower,
        b.sp1, a.species_1,
        b.sp1_per, a.species_per_1
-FROM TT_Translate_ab06_lyr_test('rawfri', 'ab06_min_200') a, rawfri.ab06_min_200 b
+FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_min_200') a, rawfri.ab06_min_200 b
 WHERE b.poly_num = substr(a.cas_id, 33, 10)::int;
 
 --------------------------------------------------------------------------
-SELECT TT_DeleteAllLogs('translation_test');
+SELECT TT_DeleteAllLogs('translation_devel');
