@@ -497,6 +497,25 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_CountEstimate
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CountEstimate(text);
+CREATE OR REPLACE FUNCTION TT_CountEstimate(query text)
+RETURNS integer AS $$
+  DECLARE
+    rec record;
+    rows integer;
+  BEGIN
+    FOR rec IN EXECUTE 'EXPLAIN ' || query LOOP
+      rows := substring(rec."QUERY PLAN" FROM ' rows=([[:digit:]]+)');
+      EXIT WHEN rows IS NOT NULL;
+    END LOOP;
+    RETURN rows;
+END;
+$$ LANGUAGE plpgsql VOLATILE STRICT;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_CreateMapping
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_CreateMapping(text, text, int, name, int); 
@@ -703,9 +722,11 @@ RETURNS text AS $$
       END LOOP;
     END IF;
 
+    nb = NULL;
     -- Concatenate the WHERE attribute into a string
     IF cardinality(whereExpArr) = 0 AND validRowSubset THEN
       whereExpStr = '  WHERE FALSE = TRUE';
+      nb = 0;
     ELSIF cardinality(whereExpArr) > 0 THEN
       whereExpStr = '  WHERE ' || array_to_string(TT_ArrayDistinct(whereExpArr), ' OR ' || chr(10) || '        ');
     END IF;
@@ -742,10 +763,23 @@ RETURNS text AS $$
     -- Make it random if requested
     IF NOT randomNb IS NULL THEN
       queryStr = queryStr || ', TT_RandomInt(' || randomNb || ', 1, (SELECT count(*) FROM ' || filteredTableName || ')::int, 1.0) rd' || chr(10) ||
-                'WHERE rd.id = fr.' || filteredNbColName || ';';
+                'WHERE rd.id = fr.' || filteredNbColName || chr(10) ||
+                'LIMIT ' || randomNb || ';';
     END IF;
     RAISE NOTICE 'TT_CreateMappingView(): Creating VIEW ''%''...', viewName;
     EXECUTE queryStr;
+    
+    -- Display the approximate number of row returned by the view
+    IF nb IS NULL THEN
+      nb = TT_CountEstimate('SELECT 1 FROM ' || viewName);
+    END IF;
+    IF nb < 2 THEN
+      RAISE NOTICE 'WARNING TT_CreateMappingView(): VIEW ''%'' should return 0 rows...', viewName; 
+    ELSIF nb < 1000 THEN
+       RAISE NOTICE 'TT_CreateMappingView(): VIEW ''%'' should return % rows...', viewName, nb;
+    ELSE
+      RAISE NOTICE 'TT_CreateMappingView(): VIEW ''%'' should return at least 1000 rows or more...', viewName;
+    END IF;
     RETURN queryStr;
   END; 
 $$ LANGUAGE plpgsql VOLATILE;
