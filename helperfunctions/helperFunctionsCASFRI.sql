@@ -21,7 +21,7 @@
 -- 
 --   RETURNS text     - Type. 
 -- 
--- Return the column names for the speficied table. 
+-- Return the column names for the specified table. 
 ------------------------------------------------------------ 
 --DROP FUNCTION IF EXISTS TT_TableColumnType(name, name, name);
 CREATE OR REPLACE FUNCTION TT_TableColumnType( 
@@ -497,6 +497,25 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_CountEstimate
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CountEstimate(text);
+CREATE OR REPLACE FUNCTION TT_CountEstimate(query text)
+RETURNS integer AS $$
+  DECLARE
+    rec record;
+    rows integer;
+  BEGIN
+    FOR rec IN EXECUTE 'EXPLAIN ' || query LOOP
+      rows := substring(rec."QUERY PLAN" FROM ' rows=([[:digit:]]+)');
+      EXIT WHEN rows IS NOT NULL;
+    END LOOP;
+    RETURN rows;
+END;
+$$ LANGUAGE plpgsql VOLATILE STRICT;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_CreateMapping
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_CreateMapping(text, text, int, name, int); 
@@ -563,7 +582,7 @@ RETURNS text AS $$
     queryStr text;
     viewName text;
     mappingRec RECORD;
-    attributeMapArr text[] = '{}';
+    sourceTableCols text[] = '{}';
     attributeMapStr text;
     attributeArr text[] = '{}';
     whereExpArr text[] = '{}';
@@ -601,10 +620,12 @@ RETURNS text AS $$
     END IF;
 
     -- Support a variant where rowSubset is the third parameter (not toTableName)
-    attributeMapArr = TT_TableColumnNames(schemaName, fromTableName);
-    IF fromLayer = 1 AND toLayer = 1 AND randomNb IS NULL AND rowSubset IS NULL AND
+    sourceTableCols = TT_TableColumnNames(schemaName, fromTableName);
+    IF fromLayer = 1 AND toLayer = 1 AND randomNb IS NULL AND viewNameSuffix IS NULL AND
        (lower(toTableName) IN ('lyr', 'nfl', 'dst', 'eco') OR
-        strpos(toTableName, ',') != 0 OR btrim(toTableName, ' ') = ANY (attributeMapArr)) THEN
+        strpos(toTableName, ',') != 0 OR btrim(toTableName, ' ') = ANY (sourceTableCols)) THEN
+      RAISE NOTICE 'TT_CreateMappingView(): Switching viewNameSuffix, rowSubset and toTableName...';
+      viewNameSuffix = rowSubset;
       rowSubset = toTableName;
       toTableName = fromTableName;
     END IF;
@@ -612,12 +633,21 @@ RETURNS text AS $$
 
     -- Check rowSubset is a valid value
     IF NOT rowSubset IS NULL THEN
+      -- If rowSubset is a reserved keyword
+      IF rowSubset IN ('lyr', 'nfl', 'dst', 'eco') THEN
+        -- We will later name the VIEW based on rowSubset
+        IF viewNameSuffix IS NULL THEN
+          viewNameSuffix = rowSubset;
+        ELSE
+          viewNameSuffix = rowSubset || '_' || viewNameSuffix;
+        END IF;
+        validRowSubset = TRUE;
       -- If rowSubset is a list of attributes
-      IF (strpos(rowSubset, ',') != 0 OR rowSubset = ANY (attributeMapArr)) THEN
+      ELSIF (strpos(rowSubset, ',') != 0 OR rowSubset = ANY (sourceTableCols)) THEN
         attributeArr = string_to_array(rowSubset, ',');
         FOREACH attName IN ARRAY attributeArr LOOP
           attName = btrim(attName, ' ');
-          IF NOT attName = ANY (attributeMapArr) THEN
+          IF NOT attName = ANY (sourceTableCols) THEN
             RAISE NOTICE 'ERROR TT_CreateMappingView(): Attribute ''%'' in ''rowSubset'' not found in table ''translation.%''...', attName, fromTableName;
             RETURN 'ERROR: Attribute ''' || attName || ''' in ''rowSubset'' not found in table ''translation.''' || fromTableName || '''...';
           END IF;
@@ -629,19 +659,11 @@ RETURNS text AS $$
         END IF;
         attributeList = TRUE;
         validRowSubset = TRUE;
-      ELSIF rowSubset IN ('lyr', 'nfl', 'dst', 'eco') THEN
-        IF viewNameSuffix IS NULL THEN
-          viewNameSuffix = rowSubset;
-        ELSE
-          viewNameSuffix = rowSubset || '_' || viewNameSuffix;
-        END IF;
-        validRowSubset = TRUE;
       ELSE
         RAISE NOTICE 'ERROR TT_CreateMappingView(): Invalid rowSubset value (%)...', rowSubset;
         RETURN 'ERROR: Invalid rowSubset value (' || rowSubset || ')...';
       END IF;
     END IF;
-    attributeMapArr = '{}';
 
     -- Check if an entry for (toTableName, toLayer) exists in table 'attribute_dependencies'
     SELECT count(*) FROM translation.attribute_dependencies
@@ -656,7 +678,6 @@ RETURNS text AS $$
     END IF;
 
     -- Build the attribute mapping string
-    FOR mappingRec IN
       WITH mapping AS (
         SELECT * FROM TT_CreateMapping(schemaName, fromTableName, fromLayer, toTableName, toLayer)
       ), unique_att AS (
@@ -675,16 +696,30 @@ RETURNS text AS $$
       FROM mapping
       WHERE TT_NotEmpty(from_att)
       ORDER BY to_att, from_att
+    ), ordered_maps AS (
+      SELECT num, key, 
+             from_att || CASE WHEN from_att = to_att THEN '' 
+                              ELSE ' ' || to_att 
+                         END mapstr,
+             CASE WHEN key = ANY (ARRAY['inventory_id', 'layer', 'layer_rank', 'cas_id', 'orig_stand_id', 'stand_structure', 'num_of_layers', 'map_sheet_id', 'casfri_area', 'casfri_perimeter', 'src_inv_area', 'stand_photo_year']) THEN 1
+                  WHEN key = ANY (ARRAY['soil_moist_reg', 'structure_per', 'crown_closure_upper', 'crown_closure_lower', 'height_upper', 'height_lower', 'productive_for']) THEN 2
+                  WHEN key = ANY (ARRAY['species_1', 'species_per_1', 'species_2', 'species_per_2', 'species_3', 'species_per_3', 'species_4', 'species_per_4', 'species_5', 'species_per_5', 'species_6', 'species_per_6', 'species_7', 'species_per_7', 'species_8', 'species_per_8', 'species_9', 'species_per_9', 'species_10', 'species_per_10']) THEN 3
+                  WHEN key = ANY (ARRAY['origin_upper', 'origin_lower', 'site_class', 'site_index']) THEN 4
+                  WHEN key = ANY (ARRAY['nat_non_veg', 'non_for_anth', 'non_for_veg']) THEN 5
+                  WHEN key = ANY (ARRAY['dist_type_1', 'dist_year_1', 'dist_ext_upper_1', 'dist_ext_lower_1']) THEN 6
+                  WHEN key = ANY (ARRAY['dist_type_2', 'dist_year_2', 'dist_ext_upper_2', 'dist_ext_lower_2']) THEN 7
+                  WHEN key = ANY (ARRAY['dist_type_3', 'dist_year_3', 'dist_ext_upper_3', 'dist_ext_lower_3']) THEN 8
+                  WHEN key = ANY (ARRAY['wetland_type', 'wet_veg_cover', 'wet_landform_mod', 'wet_local_mod', 'eco_site']) THEN 9
+                  ELSE 10
+             END groupid
+      FROM unique_att ORDER BY num
     )
-    SELECT * FROM unique_att ORDER BY num
-    LOOP
-      attributeMapArr = array_append(attributeMapArr, mappingRec.from_att || 
-                                                      CASE WHEN mappingRec.from_att = mappingRec.to_att THEN '' 
-                                                           ELSE ' ' || mappingRec.to_att 
-                                                      END);
-    END LOOP;
-    -- Concatenate the attribute map array into a string
-    attributeMapStr = array_to_string(attributeMapArr, ', ' || chr(10));
+    SELECT string_agg(str, ', ' || chr(10))
+    FROM (SELECT string_agg(mapstr, ', ') str
+          FROM ordered_maps
+          GROUP BY groupid
+          ORDER BY groupid) foo
+    INTO attributeMapStr;
     
     -- Build the WHERE string
     IF validRowSubset AND NOT attributeList THEN
@@ -701,9 +736,11 @@ RETURNS text AS $$
       END LOOP;
     END IF;
 
+    nb = NULL;
     -- Concatenate the WHERE attribute into a string
     IF cardinality(whereExpArr) = 0 AND validRowSubset THEN
       whereExpStr = '  WHERE FALSE = TRUE';
+      nb = 0;
     ELSIF cardinality(whereExpArr) > 0 THEN
       whereExpStr = '  WHERE ' || array_to_string(TT_ArrayDistinct(whereExpArr), ' OR ' || chr(10) || '        ');
     END IF;
@@ -740,10 +777,23 @@ RETURNS text AS $$
     -- Make it random if requested
     IF NOT randomNb IS NULL THEN
       queryStr = queryStr || ', TT_RandomInt(' || randomNb || ', 1, (SELECT count(*) FROM ' || filteredTableName || ')::int, 1.0) rd' || chr(10) ||
-                'WHERE rd.id = fr.' || filteredNbColName || ';';
+                'WHERE rd.id = fr.' || filteredNbColName || chr(10) ||
+                'LIMIT ' || randomNb || ';';
     END IF;
     RAISE NOTICE 'TT_CreateMappingView(): Creating VIEW ''%''...', viewName;
     EXECUTE queryStr;
+    
+    -- Display the approximate number of row returned by the view
+    IF nb IS NULL THEN
+      nb = TT_CountEstimate('SELECT 1 FROM ' || viewName);
+    END IF;
+    IF nb < 2 THEN
+      RAISE NOTICE 'WARNING TT_CreateMappingView(): VIEW ''%'' should return 0 rows...', viewName; 
+    ELSIF nb < 1000 THEN
+       RAISE NOTICE 'TT_CreateMappingView(): VIEW ''%'' should return % rows...', viewName, nb;
+    ELSE
+      RAISE NOTICE 'TT_CreateMappingView(): VIEW ''%'' should return at least 1000 rows or more...', viewName;
+    END IF;
     RETURN queryStr;
   END; 
 $$ LANGUAGE plpgsql VOLATILE;
