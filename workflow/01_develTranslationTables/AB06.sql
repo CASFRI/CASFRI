@@ -151,11 +151,11 @@ SELECT * FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l2_to_ab06_l1_map_200_
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_lyr_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'NFL');
-SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_min_200_n', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_min_200_nfl', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_nfl_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 200, 'NFL');
-SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_l2_to_ab06_l1_map_200_n', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_l2_to_ab06_l1_map_200_nfl', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_nfl_devel');
 
 SELECT * FROM TT_Translate_ab06_geo_devel('rawfri', 'ab06_min_200', 'ogc_fid'); -- 2 s.

@@ -633,8 +633,17 @@ RETURNS text AS $$
 
     -- Check rowSubset is a valid value
     IF NOT rowSubset IS NULL THEN
+      -- If rowSubset is a reserved keyword
+      IF rowSubset IN ('lyr', 'nfl', 'dst', 'eco') THEN
+        -- We will later name the VIEW based on rowSubset
+        IF viewNameSuffix IS NULL THEN
+          viewNameSuffix = rowSubset;
+        ELSE
+          viewNameSuffix = rowSubset || '_' || viewNameSuffix;
+        END IF;
+        validRowSubset = TRUE;
       -- If rowSubset is a list of attributes
-      IF (strpos(rowSubset, ',') != 0 OR rowSubset = ANY (sourceTableCols)) THEN
+      ELSIF (strpos(rowSubset, ',') != 0 OR rowSubset = ANY (sourceTableCols)) THEN
         attributeArr = string_to_array(rowSubset, ',');
         FOREACH attName IN ARRAY attributeArr LOOP
           attName = btrim(attName, ' ');
@@ -650,19 +659,11 @@ RETURNS text AS $$
         END IF;
         attributeList = TRUE;
         validRowSubset = TRUE;
-      ELSIF rowSubset IN ('lyr', 'nfl', 'dst', 'eco') THEN
-        IF viewNameSuffix IS NULL THEN
-          viewNameSuffix = rowSubset;
-        ELSE
-          viewNameSuffix = rowSubset || '_' || viewNameSuffix;
-        END IF;
-        validRowSubset = TRUE;
       ELSE
         RAISE NOTICE 'ERROR TT_CreateMappingView(): Invalid rowSubset value (%)...', rowSubset;
         RETURN 'ERROR: Invalid rowSubset value (' || rowSubset || ')...';
       END IF;
     END IF;
-    --attributeMapArr = '{}';
 
     -- Check if an entry for (toTableName, toLayer) exists in table 'attribute_dependencies'
     SELECT count(*) FROM translation.attribute_dependencies
@@ -677,7 +678,6 @@ RETURNS text AS $$
     END IF;
 
     -- Build the attribute mapping string
-    --FOR mappingRec IN
       WITH mapping AS (
         SELECT * FROM TT_CreateMapping(schemaName, fromTableName, fromLayer, toTableName, toLayer)
       ), unique_att AS (
@@ -709,7 +709,7 @@ RETURNS text AS $$
                   WHEN key = ANY (ARRAY['dist_type_1', 'dist_year_1', 'dist_ext_upper_1', 'dist_ext_lower_1']) THEN 6
                   WHEN key = ANY (ARRAY['dist_type_2', 'dist_year_2', 'dist_ext_upper_2', 'dist_ext_lower_2']) THEN 7
                   WHEN key = ANY (ARRAY['dist_type_3', 'dist_year_3', 'dist_ext_upper_3', 'dist_ext_lower_3']) THEN 8
-                  WHEN key = ANY (ARRAY['"wetland_type"', '"wet_veg_cover"', '"wet_landform_mod"', '"wet_local_mod"', 'eco_site']) THEN 9
+                  WHEN key = ANY (ARRAY['wetland_type', 'wet_veg_cover', 'wet_landform_mod', 'wet_local_mod', 'eco_site']) THEN 9
                   ELSE 10
              END groupid
       FROM unique_att ORDER BY num
@@ -720,8 +720,6 @@ RETURNS text AS $$
           GROUP BY groupid
           ORDER BY groupid) foo
     INTO attributeMapStr;
-    -- Concatenate the attribute map array into a string
-    --attributeMapStr = array_to_string(attributeMapArr, ', ' || chr(10));
     
     -- Build the WHERE string
     IF validRowSubset AND NOT attributeList THEN

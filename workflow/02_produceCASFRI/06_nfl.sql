@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 SELECT TT_CreateMappingView('rawfri', 'ab06', 'NFL');
 
 CREATE TABLE casfri50.nfl_all AS -- 2m24s
-SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_min_n', 'ogc_fid');
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_min_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 ------------------------
@@ -41,7 +41,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 2m1s
-SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_l2_to_ab06_l1_map_n', 'ogc_fid');
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_l2_to_ab06_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 ------------------------
