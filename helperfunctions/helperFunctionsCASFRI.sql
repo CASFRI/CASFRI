@@ -747,7 +747,8 @@ RETURNS text AS $$
 
     -- Contruct the name of the VIEW
     viewName = TT_FullTableName(schemaName, fromTableName || 
-               CASE WHEN fromTableName = toTableName AND fromLayer = toLayer THEN '_min' 
+               CASE WHEN fromTableName = toTableName AND fromLayer = toLayer AND fromLayer != 1 THEN '_min_l' || fromLayer
+                    WHEN fromTableName = toTableName AND fromLayer = toLayer THEN '_min' 
                     ELSE '_l' || fromLayer || '_to_' || toTableName || '_l' || toLayer || '_map' 
                END || coalesce('_' || randomNb, '') || coalesce('_' || viewNameSuffix, ''));
 
