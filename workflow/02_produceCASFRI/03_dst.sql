@@ -48,7 +48,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_dst');
 -- Translate NB01 using NB generic translation table
 SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 'DST'); -- Only rows with a disturbance
 
-INSERT INTO casfri50.dst_all -- 1h32m
+INSERT INTO casfri50.dst_all -- 38m
 SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_l1_to_nb_l1_map_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
@@ -56,7 +56,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 -- Translate NB01 layer 2 using NB layer 1 generic translation table
 SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1, 'DST'); 
 
-INSERT INTO casfri50.dst_all -- 1h11m
+INSERT INTO casfri50.dst_all -- 44m
 SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb01_l2_to_nb_l1_map_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
@@ -64,7 +64,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
 -- Translate NB02 using NB generic translation table
 SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 'DST');
 
-INSERT INTO casfri50.dst_all -- 
+INSERT INTO casfri50.dst_all -- 34m
 SELECT * FROM TT_Translate_nb_dst('rawfri', 'nb02_l1_to_nb_l1_map_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_dst');
@@ -95,7 +95,9 @@ SELECT * FROM TT_ShowLastLog('translation', 'fvi01_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
-SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.dst_all;
+SELECT left(cas_id, 4) inv, count(*) nb 
+FROM casfri50.dst_all
+GROUP BY left(cas_id, 4);
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.dst_all
@@ -103,10 +105,7 @@ GROUP BY left(cas_id, 4), layer;
 
 SELECT count(*) FROM casfri50.dst_all; -- 7787618
 
--- Add primary and foreign key constraints
+-- Add primary key constraint
 ALTER TABLE casfri50.dst_all 
 ADD PRIMARY KEY (cas_id, layer);
-
-ALTER TABLE casfri50.dst_all
-ADD FOREIGN KEY (cas_id) REFERENCES casfri50.cas_all (cas_id) MATCH FULL;
 --------------------------------------------------------------------------

@@ -81,18 +81,17 @@ SELECT * FROM TT_ShowLastLog('translation', 'fvi01_geo');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
-SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.geo_all; 
+SELECT left(cas_id, 4) inv, count(*) nb 
+FROM casfri50.geo_all
+GROUP BY left(cas_id, 4);
 
 SELECT count(*) FROM casfri50.geo_all; -- 6860441
 SELECT count(*) FROM casfri50.geo_all WHERE geometry = '010300000000000000'; -- 0
 
--- Add primary and foreign key constraints
+-- Add primary key constraint
 ALTER TABLE casfri50.geo_all ADD PRIMARY KEY (cas_id);
 
-ALTER TABLE casfri50.geo_all
-ADD FOREIGN KEY (cas_id) REFERENCES casfri50.cas_all (cas_id) MATCH FULL;
-
--- Set the geometry type to be able to diaply in some GIS
+-- Set the geometry type to be able to display in some GIS
 ALTER TABLE casfri50.geo_all
 ALTER COLUMN geometry TYPE geometry(multipolygon, 900914);
 --------------------------------------------------------------------------
