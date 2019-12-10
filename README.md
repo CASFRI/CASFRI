@@ -74,6 +74,11 @@ Inventory standards are the attribute specifications applied to a given inventor
 
 All identifiers are listed in the [FRI inventory list CSV file](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv) listing all the forest inventories used as source datasets in this project.
 
+# Handling updates
+Historical forestry data is of great value which is why CASFRI deal with updates. One type of updates we often see in FRIs is re-inventories, i.e., when old photo-interpretation is updated to modern standards. The other types of update are so-called “depletion updates” related to various disturbances. In many jurisdictions, there are produced annually to “cut-in” polygons disturbed by harvesting, wildfire or insects. Both types of updates should be incorporated in the database by incrementing numbers in Inventory_ID respective to the jurisdiction. 
+
+For an update to be incorporated in the database, the date of publication should be at least one year appart from a previous version. When data available online, the information can be found in the metadata. For data received from a collaborator, information on the last version received should be shared in order to identify if the data to be acquired reach the criteria. 
+
 # Conversion and Loading
 Conversion and loading happen at the same time and are implemented using the GDAL/OGR ogr2ogr tool. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. Some FRIs are accompanied by an extra shapefile making it possible to associate a photo year with each stand. They are loaded with a second script. Every loading script adds a new "src_filename" attribute to the target table with the name of the source file. This is used when constructing the CAS_ID, a unique row identifier code tracing each target row back to its original row in the source dataset.
 
