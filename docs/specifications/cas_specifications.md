@@ -5,7 +5,7 @@
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
-Revised by: The CASFRI Project Team, August 2019
+Revised by: The CASFRI Project Team, December 2019
 
   
 
@@ -40,6 +40,7 @@ Attributes for CAS are stored in six attribute files to facilitate conversion an
 4. Non-Forest Land (NFL) attributes - values that pertain to naturally non-vegetated, non-forest anthropogenic, and non-forest vegetated land;  
 5. Disturbance history (DST) attributes - values that pertain to any disturbance that has occurred in a polygon including type, year, and extent; and  
 6. Ecological specific (ECO) attributes - values representing ecosites and wetlands.  
+7. Geometry attributes - values pertaining to polygon geometry.
 
 The main body of this report (Sections 2.1 through 2.3 and Section 3) defines each of the six attribute categories and tabulates the attributes and their characteristics. A summary of the data structure and data dictionary is presented in Appendix 2.  
 
@@ -49,9 +50,35 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 
 
 
-### 1.2 Error and Missing Value Codes  
+Table 1. CASFRI schema.
 
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  [Click here to view specific error codes for individual attritubes](https://edwardsmarc.github.io/CASFRI/specifications/errors/errors_specific.csv).
+| HDR               | CAS               | LYR                 | NFL                 | DST              | ECO              | GEO      |
+| ----------------- | ----------------- | ------------------- | ------------------- | ---------------- | ---------------- | -------- |
+| INVENTORY_ID      | CAS_ID            | CAS_ID              | CAS_ID              | CAS_ID           | CAS_ID           | CAS_ID   |
+| JURISDICTION      | ORIG_STAND_ID     | SOIL_MOIST_REG      | SOIL_MOIST_REG      | DIST_TYPE_1      | WETLAND_TYPE     | GEOMETRY |
+| OWNER_TYPE        | STAND_STRUCTURE   | STRUCTURE_PER       | STRUCTURE_PER       | DIST_YEAR_1      | WET_VEG_COVER    |          |
+| OWNER_NAME        | NUM_OF_LAYERS     | LAYER               | LAYER               | DIST_EXT_UPPER_1 | WET_LANDFORM_MOD |          |
+| STANDARD_TYPE     | IDENTIFICATION_ID | LAYER_RANK          | LAYER_RANK          | DIST_EXT_LOWER_1 | WET_LOCAL_MOD    |          |
+| STANDARD_VERSION  | MAP_SHEET_ID      | CROWN_CLOSURE_UPPER | CROWN_CLOSURE_UPPER | DIST_TYPE_2      | ECO_SITE         |          |
+| STANDARD_ID       | CASFRI_AREA       | CROWN_CLOSURE_LOWER | CROWN_CLOSURE_LOWER | DIST_YEAR_2      |                  |          |
+| STANDARD_REVISION | CASFRI_PERIMETER  | HEIGHT_UPPER        | HEIGHT_UPPER        | DIST_EXT_UPPER_2 |                  |          |
+| INVENTORY_MANUAL  | SRC_INV_AREA      | HEIGHT_LOWER        | HEIGHT_LOWER        | DIST_EXT_LOWER_2 |                  |          |
+| SRC_DATA_FORMAT   | STAND_PHOTO_YEAR  | PRODUCTIVE_FOR      | NAT_NON_VEG         | DIST_TYPE_3      |                  |          |
+| ACQUISITION_DATE  |                   | SPECIES_1 - 10      | NON_FOR_ANTH        | DIST_YEAR_3      |                  |          |
+| DATA_TRANSFER     |                   | SPECIES_PER_1 - 10  | NON_FOR_VEG         | DIST_EXT_UPPER_3 |                  |          |
+| RECEIVED_FROM     |                   | ORIGIN_UPPER        |                     | DIST_EXT_LOWER_3 |                  |          |
+| CONTACT_INFO      |                   | ORIGIN_LOWER        |                     | LAYER            |                  |          |
+| DATA_AVAILABILITY |                   | SITE_CLASS          |                     |                  |                  |          |
+| REDISTRIBUTION    |                   | SITE_INDEX          |                     |                  |                  |          |
+| PERMISSION        |                   |                     |                     |                  |                  |          |
+| LICENSE_AGREEMENT |                   |                     |                     |                  |                  |          |
+| PHOTO_YEAR_SRC    |                   |                     |                     |                  |                  |          |
+| PHOTO_YEAR_START  |                   |                     |                     |                  |                  |          |
+| PHOTO_YEAR_END    |                   |                     |                     |                  |                  |          |
+
+### 1.2 Error Codes  
+
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  [Click here to view specific error codes for individual attributes](https://edwardsmarc.github.io/CASFRI/specifications/errors/cas_errors_specific.csv).
 
 | Class          | Type               | Description                              | Text code         | Numeric code |
 | -------------- | ------------------ | ---------------------------------------- | ----------------- | ------------ |
@@ -328,11 +355,21 @@ The CAS base polygon data provides polygon specific information and links the or
 
 ### cas_id
 
-The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
+
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
 | cas_id                                             | values |
 | :----------------------------------------------------------- | :-------------- |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric           |
+| CAS stand identification - unique string for each polygon within CAS | alpha numeric           |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 
@@ -397,7 +434,7 @@ Map sheet identification according to original naming convention for an inventor
 
 ### casfri_area
 
-The attribute **casfri_area** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places.
+The attribute **casfri_area** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
 | casfri_area                           | values        |
 | :------------------------------------ | :------------ |
@@ -407,7 +444,7 @@ The attribute **casfri_area** measures the area of each polygon in hectares (ha)
 
 ### casfri_perimeter
 
-The attribute **casfri_perimeter** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places.
+The attribute **casfri_perimeter** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
 | casfri_perimeter                        | values          |
 | :-------------------------------------- | :-------------- |
@@ -438,17 +475,27 @@ The attribute **stand_photo_year** is a identifies the year in which the aerial 
 
 ## 4.0 LYR Attributes
 
-Updated: 2019-11-18
+Updated: 2019-11-28
 
 
 
 ### cas_id  
 
-The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
+
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
 | cas_id                                                       | values        |
 | :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+| CAS stand identification - unique string for each polygon within CAS | alpha numeric |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 
@@ -458,13 +505,15 @@ The attribute **structure_per** is assigned when a horizontal structured polygon
 
 | structure_per                                                | values  |
 | :----------------------------------------------------------- | :------ |
-| Used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 100 |
+| Used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. Value = 100 when no horizontal structure. | 1 - 100 |
 
 Notes:
 
 - Only occurs when **stand_structure** = "H"
+- When **stand_structure** != "H", then **structure_per** = 100
 - Applies to the following inventories: AB, NB, NT
 - How does this attribute differ for non-forested (NFL) polygons?
+- See issue: https://github.com/edwardsmarc/CASFRI/issues/178 
 
 
 
@@ -479,16 +528,14 @@ The attribute **structure_range** is assigned when a complex structured polygon 
 Notes:
 
 - Only occurs when **stand_structure** = "C"
-- Applies to the following inventories: AB, NB, NT
+- Applies to the following inventories: AB, NB, NT, (Wood Buffalo?)
 - How does this attribute differ for non-forested (NFL) polygons?
 
 
 
 ### layer
 
-Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on.  
-
-The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.  
+Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.
 
 | layer                                                        | values   |
 | :----------------------------------------------------------- | :------- |
@@ -508,7 +555,7 @@ Layer Rank value is an attribute related to stand structure and refers to layer 
 
 ### soil_moist_reg  
 
-Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. The detailed soil moisture regime table and CAS conversion is presented in Appendix 4.  
+Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. *The detailed soil moisture regime table and CAS conversion is presented in Appendix 4*.  
 
 | soil_moist_reg                                                   | values |
 | :----------------------------------------------------------- | :----- |
@@ -554,6 +601,10 @@ Unproductive forest is forest land not capable of producing trees for forest ope
 | Scrub Coniferous - scrub coniferous trees on poor sites | SC |
 | Non Productive Forest - poor forest types on rocky or wet sites | NP |
 | Productive Forest - any other forest | P|
+
+Notes:
+
+- This attribute needs an overhaul.
 
 
 

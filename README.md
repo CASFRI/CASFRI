@@ -8,14 +8,14 @@ The [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/do
 A number of CASFRI instances have been produced since 2009. CASFRI 5.x is the fifth version of CASFRI. It makes a number of significant updates to previous versions:
 
 * Addition of new and more up-to-date inventories.
-* Implementation of a new conversion and loading procedure focused around the open source software GDQL/OGR (in place of ArcGIS).
+* Implementation of a new conversion and loading procedure focused around the open source software GDAL/OGR (in place of ArcGIS).
 * Implementation of a SQL based translation engine abstracting the numerous issues related to this kind of conversion to simple translation files.
 * Implementation of a temporalization procedure to create a temporal database of all available inventories.
 * Enhancement of attribute generic and specific error codes.
 
 The three steps involved in the production of the CASFRI 5.x database are:
 
-1. Conversion (from many different FRI file format) and loading (in the database) using Bash files (or Batch files) and ogr2ogr.
+1. Conversion (from many different FRI file formats) and loading (in the database) using Bash files (or Batch files) and ogr2ogr.
 2. Translation of in-db FRI to CAS
 3. Temporalization of CAS data
 
@@ -73,6 +73,11 @@ CASFRI 5.x uses a four-code standard for identifying FRIs. Each FRI is coded usi
 Inventory standards are the attribute specifications applied to a given inventory. Multiple FRIs from a province/territory can use the same standard, however jurisdictions will occasionally update their standards, and each jurisdiction has their own unique inventory standards. The CASFRI specifications need to apply different sets of translation rules for different standards. Each standard is assigned a code made of three letters representing the standard, and two numbers representing the version of the standard. e.g. VRI01. 
 
 All identifiers are listed in the [FRI inventory list CSV file](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv) listing all the forest inventories used as source datasets in this project.
+
+# Handling updates
+Historical forestry data is of great value which is why CASFRI accommodates updates. One type of update we often see in FRIs is re-inventories, i.e., when old photo-interpretation is updated to modern standards. The other types of update are so-called “depletion updates” related to various disturbances. In many jurisdictions, depletion-updates are produced annually to “cut-in” polygons disturbed by harvesting, wildfire or insects. Both types of updates are incorporated in CASFRI 5.x by loading and translationg the updated dataset and labelling the dataset with an incremented Inventory_ID. Any duplicate records will be dealt with in an upcoming temporalization procedure.
+
+For an update to be incorporated in the database, the date of publication should be at least one year apart from a previous version. When data are available online, this information can be found in the metadata. For data received from a collaborator, information on the last version received should be shared in order to identify if ny new datasets meet the 1-year criteria. 
 
 # Conversion and Loading
 Conversion and loading happen at the same time and are implemented using the GDAL/OGR ogr2ogr tool. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. Some FRIs are accompanied by an extra shapefile making it possible to associate a photo year with each stand. They are loaded with a second script. Every loading script adds a new "src_filename" attribute to the target table with the name of the source file. This is used when constructing the CAS_ID, a unique row identifier code tracing each target row back to its original row in the source dataset.

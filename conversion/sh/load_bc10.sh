@@ -14,9 +14,10 @@
 # All three source tables have the same attributes, and the same polygons.
 # There are therefore 3 records per polygon.
 # We need a flat source table with one attribute per row.
-# Load the three tables into PostgreSQL, when loading L2 and D, change all attribute names
-# to have the prefix L2_ or D_. This way all tables will have unique attribute.
+# Load the three tables into PostgreSQL, prefix all attribute  names
+# to have the prefix L1_, L2_ or D_. This way all tables will have unique attribute.
 # Then merge the three tables into one final source table using ogrinfo and -sql.
+
 ######################################## Set variables #######################################
 
 source ./common.sh
@@ -634,21 +635,29 @@ FROM '$srcFileName_D'
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-# 3 way join
+-- drop all ogr_fid columns
+ALTER TABLE rawfri.bc10_layer_1 DROP COLUMN IF EXISTS ogc_fid;
+ALTER TABLE rawfri.bc10_layer_2 DROP COLUMN IF EXISTS ogc_fid;
+ALTER TABLE rawfri.bc10_layer_d DROP COLUMN IF EXISTS ogc_fid;
+
+-- drop geometry columns from L2 and D
+ALTER TABLE rawfri.bc10_layer_2 DROP COLUMN IF EXISTS wkb_geometry;
+ALTER TABLE rawfri.bc10_layer_d DROP COLUMN IF EXISTS wkb_geometry;
+
+--3 way join
 DROP TABLE IF EXISTS $targetTableName; 
 CREATE TABLE $targetTableName AS
 SELECT *
 FROM rawfri.bc10_layer_1 t1 INNER JOIN rawfri.bc10_layer_2 t2 ON t1.l1_feature_id = t2.l2_feature_id
 INNER JOIN rawfri.bc10_layer_d td ON t2.l2_feature_id = td.d_feature_id;
 
-#update ogc_fid
-ALTER TABLE $targetTableName DROP COLUMN IF EXISTS ogc_fid;
+--update ogc_fid
 ALTER TABLE $targetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
 ALTER TABLE $targetTableName ADD COLUMN ogc_fid INT;
 UPDATE $targetTableName SET ogc_fid=temp_key;
 ALTER TABLE $targetTableName DROP COLUMN IF EXISTS temp_key;
 
-#drop tables
+--drop tables
 DROP TABLE IF EXISTS $tableName_L1;
 DROP TABLE IF EXISTS $tableName_L2; 
 DROP TABLE IF EXISTS $tableName_D;
