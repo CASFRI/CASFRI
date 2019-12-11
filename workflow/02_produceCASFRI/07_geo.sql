@@ -85,7 +85,7 @@ SELECT left(cas_id, 4) inv, count(*) nb
 FROM casfri50.geo_all
 GROUP BY left(cas_id, 4);
 
-SELECT count(*) FROM casfri50.geo_all; -- 6860441
+SELECT count(*) FROM casfri50.geo_all; -- 7462773
 SELECT count(*) FROM casfri50.geo_all WHERE geometry = '010300000000000000'; -- 0
 
 -- Add primary key constraint
