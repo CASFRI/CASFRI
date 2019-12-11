@@ -78,10 +78,10 @@ SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02_l1_to_nb_l1_map_nfl', 'ogc_fid
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_nfl');
 ------------------------
 -- Translate BC08
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bclcs_level_4, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1', 'bc08_nfl');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 16h38m
-SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_min_bc08_nfl', 'ogc_fid');
+SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_min_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_nfl');
 ------------------------

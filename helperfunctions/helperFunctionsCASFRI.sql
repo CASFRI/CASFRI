@@ -526,7 +526,7 @@ CREATE OR REPLACE FUNCTION TT_CreateMapping(
   toTableName text,
   toLayer int
 ) 
-RETURNS TABLE (num int, key text, from_att text, to_att text) AS $$
+RETURNS TABLE (num int, key text, from_att text, to_att text, contributing boolean) AS $$
   WITH colnames AS (
     SELECT TT_TableColumnNames('translation', 'attribute_dependencies') col_name_arr
   ), colnames_num AS (
@@ -542,16 +542,25 @@ RETURNS TABLE (num int, key text, from_att text, to_att text) AS $$
     SELECT (jsonb_each(to_jsonb(a.*))).*
     FROM translation.attribute_dependencies a
     WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(toTableName) AND layer = toLayer::text
+  ), splitted AS (
+    -- Splitted by comma, still vertically
+    SELECT colnames_num.num, from_att.key, 
+           --rtrim(ltrim(trim(regexp_split_to_table(btrim(from_att.value::text, '"'), E',')), '['), ']') from_att, 
+           trim(regexp_split_to_table(btrim(from_att.value::text, '"'), E',')) from_att, 
+           trim(regexp_split_to_table(btrim(to_att.value::text, '"'), E',')) to_att
+    FROM from_att, to_att, colnames_num
+    WHERE colnames_num.colname = from_att.key AND 
+          from_att.key = to_att.key AND 
+          from_att.key != 'ogc_fid' AND 
+          from_att.key != 'ttable_exists'
   )
-  -- Splitted by comma, still vertically
-  SELECT colnames_num.num, from_att.key, 
-         trim(regexp_split_to_table(btrim(from_att.value::text, '"'), E',')) from_att, 
-         trim(regexp_split_to_table(btrim(to_att.value::text, '"'), E',')) to_att
-  FROM from_att, to_att, colnames_num
-  WHERE colnames_num.colname = from_att.key AND 
-        from_att.key = to_att.key AND 
-        from_att.key != 'ogc_fid' AND 
-        from_att.key != 'ttable_exists';
+  SELECT num, key,
+         rtrim(ltrim(from_att, '['), ']') from_att,
+         rtrim(ltrim(to_att, '['), ']') to_att,
+         CASE WHEN left(from_att, 1) = '[' AND right(from_att, 1) = ']' THEN FALSE
+              ELSE TRUE
+         END contributing
+  FROM splitted;
 $$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 
@@ -586,6 +595,8 @@ RETURNS text AS $$
     attributeMapStr text;
     attributeArr text[] = '{}';
     whereExpArr text[] = '{}';
+    whereExpLyrAddArr text[] = '{}';
+    whereExpLyrNFLArr text[] = '{}';
     whereExpStr text = '';
     nb int;
     attName text;
@@ -594,6 +605,7 @@ RETURNS text AS $$
     attributeList boolean = FALSE;
     validRowSubset boolean = FALSE;
     attListViewName text = '';
+    rowSubsetKeywords text[] = ARRAY['lyr', 'lyr2', 'nfl', 'dst', 'eco'];
   BEGIN
     -- Check if table 'attribute_dependencies' exists
     IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
@@ -622,7 +634,7 @@ RETURNS text AS $$
     -- Support a variant where rowSubset is the third parameter (not toTableName)
     sourceTableCols = TT_TableColumnNames(schemaName, fromTableName);
     IF fromLayer = 1 AND toLayer = 1 AND randomNb IS NULL AND viewNameSuffix IS NULL AND
-       (lower(toTableName) IN ('lyr', 'nfl', 'dst', 'eco') OR
+       (lower(toTableName) = ANY (rowSubsetKeywords)  OR
         strpos(toTableName, ',') != 0 OR btrim(toTableName, ' ') = ANY (sourceTableCols)) THEN
       RAISE NOTICE 'TT_CreateMappingView(): Switching viewNameSuffix, rowSubset and toTableName...';
       viewNameSuffix = rowSubset;
@@ -634,7 +646,7 @@ RETURNS text AS $$
     -- Check rowSubset is a valid value
     IF NOT rowSubset IS NULL THEN
       -- If rowSubset is a reserved keyword
-      IF rowSubset IN ('lyr', 'nfl', 'dst', 'eco') THEN
+      IF rowSubset = ANY (rowSubsetKeywords) THEN
         -- We will later name the VIEW based on rowSubset
         IF viewNameSuffix IS NULL THEN
           viewNameSuffix = rowSubset;
@@ -726,12 +738,22 @@ RETURNS text AS $$
       FOR mappingRec IN SELECT * 
                         FROM TT_CreateMapping(schemaName, fromTableName, fromLayer, toTableName, toLayer)
                         WHERE TT_NotEmpty(from_att) LOOP
-        IF (rowSubset = 'lyr' AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
+        IF mappingRec.contributing AND (((rowSubset = 'lyr' OR rowSubset = 'lyr2') AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
            (rowSubset = 'nfl' AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg')) OR
            (rowSubset = 'dst' AND (mappingRec.key = 'dist_type_1' OR mappingRec.key = 'dist_year_1' OR mappingRec.key = 'dist_type_2' OR mappingRec.key = 'dist_year_2' OR mappingRec.key = 'dist_type_3' OR mappingRec.key = 'dist_year_3')) OR
-           (rowSubset = 'eco' AND mappingRec.key = 'wetland_type')
+           (rowSubset = 'eco' AND mappingRec.key = 'wetland_type'))
         THEN
           whereExpArr = array_append(whereExpArr, '(TT_NotEmpty(' || mappingRec.from_att || '::text) AND ' || mappingRec.from_att || '::text != ''0'')');
+        END IF;
+        IF rowSubset = 'lyr2' THEN
+          -- Add soil_moist_reg, site_class and site_index
+          IF mappingRec.contributing AND (mappingRec.key = 'soil_moist_reg' OR mappingRec.key = 'site_class' OR mappingRec.key = 'site_index') THEN
+            whereExpLyrAddArr = array_append(whereExpLyrAddArr, '(TT_NotEmpty(' || mappingRec.from_att || '::text) AND ' || mappingRec.from_att || '::text != ''0'')');
+          END IF;
+          -- Except when any NFL attribute is set
+          IF mappingRec.contributing AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg' OR mappingRec.key = 'dist_type_1' OR mappingRec.key = 'dist_type_2') THEN
+            whereExpLyrNFLArr = array_append(whereExpLyrNFLArr, '(TT_NotEmpty(' || mappingRec.from_att || '::text) AND ' || mappingRec.from_att || '::text != ''0'')');
+          END IF;
         END IF;
       END LOOP;
     END IF;
@@ -743,6 +765,13 @@ RETURNS text AS $$
       nb = 0;
     ELSIF cardinality(whereExpArr) > 0 THEN
       whereExpStr = '  WHERE ' || array_to_string(TT_ArrayDistinct(whereExpArr), ' OR ' || chr(10) || '        ');
+      
+      -- Add extra condition for lyr including soil_moist_reg, site_class and site_index when NFL attributes are not set
+      IF rowSubset = 'lyr2' THEN
+        whereExpStr = whereExpStr || ' OR ' || chr(10) || 
+                      '        ((' || array_to_string(TT_ArrayDistinct(whereExpLyrAddArr), ' OR ' || chr(10) || '          ') || ') AND ' || chr(10) || 
+                      '         NOT (' || array_to_string(TT_ArrayDistinct(whereExpLyrNFLArr), ' OR ' || chr(10) || '              ') || '))';
+      END IF;
     END IF;
 
     -- Contruct the name of the VIEW

@@ -254,7 +254,7 @@ SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1, 600, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_nb01_nfl_test('rawfri', 'nb01_l2_to_nb_l1_map_600_nfl');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1000, 'bclcs_level_4, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1', 'bc08_nfl');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 1000, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_bc08_nfl_test('rawfri', 'bc08_min_1000_bc08_nfl');
 ------------------------
