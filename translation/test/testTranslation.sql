@@ -232,11 +232,11 @@ DROP TABLE IF EXISTS casfri50_test.nfl_all_new CASCADE;
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab06', 200, 'NFL');
 CREATE TABLE casfri50_test.nfl_all_new AS 
-SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_min_200_n');
+SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_min_200_nfl');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 200, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new 
-SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_l2_to_ab06_l1_map_200_n');
+SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab06_l2_to_ab06_l1_map_200_nfl');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab16', 400, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
@@ -311,7 +311,7 @@ UNION ALL
 SELECT '2.0' number, 
        'Compare "dst_all_new_ordered" and "dst_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''dst_all_test_ordered'', ''casfri50_test'' , ''dst_all_new_ordered'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''dst_all_test'', ''casfri50_test'' , ''dst_all_new_ordered'', ''cas_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.dst_all_new_ordered a 
       FULL OUTER JOIN casfri50_test.dst_all_test b USING (cas_id, layer)) foo

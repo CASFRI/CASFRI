@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 SELECT TT_CreateMappingView('rawfri', 'ab06', 'NFL');
 
 CREATE TABLE casfri50.nfl_all AS -- 2m24s
-SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_min_n', 'ogc_fid');
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_min_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 ------------------------
@@ -41,7 +41,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab06', 1, 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 2m1s
-SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_l2_to_ab06_l1_map_n', 'ogc_fid');
+SELECT * FROM TT_Translate_ab06_nfl('rawfri', 'ab06_l2_to_ab06_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_nfl');
 ------------------------
@@ -78,10 +78,10 @@ SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02_l1_to_nb_l1_map_nfl', 'ogc_fid
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_nfl');
 ------------------------
 -- Translate BC08
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bclcs_level_4, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1', 'bc08_nfl');
 
 INSERT INTO casfri50.nfl_all -- 16h38m
-SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_min_nfl', 'ogc_fid');
+SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_min_bc08_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_nfl');
 ------------------------
@@ -119,13 +119,12 @@ SELECT * FROM TT_ShowLastLog('translation', 'fvi01_nfl');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
-SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.nfl_all;
+SELECT left(cas_id, 4) inv, count(*) nb 
+FROM casfri50.nfl_all
+GROUP BY left(cas_id, 4);
 
 SELECT count(*) FROM casfri50.nfl_all; -- 6860441
 
--- Add primary and foreign key constraints
+-- Add primary key constraint
 ALTER TABLE casfri50.nfl_all ADD PRIMARY KEY (cas_id, layer);
-
-ALTER TABLE casfri50.nfl_all
-ADD FOREIGN KEY (cas_id) REFERENCES casfri50.cas_all (cas_id) MATCH FULL;
 --------------------------------------------------------------------------

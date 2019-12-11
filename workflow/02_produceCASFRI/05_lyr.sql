@@ -135,7 +135,9 @@ SELECT * FROM TT_ShowLastLog('translation', 'fvi01_lyr');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
-SELECT DISTINCT left(cas_id, 4) inv FROM casfri50.lyr_all;
+SELECT left(cas_id, 4) inv, count(*) nb 
+FROM casfri50.lyr_all
+GROUP BY left(cas_id, 4);
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.lyr_all
@@ -143,9 +145,6 @@ GROUP BY left(cas_id, 4), layer;
 
 SELECT count(*) FROM casfri50.lyr_all; -- 8911511
 
--- Add primary and foreign key constraints
+-- Add primary key constraint
 ALTER TABLE casfri50.lyr_all ADD PRIMARY KEY (cas_id, layer);
-
-ALTER TABLE casfri50.lyr_all
-ADD FOREIGN KEY (cas_id) REFERENCES casfri50.cas_all (cas_id) MATCH FULL;
 --------------------------------------------------------------------------

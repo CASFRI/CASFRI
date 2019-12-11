@@ -46,5 +46,6 @@ WHERE inventory_id IN ('AB06', 'AB16', 'BC08', 'NB01', 'NB02', 'NT01', 'NT02');
 ------------------------
 SELECT count(*) FROM casfri50.hdr_all; -- 5
 
+-- Add primary key constraint
 ALTER TABLE casfri50.hdr_all ADD PRIMARY KEY (inventory_id);
 -------------------------------------------------------
