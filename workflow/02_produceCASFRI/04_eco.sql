@@ -91,7 +91,7 @@ SELECT left(cas_id, 4) inv, count(*) nb
 FROM casfri50.eco_all
 GROUP BY left(cas_id, 4);
 
-SELECT count(*) FROM casfri50.eco_all; -- 6860441
+SELECT count(*) FROM casfri50.eco_all; -- 184113
 
 -- Add primary key constraint
 ALTER TABLE casfri50.eco_all ADD PRIMARY KEY (cas_id);

@@ -8,7 +8,7 @@ The [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/do
 A number of CASFRI instances have been produced since 2009. CASFRI 5.x is the fifth version of CASFRI. It makes a number of significant updates to previous versions:
 
 * Addition of new and more up-to-date inventories.
-* Implementation of a new conversion and loading procedure focused around the open source software GDQL/OGR (in place of ArcGIS).
+* Implementation of a new conversion and loading procedure focused around the open source software GDAL/OGR (in place of ArcGIS).
 * Implementation of a SQL based translation engine abstracting the numerous issues related to this kind of conversion to simple translation files.
 * Implementation of a temporalization procedure to create a temporal database of all available inventories.
 * Enhancement of attribute generic and specific error codes.

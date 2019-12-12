@@ -103,7 +103,7 @@ SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.dst_all
 GROUP BY left(cas_id, 4), layer;
 
-SELECT count(*) FROM casfri50.dst_all; -- 7787618
+SELECT count(*) FROM casfri50.dst_all; -- 2432342
 
 -- Add primary key constraint
 ALTER TABLE casfri50.dst_all 

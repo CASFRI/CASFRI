@@ -18,7 +18,7 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
 -------------------------------------------------------
--- Translate all LYR tables into a common table
+-- Translate all LYR tables into a common table. 32h
 -------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab06_avi01_lyr', '_ab06_lyr');
@@ -143,7 +143,7 @@ SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.lyr_all
 GROUP BY left(cas_id, 4), layer;
 
-SELECT count(*) FROM casfri50.lyr_all; -- 8911511
+SELECT count(*) FROM casfri50.lyr_all; -- 6754426
 
 -- Add primary key constraint
 ALTER TABLE casfri50.lyr_all ADD PRIMARY KEY (cas_id, layer);
