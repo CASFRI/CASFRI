@@ -933,20 +933,6 @@ RETURNS text AS $$
     sigAttArr text[] = '{}';
     attList text;
     sigAttList text;
-    lyr1AttArr text[] = '{}';
-    lyr2AttArr text[] = '{}';
-    nfl1AttArr text[] = '{}';
-    nfl2AttArr text[] = '{}';
-    dst1AttArr text[] = '{}';
-    dst2AttArr text[] = '{}';
-    ecoAttArr text[] = '{}';
-    lyr1SigAttArr text[] = '{}';
-    lyr2SigAttArr text[] = '{}';
-    nfl1SigAttArr text[] = '{}';
-    nfl2SigAttArr text[] = '{}';
-    dst1SigAttArr text[] = '{}';
-    dst2SigAttArr text[] = '{}';
-    ecoSigAttArr text[] = '{}';
     selectAttrArr text[] = '{}';
     whereInAttrArr text[] = '{}';
     whereInAttrStrArr text[] = '{}';
@@ -1070,12 +1056,17 @@ RETURNS text AS $$
                'SELECT ' || selectAttrList || chr(10) ||
                'FROM ' || fullTableName;
                
-    IF whereInAttrList != '' THEN
-      queryStr = queryStr  || chr(10) || 'WHERE (' || whereInAttrList || ')';
-    END IF;
-    
-    IF whereOutAttrList != '' THEN
-      queryStr = queryStr  || chr(10) || '      AND NOT (' || whereOutAttrList || ')';
+    IF whereInAttrList != '' OR whereOutAttrList != '' THEN
+      queryStr = queryStr  || chr(10) || 'WHERE ';
+      IF whereInAttrList != '' THEN
+        queryStr = queryStr || '(' || whereInAttrList || ')';
+      END IF;
+      IF whereInAttrList != '' AND whereOutAttrList != '' THEN
+        queryStr = queryStr  || chr(10) || '      AND NOT' || chr(10) || '      ';
+      END IF;
+      IF whereOutAttrList != '' THEN
+        queryStr = queryStr || '(' || whereOutAttrList || ')';
+      END IF;
     END IF;
     queryStr = queryStr  || ';';
 
