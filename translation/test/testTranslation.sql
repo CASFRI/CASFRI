@@ -256,7 +256,7 @@ SELECT * FROM TT_Translate_nb01_nfl_test('rawfri', 'nb02_l1_to_nb_l1_map_600_nfl
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'bc08', 1000, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
-SELECT * FROM TT_Translate_bc08_nfl_test('rawfri', 'bc08_min_1000_bc08_nfl');
+SELECT * FROM TT_Translate_bc08_nfl_test('rawfri', 'bc08_min_1000_nfl');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
