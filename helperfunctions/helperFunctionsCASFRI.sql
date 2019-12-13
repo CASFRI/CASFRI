@@ -951,15 +951,22 @@ RETURNS text AS $$
       RETURN 'ERROR: Could not find table ''translation..' || tableName || '''...';
     END IF;
     
+    -- Loop through all the possible keywords building the list of attributes from attribute_dependencies and replacing them in the 3 provided lists of attributes
     FOREACH keyword IN ARRAY keywordArr LOOP
+      -- Determine from which layer to grab the attributes
       layer = right(keyword, 1);
       IF NOT layer IN ('1', '2') THEN layer = '1'; END IF;
+      
+      -- Initialize the two attribute arrays, one for all of them and one for only contributing ones
       attArr = '{}';
       sigAttArr = '{}';
+      
+      -- Loop through all attribute_dependencies row mapping
       FOR mappingRec IN SELECT *
                         FROM TT_CreateMapping(schemaName, tableName, layer::int, tableName, layer::int)
                         WHERE TT_NotEmpty(from_att)
       LOOP
+        -- Pick the attributes corresponding to the keywords
         IF ((keyword = 'lyr1' OR keyword = 'lyr2') AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
            ((keyword = 'nfl1' OR keyword = 'nfl2') AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg')) OR
            ((keyword = 'dst1' OR keyword = 'dst2') AND (mappingRec.key = 'dist_type_1' OR mappingRec.key = 'dist_year_1' OR 
@@ -970,34 +977,41 @@ RETURNS text AS $$
                                                         mappingRec.key = 'dist_ext_upper_3' OR mappingRec.key = 'dist_ext_lower_3')) OR
            (keyword = 'eco' AND (mappingRec.key = 'wetland_type' OR mappingRec.key = 'wet_veg_cover' OR mappingRec.key = 'wet_landform_mod' OR mappingRec.key = 'wet_local_mod'))
         THEN
+          -- Append both attributes lists
           attArr = array_append(attArr, lower(mappingRec.from_att));
           sigAttArr = array_append(sigAttArr, CASE WHEN mappingRec.contributing THEN lower(mappingRec.from_att) ELSE NULL END);
         END IF;
       END LOOP;
-
+      -- Convert the first list to a string
       attList = array_to_string(TT_ArrayDistinct(attArr, TRUE), ', ');
---RAISE NOTICE '11 keyword = %', keyword;
---RAISE NOTICE '22 attList = %', attList;
---RAISE NOTICE '22 strpos(lower(selectAttrList), keyword) = %', strpos(lower(selectAttrList), keyword);
---RAISE NOTICE '33 attList = %', attList;
 
+      -- Warn if some keywords do not correspond to any attribute
       IF strpos(lower(selectAttrList), keyword) != 0 AND attList IS NULL THEN
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
+      
+      -- Replace the keywords with attributes. Once with the comma and once without the comma
       selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*,', CASE WHEN attList != '' THEN attList || ',' ELSE '' END);
       selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*', CASE WHEN attList != '' THEN attList ELSE '' END);
 
+      -- Convert the second list to a string
       sigAttList = array_to_string(TT_ArrayDistinct(sigAttArr, TRUE), ', ');
+      
+      -- Warn if some whereInAttrList keywords do not correspond to any attribute
       IF strpos(lower(whereInAttrList), keyword) != 0 AND sigAttList IS NULL THEN
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
---RAISE NOTICE '33 sigAttList = %', sigAttList;
+
+      -- Replace the keywords with attributes. Once with the comma and once without the comma
       whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*,', CASE WHEN sigAttList != '' THEN sigAttList || ',' ELSE '' END);
       whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
 
+      -- Warn if some whereOutAttrList keywords do not correspond to any attribute
       IF strpos(lower(whereOutAttrList), keyword) != 0 AND sigAttList IS NULL THEN
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
+      
+      -- Replace the keywords with attributes. Once with the comma and once without the comma
       whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*,', CASE WHEN sigAttList != '' THEN sigAttList || ',' ELSE '' END);
       whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
 --RAISE NOTICE '66 selectAttrList = %', selectAttrList;
@@ -1008,6 +1022,7 @@ RETURNS text AS $$
     -- Parse and validate the list of provided attributes against the list of attribute in the table
     sourceTableCols = TT_TableColumnNames(schemaName, tableName);
 
+    -- selectAttrArr
     selectAttrArr = TT_ArrayDistinct(regexp_split_to_array(selectAttrList, '\s*,\s*'), TRUE, TRUE);
     FOREACH attName IN ARRAY coalesce(selectAttrArr, '{}'::text[]) LOOP
       IF NOT attName = ANY (sourceTableCols) THEN
@@ -1016,14 +1031,17 @@ RETURNS text AS $$
       END IF;
     END LOOP;
 
+    -- Build the selectAttrArr string
     IF selectAttrArr IS NULL OR cardinality(selectAttrArr) = 0 THEN
       selectAttrList = '*';
     ELSE
       selectAttrList = array_to_string(selectAttrArr, ', ');
     END IF;
     
+    -- whereInAttrArr
     whereInAttrArr = TT_ArrayDistinct(regexp_split_to_array(whereInAttrList, '\s*,\s*'), TRUE, TRUE);
---RAISE NOTICE '99 whereInAttrArr = %', whereInAttrArr;
+
+    -- Build the whereInAttrArr string
     FOREACH attName IN ARRAY coalesce(whereInAttrArr, '{}'::text[]) LOOP
       IF NOT attName = ANY (sourceTableCols) THEN
         RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', attName, schemaName, tableName;
@@ -1033,11 +1051,10 @@ RETURNS text AS $$
     END LOOP;
     whereInAttrList = array_to_string(whereInAttrStrArr, ' OR ' || chr(10) || '       ');
     
+    -- whereOutAttrArr
     whereOutAttrArr = TT_ArrayDistinct(regexp_split_to_array(whereOutAttrList, '\s*,\s*'), TRUE, TRUE);
-    --SELECT regexp_split_to_array('a,    g', '\s*,\s*');
-    --SELECT TT_ArrayDistinct(regexp_split_to_array('', '\s*,\s*'), TRUE);
 
---RAISE NOTICE 'AA whereOutAttrArr = %', whereOutAttrArr;
+    -- Build the whereOutAttrArr string
     FOREACH attName IN ARRAY coalesce(whereOutAttrArr, '{}'::text[]) LOOP
       IF NOT attName = ANY (sourceTableCols) THEN
         RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', attName, schemaName, tableName;
