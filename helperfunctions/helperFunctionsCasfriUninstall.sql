@@ -56,6 +56,7 @@ DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, int, text, text);
 DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, text, text);
 DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, int, text, text);
+DROP FUNCTION IF EXISTS TT_CreateFilterView(text, text, text, text, text, text); 
 DROP FUNCTION IF EXISTS TT_CreateMapping(text, text, int, text, int);
 DROP FUNCTION IF EXISTS TT_DeleteAllViews(text);
 
