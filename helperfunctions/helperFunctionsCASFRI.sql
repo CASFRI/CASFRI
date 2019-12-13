@@ -957,7 +957,7 @@ RETURNS text AS $$
     
     -- For whereInAttrList only, replace each comma inside two brackets with a special keyword that will be replaced with AND later
     whereInAttrList = regexp_replace(whereInAttrList, '(?<=\[.*\s*)(,)(?=\s*.*\])', ', CASFRI_AND,', 'g');
-    
+--RAISE NOTICE '11 selectAttrList=%', selectAttrList;
     -- Loop through all the possible keywords building the list of attributes from attribute_dependencies and replacing them in the 3 provided lists of attributes
     FOREACH keyword IN ARRAY keywordArr LOOP
       -- Determine from which layer to grab the attributes
@@ -998,8 +998,10 @@ RETURNS text AS $$
       END IF;
       
       -- Replace the keywords with attributes. Once with the comma and once without the comma
-      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*,', CASE WHEN attList != '' THEN attList || ',' ELSE '' END);
+--RAISE NOTICE '22 selectAttrList=%', selectAttrList;
+      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*,\s*', CASE WHEN attList != '' THEN attList || ', ' ELSE '' END);
       selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*', CASE WHEN attList != '' THEN attList ELSE '' END);
+--RAISE NOTICE '33 selectAttrList=%', selectAttrList;
 
       -- Convert the second list to a string
       sigAttList = array_to_string(TT_ArrayDistinct(sigAttArr, TRUE), ', ');
@@ -1010,7 +1012,10 @@ RETURNS text AS $$
       END IF;
 
       -- Replace keywords with attributes. Once with the comma and once without the comma
-      whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*,', CASE WHEN sigAttList != '' THEN sigAttList || ',' ELSE '' END);
+      whereInAttrList = regexp_replace(lower(whereInAttrList), 'casfri_and,\s*' || keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN 'casfri_and, ' || sigAttList || ', ' ELSE '' END);
+      whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN sigAttList || ', ' ELSE '' END);
+      whereInAttrList = regexp_replace(lower(whereInAttrList), ', casfri_and,\s*' || keyword || '\s*', CASE WHEN sigAttList != '' THEN ', casfri_and, ' || sigAttList ELSE '' END);
+      whereInAttrList = regexp_replace(lower(whereInAttrList), ', ' || keyword || '\s*', CASE WHEN sigAttList != '' THEN ',' || sigAttList ELSE '' END);
       whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
 
       -- Warn if some whereOutAttrList keywords do not correspond to any attribute
@@ -1019,9 +1024,10 @@ RETURNS text AS $$
       END IF;
       
       -- Replace the keywords with attributes. Once with the comma and once without the comma
-      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*,', CASE WHEN sigAttList != '' THEN sigAttList || ',' ELSE '' END);
+      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN sigAttList || ', ' ELSE '' END);
       whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
     END LOOP;
+--RAISE NOTICE '44 selectAttrList=%', selectAttrList;
 
     -- Parse and validate the list of provided attributes against the list of attribute in the table
     sourceTableCols = TT_TableColumnNames(schemaName, tableName);
