@@ -938,6 +938,10 @@ RETURNS text AS $$
     whereInAttrStrArr text[] = '{}';
     whereOutAttrArr text[] = '{}';
     whereOutAttrStrArr text[] = '{}';
+    whereInAttrListArr text[] = '{}';
+    attCount int = 0;
+    trimmedAttName text;
+    indentStr text;
   BEGIN
     -- Check if table 'attribute_dependencies' exists
     IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
@@ -950,6 +954,9 @@ RETURNS text AS $$
       RAISE NOTICE 'ERROR TT_CreateFilterView(): Could not find table ''translation.%''...', tableName;
       RETURN 'ERROR: Could not find table ''translation..' || tableName || '''...';
     END IF;
+    
+    -- For whereInAttrList only, replace each comma inside two brackets with a special keyword that will be replaced with AND later
+    whereInAttrList = regexp_replace(whereInAttrList, '(?<=\[.*\s*)(,)(?=\s*.*\])', ', CASFRI_AND,', 'g');
     
     -- Loop through all the possible keywords building the list of attributes from attribute_dependencies and replacing them in the 3 provided lists of attributes
     FOREACH keyword IN ARRAY keywordArr LOOP
@@ -966,7 +973,7 @@ RETURNS text AS $$
                         FROM TT_CreateMapping(schemaName, tableName, layer::int, tableName, layer::int)
                         WHERE TT_NotEmpty(from_att)
       LOOP
-        -- Pick the attributes corresponding to the keywords
+        -- Pick attributes corresponding to keywords
         IF ((keyword = 'lyr1' OR keyword = 'lyr2') AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
            ((keyword = 'nfl1' OR keyword = 'nfl2') AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg')) OR
            ((keyword = 'dst1' OR keyword = 'dst2') AND (mappingRec.key = 'dist_type_1' OR mappingRec.key = 'dist_year_1' OR 
@@ -1002,7 +1009,7 @@ RETURNS text AS $$
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
 
-      -- Replace the keywords with attributes. Once with the comma and once without the comma
+      -- Replace keywords with attributes. Once with the comma and once without the comma
       whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*,', CASE WHEN sigAttList != '' THEN sigAttList || ',' ELSE '' END);
       whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
 
@@ -1014,9 +1021,6 @@ RETURNS text AS $$
       -- Replace the keywords with attributes. Once with the comma and once without the comma
       whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*,', CASE WHEN sigAttList != '' THEN sigAttList || ',' ELSE '' END);
       whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
---RAISE NOTICE '66 selectAttrList = %', selectAttrList;
---RAISE NOTICE '77 whereInAttrList = %', whereInAttrList;
---RAISE NOTICE '88 whereOutAttrList = %', whereOutAttrList;
     END LOOP;
 
     -- Parse and validate the list of provided attributes against the list of attribute in the table
@@ -1039,18 +1043,41 @@ RETURNS text AS $$
     END IF;
     
     -- whereInAttrArr
-    whereInAttrArr = TT_ArrayDistinct(regexp_split_to_array(whereInAttrList, '\s*,\s*'), TRUE, TRUE);
-
-    -- Build the whereInAttrArr string
+    whereInAttrArr = regexp_split_to_array(whereInAttrList, '\s*,\s*');
+    whereInAttrList = '';
+    IF 'casfri_and' = ANY (whereInAttrArr) THEN
+      indentStr = '        ';
+    ELSE
+      indentStr = '      ';
+    END IF;
     FOREACH attName IN ARRAY coalesce(whereInAttrArr, '{}'::text[]) LOOP
-      IF NOT attName = ANY (sourceTableCols) THEN
-        RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', attName, schemaName, tableName;
-        RETURN 'ERROR TT_CreateFilterView(): Attribute ''' || attName || ''' not found in table ''' || schemaName || '.' || tableName || '''...';
+      attCount = attCount + 1;
+      IF left(attName, 1) = '[' AND 'casfri_and' = ANY (whereInAttrArr) THEN 
+        IF attCount != 1 THEN
+          whereInAttrList = whereInAttrList || chr(10) || '       ' || 'OR' || chr(10) || indentStr;
+        END IF;        
+        whereInAttrList = whereInAttrList || '(';
+        attCount = 1;
       END IF;
-      whereInAttrStrArr = array_append(whereInAttrStrArr, '(TT_NotEmpty(' || attName || '::text) AND ' || attName || '::text != ''0'')');
+      trimmedAttName = rtrim(ltrim(attName, '['), ']');
+      IF trimmedAttName = 'casfri_and' THEN
+        whereInAttrList = whereInAttrList || ')'  || chr(10) || '       ' || 'AND'  || chr(10) || indentStr || '(';
+        attCount = 0;
+      ELSE
+        IF attCount != 1 THEN
+          whereInAttrList = whereInAttrList || ' OR ' || chr(10) || indentStr;
+        END IF;
+        IF NOT trimmedAttName = ANY (sourceTableCols) THEN
+          RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', trimmedAttName, schemaName, tableName;
+          RETURN 'ERROR TT_CreateFilterView(): Attribute ''' || trimmedAttName || ''' not found in table ''' || schemaName || '.' || tableName || '''...';
+        END IF;
+        whereInAttrList = whereInAttrList || '(TT_NotEmpty(' || trimmedAttName || '::text) AND ' || trimmedAttName || '::text != ''0'')';
+      END IF;
+      IF right(attName, 1) = ']' AND 'casfri_and' = ANY (whereInAttrArr) THEN
+        whereInAttrList = whereInAttrList || ')' || chr(10) || '      ';
+      END IF;
     END LOOP;
-    whereInAttrList = array_to_string(whereInAttrStrArr, ' OR ' || chr(10) || '       ');
-    
+
     -- whereOutAttrArr
     whereOutAttrArr = TT_ArrayDistinct(regexp_split_to_array(whereOutAttrList, '\s*,\s*'), TRUE, TRUE);
 
@@ -1062,7 +1089,7 @@ RETURNS text AS $$
       END IF;
       whereOutAttrStrArr = array_append(whereOutAttrStrArr, '(TT_NotEmpty(' || attName || '::text) AND ' || attName || '::text != ''0'')');
     END LOOP;
-    whereOutAttrList = array_to_string(whereOutAttrStrArr, ' OR ' || chr(10) || '       ');
+    whereOutAttrList = array_to_string(whereOutAttrStrArr, ' OR ' || chr(10) || indentStr);
 
     -- Construct the name of the VIEW
     viewName = fullTableName || coalesce('_' || viewNamesuffix, '_' || (random()*100)::int::text);
@@ -1074,12 +1101,15 @@ RETURNS text AS $$
                'FROM ' || fullTableName;
                
     IF whereInAttrList != '' OR whereOutAttrList != '' THEN
-      queryStr = queryStr  || chr(10) || 'WHERE ';
+      queryStr = queryStr || chr(10) || 'WHERE ';
+      IF whereInAttrList != '' AND whereOutAttrList != '' THEN
+        queryStr = queryStr || '(';
+      END IF;
       IF whereInAttrList != '' THEN
-        queryStr = queryStr || '(' || whereInAttrList || ')';
+        queryStr = queryStr || whereInAttrList;
       END IF;
       IF whereInAttrList != '' AND whereOutAttrList != '' THEN
-        queryStr = queryStr  || chr(10) || '      AND NOT' || chr(10) || '      ';
+        queryStr = queryStr || ')' || chr(10) || '      AND NOT' || chr(10) || '       ';
       END IF;
       IF whereOutAttrList != '' THEN
         queryStr = queryStr || '(' || whereOutAttrList || ')';
