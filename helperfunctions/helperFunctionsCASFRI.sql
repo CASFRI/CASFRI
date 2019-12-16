@@ -998,10 +998,8 @@ RETURNS text AS $$
       END IF;
       
       -- Replace the keywords with attributes. Once with the comma and once without the comma
---RAISE NOTICE '22 selectAttrList=%', selectAttrList;
       selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*,\s*', CASE WHEN attList != '' THEN attList || ', ' ELSE '' END);
       selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*', CASE WHEN attList != '' THEN attList ELSE '' END);
---RAISE NOTICE '33 selectAttrList=%', selectAttrList;
 
       -- Convert the second list to a string
       sigAttList = array_to_string(TT_ArrayDistinct(sigAttArr, TRUE), ', ');
@@ -1011,12 +1009,24 @@ RETURNS text AS $$
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
 
+--RAISE NOTICE '22 whereInAttrList=%', whereInAttrList;
       -- Replace keywords with attributes. Once with the comma and once without the comma
+
+      -- casfri_and at the beginning
       whereInAttrList = regexp_replace(lower(whereInAttrList), 'casfri_and,\s*' || keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN 'casfri_and, ' || sigAttList || ', ' ELSE '' END);
+      -- keyword at the beginning
       whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN sigAttList || ', ' ELSE '' END);
+--RAISE NOTICE '33 whereInAttrList=%', whereInAttrList;
+
+      -- casfri_and in the middle
       whereInAttrList = regexp_replace(lower(whereInAttrList), ', casfri_and,\s*' || keyword || '\s*', CASE WHEN sigAttList != '' THEN ', casfri_and, ' || sigAttList ELSE '' END);
+      -- keyword in the middle
       whereInAttrList = regexp_replace(lower(whereInAttrList), ', ' || keyword || '\s*', CASE WHEN sigAttList != '' THEN ',' || sigAttList ELSE '' END);
+--RAISE NOTICE '44 whereInAttrList=%', whereInAttrList;
+
+      -- keyword alone
       whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
+--RAISE NOTICE '55 whereInAttrList=%', whereInAttrList;
 
       -- Warn if some whereOutAttrList keywords do not correspond to any attribute
       IF strpos(lower(whereOutAttrList), keyword) != 0 AND sigAttList IS NULL THEN
@@ -1027,7 +1037,7 @@ RETURNS text AS $$
       whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN sigAttList || ', ' ELSE '' END);
       whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
     END LOOP;
---RAISE NOTICE '44 selectAttrList=%', selectAttrList;
+--RAISE NOTICE '88 selectAttrList=%', selectAttrList;
 
     -- Parse and validate the list of provided attributes against the list of attribute in the table
     sourceTableCols = TT_TableColumnNames(schemaName, tableName);
@@ -1036,8 +1046,8 @@ RETURNS text AS $$
     selectAttrArr = TT_ArrayDistinct(regexp_split_to_array(selectAttrList, '\s*,\s*'), TRUE, TRUE);
     FOREACH attName IN ARRAY coalesce(selectAttrArr, '{}'::text[]) LOOP
       IF NOT attName = ANY (sourceTableCols) THEN
-        RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', attName, schemaName, tableName;
-        RETURN 'ERROR TT_CreateFilterView(): Attribute ''' || attName || ''' not found in table ''' || schemaName || '.' || tableName || '''...';
+        RAISE NOTICE 'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''%'' attribute not found in table ''%.%''...', attName, schemaName, tableName;
+        RETURN 'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''' || attName || ''' attribute not found in table ''' || schemaName || '.' || tableName || '''...';
       END IF;
     END LOOP;
 
@@ -1047,9 +1057,12 @@ RETURNS text AS $$
     ELSE
       selectAttrList = array_to_string(selectAttrArr, ', ');
     END IF;
-    
+--RAISE NOTICE '55 whereInAttrList=%', whereInAttrList;
+
+
     -- whereInAttrArr
-    whereInAttrArr = regexp_split_to_array(whereInAttrList, '\s*,\s*');
+    whereInAttrArr = CASE WHEN whereInAttrList = '' THEN '{}'::text[] 
+                          ELSE regexp_split_to_array(whereInAttrList, '\s*,\s*') END;
     whereInAttrList = '';
     IF 'casfri_and' = ANY (whereInAttrArr) THEN
       indentStr = '        ';
@@ -1074,8 +1087,8 @@ RETURNS text AS $$
           whereInAttrList = whereInAttrList || ' OR ' || chr(10) || indentStr;
         END IF;
         IF NOT trimmedAttName = ANY (sourceTableCols) THEN
-          RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', trimmedAttName, schemaName, tableName;
-          RETURN 'ERROR TT_CreateFilterView(): Attribute ''' || trimmedAttName || ''' not found in table ''' || schemaName || '.' || tableName || '''...';
+          RAISE NOTICE 'ERROR TT_CreateFilterView(): ''whereInAttrList'' parameter''s ''%'' attribute not found in table ''%.%''...', trimmedAttName, schemaName, tableName;
+          RETURN 'ERROR TT_CreateFilterView(): ''whereInAttrList'' parameter''s ''' || trimmedAttName || ''' attribute not found in table ''' || schemaName || '.' || tableName || '''...';
         END IF;
         whereInAttrList = whereInAttrList || '(TT_NotEmpty(' || trimmedAttName || '::text) AND ' || trimmedAttName || '::text != ''0'')';
       END IF;
@@ -1090,8 +1103,8 @@ RETURNS text AS $$
     -- Build the whereOutAttrArr string
     FOREACH attName IN ARRAY coalesce(whereOutAttrArr, '{}'::text[]) LOOP
       IF NOT attName = ANY (sourceTableCols) THEN
-        RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', attName, schemaName, tableName;
-        RETURN 'ERROR TT_CreateFilterView(): Attribute ''' || attName || ''' not found in table ''' || schemaName || '.' || tableName || '''...';
+        RAISE NOTICE 'ERROR TT_CreateFilterView(): ''whereOutAttrList'' parameter''s ''%'' attribute not found in table ''%.%''...', attName, schemaName, tableName;
+        RETURN 'ERROR TT_CreateFilterView(): ''whereOutAttrList'' parameter''s ''' || attName || ''' attribute not found in table ''' || schemaName || '.' || tableName || '''...';
       END IF;
       whereOutAttrStrArr = array_append(whereOutAttrStrArr, '(TT_NotEmpty(' || attName || '::text) AND ' || attName || '::text != ''0'')');
     END LOOP;
@@ -1100,6 +1113,7 @@ RETURNS text AS $$
     -- Construct the name of the VIEW
     viewName = fullTableName || coalesce('_' || viewNamesuffix, '_' || (random()*100)::int::text);
 
+--RAISE NOTICE '66 selectAttrList=%', selectAttrList;
     -- Build the VIEW query
     queryStr = 'DROP VIEW IF EXISTS ' || viewName || ' CASCADE;' || chr(10) ||
                'CREATE OR REPLACE VIEW ' || viewName || ' AS' || chr(10) ||
