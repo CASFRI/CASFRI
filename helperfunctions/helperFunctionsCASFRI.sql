@@ -463,9 +463,21 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_ArrayDistinct
 -------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION TT_ArrayDistinct(anyarray) 
+--DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean);
+CREATE OR REPLACE FUNCTION TT_ArrayDistinct(
+  anyarray, 
+  purgeNulls boolean DEFAULT FALSE, 
+  purgeEmptys boolean DEFAULT FALSE
+) 
 RETURNS anyarray AS $$
-  SELECT array_agg(DISTINCT x) FROM unnest($1) t(x);
+  WITH numbered AS (
+    SELECT ROW_NUMBER() OVER() rn, x
+    FROM unnest($1) x 
+    WHERE (purgeNulls IS FALSE OR NOT x IS NULL) AND (purgeEmptys IS FALSE OR TT_NotEmpty(x::text))
+  ), distincts AS (
+    SELECT x, min(rn) rn FROM numbered GROUP BY x ORDER BY rn
+)
+SELECT array_agg(x) FROM distincts
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 
@@ -887,7 +899,250 @@ RETURNS text AS $$
   SELECT TT_CreateMappingView(schemaName, fromTableName, 1, fromTableName, 1, randomNb, rowSubset, viewNameSuffix);
 $$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
--- Overwrrite the TT_DefaultProjectErrorCode() function to define default error 
+
+-------------------------------------------------------------------------------
+-- TT_CreateFilterView 
+-- 
+-- Create a VIEW listing only the 'selectAttrList' WHERE 'whereInAttrList' are 
+-- TT_NotEmpty() and 'whereOutAttrList' are NOT TT_NotEmpty(). The name 
+-- of the view can be suffixed with viewNameSuffix. Otherwise it will get a 
+-- random number.
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_CreateFilterView(text, text, text, text, text, text); 
+CREATE OR REPLACE FUNCTION TT_CreateFilterView( 
+  schemaName text, 
+  tableName text,
+  selectAttrList text,
+  whereInAttrList text DEFAULT '',
+  whereOutAttrList text DEFAULT '',
+  viewNameSuffix text DEFAULT NULL
+) 
+RETURNS text AS $$ 
+  DECLARE
+    queryStr text;
+    viewName text;
+    fullTableName text = TT_FullTableName(schemaName, tableName);
+    mappingRec RECORD;
+    sourceTableCols text[] = '{}';
+    keywordArr text[] = ARRAY['lyr1', 'lyr2', 'nfl1', 'nfl2', 'dst1', 'dst2', 'eco'];
+    keyword text;
+    nb int;
+    layer text;
+    attName text;
+    attArr text[] = '{}';
+    sigAttArr text[] = '{}';
+    attList text;
+    sigAttList text;
+    selectAttrArr text[] = '{}';
+    whereInAttrArr text[] = '{}';
+    whereInAttrStrArr text[] = '{}';
+    whereOutAttrArr text[] = '{}';
+    whereOutAttrStrArr text[] = '{}';
+    whereInAttrListArr text[] = '{}';
+    attCount int = 0;
+    trimmedAttName text;
+    indentStr text;
+  BEGIN
+    -- Check if table 'attribute_dependencies' exists
+    IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
+      RAISE NOTICE 'ERROR TT_CreateFilterView(): Could not find table ''translation.dependencies''...';
+      RETURN 'ERROR: Could not find table ''translation.dependencies''...';
+    END IF;
+
+    -- Check if tableName exists
+    IF NOT TT_TableExists(schemaName, tableName) THEN
+      RAISE NOTICE 'ERROR TT_CreateFilterView(): Could not find table ''translation.%''...', tableName;
+      RETURN 'ERROR: Could not find table ''translation..' || tableName || '''...';
+    END IF;
+    
+    -- For whereInAttrList only, replace each comma inside two brackets with a special keyword that will be replaced with AND later
+    whereInAttrList = regexp_replace(whereInAttrList, '(?<=\[.*\s*)(,)(?=\s*.*\])', ', CASFRI_AND,', 'g');
+--RAISE NOTICE '11 selectAttrList=%', selectAttrList;
+    -- Loop through all the possible keywords building the list of attributes from attribute_dependencies and replacing them in the 3 provided lists of attributes
+    FOREACH keyword IN ARRAY keywordArr LOOP
+      -- Determine from which layer to grab the attributes
+      layer = right(keyword, 1);
+      IF NOT layer IN ('1', '2') THEN layer = '1'; END IF;
+      
+      -- Initialize the two attribute arrays, one for all of them and one for only contributing ones
+      attArr = '{}';
+      sigAttArr = '{}';
+      
+      -- Loop through all attribute_dependencies row mapping
+      FOR mappingRec IN SELECT *
+                        FROM TT_CreateMapping(schemaName, tableName, layer::int, tableName, layer::int)
+                        WHERE TT_NotEmpty(from_att)
+      LOOP
+        -- Pick attributes corresponding to keywords
+        IF ((keyword = 'lyr1' OR keyword = 'lyr2') AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
+           ((keyword = 'nfl1' OR keyword = 'nfl2') AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg')) OR
+           ((keyword = 'dst1' OR keyword = 'dst2') AND (mappingRec.key = 'dist_type_1' OR mappingRec.key = 'dist_year_1' OR 
+                                                        mappingRec.key = 'dist_ext_upper_1' OR mappingRec.key = 'dist_ext_lower_1' OR
+                                                        mappingRec.key = 'dist_type_2' OR mappingRec.key = 'dist_year_2' OR 
+                                                        mappingRec.key = 'dist_ext_upper_2' OR mappingRec.key = 'dist_ext_lower_2' OR
+                                                        mappingRec.key = 'dist_type_3' OR mappingRec.key = 'dist_year_3' OR 
+                                                        mappingRec.key = 'dist_ext_upper_3' OR mappingRec.key = 'dist_ext_lower_3')) OR
+           (keyword = 'eco' AND (mappingRec.key = 'wetland_type' OR mappingRec.key = 'wet_veg_cover' OR mappingRec.key = 'wet_landform_mod' OR mappingRec.key = 'wet_local_mod'))
+        THEN
+          -- Append both attributes lists
+          attArr = array_append(attArr, lower(mappingRec.from_att));
+          sigAttArr = array_append(sigAttArr, CASE WHEN mappingRec.contributing THEN lower(mappingRec.from_att) ELSE NULL END);
+        END IF;
+      END LOOP;
+      -- Convert the first list to a string
+      attList = array_to_string(TT_ArrayDistinct(attArr, TRUE), ', ');
+
+      -- Warn if some keywords do not correspond to any attribute
+      IF strpos(lower(selectAttrList), keyword) != 0 AND attList IS NULL THEN
+        RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
+      END IF;
+      
+      -- Replace the keywords with attributes. Once with the comma and once without the comma
+--RAISE NOTICE '22 selectAttrList=%', selectAttrList;
+      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*,\s*', CASE WHEN attList != '' THEN attList || ', ' ELSE '' END);
+      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*', CASE WHEN attList != '' THEN attList ELSE '' END);
+--RAISE NOTICE '33 selectAttrList=%', selectAttrList;
+
+      -- Convert the second list to a string
+      sigAttList = array_to_string(TT_ArrayDistinct(sigAttArr, TRUE), ', ');
+      
+      -- Warn if some whereInAttrList keywords do not correspond to any attribute
+      IF strpos(lower(whereInAttrList), keyword) != 0 AND sigAttList IS NULL THEN
+        RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
+      END IF;
+
+      -- Replace keywords with attributes. Once with the comma and once without the comma
+      whereInAttrList = regexp_replace(lower(whereInAttrList), 'casfri_and,\s*' || keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN 'casfri_and, ' || sigAttList || ', ' ELSE '' END);
+      whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN sigAttList || ', ' ELSE '' END);
+      whereInAttrList = regexp_replace(lower(whereInAttrList), ', casfri_and,\s*' || keyword || '\s*', CASE WHEN sigAttList != '' THEN ', casfri_and, ' || sigAttList ELSE '' END);
+      whereInAttrList = regexp_replace(lower(whereInAttrList), ', ' || keyword || '\s*', CASE WHEN sigAttList != '' THEN ',' || sigAttList ELSE '' END);
+      whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
+
+      -- Warn if some whereOutAttrList keywords do not correspond to any attribute
+      IF strpos(lower(whereOutAttrList), keyword) != 0 AND sigAttList IS NULL THEN
+        RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
+      END IF;
+      
+      -- Replace the keywords with attributes. Once with the comma and once without the comma
+      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN sigAttList || ', ' ELSE '' END);
+      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
+    END LOOP;
+--RAISE NOTICE '44 selectAttrList=%', selectAttrList;
+
+    -- Parse and validate the list of provided attributes against the list of attribute in the table
+    sourceTableCols = TT_TableColumnNames(schemaName, tableName);
+
+    -- selectAttrArr
+    selectAttrArr = TT_ArrayDistinct(regexp_split_to_array(selectAttrList, '\s*,\s*'), TRUE, TRUE);
+    FOREACH attName IN ARRAY coalesce(selectAttrArr, '{}'::text[]) LOOP
+      IF NOT attName = ANY (sourceTableCols) THEN
+        RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', attName, schemaName, tableName;
+        RETURN 'ERROR TT_CreateFilterView(): Attribute ''' || attName || ''' not found in table ''' || schemaName || '.' || tableName || '''...';
+      END IF;
+    END LOOP;
+
+    -- Build the selectAttrArr string
+    IF selectAttrArr IS NULL OR cardinality(selectAttrArr) = 0 THEN
+      selectAttrList = '*';
+    ELSE
+      selectAttrList = array_to_string(selectAttrArr, ', ');
+    END IF;
+    
+    -- whereInAttrArr
+    whereInAttrArr = regexp_split_to_array(whereInAttrList, '\s*,\s*');
+    whereInAttrList = '';
+    IF 'casfri_and' = ANY (whereInAttrArr) THEN
+      indentStr = '        ';
+    ELSE
+      indentStr = '      ';
+    END IF;
+    FOREACH attName IN ARRAY coalesce(whereInAttrArr, '{}'::text[]) LOOP
+      attCount = attCount + 1;
+      IF left(attName, 1) = '[' AND 'casfri_and' = ANY (whereInAttrArr) THEN 
+        IF attCount != 1 THEN
+          whereInAttrList = whereInAttrList || chr(10) || '       ' || 'OR' || chr(10) || indentStr;
+        END IF;        
+        whereInAttrList = whereInAttrList || '(';
+        attCount = 1;
+      END IF;
+      trimmedAttName = rtrim(ltrim(attName, '['), ']');
+      IF trimmedAttName = 'casfri_and' THEN
+        whereInAttrList = whereInAttrList || ')'  || chr(10) || '       ' || 'AND'  || chr(10) || indentStr || '(';
+        attCount = 0;
+      ELSE
+        IF attCount != 1 THEN
+          whereInAttrList = whereInAttrList || ' OR ' || chr(10) || indentStr;
+        END IF;
+        IF NOT trimmedAttName = ANY (sourceTableCols) THEN
+          RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', trimmedAttName, schemaName, tableName;
+          RETURN 'ERROR TT_CreateFilterView(): Attribute ''' || trimmedAttName || ''' not found in table ''' || schemaName || '.' || tableName || '''...';
+        END IF;
+        whereInAttrList = whereInAttrList || '(TT_NotEmpty(' || trimmedAttName || '::text) AND ' || trimmedAttName || '::text != ''0'')';
+      END IF;
+      IF right(attName, 1) = ']' AND 'casfri_and' = ANY (whereInAttrArr) THEN
+        whereInAttrList = whereInAttrList || ')' || chr(10) || '      ';
+      END IF;
+    END LOOP;
+
+    -- whereOutAttrArr
+    whereOutAttrArr = TT_ArrayDistinct(regexp_split_to_array(whereOutAttrList, '\s*,\s*'), TRUE, TRUE);
+
+    -- Build the whereOutAttrArr string
+    FOREACH attName IN ARRAY coalesce(whereOutAttrArr, '{}'::text[]) LOOP
+      IF NOT attName = ANY (sourceTableCols) THEN
+        RAISE NOTICE 'ERROR TT_CreateFilterView(): Attribute ''%'' not found in table ''%.%''...', attName, schemaName, tableName;
+        RETURN 'ERROR TT_CreateFilterView(): Attribute ''' || attName || ''' not found in table ''' || schemaName || '.' || tableName || '''...';
+      END IF;
+      whereOutAttrStrArr = array_append(whereOutAttrStrArr, '(TT_NotEmpty(' || attName || '::text) AND ' || attName || '::text != ''0'')');
+    END LOOP;
+    whereOutAttrList = array_to_string(whereOutAttrStrArr, ' OR ' || chr(10) || indentStr);
+
+    -- Construct the name of the VIEW
+    viewName = fullTableName || coalesce('_' || viewNamesuffix, '_' || (random()*100)::int::text);
+
+    -- Build the VIEW query
+    queryStr = 'DROP VIEW IF EXISTS ' || viewName || ' CASCADE;' || chr(10) ||
+               'CREATE OR REPLACE VIEW ' || viewName || ' AS' || chr(10) ||
+               'SELECT ' || selectAttrList || chr(10) ||
+               'FROM ' || fullTableName;
+               
+    IF whereInAttrList != '' OR whereOutAttrList != '' THEN
+      queryStr = queryStr || chr(10) || 'WHERE ';
+      IF whereInAttrList != '' AND whereOutAttrList != '' THEN
+        queryStr = queryStr || '(';
+      END IF;
+      IF whereInAttrList != '' THEN
+        queryStr = queryStr || whereInAttrList;
+      END IF;
+      IF whereInAttrList != '' AND whereOutAttrList != '' THEN
+        queryStr = queryStr || ')' || chr(10) || '      AND NOT' || chr(10) || '       ';
+      END IF;
+      IF whereOutAttrList != '' THEN
+        queryStr = queryStr || '(' || whereOutAttrList || ')';
+      END IF;
+    END IF;
+    queryStr = queryStr  || ';';
+
+    -- Create the VIEW
+    RAISE NOTICE 'TT_CreateFilterView(): Creating VIEW ''%''...', viewName;
+    EXECUTE queryStr;
+    
+    -- Display the approximate number of row returned by the view
+    nb = TT_CountEstimate('SELECT 1 FROM ' || viewName);
+    IF nb < 2 THEN
+      RAISE NOTICE 'WARNING TT_CreateFilterView(): VIEW ''%'' should return 0 rows...', viewName; 
+    ELSIF nb < 1000 THEN
+       RAISE NOTICE 'TT_CreateFilterView(): VIEW ''%'' should return % rows...', viewName, nb;
+    ELSE
+      RAISE NOTICE 'TT_CreateFilterView(): VIEW ''%'' should return at least 1000 rows or more...', viewName;
+    END IF;
+    RETURN queryStr;
+  END; 
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- Overwrite the TT_DefaultProjectErrorCode() function to define default error 
 -- codes for these helper functions...
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_DefaultProjectErrorCode(text, text);
