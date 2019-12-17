@@ -14,8 +14,10 @@
 # All three source tables have the same attributes, and the same polygons.
 # There are therefore 3 records per polygon.
 # We need a flat source table with one attribute per row.
-# Load the three tables into PostgreSQL, prefix all attribute  names
+# Load the three tables into PostgreSQL, prefix attribute  names
 # to have the prefix L1_, L2_ or D_. This way all tables will have unique attribute.
+# The first 97 attributes have identical values in all three datasets, i.e. they are
+# polygon level attributes. Only need to load these once with no prefix.
 # Then merge the three tables into one final source table using ogrinfo and -sql.
 
 ######################################## Set variables #######################################
@@ -104,7 +106,7 @@ PROJ_HEIGHT_CLASS_CD_2 AS L1_PROJ_HEIGHT_CLASS_CD_2,
 DATA_SOURCE_HEIGHT_CD AS L1_DATA_SOURCE_HEIGHT_CD,
 GEOMETRY_Length AS L1_GEOMETRY_Length,
 GEOMETRY_Area AS L1_GEOMETRY_Area,
-'$srcFileName_L1' AS L1_src_filename
+'$srcFileName_L1' AS L1_src_filename,
 '$inventoryID' AS inventory_id
 FROM '$srcFileName_L1'
 "
@@ -203,7 +205,7 @@ PROJ_HEIGHT_CLASS_CD_2 AS D_PROJ_HEIGHT_CLASS_CD_2,
 DATA_SOURCE_HEIGHT_CD AS D_DATA_SOURCE_HEIGHT_CD,
 GEOMETRY_Length AS D_GEOMETRY_Length,
 GEOMETRY_Area AS D_GEOMETRY_Area, 
-'$srcFileName_D' AS D_src_filename
+'$srcFileName_D' AS D_src_filename,
 FROM '$srcFileName_D'
 "
 
