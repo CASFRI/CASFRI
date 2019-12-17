@@ -957,8 +957,8 @@ RETURNS text AS $$
     
     -- For whereInAttrList only, replace each comma inside two brackets with a special keyword that will be replaced with AND later
     whereInAttrList = regexp_replace(whereInAttrList, '(?<=\[.*\s*)(,)(?=\s*.*\])', ', CASFRI_AND,', 'g');
---RAISE NOTICE '11 selectAttrList=%', selectAttrList;
-    -- Loop through all the possible keywords building the list of attributes from attribute_dependencies and replacing them in the 3 provided lists of attributes
+
+     -- Loop through all the possible keywords building the list of attributes from attribute_dependencies and replacing them in the 3 provided lists of attributes
     FOREACH keyword IN ARRAY keywordArr LOOP
       -- Determine from which layer to grab the attributes
       layer = right(keyword, 1);
@@ -997,9 +997,10 @@ RETURNS text AS $$
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
       
-      -- Replace the keywords with attributes. Once with the comma and once without the comma
-      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*,\s*', CASE WHEN attList != '' THEN attList || ', ' ELSE '' END);
-      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*', CASE WHEN attList != '' THEN attList ELSE '' END);
+      -- Replace keywords with attributes
+      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*(,)?\s*', CASE WHEN attList != '' THEN attList || '\1, ' ELSE '' END);
+      -- Standardise commas and spaces
+      selectAttrList = regexp_replace(selectAttrList, '\s*,\s*', ', ', 'g');
 
       -- Convert the second list to a string
       sigAttList = array_to_string(TT_ArrayDistinct(sigAttArr, TRUE), ', ');
@@ -1009,35 +1010,21 @@ RETURNS text AS $$
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
 
---RAISE NOTICE '22 whereInAttrList=%', whereInAttrList;
-      -- Replace keywords with attributes. Once with the comma and once without the comma
-
-      -- casfri_and at the beginning
-      whereInAttrList = regexp_replace(lower(whereInAttrList), 'casfri_and,\s*' || keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN 'casfri_and, ' || sigAttList || ', ' ELSE '' END);
-      -- keyword at the beginning
-      whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN sigAttList || ', ' ELSE '' END);
---RAISE NOTICE '33 whereInAttrList=%', whereInAttrList;
-
-      -- casfri_and in the middle
-      whereInAttrList = regexp_replace(lower(whereInAttrList), ', casfri_and,\s*' || keyword || '\s*', CASE WHEN sigAttList != '' THEN ', casfri_and, ' || sigAttList ELSE '' END);
-      -- keyword in the middle
-      whereInAttrList = regexp_replace(lower(whereInAttrList), ', ' || keyword || '\s*', CASE WHEN sigAttList != '' THEN ',' || sigAttList ELSE '' END);
---RAISE NOTICE '44 whereInAttrList=%', whereInAttrList;
-
-      -- keyword alone
-      whereInAttrList = regexp_replace(lower(whereInAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
---RAISE NOTICE '55 whereInAttrList=%', whereInAttrList;
+      -- Replace keywords with attributes
+      whereInAttrList = regexp_replace(lower(whereInAttrList), '\s*(,)?\s*(casfri_and)?\s*(,)?\s*' || keyword || '\s*(,)?\s*', CASE WHEN sigAttList != '' THEN '\1\2\3' || sigAttList || '\4' ELSE '' END, 'g');
+      -- Standardise commas and spaces
+      whereInAttrList = regexp_replace(whereInAttrList, '\s*,\s*', ', ', 'g');
 
       -- Warn if some whereOutAttrList keywords do not correspond to any attribute
       IF strpos(lower(whereOutAttrList), keyword) != 0 AND sigAttList IS NULL THEN
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
       
-      -- Replace the keywords with attributes. Once with the comma and once without the comma
-      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*,\s*', CASE WHEN sigAttList != '' THEN sigAttList || ', ' ELSE '' END);
-      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*', CASE WHEN sigAttList != '' THEN sigAttList ELSE '' END);
+      -- Replace keywords with attributes
+      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*(,)?\s*', CASE WHEN attList != '' THEN attList || '\1, ' ELSE '' END);
+      -- Standardise commas and spaces
+      whereOutAttrList = regexp_replace(whereOutAttrList, '\s*,\s*', ', ', 'g');
     END LOOP;
---RAISE NOTICE '88 selectAttrList=%', selectAttrList;
 
     -- Parse and validate the list of provided attributes against the list of attribute in the table
     sourceTableCols = TT_TableColumnNames(schemaName, tableName);
@@ -1057,8 +1044,6 @@ RETURNS text AS $$
     ELSE
       selectAttrList = array_to_string(selectAttrArr, ', ');
     END IF;
---RAISE NOTICE '55 whereInAttrList=%', whereInAttrList;
-
 
     -- whereInAttrArr
     whereInAttrArr = CASE WHEN whereInAttrList = '' THEN '{}'::text[] 
@@ -1113,7 +1098,6 @@ RETURNS text AS $$
     -- Construct the name of the VIEW
     viewName = fullTableName || coalesce('_' || viewNamesuffix, '_' || (random()*100)::int::text);
 
---RAISE NOTICE '66 selectAttrList=%', selectAttrList;
     -- Build the VIEW query
     queryStr = 'DROP VIEW IF EXISTS ' || viewName || ' CASCADE;' || chr(10) ||
                'CREATE OR REPLACE VIEW ' || viewName || ' AS' || chr(10) ||
