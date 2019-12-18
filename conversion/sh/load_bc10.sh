@@ -164,7 +164,7 @@ FROM '$srcFileName_L2'
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_D" \
 -nln $tableName_D $layer_creation_option \
 -progress $overwrite_tab \
--sql "FEATURE_ID AS D_FEATURE_ID,
+-sql "SELECT FEATURE_ID AS D_FEATURE_ID,
 LAYER_ID AS D_LAYER_ID,
 FOR_COVER_RANK_CD AS D_FOR_COVER_RANK_CD,
 NON_FOREST_DESCRIPTOR AS D_NON_FOREST_DESCRIPTOR,
@@ -205,7 +205,7 @@ PROJ_HEIGHT_CLASS_CD_2 AS D_PROJ_HEIGHT_CLASS_CD_2,
 DATA_SOURCE_HEIGHT_CD AS D_DATA_SOURCE_HEIGHT_CD,
 GEOMETRY_Length AS D_GEOMETRY_Length,
 GEOMETRY_Area AS D_GEOMETRY_Area, 
-'$srcFileName_D' AS D_src_filename,
+'$srcFileName_D' AS D_src_filename
 FROM '$srcFileName_D'
 "
 
