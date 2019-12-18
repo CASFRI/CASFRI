@@ -205,7 +205,7 @@ PROJ_HEIGHT_CLASS_CD_2 AS D_PROJ_HEIGHT_CLASS_CD_2,
 DATA_SOURCE_HEIGHT_CD AS D_DATA_SOURCE_HEIGHT_CD,
 GEOMETRY_Length AS D_GEOMETRY_Length,
 GEOMETRY_Area AS D_GEOMETRY_Area, 
-'$srcFileName_D' AS D_src_filename,
+'$srcFileName_D' AS D_src_filename
 FROM '$srcFileName_D'
 "
 
