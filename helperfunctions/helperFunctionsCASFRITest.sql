@@ -38,7 +38,7 @@ WITH test_nb AS (
     SELECT 'TT_nbi01_wetland_translation'::text function_tested,             13 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
     SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num, 5 nb_test UNION ALL
-    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 20 nb_test
+    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 22 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -792,6 +792,30 @@ WHERE (((TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR
       )
       AND NOT
        ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0''));' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '16.21'::text number,
+       'TT_CreateFilterView'::text function_tested,
+       'Test with whereOutAttrList attribute only'::text description,
+       TT_CreateFilterView('rawfri', 'ab06', NULL, NULL, 'LYR1', 'not_lyr1') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_not_lyr1 CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_not_lyr1 AS
+SELECT *
+FROM rawfri.ab06
+WHERE NOT
+       ((TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR 
+      (TT_NotEmpty(sp2::text) AND sp2::text != ''0'') OR 
+      (TT_NotEmpty(sp3::text) AND sp3::text != ''0''));' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '16.22'::text number,
+       'TT_CreateFilterView'::text function_tested,
+       'Test with whereOutAttrList attribute only'::text description,
+       TT_CreateFilterView('rawfri', 'ab06', 'site_class, LYR1', NULL, NULL, 'site_class') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_site_class CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_site_class AS
+SELECT tpr, sp1, sp2, sp3
+FROM rawfri.ab06;' passed
 ---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

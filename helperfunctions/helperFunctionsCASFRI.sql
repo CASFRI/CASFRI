@@ -954,7 +954,7 @@ RETURNS text AS $$
       RAISE NOTICE 'ERROR TT_CreateFilterView(): Could not find table ''translation.%''...', tableName;
       RETURN 'ERROR: Could not find table ''translation..' || tableName || '''...';
     END IF;
-    
+
     -- For whereInAttrList only, replace each comma inside two brackets with a special keyword that will be replaced with AND later
     whereInAttrList = regexp_replace(whereInAttrList, '(?<=\[.*\s*)(,)(?=\s*.*\])', ', CASFRI_AND,', 'g');
 
@@ -964,7 +964,7 @@ RETURNS text AS $$
                       WHERE TT_NotEmpty(from_att) AND key != 'inventory_id' AND key != 'layer'
                       GROUP BY key
     LOOP
-       selectAttrList = regexp_replace(lower(selectAttrList), '\m' || mappingRec.key || '\s*(,)?\s*', mappingRec.attrs, 'g');
+       selectAttrList = regexp_replace(lower(selectAttrList), '\m' || mappingRec.key || '\M', mappingRec.attrs, 'g');
     END LOOP;
 
     -- Replace whereInAttrList and whereOutAttrList CASFRI attributes with their mapping attribute. only the 
@@ -973,8 +973,8 @@ RETURNS text AS $$
                       WHERE TT_NotEmpty(from_att) AND contributing AND key != 'inventory_id' AND key != 'layer'
                       GROUP BY key
     LOOP
-       whereInAttrList = regexp_replace(lower(whereInAttrList), mappingRec.key || '\s*(,)?\s*', mappingRec.attrs, 'g');
-       whereOutAttrList = regexp_replace(lower(whereOutAttrList), mappingRec.key || '\s*(,)?\s*', mappingRec.attrs, 'g');
+       whereInAttrList = regexp_replace(lower(whereInAttrList), mappingRec.key || '\M', mappingRec.attrs, 'g');
+       whereOutAttrList = regexp_replace(lower(whereOutAttrList), mappingRec.key || '\M', mappingRec.attrs, 'g');
     END LOOP;
 
      -- Loop through all the possible keywords building the list of attributes from attribute_dependencies and replacing them in the 3 provided lists of attributes
@@ -1015,9 +1015,9 @@ RETURNS text AS $$
       IF strpos(lower(selectAttrList), keyword) != 0 AND attList IS NULL THEN
         RAISE NOTICE 'WARNING TT_CreateFilterView(): No attributes for keyword ''%'' found in table ''%.%''...', keyword, schemaName, tableName;
       END IF;
-      
+
       -- Replace keywords with attributes
-      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*(,)?\s*', CASE WHEN attList != '' THEN attList || '\1, ' ELSE '' END, 'g');
+      selectAttrList = regexp_replace(lower(selectAttrList), keyword || '\s*(,)?\s*', CASE WHEN attList != '' THEN attList || '\1' ELSE '' END, 'g');
       -- Standardise commas and spaces
       selectAttrList = regexp_replace(selectAttrList, '\s*,\s*', ', ', 'g');
 
@@ -1040,7 +1040,7 @@ RETURNS text AS $$
       END IF;
       
       -- Replace keywords with attributes
-      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*(,)?\s*', CASE WHEN attList != '' THEN attList || '\1, ' ELSE '' END, 'g');
+      whereOutAttrList = regexp_replace(lower(whereOutAttrList), keyword || '\s*(,)?\s*', CASE WHEN attList != '' THEN attList || '\1' ELSE '' END, 'g');
       -- Standardise commas and spaces
       whereOutAttrList = regexp_replace(whereOutAttrList, '\s*,\s*', ', ', 'g');
     END LOOP;
@@ -1132,10 +1132,10 @@ RETURNS text AS $$
         queryStr = queryStr || whereInAttrList;
       END IF;
       IF whereInAttrList != '' AND whereOutAttrList != '' THEN
-        queryStr = queryStr || ')' || chr(10) || '      AND NOT' || chr(10) || '       ';
+        queryStr = queryStr || ')' || chr(10) || '      AND ';
       END IF;
       IF whereOutAttrList != '' THEN
-        queryStr = queryStr || '(' || whereOutAttrList || ')';
+        queryStr = queryStr || 'NOT' || chr(10) || '       (' || whereOutAttrList || ')';
       END IF;
     END IF;
     queryStr = queryStr  || ';';
