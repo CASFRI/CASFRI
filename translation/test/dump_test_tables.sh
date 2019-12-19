@@ -9,18 +9,20 @@
 
 source ../../conversion/sh/common.sh
 
+pgversion=${pgversion:=11} 
+
 # ########################################## Process ######################################
 
 # Run ogr2ogr
 
-rm ./data/*.csv
+rm ./data$pgversion/*.csv
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\data\cas_all_test.csv" "$pg_connection_string" "casfri50_test.cas_all_new_ordered"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\data$pgversion\cas_all_test.csv" "$pg_connection_string" "casfri50_test.cas_all_new_ordered"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\data\dst_all_test.csv" "$pg_connection_string" "casfri50_test.dst_all_new_ordered" 
+"$gdalFolder/ogr2ogr" -f "CSV" ".\data$pgversion\dst_all_test.csv" "$pg_connection_string" "casfri50_test.dst_all_new_ordered" 
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\data\eco_all_test.csv" "$pg_connection_string" "casfri50_test.eco_all_new_ordered" 
+"$gdalFolder/ogr2ogr" -f "CSV" ".\data$pgversion\eco_all_test.csv" "$pg_connection_string" "casfri50_test.eco_all_new_ordered" 
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\data\lyr_all_test.csv" "$pg_connection_string" "casfri50_test.lyr_all_new_ordered" 
+"$gdalFolder/ogr2ogr" -f "CSV" ".\data$pgversion\lyr_all_test.csv" "$pg_connection_string" "casfri50_test.lyr_all_new_ordered" 
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\data\nfl_all_test.csv" "$pg_connection_string" "casfri50_test.nfl_all_new_ordered" 
+"$gdalFolder/ogr2ogr" -f "CSV" ".\data$pgversion\nfl_all_test.csv" "$pg_connection_string" "casfri50_test.nfl_all_new_ordered" 
