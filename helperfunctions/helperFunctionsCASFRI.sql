@@ -463,7 +463,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_ArrayDistinct
 -------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean);
+--DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_ArrayDistinct(
   anyarray, 
   purgeNulls boolean DEFAULT FALSE, 
@@ -512,7 +512,9 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- TT_CountEstimate
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_CountEstimate(text);
-CREATE OR REPLACE FUNCTION TT_CountEstimate(query text)
+CREATE OR REPLACE FUNCTION TT_CountEstimate(
+  query text
+)
 RETURNS integer AS $$
   DECLARE
     rec record;

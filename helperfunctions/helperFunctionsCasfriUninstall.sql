@@ -59,5 +59,7 @@ DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, int, te
 DROP FUNCTION IF EXISTS TT_CreateFilterView(text, text, text, text, text, text); 
 DROP FUNCTION IF EXISTS TT_CreateMapping(text, text, int, text, int);
 DROP FUNCTION IF EXISTS TT_DeleteAllViews(text);
+DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean, boolean);
+DROP FUNCTION IF EXISTS TT_CountEstimate(text);
 
 
