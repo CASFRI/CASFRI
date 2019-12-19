@@ -6,6 +6,7 @@ pghost=localhost
 pgdbname=cas
 pguser=postgres
 pgpassword=postgres
+pgversion=11
 
 targetFRISchema=rawfri
 targetTranslationFileSchema=translation
