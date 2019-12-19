@@ -745,9 +745,9 @@ RETURNS text AS $$
           GROUP BY groupid
           ORDER BY groupid) foo
     INTO attributeMapStr;
-    
+
     -- Determine max_layer_number and add it to the list of attributes
-    maxLayerNb = CASE WHEN rowsubset != 'nfl' THEN fromLayer ELSE fromLayer + 2 END;
+    maxLayerNb = CASE WHEN rowSubset IS NULL OR rowSubset != 'nfl' THEN fromLayer ELSE fromLayer + 2 END;
     attributeMapStr = attributeMapStr || ', ' || maxLayerNb || ' max_layer_number';
     
     -- Build the WHERE string
