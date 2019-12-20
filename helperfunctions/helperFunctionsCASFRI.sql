@@ -463,7 +463,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_ArrayDistinct
 -------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean);
+--DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_ArrayDistinct(
   anyarray, 
   purgeNulls boolean DEFAULT FALSE, 
@@ -512,7 +512,9 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- TT_CountEstimate
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_CountEstimate(text);
-CREATE OR REPLACE FUNCTION TT_CountEstimate(query text)
+CREATE OR REPLACE FUNCTION TT_CountEstimate(
+  query text
+)
 RETURNS integer AS $$
   DECLARE
     rec record;
@@ -618,6 +620,7 @@ RETURNS text AS $$
     validRowSubset boolean = FALSE;
     attListViewName text = '';
     rowSubsetKeywords text[] = ARRAY['lyr', 'lyr2', 'nfl', 'dst', 'eco'];
+    maxLayerNb int = 0;
   BEGIN
     -- Check if table 'attribute_dependencies' exists
     IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
@@ -744,6 +747,10 @@ RETURNS text AS $$
           GROUP BY groupid
           ORDER BY groupid) foo
     INTO attributeMapStr;
+
+    -- Determine max_layer_number and add it to the list of attributes
+    maxLayerNb = CASE WHEN rowSubset IS NULL OR rowSubset != 'nfl' THEN fromLayer ELSE fromLayer + 2 END;
+    attributeMapStr = attributeMapStr || ', ' || maxLayerNb || ' max_layer_number';
     
     -- Build the WHERE string
     IF validRowSubset AND NOT attributeList THEN
