@@ -564,6 +564,8 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration. |  M |
 | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water. | W |
 | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water. | A |
+| Not member of set | NOT_IN_SET |
+| Null value | NULL_VALUE |
 
 
 
