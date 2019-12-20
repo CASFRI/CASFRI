@@ -1166,6 +1166,104 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_StackTranslationRules 
+-- 
+-- List all target_attribute rules vertically for easy comparison for the provided
+-- translation tables or for the 'cas', 'lyr', 'nfl', 'dst', 'eco' or 'geo' keywords.
+--
+-- e.g.
+-- SELECT * FROM TT_StackTranslationRules('translation', 'ab06_avi01_nfl, ab16_avi01_nfl');
+--
+-- SELECT * FROM TT_StackTranslationRules('nfl');
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_StackTranslationRules(text, text);
+CREATE OR REPLACE FUNCTION TT_StackTranslationRules(
+  schemaName text,
+  transTableList text DEFAULT NULL
+)
+RETURNS TABLE (ttable text,
+               rule_id int,
+               target_attribute text, 
+               target_attribute_type text, 
+               validation_rules text,
+               translation_rules text
+) AS $$
+  DECLARE
+    query text = '';
+    attrPart text = '';
+    wherePart text = 'WHERE ';
+    attributeArr text[];
+    attributeArrOld text[];
+    tTableArr text[];
+    tTable text;
+    attr text;
+    nb int = 1;
+    nb2 int = 1;
+  BEGIN
+    IF transTableList IS NULL AND lower(schemaName) IN ('cas', 'lyr', 'nfl', 'dst', 'eco', 'geo') THEN
+      transTableList = 'ab06_avi01_' || schemaName || ', ' || 
+                       'ab16_avi01_' || schemaName || ', ' || 
+                       'fvi01_' || schemaName || ', ' || 
+                       'nbi01_' || schemaName || ', ' || 
+                       'vri01_' || schemaName;
+      schemaName = 'translation';
+                       
+    END IF;
+    
+    -- Parse the list of translation tables
+    tTableArr = regexp_split_to_array(transTableList, '\s*,\s*');
+
+    nb = 1;
+    query = 'SELECT ttable, rule_id, target_attribute, target_attribute_type, validation_rules, translation_rules FROM (' || chr(10);
+    FOREACH tTable IN ARRAY tTableArr LOOP
+      IF NOT TT_TableExists(schemaName, tTable) THEN
+        RAISE EXCEPTION 'TT_StackTranslationRules() ERROR: Table ''%.%'' does not exist...', schemaName, tTable;
+      END IF;
+      
+      -- Build a list of all target attributes for this table
+      EXECUTE 'SELECT array_agg(target_attribute)' ||
+              ' FROM ' || TT_FullTableName(schemaName, tTable) 
+      INTO attributeArr;
+      IF nb > 1 AND attributeArr != attributeArrOld THEN
+        RAISE EXCEPTION 'TT_StackTranslationRules() ERROR: Table ''%.%'' does not have the same target attributes as the previous table in the list...', schemaName, tTable;
+      END IF;
+      attributeArrOld = attributeArr;
+      
+      IF nb = 1 THEN
+        -- Create the attribute part of the query which will be repeated for each translation table
+        nb2 = 1;
+        FOREACH attr IN ARRAY attributeArr LOOP
+          wherePart = wherePart || 'target_attribute = ''' || attr || '''';
+          IF nb2 < cardinality(attributeArr) THEN
+            wherePart = wherePart || ' OR ';
+          END IF;
+          nb2 = nb2 + 1;
+        END LOOP;
+      END IF;
+
+      IF nb > 1 THEN
+        query = query || 'UNION ALL' || chr(10);
+      END IF;
+      query = query || 'SELECT ' || nb || ' nb, ''' || tTable || ''' ttable,' || chr(10) ||
+                       '        rule_id::int,' || chr(10) ||
+                       '        target_attribute::text,' || chr(10) ||
+                       '        target_attribute_type::text,' || chr(10) ||
+                       '        validation_rules::text,' || chr(10) ||
+                       '        translation_rules::text' || chr(10) ||
+                       'FROM ' || TT_FullTableName(schemaName, tTable) || chr(10) ||
+                       wherePart;
+      IF nb < cardinality(tTableArr) THEN
+        query = query || chr(10);
+      END IF;
+      nb = nb + 1;
+    END LOOP;
+    query = query  || chr(10) || ') foo' || chr(10) || 'ORDER BY rule_id, nb;';
+    RETURN QUERY EXECUTE query;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- Overwrite the TT_DefaultProjectErrorCode() function to define default error 
 -- codes for these helper functions...
 -------------------------------------------------------------------------------
