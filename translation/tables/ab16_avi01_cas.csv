@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,"notNull(forest_id_2);isInt(forest_id_2);isGreaterThan(forest_id_2,0)",copyText(forest_id_2),Copies source value to ORIG_STAND_ID,TRUE
 4,STAND_STRUCTURE,text,"notNull(std_struct);notEmpty(std_struct);matchList(std_struct,{' 0',0,'C4','C5','M','M0','MO'})","mapText(std_struct, {' 0',0,'C4','C5','M','M0','MO'}, {'-9999','-9999',4,5,'-9999','-9999','-9999'})",Copies source value to STAND_STRUCTURE,TRUE
-5,NUM_OF_LAYERS,integer,true(),copyInt(1),Copies value 1 to NUM_OF_LAYERS,TRUE
+5,NUM_OF_LAYERS,integer,true(),"NumberOfNotNull({sp1}, {us_sp1}, {nat_nonveg, anth_noveg, anthro_veg, nonfor_veg}, {us_natnveg, us_annoveg, us_anthveg, nonforvegu}, 4)","Counts number of layers based on the presence of a not null value for attributes representing each layer. Assumes valid LYR1 row must have sp1, LYR2 must have us_sp1, NFL1 must have nat_nonveg or anth_noveg or anthro_veg or nonfor_veg, NFL2 must have us_natnveg or us_annoveg or us_anthveg or nonforvegu",TRUE
 6,MAP_SHEET_ID,text,notNull(src_filename),copyText(src_filename),Copies source value to MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
