@@ -54,9 +54,9 @@ SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 600);
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_nb01_cas_test('rawfri', 'nb02_l1_to_nb_l1_map_600');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1000);
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 1000);
 INSERT INTO casfri50_test.cas_all_new 
-SELECT * FROM TT_Translate_bc08_cas_test('rawfri', 'bc08_min_1000');
+SELECT * FROM TT_Translate_bc08_cas_test('rawfri', 'bc08_l1_to_bc_l1_map_1000');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500);
 INSERT INTO casfri50_test.cas_all_new 
@@ -98,9 +98,9 @@ SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 600, 'DST');
 INSERT INTO casfri50_test.dst_all_new
 SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb02_l1_to_nb_l1_map_600_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1000, 'DST');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 1000, 'DST');
 INSERT INTO casfri50_test.dst_all_new
-SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc08_min_1000_dst');
+SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc08_l1_to_bc_l1_map_1000_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, 'DST');
 INSERT INTO casfri50_test.dst_all_new
@@ -142,9 +142,9 @@ SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 600, 'ECO');
 INSERT INTO casfri50_test.eco_all_new
 SELECT * FROM TT_Translate_nb01_eco_test('rawfri', 'nb02_l1_to_nb_l1_map_600_eco');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1000, 'ECO');
+SELECT TT_CreateMappingView('rawfri', 'bc08','bc', 1000, 'ECO');
 INSERT INTO casfri50_test.eco_all_new
-SELECT * FROM TT_Translate_bc08_eco_test('rawfri', 'bc08_min_1000_eco');
+SELECT * FROM TT_Translate_bc08_eco_test('rawfri', 'bc08_l1_to_bc_l1_map_1000_eco');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, 'ECO');
 INSERT INTO casfri50_test.eco_all_new
@@ -198,9 +198,9 @@ SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb', 1, 600, 'LYR');
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_nb01_lyr_test('rawfri', 'nb02_l2_to_nb_l1_map_600_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1000, 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 1000, 'LYR');
 INSERT INTO casfri50_test.lyr_all_new
-SELECT * FROM TT_Translate_bc08_lyr_test('rawfri', 'bc08_min_1000_lyr');
+SELECT * FROM TT_Translate_bc08_lyr_test('rawfri', 'bc08_l1_to_bc_l1_map_1000_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, 'LYR');
 INSERT INTO casfri50_test.lyr_all_new
@@ -254,9 +254,9 @@ SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 600, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_nb01_nfl_test('rawfri', 'nb02_l1_to_nb_l1_map_600_nfl');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1000, 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 1000, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
-SELECT * FROM TT_Translate_bc08_nfl_test('rawfri', 'bc08_min_1000_nfl');
+SELECT * FROM TT_Translate_bc08_nfl_test('rawfri', 'bc08_l1_to_bc_l1_map_1000_nfl');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
