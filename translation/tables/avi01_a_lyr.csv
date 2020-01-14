@@ -2,7 +2,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(trm_1);notNull(poly_num);notNull(ogc_fid),"padConcat({inventory_id, src_filename, trm_1, poly_num, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(moist_reg);matchList(moist_reg,{'a','A','d','D','m','M','w','W'})","mapText(moist_reg, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Maps source value to SOIL_MOIST_REG using lists of values,TRUE
 3,STRUCTURE_PER,integer,"notNull(struc_val);isInt(struc_val);isBetween(struc_val,1,9)",copyInt(struc_val),Copy source value to STRUCTURE_PER,TRUE
-4,LAYER,integer,true(),copyInt(layer),Copy value of 1 to LAYER,TRUE
+4,LAYER,integer,true(),"NumberOfNotNull({dummy1}, {dummy2}, {dummy3, dummy4, dummy5, dummy6}, {dummy7, dummy8, dummy9, dummy10}, max_layer_number)",Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Dummy variables are used here and in attribute_dependencies.csv to avoid two sets of values (sp1 and usp1) being mapped to the same column (sp1),TRUE
 5,LAYER_RANK,integer,true(),copyInt(layer_rank),Copy value of 1 to LAYER_RANK,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(density);matchList(density,{'A','B','C','D'})","mapInt(density, {'A','B','C','D'}, {30,50,70,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(density);matchList(density,{'A','B','C','D'})","mapInt(density, {'A','B','C','D'}, {6,31,51,71})",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
