@@ -120,8 +120,8 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200, 'LYR');
 SELECT * FROM TT_Translate_bc08_lyr_devel('rawfri', 'bc08_l1_to_bc_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200, 'bclcs_level_4,land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1', 'bc08_nfl');
-SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l1_to_bc_l1_map_200_bc08_nfl', 'ogc_fid'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200, 'NFL');
+SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l1_to_bc_l1_map_200_nfl', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_nfl_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'bc08', 200);

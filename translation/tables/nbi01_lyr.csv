@@ -2,7 +2,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,false(),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,false(),nothingInt(),Copies NULL integer code to STRUCTURE_PER,TRUE
-4,LAYER,integer,true(),copyInt(layer),Copies 1 to LAYER,TRUE
+4,LAYER,integer,true(),"NumberOfNotNull({l1s1, l1s2, l1s3, l1s4, l1s5}, {l2s1, l2s2, l2s3, l2s4, l2s5}, {slu}, max_layer_number)",Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. ,TRUE
 5,LAYER_RANK,integer,true(),copyInt(layer_rank),Copies 1 to LAYER_ID,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(l1cc);isNumeric(l1cc);matchList(l1cc,{1,2,3,4,5})","mapInt(l1cc, {1,2,3,4,5}, {30,50,70,90,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(l1cc);isNumeric(l1cc);matchList(l1cc,{1,2,3,4,5})","mapInt(l1cc, {1,2,3,4,5}, {10,31,51,71,91})",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
