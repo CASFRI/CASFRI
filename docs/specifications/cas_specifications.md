@@ -524,7 +524,7 @@ The attribute **structure_range** is assigned when a complex structured polygon 
 | structure_range                                              | values |
 | :----------------------------------------------------------- | :----- |
 | When **stand_structure** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as the difference between the mean or median heights of the upper and lower layers within the complex stand. | 1 - 99 |
-| When **stand_structure** = "S", "M", or "H", value = 0       | 0      |
+| When **stand_structure** = "S", "M", or "H", value = -8887 i.e., not applicable | -8887  |
 
 Notes:
 
