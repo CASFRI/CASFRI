@@ -237,7 +237,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab', 400, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab16_l1_to_ab_l1_map_400_nfl');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab_b', 1, 400, 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab', 1, 400, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_ab06_nfl_test('rawfri', 'ab16_l2_to_ab_l1_map_400_nfl');
 ------------------------
