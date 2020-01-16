@@ -1,11 +1,11 @@
-
+  1 - 99  When **stand_structure** = "S", "M", or "H", value = 0.
 
 
 # COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA  
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
-Revised by: The CASFRI Project Team, December 2019
+Revised by: The CASFRI Project Team, January 2020
 
   
 
@@ -505,13 +505,13 @@ The attribute **structure_per** is assigned when a horizontal structured polygon
 
 | structure_per                                                | values  |
 | :----------------------------------------------------------- | :------ |
-| Used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. Value = 100 when no horizontal structure. | 1 - 100 |
+| When **stand_structure** = "H", used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 100 |
+| When **stand_structure** = "S", "M", "C", value = 100 i.e., when there is no horizontal structure. | 100     |
 
 Notes:
 
-- Only occurs when **stand_structure** = "H"
-- When **stand_structure** != "H", then **structure_per** = 100
-- Applies to the following inventories: AB, NB, NT
+- Applies to the following inventories: AB, NB, NT?
+- How many horizontal strata can there be per polygon? The above seems contradictory.
 - How does this attribute differ for non-forested (NFL) polygons?
 - See issue: https://github.com/edwardsmarc/CASFRI/issues/178 
 
@@ -519,15 +519,15 @@ Notes:
 
 ### structure_range
 
-The attribute **structure_range** is assigned when a complex structured polygon is identified. It is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
+The attribute **structure_range** is assigned when a complex structured polygon is identified. It is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.
 
 | structure_range                                              | values |
 | :----------------------------------------------------------- | :----- |
-| Measures the height range (m) around the midpoint height of the stand. It is calculated as the difference between the mean or median heights of the upper and lower layers within the complex stand. | 1 - 9  |
+| When **stand_structure** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as the difference between the mean or median heights of the upper and lower layers within the complex stand. | 1 - 99 |
+| When **stand_structure** = "S", "M", or "H", value = 0       | 0      |
 
 Notes:
 
-- Only occurs when **stand_structure** = "C"
 - Applies to the following inventories: AB, NB, NT, (Wood Buffalo?)
 - How does this attribute differ for non-forested (NFL) polygons?
 
