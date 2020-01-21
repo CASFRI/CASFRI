@@ -119,7 +119,30 @@ Some translations require dependency tables. Examples are species lookup tables 
 * In an operating system command window, load the necessary inventories by executing the proper conversion scripts located in either the .bat or .sh conversion folder.
 * After running each conversion/loading script, the source FRI tables will be added to the PostgreSQL schema specified in the config file ("rawfri" by default).
 
-Conversion and loading scripts are written so that FRIs to convert and load must be stored in a specific folder hierarchy. TO BE PROPERLY EXPLAINED AFTER FIX FOR [ISSUE #40](https://github.com/edwardsmarc/CASFRI/issues/40).
+Conversion and loading scripts are written so that FRIs to convert and load must be stored in a specific folder hierarchy:
+
+FRI/  
+├─AB/  
+│ ├─AB06/  
+│ │ ├─data/  
+│ │ │ ├─archive/  
+│ │ │ ├─coverage/  
+│ │ │ ├─inventory/  
+│ │ │ └─photoyear/  
+│ │ ├─doc/  
+│ │ │ ├─archive/  
+│ │ │ ├─emailexchange/  
+│ │ │ ├─manual/  
+│ │ │ │ ├─others/  
+│ │ │ └─map/  
+│ │ ├─license/  
+│ │ └─toclassify/  
+│ └─AB16/  
+│ │ ├─data/  
+│ │ ├─doc/  
+│ │ ├─.../  
+├─BC/  
+│ ├─.../  
 
 ### Loading Translation Tables
 * Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
@@ -129,7 +152,45 @@ Conversion and loading scripts are written so that FRIs to convert and load must
 ### Translating
 * Validate dependency tables using the loaded validation tables.
 * Run the translation engine for each FRI using the loaded source FRI table and the translation table.
+
+#### Workflow scripts
 * Refer to the files located in the CASFRI/workflow folder for an example of how to run the translation engine. 
+* The workflow scripts combine three elements:
+
+**1. Generic translation tables.**
+If multiple datasets using the same standard have similar structures and translation rules, we can use the same generic translation table to translate them. We create VIEWs that map the source data to the attribute names used in the generic translation table. We can then run the translation using the VIEW and the generic translation table.
+
+**2. Attribute dependency table.**
+This table defines the mapping of attributes from the source table to the attributes used in the generic translation table. For a given standard, the table will contain a row for the generic translation attribute names, and rows for each translation that needs to be completed using a source inventory. If there are multiple layers to be translated for a dataset, it will have multiple rows for the inventory. The table has the following columns:
+* inventory_id - either a name representing the generic translation table or a name matching a source inventory dataset
+* layer - a unique integer value within a given inventory used in TT_CreateMappingView().
+* ttable_exists - indicates if the row values represent a translation table.
+
+All other columns represent target attributes in the CASFRI. The values in each cell list the attributes used in the translation to the target attribute. In the case of the generic rows, these must match the attributes used in the generic translation table. In the case of rows representing source datasets, the values represent source attributes.
+
+**3. TT_CreateMappingView().**
+The function TT_CreateMappingView() is used to create the VIEWs used in the translation by mapping the attributes defined in the attribute dependencies table from the source names to the generic translation table names. It has the following arguments:
+* schema name: what schema is the source data in
+*	from table name (optional): inventory_id of source data row in attribute dependencies table
+*	from layer (optional, default 1): matches the layer value in the attribute dependencies table
+*	to table: inventory_id of generic row in attribute dependencies table
+*	to layer (optional, default 1): matches the layer value in the attribute dependencies table
+*	number of rows (optional): number of random rows to select
+*	row subset (optional): subset by rows that have data for this table type ('LYR', 'LYR2', 'NFL', 'DST', 'ECO')
+
+The function creates a view with a name based on the input arguments:
+If only the 'from' table is provided, a VIEW with a minimal set of attributes and no mappings is created. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 200);` creates a view named **bc08_min_200**.
+
+If both a 'from' and a 'to' table are provided, the source data is mapped to the generic row, defaulting to use layer 1. For exampe `SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200);` creates a view name **bc08_l1_to_bc_l1_map**.
+
+If 'layer' integers are provided, the row corresponding to the provided layer number will be used for the mapping. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1);` creates a view name **bc08_l2_to_bc_l1_map**.
+
+If the number of rows are provided, the view name is ended with the number of rows randomly selected. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, 200);` creates a view name **bc08_l2_to_bc_l1_map_200**.
+
+If the 'row subset' argument is used, the rows with data for the provided subset are selected and the subset name is added to the view name. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, 200, 'LYR');` creates a view name **bc08_l2_to_bc_l1_map_200_lyr**.
+
+The following diagram illustrates the relationship between the generic translation table, the attribute dependencies table, and TT_CreateMappingView() using a simple attribute - SPECIES_1_PER. The translation rule is a simple copy, but the attribute has a different name in BC08 and BC10. Views are used to map from the source attribute names to the name used in the generic BC translation table.
+![Workflow diagram](workflow_diagram.jpg)
 
 # Credits
 **Steve Cumming**, Center for forest research, University Laval.
