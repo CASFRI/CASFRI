@@ -33,7 +33,6 @@ WITH test_nb AS (
     SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,         8 maj_num, 2 nb_test UNION ALL
     SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,         9 maj_num, 9 nb_test UNION ALL
     SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,     10 maj_num, 5 nb_test UNION ALL
-    SELECT 'TT_nbi01_num_of_layers_translation'::text function_tested,       11 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_wetland_validation'::text function_tested,              12 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_wetland_translation'::text function_tested,             13 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
@@ -298,32 +297,6 @@ SELECT '10.5'::text number,
        'TT_nbi01_stand_structure_translation'::text function_tested,
        'Complex layer'::text description,
        TT_nbi01_stand_structure_translation('geonb_forest-foret'::text, '2'::text, '2'::text) = 'C' passed
----------------------------------------------------------
--- TT_nbi01_num_of_layers
----------------------------------------------------------
-UNION ALL
-SELECT '11.1'::text number,
-       'TT_nbi01_num_of_layers_translation'::text function_tested,
-       'Wrong source dataset'::text description,
-       TT_nbi01_num_of_layers_translation('Wetland'::text, '0'::text, '0'::text) IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '11.2'::text number,
-       'TT_nbi01_num_of_layers_translation'::text function_tested,
-       '1 layer, S'::text description,
-       TT_nbi01_num_of_layers_translation('Forest'::text, '0'::text, '0'::text) = 1 passed
----------------------------------------------------------
-UNION ALL
-SELECT '11.3'::text number,
-       'TT_nbi01_num_of_layers_translation'::text function_tested,
-       '2 layer, M'::text description,
-       TT_nbi01_num_of_layers_translation('Forest'::text, '1'::text, '1'::text) = 2 passed
----------------------------------------------------------
-UNION ALL
-SELECT '11.4'::text number,
-       'TT_nbi01_num_of_layers_translation'::text function_tested,
-       '2 layer, C'::text description,
-       TT_nbi01_num_of_layers_translation('Forest'::text, '2'::text, '2'::text) = 2 passed
 ---------------------------------------------------------
   -- TT_nbi01_wetland_validation
 ---------------------------------------------------------

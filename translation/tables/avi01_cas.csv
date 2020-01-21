@@ -2,9 +2,9 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(trm_1);notNull(poly_num);notNull(ogc_fid),"padConcat({inventory_id, src_filename, trm_1, poly_num, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,"notNull(poly_num);isInt(poly_num);isGreaterThan(poly_num,0)",copyText(poly_num),Copies source value to ORIG_STAND_ID,TRUE
-4,STAND_STRUCTURE,text,"notNull(struc);notEmpty(struc);matchList(struc,{'C','H','M'})",copyText(struc),Copies source value to STAND_STRUCTURE,TRUE
-5,NUM_OF_LAYERS,integer,true(),copyInt(1),Copies value 1 to NUM_OF_LAYERS,TRUE
-6,MAP_SHEET_ID,text,notNull(trm);isInt(trm),copyText(trm),Copies source value to MAP_SHEET_ID,TRUE
+4,STAND_STRUCTURE,text,"notNull(struc);matchList(struc,{' ','C','H','M',' 0',0,'C4','C5','M','M0','MO'})","mapText(struc, {' ','C','H','M',' 0',0,'C4','C5','M','M0','MO'}, {'S','C','H','M','S','S','C','C','M','M','M'})","For ab06, just copies the value over (C, H, M). All other rows in ab06 are a single space, indicating no value. Assign these to S. For AB16, assigns a value based on the structure-percent combo. Anything without a code in the AVI defaults to single storey.",TRUE
+5,NUM_OF_LAYERS,integer,true(),"NumberOfNotNull({dummy1}, {dummy2}, {dummy3, dummy4, dummy5, dummy6}, {dummy7, dummy8, dummy9, dummy10}, 4)","Counts number of layers based on the presence of a not null value for attributes representing each layer. Assumes valid LYR1 row must have sp1, LYR2 must have usp1, NFL1 must have nfl or anth_veg or anth_non or nat_non, NFL2 must have unfl or uanth_veg or uanth_non or unat_non. See attribute dependencies table for mappings.",TRUE
+6,MAP_SHEET_ID,text,notNull(trm),copyText(trm),Copies source value to MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,"notNull(shape_area);isNumeric(shape_area);isGreaterThan(shape_area,0)",copyDouble(shape_area),Copies source value to SRC_INV_AREA,TRUE

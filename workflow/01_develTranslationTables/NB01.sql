@@ -135,8 +135,8 @@ SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1, 200, 'lyr');
 SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb01_l2_to_nb_l1_map_200_lyr', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nb01', 200, 'nfl');
-SELECT * FROM TT_Translate_nb01_nfl_devel('rawfri', 'nb01_min_200_nfl', 'ogc_fid'); -- 3 s.
+SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 200, 'nfl');
+SELECT * FROM TT_Translate_nb01_nfl_devel('rawfri', 'nb01_l1_to_nb_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_nfl_devel');
 
 SELECT * FROM TT_Translate_nb01_geo_devel('rawfri', 'nb01_min_200', 'ogc_fid'); -- 2 s.

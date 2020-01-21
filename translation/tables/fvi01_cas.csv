@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,"notNull(fc_id_1);isInt(fc_id_1);isGreaterThan(fc_id_1,0)",copyText(fc_id_1),Copies source value to ORIG_STAND_ID,TRUE
 4,STAND_STRUCTURE,text,"notNull(structur);notEmpty(structur);matchList(structur,{'C','H','M','S'})",copyText(structur),Copies source value to STAND_STRUCTURE,TRUE
-5,NUM_OF_LAYERS,integer,false(),nothingInt(),Copies value 1 to NUM_OF_LAYERS,TRUE
+5,NUM_OF_LAYERS,integer,true(),"NumberOfNotNull({dummy1, dummy2, dummy3, dummy4}, {dummy5, dummy6, dummy7, dummy8}, {dummy9}, {dummy10}, 4)","Counts number of layers based on the presence of a not null value for attributes representing each layer. Assumes LYR1 must have sp1 or sp2 or sp3 or sp4 attribute and LYR2 must have minsp1 or minsp2 or minsp3 or minsp4 attribute. Species values are not hierarchical so you can have sp2 with no sp1. Assumes valid NFL1 must have typeclas, NFL2 must have mintypecla. See attribute dependencies table for mappings.",TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Copies source value to MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
