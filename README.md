@@ -146,6 +146,7 @@ FRI/
 
 ### Loading Translation Tables
 * Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
+* Open a query window in pgAdmin and run the drop_tables.sql script to remove all existing tables.
 * In an operating system command window, load the translation files by executing the load_tables (.bat or .sh) script located in the translation folder. 
 * The script will load all translation tables and validation tables stored in the "translation/tables" folder and subfolder into the specified schema ("translation" by default).
 
