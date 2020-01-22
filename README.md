@@ -177,7 +177,7 @@ The function TT_CreateMappingView() is used to create the VIEWs used in the tran
 *	to table: inventory_id of generic row in attribute dependencies table
 *	to layer (optional, default 1): matches the layer value in the attribute dependencies table
 *	number of rows (optional): number of random rows to select
-*	row subset (optional): subset by rows that have data for this table type ('LYR', 'LYR2', 'NFL', 'DST', 'ECO')
+*	row subset (optional): subset by rows that have data for this table type ('LYR', 'NFL', 'DST', 'ECO')
 
 The function creates a view with a name based on the input arguments:
 If only the 'from' table is provided, a VIEW with a minimal set of attributes and no mappings is created. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 200);` creates a view named **bc08_min_200**.
