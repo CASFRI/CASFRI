@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,SOIL_MOIST_REG,text,"notNull(moisture);matchList(moisture,{'vx','x','sx','sm','m','sg','hg','sd','hd'})","mapText(moisture, {'vx','x','sx','sm','m','sg','hg','sd','hd'}, {'D','D','D','F','F','M','M','W','W'})",Maps source value to SOIL_moisture using lists of values,TRUE
 3,STRUCTURE_PER,integer,"notNull(strc_per);isInt(strc_per);isBetween(strc_per,1,9)",copyInt(strc_per),Copy source value to STRUCTURE_PER,TRUE
 4,LAYER,integer,true(),"NumberOfNotNull({dummy1, dummy2, dummy3, dummy4}, {dummy5, dummy6, dummy7, dummy8}, {dummy9}, {dummy10}, max_layer_number)",Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Dummy variables are used here and in attribute_dependencies.csv to avoid two sets of values (sp1 and minsp1) being mapped to the same column (sp1),TRUE
-5,LAYER_RANK,integer,true(),copyInt(layer_rank),Copy value of 1 to LAYER_RANK,TRUE
+5,LAYER_RANK,integer,false(|-8887),nothingInt(),No rank attribute,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(crownclos);isInt(crownclos);isBetween(crownclos,0,100)",copyInt(crownclos),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(crownclos);isInt(crownclos);isBetween(crownclos,0,100)",copyInt(crownclos),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(height);isNumeric(height);isGreaterThan(height,1);isLessThan(height,100)",copyDouble(height),Copies source value to HEIGHT_UPPER,TRUE
