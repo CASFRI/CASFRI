@@ -46,76 +46,76 @@ SELECT * FROM rawfri.qc03_min_200_test;
 CREATE SCHEMA IF NOT EXISTS translation_test;
 -------------------------------------------------------
 -- Display translation tables
-SELECT * FROM translation.tie03_cas; 
-SELECT * FROM translation.tie03_dst; 
-SELECT * FROM translation.tie03_eco; 
-SELECT * FROM translation.tie03_lyr; 
-SELECT * FROM translation.tie03_nfl;
-SELECT * FROM translation.tie03_geo;
+SELECT * FROM translation.qc03_cas; 
+SELECT * FROM translation.qc03_dst; 
+SELECT * FROM translation.qc03_eco; 
+SELECT * FROM translation.qc03_lyr; 
+SELECT * FROM translation.qc03_nfl;
+SELECT * FROM translation.qc03_geo;
 ----------------------------
 -- Create subsets of translation tables if necessary
 ----------------------------
 -- cas
-DROP TABLE IF EXISTS translation_test.qc03_tie03_cas_test;
-CREATE TABLE translation_test.qc03_tie03_cas_test AS
-SELECT * FROM translation.tie03_cas
+DROP TABLE IF EXISTS translation_test.qc03_cas_test;
+CREATE TABLE translation_test.qc03_cas_test AS
+SELECT * FROM translation.qc03_cas
 --WHERE rule_id::int < 1
 ;
 -- display
-SELECT * FROM translation_test.qc03_tie03_cas_test;
+SELECT * FROM translation_test.qc03_cas_test;
 ----------------------------
 -- dst
-DROP TABLE IF EXISTS translation_test.qc03_tie03_dst_test;
-CREATE TABLE translation_test.qc03_tie03_dst_test AS
-SELECT * FROM translation.tie03_dst
+DROP TABLE IF EXISTS translation_test.qc03_dst_test;
+CREATE TABLE translation_test.qc03_dst_test AS
+SELECT * FROM translation.qc03_dst
 --WHERE rule_id::int = 1
 ;
 -- display
-SELECT * FROM translation_test.qc03_tie03_dst_test;
+SELECT * FROM translation_test.qc03_qc03_dst_test;
 ----------------------------
 -- eco
-DROP TABLE IF EXISTS translation_test.qc03_tie03_eco_test;
-CREATE TABLE translation_test.qc03_tie03_eco_test AS
-SELECT * FROM translation.tie03_eco
+DROP TABLE IF EXISTS translation_test.qc03_eco_test;
+CREATE TABLE translation_test.qc03_eco_test AS
+SELECT * FROM translation.qc03_eco
 --WHERE rule_id::int = 1
 ;
 -- display
-SELECT * FROM translation_test.qc03_tie03_eco_test;
+SELECT * FROM translation_test.qc03_eco_test;
 ----------------------------
 -- lyr
-DROP TABLE IF EXISTS translation_test.qc03_tie03_lyr_test;
-CREATE TABLE translation_test.qc03_tie03_lyr_test AS
-SELECT * FROM translation.tie03_lyr
+DROP TABLE IF EXISTS translation_test.qc03_lyr_test;
+CREATE TABLE translation_test.qc03_lyr_test AS
+SELECT * FROM translation.qc03_lyr
 --WHERE rule_id::int = 1
 ;
 -- display
-SELECT * FROM translation_test.qc03_tie03_lyr_test;
+SELECT * FROM translation_test.qc03_qc03_lyr_test;
 ----------------------------
 -- nfl
-DROP TABLE IF EXISTS translation_test.qc03_tie03_nfl_test;
-CREATE TABLE translation_test.qc03_tie03_nfl_test AS
-SELECT * FROM translation.tie03_nfl
+DROP TABLE IF EXISTS translation_test.qc03_nfl_test;
+CREATE TABLE translation_test.qc03_nfl_test AS
+SELECT * FROM translation.qc03_nfl
 --WHERE rule_id::int = 1
 ;
 -- display
-SELECT * FROM translation_test.qc03_tie03_nfl_test;
+SELECT * FROM translation_test.qc03_nfl_test;
 ----------------------------
 -- geo
-DROP TABLE IF EXISTS translation_test.qc03_tie03_geo_test;
-CREATE TABLE translation_test.qc03_tie03_geo_test AS
-SELECT * FROM translation.tie03_geo
+DROP TABLE IF EXISTS translation_test.qc03_geo_test;
+CREATE TABLE translation_test.qc03_geo_test AS
+SELECT * FROM translation.qc03_geo
 --WHERE rule_id::int = 2
 ;
 -- display
-SELECT * FROM translation_test.qc03_tie03_geo_test;
+SELECT * FROM translation_test.qc03_geo_test;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Validate the NT species dependency tables
+-- Validate the QC species dependency tables
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'nt_tie03_species_validation', '_nt_species_val');
-SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_tie03_species');
+SELECT TT_Prepare('translation', 'qc_qc03_species_validation', '_qc_species_val');
+SELECT * FROM TT_Translate_qc_species_val('translation', 'qc_qc03_species');
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
@@ -123,12 +123,12 @@ SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_tie03_species');
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Create translation functions
-SELECT TT_Prepare('translation_test', 'qc03_tie03_cas_test', '_qc03_cas_test');
-SELECT TT_Prepare('translation_test', 'qc03_tie03_dst_test', '_qc03_dst_test');
-SELECT TT_Prepare('translation_test', 'qc03_tie03_eco_test', '_qc03_eco_test');
-SELECT TT_Prepare('translation_test', 'qc03_tie03_lyr_test', '_qc03_lyr_test');
-SELECT TT_Prepare('translation_test', 'qc03_tie03_nfl_test', '_qc03_nfl_test');
-SELECT TT_Prepare('translation_test', 'qc03_tie03_geo_test', '_qc03_geo_test');
+SELECT TT_Prepare('translation_test', 'qc03_cas_test', '_qc03_cas_test');
+SELECT TT_Prepare('translation_test', 'qc03_dst_test', '_qc03_dst_test');
+SELECT TT_Prepare('translation_test', 'qc03_eco_test', '_qc03_eco_test');
+SELECT TT_Prepare('translation_test', 'qc03_lyr_test', '_qc03_lyr_test');
+SELECT TT_Prepare('translation_test', 'qc03_nfl_test', '_qc03_nfl_test');
+SELECT TT_Prepare('translation_test', 'qc03_geo_test', '_qc03_geo_test');
 
 -- Create VIEW 'qc03_l2_to_qc03_l1_map_200' mapping the NT01 layer 2 
 -- attributes to the QC03 layer 1 attributes
@@ -136,25 +136,25 @@ SELECT TT_Prepare('translation_test', 'qc03_tie03_geo_test', '_qc03_geo_test');
 
 -- Translate the samples
 SELECT * FROM TT_Translate_qc03_cas_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 6 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_tie03_cas_test');
+SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_cas_test');
 
 SELECT * FROM TT_Translate_qc03_dst_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_tie03_dst_test');
+SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_dst_test');
 
 SELECT * FROM TT_Translate_qc03_eco_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_tie03_eco_test');
+SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_eco_test');
 
 SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_tie03_lyr_test');
+SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_lyr_test');
 
-SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_tie03_lyr_test');
+--SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
+--SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_lyr_test');
 
 SELECT * FROM TT_Translate_qc03_nfl_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_tie03_nfl_test');
+SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_nfl_test');
 
-SELECT * FROM TT_Translate_qc03_nfl_test('rawfri', 'qc03_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_tie03_nfl_test');
+--SELECT * FROM TT_Translate_qc03_nfl_test('rawfri', 'qc03_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
+--SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_nfl_test');
 
 SELECT * FROM TT_Translate_qc03_geo_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_tie03_geo_test');
