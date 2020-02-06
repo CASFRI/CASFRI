@@ -101,7 +101,7 @@ ALTER TABLE %tableName_meta% DROP COLUMN IF EXISTS ogc_fid; ^
 ALTER TABLE %tableName_meta% DROP COLUMN IF EXISTS wkb_geometry; ^
 -- ^
 -- rename geoc_maj in meta ^
---ALTER TABLE %tableName_meta% RENAME COLUMN geoc_maj TO meta_geoc_maj; ^
+ALTER TABLE %tableName_meta% RENAME COLUMN geoc_maj TO meta_geoc_maj; ^
 -- ^
 -- join qc03_poly, qc03_meta, qc03_etage_sup, and qc03_etage_inf ^
 DROP TABLE IF EXISTS %targetTableName%; ^
