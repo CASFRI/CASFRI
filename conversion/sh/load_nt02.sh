@@ -74,6 +74,11 @@ photoyearTableName=${targetTableName}_photoyear
 # Some columns need to be dropped before joining.
 # The ogc_fid attributes are no longer unique identifiers 
 # after the join so a new ogc_fid is created.
+# fc_id values of 1000000 are removed, these are not valid
+# polygons.
+# Merges split polygons back together using ST_Union and GROUP BY
+# to perform a dissolve.
+# Duplicate rows in the attribute table are removed.
 # Original tables are deleted at the end.
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "

@@ -31,9 +31,9 @@ CREATE SCHEMA IF NOT EXISTS casfri50_test;
 -- Translate all CAS tables into a common table
 -------------------------------------------------------
 SELECT TT_Prepare('translation', 'avi01_cas', '_ab06_cas_test');
-SELECT TT_Prepare('translation', 'nbi01_cas', '_nb01_cas_test', 'ab06_avi01_cas');
-SELECT TT_Prepare('translation', 'vri01_cas', '_bc08_cas_test', 'ab06_avi01_cas');
-SELECT TT_Prepare('translation', 'fvi01_cas', '_nt01_cas_test', 'ab06_avi01_cas');
+SELECT TT_Prepare('translation', 'nbi01_cas', '_nb01_cas_test', 'avi01_cas');
+SELECT TT_Prepare('translation', 'vri01_cas', '_bc08_cas_test', 'avi01_cas');
+SELECT TT_Prepare('translation', 'fvi01_cas', '_nt01_cas_test', 'avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.cas_all_new CASCADE;;
 ------------------------
@@ -70,9 +70,9 @@ SELECT count(*) FROM casfri50_test.cas_all_new; -- 3800
 -- Translate all DST tables into a common table
 -------------------------------------------------------
 SELECT TT_Prepare('translation', 'avi01_dst', '_ab06_dst_test');
-SELECT TT_Prepare('translation', 'nbi01_dst', '_nb01_dst_test', 'ab06_avi01_dst');
-SELECT TT_Prepare('translation', 'vri01_dst', '_bc08_dst_test', 'ab06_avi01_dst');
-SELECT TT_Prepare('translation', 'fvi01_dst', '_nt01_dst_test', 'ab06_avi01_dst');
+SELECT TT_Prepare('translation', 'nbi01_dst', '_nb01_dst_test', 'avi01_dst');
+SELECT TT_Prepare('translation', 'vri01_dst', '_bc08_dst_test', 'avi01_dst');
+SELECT TT_Prepare('translation', 'fvi01_dst', '_nt01_dst_test', 'avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.dst_all_new CASCADE;
 ------------------------
@@ -117,9 +117,9 @@ SELECT count(*) FROM casfri50_test.dst_all_new; -- 4900
 -- Translate all ECO tables into a common table
 -------------------------------------------------------
 SELECT TT_Prepare('translation', 'avi01_eco', '_ab06_eco_test');
-SELECT TT_Prepare('translation', 'nbi01_eco', '_nb01_eco_test', 'ab06_avi01_eco');
-SELECT TT_Prepare('translation', 'vri01_eco', '_bc08_eco_test', 'ab06_avi01_eco');
-SELECT TT_Prepare('translation', 'fvi01_eco', '_nt01_eco_test', 'ab06_avi01_eco');
+SELECT TT_Prepare('translation', 'nbi01_eco', '_nb01_eco_test', 'avi01_eco');
+SELECT TT_Prepare('translation', 'vri01_eco', '_bc08_eco_test', 'avi01_eco');
+SELECT TT_Prepare('translation', 'fvi01_eco', '_nt01_eco_test', 'avi01_eco');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.eco_all_new CASCADE;
 ------------------------
@@ -156,9 +156,9 @@ SELECT count(*) FROM casfri50_test.eco_all_new; -- 1200
 -- Translate all LYR tables into a common table
 -------------------------------------------------------
 SELECT TT_Prepare('translation', 'avi01_lyr', '_ab06_lyr_test');
-SELECT TT_Prepare('translation', 'nbi01_lyr', '_nb01_lyr_test', 'ab06_avi01_lyr');
-SELECT TT_Prepare('translation', 'vri01_lyr', '_bc08_lyr_test', 'ab06_avi01_lyr');
-SELECT TT_Prepare('translation', 'fvi01_lyr', '_nt01_lyr_test', 'ab06_avi01_lyr');
+SELECT TT_Prepare('translation', 'nbi01_lyr', '_nb01_lyr_test', 'avi01_lyr');
+SELECT TT_Prepare('translation', 'vri01_lyr', '_bc08_lyr_test', 'avi01_lyr');
+SELECT TT_Prepare('translation', 'fvi01_lyr', '_nt01_lyr_test', 'avi01_lyr');
 -------------------------
 DROP TABLE IF EXISTS casfri50_test.lyr_all_new CASCADE;
 ------------------------
@@ -219,9 +219,9 @@ SELECT count(*) FROM casfri50_test.lyr_all_new; -- 6600
 -- Translate all NFL tables into a common table
 -------------------------------------------------------
 SELECT TT_Prepare('translation', 'avi01_nfl', '_ab06_nfl_test');
-SELECT TT_Prepare('translation', 'nbi01_nfl', '_nb01_nfl_test', 'ab06_avi01_nfl');
-SELECT TT_Prepare('translation', 'vri01_nfl', '_bc08_nfl_test', 'ab06_avi01_nfl');
-SELECT TT_Prepare('translation', 'fvi01_nfl', '_nt01_nfl_test', 'ab06_avi01_nfl');
+SELECT TT_Prepare('translation', 'nbi01_nfl', '_nb01_nfl_test', 'avi01_nfl');
+SELECT TT_Prepare('translation', 'vri01_nfl', '_bc08_nfl_test', 'avi01_nfl');
+SELECT TT_Prepare('translation', 'fvi01_nfl', '_nt01_nfl_test', 'avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.nfl_all_new CASCADE;
 ------------------------

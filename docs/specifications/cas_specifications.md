@@ -1,16 +1,13 @@
-  1 - 99  When **stand_structure** = "S", "M", or "H", value = 0.
-
-
 # COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA  
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
-Revised by: The CASFRI Project Team, January 2020
-
-  
+Revised by: The CASFRI Project Team, February 03, 2020
 
 
-## 1.0 Introduction  
+
+
+## Introduction  
 
 Canada's vast boreal ecosystem hosts one of the most diverse bird communities in North America. Development pressure within the boreal region is on the increase, and there is an urgent need to understand the impact of changing habitats on boreal bird populations and to make sound management decisions. The Boreal Avian Modeling Project was initiated to help address the lack of basic information on boreal birds and their habitats across boreal forests in Canada. The need to effectively manage bird species and their habitats has resulted in the effort to collect and gather data across Canada to develop models that will predict bird abundance and distribution, and that will clarify population and habitat associations with climate and land cover.  
 
@@ -20,7 +17,7 @@ Digital forest inventory data can overcome many of the deficiencies identified w
 
 
 
-### 1.1 Common Attribute Schema  
+### Common Attribute Schema  
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index,  
 non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
@@ -76,7 +73,9 @@ Table 1. CASFRI schema.
 | PHOTO_YEAR_START  |                   |                     |                     |                  |                  |          |
 | PHOTO_YEAR_END    |                   |                     |                     |                  |                  |          |
 
-### 1.2 Error Codes  
+
+
+### Error Codes  
 
 Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  [Click here to view specific error codes for individual attributes](https://edwardsmarc.github.io/CASFRI/specifications/errors/cas_errors_specific.csv).
 
@@ -100,9 +99,7 @@ Error codes are needed during translation if source values are invalid, null, or
 
 
 
-## 2.0 HDR Attributes 
-
-Updated: 2019-08-09
+## HDR Attributes 
 
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are described below.
 
@@ -344,9 +341,7 @@ The attribute **photo_year_end** identifies the year in which the inventory was 
 
 
 
-## 3.0 CAS Attributes
-
-Updated: 2019-08-09
+## CAS Attributes
 
 The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
@@ -473,9 +468,9 @@ The attribute **stand_photo_year** is a identifies the year in which the aerial 
 
 
 
-## 4.0 LYR Attributes
+## LYR Attributes
 
-Updated: 2019-11-28
+Forest layer attributes.
 
 
 
@@ -541,6 +536,11 @@ Layer is an attribute related to stand structure that identifies which layer is 
 | :----------------------------------------------------------- | :------- |
 | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified. | 1 - 9, V |
 
+Notes:
+
+- LAYER will be "computed" using the method we have developed, such that the tallest forest layer will be layer 1, followed by layer 2 etc. Followed by any NFL layers. If no forest data, NFL will start at layer 1.
+- LAYER is therefore a CASFRI specific attribute that we compute ourselves, whereas LAYER_RANK is a copied attribute from the source data.
+
 
 
 ### layer_rank
@@ -551,7 +551,12 @@ Layer Rank value is an attribute related to stand structure and refers to layer 
 | :----------------------------------------------------------- | :----- |
 | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc. | 1 - 9  |
 
-  
+ Notes:
+
+- LAYER_RANK will be copied from the source data attribute if one exists. If this attribute exists and has a value of null, we will report a null value error code in the CASFRI. If no attribute exists for rank in the source data will report a NOT_APPLICABLE error code.
+- LAYER_RANK is therefore a copied attribute from the source data, whereas LAYER is a CASFRI specific attribute that we compute ourselves. 
+
+
 
 ### soil_moist_reg  
 
@@ -667,9 +672,9 @@ Site Index is an estimate of site productivity for tree growth. It is derived fo
 
 
 
-## 5.0 NFL Attributes
+## NFL Attributes
 
-Updated: 2019-08-08
+Non-forested attributes.
 
 
 
@@ -718,6 +723,11 @@ The maximum number of layers recognized is nine. The uppermost layer may also be
 | :----------------------------------------------------------- | :------- |
 | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified. | 1 - 9, V |
 
+Notes:
+
+- LAYER will be "computed" using the method we have developed, such that the tallest forest layer will be layer 1, followed by layer 2 etc. Followed by any NFL layers. If no forest data, NFL will start at layer 1.
+- LAYER is therefore a CASFRI specific attribute that we compute ourselves, whereas LAYER_RANK is a copied attribute from the source data.
+
 
 
 ### layer_rank  
@@ -728,6 +738,11 @@ Layer Rank value is an attribute related to stand structure and refers to layer 
 | :----------------------------------------------------------- | :----- |
 | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc. | 1 - 9  |
 | Blank - no value                                             | NA     |
+
+ Notes:
+
+- LAYER_RANK will be copied from the source data attribute if one exists. If this attribute exists and has a value of null, we will report a null value error code in the CASFRI. If no attribute exists for rank in the source data will report a NOT_APPLICABLE error code.
+- LAYER_RANK is therefore a copied attribute from the source data, whereas LAYER is a CASFRI specific attribute that we compute ourselves. 
 
 
 
@@ -814,11 +829,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 
 
-## 6.0 DST Attributes
-
-Updated: 2019-08-09
-
-
+## DST Attributes
 
 ### cas_id
 
@@ -896,11 +907,7 @@ The maximum number of layers recognized is nine. The uppermost layer may also be
 
 
 
-## 7.0 ECO Attributes
-
-Updated: 2019-08-08
-
-
+## ECO Attributes
 
 Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.  
 
@@ -999,10 +1006,9 @@ Ecosites are site-level descriptions that provide a linkage between vegetation a
 
 
 
-## 8.0 GEO Attributes 
+## GEO Attributes 
 
-Updated: 2019-08-16
-
+Geometry attributes are calculated by the translation engine.
 
 ### cas_id
 
@@ -1026,7 +1032,7 @@ The attribute **geometry** returns the geometry and validates if necessary. If v
 
 
 
-## 9.0 Bibliography  
+## Bibliography  
 
 
 
@@ -1197,7 +1203,7 @@ National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classi
 
 
 
-##  9.0 Appendices  
+##  Appendices  
 
 
 
