@@ -19,7 +19,7 @@
 
 ::######################################## Set variables #######################################
 
-CALL ./common.sh
+CALL ./common.bat
 
 SET inventoryID=QC03
 SET srcFileName=CARTE_ECO_MAJ_PROV_10
@@ -39,22 +39,22 @@ SET tableName_inf=%targetTableName%_etage_inf
 ::########################################## Process ######################################
 
 :: Run ogr2ogr for polygons
-"%gdalFolder%/ogr2ogr" \
--f "PostgreSQL" "%pg_connection_string%" "%srcFullPath%" "%gdbFileName_poly%" \
--nln %tableName_poly% %layer_creation_option% \
--sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbFileName_poly%'" \
+"%gdalFolder%\ogr2ogr" ^
+-f PostgreSQL %pg_connection_string% %srcFullPath% %gdbFileName_poly% ^
+-nln %tableName_poly% %layer_creation_option% ^
+-sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbFileName_poly%'" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for meta table
-"%gdalFolder%/ogr2ogr" \
--f "PostgreSQL" "%pg_connection_string%" "%srcFullPath%" "%gdbFileName_meta%" \
--nln %tableName_meta% %layer_creation_option% \
+"%gdalFolder%\ogr2ogr" ^
+-f PostgreSQL %pg_connection_string% %srcFullPath% %gdbFileName_meta% ^
+-nln %tableName_meta% %layer_creation_option% ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for etage table
-"%gdalFolder%/ogr2ogr" \
--f "PostgreSQL" "%pg_connection_string%" "%srcFullPath%" "%gdbFileName_etage%" \
--nln %tableName_etage% %layer_creation_option% \
+"%gdalFolder%\ogr2ogr" ^
+-f PostgreSQL %pg_connection_string% %srcFullPath% %gdbFileName_etage% ^
+-nln %tableName_etage% %layer_creation_option% ^
 -progress %overwrite_tab%
 
 :: Join META and ETAGE tables to polygons using the GEOC_MAJ attribute.
@@ -66,8 +66,7 @@ SET tableName_inf=%targetTableName%_etage_inf
 :: therefore be 4 table to join at the end. poly, meta, sup and inf.
 :: Original tables are deleted at the end.
 
-SET query1=-- select all sup rows ^
-CREATE INDEX ON %tableName_poly% (geoc_maj); ^
+SET query1=CREATE INDEX ON %tableName_poly% (geoc_maj); ^
 DROP TABLE IF EXISTS %tableName_sup%; ^
 CREATE TABLE %tableName_sup% AS ^
 SELECT geoc_maj sup_geoc_maj, ^
@@ -77,10 +76,9 @@ densite sup_densite, ^
 hauteur sup_hauteur, ^
 cl_age_et sup_cl_age_et, ^
 eta_ess_pc sup_eta_ess_pc ^
-FROM $tableName_etage ^
+FROM %tableName_etage% ^
 WHERE etage = 'SUP'; ^
--- ^
--- select all INF rows ^
+ ^
 DROP TABLE IF EXISTS %tableName_inf%; ^
 CREATE TABLE %tableName_inf% AS ^
 SELECT geoc_maj inf_geoc_maj, ^
@@ -91,46 +89,36 @@ hauteur inf_hauteur, ^
 cl_age_et inf_cl_age_et, ^
 eta_ess_pc inf_eta_ess_pc ^
 FROM %tableName_etage% ^
-WHERE etage = 'INF'; ^
--- ^
--- drop all ogr_fid columns ^
-ALTER TABLE %tableName_poly% DROP COLUMN IF EXISTS ogc_fid; ^
-ALTER TABLE %tableName_meta% DROP COLUMN IF EXISTS ogc_fid; ^
--- ^
--- drop geometry columns from meta ^
-ALTER TABLE %tableName_meta% DROP COLUMN IF EXISTS wkb_geometry; ^
--- ^
--- rename geoc_maj in meta ^
-ALTER TABLE %tableName_meta% RENAME COLUMN geoc_maj TO meta_geoc_maj; ^
--- ^
--- join qc03_poly, qc03_meta, qc03_etage_sup, and qc03_etage_inf ^
-DROP TABLE IF EXISTS %targetTableName%; ^
+WHERE etage = 'INF';^
+ ^
+ALTER TABLE %tableName_poly% DROP COLUMN IF EXISTS ogc_fid;^
+ALTER TABLE %tableName_meta% DROP COLUMN IF EXISTS ogc_fid;^
+ ^
+ALTER TABLE %tableName_meta% DROP COLUMN IF EXISTS wkb_geometry;^
+ ^
+ALTER TABLE %tableName_meta% RENAME COLUMN geoc_maj TO meta_geoc_maj;^
+ ^
+DROP TABLE IF EXISTS %targetTableName%;^
 CREATE TABLE %targetTableName% AS ^
 SELECT * ^
 FROM %tableName_poly% as poly ^
-LEFT join %tableName_meta% as meta ^ 
-  on poly.geoc_maj = meta.meta_geoc_maj ^
-LEFT join %tableName_sup% as sup ^
-  on poly.geoc_maj = sup.sup_geoc_maj ^
-LEFT join %tableName_inf% as inf ^
-  on poly.geoc_maj = inf.inf_geoc_maj; ^
--- ^  
---update ogc_fid ^
+LEFT join %tableName_meta% as meta ON poly.geoc_maj = meta.meta_geoc_maj ^
+LEFT join %tableName_sup% as sup ON poly.geoc_maj = sup.sup_geoc_maj ^
+LEFT join %tableName_inf% as inf ON poly.geoc_maj = inf.inf_geoc_maj; ^
+ ^
 ALTER TABLE %targetTableName% ADD COLUMN temp_key BIGSERIAL PRIMARY KEY; ^
 ALTER TABLE %targetTableName% ADD COLUMN ogc_fid INT; ^
 UPDATE %targetTableName% SET ogc_fid=temp_key; ^
 ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS temp_key; ^
--- ^
---drop extra geoc_maj attributes ^
-ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS sup_geoc_maj; ^
-ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS inf_geoc_maj; ^
-ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS meta_geoc_maj; ^
--- ^
---drop tables ^
+ ^
+ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS sup_geoc_maj;^
+ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS inf_geoc_maj;^
+ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS meta_geoc_maj;^
+ ^
 DROP TABLE IF EXISTS %tableName_poly%; ^
 DROP TABLE IF EXISTS %tableName_meta%; ^
 DROP TABLE IF EXISTS %tableName_etage%; ^
 DROP TABLE IF EXISTS %tableName_sup%; ^
 DROP TABLE IF EXISTS %tableName_inf%;
 
-"%gdalFolder%/ogrinfo" "%pg_connection_string%" -sql "%query1%"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query1%"
