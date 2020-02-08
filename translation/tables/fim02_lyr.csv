@@ -8,7 +8,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 7,CROWN_CLOSURE_LOWER,integer,"notNull(l1ht);isNumeric(l1ht);isGreaterThan(l1ht,'0');isLessThan(l1ht, 100)",copyDouble(occlo),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(oht);isNumeric(oht);isGreaterThan(oht,'1');isLessThan(oht, 100)",copyDouble(oht),Copies source value to HEIGHT_UPPER,TRUE
 9,HEIGHT_LOWER,double precision,"notNull(oht);isNumeric(oht);isGreaterThan(oht,'1');isLessThan(oht, 100)",copyDouble(oht),Copies source value to HEIGHT_LOWER,TRUE
-10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
+10,PRODUCTIVE_FOR,text,"notNull(polytype);matchList(polytype,{'BSH','DAL','FOR','GRS','ISL','OMS','RCK','TMS','UCL','WAT'})","mapText(polytype, {'BSH','DAL','FOR','GRS','ISL','OMS','RCK','TMS','UCL','WAT'}, {'PP','PP','PF','PP','PP','PP','PP','PP','PP','PP'})",Correct translation has not been determined.,TRUE
 11,SPECIES_1,text,false(),nothingText(),Maps source value to SPECIES_1 using lookup table,TRUE
 12,SPECIES_PER_1,integer,false(),nothingInt(),Copies source value to SPECIES_PER_1,TRUE
 13,SPECIES_2,text,false(),nothingText(),Maps source value to SPECIES_2 using lookup table,TRUE
