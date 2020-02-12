@@ -21,25 +21,28 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -- Translate all GEO tables into a common table
 -------------------------------------------------------
 -- Prepare the translation functions
-SELECT TT_Prepare('translation', 'ab06_avi01_geo', '_ab06_geo');
-SELECT TT_Prepare('translation', 'ab16_avi01_geo', '_ab16_geo', 'ab06_avi01_geo');
-SELECT TT_Prepare('translation', 'nbi01_geo', '_nb_geo',   'ab06_avi01_geo'); -- reused for both NB01 and NB02
-SELECT TT_Prepare('translation', 'vri01_geo', '_bc_geo', 'ab06_avi01_geo');
-SELECT TT_Prepare('translation', 'fvi01_geo', '_nt_geo',   'ab06_avi01_geo'); -- reused for both NT01 and NT02
+SELECT TT_Prepare('translation', 'avi01_geo', '_ab_geo'); -- used for both AB06 and AB16
+SELECT TT_Prepare('translation', 'nbi01_geo', '_nb_geo', 'avi01_geo'); -- used for both NB01 and NB02
+SELECT TT_Prepare('translation', 'vri01_geo', '_bc_geo', 'avi01_geo'); -- used for both BC08 and BC10
+SELECT TT_Prepare('translation', 'fvi01_geo', '_nt_geo', 'avi01_geo'); -- used for both NT01 and NT02
 ------------------------
 DROP TABLE IF EXISTS casfri50.geo_all CASCADE;
 ------------------------
 -- Translate AB06
-CREATE TABLE casfri50.geo_all AS -- 54s
-SELECT * FROM TT_Translate_ab06_geo('rawfri', 'ab06', 'ogc_fid'); 
+SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab06_avi01_geo');
+CREATE TABLE casfri50.geo_all AS -- 54s
+SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab06_l1_to_ab_l1_map', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'avi01_geo');
 ------------------------
 -- Translate AB16
-INSERT INTO casfri50.geo_all -- 7m30s
-SELECT * FROM TT_Translate_ab16_geo('rawfri', 'ab16', 'ogc_fid'); 
+SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab16_avi01_geo');
+INSERT INTO casfri50.geo_all -- 7m30s
+SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab16_l1_to_ab_l1_map', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'avi01_geo');
 ------------------------
 -- Translate NB01 using the NB generic translation table
 SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb');
@@ -58,8 +61,18 @@ SELECT * FROM TT_Translate_nb_geo('rawfri', 'nb02_l1_to_nb_l1_map', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_geo');
 ------------------------
 -- Translate BC08
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');
+
 INSERT INTO casfri50.geo_all --4h59m
-SELECT * FROM TT_Translate_bc_geo('rawfri', 'bc08', 'ogc_fid');
+SELECT * FROM TT_Translate_bc_geo('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'vri01_geo');
+------------------------
+-- Translate BC10
+SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc');
+
+INSERT INTO casfri50.geo_all --*h**m
+SELECT * FROM TT_Translate_bc_geo('rawfri', 'bc10_l1_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_geo');
 ------------------------
