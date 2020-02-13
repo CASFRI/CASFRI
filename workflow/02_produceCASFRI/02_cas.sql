@@ -64,7 +64,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nbi01_cas');
 SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');
 
 INSERT INTO casfri50.cas_all -- 12h16m
-SELECT * FROM TT_Translate_bc_cas('rawfri', 'bc08_l1_to_bc_l1_map ', 'ogc_fid');
+SELECT * FROM TT_Translate_bc_cas('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_cas');
 ------------------------
@@ -72,7 +72,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'vri01_cas');
 SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc');
 
 INSERT INTO casfri50.cas_all -- **h**m
-SELECT * FROM TT_Translate_bc_cas('rawfri', 'bc10_l1_to_bc_l1_map ', 'ogc_fid');
+SELECT * FROM TT_Translate_bc_cas('rawfri', 'bc10_l1_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_cas');
 ------------------------

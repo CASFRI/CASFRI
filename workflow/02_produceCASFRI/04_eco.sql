@@ -64,7 +64,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nbi02_eco');
 SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 'ECO'); -- only rows with eco attributes
 
 INSERT INTO casfri50.eco_all -- 4h05m
-SELECT * FROM TT_Translate_bc_eco('rawfri', 'bc08_l1_to_bc_l1_map_eco ', 'ogc_fid');6
+SELECT * FROM TT_Translate_bc_eco('rawfri', 'bc08_l1_to_bc_l1_map_eco', 'ogc_fid');6
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_eco');
 ------------------------
@@ -72,7 +72,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'vri01_eco');
 SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 'ECO'); -- only rows with eco attributes
 
 INSERT INTO casfri50.eco_all -- *h**m
-SELECT * FROM TT_Translate_bc_eco('rawfri', 'bc10_l1_to_bc_l1_map_eco  ', 'ogc_fid');6
+SELECT * FROM TT_Translate_bc_eco('rawfri', 'bc10_l1_to_bc_l1_map_eco', 'ogc_fid');6
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_eco');
 ------------------------
