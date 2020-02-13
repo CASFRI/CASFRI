@@ -17,17 +17,93 @@ SET tt.debug TO FALSE;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
+-- Create devel translation tables
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS translation_devel;
+-------------------------------------------------------
+-- Display translation tables
+SELECT * FROM translation.fim02_cas;
+SELECT * FROM translation.fim02_dst;
+SELECT * FROM translation.fim02_eco;
+SELECT * FROM translation.fim02_lyr;
+SELECT * FROM translation.fim02_nfl;
+SELECT * FROM translation.fim02_geo;
+----------------------------
+-- Create subsets of translation tables if necessary
+----------------------------
+-- cas
+DROP TABLE IF EXISTS translation_devel.on02_fim02_cas_devel;
+CREATE TABLE translation_devel.on02_fim02_cas_devel AS
+SELECT * FROM translation.fim02_cas
+--WHERE rule_id::int = 1
+;
+-- Display
+SELECT * FROM translation_devel.on02_fim02_cas_devel;
+-- dst
+DROP TABLE IF EXISTS translation_devel.on02_fim02_dst_devel;
+CREATE TABLE translation_devel.on02_fim02_dst_devel AS
+SELECT * FROM translation.fim02_dst
+--WHERE rule_id::int = 1
+;
+-- Display
+SELECT * FROM translation_devel.on02_fim02_dst_devel;
+-- eco
+DROP TABLE IF EXISTS translation_devel.on02_fim02_eco_devel;
+CREATE TABLE translation_devel.on02_fim02_eco_devel AS
+SELECT * FROM translation.fim02_eco
+--WHERE rule_id::int = 1
+;
+-- Display
+SELECT * FROM translation_devel.on02_fim02_eco_devel;
+-- lyr
+DROP TABLE IF EXISTS translation_devel.on02_fim02_lyr_devel;
+CREATE TABLE translation_devel.on02_fim02_lyr_devel AS
+SELECT * FROM translation.fim02_lyr
+--WHERE rule_id::int = 1
+;
+-- Display
+SELECT * FROM translation_devel.on02_fim02_lyr_devel;
+-- nfl
+DROP TABLE IF EXISTS translation_devel.on02_fim02_nfl_devel;
+CREATE TABLE translation_devel.on02_fim02_nfl_devel AS
+SELECT * FROM translation.fim02_nfl
+--WHERE rule_id::int = 1
+;
+-- Display
+SELECT * FROM translation_devel.on02_fim02_nfl_devel;
+-- geo
+DROP TABLE IF EXISTS translation_devel.on02_fim02_geo_devel;
+CREATE TABLE translation_devel.on02_fim02_geo_devel AS
+SELECT * FROM translation.fim02_geo
+--WHERE rule_id::int = 1
+;
+-- Display
+SELECT * FROM translation_devel.on02_fim02_geo_devel;
+----------------------------
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
 -- Validate ON species dependency tables
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'on_fim02_species_validation', '_nb_species_val');
-SELECT * FROM TT_Translate_nb_species_val('translation', 'on_fim02_species');
+SELECT TT_Prepare('translation', 'on_fim02_species_validation', '_on_species_val');
+SELECT * FROM TT_Translate_on_species_val('translation', 'on_fim02_species');
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Translate the sample table
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
+-- Create translation functions
+SELECT TT_Prepare('translation_devel', 'on02_fim02_cas_devel', '_on02_cas_devel');
+SELECT TT_Prepare('translation_devel', 'bc10_vri01_dst_devel', '_bc10_dst_devel');
+SELECT TT_Prepare('translation_devel', 'bc10_vri01_eco_devel', '_bc10_eco_devel');
+SELECT TT_Prepare('translation_devel', 'bc10_vri01_lyr_devel', '_bc10_lyr_devel');
+SELECT TT_Prepare('translation_devel', 'bc10_vri01_nfl_devel', '_bc10_nfl_devel');
+SELECT TT_Prepare('translation_devel', 'bc10_vri01_geo_devel', '_bc10_geo_devel');
+
+---CRASHED ON NEXT LINE...
+
 -- Translate the samples (reusing ON translation functions prepared by ON02.sql)
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200);
 SELECT * FROM TT_Translate_on01_cas_devel('rawfri', 'on02_l1_to_on_l1_map_200', 'ogc_fid'); -- 5 s.
