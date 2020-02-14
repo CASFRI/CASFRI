@@ -106,11 +106,11 @@ SELECT TT_Prepare('translation_devel', 'bc10_vri01_geo_devel', '_bc10_geo_devel'
 
 -- Translate the samples (reusing ON translation functions prepared by ON02.sql)
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200);
-SELECT * FROM TT_Translate_on01_cas_devel('rawfri', 'on02_l1_to_on_l1_map_200', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_Translate_on02_cas_devel('rawfri', 'on02_l1_to_on_l1_map_200', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_cas_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'dst');
-SELECT * FROM TT_Translate_on01_dst_devel('rawfri', 'on02_l1_to_on_l1_map_200_dst', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_on02_dst_devel('rawfri', 'on02_l1_to_on_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_dst_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'eco');
