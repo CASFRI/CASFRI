@@ -1864,3 +1864,45 @@ RETURNS text AS $$
 	RETURN NULL;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+-- TT_vri01_dist_yr_translation(text)
+--
+--  val
+-- cutoff_val
+--
+-- BC disturbance codes are always a single character for the type, concatenated
+-- to two digits for the year (e.g. B00). Digits needs to extracted and converted to 4-digit
+-- integer for disturbance year.
+--
+-- Takes the disturbance code, substrings to get the last two values,
+-- then concats with either 19 or 20 depending on cutoff.
+-- If val <= cutoff_val, concat with 20, else concat with 19.
+-- e.g. with cutoff_val of 17 B17 would become 2017, B18 would become
+-- 1918.
+--
+-- e.g. TT_vri01_dist_yr_translation(val, cutoff_val)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_vri01_dist_yr_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_vri01_dist_yr_translation(
+  val text,
+  cutoff_val text
+)
+RETURNS int AS $$
+  DECLARE
+    _val_text text;
+    _val_int int;
+    _cutoff_val int;
+  BEGIN
+  PERFORM TT_ValidateParams('TT_vri01_dist_yr_translation',
+                              ARRAY['cutoff_val', cutoff_val, 'int']);
+  _cutoff_val = cutoff_val::int;
+  _val_text = TT_SubstringText(val, '2'::text, '2'::text); -- get last two characters from string. This is the year. First character is the dist type.
+  _val_int = _val_text::int;
+  
+  IF _val_int <= _cutoff_val THEN
+    RETURN TT_Concat('{''20'', ' || _val_text || '}'::text, ''::text)::int;
+  ELSE
+    RETURN TT_Concat('{''19'', ' || _val_text || '}'::text, ''::text)::int;
+  END IF;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;

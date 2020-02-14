@@ -33,6 +33,7 @@ DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_nb01_productive_for_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_nb02_productive_for_translation(text);
+DROP FUNCTION IF EXISTS TT_vri01_dist_yr_translation(text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

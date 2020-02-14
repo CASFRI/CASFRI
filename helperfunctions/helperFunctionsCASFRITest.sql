@@ -37,7 +37,8 @@ WITH test_nb AS (
     SELECT 'TT_nbi01_wetland_translation'::text function_tested,             13 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
     SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num, 5 nb_test UNION ALL
-    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 22 nb_test
+    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 22 nb_test UNION ALL
+    SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test 
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -789,6 +790,33 @@ SELECT '16.22'::text number,
 CREATE OR REPLACE VIEW rawfri.ab06_site_class AS
 SELECT tpr, sp1, sp2, sp3
 FROM rawfri.ab06;' passed
+---------------------------------------------------------
+---------------------------------------------------------
+  -- TT_vri01_dist_yr_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '17.1'::text number,
+       'TT_vri01_dist_yr_translation'::text function_tested,
+       'Test value <10, equal to cutoff'::text description,
+       TT_vri01_dist_yr_translation('B05', '05') = 2005::int passed
+---------------------------------------------------------
+UNION ALL
+SELECT '17.2'::text number,
+       'TT_vri01_dist_yr_translation'::text function_tested,
+       'Test value <10, greater than cutoff'::text description,
+       TT_vri01_dist_yr_translation('B05', '04') = 1905::int passed
+  ---------------------------------------------------------
+UNION ALL
+SELECT '17.3'::text number,
+       'TT_vri01_dist_yr_translation'::text function_tested,
+       'Test value >10, equal to cutoff'::text description,
+       TT_vri01_dist_yr_translation('B17', '17') = 2017::int passed
+---------------------------------------------------------
+UNION ALL
+SELECT '17.4'::text number,
+       'TT_vri01_dist_yr_translation'::text function_tested,
+       'Test value >10, greater than cutoff'::text description,
+       TT_vri01_dist_yr_translation('B17', '16') = 1917::int passed
 ---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
