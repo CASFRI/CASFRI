@@ -114,7 +114,7 @@ SELECT * FROM TT_Translate_on02_dst_devel('rawfri', 'on02_l1_to_on_l1_map_200_ds
 SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_dst_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'eco');
-SELECT * FROM TT_Translate_on01_eco_devel('rawfri', 'on02_l1_to_on_l1_map_200_eco', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_on02_eco_devel('rawfri', 'on02_l1_to_on_l1_map_200_eco', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_eco_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'lyr');
