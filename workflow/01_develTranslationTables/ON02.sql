@@ -14,123 +14,96 @@
 -- No not display debug messages.
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
-
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Create devel translation tables
---------------------------------------------------------------------------
---------------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS translation_devel;
--------------------------------------------------------
--- Display translation tables
-SELECT * FROM translation.fim02_cas;
-SELECT * FROM translation.fim02_dst;
-SELECT * FROM translation.fim02_eco;
-SELECT * FROM translation.fim02_lyr;
-SELECT * FROM translation.fim02_nfl;
-SELECT * FROM translation.fim02_geo;
-----------------------------
--- Create subsets of translation tables if necessary
-----------------------------
--- cas
-DROP TABLE IF EXISTS translation_devel.on02_fim02_cas_devel;
-CREATE TABLE translation_devel.on02_fim02_cas_devel AS
-SELECT * FROM translation.fim02_cas
---WHERE rule_id::int = 1
-;
--- Display
-SELECT * FROM translation_devel.on02_fim02_cas_devel;
--- dst
-DROP TABLE IF EXISTS translation_devel.on02_fim02_dst_devel;
-CREATE TABLE translation_devel.on02_fim02_dst_devel AS
-SELECT * FROM translation.fim02_dst
---WHERE rule_id::int = 1
-;
--- Display
-SELECT * FROM translation_devel.on02_fim02_dst_devel;
--- eco
-DROP TABLE IF EXISTS translation_devel.on02_fim02_eco_devel;
-CREATE TABLE translation_devel.on02_fim02_eco_devel AS
-SELECT * FROM translation.fim02_eco
---WHERE rule_id::int = 1
-;
--- Display
-SELECT * FROM translation_devel.on02_fim02_eco_devel;
--- lyr
-DROP TABLE IF EXISTS translation_devel.on02_fim02_lyr_devel;
-CREATE TABLE translation_devel.on02_fim02_lyr_devel AS
-SELECT * FROM translation.fim02_lyr
---WHERE rule_id::int = 1
-;
--- Display
-SELECT * FROM translation_devel.on02_fim02_lyr_devel;
--- nfl
-DROP TABLE IF EXISTS translation_devel.on02_fim02_nfl_devel;
-CREATE TABLE translation_devel.on02_fim02_nfl_devel AS
-SELECT * FROM translation.fim02_nfl
---WHERE rule_id::int = 1
-;
--- Display
-SELECT * FROM translation_devel.on02_fim02_nfl_devel;
--- geo
-DROP TABLE IF EXISTS translation_devel.on02_fim02_geo_devel;
-CREATE TABLE translation_devel.on02_fim02_geo_devel AS
-SELECT * FROM translation.fim02_geo
---WHERE rule_id::int = 1
-;
--- Display
-SELECT * FROM translation_devel.on02_fim02_geo_devel;
-----------------------------
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Validate ON species dependency tables
---------------------------------------------------------------------------
---------------------------------------------------------------------------
+
+
+-- Validate species dependency tables
 SELECT TT_Prepare('translation', 'on_fim02_species_validation', '_on_species_val');
 SELECT * FROM TT_Translate_on_species_val('translation', 'on_fim02_species');
 
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Translate the sample table
---------------------------------------------------------------------------
---------------------------------------------------------------------------
--- Create translation functions
+
+-- CAS ATTRIBUTES
+SELECT * FROM translation.fim02_cas;
+DROP TABLE IF EXISTS translation_devel.on02_fim02_cas_devel;
+CREATE TABLE translation_devel.on02_fim02_cas_devel AS
+SELECT * FROM translation.fim02_cas; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.on02_fim02_cas_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_cas_devel', '_on02_cas_devel');
-SELECT TT_Prepare('translation_devel', 'bc10_vri01_dst_devel', '_bc10_dst_devel');
-SELECT TT_Prepare('translation_devel', 'bc10_vri01_eco_devel', '_bc10_eco_devel');
-SELECT TT_Prepare('translation_devel', 'bc10_vri01_lyr_devel', '_bc10_lyr_devel');
-SELECT TT_Prepare('translation_devel', 'bc10_vri01_nfl_devel', '_bc10_nfl_devel');
-SELECT TT_Prepare('translation_devel', 'bc10_vri01_geo_devel', '_bc10_geo_devel');
-
----CRASHED ON NEXT LINE...
-
--- Translate the samples (reusing ON translation functions prepared by ON02.sql)
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200);
 SELECT * FROM TT_Translate_on02_cas_devel('rawfri', 'on02_l1_to_on_l1_map_200', 'ogc_fid'); -- 5 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_cas_devel');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'on02_fim02_cas_devel');
 
+
+-- LYR1 ATTRIBUTES
+SELECT * FROM translation.fim02_lyr;
+DROP TABLE IF EXISTS translation_devel.on02_fim02_lyr_devel;
+CREATE TABLE translation_devel.on02_fim02_lyr_devel AS
+SELECT * FROM translation.fim02_lyr; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.on02_fim02_lyr_devel;
+SELECT TT_Prepare('translation_devel', 'on02_fim02_lyr_devel', '_on02_lyr_devel');
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'lyr');
+SELECT * FROM TT_Translate_on02_lyr_devel('rawfri', 'on02_l1_to_on_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'on02_fim02_lyr_devel');
+
+
+-- LYR2 ATTRIBUTES
+DROP TABLE IF EXISTS translation_devel.on02_fim02_lyr_devel;
+CREATE TABLE translation_devel.on02_fim02_lyr_devel AS
+SELECT * FROM translation.fim02_lyr; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.on02_fim02_lyr_devel;
+SELECT TT_Prepare('translation_devel', 'on02_fim02_lyr_devel', '_on02_lyr_devel');
+SELECT TT_CreateMappingView('rawfri', 'on02', 2, 'on', 1, 200, 'lyr');
+SELECT * FROM TT_Translate_on02_lyr_devel('rawfri', 'on02_l2_to_on_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'on02_fim02_lyr_devel');
+
+
+-- DST ATTRIBUTES
+SELECT * FROM translation.fim02_dst;
+DROP TABLE IF EXISTS translation_devel.on02_fim02_dst_devel;
+CREATE TABLE translation_devel.on02_fim02_dst_devel AS
+SELECT * FROM translation.fim02_dst; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.on02_fim02_dst_devel;
+SELECT TT_Prepare('translation_devel', 'on02_fim02_dst_devel', '_on02_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'dst');
 SELECT * FROM TT_Translate_on02_dst_devel('rawfri', 'on02_l1_to_on_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_dst_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'eco');
-SELECT * FROM TT_Translate_on02_eco_devel('rawfri', 'on02_l1_to_on_l1_map_200_eco', 'ogc_fid'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_eco_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'lyr');
-SELECT * FROM TT_Translate_on01_lyr_devel('rawfri', 'on02_l1_to_on_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_lyr_devel');
-
-SELECT TT_CreateMappingView('rawfri', 'on02', 2, 'on', 1, 200, 'lyr');
-SELECT * FROM TT_Translate_on01_lyr_devel('rawfri', 'on02_l2_to_on_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_lyr_devel');
-
+-- NFL ATTRIBUTES
+SELECT * FROM translation.fim02_nfl;
+DROP TABLE IF EXISTS translation_devel.on02_fim02_nfl_devel;
+CREATE TABLE translation_devel.on02_fim02_nfl_devel AS
+SELECT * FROM translation.fim02_nfl; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.on02_fim02_nfl_devel;
+SELECT TT_Prepare('translation_devel', 'on02_fim02_nfl_devel', '_on02_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'nfl');
 SELECT * FROM TT_Translate_on01_nfl_devel('rawfri', 'on02_l1_to_on_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_nfl_devel');
 
-SELECT * FROM TT_Translate_on01_geo_devel('rawfri', 'on02_l1_to_on_l1_map_200', 'ogc_fid'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_geo_devel');
+
+-- ECO ATTRIBUTES
+SELECT * FROM translation.fim02_eco;
+DROP TABLE IF EXISTS translation_devel.on02_fim02_eco_devel;
+CREATE TABLE translation_devel.on02_fim02_eco_devel AS
+SELECT * FROM translation.fim02_eco; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.on02_fim02_eco_devel;
+SELECT TT_Prepare('translation_devel', 'on02_fim02_eco_devel', '_on02_eco_devel');
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'eco');
+SELECT * FROM TT_Translate_on02_eco_devel('rawfri', 'on02_l1_to_on_l1_map_200_eco', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_eco_devel');
+
+
+-- GEO ATTRIBUTES
+SELECT * FROM translation.fim02_geo;
+DROP TABLE IF EXISTS translation_devel.on02_fim02_geo_devel;
+CREATE TABLE translation_devel.on02_fim02_geo_devel AS
+SELECT * FROM translation.fim02_geo; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.on02_fim02_geo_devel;
+SELECT TT_Prepare('translation_devel', 'on02_fim02_geo_devel', '_on02_geo_devel');
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'geo');
+SELECT * FROM TT_Translate_on02_geo_devel('rawfri', 'on02_l1_to_on_l1_map_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'on02_fim02_geo_devel');
+
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id, 

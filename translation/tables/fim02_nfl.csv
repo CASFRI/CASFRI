@@ -4,8 +4,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"countOfNotNull({ospcomp}, {ospcomp}, {polytype}, max_layer_number)",Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. ,TRUE
 5,LAYER_RANK,integer,false(|-8887),nothingInt(),Copies 1 to LAYER_ID,TRUE
-6,CROWN_CLOSURE_UPPER,integer,"notNull(occlo);isNumeric(occlo);isGreaterThan(occlo,'0');isLessThan(occlo, 100)",copyDouble(occlo),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
-7,CROWN_CLOSURE_LOWER,integer,"notNull(l1ht);isNumeric(l1ht);isGreaterThan(l1ht,'0');isLessThan(l1ht, 100)",copyDouble(occlo),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+6,CROWN_CLOSURE_UPPER,integer,"notNull(occlo);isInt(occlo);isGreaterThan(occlo,'0');isLessThan(occlo, 100)",copyInt(occlo),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
+7,CROWN_CLOSURE_LOWER,integer,"notNull(l1ht);isInt(l1ht);isGreaterThan(l1ht,'0');isLessThan(l1ht, 100)",copyInt(occlo),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(oht);isNumeric(oht);isGreaterThan(oht,'1');isLessThan(oht, 100)",copyDouble(oht),Copies source value to HEIGHT_UPPER,TRUE
 9,HEIGHT_LOWER,double precision,"notNull(oht);isNumeric(oht);isGreaterThan(oht,'1');isLessThan(oht, 100)",copyDouble(oht),Copies source value to HEIGHT_LOWER,TRUE
 10,NAT_NON_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'BSH','GRS','OMS'})","mapText(polytype, {'BSH','GRS','OMS'}, {'HG','HG','OM'})",Maps source value to NAT_NON_VEG using list of values,TRUE
