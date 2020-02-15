@@ -91,6 +91,14 @@ INSERT INTO casfri50.cas_all -- 57m
 SELECT * FROM TT_Translate_nt_cas('rawfri', 'nt02_l1_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_cas');
+------------------------
+-- Translate ON02 using NT generic translation table
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on');
+
+INSERT INTO casfri50.cas_all -- 57m
+SELECT * FROM TT_Translate_nt_cas('rawfri', 'on02_l1_to_on_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'fim02_cas');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
