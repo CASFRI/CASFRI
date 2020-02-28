@@ -23,7 +23,7 @@ SET srcFileName=UTM
 SET gdbTableName=fpoly
 SET srcFullPath="%friDir%/SK/%inventoryID%/data/inventory/UTM.gdb"
 
-fullTargetTableName=%targetFRISchema%.sk01
+SET fullTargetTableName=%targetFRISchema%.sk01
 
 ::########################################## Process ######################################
 
@@ -31,5 +31,7 @@ fullTargetTableName=%targetFRISchema%.sk01
 "%gdalFolder%/ogr2ogr" ^
 -f PostgreSQL %pg_connection_string% %srcFullPath% %gdbTableName% ^
 -nln %fullTargetTableName% %layer_creation_option% ^
--sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbTableName%' WHERE CZONE NOT LIKE '0'" \
+-sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbTableName%' WHERE CZONE NOT LIKE '0'" ^
 -progress %overwrite_tab%
+
+ENDLOCAL
