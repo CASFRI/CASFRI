@@ -1,6 +1,7 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,FALSE
-2,SOIL_MOIST_REG,text,false(),nothingText(),Attribute does not occur,FALSE
+2,SOIL_MOIST_REG,text,"notNull(cl_drai);matchList(cl_dra,{'00','10','11','12','13','14','20','21','22','23','24','30','31','32','33','34','40','41','42','43','44','50','51','52','53','54','60','61','62','63','64','16'})
+","mapText(cl_drai, {'00','10','11','12','13','14','20','21','22','23','24','30','31','32','33','34','40','41','42','43','44','50','51','52','53','54','60','61','62','63','64','16'}, {'D','D','D','D','D','D','F','F','F','F','F','F','F','F','F','F','M','M','M','M','M','W','W','W','W','W','A','A','A','A','A','UNUSED_VALUE'})",Attribute does not occur,FALSE
 3,STRUCTURE_PER,integer,false(),nothingInt(),Copies NULL integer code to STRUCTURE_PER,FALSE
 4,LAYER,integer,true(),copyInt(1),Copies 1 to LAYER,FALSE
 5,LAYER_RANK,integer,true(),copyInt(1),Copies 1 to LAYER_ID,FALSE

@@ -2,8 +2,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, src_filename, ogc_fid, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,"notNull(ogc_fid);isInt(ogc_fid);isGreaterThan(ogc_fid,0)",copyText(ogc_fid),Copies source value to ORIG_STAND_ID,TRUE
-4,STAND_STRUCTURE,text,,"if cl_age IN (10,30,50,70,90,120,JIN,VIN) STAND_STRUCTURE = S, if cl_age IN (JIR'VIR) STAND_STRUCTURE = C, if length(cl_age)>3, STAND_STRUCTURE = M",,FALSE
-5,NUM_OF_LAYERS,integer,,"if STAND_STRUCTURE = S, NUM_OF_LAYERS = 1, if STAND_STRUCTURE = M, NUM_OF_LAYERS = 2, if STAND_STRUCTURE = C, NUM_OF_LAYERS = unknown",,FALSE
+4,STAND_STRUCTURE,text,"matchTable(cl_age, 'translation', 'qc03_standstructure',TRUE,TRUE)","lookupText(cl_age, 'translation', 'qc03_standstructure', 'stand_structure', 'TRUE')",Maps source value to stand_structure using lookup table,TRUE
+5,NUM_OF_LAYERS,integer,"matchTable(cl_age, 'translation', 'qc03_standstructure',TRUE,TRUE)","lookupInt(cl_age, 'translation', 'qc03_standstructure', 'num_of_layers', 'TRUE')",Maps source value to num_of_layers using lookup table,TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Attribute does not occur,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
