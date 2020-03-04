@@ -113,6 +113,7 @@ Some translations require dependency tables. Examples are species lookup tables 
 
 * Install the PostgreSQL, PostGIS and GDAL versions specified in the requirement section.
 * Install the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) following the instructions provided in the project readme.
+* In a PostgreSQL query window, or using the PSQL client, run the helperFunctionsCASFRI.sql file. This loads CASFRI specific helper functions used for especially complex, inventory specific translations.
 
 ### Converting/Loading FRIs
 * Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
