@@ -1279,6 +1279,10 @@ RETURNS text AS $$
   BEGIN
     IF targetTypelc = 'integer' OR targetTypelc = 'int' OR targetTypelc = 'double precision' THEN 
       RETURN CASE WHEN rulelc = 'projectrule1' THEN '-9999'
+                  WHEN rulelc = 'tie01_2layer_age_codes_validation' THEN '-9997'
+                  WHEN rulelc = 'tie01_not_etage_notnull_validation' THEN '-8888'
+                  WHEN rulelc = 'tie01_not_etage_layer1_validation' THEN '-8887'
+                  WHEN rulelc = 'tie01_not_etage_dens_layers_validation' THEN '-8887'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1493,6 +1497,172 @@ RETURNS boolean AS $$
       RETURN FALSE;
 		END IF;
     RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_tie01_2layer_age_codes_validation()
+--
+-- When num_of_layers is 2, do the 2 age codes from cl_age match the age codes in
+-- sup_cl_age_et and inf_cl_age_et?
+--
+-- Also need to do this check when et_domi is EQU because in that case we don't know the dominant layer
+-- and have to id it using the age code order.
+--
+-- e.g. TT_tie01_2layer_age_codes_validation()
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_tie01_2layer_age_codes_validation(text,text,text,text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_tie01_2layer_age_codes_validation(
+  cl_age text,
+  lookup_schema text,
+  lookup_table text,
+  in_etage text,
+  et_domi text,
+  sup_cl_age_et text,
+  inf_cl_age_et text
+)
+RETURNS boolean AS $$
+  DECLARE
+		layer_1_age_code text;
+    layer_2_age_code text;
+    num_of_layers int;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_tie01_2layer_age_codes_validation',
+                              ARRAY['lookup_schema', lookup_schema, 'text',
+                                   'lookup_table', lookup_table, 'text']);
+	
+    IF cl_age IS NOT NULL AND in_etage = 'O' THEN
+      num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'num_of_layers');
+      
+      IF num_of_layers = 2 THEN
+        IF et_domi IS NULL OR et_domi = 'EQU' THEN        
+          layer_1_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, 'layer_1_age'::text);
+          layer_2_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, 'layer_2_age'::text);
+
+          -- if layer 1 doesn't match either value, return FALSE
+          IF layer_1_age_code NOT IN (sup_cl_age_et, inf_cl_age_et) THEN
+            RETURN FALSE;
+          END IF;
+
+          -- if layer 1 matches one of the values, check layer 2 matches the other
+          IF layer_1_age_code = sup_cl_age_et THEN
+            IF layer_2_age_code = inf_cl_age_et THEN
+              RETURN TRUE;
+            ELSE
+              RETURN FALSE;
+            END IF;
+          END IF;
+
+          -- if layer 1 matches one of the values, check layer 2 matches the other
+          IF layer_1_age_code = inf_cl_age_et THEN
+            IF layer_2_age_code = sup_cl_age_et THEN
+              RETURN TRUE;
+            ELSE
+              RETURN FALSE;
+            END IF;
+          END IF;
+        END IF;
+      END IF;
+    END IF;
+    
+    RETURN TRUE; -- this rule only applies in etage table where cl_age has 2 layers defined, and et_domi ir null or EQU. For all other cases return TRUE to skip this validation.
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_tie01_not_etage_notnull_validation()
+--
+-- in_etage text
+-- check_att text (cl_dens or cl_haut)
+--
+-- When in_etage = 'N', check cl_dens and cl_height are not null
+--
+-- e.g. TT_tie01_not_etage_notnull_validation(in_etage, check_att)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_tie01_not_etage_notnull_validation(text,text);
+CREATE OR REPLACE FUNCTION TT_tie01_not_etage_notnull_validation(
+  in_etage text,  
+  check_att text
+)
+RETURNS boolean AS $$		
+  BEGIN
+
+    IF in_etage = 'N' THEN
+      RETURN TT_NotNull(check_att);
+    END IF;
+    
+    RETURN TRUE; -- if row is in_etage = 'O', return true.
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_tie01_not_etage_layer1_validation()
+--
+-- in_etage text
+-- layer text
+--
+-- When in_etage = 'N', check layer requested = 1, otherwise return FALSE
+--
+-- e.g. TT_tie01_not_etage_layer1_validation(in_etage, layer)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_tie01_not_etage_layer1_validation(text,text);
+CREATE OR REPLACE FUNCTION TT_tie01_not_etage_layer1_validation(
+  in_etage text,  
+  layer text
+)
+RETURNS boolean AS $$		
+  DECLARE
+    _layer int;
+  BEGIN
+    
+    _layer = layer::int;
+    
+    IF in_etage = 'N' THEN
+      IF NOT _layer = 1 THEN
+        RETURN FALSE;
+      END IF;
+    END IF;
+    
+    RETURN TRUE; -- if row is in_etage = 'O', or layer = 1, return true.
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_tie01_not_etage_dens_layers_validation()
+--
+-- in_etage text
+-- cl_age text
+-- lookup_schema text,
+-- lookup_table text,
+--
+-- When in_etage = 'N', for density, check if num_of_layer > 1, if so return FALSE
+--
+-- e.g. TT_tie01_not_etage_dens_layers_validation(in_etage, layer)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_tie01_not_etage_dens_layers_validation(text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_tie01_not_etage_dens_layers_validation(
+  in_etage text,  
+  cl_age text,
+  lookup_schema text,
+  lookup_table text  
+)
+RETURNS boolean AS $$		
+  DECLARE
+    num_of_layers int;
+  BEGIN
+    
+    IF in_etage = 'N' THEN
+      num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'num_of_layers');
+      IF num_of_layers = 2 THEN
+        RETURN FALSE;
+      END IF;
+    END IF;
+    
+    RETURN TRUE; -- if row is in_etage = 'O', or layer = 1, return true.
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
@@ -1779,7 +1949,7 @@ RETURNS text AS $$
   BEGIN
     PERFORM TT_ValidateParams('TT_nbi01_wetland_translation',
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
-	wetland_code = TT_nbi01_wetland_code(wc, vt, im);
+	  wetland_code = TT_nbi01_wetland_code(wc, vt, im);
 
     -- substring wetland_code
     IF wetland_code IS NOT NULL THEN
@@ -1904,5 +2074,283 @@ RETURNS int AS $$
   ELSE
     RETURN TT_Concat('{''19'', ' || _val_text || '}'::text, ''::text)::int;
   END IF;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+-- TT_tie01_crownclosure_translation(text)
+--
+-- val text
+-- lookup_schema text
+-- lookup_table text
+-- lookup_col text
+-- in_etage text
+-- et_domi text
+-- sup_cl_age_et text - source column
+-- inf_cl_age_et text - source column
+-- sup_densitie text
+-- inf_densitie text
+-- cl_dens text 
+-- layer text (1 or 2)
+-- upper_lower - if returned values represent ranges we will need to return either the upper or lower value
+--
+-- QC crown closure assigned based on complicated logic.
+-- If no cl_age value we know the entire polygon is NFL. This should be trapped with a validation function
+-- If cl_age has a value we know there is forest info.
+  -- If forest info and there is data in the etage table, we need to calculate the number of layers.
+    -- If only one layer, we simply return the density value from the sup table (e.g. sup_densite)
+    -- If two layers of forest info, we need to figure out whether layer 1 is sup or inf. Get the age class code for the layer being processed
+    -- from the cl_age string, and compare it to the age class codes from the sup and inf tables. Then return crown closure from whichever matches.
+  -- If forest info but no data in etage table, 
+    -- If num_of_layers = 2, return NULL. The density is for the polygon and cannot be attributed to a layer.
+    -- If num_of_layers = 1, check for values in cl_dens.
+    -- If null, no info for this polygon
+    -- If processing layer 1, return cl_dens
+    -- If processing layer 2, no info for this polygon. 
+--
+-- e.g. TT_tie01_crownclosure_translation(val, lookup_schema, lookup_table, in_etage, et_domi, sup_cl_age_et, inf_cl_age_et, sup_densite, inf_densite, cl_dens, layer, upper_lower)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_tie01_crownclosure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_tie01_crownclosure_translation(
+  cl_age text,
+  lookup_schema text,
+  lookup_table text,
+  lookup_col text,
+  in_etage text,
+  et_domi text,
+  sup_cl_age_et text,
+  inf_cl_age_et text,
+  sup_densite text,
+  inf_densite text,
+  cl_dens text,
+  layer text,
+  upper_lower text
+)
+RETURNS int AS $$
+  DECLARE
+    _layer int;
+    num_of_layers int;
+    layer_age_code text;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_tie01_crownclosure_translation',
+                              ARRAY['lookup_schema', lookup_schema, 'text',
+                                   'lookup_table', lookup_table, 'text',
+                                   'lookup_col', lookup_col, 'text',
+                                   'layer', layer, 'int',
+                                   'upper_lower', upper_lower, 'text']);
+    _layer = layer::int;
+    num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'num_of_layers'::text);
+    
+    -- layer can only be 1 or 2
+    IF num_of_layers > 2 THEN
+      RETURN NULL;
+    END IF;
+    
+    -- upper_lower can only be 'upper' or 'lower'.
+    IF NOT upper_lower IN ('upper','lower') THEN
+      RETURN NULL;
+    END IF;
+    
+    -- cl_age needs a value
+    IF cl_age IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    IF in_etage = 'O' THEN
+      IF num_of_layers = 1 THEN
+        IF _layer = 1 THEN
+          RETURN sup_densite;
+        ELSE
+          RETURN NULL; -- no layer 2 info to return
+        END IF;
+      ELSE -- num_of_layers = 2
+        
+        IF et_domi IS NULL OR et_domi = 'EQU' THEN
+          -- the layer 1 code is always the first code in cl_age, i.e. layer_1_age in the lookup table. But the return value could be in either the sup or inf table.
+          -- same for layer 2. Always the second code, but cound be sup or inf.
+          -- get the layer 1/2 age code using lookup table...
+          layer_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, lookup_col);
+
+          -- is it in the sup or the inf table? Find out then return the return value from the correct table.
+          IF sup_cl_age_et = inf_cl_age_et THEN
+            -- what do we do here? Don't know which to return
+            RETURN NULL;
+          ELSIF layer_age_code = sup_cl_age_et THEN
+            RETURN sup_densite; -- if layer is from sup, return sup
+          ELSIF layer_age_code = inf_cl_age_et THEN
+            RETURN inf_densite; -- if layer is from inf, return inf
+          ELSE
+            RETURN NULL; -- if it doesn't match either there is an error
+          END IF;
+        ELSE 
+          -- If et_domi has a value, identify layers 1 and 2 using the following:
+            -- EQU: Both layers have the same coverage (45%-55%). IN THIS CASE USE THE AGE CODE METHOD ABOVE.
+            -- SUP: sup is layer one and it covers more than 50%
+            -- INF: inf is the dominant layer (layer 1) and it covers more than 50%
+            IF et_domi = 'SUP' THEN
+              IF _layer = 1 THEN
+                RETURN sup_densite;
+              ELSE --layer 2
+                RETURN inf_densite;
+              END IF;
+            ELSIF et_domi = 'INF' THEN
+              IF _layer = 1 THEN
+                RETURN inf_densite;
+              ELSE --layer 2
+                RETURN sup_densite;
+              END IF;
+            ELSE
+              RETURN NULL; -- error, should be caught in validation
+            END IF;
+        END IF;
+      END IF;
+      
+    ELSIF in_etage = 'N' THEN
+      IF cl_dens IS NULL THEN
+        RETURN NULL;
+      ELSIF num_of_layers = 1 AND _layer = 1 THEN
+        IF upper_lower = 'upper' THEN
+          RETURN TT_MapInt(cl_dens, '{''A'',''B'',''C'',''D'',''H'',''I''}', '{100,80,60,40,100,60}');
+        ELSE -- lower
+          RETURN TT_MapInt(cl_dens, '{''A'',''B'',''C'',''D'',''H'',''I''}', '{80,60,40,25,60,0}');
+        END IF;
+      ELSE
+        RETURN NULL; -- if num_of_layers = 2 no value can be assigned because cl_dens is at the polygon level. If layer = 2 and num_of_layers = 1, no layer 2 info to return.
+      END IF;   
+    ELSE
+      RETURN NULL; -- in_etage is erroneous
+    END IF;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+-------------------------------------------------------------------------------
+-- TT_tie01_height_translation(text)
+--
+-- val text
+-- lookup_schema text
+-- lookup_table text
+-- lookup_col text
+-- in_etage - source column
+-- sup_cl_age_et text - source column
+-- inf_cl_age_et text - source column
+-- sup_hauteur text
+-- inf_hauteur text
+-- cl_haut text 
+-- layer text (1 or 2)
+-- upper_lower - if returned values represent ranges we will need to return either the upper or lower value
+--
+-- logic is the same as TT_tie01_crownclosure_translation except that when in_etage = 'O' and num_of_layers = 2,
+-- the single possible height value is assigned to layer 1. Instead of all layers returning null.
+--
+-- e.g. TT_tie01_height_translation(val, lookup_schema, lookup_table, in_etage, sup_cl_age_et, inf_cl_age_et, sup_hauteur, inf_hauteur, cl_haut, layer, upper_lower)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_tie01_height_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_tie01_height_translation(
+  cl_age text,
+  lookup_schema text,
+  lookup_table text,
+  lookup_col text,
+  in_etage text,
+  et_domi text,
+  sup_cl_age_et text,
+  inf_cl_age_et text,
+  sup_hauteur text,
+  inf_hauteur text,
+  cl_haut text,
+  layer text,
+  upper_lower text
+)
+RETURNS int AS $$
+  DECLARE
+    _layer int;
+    num_of_layers int;
+    layer_age_code text;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_tie01_height_translation',
+                              ARRAY['lookup_schema', lookup_schema, 'text',
+                                   'lookup_table', lookup_table, 'text',
+                                   'lookup_col', lookup_col, 'text',
+                                   'layer', layer, 'int',
+                                   'upper_lower', upper_lower, 'text']);
+    _layer = layer::int;
+    num_of_layers = TT_lookupInt(cl_age, lookup_schema::text, lookup_table::text, 'num_of_layers'::text);
+    
+    -- layer can only be 1 or 2
+    IF num_of_layers > 2 THEN
+      RETURN NULL;
+    END IF;
+    
+    -- upper_lower can only be 'upper' or 'lower'.
+    IF NOT upper_lower IN ('upper','lower') THEN
+      RETURN NULL;
+    END IF;
+    
+    -- cl_age needs a value
+    IF cl_age IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    IF in_etage = 'O' THEN
+      IF num_of_layers = 1 THEN
+        IF _layer = 1 THEN
+          RETURN sup_hauteur;
+        ELSE
+          RETURN NULL; -- no layer 2 info to return
+        END IF;
+      ELSE -- num_of_layers = 2
+        IF et_domi IS NULL OR et_domi = 'EQU' THEN
+          -- the layer 1 code is always the first code in cl_age, i.e. layer_1_age in the lookup table. But the return value could be in either the sup or inf table.
+          -- same for layer 2. Always the second code, but cound be sup or inf.
+          -- get the layer 1/2 age code using lookup table...
+          layer_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, lookup_col);
+
+          -- is it in the sup or the inf table? Find out then return the return value from the correct table.
+          IF sup_cl_age_et = inf_cl_age_et THEN
+            -- what do we do here? Don't know which to return
+            RETURN NULL;
+          ELSIF layer_age_code = sup_cl_age_et THEN
+            RETURN sup_hauteur; -- if layer is from sup, return sup
+          ELSIF layer_age_code = inf_cl_age_et THEN
+            RETURN inf_hauteur; -- if layer is from inf, return inf
+          ELSE
+            RETURN NULL; -- if it doesn't match either there is an error
+          END IF;
+        ELSE 
+          -- If et_domi has a value, identify layers 1 and 2 using the following:
+            -- EQU: Both layers have the same coverage (45%-55%). IN THIS CASE USE THE AGE CODE METHOD ABOVE.
+            -- SUP: sup is layer one and it covers more than 50%
+            -- INF: inf is the dominant layer (layer 1) and it covers more than 50%
+            IF et_domi = 'SUP' THEN
+              IF _layer = 1 THEN
+                RETURN sup_hauteur;
+              ELSE --layer 2
+                RETURN inf_hauteur;
+              END IF;
+            ELSIF et_domi = 'INF' THEN
+              IF _layer = 1 THEN
+                RETURN inf_hauteur;
+              ELSE --layer 2
+                RETURN sup_hauteur;
+              END IF;
+            ELSE
+              RETURN NULL; -- error, should be caught in validation
+            END IF;
+        END IF;
+      END IF;
+      
+    ELSIF in_etage = 'N' THEN
+      IF cl_haut IS NULL THEN
+        RETURN NULL;
+      ELSIF _layer = 1 THEN
+        IF upper_lower = 'upper' THEN
+          RETURN TT_MapInt(cl_haut, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{100, 22, 17, 12, 7, 4, 2}');
+        ELSE -- lower
+          RETURN TT_MapInt(cl_haut, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{22, 17, 12, 7, 4, 2, 0}');
+        END IF;
+      ELSE
+        RETURN NULL; -- If layer = 2 and num_of_layers = 1 or 2, no layer 2 info to return.
+      END IF;   
+    ELSE
+      RETURN NULL; -- in_etage is erroneous
+    END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;

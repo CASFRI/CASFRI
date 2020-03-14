@@ -86,10 +86,10 @@ SELECT * FROM translation_test.qc03_eco_test;
 DROP TABLE IF EXISTS translation_test.qc03_lyr_test;
 CREATE TABLE translation_test.qc03_lyr_test AS
 SELECT * FROM translation.qc03_lyr
---WHERE rule_id::int = 1
+WHERE rule_id::int < 10
 ;
 -- display
-SELECT * FROM translation_test.qc03_qc03_lyr_test;
+SELECT * FROM translation_test.qc03_lyr_test;
 ----------------------------
 -- nfl
 DROP TABLE IF EXISTS translation_test.qc03_nfl_test;
@@ -135,7 +135,8 @@ SELECT TT_Prepare('translation_test', 'qc03_geo_test', '_qc03_geo_test');
 --SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'nt', 1, 200);
 
 -- Translate the samples
-SELECT * FROM TT_Translate_qc03_cas_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 6 s.
+SELECT TT_CreateMappingView('rawfri', 'qc03', 'qc', 200);
+SELECT * FROM TT_Translate_qc03_cas_test('rawfri', 'qc03_l1_to_qc_l1_map_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_cas_test');
 
 SELECT * FROM TT_Translate_qc03_dst_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
@@ -144,7 +145,12 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_dst_test');
 SELECT * FROM TT_Translate_qc03_eco_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_eco_test');
 
-SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'qc03', 'qc', 200, 'lyr');
+SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l1_to_qc_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_lyr_test');
+
+SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'qc', 1, 200, 'lyr');
+SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l2_to_qc_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_lyr_test');
 
 --SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
