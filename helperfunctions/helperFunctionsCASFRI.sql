@@ -2442,7 +2442,7 @@ $$ LANGUAGE plpgsql;
 -- then extracts the percentage as the fifth and sixth characters, or the fourth fifth and sixth characters
 -- if 100%.
 ------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_fim_species_percent(text, text);
+--DROP FUNCTION IF EXISTS TT_fim_species_percent(text, text);
 CREATE OR REPLACE FUNCTION TT_fim_species_percent(
   sp_string text,
   sp_number text
