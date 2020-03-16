@@ -2354,3 +2354,109 @@ RETURNS int AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+
+-------------------------------------------------------------------------------
+-- TT_fim_species_code(text, text)
+--
+-- sp_string text - source string of species and percentages
+-- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
+--
+-- This function is used by the following two functions to extract the requested species name an percent code.
+-- The following functions take that code and extract either species name or percent info.
+-- String structure is a 2-letter species code, followed by 2 spaces, then a 2 digit percentage.
+-- In cases where a species is 100%, there is only 1 space so the total length of all codes is 6.
+-- Multiple codes are concatenated together. Max number of species in ON is 10.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fim_species_code(text, text);
+CREATE OR REPLACE FUNCTION TT_fim_species_code(
+  sp_string text,
+  sp_number text
+)
+RETURNS text AS $$
+  DECLARE
+    _sp_number int;
+    start_char int;
+  BEGIN
+    
+  _sp_number = sp_number::int;
+  
+  IF TT_Length(sp_string) > 1 THEN -- any empty cells will return null
+    IF _sp_number = 1 THEN -- first species is characters 1 to 6
+      RETURN substring(sp_string, 1, 6);
+    ELSE
+      start_char = 1 + ((_sp_number - 1)*6); -- calculate start character for substring
+      RETURN substring(sp_string, start_char, 6); -- following species are start character + 6
+    END IF;
+  ELSE
+    RETURN NULL;
+  END IF;
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_fim_species(text, text, text, text, text)
+--
+-- sp_string text - source string of species and percentages
+-- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
+-- lookup_schema text, 
+-- lookup_table text,
+-- lookup_col text
+--
+-- This functions calls TT_fim_species_code() to extract the requested species-percent code,
+-- then extracts the species code as the first two characters. Then runs TT_LookupText() to
+-- convert the ON code into the CASFRI code using a lookup table.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fim_species(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_fim_species(
+  sp_string text,
+  sp_number text,
+  lookup_schema text, 
+  lookup_table text,
+  lookup_col text
+)
+RETURNS text AS $$
+  DECLARE
+  code text;
+  species text;
+  BEGIN
+    code = TT_fim_species_code(sp_string, sp_number); -- get the requested species code and percent
+    
+    IF TT_Length(code) > 1 THEN -- 
+      species = substring(code, 1, 2); -- species code is first two characters of code
+    ELSE
+      RETURN NULL;
+    END IF;
+    
+    -- transform species to casfri species using lookup table
+    RETURN TT_LookupText(species, lookup_schema, lookup_table, lookup_col, TRUE::text);
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_fim_species_percent(text, text)
+--
+-- sp_string text - source string of species and percentages
+-- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
+--
+-- This functions calls TT_fim_species_code() to extract the requested species-percent code,
+-- then extracts the percentage as the fifth and sixth characters, or the fourth fifth and sixth characters
+-- if 100%.
+------------------------------------------------------------
+DROP FUNCTION IF EXISTS TT_fim_species_percent(text, text);
+CREATE OR REPLACE FUNCTION TT_fim_species_percent(
+  sp_string text,
+  sp_number text
+)
+RETURNS int AS $$
+  DECLARE
+  code text;
+  BEGIN
+    code = TT_fim_species_code(sp_string, sp_number);
+    
+    IF TT_Length(code) > 1 THEN
+      RETURN substring(code, 4, 3)::int; -- If 100, last 3 digits returned. If <100, substring grabs space and 2 digits but then converts to int so the space is dropped.
+    ELSE
+      RETURN NULL;
+    END IF;
+  END; 
+$$ LANGUAGE plpgsql;
