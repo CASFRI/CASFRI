@@ -197,6 +197,7 @@ The following diagram illustrates the relationship between the generic translati
 # Progress
 * Progress of completed translations can be found in issue [#175](https://github.com/edwardsmarc/CASFRI/issues/175).
 * The attribute PRODUCTIVE_FOR requires a discussion about how to apply for inventories that do not have a source attribute. Some inventories are therefore complete except for PRODUCTIVE_FOR.
+* The attribute STRUCTURE_RANGE may be added to describe height ranges in complex stands. This attribute was not included in CAS04. [#208](https://github.com/edwardsmarc/CASFRI/issues/208).
 * Any inventory labelled 'Done' or 'Done - attributes missing' can successfully be translated without errors. The resulting tables will just have missing information for some attributes (e.g. PRODUCTIVE_FOR).
 * Inventories labelled 'In progress' are being actively worked on and may produce errors when translated.
 
