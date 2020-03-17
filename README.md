@@ -194,6 +194,12 @@ If the 'row subset' argument is used, the rows with data for the provided subset
 The following diagram illustrates the relationship between the generic translation table, the attribute dependencies table, and TT_CreateMappingView() using a simple attribute - SPECIES_1_PER. The translation rule is a simple copy, but the attribute has a different name in BC08 and BC10. Views are used to map from the source attribute names to the name used in the generic BC translation table.
 ![Workflow diagram](workflow_diagram.jpg)
 
+# Progress
+* Progress of completed translations can be found in issue [#175](https://github.com/edwardsmarc/CASFRI/issues/175).
+* The attribute PRODUCTIVE_FOR requires a discussion about how to apply for inventories that do not have a source attribute. Some inventories are therefore complete except for PRODUCTIVE_FOR.
+* Any inventory labelled 'Done' or 'Done - attributes missing' can successfully be translated without errors. The resulting tables will just have missing information for some attributes (e.g. PRODUCTIVE_FOR).
+* Inventories labelled 'In progress' are being actively worked on and may produce errors when translated.
+
 # Credits
 **Steve Cumming**, Center for forest research, University Laval.
 
