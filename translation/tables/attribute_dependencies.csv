@@ -28,5 +28,5 @@ ON02',2,no,1,"inventory_id, src_filename, '', polyid, ogc_fid",polyid,vert,,"osp
 YT',1,yes,1,"inventory_id, src_filename, '', poly_no, ogc_fid",poly_no,,,,,,wkb_geometry,wkb_geometry,,ref_year,smr,,cc,cc,avg_ht,avg_ht,,sp1,sp1_per,sp2,sp2_per,sp3,sp3_per,sp4,sp4_per,,,,,,,,,,,,,age,age,site_class,site_index,,,,dist_code1,dist_year1,,,dist_code2,dist_year2,,,,,,,,,,,,wkb_geometry
 YT02',1,no,1,"inventory_id, src_filename, '', poly_no, ogc_fid",poly_no,,,,,,wkb_geometry,wkb_geometry,,ref_year,smr,,cc,cc,avg_ht,avg_ht,,sp1,sp1_per,sp2,sp2_per,sp3,sp3_per,sp4,sp4_per,,,,,,,,,,,,,age,age,site_class,site_index,,,,dist_code1,dist_year1,,,dist_code2,dist_year2,,,,,,,,,,,,wkb_geometry
 SK',1,yes,1,"inventory_id, src_filename, '', mapfid, ogc_fid",mapfid,,,,,,wkb_geometry,wkb_geometry,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,wkb_geometry
-SK01',1,no,1,"inventory_id, src_filename, '', mapfid, ogc_fid",mapfid,,,,,,wkb_geometry,wkb_geometry,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,wkb_geometry
-SK01',2,no,1,"inventory_id, src_filename, '', mapfid, ogc_fid",mapfid,,,,,,wkb_geometry,wkb_geometry,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,wkb_geometry
+SK01',1,no,1,"inventory_id, src_filename, '', mapfid, ogc_fid",mapfid,,,,,map,wkb_geometry,wkb_geometry,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,wkb_geometry
+SK01',2,no,1,"inventory_id, src_filename, '', mapfid, ogc_fid",mapfid,,,,,map,wkb_geometry,wkb_geometry,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,wkb_geometry
