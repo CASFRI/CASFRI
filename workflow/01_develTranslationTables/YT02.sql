@@ -36,7 +36,7 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_cas_devel');
 -- LYR ATTRIBUTES
 SELECT * FROM translation.yvi01_lyr;
 DROP TABLE IF EXISTS translation_devel.yt02_yvi01_lyr_devel;
-CREATE TABLE translation_devel.yt02_yvi01_lyr_devel AS SELECT * FROM translation.yvi01_lyr; --WHERE rule_id::int = 1
+CREATE TABLE translation_devel.yt02_yvi01_lyr_devel AS SELECT * FROM translation.yt_yvi01_lyr; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.yt02_yvi01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_lyr_devel', '_yt02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200, 'lyr');
@@ -59,12 +59,12 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_dst_devel');
 SELECT * FROM translation.yvi01_nfl;
 DROP TABLE IF EXISTS translation_devel.yt02_yvi01_nfl_devel;
 CREATE TABLE translation_devel.yt02_yvi01_nfl_devel AS
-SELECT * FROM translation.yvi01_nfl; --WHERE rule_id::int = 1
+SELECT * FROM translation.yt_yvi01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.yt02_yvi01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_nfl_devel', '_yt02_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200, 'nfl');
 SELECT * FROM TT_Translate_yt02_nfl_devel('rawfri', 'yt02_l1_to_yt_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_nfl_devel');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_nfl_devel');
 
 
 -- ECO ATTRIBUTES

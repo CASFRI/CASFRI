@@ -2,7 +2,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_no);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_no, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(smr);matchList(smr,{'a','A','d','D','m','M','w','W'})","mapText(smr, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
-4,LAYER,integer,true(),copyInt(1),Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. ,TRUE
+4,LAYER,integer,true(),copyInt(1),Only 1 layer possible in YT. Every polygon is either LYR or NFL.,TRUE
 5,LAYER_RANK,integer,true(),copyInt(1),Copies 1 to LAYER_ID,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(cc);isInt(cc);isGreaterThan(cc,'0');isLessThan(cc, 100)",copyInt(cc),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(cc);isInt(cc);isGreaterThan(cc,'0');isLessThan(cc, 100)",copyInt(cc),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE

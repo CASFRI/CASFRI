@@ -70,8 +70,12 @@ WITH test_nb AS (
     SELECT 'TT_tie01_not_etage_layer1_validation'::text function_tested,     22 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_tie01_not_etage_dens_layers_validation'::text function_tested,23 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_fim_species'::text function_tested,                           25 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_fim_species_percent'::text function_tested,                   26 maj_num,  5 nb_test
+    SELECT 'TT_fim_species_translation'::text function_tested,               25 maj_num,  6 nb_test UNION ALL
+    SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_yvi01_nat_non_veg_validation'::text function_tested,          27 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_yvi01_nat_non_veg_translation'::text function_tested,         28 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_yvi01_non_for_veg_translation'::text function_tested,         29 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,    30 maj_num,  5 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1130,76 +1134,200 @@ SELECT '24.5'::text number,
        'Species code null'::text description,
        TT_fim_species_code('', '1') IS NULL passed
 ---------------------------------------------------------
-  -- TT_fim_species
+  -- TT_fim_species_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.1'::text number,
-       'TT_fim_species'::text function_tested,
+       'TT_fim_species_translation'::text function_tested,
        'Get species code 1'::text description,
-       TT_fim_species('Sw  10Sb  90', '1', 'public', 'test_lookup_on_species', 'spec1') = 'Pice glau' passed
+       TT_fim_species_translation('Sw  10Sb  90', '1', 'public', 'test_lookup_on_species', 'spec1') = 'Pice glau' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.2'::text number,
-       'TT_fim_species'::text function_tested,
+       'TT_fim_species_translation'::text function_tested,
        'Get species code 2'::text description,
-       TT_fim_species('Sw  10Sb  90', '2', 'public', 'test_lookup_on_species', 'spec1') = 'Pice mari' passed
+       TT_fim_species_translation('Sw  10Sb  90', '2', 'public', 'test_lookup_on_species', 'spec1') = 'Pice mari' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.3'::text number,
-       'TT_fim_species'::text function_tested,
+       'TT_fim_species_translation'::text function_tested,
        'Get species code 100'::text description,
-       TT_fim_species('Sw 100', '1', 'public', 'test_lookup_on_species', 'spec1') = 'Pice glau' passed
+       TT_fim_species_translation('Sw 100', '1', 'public', 'test_lookup_on_species', 'spec1') = 'Pice glau' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.4'::text number,
-       'TT_fim_species'::text function_tested,
+       'TT_fim_species_translation'::text function_tested,
        'Species code doesnt exist'::text description,
-       TT_fim_species('Sw 100', '2', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
+       TT_fim_species_translation('Sw 100', '2', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.5'::text number,
-       'TT_fim_species'::text function_tested,
+       'TT_fim_species_translation'::text function_tested,
        'Species code not in table'::text description,
-       TT_fim_species('Ss 100', '1', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
+       TT_fim_species_translation('Ss 100', '1', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.6'::text number,
-       'TT_fim_species'::text function_tested,
+       'TT_fim_species_translation'::text function_tested,
        'Null string'::text description,
-       TT_fim_species(null::text, '1', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
+       TT_fim_species_translation(null::text, '1', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
 ---------------------------------------------------------
-  -- TT_fim_species_percent
+  -- TT_fim_species_percent_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '26.1'::text number,
-       'TT_fim_species_percent'::text function_tested,
+       'TT_fim_species_percent_translation'::text function_tested,
        'Get species percent 1'::text description,
-       TT_fim_species_percent('Sw  10Sb  90', '1') = 10 passed
+       TT_fim_species_percent_translation('Sw  10Sb  90', '1') = 10 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '26.2'::text number,
-       'TT_fim_species_percent'::text function_tested,
+       'TT_fim_species_percent_translation'::text function_tested,
        'Get species percent 2'::text description,
-       TT_fim_species_percent('Sw  10Sb  90', '2') = 90 passed
+       TT_fim_species_percent_translation('Sw  10Sb  90', '2') = 90 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '26.3'::text number,
-       'TT_fim_species_percent'::text function_tested,
+       'TT_fim_species_percent_translation'::text function_tested,
        'Get species percent 100'::text description,
-       TT_fim_species_percent('Sw 100', '1') = 100 passed
+       TT_fim_species_percent_translation('Sw 100', '1') = 100 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '26.4'::text number,
-       'TT_fim_species_percent'::text function_tested,
+       'TT_fim_species_percent_translation'::text function_tested,
        'Species number doesnt exist'::text description,
-       TT_fim_species_percent('Sw 100', '2') IS NULL passed
+       TT_fim_species_percent_translation('Sw 100', '2') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '26.5'::text number,
-       'TT_fim_species_percent'::text function_tested,
+       'TT_fim_species_percent_translation'::text function_tested,
        'Null string'::text description,
-       TT_fim_species_percent(null::text, '1') IS NULL passed
+       TT_fim_species_percent_translation(null::text, '1') IS NULL passed
 ---------------------------------------------------------
+  -- TT_yvi01_nat_non_veg_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '27.1'::text number,
+       'TT_yvi01_nat_non_veg_validation'::text function_tested,
+       'Test wrong type_lnd'::text description,
+       TT_yvi01_nat_non_veg_validation('VF', '', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '27.2'::text number,
+       'TT_yvi01_nat_non_veg_validation'::text function_tested,
+       'test Alpine'::text description,
+       TT_yvi01_nat_non_veg_validation('NE', '', 'A') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '27.3'::text number,
+       'TT_yvi01_nat_non_veg_validation'::text function_tested,
+       'test class true'::text description,
+       TT_yvi01_nat_non_veg_validation('NE', 'R', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '27.4'::text number,
+       'TT_yvi01_nat_non_veg_validation'::text function_tested,
+       'test class false'::text description,
+       TT_yvi01_nat_non_veg_validation('NE', NULL::text, NULL::text) IS FALSE passed
+---------------------------------------------------------
+  -- TT_yvi01_nat_non_veg_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '28.1'::text number,
+       'TT_yvi01_nat_non_veg_translation'::text function_tested,
+       'Test wrong type_lnd'::text description,
+       TT_yvi01_nat_non_veg_translation('VF', '', '') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '28.2'::text number,
+       'TT_yvi01_nat_non_veg_translation'::text function_tested,
+       'test Alpine'::text description,
+       TT_yvi01_nat_non_veg_translation('NE', '', 'A') = 'AP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '28.3'::text number,
+       'TT_yvi01_nat_non_veg_translation'::text function_tested,
+       'test class true'::text description,
+       TT_yvi01_nat_non_veg_translation('NE', 'R', '') = 'RI' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '28.4'::text number,
+       'TT_yvi01_nat_non_veg_translation'::text function_tested,
+       'test class false'::text description,
+       TT_yvi01_nat_non_veg_translation('NE', NULL::text, NULL::text) IS NULL passed
+---------------------------------------------------------
+  -- TT_yvi01_non_for_veg_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '29.1'::text number,
+       'TT_yvi01_non_for_veg_translation'::text function_tested,
+       'Test wrong type_lnd'::text description,
+       TT_yvi01_non_for_veg_translation('NU', '', '') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '29.2'::text number,
+       'TT_yvi01_non_for_veg_translation'::text function_tested,
+       'Test wrong class'::text description,
+       TT_yvi01_non_for_veg_translation('VN', 'SS', '') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '29.3'::text number,
+       'TT_yvi01_non_for_veg_translation'::text function_tested,
+       'Test wrong cl_mod'::text description,
+       TT_yvi01_non_for_veg_translation('VN', 'S', 'X') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '29.4'::text number,
+       'TT_yvi01_non_for_veg_translation'::text function_tested,
+       'Test correct cl_mod'::text description,
+       TT_yvi01_non_for_veg_translation('VN', 'C', 'TS') = 'ST' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '29.5'::text number,
+       'TT_yvi01_non_for_veg_translation'::text function_tested,
+       'Test correct class with no cl_mod match'::text description,
+       TT_yvi01_non_for_veg_translation('VN', 'C', 'TSS') = 'BR' passed
+---------------------------------------------------------
+---------------------------------------------------------
+  -- TT_yvi01_nfl_soil_moisture_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '30.1'::text number,
+       'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
+       'Test non_for_veg pass'::text description,
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'C', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '30.2'::text number,
+       'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
+       'Test non_for_veg fail'::text description,
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', '', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '30.3'::text number,
+       'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
+       'Test non_for_veg pass 2'::text description,
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', 'TS', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '30.4'::text number,
+       'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
+       'Test nat_non_veg fail, not EX'::text description,
+       TT_yvi01_nfl_soil_moisture_validation('NW', '', '', 'A') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '30.5'::text number,
+       'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
+       'Test nat_non_veg pass, is EX'::text description,
+       TT_yvi01_nfl_soil_moisture_validation('NW', 'E', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '30.6'::text number,
+       'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
+       'Test nat_non_veg fail, wrong type'::text description,
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'E', '', '') IS FALSE passed
+
+  
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

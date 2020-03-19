@@ -1292,6 +1292,8 @@ RETURNS text AS $$
                   WHEN rulelc = 'vri01_nat_non_veg_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'vri01_non_for_anth_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'vri01_non_for_veg_validation' THEN 'INVALID_VALUE'
+                  WHEN rulelc = 'yvi01_nat_non_veg_validation' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'yvi01_nfl_soil_moisture_validation' THEN 'NOT_APPLICABLE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -1665,6 +1667,111 @@ RETURNS boolean AS $$
     RETURN TRUE; -- if row is in_etage = 'O', or layer = 1, return true.
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+-- TT_yvi01_nat_non_veg_validation()
+--
+-- type_lnd text
+-- class text
+-- landpos text
+--
+-- e.g. TT_yvi01_nat_non_veg_validation(type_lnd, class, landpos)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text,text,text);
+CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_validation(
+  type_lnd text,
+  class_ text,
+  landpos text
+)
+RETURNS boolean AS $$		
+  BEGIN
+    IF type_lnd IN('NW', 'NS', 'NE') THEN
+      IF landpos = 'A' THEN
+        RETURN TRUE;
+      END IF;
+      
+      IF class_ IN('R','L','RS','E','S','B','RR') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+    RETURN FALSE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+-- TT_yvi01_nat_non_veg_validation()
+--
+-- type_lnd text
+-- class text
+-- landpos text
+--
+-- e.g. TT_yvi01_nat_non_veg_validation(type_lnd, class, landpos)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text,text,text);
+CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_validation(
+  type_lnd text,
+  class_ text,
+  landpos text
+)
+RETURNS boolean AS $$		
+  BEGIN
+    IF type_lnd IN('NW', 'NS', 'NE') THEN
+      IF landpos = 'A' THEN
+        RETURN TRUE;
+      END IF;
+      
+      IF class_ IN('R','L','RS','E','S','B','RR') THEN
+        RETURN TRUE;
+      END IF;
+    END IF;
+    RETURN FALSE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+-------------------------------------------------------------------------------
+-- TT_yvi01_nfl_soil_moisture_validation()
+--
+-- type_lnd text
+-- class_ text
+-- cl_mod text
+-- landpos text
+--
+-- Only want to translate soil moisture in NFL table if the row is either non_for_veg or
+-- nat_non_veg = EX (burned or exposed land).
+-- e.g. TT_yvi01_nfl_soil_moisture_validation(type_land, class_, cl_mod, landpos)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_nfl_soil_moisture_validation(text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_yvi01_nfl_soil_moisture_validation(
+  type_lnd text,
+  class_ text,
+  cl_mod text,
+  landpos text
+)
+RETURNS boolean AS $$		
+  BEGIN
+    
+    -- If row has non_for_veg attribute, return true
+    IF type_lnd = 'VN' THEN
+      IF class_ IN('S','H','C','M') THEN
+        IF TT_yvi01_non_for_veg_translation(type_lnd, class_, cl_mod) IS NOT NULL THEN
+          RETURN TRUE;
+        END IF;
+      END IF;
+    END IF;
+    
+    -- If row has nat_non_veg attribute of EX, return true
+    IF type_lnd IN('NW','NS','NE') THEN
+      IF TT_yvi01_nat_non_veg_validation(type_lnd, class_, landpos) THEN
+        IF TT_yvi01_nat_non_veg_translation(type_lnd, class_, landpos) = 'EX' THEN
+          RETURN TRUE;
+        END IF;
+      END IF;
+    END IF;
+    
+    RETURN FALSE;
+      
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Translation Function Definitions...
@@ -2394,7 +2501,7 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
--- TT_fim_species(text, text, text, text, text)
+-- TT_fim_species_translation(text, text, text, text, text)
 --
 -- sp_string text - source string of species and percentages
 -- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
@@ -2406,8 +2513,8 @@ $$ LANGUAGE plpgsql;
 -- then extracts the species code as the first two characters. Then runs TT_LookupText() to
 -- convert the ON code into the CASFRI code using a lookup table.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fim_species(text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_fim_species(
+--DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_fim_species_translation(
   sp_string text,
   sp_number text,
   lookup_schema text, 
@@ -2433,7 +2540,7 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
--- TT_fim_species_percent(text, text)
+-- TT_fim_species_percent_translation(text, text)
 --
 -- sp_string text - source string of species and percentages
 -- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
@@ -2442,8 +2549,8 @@ $$ LANGUAGE plpgsql;
 -- then extracts the percentage as the fifth and sixth characters, or the fourth fifth and sixth characters
 -- if 100%.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fim_species_percent(text, text);
-CREATE OR REPLACE FUNCTION TT_fim_species_percent(
+--DROP FUNCTION IF EXISTS TT_fim_species_percent_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_fim_species_percent_translation(
   sp_string text,
   sp_number text
 )
@@ -2458,5 +2565,75 @@ RETURNS int AS $$
     ELSE
       RETURN NULL;
     END IF;
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_yvi01_nat_non_veg_translation(text, text, text)
+--
+-- type_lnd text
+-- class_ text
+-- landpos text
+--
+-- Assigns nat non veg casfri attributes based on source attribute from various columns.
+-- landpos of A becomes AP
+-- classes of 'R','L','RS','E','S','B','RR' become 'RI,'LA,'WS,EX,SA,'EX','RK'
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_translation(
+  type_lnd text,
+  class_ text,
+  landpos text
+)
+RETURNS text AS $$
+  BEGIN
+    IF type_lnd IN('NW', 'NS', 'NE') THEN
+      IF landpos = 'A' THEN
+        RETURN 'AP';
+      END IF;
+      
+      IF class_ IN('R','L','RS','E','S','B','RR') THEN
+        RETURN TT_mapText(class_, '{''R'',''L'',''RS'',''E'',''S'',''B'',''RR''}', '{''RI'',''LA'',''WS'',''EX'',''SA'',''EX'',''RK''}');
+      END IF;
+    END IF;
+      
+    RETURN NULL;
+      
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_yvi01_non_for_veg_translation(text, text)
+--
+-- cl_mod text
+-- class_ text
+--
+-- Assigns non for veg casfri attributes based on source attribute from various columns.
+-- assumes type_lnd is VN and class is in 'S','H','C','M'
+-- then translates cl_mod 'TS','TSo','TSc','LS' to 'ST','ST','ST','SL'
+-- and class 'C','H','M' to 'BR','HE','HE'
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_non_for_veg_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_yvi01_non_for_veg_translation(
+  type_lnd text,
+  class_ text,
+  cl_mod text
+)
+RETURNS text AS $$
+  BEGIN
+    IF type_lnd IN('VN') THEN
+      IF class_ IN('S','H','C','M') THEN
+        IF cl_mod IN('TS','TSo','TSc','LS') THEN
+          RETURN TT_mapText(cl_mod, '{''TS'',''TSo'',''TSc'',''LS''}', '{''ST'',''ST'',''ST'',''SL''}');
+        END IF;
+        
+        IF class_ IN('C','H','M') THEN
+          RETURN TT_mapText(class_, '{''C'',''H'',''M''}', '{''BR'',''HE'',''HE''}');
+        END IF;
+      END IF;
+    END IF;
+    
+    RETURN NULL;
+            
   END; 
 $$ LANGUAGE plpgsql;
