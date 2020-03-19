@@ -23,10 +23,10 @@ SELECT * FROM TT_Translate_sk_species_val('translation', 'sk_utm01_species');
 
 
 -- CAS ATTRIBUTES
-SELECT * FROM translation.utm01_cas;
+SELECT * FROM translation.sk_utm01_cas;
 DROP TABLE IF EXISTS translation_devel.sk01_utm01_cas_devel;
 CREATE TABLE translation_devel.sk01_utm01_cas_devel AS
-SELECT * FROM translation.utm01_cas; --WHERE rule_id::int = 1
+SELECT * FROM translation.sk_utm01_cas; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_cas_devel', '_sk01_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 200);
@@ -35,10 +35,10 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_cas_devel');
 
 
 -- LYR1 ATTRIBUTES
-SELECT * FROM translation.utm01_lyr;
+SELECT * FROM translation.sk_utm01_lyr;
 DROP TABLE IF EXISTS translation_devel.sk01_utm01_lyr_devel;
 CREATE TABLE translation_devel.sk01_utm01_lyr_devel AS
-SELECT * FROM translation.utm01_lyr; --WHERE rule_id::int = 1
+SELECT * FROM translation.sk_utm01_lyr; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_lyr_devel', '_sk01_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 200, 'lyr');
@@ -49,7 +49,7 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_lyr_devel');
 -- LYR2 ATTRIBUTES
 DROP TABLE IF EXISTS translation_devel.sk01_utm01_lyr_devel;
 CREATE TABLE translation_devel.sk01_utm01_lyr_devel AS
-SELECT * FROM translation.utm01_lyr; --WHERE rule_id::int = 1
+SELECT * FROM translation.sk_utm01_lyr; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_lyr_devel', '_sk01_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk', 1, 200, 'lyr');
@@ -58,46 +58,46 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_lyr_devel');
 
 
 -- DST ATTRIBUTES
-SELECT * FROM translation.utm01_dst;
+SELECT * FROM translation.sk_utm01_dst;
 DROP TABLE IF EXISTS translation_devel.sk01_utm01_dst_devel;
 CREATE TABLE translation_devel.sk01_utm01_dst_devel AS
-SELECT * FROM translation.utm01_dst; --WHERE rule_id::int = 1
+SELECT * FROM translation.sk_utm01_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_dst_devel', '_sk01_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 200, 'dst');
 SELECT * FROM TT_Translate_sk01_dst_devel('rawfri', 'sk01_l1_to_sk_l1_map_200_dst', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_dst_devel');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_dst_devel');
 
 
 -- NFL ATTRIBUTES
-SELECT * FROM translation.utm01_nfl;
+SELECT * FROM translation.sk_utm01_nfl;
 DROP TABLE IF EXISTS translation_devel.sk01_utm01_nfl_devel;
 CREATE TABLE translation_devel.sk01_utm01_nfl_devel AS
-SELECT * FROM translation.utm01_nfl; --WHERE rule_id::int = 1
+SELECT * FROM translation.sk_utm01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_nfl_devel', '_sk01_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 200, 'nfl');
-SELECT * FROM TT_Translate_on01_nfl_devel('rawfri', 'sk01_l1_to_sk_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_nfl_devel');
+SELECT * FROM TT_Translate_sk01_nfl_devel('rawfri', 'sk01_l1_to_sk_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_nfl_devel');
 
 
 -- ECO ATTRIBUTES
-SELECT * FROM translation.utm01_eco;
+SELECT * FROM translation.sk_utm01_eco;
 DROP TABLE IF EXISTS translation_devel.sk01_utm01_eco_devel;
 CREATE TABLE translation_devel.sk01_utm01_eco_devel AS
-SELECT * FROM translation.utm01_eco; --WHERE rule_id::int = 1
+SELECT * FROM translation.sk_utm01_eco; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_eco_devel', '_sk01_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 200, 'eco');
 SELECT * FROM TT_Translate_sk01_eco_devel('rawfri', 'sk01_l1_to_sk_l1_map_200_eco', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_eco_devel');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_eco_devel');
 
 
 -- GEO ATTRIBUTES
-SELECT * FROM translation.utm01_geo;
+SELECT * FROM translation.sk_utm01_geo;
 DROP TABLE IF EXISTS translation_devel.sk01_utm01_geo_devel;
 CREATE TABLE translation_devel.sk01_utm01_geo_devel AS
-SELECT * FROM translation.utm01_geo; --WHERE rule_id::int = 1
+SELECT * FROM translation.sk_utm01_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_geo_devel', '_sk01_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 200, 'geo');

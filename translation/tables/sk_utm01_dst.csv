@@ -4,7 +4,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 3,DIST_YEAR_1,integer,"notNull(dyr);isInt(dyr);isBetween(dyr, 1800, 2020)",copyInt(dyr),Copies source attribute to DIST_YEAR_1,TRUE
 4,DIST_EXT_UPPER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
 5,DIST_EXT_LOWER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
-6,DIST_TYPE_2,text,false(),nothingInt(),Attribute does not occur,TRUE
+6,DIST_TYPE_2,text,false(),nothingText(),Attribute does not occur,TRUE
 7,DIST_YEAR_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
 8,DIST_EXT_UPPER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
 9,DIST_EXT_LOWER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
