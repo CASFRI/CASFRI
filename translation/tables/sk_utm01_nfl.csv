@@ -8,6 +8,6 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 8,HEIGHT_UPPER,double precision,false(),nothingDouble(),Copies source value to HEIGHT_UPPER,TRUE
 9,HEIGHT_LOWER,double precision,false(),nothingDouble(),Copies source value to HEIGHT_LOWER,TRUE
-10,NAT_NON_VEG,text,"notNull(np);notEmpty(np);matchList(np,{'3800','5100','3400','5210','5220','5200'})","mapText(np, {'3800','5100','3400','5210','5220','5200'}, {'SD','FL','RK','LA','FL','RI'})",Maps source value to NAT_NON_VEG using list of values,TRUE
-11,NON_FOR_ANTH,text,"notNull(np);notEmpty(np);matchList(np,{'3300','3500','3600'})","mapText(np, {'3300','3500','3600'}, {'OM','ST','HG'})",Maps source value to NON_FOR_ANTH using list of values,TRUE
-12,NON_FOR_VEG,text,"notNull(np);notEmpty(np);matchList(np,{'3700','9000','4000'})","mapText(np, {'3700','9000','4000'}, {'OT','OT','CL'})",Maps source value to NON_FOR_VEG using list of values. FLAG-map list matches fri list. Is this correct?,TRUE
+10,NAT_NON_VEG,text,"notNull(np);notEmpty(np);matchList(np,{'3800','5100','3400','5210','5220','5200'})","mapText(np, {'3800','5100','3400','5210','5220','5200'}, {'SA','FL','RK','LA','FL','RI'})",Maps source value to NAT_NON_VEG using list of values,TRUE
+11,NON_FOR_ANTH,text,"notNull(np);notEmpty(np);matchList(np,{'3700','9000','4000'})","mapText(np, {'3700','9000','4000'}, {'OT','OT','CL'})",Maps source value to NON_FOR_ANTH using list of values,TRUE
+12,NON_FOR_VEG,text,"notNull(np);notEmpty(np);matchList(np,{'3300','3500','3600'})","mapText(np, {'3300','3500','3600'}, {'OM','ST','HG'})",Maps source value to NON_FOR_VEG using list of values. FLAG-map list matches fri list. Is this correct?,TRUE
