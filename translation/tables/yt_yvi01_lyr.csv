@@ -1,11 +1,11 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_no);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_no, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(smr);matchList(smr,{'a','A','d','D','m','M','w','W'})","mapText(smr, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Attribute does not occur,TRUE
+2,SOIL_MOIST_REG,text,"notNull(smr);matchList(smr,{'a','A','d','D','m','M','w','W'})","mapText(smr, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Map source attribute to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),copyInt(1),Only 1 layer possible in YT. Every polygon is either LYR or NFL.,TRUE
-5,LAYER_RANK,integer,true(),copyInt(1),Copies 1 to LAYER_ID,TRUE
-6,CROWN_CLOSURE_UPPER,integer,"notNull(cc);isInt(cc);isGreaterThan(cc,'0');isLessThan(cc, 100)",copyInt(cc),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
-7,CROWN_CLOSURE_LOWER,integer,"notNull(cc);isInt(cc);isGreaterThan(cc,'0');isLessThan(cc, 100)",copyInt(cc),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
+6,CROWN_CLOSURE_UPPER,integer,"notNull(cc);isInt(cc);isGreaterThan(cc,'0');isLessThan(cc, 100)",copyInt(cc),Copies source value to CROWN_CLOSURE_UPPER,TRUE
+7,CROWN_CLOSURE_LOWER,integer,"notNull(cc);isInt(cc);isGreaterThan(cc,'0');isLessThan(cc, 100)",copyInt(cc),Copies source value to CROWN_CLOSURE_LOWER,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(avg_ht);isNumeric(avg_ht);isGreaterThan(avg_ht,'1');isLessThan(avg_ht, 100)",copyDouble(avg_ht),Copies source value to HEIGHT_UPPER,TRUE
 9,HEIGHT_LOWER,double precision,"notNull(avg_ht);isNumeric(avg_ht);isGreaterThan(avg_ht,'1');isLessThan(avg_ht, 100)",copyDouble(avg_ht),Copies source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
@@ -19,17 +19,17 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 18,SPECIES_PER_4,integer,"notNull(sp4_per);isNumeric(sp4_per);isBetween(sp4_per,0,100)",copyInt(sp4_per),Copies source value to SPECIES_PER_4,TRUE
 19,SPECIES_5,text,false(),nothingText(),Maps source value to SPECIES_5 using lookup table,TRUE
 20,SPECIES_PER_5,integer,false(),nothingInt(),Copies source value to SPECIES_PER_5,TRUE
-21,SPECIES_6,text,false(),nothingText(),attribute does not occur,TRUE
-22,SPECIES_PER_6,integer,false(),nothingInt(),attribute does not occur,TRUE
-23,SPECIES_7,text,false(),nothingText(),attribute does not occur,TRUE
-24,SPECIES_PER_7,integer,false(),nothingInt(),attribute does not occur,TRUE
-25,SPECIES_8,text,false(),nothingText(),attribute does not occur,TRUE
-26,SPECIES_PER_8,integer,false(),nothingInt(),attribute does not occur,TRUE
-27,SPECIES_9,text,false(),nothingText(),attribute does not occur,TRUE
-28,SPECIES_PER_9,integer,false(),nothingInt(),attribute does not occur,TRUE
-29,SPECIES_10,text,false(),nothingText(),attribute does not occur,TRUE
-30,SPECIES_PER_10,integer,false(),nothingInt(),attribute does not occur,TRUE
-31,ORIGIN_UPPER,integer,"notNull(age);isInt(age);isBetween(age, 0, 2020)",copyInt(age),Copies (l1estyr) to ORIGIN_UPPER,TRUE
-32,ORIGIN_LOWER,integer,"notNull(age);isInt(age);isBetween(age, 0, 2020)",copyInt(age),Copies (l1estyr) to ORIGIN_LOWER,TRUE
+21,SPECIES_6,text,false(),nothingText(),Attribute does not occur,TRUE
+22,SPECIES_PER_6,integer,false(),nothingInt(),Attribute does not occur,TRUE
+23,SPECIES_7,text,false(),nothingText(),Attribute does not occur,TRUE
+24,SPECIES_PER_7,integer,false(),nothingInt(),Attribute does not occur,TRUE
+25,SPECIES_8,text,false(),nothingText(),Attribute does not occur,TRUE
+26,SPECIES_PER_8,integer,false(),nothingInt(),Attribute does not occur,TRUE
+27,SPECIES_9,text,false(),nothingText(),Attribute does not occur,TRUE
+28,SPECIES_PER_9,integer,false(),nothingInt(),Attribute does not occur,TRUE
+29,SPECIES_10,text,false(),nothingText(),Attribute does not occur,TRUE
+30,SPECIES_PER_10,integer,false(),nothingInt(),Attribute does not occur,TRUE
+31,ORIGIN_UPPER,integer,"notNull(age);isInt(age);isBetween(age, 0, 2020)",copyInt(age),Copies source attribute to ORIGIN_UPPER,TRUE
+32,ORIGIN_LOWER,integer,"notNull(age);isInt(age);isBetween(age, 0, 2020)",copyInt(age),Copies source attribute to ORIGIN_LOWER,TRUE
 33,SITE_CLASS,text,"notNull(site_class);matchList(site_class,{'L','P','M','G'})","mapText(site_class, {'P','P','M','G'}, {'L','P','M','G'})",Maps source value to SITE_CLASS,TRUE
 34,SITE_INDEX,double precision,"notNull(site_index);isNumeric(site_index);isGreaterThan(site_index,'0.1');isLessThan(site_index, 40)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
