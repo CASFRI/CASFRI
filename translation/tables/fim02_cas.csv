@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,notNull(polyid),copyText(polyid),Copies source value to ORIG_STAND_ID,TRUE
 4,STAND_STRUCTURE,text,"notNull(vert);matchList(vert,{'SI','SV','TT','TV',CX'})","mapText(vert, {'SI','SV','TT','TV',CX'}, {'S','S','M','M','C'})",Maps source value to STAND_STRUCTURE using lists of values,TRUE
-5,NUM_OF_LAYERS,integer,true(),"countOfNotNull({ospcomp}, {uspcomp}, {polytype}, 3)","Counts number of layers based on the presence of a not null value for attributes representing each layer. Assumes valid LYR1 row must have ospcomp, LYR2 must have uspcomp, NFL1 must have polytype. Only 1 NFL layer possible per polygon. ospcomp can be null when uspcomp has a value.",TRUE
+5,NUM_OF_LAYERS,integer,true(),"countOfNotNull({ospcomp}, {uspcomp}, {polytype}, 2)","Counts number of layers based on the presence of a not null value for attributes representing each layer. Assumes valid LYR1 row must have ospcomp, LYR2 must have uspcomp, NFL1 must have polytype. NFL only occures if there is no forest LYR info. Note that poly_type has value FOR when there is forest info, so max_layer number should be set to 2. When ospcomp and uspcomp are empty, poly_type is always an NFL value so layer count will always be 1.",TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Copies source value to MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE

@@ -2,12 +2,12 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(polyid);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', polyid, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,false(),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
-4,LAYER,integer,true(),"countOfNotNull({ospcomp}, {ospcomp}, {polytype}, max_layer_number)",Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. ,TRUE
-5,LAYER_RANK,integer,false(|-8887),nothingInt(),Copies 1 to LAYER_ID,TRUE
-6,CROWN_CLOSURE_UPPER,integer,"notNull(occlo);isInt(occlo);isGreaterThan(occlo,'0');isLessThan(occlo, 100)",copyInt(occlo),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
-7,CROWN_CLOSURE_LOWER,integer,"notNull(l1ht);isInt(l1ht);isGreaterThan(l1ht,'0');isLessThan(l1ht, 100)",copyInt(occlo),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
-8,HEIGHT_UPPER,double precision,"notNull(oht);isNumeric(oht);isGreaterThan(oht,'1');isLessThan(oht, 100)",copyDouble(oht),Copies source value to HEIGHT_UPPER,TRUE
-9,HEIGHT_LOWER,double precision,"notNull(oht);isNumeric(oht);isGreaterThan(oht,'1');isLessThan(oht, 100)",copyDouble(oht),Copies source value to HEIGHT_LOWER,TRUE
-10,NAT_NON_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'BSH','GRS','OMS'})","mapText(polytype, {'BSH','GRS','OMS'}, {'HG','HG','OM'})",Maps source value to NAT_NON_VEG using list of values,TRUE
-11,NON_FOR_ANTH,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'DAL','UCL'})","mapText(polytype, {'DAL','UCL'}, {'CL','OT'})",Maps source value to NON_FOR_ANTH using list of values,TRUE
-12,NON_FOR_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'ISL','RCK','WAT'})","mapText(polytype, {'ISL','RCK','WAT'}, {'IS','RK','RI'})",Maps source value to NON_FOR_VEG using list of values. FLAG-map list matches fri list. Is this correct?,TRUE
+4,LAYER,integer,true(),"countOfNotNull({ospcomp}, {uspcomp}, {polytype}, max_layer_number)","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Note that poly_type = 'FOR' when there is forest info, but any other poly_type is NFL, and when poly_type != 'FOR' ospcomp and uspcomp are always empty. So the max_layer_number for NFL row translations will be set to 3, however it will always return 1.",TRUE
+5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),No crown closure value for nfl,TRUE
+7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),No crown closure value for nfl,TRUE
+8,HEIGHT_UPPER,double precision,false(),nothingDouble(),No height value for nfl,TRUE
+9,HEIGHT_LOWER,double precision,false(),nothingDouble(),No height value for nfl,TRUE
+10,NAT_NON_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'DAL','UCL'})","mapText(polytype, {'ISL','RCK','WAT'}, {'IS','RK','RI'})",Maps source value to NAT_NON_VEG using list of values,TRUE
+11,NON_FOR_ANTH,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'BSH','GRS','OMS','TMS'})","mapText(polytype, {'DAL','UCL'}, {'CL','OT'})",Maps source value to NON_FOR_ANTH using list of values,TRUE
+12,NON_FOR_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'ISL','RCK','WAT'})","mapText(polytype, {'BSH','GRS','OMS','TMS'}, {'HG','HG','OM','OM'})",Maps source value to NON_FOR_VEG using list of values.,TRUE
