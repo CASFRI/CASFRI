@@ -23,12 +23,12 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS translation_devel;
 -------------------------------------------------------
 -- Display translation tables
-SELECT * FROM translation.ab16_avi01_cas; 
-SELECT * FROM translation.ab16_avi01_dst; 
-SELECT * FROM translation.ab16_avi01_eco; 
-SELECT * FROM translation.ab16_avi01_lyr; 
-SELECT * FROM translation.ab16_avi01_nfl;
-SELECT * FROM translation.ab16_avi01_geo;
+SELECT * FROM translation.avi01_cas; 
+SELECT * FROM translation.avi01_dst; 
+SELECT * FROM translation.avi01_eco; 
+SELECT * FROM translation.avi01_lyr; 
+SELECT * FROM translation.avi01_nfl;
+SELECT * FROM translation.avi01_geo;
 ----------------------------
 -- Create subsets of translation tables if necessary
 ----------------------------
@@ -162,11 +162,11 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'ab16_avi01_geo_devel');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id, 
-       b.crownclose, a.crown_closure_lower, a.crown_closure_upper, 
+       b.density, a.crown_closure_lower, a.crown_closure_upper, 
        b.height, a.height_upper, a.height_lower,
        b.sp1, a.species_1,
-       b.sp1_percnt, a.species_per_1
-FROM TT_Translate_ab16_lyr_devel('rawfri', 'ab16_min_200') a, rawfri.ab16_min_200 b
+       b.sp1_per, a.species_per_1
+FROM TT_Translate_ab16_lyr_devel('rawfri', 'ab16_l2_to_ab_l1_map_200_lyr') a, rawfri.ab16_l2_to_ab_l1_map_200_lyr b
 WHERE ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------
