@@ -108,3 +108,34 @@ DROP TABLE If EXISTS translation.fvi01_geo;
 
 DROP TABLE If EXISTS translation.nt_fvi01_species;
 DROP TABLE If EXISTS translation.nt_fvi01_species_validation;
+
+DROP TABLE If EXISTS translation.fim02_cas;
+DROP TABLE If EXISTS translation.fim02_dst;
+DROP TABLE If EXISTS translation.fim02_eco;
+DROP TABLE If EXISTS translation.fim02_hdr;
+DROP TABLE If EXISTS translation.fim02_lyr;
+DROP TABLE If EXISTS translation.fim02_nfl;
+DROP TABLE If EXISTS translation.fim02_geo;
+
+DROP TABLE If EXISTS translation.on_fim02_species_validation;
+
+DROP TABLE If EXISTS translation.yt_yvi01_cas;
+DROP TABLE If EXISTS translation.yt_yvi01_dst;
+DROP TABLE If EXISTS translation.yt_yvi01_eco;
+DROP TABLE If EXISTS translation.yt_yvi01_hdr;
+DROP TABLE If EXISTS translation.yt_yvi01_lyr;
+DROP TABLE If EXISTS translation.yt_yvi01_nfl;
+DROP TABLE If EXISTS translation.yt_yvi01_geo;
+
+DROP TABLE If EXISTS translation.yt_yvi01_species_validation;
+
+DROP TABLE If EXISTS translation.sk_utm01_cas;
+DROP TABLE If EXISTS translation.sk_utm01_dst;
+DROP TABLE If EXISTS translation.sk_utm01_eco;
+DROP TABLE If EXISTS translation.sk_utm01_hdr;
+DROP TABLE If EXISTS translation.sk_utm01_lyr;
+DROP TABLE If EXISTS translation.sk_utm01_nfl;
+DROP TABLE If EXISTS translation.sk_utm01_geo;
+
+DROP TABLE If EXISTS translation.sk_utm01_species_validation;
+DROP TABLE If EXISTS translation.sk_utm01_species;
