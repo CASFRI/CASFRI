@@ -285,9 +285,8 @@ CREATE OR REPLACE FUNCTION TT_RandomInt(
 )
 RETURNS TABLE (id int) AS $$
   DECLARE
-    newnb int = nb * (1 + 3 * nb::double precision / (val_max - val_min + 1));
+    newnb int;
   BEGIN
---RAISE NOTICE 'newnb = %', newnb;
     IF nb < 0 THEN
       RAISE EXCEPTION 'ERROR random_int_id(): nb (%) must be greater than 0...', nb;
     END IF;
@@ -314,6 +313,8 @@ RETURNS TABLE (id int) AS $$
                     ) foo ORDER BY id;
        RETURN;
     END IF;
+    newnb = nb * (1 + 3 * nb::double precision / (val_max - val_min + 1));
+--RAISE NOTICE 'newnb = %', newnb;
 --RAISE NOTICE 'seed = %', nb / (nb + abs(seed) + 1);
     PERFORM setseed(nb / (nb + abs(seed) + 1));
     RETURN QUERY WITH rd AS (
