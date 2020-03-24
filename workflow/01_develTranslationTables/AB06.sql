@@ -23,12 +23,12 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS translation_devel;
 -------------------------------------------------------
 -- Display translation tables
-SELECT * FROM translation.ab06_avi01_cas; 
-SELECT * FROM translation.ab06_avi01_dst; 
-SELECT * FROM translation.ab06_avi01_eco; 
-SELECT * FROM translation.ab06_avi01_lyr; 
-SELECT * FROM translation.ab06_avi01_nfl;
-SELECT * FROM translation.ab06_avi01_geo;
+SELECT * FROM translation.avi01_cas; 
+SELECT * FROM translation.avi01_dst; 
+SELECT * FROM translation.avi01_eco; 
+SELECT * FROM translation.avi01_lyr; 
+SELECT * FROM translation.avi01_nfl;
+SELECT * FROM translation.avi01_geo;
 ----------------------------
 -- Create subsets of translation tables if necessary
 ----------------------------
@@ -167,7 +167,7 @@ SELECT b.src_filename, b.trm_1, b.poly_num, a.cas_id,
        b.height, a.height_upper, a.height_lower,
        b.sp1, a.species_1,
        b.sp1_per, a.species_per_1
-FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_min_200') a, rawfri.ab06_min_200 b
+FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l2_to_ab_l1_map_200_lyr') a, rawfri.ab06_l2_to_ab_l1_map_200_lyr b
 WHERE b.poly_num = substr(a.cas_id, 33, 10)::int;
 
 --------------------------------------------------------------------------
