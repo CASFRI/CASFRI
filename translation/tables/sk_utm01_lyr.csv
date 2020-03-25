@@ -1,25 +1,25 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notEmpty(inventory_id);notNull(mapfid);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', mapfid, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(drain);matchList(drain,{'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'})","mapText(drain, {'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'}, {'D','D','D','F','F','F','F','M','M','M','M','W','W'})",Attribute does not occur,TRUE
+2,SOIL_MOIST_REG,text,"notNull(drain);matchList(drain,{'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'})","mapText(drain, {'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'}, {'D','D','D','F','F','F','F','M','M','M','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
-4,LAYER,integer,true(),"countOfNotNull({sp10,sp11,sp20,sp12,sp21}, {u1,u2}, max_layer_number)",Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. ,TRUE
-5,LAYER_RANK,integer,false(|-8887),nothingInt(),Copies 1 to LAYER_ID,TRUE
+4,LAYER,integer,true(),"countOfNotNull({dummy_sp10, dummy_sp11, dummy_sp12}, {dummy_sp20, dummy_sp21}, {dummy_u1, dummy_u2}, {dummy_np}, max_layer_number)","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Layers are the primary canopy species, secondary canopy species, understory species, and non-forest types.",TRUE
+5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(d);matchList(d,{'A','B','C','D'})","mapInt(d, {'A','B','C','D'}, {30,55,80,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(d);matchList(d,{'A','B','C','D'})","mapInt(d, {'A','B','C','D'}, {11,31,56,81})",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
-8,HEIGHT_UPPER,double precision,"notNull(d);matchList(hgt,{'5','10','15','20','25'})","mapDouble(hgt, {'5','10','15','20','25'}, {7.5,12.5,17.5,22.5,100.0})",Copies source value to HEIGHT_UPPER,TRUE
-9,HEIGHT_LOWER,double precision,"notNull(d);matchList(hgt,{'5','10','15','20','25'})","mapDouble(hgt, {'5','10','15','20','25'}, {2.5,7.6,12.6,17.6,22.6})",Copies source value to HEIGHT_LOWER,TRUE
+8,HEIGHT_UPPER,double precision,"notNull(d);matchList(hgt,{'5','10','15','20','25'})","mapDouble(hgt, {'5','10','15','20','25'}, {7.5,12.5,17.5,22.5,100.0})",Maps source value to HEIGHT_UPPER,TRUE
+9,HEIGHT_LOWER,double precision,"notNull(d);matchList(hgt,{'5','10','15','20','25'})","mapDouble(hgt, {'5','10','15','20','25'}, {2.5,7.6,12.6,17.6,22.6})",Maps source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
-11,SPECIES_1,text,false(),nothingText(),Maps source value to SPECIES_1 using lookup table,TRUE
-12,SPECIES_PER_1,integer,false(),nothingInt(),Copies source value to SPECIES_PER_1,TRUE
-13,SPECIES_2,text,false(),nothingText(),Maps source value to SPECIES_2 using lookup table,TRUE
-14,SPECIES_PER_2,integer,false(),nothingInt(),Copies source value to SPECIES_PER_2,TRUE
-15,SPECIES_3,text,false(),nothingText(),Maps source value to SPECIES_3 using lookup table,TRUE
-16,SPECIES_PER_3,integer,false(),nothingInt(),Copies source value to SPECIES_PER_3,TRUE
-17,SPECIES_4,text,false(),nothingText(),Maps source value to SPECIES_4 using lookup table,TRUE
-18,SPECIES_PER_4,integer,false(),nothingInt(),Copies source value to SPECIES_PER_4,TRUE
-19,SPECIES_5,text,false(),nothingText(),Maps source value to SPECIES_5 using lookup table,TRUE
-20,SPECIES_PER_5,integer,false(),nothingInt(),Copies source value to SPECIES_PER_5,TRUE
-21,SPECIES_6,text,false(),nothingText(),attribute does not occur,TRUE
+11,SPECIES_1,text,"notNull(dummy_sp1);notEmpty(dummy_sp1);matchTable(dummy_sp1,'translation','sk_utm01_species','TRUE')","lookupText(dummy_sp1, 'translation', 'sk_utm01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_1 using lookup table,TRUE
+12,SPECIES_PER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
+13,SPECIES_2,text,"notNull(dummy_sp2);notEmpty(dummy_sp2);matchTable(dummy_sp2,'translation','sk_utm01_species','TRUE')","lookupText(dummy_sp2, 'translation', 'sk_utm01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_2 using lookup table,TRUE
+14,SPECIES_PER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
+15,SPECIES_3,text,"notNull(dummy_sp3);notEmpty(dummy_sp3);matchTable(dummy_sp3,'translation','sk_utm01_species','TRUE')","lookupText(dummy_sp3, 'translation', 'sk_utm01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_3 using lookup table,TRUE
+16,SPECIES_PER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
+17,SPECIES_4,text,false(),nothingText(),Attribute does not occur,TRUE
+18,SPECIES_PER_4,integer,false(),nothingInt(),Attribute does not occur,TRUE
+19,SPECIES_5,text,false(),nothingText(),Attribute does not occur,TRUE
+20,SPECIES_PER_5,integer,false(),nothingInt(),Attribute does not occur,TRUE
+21,SPECIES_6,text,false(),nothingText(),Attribute does not occur,TRUE
 22,SPECIES_PER_6,integer,false(),nothingInt(),attribute does not occur,TRUE
 23,SPECIES_7,text,false(),nothingText(),attribute does not occur,TRUE
 24,SPECIES_PER_7,integer,false(),nothingInt(),attribute does not occur,TRUE
@@ -29,7 +29,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 28,SPECIES_PER_9,integer,false(),nothingInt(),attribute does not occur,TRUE
 29,SPECIES_10,text,false(),nothingText(),attribute does not occur,TRUE
 30,SPECIES_PER_10,integer,false(),nothingInt(),attribute does not occur,TRUE
-31,ORIGIN_UPPER,integer,"notNull(yoo);isInt(yoo);isBetween(yoo, 0, 2020)",copyInt(yoo),Copies (l1estyr) to ORIGIN_UPPER,TRUE
-32,ORIGIN_LOWER,integer,"notNull(yoo);isInt(yoo);isBetween(yoo, 0, 2020)",copyInt(yoo),Copies (l1estyr) to ORIGIN_LOWER,TRUE
-33,SITE_CLASS,text,false(),nothingText(),attribute does not occur,TRUE
-34,SITE_INDEX,double precision,false(),nothingDouble(),attribute does not occur,TRUE
+31,ORIGIN_UPPER,integer,"notNull(yoo);isInt(yoo);isBetween(yoo, 1, 2020)",copyInt(yoo),Copies (l1estyr) to ORIGIN_UPPER. Validation  returns error if origin is zero.,TRUE
+32,ORIGIN_LOWER,integer,"notNull(yoo);isInt(yoo);isBetween(yoo, 1, 2020)",copyInt(yoo),Copies (l1estyr) to ORIGIN_LOWER. Validation  returns error if origin is zero.,TRUE
+33,SITE_CLASS,text,false(),nothingText(),Attribute does not occur,TRUE
+34,SITE_INDEX,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
