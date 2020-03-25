@@ -2,7 +2,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,false(),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
-4,LAYER,integer,true(),"countOfNotNull({l1s1, l1s2, l1s3, l1s4, l1s5}, {l2s1, l2s2, l2s3, l2s4, l2s5}, {slu}, max_layer_number)",Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. ,TRUE
+4,LAYER,integer,true(),"countOfNotNull({dummy_l1s1, dummy_l1s2, dummy_l1s3, dummy_l1s4, dummy_l1s5}, {dummy_l2s1, dummy_l2s2, dummy_l2s3, dummy_l2s4, dummy_l2s5}, {slu, water_code, wc}, max_layer_number)","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Third grouping represents nfl rows using slu (from FOREST table), water_code (from WATERBODY table), and wc (from WETLAND table). slu and water_code rows will be translated using the NFL table. wc rows will be translated using the ECO table. Dummy names used where values need to be mapped to two different attributes.",TRUE
 5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(l1cc);isNumeric(l1cc);matchList(l1cc,{1,2,3,4,5})","mapInt(l1cc, {1,2,3,4,5}, {30,50,70,90,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(l1cc);isNumeric(l1cc);matchList(l1cc,{1,2,3,4,5})","mapInt(l1cc, {1,2,3,4,5}, {10,31,51,71,91})",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
@@ -10,15 +10,15 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 9,HEIGHT_LOWER,double precision,"notNull(l1ht);isNumeric(l1ht);isGreaterThan(l1ht,'0.1');isLessThan(l1ht, 100)",copyDouble(l1ht),Copies source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
 11,SPECIES_1,text,"notNull(l1s1);notEmpty(l1s1);matchTable(l1s1, 'translation', 'nb_nbi01_species' )","lookupText(l1s1, 'translation', 'nb_nbi01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_1 using lookup table,TRUE
-12,SPECIES_PER_1,integer,"notNull(l1pr1);isNumeric(l1pr1);isBetween(l1pr1, 0, 100)",copyInt(l1pr1),Copies source value to SPECIES_PER_1,TRUE
+12,SPECIES_PER_1,integer,"notNull(l1pr1);matchList(l1pr1, {1,2,3,4,5,6,7,8,9,10})","mapInt(l1pr1, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_1 by multiplying by 10,TRUE
 13,SPECIES_2,text,"notNull(l1s2);notEmpty(l1s2);matchTable(l1s2, 'translation', 'nb_nbi01_species')","lookupText(l1s2, 'translation', 'nb_nbi01_species', 'spec2', 'TRUE')",Maps source value to SPECIES_2 using lookup table,TRUE
-14,SPECIES_PER_2,integer,"notNull(l1pr2);isNumeric(l1pr2);isBetween(l1pr2, 0, 100)",copyInt(l1pr2),Copies source value to SPECIES_PER_2,TRUE
+14,SPECIES_PER_2,integer,"notNull(l1pr2);matchList(l1pr2, {1,2,3,4,5,6,7,8,9,10})","mapInt(l1pr2, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_2 by multiplying by 10,TRUE
 15,SPECIES_3,text,"notNull(l1s3);notEmpty(l1s3);matchTable(l1s3, 'translation', 'nb_nbi01_species')","lookupText(l1s3, 'translation', 'nb_nbi01_species', 'spec3', 'TRUE')",Maps source value to SPECIES_3 using lookup table,TRUE
-16,SPECIES_PER_3,integer,"notNull(l1pr3);isNumeric(l1pr3);isBetween(l1pr3, 0, 100)",copyInt(l1pr3),Copies source value to SPECIES_PER_3,TRUE
+16,SPECIES_PER_3,integer,"notNull(l1pr3);matchList(l1pr3, {1,2,3,4,5,6,7,8,9,10})","mapInt(l1pr3, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_3 by multiplying by 10,TRUE
 17,SPECIES_4,text,"notNull(l1s4);notEmpty(l1s4);matchTable(l1s4, 'translation', 'nb_nbi01_species')","lookupText(l1s4, 'translation', 'nb_nbi01_species', 'spec4', 'TRUE')",Maps source value to SPECIES_4 using lookup table,TRUE
-18,SPECIES_PER_4,integer,"notNull(l1pr4);isNumeric(l1pr4);isBetween(l1pr4, 0, 100)",copyInt(l1pr4),Copies source value to SPECIES_PER_4,TRUE
+18,SPECIES_PER_4,integer,"notNull(l1pr4);matchList(l1pr4, {1,2,3,4,5,6,7,8,9,10})","mapInt(l1pr4, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_4 by multiplying by 10,TRUE
 19,SPECIES_5,text,"notNull(l1s5);notEmpty(l1s5);matchTable(l1s5, 'translation', 'nb_nbi01_species')","lookupText(l1s5, 'translation', 'nb_nbi01_species', 'spec5', 'TRUE')",Maps source value to SPECIES_5 using lookup table,TRUE
-20,SPECIES_PER_5,integer,"notNull(l1pr5);isNumeric(l1pr5);isBetween(l1pr5, 0, 100)",copyInt(l1pr5),Copies source value to SPECIES_PER_5,TRUE
+20,SPECIES_PER_5,integer,"notNull(l1pr5);matchList(l1pr5, {1,2,3,4,5,6,7,8,9,10})","mapInt(l1pr5, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_5 by multiplying by 10,TRUE
 21,SPECIES_6,text,false(),nothingText(),Attribute does not occur,TRUE
 22,SPECIES_PER_6,integer,false(),nothingInt(),Attribute does not occur,TRUE
 23,SPECIES_7,text,false(),nothingText(),Attribute does not occur,TRUE
