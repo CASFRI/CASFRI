@@ -10,7 +10,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 9,HEIGHT_LOWER,double precision,"notNull(d);matchList(hgt,{'5','10','15','20','25'})","mapDouble(hgt, {'5','10','15','20','25'}, {2.5,7.6,12.6,17.6,22.6})",Maps source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
 11,SPECIES_1,text,"notNull(dummy_sp1);notEmpty(dummy_sp1);matchTable(dummy_sp1,'translation','sk_utm01_species','TRUE')","lookupText(dummy_sp1, 'translation', 'sk_utm01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_1 using lookup table,TRUE
-12,SPECIES_PER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
+12,SPECIES_PER_1,integer,"hasCountOfNotNull({dummy_sp1, dummy_sp2, dummy_sp3}, 1, 'TRUE', 'TRUE')","ifElseCountOfNotNullInt({dummy_sp1}, {dummy_sp2}, {dummy_sp3}, 3, 1, 100, 0)",Can only assign percentage when there is only one species in the layer and we know it is 100%,TRUE
 13,SPECIES_2,text,"notNull(dummy_sp2);notEmpty(dummy_sp2);matchTable(dummy_sp2,'translation','sk_utm01_species','TRUE')","lookupText(dummy_sp2, 'translation', 'sk_utm01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_2 using lookup table,TRUE
 14,SPECIES_PER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
 15,SPECIES_3,text,"notNull(dummy_sp3);notEmpty(dummy_sp3);matchTable(dummy_sp3,'translation','sk_utm01_species','TRUE')","lookupText(dummy_sp3, 'translation', 'sk_utm01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_3 using lookup table,TRUE
