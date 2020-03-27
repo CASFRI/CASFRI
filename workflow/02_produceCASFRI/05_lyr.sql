@@ -103,7 +103,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'vri01_lyr');
 -- Translate BC10 layer 1
 SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 'LYR'); -- only rows with LYR attributes
 
-CREATE TABLE casfri50.lyr_all AS -- *m**s
+INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc_lyr('rawfri', 'bc10_l1_to_bc_l1_map_lyr', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_lyr');
