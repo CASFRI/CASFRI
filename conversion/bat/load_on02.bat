@@ -12,6 +12,8 @@
 
 :: All tables have the same core attributes, but many have additional attributes.
 :: Load all tables using -addfields
+:: Then use -sql query to select only the columns specified in the FIM documentation.
+:: Drop any rows with null polyid using the sql statement.
 
 ::######################################## Set variables #######################################
 SETLOCAL
@@ -43,7 +45,7 @@ for %%F in (AL_615_2D AP_451_2D ARF_110_2D BA_220_2D BSF_030_2D CF_175_2D CL_noF
 	SET ogr_options=-update -append -addfields
 )
 
-:: TMF_280_2D is missing PERIMETER value but has Shape_Leng we can use insteead. Make PERIMETER attribute during loading.
+:: TMF_280_2D is missing PERIMETER value but has Shape_Leng we can use instead. Make PERIMETER attribute during loading.
 for %%F in (TMF_280_2D) do (
 	
 	"%gdalFolder%/ogr2ogr" ^
@@ -60,6 +62,7 @@ SELECT  wkb_geometry, ogc_fid, inventory_id, src_filename, AREA, PERIMETER, FMFO
 OYRORG, OSPCOMP, OLEADSPC, OAGE, OHT, OCCLO, OSI, OSC, UYRORG, USPCOMP, ULEADSPC, UAGE, UHT, UCCLO, USI, USC, ^
 INCIDSPC, VERT, HORIZ, PRI_ECO, SEC_ECO, ACCESS1, ACCESS2, MGMTCON1, MGMTCON2, MGMTCON3, VERDATE, SENSITIV, BED ^
 FROM %temp_table% ^
+WHERE POLYID IS NOT NULL ^
 ; ^
 DROP TABLE IF EXISTS %temp_table%;
 
