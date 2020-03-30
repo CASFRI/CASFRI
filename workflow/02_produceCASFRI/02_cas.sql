@@ -18,6 +18,26 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
 --------------------------------------------------------------------------
+-- Validate AB photo year table
+--------------------------------------------------------------------------
+SELECT TT_Prepare('translation', 'ab_photoyear_validation', '_ab_photo_val');
+SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear');
+
+-- make table valid and subset by rows with valid photo years
+DROP TABLE IF EXISTS rawfri.new_photo_year;
+CREATE TABLE rawfri.new_photo_year AS
+SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photo_yr
+FROM rawfri.ab_photoyear
+WHERE TT_IsInt(photo_yr);
+
+CREATE INDEX IF NOT EXISTS ab_photoyear_idx 
+ ON rawfri.new_photo_year
+ USING GIST(wkb_geometry);
+
+DROP TABLE rawfri.ab_photoyear;
+ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
+
+--------------------------------------------------------------------------
 -- Translate all CAS tables into a common table
 --------------------------------------------------------------------------
 -- Prepare the translation functions
