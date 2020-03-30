@@ -25,7 +25,9 @@ SELECT TT_Prepare('translation', 'avi01_cas', '_ab_cas'); -- used for both AB06 
 SELECT TT_Prepare('translation', 'nbi01_cas', '_nb_cas', 'avi01_cas'); -- used for both NB01 and NB02
 SELECT TT_Prepare('translation', 'vri01_cas', '_bc_cas', 'avi01_cas'); 
 SELECT TT_Prepare('translation', 'fvi01_cas', '_nt_cas', 'avi01_cas'); -- used for both NT01 and NT02
-SELECT TT_Prepare('translation', 'fim02_cas', '_on_cas', 'fim02_cas'); 
+SELECT TT_Prepare('translation', 'fim02_cas', '_on_cas', 'avi01_cas'); 
+SELECT TT_Prepare('translation', 'sk_utm01_cas', '_sk_cas', 'avi01_cas'); 
+SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt_cas', 'avi01_cas'); 
 ------------------------
 DROP TABLE IF EXISTS casfri50.cas_all CASCADE;
 ------------------------
@@ -100,6 +102,22 @@ INSERT INTO casfri50.cas_all -- 57m
 SELECT * FROM TT_Translate_on_cas('rawfri', 'on02_l1_to_on_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fim02_cas');
+------------------------
+-- Translate SK01 using UTM translation table
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk');
+
+INSERT INTO casfri50.cas_all -- 
+SELECT * FROM TT_Translate_sk_cas('rawfri', 'sk01_l1_to_sk_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_cas');
+------------------------
+-- Translate YT02 using YVI01 translation table
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
+
+INSERT INTO casfri50.cas_all -- 
+SELECT * FROM TT_Translate_yt_cas('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_cas');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

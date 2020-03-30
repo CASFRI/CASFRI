@@ -25,6 +25,9 @@ SELECT TT_Prepare('translation', 'avi01_dst', '_ab_dst'); -- used for both AB06 
 SELECT TT_Prepare('translation', 'nbi01_dst', '_nb_dst', 'avi01_dst'); -- used for both NB01 and NB02
 SELECT TT_Prepare('translation', 'vri01_dst', '_bc_dst', 'avi01_dst');
 SELECT TT_Prepare('translation', 'fvi01_dst', '_nt_dst', 'avi01_dst'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'fim02_dst', '_on_dst', 'avi01_dst');
+SELECT TT_Prepare('translation', 'sk_utm01_dst', '_sk_dst', 'avi01_dst');
+SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt_dst', 'avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 ------------------------
@@ -99,6 +102,30 @@ INSERT INTO casfri50.dst_all -- 51m
 SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt02_l1_to_nt_l1_map_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_dst');
+------------------------
+-- Translate ON02 using FIM generic translation table
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 'DST');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_on_dst('rawfri', 'on02_l1_to_on_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'fim02_dst');
+------------------------
+-- Translate SK01 using UTM translation table
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 'DST');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_sk_dst('rawfri', 'sk01_l1_to_sk_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst');
+------------------------
+-- Translate YT02 using YVI translation table
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 'DST');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_yt_dst('rawfri', 'yt02_l1_to_yt_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

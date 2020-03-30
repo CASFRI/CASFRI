@@ -25,6 +25,9 @@ SELECT TT_Prepare('translation', 'avi01_nfl', '_ab_nfl'); -- used for both AB06 
 SELECT TT_Prepare('translation', 'nbi01_nfl', '_nb_nfl', 'avi01_nfl'); -- used for both NB01 and NB02
 SELECT TT_Prepare('translation', 'vri01_nfl', '_bc_nfl', 'avi01_nfl'); -- used for both BC08 and BC10
 SELECT TT_Prepare('translation', 'fvi01_nfl', '_nt_nfl', 'avi01_nfl'); -- used for both NT01 and NT02, layer 1 and 2
+SELECT TT_Prepare('translation', 'fim02_nfl', '_on_nfl', 'avi01_nfl');
+SELECT TT_Prepare('translation', 'sk_utm01_nfl', '_sk_nfl', 'avi01_nfl');
+SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt_nfl', 'avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 ------------------------
@@ -44,6 +47,7 @@ SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab06_l2_to_ab_l1_map_nfl', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'avi01_nfl');
 ------------------------
+
 -- Translate AB16
 SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab', 'NFL');
 
@@ -60,6 +64,7 @@ SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab16_l2_to_ab_l1_map_nfl', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'avi01_nfl');
 ------------------------
+
 -- Translate NB01
 SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 'NFL');
 
@@ -68,6 +73,7 @@ SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb01_l1_to_nb_l1_map_nfl', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_nfl');
 ------------------------
+
 -- Translate NB02 using NB generic translation table
 SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 'NFL');
 
@@ -76,6 +82,7 @@ SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02_l1_to_nb_l1_map_nfl', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'nbi01_nfl');
 ------------------------
+
 -- Translate BC08
 SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 'NFL');
 
@@ -84,6 +91,7 @@ SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l1_to_bc_l1_map_nfl', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_nfl');
 ------------------------
+
 -- Translate BC10
 SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 'NFL');
 
@@ -92,6 +100,7 @@ SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc10_l1_to_bc_l1_map_nfl', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'vri01_nfl');
 ------------------------
+
 -- Translate NT01 using NT generic translation table
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 'NFL'); 
 
@@ -108,6 +117,7 @@ SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l2_to_nt_l1_map_nfl', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_nfl');
 ------------------------
+
 -- Translate NT02 reusing NT translation table
 SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 'NFL');
 
@@ -123,6 +133,35 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l2_to_nt_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_nfl');
+------------------------
+
+-- Translate ON02 using FIM translation table
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 'NFL');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_on_nfl('rawfri', 'on02_l1_to_on_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'fim02_nfl');
+------------------------
+
+-- Translate SK01 using UTM translation table
+SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk', 1, 'NFL');
+
+-- Translating the single NFL layer using row 2 in attribute dependencies is a trick to allow max_layer_number to be set to 4. 
+-- createMappingView() only allows NFL max_layer_number to be 2 hgiher than the rows layer number which is insufficient in this case.
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l2_to_sk_l1_map_nfl', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl');
+------------------------
+
+-- Translate YT02 using YVI translation table
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 'NFL');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_yt_nfl('rawfri', 'yt02_l1_to_yt_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
