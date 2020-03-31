@@ -58,8 +58,6 @@ SET fullTargetTableName=%targetFRISchema%.nb02
 :: Only runs once, when flag file poly_id_added.txt does not exist.
 
 if not exist "%friDir%\%NB_subFolder%poly_id_added.txt" (
-	
-	echo " " > "%friDir%\%NB_subFolder%poly_id_added.txt"
 
 	:: Waterbody
 	"%gdalFolder%\ogrinfo" %srcWaterFullPath% -sql "ALTER TABLE %srcNameWater% DROP COLUMN poly_id"
@@ -80,6 +78,8 @@ if not exist "%friDir%\%NB_subFolder%poly_id_added.txt" (
 	"%gdalFolder%\ogrinfo" %srcForestFullPath% -sql "ALTER TABLE %srcNameForest% DROP COLUMN poly_id"
 	"%gdalFolder%\ogrinfo" %srcForestFullPath% -sql "ALTER TABLE %srcNameForest% ADD COLUMN poly_id integer"
 	"%gdalFolder%\ogrinfo" %srcForestFullPath% -dialect SQLite -sql "UPDATE %srcNameForest% set poly_id = rowid+1"
+	
+	echo " " > "%friDir%\%NB_subFolder%poly_id_added.txt"
 )
 
 ::### FILE 1 ###
