@@ -211,14 +211,6 @@ SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l2_to_sk_l1_map_lyr', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
 ------------------------
--- Translate SK01 layer 3 using UTM translation table
-SELECT TT_CreateMappingView('rawfri', 'sk01', 3, 'sk', 1, 'LYR');
-
-INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l3_to_sk_l1_map_lyr', 'ogc_fid');
-
-SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
-------------------------
 
 -- Translate YT02 using YVI translation table
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 'LYR');

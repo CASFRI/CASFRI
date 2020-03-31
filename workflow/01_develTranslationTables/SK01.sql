@@ -49,11 +49,6 @@ SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk', 1, 200, 'lyr');
 SELECT * FROM TT_Translate_sk01_lyr_devel('rawfri', 'sk01_l2_to_sk_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_lyr_devel');
 
--- LYR3 ATTRIBUTES
-SELECT TT_CreateMappingView('rawfri', 'sk01', 3, 'sk', 1, 200, 'lyr');
-SELECT * FROM TT_Translate_sk01_lyr_devel('rawfri', 'sk01_l3_to_sk_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_lyr_devel');
-
 -- DST ATTRIBUTES
 SELECT * FROM translation.sk_utm01_dst;
 DROP TABLE IF EXISTS translation_devel.sk01_utm01_dst_devel;
@@ -72,8 +67,8 @@ CREATE TABLE translation_devel.sk01_utm01_nfl_devel AS
 SELECT * FROM translation.sk_utm01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_nfl_devel', '_sk01_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk', 1, 200, 'nfl'); -- Translating the single NFL layer using row 2 in attribute dependencies is a trick to allow max_layer_number to be set to 4. createMappingView() only allows NFL max_layer_number to be 2 hgiher than the rows layer number which is insufficient in this case.
-SELECT * FROM TT_Translate_sk01_nfl_devel('rawfri', 'sk01_l2_to_sk_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 200, 'nfl');
+SELECT * FROM TT_Translate_sk01_nfl_devel('rawfri', 'sk01_l1_to_sk_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_nfl_devel');
 
 

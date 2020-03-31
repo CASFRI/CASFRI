@@ -145,12 +145,10 @@ SELECT * FROM TT_ShowLastLog('translation', 'fim02_nfl');
 ------------------------
 
 -- Translate SK01 using UTM translation table
-SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk', 1, 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 'NFL');
 
--- Translating the single NFL layer using row 2 in attribute dependencies is a trick to allow max_layer_number to be set to 4. 
--- createMappingView() only allows NFL max_layer_number to be 2 hgiher than the rows layer number which is insufficient in this case.
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l2_to_sk_l1_map_nfl', 'ogc_fid'); 
+SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l1_to_sk_l1_map_nfl', 'ogc_fid'); 
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl');
 ------------------------
