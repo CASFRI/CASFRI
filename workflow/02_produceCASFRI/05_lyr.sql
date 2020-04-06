@@ -145,10 +145,10 @@ SELECT * FROM TT_ShowLastLog('translation', 'vri01_lyr');
 ------------------------
 
 -- Translate NT01 using NT generic translation table
-SELECT TT_CreateMappingView('rawfri', 'nt01', 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 'LYR');
 
 INSERT INTO casfri50.lyr_all -- 1h49m
-SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt01_min_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt01_l1_to_nt_l1_map_lyr', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'fvi01_lyr');
 ------------------------
