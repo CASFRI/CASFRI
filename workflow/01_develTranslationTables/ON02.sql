@@ -23,10 +23,10 @@ SELECT * FROM TT_Translate_on_species_val('translation', 'on_fim02_species');
 
 
 -- CAS ATTRIBUTES
-SELECT * FROM translation.fim02_cas;
+SELECT * FROM translation.on_fim02_cas;
 DROP TABLE IF EXISTS translation_devel.on02_fim02_cas_devel;
 CREATE TABLE translation_devel.on02_fim02_cas_devel AS
-SELECT * FROM translation.fim02_cas; --WHERE rule_id::int = 1
+SELECT * FROM translation.on_fim02_cas; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.on02_fim02_cas_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_cas_devel', '_on02_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200);
@@ -35,10 +35,10 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'on02_fim02_cas_devel');
 
 
 -- LYR1 ATTRIBUTES
-SELECT * FROM translation.fim02_lyr;
+SELECT * FROM translation.on_fim02_lyr;
 DROP TABLE IF EXISTS translation_devel.on02_fim02_lyr_devel;
 CREATE TABLE translation_devel.on02_fim02_lyr_devel AS
-SELECT * FROM translation.fim02_lyr; --WHERE rule_id::int = 1
+SELECT * FROM translation.on_fim02_lyr; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.on02_fim02_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_lyr_devel', '_on02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'lyr');
@@ -49,7 +49,7 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'on02_fim02_lyr_devel');
 -- LYR2 ATTRIBUTES
 DROP TABLE IF EXISTS translation_devel.on02_fim02_lyr_devel;
 CREATE TABLE translation_devel.on02_fim02_lyr_devel AS
-SELECT * FROM translation.fim02_lyr; --WHERE rule_id::int = 1
+SELECT * FROM translation.on_fim02_lyr; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.on02_fim02_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_lyr_devel', '_on02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 2, 'on', 1, 200, 'lyr');
@@ -58,10 +58,10 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'on02_fim02_lyr_devel');
 
 
 -- DST ATTRIBUTES
-SELECT * FROM translation.fim02_dst;
+SELECT * FROM translation.on_fim02_dst;
 DROP TABLE IF EXISTS translation_devel.on02_fim02_dst_devel;
 CREATE TABLE translation_devel.on02_fim02_dst_devel AS
-SELECT * FROM translation.fim02_dst; --WHERE rule_id::int = 1
+SELECT * FROM translation.on_fim02_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.on02_fim02_dst_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_dst_devel', '_on02_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'dst');
@@ -70,10 +70,10 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_dst_devel');
 
 
 -- NFL ATTRIBUTES
-SELECT * FROM translation.fim02_nfl;
+SELECT * FROM translation.on_fim02_nfl;
 DROP TABLE IF EXISTS translation_devel.on02_fim02_nfl_devel;
 CREATE TABLE translation_devel.on02_fim02_nfl_devel AS
-SELECT * FROM translation.fim02_nfl; --WHERE rule_id::int = 1
+SELECT * FROM translation.on_fim02_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.on02_fim02_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_nfl_devel', '_on02_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'nfl');
@@ -82,10 +82,10 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_nfl_devel');
 
 
 -- ECO ATTRIBUTES
-SELECT * FROM translation.fim02_eco;
+SELECT * FROM translation.on_fim02_eco;
 DROP TABLE IF EXISTS translation_devel.on02_fim02_eco_devel;
 CREATE TABLE translation_devel.on02_fim02_eco_devel AS
-SELECT * FROM translation.fim02_eco; --WHERE rule_id::int = 1
+SELECT * FROM translation.on_fim02_eco; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.on02_fim02_eco_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_eco_devel', '_on02_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'eco');
@@ -94,10 +94,10 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_eco_devel');
 
 
 -- GEO ATTRIBUTES
-SELECT * FROM translation.fim02_geo;
+SELECT * FROM translation.on_fim02_geo;
 DROP TABLE IF EXISTS translation_devel.on02_fim02_geo_devel;
 CREATE TABLE translation_devel.on02_fim02_geo_devel AS
-SELECT * FROM translation.fim02_geo; --WHERE rule_id::int = 1
+SELECT * FROM translation.on_fim02_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.on02_fim02_geo_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_geo_devel', '_on02_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 200, 'geo');

@@ -23,19 +23,19 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS translation_devel;
 -------------------------------------------------------
 -- Display translation tables
-SELECT * FROM translation.fvi01_cas; 
-SELECT * FROM translation.fvi01_dst; 
-SELECT * FROM translation.fvi01_eco; 
-SELECT * FROM translation.fvi01_lyr; 
-SELECT * FROM translation.fvi01_nfl;
-SELECT * FROM translation.fvi01_geo;
+SELECT * FROM translation.nt_fvi01_cas; 
+SELECT * FROM translation.nt_fvi01_dst; 
+SELECT * FROM translation.nt_fvi01_eco; 
+SELECT * FROM translation.nt_fvi01_lyr; 
+SELECT * FROM translation.nt_fvi01_nfl;
+SELECT * FROM translation.nt_fvi01_geo;
 ----------------------------
 -- Create subsets of translation tables if necessary
 ----------------------------
 -- cas
 DROP TABLE IF EXISTS translation_devel.nt01_fvi01_cas_devel;
 CREATE TABLE translation_devel.nt01_fvi01_cas_devel AS
-SELECT * FROM translation.fvi01_cas
+SELECT * FROM translation.nt_fvi01_cas
 --WHERE rule_id::int < 1
 ;
 -- display
@@ -44,7 +44,7 @@ SELECT * FROM translation_devel.nt01_fvi01_cas_devel;
 -- dst
 DROP TABLE IF EXISTS translation_devel.nt01_fvi01_dst_devel;
 CREATE TABLE translation_devel.nt01_fvi01_dst_devel AS
-SELECT * FROM translation.fvi01_dst
+SELECT * FROM translation.nt_fvi01_dst
 --WHERE rule_id::int = 1
 ;
 -- display
@@ -53,7 +53,7 @@ SELECT * FROM translation_devel.nt01_fvi01_dst_devel;
 -- eco
 DROP TABLE IF EXISTS translation_devel.nt01_fvi01_eco_devel;
 CREATE TABLE translation_devel.nt01_fvi01_eco_devel AS
-SELECT * FROM translation.fvi01_eco
+SELECT * FROM translation.nt_fvi01_eco
 --WHERE rule_id::int = 1
 ;
 -- display
@@ -62,7 +62,7 @@ SELECT * FROM translation_devel.nt01_fvi01_eco_devel;
 -- lyr
 DROP TABLE IF EXISTS translation_devel.nt01_fvi01_lyr_devel;
 CREATE TABLE translation_devel.nt01_fvi01_lyr_devel AS
-SELECT * FROM translation.fvi01_lyr
+SELECT * FROM translation.nt_fvi01_lyr
 --WHERE rule_id::int = 1
 ;
 -- display
@@ -71,7 +71,7 @@ SELECT * FROM translation_devel.nt01_fvi01_lyr_devel;
 -- nfl
 DROP TABLE IF EXISTS translation_devel.nt01_fvi01_nfl_devel;
 CREATE TABLE translation_devel.nt01_fvi01_nfl_devel AS
-SELECT * FROM translation.fvi01_nfl
+SELECT * FROM translation.nt_fvi01_nfl
 --WHERE rule_id::int = 1
 ;
 -- display
@@ -80,7 +80,7 @@ SELECT * FROM translation_devel.nt01_fvi01_nfl_devel;
 -- geo
 DROP TABLE IF EXISTS translation_devel.nt01_fvi01_geo_devel;
 CREATE TABLE translation_devel.nt01_fvi01_geo_devel AS
-SELECT * FROM translation.fvi01_geo
+SELECT * FROM translation.nt_fvi01_geo
 --WHERE rule_id::int = 2
 ;
 -- display
