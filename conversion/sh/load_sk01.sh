@@ -11,7 +11,7 @@
 # If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
 # in the configuration file.
 
-# Mapsheets with values 0 in the CZONE attribute are not part of the inventory and shold be 
+# Mapsheets with values 0 in the CZONE attribute are not part of the inventory and should be 
 # removed.
 
 ######################################## Set variables #######################################
