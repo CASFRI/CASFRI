@@ -1,9 +1,8 @@
-:: This script loads the SK SFVI Government Forest Island dataset (SK02) into PostgreSQL
+:: This script loads the SK SFVI Government Meadow Lake Provincial Park dataset (SK03) into PostgreSQL
 
 :: The format of the source dataset is a geodatabase
 :: Source data is split into a STAND feature class of polygons, and the following tables
-:: of attributes: DISTURBANCES, FEATURE_METADATA, HERBS, LAYER_1, LAYER_2, LAYER_3, SHRUBS,
-:: WETLAND.
+:: of attributes: DISTURBANCES, FEATURE_METADATA, HERBS, LAYER_1, LAYER_2, LAYER_3, SHRUBS.
 
 :: These tables need to be joined into a single source table in the database. All columns
 :: are unique. Polygons with type = OTH and no entries for all of SMR, LUC and TRANSP_CLASS
@@ -22,9 +21,9 @@ SETLOCAL
 
 CALL .\common.bat
 
-SET inventoryID=SK02
-SET srcFileName=SFVI_Island_Forest
-SET fullTargetTableName=%targetFRISchema%.sk02
+SET inventoryID=SK03
+SET srcFileName=SFVI_Meadow_Lake_Provincial_Park
+SET fullTargetTableName=%targetFRISchema%.sk03
 
 SET gdbFileName_poly=STAND
 SET gdbFileName_meta=FEATURE_METADATA
@@ -34,7 +33,6 @@ SET gdbFileName_l1=LAYER_1
 SET gdbFileName_l2=LAYER_2
 SET gdbFileName_l3=LAYER_3
 SET gdbFileName_shrubs=SHRUBS
-SET gdbFileName_wetland=WETLAND
 
 SET TableName_poly=%fullTargetTableName%_poly
 SET TableName_meta=%fullTargetTableName%_meta
@@ -44,7 +42,6 @@ SET TableName_l1=%fullTargetTableName%_l1
 SET TableName_l2=%fullTargetTableName%_l2
 SET TableName_l3=%fullTargetTableName%_l3
 SET TableName_shrubs=%fullTargetTableName%_shrubs
-SET TableName_wetland=%fullTargetTableName%_wetland
 
 SET srcFullPath="%friDir%/SK/%inventoryID%/data/inventory/%srcFileName%.gdb"
 
@@ -108,13 +105,6 @@ SET query1=SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS invento
 -sql "SELECT *, poly_id AS poly_id_shrubs FROM %gdbFileName_shrubs%" ^
 -progress %overwrite_tab%
 
-:: Run ogr2ogr for wetland data
-"%gdalFolder%/ogr2ogr" ^
--f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_wetland% ^
--nln %TableName_wetland% %layer_creation_option% ^
--sql "SELECT *, poly_id AS poly_id_wetland FROM %gdbFileName_wetland%" ^
--progress %overwrite_tab%
-
 
 :: Join all attribute tables to polygons.
 :: The ogc_fid attribute is dropped from all but the poly table. 
@@ -127,7 +117,6 @@ ALTER TABLE %TableName_l1% DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS 
 ALTER TABLE %TableName_l2% DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id; ^
 ALTER TABLE %TableName_l3% DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id; ^
 ALTER TABLE %TableName_shrubs% DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id; ^
-ALTER TABLE %TableName_wetland% DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id; ^
 DROP TABLE IF EXISTS %fullTargetTableName%; ^
 CREATE TABLE %fullTargetTableName% AS ^
 SELECT * FROM %TableName_poly% A ^
@@ -137,8 +126,7 @@ LEFT JOIN %TableName_herbs% D ON A.poly_id = D.poly_id_herbs ^
 LEFT JOIN %TableName_l1% E ON A.poly_id = E.poly_id_l1 ^
 LEFT JOIN %TableName_l2% F ON A.poly_id = F.poly_id_l2 ^
 LEFT JOIN %TableName_l3% G ON A.poly_id = G.poly_id_l3 ^
-LEFT JOIN %TableName_shrubs% H ON A.poly_id = H.poly_id_shrubs ^
-LEFT JOIN %TableName_wetland% I ON A.poly_id = I.poly_id_wetland; ^
+LEFT JOIN %TableName_shrubs% H ON A.poly_id = H.poly_id_shrubs; ^
 DROP TABLE IF EXISTS %TableName_poly%; ^
 DROP TABLE IF EXISTS %TableName_meta%; ^
 DROP TABLE IF EXISTS %TableName_dist%; ^
@@ -147,7 +135,6 @@ DROP TABLE IF EXISTS %TableName_l1%; ^
 DROP TABLE IF EXISTS %TableName_l2%; ^
 DROP TABLE IF EXISTS %TableName_l3%; ^
 DROP TABLE IF EXISTS %TableName_shrubs%; ^
-DROP TABLE IF EXISTS %TableName_wetland%; ^
-ALTER TABLE %fullTargetTableName% DROP COLUMN poly_id_meta, DROP COLUMN poly_id_dist, DROP COLUMN poly_id_herbs, DROP COLUMN poly_id_l1, DROP COLUMN poly_id_l2, DROP COLUMN poly_id_l3, DROP COLUMN poly_id_shrubs, DROP COLUMN poly_id_wetland;
+ALTER TABLE %fullTargetTableName% DROP COLUMN poly_id_meta, DROP COLUMN poly_id_dist, DROP COLUMN poly_id_herbs, DROP COLUMN poly_id_l1, DROP COLUMN poly_id_l2, DROP COLUMN poly_id_l3, DROP COLUMN poly_id_shrubs;
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query2%"
