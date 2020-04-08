@@ -25,6 +25,10 @@ SELECT TT_Prepare('translation', 'ab_avi01_eco', '_ab_eco'); -- used for both AB
 SELECT TT_Prepare('translation', 'nb_nbi01_eco', '_nb_eco', 'ab_avi01_eco'); -- used for both NB01 and NB02
 SELECT TT_Prepare('translation', 'bc_vri01_eco', '_bc_eco', 'ab_avi01_eco'); -- used for both BC08 and BC10
 SELECT TT_Prepare('translation', 'nt_fvi01_eco', '_nt_eco', 'ab_avi01_eco'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'on_fim02_eco', '_on_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'sk_utm01_eco', '_sk_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt_eco', 'ab_avi01_eco');
+
 ------------------------
 DROP TABLE IF EXISTS casfri50.eco_all CASCADE;
 ------------------------
@@ -76,7 +80,7 @@ SELECT * FROM TT_Translate_bc_eco('rawfri', 'bc10_l1_to_bc_l1_map_eco', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_eco');
 ------------------------
--- Translate TN01 using NT generic translation table
+-- Translate NT01 using NT generic translation table
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 'ECO'); -- only rows with eco attributes
 
 INSERT INTO casfri50.eco_all -- 
@@ -91,6 +95,31 @@ INSERT INTO casfri50.eco_all --
 SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt02_l1_to_nt_l1_map_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_eco');
+------------------------
+-- Translate ON02 using ON translation table
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 'ECO');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_on_eco('rawfri', 'on02_l1_to_on_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_eco');
+------------------------
+-- Translate SK01 using SK translation table
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 'ECO');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_sk_eco('rawfri', 'sk01_l1_to_sk_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_eco');
+------------------------
+-- Translate YT02 using YT translation table
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 'ECO');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_yt_eco('rawfri', 'yt02_l1_to_yt_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco');
+
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
