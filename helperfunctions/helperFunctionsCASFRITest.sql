@@ -61,7 +61,7 @@ WITH test_nb AS (
     SELECT 'TT_nbi01_wetland_translation'::text function_tested,             13 maj_num, 4 nb_test UNION ALL
     SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
     SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num, 5 nb_test UNION ALL
-    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 22 nb_test UNION ALL
+    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 20 nb_test UNION ALL
     SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_tie01_crownclosure_translation'::text function_tested,        18 maj_num,  8 nb_test UNION ALL
     SELECT 'TT_tie01_height_translation'::text function_tested,              19 maj_num,  9 nb_test UNION ALL
@@ -526,22 +526,22 @@ CREATE OR REPLACE VIEW rawfri.ab06_lyr1_nfl1_dst1 AS
 SELECT sp1, sp2, sp3, nat_non, anth_veg, anth_non, nfl, mod1, mod1_yr, mod1_ext, mod2, mod2_yr, mod2_ext
 FROM rawfri.ab06;' passed
 ---------------------------------------------------------
+--UNION ALL
+--SELECT '16.5'::text number,
+--       'TT_CreateFilterView'::text function_tested,
+--       'Wrong first argument test 1'::text description,
+--       TT_CreateFilterView('rawfri', 'ab06', 'lyr', NULL, NULL, 'lyr') = 
+--       'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''lyr'' attribute not found in table ''rawfri.ab06''...' passed
+---------------------------------------------------------
+--UNION ALL
+--SELECT '16.6'::text number,
+--       'TT_CreateFilterView'::text function_tested,
+--       'Wrong first argument test 2'::text description,
+--       TT_CreateFilterView('rawfri', 'ab06', 'lyr, lyr1, nfl1, dst1', NULL, NULL, 'lyr1_nfl1_dst1') = 
+--       'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''lyr'' attribute not found in table ''rawfri.ab06''...' passed
+---------------------------------------------------------
 UNION ALL
 SELECT '16.5'::text number,
-       'TT_CreateFilterView'::text function_tested,
-       'Wrong first argument test 1'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr', NULL, NULL, 'lyr') = 
-       'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''lyr'' attribute not found in table ''rawfri.ab06''...' passed
----------------------------------------------------------
-UNION ALL
-SELECT '16.6'::text number,
-       'TT_CreateFilterView'::text function_tested,
-       'Wrong first argument test 2'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr, lyr1, nfl1, dst1', NULL, NULL, 'lyr1_nfl1_dst1') = 
-       'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''lyr'' attribute not found in table ''rawfri.ab06''...' passed
----------------------------------------------------------
-UNION ALL
-SELECT '16.7'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple second argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl1', NULL, 'lyr1_for_nfl1') = 
@@ -555,14 +555,17 @@ WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       (TT_NotEmpty(nfl::text) AND nfl::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.8'::text number,
+SELECT '16.6'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Wrong second argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'lyr', NULL, 'lyr1_for_lyr') = 
-       'ERROR TT_CreateFilterView(): ''whereInAttrList'' parameter''s ''lyr'' attribute not found in table ''rawfri.ab06''...' passed
+       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_lyr CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_lyr AS
+SELECT sp1, sp2, sp3
+FROM rawfri.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.9'::text number,
+SELECT '16.7'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex second argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl1, nfl2', NULL, 'lyr1_for_nfl1_nfl2') = 
@@ -580,7 +583,7 @@ WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       (TT_NotEmpty(unfl::text) AND unfl::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.10'::text number,
+SELECT '16.8'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''and'' second argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl1, nfl2]', NULL, 'lyr1_for_nfl1_and_nfl2') = 
@@ -600,7 +603,7 @@ WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       ;' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.11'::text number,
+SELECT '16.9'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''or/and'' second argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'dst1, [nfl1, nfl2]', NULL, 'lyr1_for_dst_or_nfl1_and_nfl2') = 
@@ -627,7 +630,7 @@ WHERE (TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR
       ;' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.12'::text number,
+SELECT '16.10'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''and/or'' second argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl1, nfl2], dst1', NULL, 'lyr1_for_nfl1_and_nfl2_or_dst') = 
@@ -653,7 +656,7 @@ WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
         (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.13'::text number,
+SELECT '16.11'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple third argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl1, nfl2', 'dst1', 'lyr1_for_nfl1_or_nfl2_not_dst') = 
@@ -678,7 +681,7 @@ WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.14'::text number,
+SELECT '16.12'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple ''and'' second argument with third argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl1, nfl2]', 'dst1', 'lyr1_for_nfl1_and_nfl2_not_dst') = 
@@ -705,7 +708,7 @@ WHERE (((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
         (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.15'::text number,
+SELECT '16.13'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test empty ''eco'' keywords'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'eco', 'nfl1, eco', NULL, 'eco_for_nfl1_or_eco') = 
@@ -719,7 +722,7 @@ WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       (TT_NotEmpty(nfl::text) AND nfl::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.16'::text number,
+SELECT '16.14'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test empty keywords in ''and'' second argument'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'eco', '[nfl1, eco]', 'dst2', 'eco_for_nfl1_and_eco_not_dst2') = 
@@ -733,7 +736,7 @@ WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       (TT_NotEmpty(nfl::text) AND nfl::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.17'::text number,
+SELECT '16.15'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with some source attributes in each parameter'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1, wkb_geometry', '[nfl1, inventory_id, nfl2]', 'dst1, trm', 'extra_lyr1_for_nfl1_and_nfl2_not_dst') = 
@@ -763,7 +766,7 @@ WHERE (((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
         (TT_NotEmpty(trm::text) AND trm::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.18'::text number,
+SELECT '16.16'::text number,
        'TT_CreateFilterView'::text function_tested,
        'All arguments NULL'::text description,
        TT_CreateFilterView('rawfri', 'ab06', NULL, NULL, NULL, 'null') = 
@@ -773,7 +776,7 @@ SELECT *
 FROM rawfri.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.19'::text number,
+SELECT '16.17'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test one CASFRI attribute to be replaced by source attributes'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'CAS_ID', NULL, NULL, 'cas_id') = 
@@ -783,7 +786,7 @@ SELECT inventory_id, src_filename, trm_1, poly_num, ogc_fid
 FROM rawfri.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.20'::text number,
+SELECT '16.18'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test CASFRI attribute inside ''and'' braquets'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'cas_id', '[lyr1, cas_id]', 'nat_non_veg', 'lyr1_cas_id_nfl') = 
@@ -805,7 +808,7 @@ WHERE (((TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR
        ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.21'::text number,
+SELECT '16.19'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with whereOutAttrList attribute only'::text description,
        TT_CreateFilterView('rawfri', 'ab06', NULL, NULL, 'LYR1', 'not_lyr1') = 
@@ -819,7 +822,7 @@ WHERE NOT
       (TT_NotEmpty(sp3::text) AND sp3::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.22'::text number,
+SELECT '16.20'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with whereOutAttrList attribute only'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'site_class, LYR1', NULL, NULL, 'site_class') = 
