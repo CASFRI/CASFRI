@@ -1,15 +1,17 @@
 #!/bin/bash -x
 
-# This script loads the SK SFVI Government Forest Island dataset (SK02) into PostgreSQL
+# This script loads the SK SFVI Industry PAFMA data (SK04) into PostgreSQL
 
 # The format of the source dataset is a geodatabase
 # Source data is split into a STAND feature class of polygons, and the following tables
-# of attributes: DISTURBANCES, FEATURE_METADATA, HERBS, LAYER_1, LAYER_2, LAYER_3, SHRUBS,
-# WETLAND.
+# of attributes: DISTURBANCES, FEATURE_METADATA, HERBS, LAYER_1, LAYER_2, LAYER_3, SHRUBS.
 
 # These tables need to be joined into a single source table in the database. All columns
-# are unique. Polygons with type = OTH and no entries for all of SMR, LUC and TRANSP_CLASS
-# are empty polygons forming the bounding extent of the dataset. These should be removed.
+# are unique. Empty bounding polygons are removed by dropping columns where FCT code is 9000
+# and the NVSL attribute is NULL.
+
+# Common code to do the join is shared between SK02, SK03, SK04 and SK05 and is sourced from
+# sk_SFVI_join_code.sh
 
 # The year of photography is included in the attribute FEATURE_SOURCE_DATE
 
@@ -22,10 +24,9 @@
 
 source ./common.sh
 
-inventoryID=SK02
-srcFileName=SFVI_Island_Forest
-fullTargetTableName=$targetFRISchema.sk02_temp
-actualFullTargetTableName=$targetFRISchema.sk02
+inventoryID=SK04
+srcFileName=SFVI_PAFMA_PPFMA
+fullTargetTableName=$targetFRISchema.sk04
 
 gdbFileName_poly=STAND
 gdbFileName_meta=FEATURE_METADATA
@@ -35,7 +36,6 @@ gdbFileName_l1=LAYER_1
 gdbFileName_l2=LAYER_2
 gdbFileName_l3=LAYER_3
 gdbFileName_shrubs=SHRUBS
-gdbFileName_wetland=WETLAND
 
 TableName_poly=${fullTargetTableName}_poly
 TableName_meta=${fullTargetTableName}_meta
@@ -45,7 +45,6 @@ TableName_l1=${fullTargetTableName}_l1
 TableName_l2=${fullTargetTableName}_l2
 TableName_l3=${fullTargetTableName}_l3
 TableName_shrubs=${fullTargetTableName}_shrubs
-TableName_wetland=${fullTargetTableName}_wetland
 
 srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 
@@ -56,7 +55,7 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_poly" \
 -nln $TableName_poly $layer_creation_option \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_poly' \
-        WHERE NOT(TYPE = 'OTH' AND SMR = ' ' AND LUC = ' ' AND TRANSP_CLASS = ' ')" \
+        WHERE NOT(FCT_CODE = 9000 AND NVSL IS NULL)" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for meta data
@@ -77,14 +76,14 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_herbs" \
 -nln $TableName_herbs $layer_creation_option \
--sql "SELECT *, poly_id AS poly_id_herbs FROM '$gdbFileName_herbs'" \
+-sql "SELECT *, poly_id AS poly_id_herbs, crown_closure AS herbs_crown_closure FROM '$gdbFileName_herbs'" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for layer 1 data
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_l1" \
 -nln $TableName_l1 $layer_creation_option \
--sql "SELECT *, poly_id AS poly_id_l1 FROM '$gdbFileName_l1'" \
+-sql "SELECT *, poly_id AS poly_id_l1, crown_closure AS l1_crown_closure FROM '$gdbFileName_l1'" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for layer 2 data
@@ -105,41 +104,8 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_shrubs" \
 -nln $TableName_shrubs $layer_creation_option \
--sql "SELECT *, poly_id AS poly_id_shrubs FROM '$gdbFileName_shrubs'" \
+-sql "SELECT *, poly_id AS poly_id_shrubs, crown_closure AS shrubs_crown_closure FROM '$gdbFileName_shrubs'" \
 -progress $overwrite_tab
 
 # join tables by sourcing the join code
 source ./sk_SFVI_join_code.sh
-
-
-# Now load and join the wetland table. This table only occurs in SK02.
-
-# Run ogr2ogr for wetland data
-"$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_wetland" \
--nln $TableName_wetland $layer_creation_option \
--sql "SELECT *, poly_id AS poly_id_wetland FROM '$gdbFileName_wetland'" \
--progress $overwrite_tab
-
-
-# Join wetland to the temp table and save as actualFullTargetTableName.
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
--sql "
--- delete ogc and poly_id, joins don't work with matching names
-ALTER TABLE $TableName_wetland DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id;
-
--- join
-DROP TABLE IF EXISTS $actualFullTargetTableName; 
-CREATE TABLE $actualFullTargetTableName AS
-SELECT *
-    FROM $fullTargetTableName A 
-	LEFT JOIN $TableName_wetland I ON A.poly_id = I.poly_id_wetland;
-
---drop tables
-DROP TABLE IF EXISTS $TableName_wetland;
-DROP TABLE IF EXISTS $fullTargetTableName;
-
--- drop duplicate poly_ids
-ALTER TABLE $actualFullTargetTableName  
-  DROP COLUMN poly_id_wetland;
-"
