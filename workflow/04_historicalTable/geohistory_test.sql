@@ -154,16 +154,18 @@ ORDER BY test;
 -- Create a test table for TT_GeoHistory() without taking validity into account
 DROP TABLE IF EXISTS test_geohistory_2_results_without_validity;
 CREATE TABLE test_geohistory_2_results_without_validity AS
-SELECT *
-FROM TT_GeoHistory2('public', 'test_geohistory_2', 'idx', 'geom', 'valid_year', 'idx')
-ORDER BY id::int;
+SELECT ROW_NUMBER() OVER() - 1 rownum, *
+FROM (SELECT *
+      FROM TT_GeoHistory2('public', 'test_geohistory_2', 'idx', 'geom', 'valid_year', 'idx')
+      ORDER BY id::int) foo;
 
 -- Create a test table for TT_GeoHistory() taking validity into account
 DROP TABLE IF EXISTS test_geohistory_2_results_with_validity;
 CREATE TABLE test_geohistory_2_results_with_validity AS
-SELECT *
-FROM TT_GeoHistory2('public', 'test_geohistory_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
-ORDER BY id::int;
+SELECT ROW_NUMBER() OVER() - 1 rownum, *
+FROM (SELECT *
+      FROM TT_GeoHistory2('public', 'test_geohistory_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      ORDER BY id::int) foo;
 
 -- Display flat
 SELECT test, idx, att, valid_year, 
@@ -185,7 +187,6 @@ SELECT * FROM TT_GeoHistory2('public', 'test_geohistory_2', 'idx', 'geom', 'vali
 
 -- Taking validity into account
 SELECT * FROM TT_GeoHistory2('public', 'test_geohistory_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att']);
-
 
 -- Display oblique history
 SELECT * FROM TT_GeoHistoryOblique('public', 'test_geohistory_2', 'idx', 'geom', 'valid_year', 0.2, 0.4);
@@ -289,7 +290,54 @@ SELECT * FROM TT_GeoHistoryOblique2('public', 'test_geohistory_3', 'idx', 'geom'
 
 SELECT * FROM TT_GeoHistoryOblique2('public', 'test_geohistory_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'], 0.2, 0.4);
 
+---------------------------------------------
+-- Declare TT_GenerateTestsForTable()
+---------------------------------------------
+DROP FUNCTION IF EXISTS TT_GenerateTestsForTable(name, name, int);
+CREATE OR REPLACE FUNCTION TT_GenerateTestsForTable(
+  schemaName name,
+  tableName name,
+  majNum int DEFAULT 1
+)
+RETURNS text AS $$
+  DECLARE
+    testStr text = '';
+    testRow RECORD;
+    minorNum int = 1;
+  BEGIN
+    -- SELECT * FROM test_geohistory_2_results_with_validity
+    FOR testRow IN EXECUTE 'SELECT * FROM ' || TT_FullTableName(schemaName, tableName) LOOP
+      IF minorNum != 1 THEN
+        testStr = testStr || 'UNION ALL
+';
+      END IF;
+      testStr = testStr || 'SELECT ''' || majNum::text || '.' || minorNum::text || '''::text number,
+       ''TT_GeoHistory''::text function_tested,
+       ''Test TT_GeoHistory() on polygon ID ''''' || testRow.id::text || ''''' ''::text description,
+        ST_AsText(wkb_geometry) = ''' || ST_AsText(testRow.wkb_geometry) || ''' AND
+        ref_year::text = ''' || testRow.ref_year || ''' AND
+        valid_year_begin::text = ''' || testRow.valid_year_begin || ''' AND 
+        valid_year_end::text = ''' || testRow.valid_year_end || ''' passed
+FROM ' ||  TT_FullTableName(schemaName, tableName) || '
+WHERE rownum = ' || testRow.rownum || '
+---------------------------------------------------------
+';
+      minorNum = minorNum + 1;
+    END LOOP;
+    RETURN testStr;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
 
+DROP FUNCTION IF EXISTS TT_GenerateTestsForTable(name, int);
+CREATE OR REPLACE FUNCTION TT_GenerateTestsForTable(
+  tableName name,
+  majNum int DEFAULT 1
+)
+RETURNS text AS $$
+  SELECT TT_GenerateTestsForTable('public', tableName, majNum);
+$$ LANGUAGE sql VOLATILE;
+
+--SELECT TT_GenerateTestsForTable('test_geohistory_2_results_without_validity', 4);
 ---------------------------------------------
 -- Begin tests
 ---------------------------------------------
@@ -474,180 +522,934 @@ SELECT '2.1'::text number,
        string_agg(valid_year_end::text, ', ') = '3000, 3000' passed
 FROM TT_GeoHistory('public', 'test_geohistory_1', 'idx', 'geom', 'valid_year')
 ---------------------------------------------------------
+-- The 3.x test seires was generated using 
+-- SELECT TT_GenerateTestsForTable('test_geohistory_2_results_with_validity', 3);
+---------------------------------------------------------
 UNION ALL
 SELECT '3.1'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (0, 1) and (2, 3) (without validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((1 0,1 -1,-1 -1,-1 1,0 1,0 0,1 0)), POLYGON((2 2,2 0,0 0,0 2,2 2)), POLYGON((12 2,12 0,11 0,11 1,10 1,10 2,12 2)), POLYGON((11 1,11 -1,9 -1,9 1,11 1))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_without_validity
-WHERE id::int IN (0, 1, 2, 3)
+       'Test TT_GeoHistory() on polygon ID ''0'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((1 0,1 -1,-1 -1,-1 1,0 1,0 0,1 0))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 0
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.2'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (4, 5) and (6, 7) (without validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((21 0,21 -1,19 -1,19 1,20 1,20 0,21 0)), POLYGON((22 2,22 0,20 0,20 2,22 2)), POLYGON((32 2,32 0,31 0,31 1,30 1,30 2,32 2)), POLYGON((31 1,31 -1,29 -1,29 1,31 1))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_without_validity
-WHERE id::int IN (4, 5, 6, 7)
+       'Test TT_GeoHistory() on polygon ID ''1'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((2 2,2 0,0 0,0 2,2 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 1
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.3'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (8, 9) and (10, 11) (without validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((41 0,41 -1,39 -1,39 1,40 1,40 0,41 0)), POLYGON((42 2,42 0,40 0,40 2,42 2)), POLYGON((52 2,52 0,51 0,51 1,50 1,50 2,52 2)), POLYGON((51 1,51 -1,49 -1,49 1,51 1))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_without_validity
-WHERE id::int IN (8, 9, 10, 11)
+       'Test TT_GeoHistory() on polygon ID ''2'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((12 2,12 0,11 0,11 1,10 1,10 2,12 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 2
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.4'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (12, 13) and (14, 15) (without validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((61 0,61 -1,59 -1,59 1,60 1,60 0,61 0)), POLYGON((62 2,62 0,60 0,60 2,62 2)), POLYGON((72 2,72 0,71 0,71 1,70 1,70 2,72 2)), POLYGON((71 1,71 -1,69 -1,69 1,71 1))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_without_validity
-WHERE id::int IN (12, 13, 14, 15)
+       'Test TT_GeoHistory() on polygon ID ''3'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((11 1,11 -1,9 -1,9 1,11 1))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 3
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.5'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (16, 17) and (18, 19) (without validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((1 20,1 19,-1 19,-1 21,0 21,0 20,1 20)), POLYGON((1 21,1 19,-1 19,-1 21,1 21)), POLYGON((2 22,2 20,0 20,0 22,2 22)), POLYGON((2 22,2 20,1 20,1 21,0 21,0 22,2 22)), POLYGON((12 22,12 20,10 20,10 22,12 22)), POLYGON((12 22,12 20,11 20,11 21,10 21,10 22,12 22)), POLYGON((11 20,11 19,9 19,9 21,10 21,10 20,11 20)), POLYGON((11 21,11 19,9 19,9 21,11 21))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2010, 2010, 2010, 2010, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '2010, 1990, 2010, 1990, 2010, 1990, 2010, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 2009, 3000, 2009, 3000, 2009, 3000, 2009' passed       
-FROM public.test_geohistory_2_results_without_validity
-WHERE id::int IN (16, 17, 18, 19)
+       'Test TT_GeoHistory() on polygon ID ''4'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((21 0,21 -1,19 -1,19 1,20 1,20 0,21 0))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 4
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.6'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (20, 21) and (22, 23) (without validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((21 20,21 19,19 19,19 21,20 21,20 20,21 20)), POLYGON((21 21,21 19,19 19,19 21,21 21)), POLYGON((22 22,22 20,20 20,20 22,22 22)), POLYGON((22 22,22 20,21 20,21 21,20 21,20 22,22 22)), POLYGON((32 22,32 20,30 20,30 22,32 22)), POLYGON((32 22,32 20,31 20,31 21,30 21,30 22,32 22)), POLYGON((31 21,31 19,29 19,29 21,31 21)), POLYGON((31 20,31 19,29 19,29 21,30 21,30 20,31 20))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2010, 2010, 2010, 2010, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '2010, 1990, 2010, 1990, 2010, 1990, 1990, 2010' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 2009, 3000, 2009, 3000, 2009, 2009, 3000' passed       
-FROM public.test_geohistory_2_results_without_validity
-WHERE id::int IN (20, 21, 22, 23)
+       'Test TT_GeoHistory() on polygon ID ''5'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((22 2,22 0,20 0,20 2,22 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 5
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.7'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (24, 25) and (26, 27) (without validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((41 20,41 19,39 19,39 21,40 21,40 20,41 20)), POLYGON((41 21,41 19,39 19,39 21,41 21)), POLYGON((42 22,42 20,41 20,41 21,40 21,40 22,42 22)), POLYGON((42 22,42 20,40 20,40 22,42 22)), POLYGON((52 22,52 20,50 20,50 22,52 22)), POLYGON((52 22,52 20,51 20,51 21,50 21,50 22,52 22)), POLYGON((51 21,51 19,49 19,49 21,51 21)), POLYGON((51 20,51 19,49 19,49 21,50 21,50 20,51 20))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2010, 2010, 2010, 2010, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '2010, 1990, 1990, 2010, 2010, 1990, 1990, 2010' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 2009, 2009, 3000, 3000, 2009, 2009, 3000' passed       
-FROM public.test_geohistory_2_results_without_validity
-WHERE id::int IN (24, 25, 26, 27)
+       'Test TT_GeoHistory() on polygon ID ''6'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((32 2,32 0,30 0,30 2,32 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 6
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.8'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (28, 29) and (30, 31) (without validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((61 21,61 19,59 19,59 21,61 21)), POLYGON((61 20,61 19,59 19,59 21,60 21,60 20,61 20)), POLYGON((62 22,62 20,60 20,60 22,62 22)), POLYGON((62 22,62 20,61 20,61 21,60 21,60 22,62 22)), POLYGON((72 22,72 20,71 20,71 21,70 21,70 22,72 22)), POLYGON((72 22,72 20,70 20,70 22,72 22)), POLYGON((71 21,71 19,69 19,69 21,71 21)), POLYGON((71 20,71 19,69 19,69 21,70 21,70 20,71 20))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2010, 2010, 2010, 2010, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 2010, 2010, 1990, 1990, 2010, 1990, 2010' AND 
-        string_agg(valid_year_end::text, ', ')    = '2009, 3000, 3000, 2009, 2009, 3000, 2009, 3000' passed       
-FROM public.test_geohistory_2_results_without_validity
-WHERE id::int IN (28, 29, 30, 31)
+       'Test TT_GeoHistory() on polygon ID ''7'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((31 0,31 -1,29 -1,29 1,30 1,30 0,31 0))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 7
+---------------------------------------------------------
+UNION ALL
+SELECT '3.9'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''8'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((41 1,41 -1,39 -1,39 1,41 1))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 8
+---------------------------------------------------------
+UNION ALL
+SELECT '3.10'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''9'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((42 2,42 0,41 0,41 1,40 1,40 2,42 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 9
+---------------------------------------------------------
+UNION ALL
+SELECT '3.11'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''10'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((52 2,52 0,51 0,51 1,50 1,50 2,52 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 10
+---------------------------------------------------------
+UNION ALL
+SELECT '3.12'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''11'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((51 1,51 -1,49 -1,49 1,51 1))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 11
+---------------------------------------------------------
+UNION ALL
+SELECT '3.13'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''12'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((61 0,61 -1,59 -1,59 1,60 1,60 0,61 0))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 12
+---------------------------------------------------------
+UNION ALL
+SELECT '3.14'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''13'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((62 2,62 0,60 0,60 2,62 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 13
+---------------------------------------------------------
+UNION ALL
+SELECT '3.15'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''14'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((72 2,72 0,71 0,71 1,70 1,70 2,72 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 14
+---------------------------------------------------------
+UNION ALL
+SELECT '3.16'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''15'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((71 1,71 -1,69 -1,69 1,71 1))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 15
+---------------------------------------------------------
+UNION ALL
+SELECT '3.17'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''16'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((1 20,1 19,-1 19,-1 21,0 21,0 20,1 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 16
+---------------------------------------------------------
+UNION ALL
+SELECT '3.18'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''17'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((2 22,2 20,0 20,0 22,2 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 17
+---------------------------------------------------------
+UNION ALL
+SELECT '3.19'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''18'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((12 22,12 20,10 20,10 22,12 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 18
+---------------------------------------------------------
+UNION ALL
+SELECT '3.20'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''19'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((11 20,11 19,9 19,9 21,10 21,10 20,11 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 19
+---------------------------------------------------------
+UNION ALL
+SELECT '3.21'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''20'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((21 20,21 19,19 19,19 21,20 21,20 20,21 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 20
+---------------------------------------------------------
+UNION ALL
+SELECT '3.22'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''21'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((22 22,22 20,20 20,20 22,22 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 21
+---------------------------------------------------------
+UNION ALL
+SELECT '3.23'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''22'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((32 22,32 20,30 20,30 22,32 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 22
+---------------------------------------------------------
+UNION ALL
+SELECT '3.24'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''23'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((31 20,31 19,29 19,29 21,30 21,30 20,31 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 23
+---------------------------------------------------------
+UNION ALL
+SELECT '3.25'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''24'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((41 21,41 19,39 19,39 21,41 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 24
+---------------------------------------------------------
+UNION ALL
+SELECT '3.26'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''25'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((42 22,42 20,41 20,41 21,40 21,40 22,42 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 25
+---------------------------------------------------------
+UNION ALL
+SELECT '3.27'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''26'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((52 22,52 20,51 20,51 21,50 21,50 22,52 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 26
+---------------------------------------------------------
+UNION ALL
+SELECT '3.28'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''27'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((51 21,51 19,49 19,49 21,51 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 27
+---------------------------------------------------------
+UNION ALL
+SELECT '3.29'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''28'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((61 21,61 19,59 19,59 21,61 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 28
+---------------------------------------------------------
+UNION ALL
+SELECT '3.30'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''28'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((61 20,61 19,59 19,59 21,60 21,60 20,61 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 29
+---------------------------------------------------------
+UNION ALL
+SELECT '3.31'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''29'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((62 22,62 20,60 20,60 22,62 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 30
+---------------------------------------------------------
+UNION ALL
+SELECT '3.32'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''29'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((62 22,62 20,61 20,61 21,60 21,60 22,62 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 31
+---------------------------------------------------------
+UNION ALL
+SELECT '3.33'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''30'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((72 22,72 20,70 20,70 22,72 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 32
+---------------------------------------------------------
+UNION ALL
+SELECT '3.34'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''30'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((72 22,72 20,71 20,71 21,70 21,70 22,72 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 33
+---------------------------------------------------------
+UNION ALL
+SELECT '3.35'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''31'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((71 21,71 19,69 19,69 21,71 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 34
+---------------------------------------------------------
+UNION ALL
+SELECT '3.36'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''31'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((71 20,71 19,69 19,69 21,70 21,70 20,71 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_with_validity
+WHERE rownum = 35
+---------------------------------------------------------
+-- The 4.x test series was generated using
+--SELECT TT_GenerateTestsForTable('test_geohistory_2_results_without_validity', 4);
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.1'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (0, 1) and (2, 3) (with validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((1 0,1 -1,-1 -1,-1 1,0 1,0 0,1 0)), POLYGON((2 2,2 0,0 0,0 2,2 2)), POLYGON((12 2,12 0,11 0,11 1,10 1,10 2,12 2)), POLYGON((11 1,11 -1,9 -1,9 1,11 1))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_with_validity
-WHERE id::int IN (0, 1, 2, 3)
+       'Test TT_GeoHistory() on polygon ID ''0'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((1 0,1 -1,-1 -1,-1 1,0 1,0 0,1 0))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 0
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.2'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (4, 5) and (6, 7) (with validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((21 0,21 -1,19 -1,19 1,20 1,20 0,21 0)), POLYGON((22 2,22 0,20 0,20 2,22 2)), POLYGON((32 2,32 0,30 0,30 2,32 2)), POLYGON((31 0,31 -1,29 -1,29 1,30 1,30 0,31 0))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_with_validity
-WHERE id::int IN (4, 5, 6, 7)
+       'Test TT_GeoHistory() on polygon ID ''1'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((2 2,2 0,0 0,0 2,2 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 1
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.3'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (8, 9) and (10, 11) (with validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((41 1,41 -1,39 -1,39 1,41 1)), POLYGON((42 2,42 0,41 0,41 1,40 1,40 2,42 2)), POLYGON((52 2,52 0,51 0,51 1,50 1,50 2,52 2)), POLYGON((51 1,51 -1,49 -1,49 1,51 1))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_with_validity
-WHERE id::int IN (8, 9, 10, 11)
+       'Test TT_GeoHistory() on polygon ID ''2'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((12 2,12 0,11 0,11 1,10 1,10 2,12 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 2
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.4'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (12, 13) and (14, 15) (with validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((61 0,61 -1,59 -1,59 1,60 1,60 0,61 0)), POLYGON((62 2,62 0,60 0,60 2,62 2)), POLYGON((72 2,72 0,71 0,71 1,70 1,70 2,72 2)), POLYGON((71 1,71 -1,69 -1,69 1,71 1))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_with_validity
-WHERE id::int IN (12, 13, 14, 15)
+       'Test TT_GeoHistory() on polygon ID ''3'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((11 1,11 -1,9 -1,9 1,11 1))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 3
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.5'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (16, 17) and (18, 19) (with validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((1 20,1 19,-1 19,-1 21,0 21,0 20,1 20)), POLYGON((2 22,2 20,0 20,0 22,2 22)), POLYGON((12 22,12 20,10 20,10 22,12 22)), POLYGON((11 20,11 19,9 19,9 21,10 21,10 20,11 20))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2010, 2010, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_with_validity
-WHERE id::int IN (16, 17, 18, 19)
+       'Test TT_GeoHistory() on polygon ID ''4'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((21 0,21 -1,19 -1,19 1,20 1,20 0,21 0))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 4
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.6'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (20, 21) and (22, 23) (with validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((21 20,21 19,19 19,19 21,20 21,20 20,21 20)), POLYGON((22 22,22 20,20 20,20 22,22 22)), POLYGON((32 22,32 20,30 20,30 22,32 22)), POLYGON((31 20,31 19,29 19,29 21,30 21,30 20,31 20))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2010, 2010, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_with_validity
-WHERE id::int IN (20, 21, 22, 23)
+       'Test TT_GeoHistory() on polygon ID ''5'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((22 2,22 0,20 0,20 2,22 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 5
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.7'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (24, 25) and (26, 27) (with validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((41 21,41 19,39 19,39 21,41 21)), POLYGON((42 22,42 20,41 20,41 21,40 21,40 22,42 22)), POLYGON((52 22,52 20,51 20,51 21,50 21,50 22,52 22)), POLYGON((51 21,51 19,49 19,49 21,51 21))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2010, 2010, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 1990, 1990, 1990' AND 
-        string_agg(valid_year_end::text, ', ')    = '3000, 3000, 3000, 3000' passed       
-FROM public.test_geohistory_2_results_with_validity
-WHERE id::int IN (24, 25, 26, 27)
+       'Test TT_GeoHistory() on polygon ID ''6'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((32 2,32 0,31 0,31 1,30 1,30 2,32 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 6
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.8'::text number,
        'TT_GeoHistory'::text function_tested,
-       'Table of polygon couples with ids (28, 29) and (30, 31) (with validity check)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((61 21,61 19,59 19,59 21,61 21)), POLYGON((61 20,61 19,59 19,59 21,60 21,60 20,61 20)), POLYGON((62 22,62 20,60 20,60 22,62 22)), POLYGON((62 22,62 20,61 20,61 21,60 21,60 22,62 22)), POLYGON((72 22,72 20,70 20,70 22,72 22)), POLYGON((72 22,72 20,71 20,71 21,70 21,70 22,72 22)), POLYGON((71 21,71 19,69 19,69 21,71 21)), POLYGON((71 20,71 19,69 19,69 21,70 21,70 20,71 20))' AND
-        string_agg(ref_year::text, ', ')          = '2000, 2000, 2010, 2010, 2010, 2010, 2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ')  = '1990, 2010, 2010, 1990, 2010, 1990, 1990, 2010' AND 
-        string_agg(valid_year_end::text, ', ')    = '2009, 3000, 3000, 2009, 3000, 2009, 2009, 3000' passed       
-FROM public.test_geohistory_2_results_with_validity
-WHERE id::int IN (28, 29, 30, 31)
+       'Test TT_GeoHistory() on polygon ID ''7'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((31 1,31 -1,29 -1,29 1,31 1))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 7
+---------------------------------------------------------
+UNION ALL
+SELECT '4.9'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''8'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((41 0,41 -1,39 -1,39 1,40 1,40 0,41 0))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 8
+---------------------------------------------------------
+UNION ALL
+SELECT '4.10'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''9'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((42 2,42 0,40 0,40 2,42 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 9
+---------------------------------------------------------
+UNION ALL
+SELECT '4.11'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''10'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((52 2,52 0,51 0,51 1,50 1,50 2,52 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 10
+---------------------------------------------------------
+UNION ALL
+SELECT '4.12'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''11'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((51 1,51 -1,49 -1,49 1,51 1))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 11
+---------------------------------------------------------
+UNION ALL
+SELECT '4.13'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''12'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((61 0,61 -1,59 -1,59 1,60 1,60 0,61 0))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 12
+---------------------------------------------------------
+UNION ALL
+SELECT '4.14'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''13'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((62 2,62 0,60 0,60 2,62 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 13
+---------------------------------------------------------
+UNION ALL
+SELECT '4.15'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''14'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((72 2,72 0,71 0,71 1,70 1,70 2,72 2))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 14
+---------------------------------------------------------
+UNION ALL
+SELECT '4.16'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''15'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((71 1,71 -1,69 -1,69 1,71 1))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 15
+---------------------------------------------------------
+UNION ALL
+SELECT '4.17'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''16'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((1 20,1 19,-1 19,-1 21,0 21,0 20,1 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 16
+---------------------------------------------------------
+UNION ALL
+SELECT '4.18'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''16'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((1 21,1 19,-1 19,-1 21,1 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 17
+---------------------------------------------------------
+UNION ALL
+SELECT '4.19'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''17'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((2 22,2 20,0 20,0 22,2 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 18
+---------------------------------------------------------
+UNION ALL
+SELECT '4.20'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''17'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((2 22,2 20,1 20,1 21,0 21,0 22,2 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 19
+---------------------------------------------------------
+UNION ALL
+SELECT '4.21'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''18'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((12 22,12 20,10 20,10 22,12 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 20
+---------------------------------------------------------
+UNION ALL
+SELECT '4.22'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''18'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((12 22,12 20,11 20,11 21,10 21,10 22,12 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 21
+---------------------------------------------------------
+UNION ALL
+SELECT '4.23'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''19'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((11 20,11 19,9 19,9 21,10 21,10 20,11 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 22
+---------------------------------------------------------
+UNION ALL
+SELECT '4.24'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''19'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((11 21,11 19,9 19,9 21,11 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 23
+---------------------------------------------------------
+UNION ALL
+SELECT '4.25'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''20'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((21 20,21 19,19 19,19 21,20 21,20 20,21 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 24
+---------------------------------------------------------
+UNION ALL
+SELECT '4.26'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''20'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((21 21,21 19,19 19,19 21,21 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 25
+---------------------------------------------------------
+UNION ALL
+SELECT '4.27'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''21'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((22 22,22 20,20 20,20 22,22 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 26
+---------------------------------------------------------
+UNION ALL
+SELECT '4.28'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''21'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((22 22,22 20,21 20,21 21,20 21,20 22,22 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 27
+---------------------------------------------------------
+UNION ALL
+SELECT '4.29'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''22'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((32 22,32 20,30 20,30 22,32 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 28
+---------------------------------------------------------
+UNION ALL
+SELECT '4.30'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''22'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((32 22,32 20,31 20,31 21,30 21,30 22,32 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 29
+---------------------------------------------------------
+UNION ALL
+SELECT '4.31'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''23'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((31 21,31 19,29 19,29 21,31 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 30
+---------------------------------------------------------
+UNION ALL
+SELECT '4.32'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''23'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((31 20,31 19,29 19,29 21,30 21,30 20,31 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 31
+---------------------------------------------------------
+UNION ALL
+SELECT '4.33'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''24'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((41 20,41 19,39 19,39 21,40 21,40 20,41 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 32
+---------------------------------------------------------
+UNION ALL
+SELECT '4.34'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''24'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((41 21,41 19,39 19,39 21,41 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 33
+---------------------------------------------------------
+UNION ALL
+SELECT '4.35'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''25'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((42 22,42 20,41 20,41 21,40 21,40 22,42 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 34
+---------------------------------------------------------
+UNION ALL
+SELECT '4.36'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''25'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((42 22,42 20,40 20,40 22,42 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 35
+---------------------------------------------------------
+UNION ALL
+SELECT '4.37'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''26'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((52 22,52 20,50 20,50 22,52 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 36
+---------------------------------------------------------
+UNION ALL
+SELECT '4.38'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''26'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((52 22,52 20,51 20,51 21,50 21,50 22,52 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 37
+---------------------------------------------------------
+UNION ALL
+SELECT '4.39'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''27'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((51 21,51 19,49 19,49 21,51 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 38
+---------------------------------------------------------
+UNION ALL
+SELECT '4.40'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''27'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((51 20,51 19,49 19,49 21,50 21,50 20,51 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 39
+---------------------------------------------------------
+UNION ALL
+SELECT '4.41'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''28'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((61 21,61 19,59 19,59 21,61 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 40
+---------------------------------------------------------
+UNION ALL
+SELECT '4.42'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''28'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((61 20,61 19,59 19,59 21,60 21,60 20,61 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 41
+---------------------------------------------------------
+UNION ALL
+SELECT '4.43'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''29'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((62 22,62 20,60 20,60 22,62 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 42
+---------------------------------------------------------
+UNION ALL
+SELECT '4.44'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''29'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((62 22,62 20,61 20,61 21,60 21,60 22,62 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 43
+---------------------------------------------------------
+UNION ALL
+SELECT '4.45'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''30'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((72 22,72 20,71 20,71 21,70 21,70 22,72 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 44
+---------------------------------------------------------
+UNION ALL
+SELECT '4.46'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''30'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((72 22,72 20,70 20,70 22,72 22))' AND
+        ref_year::text = '2010' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 45
+---------------------------------------------------------
+UNION ALL
+SELECT '4.47'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''31'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((71 21,71 19,69 19,69 21,71 21))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '1990' AND 
+        valid_year_end::text = '2009' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 46
+---------------------------------------------------------
+UNION ALL
+SELECT '4.48'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test TT_GeoHistory() on polygon ID ''31'' '::text description,
+        ST_AsText(wkb_geometry) = 'POLYGON((71 20,71 19,69 19,69 21,70 21,70 20,71 20))' AND
+        ref_year::text = '2000' AND
+        valid_year_begin::text = '2010' AND 
+        valid_year_end::text = '3000' passed
+FROM public.test_geohistory_2_results_without_validity
+WHERE rownum = 47
+---------------------------------------------------------
 ;
-

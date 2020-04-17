@@ -24,6 +24,8 @@ DROP FUNCTION IF EXISTS TT_GeoHistoryOblique2(name, name, name, name, name, text
 
 DROP FUNCTION IF EXISTS TT_GeoOblique(geometry, int, double precision, double precision);
 
+DROP FUNCTION IF EXISTS TT_GenerateTestsForTable(name, int);
+DROP FUNCTION IF EXISTS TT_GenerateTestsForTable(name, name, int);
 --------------------------------------------
 -- DROP test tables
 --------------------------------------------
