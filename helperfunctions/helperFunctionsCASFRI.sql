@@ -1701,35 +1701,6 @@ RETURNS boolean AS $$
     RETURN FALSE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
--------------------------------------------------------------------------------
--- TT_yvi01_nat_non_veg_validation()
---
--- type_lnd text
--- class text
--- landpos text
---
--- e.g. TT_yvi01_nat_non_veg_validation(type_lnd, class, landpos)
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text,text,text);
-CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_validation(
-  type_lnd text,
-  class_ text,
-  landpos text
-)
-RETURNS boolean AS $$		
-  BEGIN
-    IF type_lnd IN('NW', 'NS', 'NE') THEN
-      IF landpos = 'A' THEN
-        RETURN TRUE;
-      END IF;
-      
-      IF class_ IN('R','L','RS','E','S','B','RR') THEN
-        RETURN TRUE;
-      END IF;
-    END IF;
-    RETURN FALSE;
-  END;
-$$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_yvi01_nfl_soil_moisture_validation()
@@ -2640,5 +2611,82 @@ RETURNS text AS $$
     
     RETURN NULL;
             
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_sk_utm01_species_percent_translation(text, text, text, text, text, text, text)
+--
+-- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
+-- sa text
+-- sp10 text
+-- sp11 text
+-- sp12 text
+-- sp20 text
+-- sp21 text
+--
+-- returns the species percent based on the requested sp_number and many logical statements
+-- to determine the percent based on what species are present. Logical statements taken from
+-- casfir04 scripts.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_translation(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_utm01_species_percent_translation(
+  sp_number text,
+  sa text,
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text
+)
+RETURNS text AS $$
+  DECLARE
+    hardwoods text[]; -- list of harwood species codes
+    softwoods text[]; -- list of softwood species codes
+    ft10 text; -- assigns hardwood or softwood forest type
+    ft11 text;
+    ft12 text;
+    ft20 text;
+    ft21 text;
+    n_sp1 int; -- counts number of species values in sp10, sp11, sp12
+    n_sp2 int; -- counts number of species values in sp20, sp21
+    n_sp_all int; -- counts number of species in sp10, sp11, sp12, sp20, sp21
+  BEGIN
+    
+    -- assign hardwood and softwood groups
+    --softwoods = ['WS','BS','JP','BF','TL','LP']
+    --hardwoods = ['GA','TA','BP','WB','WE','MM','BO']
+    
+    -- assign forest type variables
+    --IF sp10 = ANY(hardwoods) THEN ft10 = 'hardwood';
+    --ELSIF sp10 = ANY(softwoods) THEN ft10 = 'softwood';
+    --ELSE ft10 = sp10;
+    --END IF;
+    
+    --IF sp11 = ANY(hardwoods) THEN ft11 = 'hardwood';
+    --ELSIF sp11 = ANY(softwoods) THEN ft11 = 'softwood';
+    --ELSE ft11 = sp11;
+    --END IF;
+    
+    --IF sp12 = ANY(hardwoods) THEN ft12 = 'hardwood';
+    --ELSIF sp12 = ANY(softwoods) THEN ft12 = 'softwood';
+    --ELSE ft12 = sp12;
+    --END IF;
+    
+    --IF sp20 = ANY(hardwoods) THEN ft20 = 'hardwood';
+    --ELSIF sp20 = ANY(softwoods) THEN ft20 = 'softwood';
+    --ELSE ft20 = sp20;
+    --END IF;
+    
+    --IF sp21 = ANY(hardwoods) THEN ft21 = 'hardwood';
+    --ELSIF sp21 = ANY(softwoods) THEN ft21 = 'softwood';
+    --ELSE ft21 = sp21;
+    --END IF;
+
+    -- assign species counts
+    --n_sp1 = TT_NotEmpty(sp10)::int + TT_NotEmpty(sp11)::int + TT_NotEmpty(sp12)::int;
+    --n_sp2 = TT_NotEmpty(sp20)::int + TT_NotEmpty(sp21)::int;
+    --n_sp_all = n_sp1 + n_sp2;
+
   END; 
 $$ LANGUAGE plpgsql;

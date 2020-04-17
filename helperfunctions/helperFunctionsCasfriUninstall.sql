@@ -16,7 +16,6 @@
 -------------------------------------------------------------------------------
 -- Validation functions
 -------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_nbi01_wetland_code(text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_validation(text, text, text, text, text);
@@ -25,6 +24,8 @@ DROP FUNCTION IF EXISTS TT_tie01_2layer_age_codes_validation(text,text,text,text
 DROP FUNCTION IF EXISTS TT_tie01_not_etage_notnull_validation(text,text);
 DROP FUNCTION IF EXISTS TT_tie01_not_etage_layer1_validation(text,text);
 DROP FUNCTION IF EXISTS TT_tie01_not_etage_dens_layers_validation(text,text,text,text);
+DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text,text,text);
+DROP FUNCTION IF EXISTS TT_yvi01_nfl_soil_moisture_validation(text,text,text,text);
 -------------------------------------------------------------------------------
 -- Translation functions
 -------------------------------------------------------------------------------
@@ -42,8 +43,10 @@ DROP FUNCTION IF EXISTS TT_vri01_dist_yr_translation(text, text);
 DROP FUNCTION IF EXISTS TT_tie01_crownclosure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_tie01_height_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fim_species_code(text, text);
-DROP FUNCTION IF EXISTS TT_fim_species(text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_fim_species_percent(text, text);
+DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_fim_species_percent_translation(text, text);
+DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text, text, text);
+DROP FUNCTION IF EXISTS TT_yvi01_non_for_veg_translation(text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
