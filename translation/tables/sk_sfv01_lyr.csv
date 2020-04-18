@@ -1,0 +1,35 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+2,SOIL_MOIST_REG,text,"notNull(drain);matchList(drain,{'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'})","mapText(drain, {'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'}, {'D','F','M','F','M','W','D','F','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
+3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
+4,LAYER,integer,true(),"countOfNotNull({dummy_sp10, dummy_sp11, dummy_sp12, dummy_sp20, dummy_sp21}, {dummy_u1, dummy_u2}, {dummy_np}, max_layer_number)","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Layers are the  canopy species, understory species, and non-forest types.",TRUE
+5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+6,CROWN_CLOSURE_UPPER,integer,"notNull(l1_crown_closure);isInt(l1_crown_closure);isBetween(l1_crown_closure,0,100)",copyInt(l1_crown_closure),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
+7,CROWN_CLOSURE_LOWER,integer,"notNull(l1_crown_closure);isInt(l1_crown_closure);isBetween(l1_crown_closure,0,100)",copyInt(l1_crown_closure),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+8,HEIGHT_UPPER,double precision,"notNull(l1_height);isInt(l1_height);isBetween(l1_height,0,100)",copyInt(l1_height),Maps source value to HEIGHT_UPPER,TRUE
+9,HEIGHT_LOWER,double precision,"notNull(l1_height);isInt(l1_height);isBetween(l1_height,0,100)",copyInt(l1_height),Maps source value to HEIGHT_LOWER,TRUE
+10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
+11,SPECIES_1,text,"notNull(l1_sp1);notEmpty(l1_sp1);matchTable(l1sp1,'translation', 'sk_sfv01_species')","lookupText(l1_sp1, 'translation', 'sk_sfv01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_1 using lookup table,TRUE
+12,SPECIES_PER_1,integer,"notNull(l1_sp1_cover);isNumeric(l1_sp1_cover);isBetween(l1_sp1_cover,0,100)",copyInt(l1_sp1_cover),"Assigns percent based on many logical tests using the sa, sp10, sp11, sp12, sp20 and sp21 columns",TRUE
+13,SPECIES_2,text,"notNull(l1_sp2);notEmpty(l1_sp2);matchTable(l1_sp2,'translation', 'sk_sfv01_species')","lookupText(l1_sp2, 'translation', 'sk_sfv01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_2 if available using lookup table,TRUE
+14,SPECIES_PER_2,integer,"notNull(l1_sp2_cover);isNumeric(l1_sp2_cover);isBetween(l1_sp2_cover,0,100)",copyInt(l1_sp2_cover),"Assigns percent based on many logical tests using the sa, sp10, sp11, sp12, sp20 and sp21 columns",TRUE
+15,SPECIES_3,text,"notNull(l1_sp3);notEmpty(l1_sp3);matchTable(l1_sp3,'translation', 'sk_sfv01_species')","lookupText(l1_sp3, 'translation', 'sk_sfv01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_3 if available using lookup table,TRUE
+16,SPECIES_PER_3,integer,"notNull(l1_sp3_cover);isNumeric(l1_sp3_cover);isBetween(l1_sp3_cover,0,100)",copyInt(l1_sp3_cover),"Assigns percent based on many logical tests using the sa, sp10, sp11, sp12, sp20 and sp21 columns",TRUE
+17,SPECIES_4,text,"notNull(l1_sp4);notEmpty(l1_sp4);matchTable(l1_sp4,'translation', 'sk_sfv01_species')","lookupText(l1_sp4, 'translation', 'sk_sfv01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_4 if available using lookup table,TRUE
+18,SPECIES_PER_4,integer,"notNull(l1_sp4_cover);isNumeric(l1_sp4_cover);isBetween(l1_sp4_cover,0,100)",copyInt(l1_sp4_cover),"Assigns percent based on many logical tests using the sa, sp10, sp11, sp12, sp20 and sp21 columns",TRUE
+19,SPECIES_5,text,"notNull(l1_sp5);notEmpty(l1_sp5);matchTable(l1_sp5,'translation', 'sk_sfv01_species')","lookupText(l1_sp5, 'translation', 'sk_sfv01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_5 if available using lookup table,TRUE
+20,SPECIES_PER_5,integer,"notNull(l1_sp5_cover);isNumeric(l1_sp5_cover);isBetween(l1_sp5_cover,0,100)",copyInt(l1_sp5_cover),"Assigns percent based on many logical tests using the sa, sp10, sp11, sp12, sp20 and sp21 columns",TRUE
+21,SPECIES_6,text,"notNull(l1_sp6);notEmpty(l1_sp6);matchTable(l1_sp6,'translation', 'sk_sfv01_species')","lookupText(l1_sp6, 'translation', 'sk_sfv01_species', 'spec1', 'TRUE')",Attribute does not occur,TRUE
+22,SPECIES_PER_6,integer,"notNull(l1_sp6_cover);isNumeric(l1_sp6_cover);isBetween(l1_sp6_cover,0,100)",copyInt(l1_sp6_cover),attribute does not occur,TRUE
+23,SPECIES_7,text,false(),nothingText(),attribute does not occur,TRUE
+24,SPECIES_PER_7,integer,false(),nothingInt(),attribute does not occur,TRUE
+25,SPECIES_8,text,false(),nothingText(),attribute does not occur,TRUE
+26,SPECIES_PER_8,integer,false(),nothingInt(),attribute does not occur,TRUE
+27,SPECIES_9,text,false(),nothingText(),attribute does not occur,TRUE
+28,SPECIES_PER_9,integer,false(),nothingInt(),attribute does not occur,TRUE
+29,SPECIES_10,text,false(),nothingText(),attribute does not occur,TRUE
+30,SPECIES_PER_10,integer,false(),nothingInt(),attribute does not occur,TRUE
+31,ORIGIN_UPPER,integer,"notNull(l1_yoo);isInt(l1_yoo);isBetween(l1_yoo, 1, 2020)",copyInt(l1_yoo),Copies source value to ORIGIN_UPPER. Validation  returns error if origin is zero.,TRUE
+32,ORIGIN_LOWER,integer,"notNull(l1_yoo);isInt(l1_yoo);isBetween(l1_yoo, 1, 2020)",copyInt(l1_yoo),Copies source value to ORIGIN_LOWER. Validation  returns error if origin is zero.,TRUE
+33,SITE_CLASS,text,false(),nothingText(),Attribute does not occur,TRUE
+34,SITE_INDEX,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
