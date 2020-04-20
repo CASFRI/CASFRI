@@ -1204,11 +1204,11 @@ RETURNS TABLE (ttable text,
     nb2 int = 1;
   BEGIN
     IF transTableList IS NULL AND lower(schemaName) IN ('cas', 'lyr', 'nfl', 'dst', 'eco', 'geo') THEN
-      transTableList = 'avi01_' || schemaName || ', ' || 
-                       'fvi01_' || schemaName || ', ' || 
-                       'nbi01_' || schemaName || ', ' || 
-                       'vri01_' || schemaName || ', ' || 
-                       'fim02_' || schemaName || ', ' || 
+      transTableList = 'ab_avi01_' || schemaName || ', ' || 
+                       'nt_fvi01_' || schemaName || ', ' || 
+                       'nb_nbi01_' || schemaName || ', ' || 
+                       'bc_vri01_' || schemaName || ', ' || 
+                       'on_fim02_' || schemaName || ', ' || 
                        'sk_utm01_' || schemaName || ', ' || 
                        'yt_yvi01_' || schemaName;
       schemaName = 'translation';
