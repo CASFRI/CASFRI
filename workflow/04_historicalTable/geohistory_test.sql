@@ -389,10 +389,10 @@ RAISE NOTICE '222';
 SELECT ''' || majNum::text || '.' || minorNum::text || ''' number,
        ''TT_GeoHistory'' function_tested,
        ''Test TT_GeoHistory() on polygon ID ''''' || testRow.id::text || ''''' '' description,
-        ST_AsText(wkb_geometry) ' || coalesce('= ''' || ST_AsText(testRow.wkb_geometry) || '''', 'IS NOT NULL') || ' AND
-        ref_year ' || coalesce('= ' || testRow.ref_year, 'IS NOT NULL') || ' AND
-        valid_year_begin ' || coalesce('= ' || testRow.valid_year_begin, 'IS NOT NULL') || ' AND 
-        valid_year_end ' || coalesce('= ' || testRow.valid_year_end, 'IS NOT NULL') || ' passed
+        wkb_geometry IS NOT NULL ' || coalesce('AND ST_AsText(wkb_geometry) =  ''' || ST_AsText(testRow.wkb_geometry) || '''', '') || ' AND
+        ref_year IS NOT NULL ' || coalesce('AND ref_year = ' || testRow.ref_year, '') || ' AND
+        valid_year_begin IS NOT NULL ' || coalesce('AND valid_year_begin = ' || testRow.valid_year_begin, '') || ' AND 
+        valid_year_end IS NOT NULL ' || coalesce('AND valid_year_end = ' || testRow.valid_year_end, '') || ' passed
 FROM ' ||  TT_FullTableName(schemaName, tableName) || '
 WHERE id::text = ''' || testRow.id::text || ''' AND poly_id = ' || testRow.poly_id  || '
 ---------------------------------------------------------
