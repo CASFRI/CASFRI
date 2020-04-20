@@ -279,19 +279,19 @@ WITH validities AS (
 -- Square are rotated arounf their centroid and snapped to a 
 -- grid so that its coordinates becomes integers.
 SELECT all_test_nb test, idx1 + all_test_nb * 3 idx, a1 att, y1 valid_year,
-       ST_Translate(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), mod(all_test_nb - 1, 6) * 16, ((all_test_nb - 1) / 6) * 30) geom
+       ST_Translate(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), mod(all_test_nb, 6) * 16, (all_test_nb / 6) * 30) geom
 FROM numbered_tests
 UNION ALL
 -- Generate the second square with the second set of values 
 -- (a little bit translated to the upper right)
 SELECT all_test_nb, idx2 + all_test_nb * 3, a2, y2,
-       ST_Translate(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), mod(all_test_nb - 1, 6) * 16 + 1, ((all_test_nb - 1) / 6) * 30 + 2) geom
+       ST_Translate(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), mod(all_test_nb, 6) * 16 + 1, (all_test_nb / 6) * 30 + 2) geom
 FROM numbered_tests
 UNION ALL
 -- Generate the third square with the third set of values 
 -- (a little bit translated to the right in between the two first squares so that the three intersects)
 SELECT all_test_nb, idx3 + all_test_nb * 3, a3, y3,
-       ST_Translate(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), mod(all_test_nb - 1, 6) * 16 + 2, ((all_test_nb - 1) / 6) * 30 + 1) geom
+       ST_Translate(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), mod(all_test_nb, 6) * 16 + 2, (all_test_nb / 6) * 30 + 1) geom
 FROM numbered_tests
 ORDER BY test, idx;
 
@@ -448,22 +448,24 @@ UNION ALL
 ' || (SELECT TT_GenerateTestsForTable('test_geohistory_3_results_with_validity', 6)) || '
 ) foo
 WHERE NOT passed
-ORDER BY number::double precision;';
+ORDER BY floor(number::double precision), split_part(number, '.', 2)::int;';
 
 ---------------------------------------------
 -- Debug procedure
 ---------------------------------------------
--- 1) Create a view limiting polygon to the ones 
--- in the same test as the faulty polygon
---CREATE OR REPLACE VIEW test_geohistory_bug AS
---SELECT * FROM test_geohistory_3
---WHERE test = (SELECT test FROM test_geohistory_3 WHERE idx = 144);
+-- -- 1) Create a view limiting polygon to the ones 
+-- --    in the same test as the faulty polygon
+-- CREATE OR REPLACE VIEW test_geohistory_bug AS
+-- SELECT * FROM test_geohistory_3
+-- WHERE test = (SELECT test FROM test_geohistory_3 WHERE idx = 144);
 
--- 2) Modify the WHERE clause of TT_GeoHistory2() currentPolyQuery to 
--- ' WHERE ' || quote_ident(idColName) || '::text = ''144'' '
--- and activate the RAISE NOTICEs
+-- SELECT * FROM test_geohistory_bug;
 
--- 3) Run this query
+-- -- 2) Modify the WHERE clause of TT_GeoHistory2() currentPolyQuery to 
+-- --    ' WHERE ' || quote_ident(idColName) || '::text = ''144'' '
+-- --    and activate the RAISE NOTICEs
+
+-- -- 3) Run this query
 -- SELECT *
 -- FROM TT_GeoHistory2('public', 'test_geohistory_bug', 'idx', 'geom', 'valid_year', 'idx');
 

@@ -431,7 +431,7 @@ RAISE NOTICE '666 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. 
 RAISE NOTICE '777 CASE 3: Return postPoly and set the next one by removing ovlpPoly. year = %', ovlpRow.gh_photo_year;
           -- Make sure the last computed polygon still intersect with ovlpPoly
           IF ST_Intersects(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
-            IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year THEN
+            IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year AND postValidYearPoly IS NOT NULL THEN
               poly_id = poly_id + 1;
               wkb_geometry = postValidYearPoly;
               poly_type = '2_post_1';
@@ -445,7 +445,7 @@ RAISE NOTICE '---------';
             END IF;
             postValidYearPoly = ST_Difference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom);
             postValidYearPolyYearBegin = ovlpRow.gh_photo_year;
-            preValidYearPolyYearEnd = ovlpRow.gh_photo_year - 1;
+            preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, ovlpRow.gh_photo_year - 1);
           END IF;
         END IF;
         oldOvlpPolyYear = ovlpRow.gh_photo_year;
