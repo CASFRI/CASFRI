@@ -18,7 +18,7 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
 -------------------------------------------------------
--- Translate all NFL tables into a common table
+-- Translate all NFL tables into a common table. 33h32m
 -------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab_avi01_nfl', '_ab_nfl'); -- used for both AB06 and AB16
@@ -166,8 +166,20 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl');
 SELECT left(cas_id, 4) inv, count(*) nb 
 FROM casfri50.nfl_all
 GROUP BY left(cas_id, 4);
+--inv   nb
+--AB06	3515
+--AB16	26858
+--BC08	4669156
+--BC10	5141801
+--NB01	87371
+--NB02	141747
+--NT01	312384
+--NT02	480283
+--ON02	3629071
+--SK01	574487
+--YT02	169016
 
-SELECT count(*) FROM casfri50.nfl_all; -- 5492196
+SELECT count(*) FROM casfri50.nfl_all; -- 15235689
 
 -- Add primary key constraint
 ALTER TABLE casfri50.nfl_all ADD PRIMARY KEY (cas_id, layer);
