@@ -448,7 +448,7 @@ UNION ALL
 ' || (SELECT TT_GenerateTestsForTable('test_geohistory_3_results_with_validity', 6)) || '
 ) foo
 WHERE NOT passed
-ORDER BY floor(number::double precision), split_part(number, '.', 2)::int;';
+ORDER BY floor(number::double precision), split_part(number, ''.'', 2)::int;';
 
 ---------------------------------------------
 -- Debug procedure
