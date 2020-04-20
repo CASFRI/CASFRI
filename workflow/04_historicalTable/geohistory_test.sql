@@ -422,7 +422,8 @@ $$ LANGUAGE sql VOLATILE;
 --SELECT TT_GenerateTestsForTable('test_geohistory_2_results_with_validity', 5);
 
 -- Generate all auto tests
-SELECT '---------------------------------------------------------
+SELECT 'SELECT * FROM (
+---------------------------------------------------------
 -- The 3.x test series was generated using
 -- SELECT TT_GenerateTestsForTable(''test_geohistory_2_results_without_validity'', 3);
 ---------------------------------------------------------
@@ -444,7 +445,10 @@ UNION ALL
 -- SELECT TT_GenerateTestsForTable(''test_geohistory_3_results_with_validity'', 6);
 ---------------------------------------------------------
 UNION ALL
-' || (SELECT TT_GenerateTestsForTable('test_geohistory_3_results_with_validity', 6));
+' || (SELECT TT_GenerateTestsForTable('test_geohistory_3_results_with_validity', 6)) || '
+) foo
+WHERE NOT passed
+ORDER BY number::double precision;';
 
 ---------------------------------------------
 -- Debug procedure
