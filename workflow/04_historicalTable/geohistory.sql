@@ -315,6 +315,7 @@ CREATE OR REPLACE FUNCTION TT_GeoHistory2(
   validityColNames text[] DEFAULT NULL
 )
 RETURNS TABLE (id text,
+               poly_id int,
                isvalid boolean,
                wkb_geometry geometry, 
                poly_type text,
@@ -340,7 +341,6 @@ RETURNS TABLE (id text,
     postValidYearPolyYearBegin int;
 
     oldOvlpPolyYear int;
-
   BEGIN
       -- Check that idColName, geoColName and photoYearColName exists
     colNames = TT_TableColumnNames(schemaName, tableName);
@@ -397,6 +397,7 @@ RAISE NOTICE '000 currentRow.gh_photo_year = %', currentRow.gh_photo_year;
       -- Assign some RETURN values now that are useful for debug only
       ref_year = currentRow.gh_photo_year;
       id = currentRow.gh_row_id;
+      poly_id = 0;
       isvalid = currentRow.gh_is_valid;
 
       -- LOOP over all overlapping polygons sorted by photoYear ASC
@@ -412,7 +413,7 @@ RAISE NOTICE '444 id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_p
             (NOT currentRow.gh_is_valid OR (currentRow.gh_is_valid AND ovlpRow.gh_is_valid))))) OR
            (ovlpRow.gh_photo_year < currentRow.gh_photo_year AND NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
            (ovlpRow.gh_photo_year > currentRow.gh_photo_year AND NOT currentRow.gh_is_valid) THEN
-RAISE NOTICE '555 CASE 1: Remove ovlpPoly. year = %', ovlpRow.gh_photo_year;
+RAISE NOTICE '555 CASE SAME YEAR: Remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;
 
           preValidYearPoly = ST_Difference(preValidYearPoly, ovlpRow.gh_geom);
           IF postValidYearPoly IS NOT NULL THEN
@@ -430,7 +431,8 @@ RAISE NOTICE '666 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. 
 RAISE NOTICE '777 CASE 3: Return postPoly and set the next one by removing ovlpPoly. year = %', ovlpRow.gh_photo_year;
           -- Make sure the last computed polygon still intersect with ovlpPoly
           IF ST_Intersects(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
-            IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year THEN            
+            IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year THEN
+              poly_id = poly_id + 1;
               wkb_geometry = postValidYearPoly;
               poly_type = '2_post_1';
               valid_year_begin = postValidYearPolyYearBegin;
@@ -453,6 +455,7 @@ RAISE NOTICE '---------';
       ---------------------------------------------------------------------------
       -- Return the last new polygon (newestPoly, oldCurrentYear, ovlpPoly.photoYear)
       IF NOT ST_IsEmpty(postValidYearPoly) THEN
+        poly_id = poly_id + 1;
         wkb_geometry = postValidYearPoly;
         poly_type = '2_post_2';
         valid_year_begin = postValidYearPolyYearBegin;
@@ -465,6 +468,7 @@ RAISE NOTICE 'AAA2 postPoly valid_time=%', valid_time;
       ---------------------------------------------------------------------------
       -- Return the current polygon (olderPoly, refYearBegin, currentPoly.photoYear - 1))
       IF NOT ST_IsEmpty(preValidYearPoly) THEN
+        poly_id = poly_id + 1;
         wkb_geometry = preValidYearPoly;
         poly_type = '1_pre';
         valid_year_begin = refYearBegin;
