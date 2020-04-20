@@ -18,7 +18,7 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
 -------------------------------------------------------
--- Translate all GEO tables into a common table
+-- Translate all GEO tables into a common table. 20h15m
 -------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab_avi01_geo', '_ab_geo'); -- used for both AB06 and AB16
@@ -124,8 +124,20 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_geo');
 SELECT left(cas_id, 4) inv, count(*) nb 
 FROM casfri50.geo_all
 GROUP BY left(cas_id, 4);
+--inv   nb
+--AB06	11484
+--AB16	120476
+--BC08	4677411
+--BC10	5151772
+--NB01	927177
+--NB02	1123893
+--NT01	281388
+--NT02	320944
+--ON02	3629072
+--SK01	1501667
+--YT02	231137
 
-SELECT count(*) FROM casfri50.geo_all; -- 7462773
+SELECT count(*) FROM casfri50.geo_all; -- 17976421
 SELECT count(*) FROM casfri50.geo_all WHERE geometry = '010300000000000000'; -- 0
 
 -- Add primary key constraint

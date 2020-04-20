@@ -38,7 +38,7 @@ DROP TABLE rawfri.ab_photoyear;
 ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
 
 --------------------------------------------------------------------------
--- Translate all CAS tables into a common table
+-- Translate all CAS tables into a common table. 43h09m
 --------------------------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab_cas'); -- used for both AB06 and AB16
@@ -144,8 +144,20 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_cas');
 SELECT left(cas_id, 4) inv, count(*) nb 
 FROM casfri50.cas_all
 GROUP BY left(cas_id, 4);
+--inv   nb
+--AB06	11484
+--AB16	120476
+--BC08	4677411
+--BC10	5151772
+--NB01	927177
+--NB02	1123893
+--NT01	281388
+--NT02	320944
+--ON02	3629072
+--SK01	1501667
+--YT02	231137
 
-SELECT count(*) FROM casfri50.cas_all; -- 7462773
+SELECT count(*) FROM casfri50.cas_all; -- 17976422
 
 -- Add primary key constraint
 ALTER TABLE casfri50.cas_all 

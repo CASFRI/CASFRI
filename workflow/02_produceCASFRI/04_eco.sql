@@ -126,6 +126,9 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco');
 SELECT left(cas_id, 4) inv, count(*) nb 
 FROM casfri50.eco_all
 GROUP BY left(cas_id, 4);
+--inv   count
+--NB01	72978
+--NB02	111135
 
 SELECT count(*) FROM casfri50.eco_all; -- 184113
 
