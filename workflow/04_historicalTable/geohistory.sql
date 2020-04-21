@@ -304,6 +304,95 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------
 -- TT_GeoHistory2()
 ------------------------------------------------------------------
+-- Logic table
+-- Overlapping polygons are treated starting with 1) the same year 
+-- ones, then 2) the older ones and finally 3) the newer ones as 
+-- they are ordered in the ovlpPolyQuery.
+--
+-- 1) Same year polygons with higher precedence are first removed 
+-- to form prePoly.
+--
+-- 2) Then postPoly is initialized from prePoly and all past polygons 
+-- are removed from prePoly (when they are valid). prepoly is no 
+-- more modified and is returned as is.
+--
+-- 3) Then one postPoly is produced by removing each newer polygon.
+-- 
+-- A = current polygon
+-- B = overlapping polygon
+-- AY = A year
+-- BY = B year
+-- RefYB = Reference year begin
+-- RefYE = Reference year end
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |   A year VS   |       A       |    A    |    B    | Resulting poly with    | Case  | Code                                       | Explanation 
+-- |    B year     | hasPrecedence | isValid | isValid | begin and end year     |       |                                            |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |    0 (same)   |       T       |    T    |    T    | A RefYB -> RefYE       |   A   | Do nothing                                 | prePoly has prededence over ovlpPoly 
+-- |               |               |         |         |                        |       |                                            | so just ignore ovlpPoly
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |    0 (same)   |       T       |    T    |    F    | A RefYB -> RefYE       |   A   | Do nothing                                 | prePoly has prededence over ovlpPoly 
+-- |               |               |         |         |                        |       |                                            | so just ignore ovlpPoly
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |    0 (same)   |       T       |    F    |    T    | (A - B) RefYB -> RefYE |   B   | IF postPoly IS NOT NULL                    | prePoly has prededence over ovlpPoly 
+-- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | but is invalid so remove ovlpPoly from
+-- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | it and from postPoly if it exists
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |    0 (same)   |       T       |    F    |    F    | A RefYB -> RefYE       |   A   | Do nothing                                 | prePoly has prededence over ovlpPoly 
+-- |               |               |         |         |                        |       |                                            | so just ignore ovlpPoly
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |    0 (same)   |       F       |    T    |    T    | (A - B) RefYB-> RefYE  |   B   | IF postPoly IS NOT NULL                    | ovlpPoly has precedence over prePoly 
+-- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
+-- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |    0 (same)   |       F       |    T    |    F    | A RefYB -> RefYE       |   A   | Do nothing                                 | ovlpPoly has precedence over prePoly 
+-- |               |               |         |         |                        |       |                                            | but is invalid, so just ignore ovlpPoly
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |    0 (same)   |       F       |    F    |    T    | (A - B) RefYB -> RefYE |   B   | IF postPoly IS NOT NULL                    | ovlpPoly has precedence over prePoly 
+-- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
+-- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- |    0 (same)   |       F       |    F    |    F    | (A - B) RefYB -> RefYE |   B   | IF postPoly IS NOT NULL                    | ovlpPoly has precedence over prePoly 
+-- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
+-- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- | 1 (post, A>B) |       T       |    T    |    T    | (A - B) RefYB -> AY - 1|   C   | postPoly = coalesce(postPoly, prePoly)     | Two polygons parts are produced:
+-- |               |               |         |         | A AY -> RefYE          |       | postPolyYearBegin = currentPolyYear        | 1) postPoly, which is the same as prePoly 
+-- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               |    but starting at currentPolyYear
+-- |               |               |         |         |                        |       | prePolyYearEnd = currentPolyYearBegin  - 1 | 2) prePoly from which we remove ovlpPoly 
+-- |               |               |         |         |                        |       |                                            |    and ends at currentYear - 1
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- | 1 (post, A>B) |       T       |    T    |    F    | A RefYB -> RefYE       |   A   | Do nothing                                 | ovlpPoly is invalid so ignore it
+-- |               |               |         |         |                        |       |                                            | 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- | 1 (post, A>B) |       T       |    F    |    T    | (A - B) RefYB -> RefYE |   B   | IF postPoly IS NOT NULL                    | prePoly has prededence over ovlpPoly 
+-- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | but is invalid so remove ovlpPoly from 
+-- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | it and from postPoly if it exists
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- | 1 (post, A>B) |       T       |    F    |    F    | A RefYB -> RefYE       |   A   | Do nothing                                 | prePoly has prededence over ovlpPoly 
+-- |               |               |         |         |                        |       |                                            | so just ignore ovlpPoly
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- | 2 (pre, A<B)  |       F       |    T    |    T    | A RefYB -> BY - 1      |   D   | IF oldPostPolyYear IS NOT NULL AND         | Two polygons parts are produced:
+-- |               |               |         |         | (A - B) BY -> RefYE    |       |   oldPostPolyYear != ovlpPolyYear          |
+-- |               |               |         |         |                        |       |   postPolyYearEnd = ovlpPolyYear  - 1      | 1) postPoly before ovlpPoly, which is the 
+-- |               |               |         |         |                        |       |   RETURN postPoly                          |    same as postPoly but ending at ovlpPolyYear
+-- |               |               |         |         |                        |       |                                            |
+-- |               |               |         |         |                        |       | postPoly = coalesce(postPoly, prePoly) -   | 2) the new postPoly from which we remove 
+-- |               |               |         |         |                        |       |            ovlpPoly                        |    ovlpPoly and begin at ovlpPoly and ends at 
+-- |               |               |         |         |                        |       | postPolyYearBegin = ovlpPolyYear           |    refYearEnd
+-- |               |               |         |         |                        |       | prePolyYearEnd = ovlpPolyYear - 1          |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- | 2 (pre, A<B)  |       F       |    T    |    F    | A RefYB -> RefYE       |   A   | Do nothing                                 | prePoly has prededence over ovlpPoly 
+-- |               |               |         |         |                        |       |                                            | so just ignore ovlpPoly
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- | 2 (pre, A<B)  |       F       |    F    |    T    | (A - B) RefYB -> RefYE |   B   | IF postPoly IS NOT NULL                    | ovlpPoly has precedence over prePoly
+-- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
+-- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- | 2 (pre, A<B)  |       F       |    F    |    F    | (A - B) RefY -> RefYE  |   B   | IF postPoly IS NOT NULL                    | ovlpPoly has precedence over prePoly
+-- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
+-- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_GeoHistory2(name, name, name, name, name, text, text[]);
 CREATE OR REPLACE FUNCTION TT_GeoHistory2(
   schemaName name,
@@ -353,7 +442,7 @@ RETURNS TABLE (id text,
     IF NOT photoYearColName = ANY (colNames) THEN
       RAISE EXCEPTION 'TT_GeoHistory(): Column ''%'' not found in table %.%...', photoYearColName, schemaName, tableName;
     END IF;
-
+    -- Prepare the main LOOP query looping through all polygons of the processed table
     currentPolyQuery = 'SELECT ' || quote_ident(idColName) || '::text gh_row_id, ' ||
                             quote_ident(geoColName) || ' gh_geom, ' ||
                            'coalesce(' || quote_ident(photoYearColName) || ', ' || refYearBegin || ') gh_photo_year, ' ||
@@ -363,7 +452,7 @@ RETURNS TABLE (id text,
              --   ' WHERE ' || quote_ident(idColName) || '::text = ''6'' ' ||
               ' ORDER BY gh_photo_year DESC;';
 RAISE NOTICE '111 currentPolyQuery = %', currentPolyQuery;
-
+    -- Prepare the nested LOOP query looping through polygons overlapping the current main loop polygons
     ovlpPolyQuery = 'SELECT ' || quote_ident(idColName) || '::text gh_row_id, ' ||
                                  quote_ident(geoColName) || ' gh_geom, ' ||
                                  'coalesce(' || quote_ident(photoYearColName) || ', ' || refYearBegin || ') gh_photo_year, ' ||
@@ -383,7 +472,7 @@ RAISE NOTICE '222 ovlpPolyQuery = %', ovlpPolyQuery;
     FOR currentRow IN EXECUTE currentPolyQuery LOOP
 RAISE NOTICE '---------------------';
 RAISE NOTICE '000 currentRow.gh_photo_year = %', currentRow.gh_photo_year;
-      -- initialize preValidYearPoly to the current polygon
+      -- Initialize preValidYearPoly to the current polygon
       preValidYearPoly = currentRow.gh_geom;
       preValidYearPolyYearEnd = refYearEnd;
 
@@ -391,7 +480,7 @@ RAISE NOTICE '000 currentRow.gh_photo_year = %', currentRow.gh_photo_year;
       -- is cut by pre_valid_year polygons or same_valid_year polygons
       postValidYearPoly = NULL;
       postValidYearPolyYearBegin = currentRow.gh_photo_year;
-    
+
       oldOvlpPolyYear = NULL;
       
       -- Assign some RETURN values now that are useful for debug only
@@ -406,6 +495,7 @@ RAISE NOTICE '000 currentRow.gh_photo_year = %', currentRow.gh_photo_year;
 RAISE NOTICE '---------';
 RAISE NOTICE '333 id=%, py=%, inv=%, isvalid=%', currentRow.gh_row_id, currentRow.gh_photo_year, currentRow.gh_inv, currentRow.gh_is_valid;
 RAISE NOTICE '444 id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;
+        -- CASE B - (A - B) RefYB -> RefYE (see logic table above)
         IF (ovlpRow.gh_photo_year = currentRow.gh_photo_year AND 
            ((TT_HasPrecedence2(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id) AND 
             NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
@@ -419,7 +509,8 @@ RAISE NOTICE '555 CASE SAME YEAR: Remove ovlpPoly from prePoly. year = %', ovlpR
           IF postValidYearPoly IS NOT NULL THEN
             postValidYearPoly = ST_Difference(postValidYearPoly, ovlpRow.gh_geom);
           END IF;
- 
+
+        -- CASE C - (A - B) RefYB -> AY - 1 and A AY -> RefYE (see logic table above)
         ELSIF ovlpRow.gh_photo_year < currentRow.gh_photo_year AND currentRow.gh_is_valid AND ovlpRow.gh_is_valid THEN
 RAISE NOTICE '666 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;
           postValidYearPoly = coalesce(postValidYearPoly, preValidYearPoly);
@@ -427,6 +518,7 @@ RAISE NOTICE '666 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. 
           preValidYearPoly = ST_Difference(preValidYearPoly, ovlpRow.gh_geom);
           preValidYearPolyYearEnd = currentRow.gh_photo_year - 1;
 
+        -- CASE D - A RefYB -> BY - 1 and (A - B) BY -> RefYE (see logic table above)
         ELSIF ovlpRow.gh_photo_year > currentRow.gh_photo_year AND currentRow.gh_is_valid AND ovlpRow.gh_is_valid THEN
 RAISE NOTICE '777 CASE 3: Return postPoly and set the next one by removing ovlpPoly. year = %', ovlpRow.gh_photo_year;
           -- Make sure the last computed polygon still intersect with ovlpPoly
