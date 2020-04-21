@@ -136,7 +136,7 @@ GROUP BY left(cas_id, 4);
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.dst_all
 GROUP BY left(cas_id, 4), layer;
---inv lyr count
+--inv lyr nb
 --AB06 1	1875
 --AB16 1	8873
 --BC08 1	4677411

@@ -179,6 +179,36 @@ GROUP BY left(cas_id, 4);
 --SK01	574487
 --YT02	169016
 
+SELECT left(cas_id, 4) inv, layer, count(*) nb
+FROM casfri50.nfl_all
+GROUP BY left(cas_id, 4), layer;
+-- inv lyr nb
+--AB06	1	2081
+--AB06	2	1434
+--AB16	1	15434
+--AB16	2	11424
+--BC08	1	558779
+--BC08	2	4110377
+--BC10	1	574975
+--BC10	2	4392244
+--BC10	3	174582
+--NB01	1	87371
+--NB02	1	141747
+--NT01	1	43765
+--NT01	2	229699
+--NT01	3	29682
+--NT01	4	9238
+--NT02	1	53674
+--NT02	2	195061
+--NT02	3	146864
+--NT02	4	84684
+--ON02	1	1562183
+--ON02	2	1892961
+--ON02	3	173927
+--SK01	1	574481
+--SK01	2	6
+--YT02	1	169016
+
 SELECT count(*) FROM casfri50.nfl_all; -- 15235689
 
 -- Add primary key constraint

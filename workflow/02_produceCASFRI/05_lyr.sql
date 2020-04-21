@@ -255,13 +255,47 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr');
 SELECT left(cas_id, 4) inv, count(*) nb 
 FROM casfri50.lyr_all
 GROUP BY left(cas_id, 4);
+-- inv  nb
+-- AB06	14179
+-- AB16	149674
+-- BC08	4113383
+-- BC10	4744673
+-- NB01	932271
+-- NB02	1053553
+-- NT01	246179
+-- NT02	350967
+-- ON02	2240815
+-- SK01	860394
+-- YT02	105102
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.lyr_all
 GROUP BY left(cas_id, 4), layer;
+-- inv lyr nb
+-- AB06	1	9403
+-- AB06	2	4776
+-- AB16	1	104945
+-- AB16	2	44729
+-- BC08	1	4113383
+-- BC10	1	4570063
+-- BC10	2	174610
+-- NB01	1	767392
+-- NB01	2	164879
+-- NB02	1	870924
+-- NB02	2	182629
+-- NT01	1	236939
+-- NT01	2	9240
+-- NT02	1	266159
+-- NT02	2	84808
+-- ON02	1	2066888
+-- ON02	2	173927
+-- SK01	1	846500
+-- SK01	2	13894
+-- YT02	1	105102
 
-SELECT count(*) FROM casfri50.lyr_all; -- 6754426
+SELECT count(*) FROM casfri50.lyr_all; -- 14811190
 
 -- Add primary key constraint
-ALTER TABLE casfri50.lyr_all ADD PRIMARY KEY (cas_id, layer);
+ALTER TABLE casfri50.lyr_all
+ADD PRIMARY KEY (cas_id, layer);
 --------------------------------------------------------------------------
