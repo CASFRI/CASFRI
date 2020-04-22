@@ -14,19 +14,19 @@
 -- Create a test table
 DROP TABLE IF EXISTS test_geohistory CASCADE;
 CREATE TABLE test_geohistory AS
-SELECT 0 idx, 1998 valid_year, 'aa' att, ST_GeomFromText('POLYGON((24 13, 24 23, 34 23, 34 13, 24 13))') geom
+SELECT 0 idx, 1998 valid_year, '1' att, ST_GeomFromText('POLYGON((24 13, 24 23, 34 23, 34 13, 24 13))') geom
 UNION ALL
-SELECT 1 idx, 2000 valid_year, 'bb' att, ST_GeomFromText('POLYGON((13 13, 13 23, 23 23, 23 13, 13 13))') geom
+SELECT 1 idx, 2000 valid_year, '2' att, ST_GeomFromText('POLYGON((13 13, 13 23, 23 23, 23 13, 13 13))') geom
 UNION ALL
-SELECT 2 idx, 2010 valid_year, 'cc' att, ST_GeomFromText('POLYGON((9 19, 9 21, 11 21, 11 19, 9 19))') geom
+SELECT 2 idx, 2010 valid_year, '3' att, ST_GeomFromText('POLYGON((9 19, 9 21, 11 21, 11 19, 9 19))') geom
 UNION ALL
-SELECT 3 idx, 2010 valid_year, 'dd' att, ST_GeomFromText('POLYGON((10 10, 10 20, 20 20, 20 10, 10 10))') geom
+SELECT 3 idx, 2010 valid_year, '4' att, ST_GeomFromText('POLYGON((10 10, 10 20, 20 20, 20 10, 10 10))') geom
 UNION ALL
-SELECT 4 idx, 2020 valid_year, 'ee' att, ST_GeomFromText('POLYGON((7 7, 7 17, 17 17, 17 7, 7 7))') geom
+SELECT 4 idx, 2020 valid_year, '5' att, ST_GeomFromText('POLYGON((7 7, 7 17, 17 17, 17 7, 7 7))') geom
 UNION ALL
-SELECT 5 idx, 1998 valid_year, 'ff' att, ST_GeomFromText('POLYGON((26 15, 26 19, 30 19, 30 15, 26 15))') geom
+SELECT 5 idx, 1998 valid_year, '6' att, ST_GeomFromText('POLYGON((26 15, 26 19, 30 19, 30 15, 26 15))') geom
 UNION ALL
-SELECT 6 idx, 1998 valid_year, 'gg' att, ST_GeomFromText('POLYGON((25 14, 25 21, 32 21, 32 14, 25 14))') geom
+SELECT 6 idx, 1998 valid_year, '7' att, ST_GeomFromText('POLYGON((25 14, 25 21, 32 21, 32 14, 25 14))') geom
 ;
 
 -- Display flat
@@ -77,7 +77,7 @@ CREATE TABLE test_geohistory_1 AS
 WITH validities AS (
   SELECT 1 v_order, '' a1
   UNION ALL
-  SELECT 2,         'aa' a1
+  SELECT 2,         '1' a1
 ), all_tests AS (
   SELECT 1 idx1, a1, 2000 y1,
          ST_Buffer(ST_GeomFromText('POINT(0 0)'), sqrt(2.0), 1) geom
@@ -122,11 +122,11 @@ WITH validities AS (
   -- all permutations of validity for two polygons
   SELECT 1 v_order, '' a1, '' a2
   UNION ALL
-  SELECT 2,         '' a1, 'aa' a2
+  SELECT 2,         '' a1, '1' a2
   UNION ALL
-  SELECT 3,         'aa' a1, '' a2
+  SELECT 3,         '1' a1, '' a2
   UNION ALL
-  SELECT 4,         'aa' a1, 'aa' a2
+  SELECT 4,         '1' a1, '1' a2
 ), years AS (
   -- all permutations of years for two polygons
   SELECT 1 y_order, 2000 y1, 2000 y2
@@ -227,19 +227,19 @@ WITH validities AS (
   -- all permutations of validity for three polygons
   SELECT 1 v_order, '' a1, '' a2, '' a3
   UNION ALL
-  SELECT 2,         '' a1, '' a2, 'aa' a3
+  SELECT 2,         '' a1, '' a2, '1' a3
   UNION ALL
-  SELECT 3,         '' a1, 'aa' a2, '' a3
+  SELECT 3,         '' a1, '1' a2, '' a3
   UNION ALL
-  SELECT 4,         '' a1, 'aa' a2, 'aa' a3
+  SELECT 4,         '' a1, '1' a2, '1' a3
   UNION ALL
-  SELECT 5,         'aa' a1, '' a2, '' a3
+  SELECT 5,         '1' a1, '' a2, '' a3
   UNION ALL
-  SELECT 6,         'aa' a1, '' a2, 'aa' a3
+  SELECT 6,         '1' a1, '' a2, '1' a3
   UNION ALL
-  SELECT 7,         'aa' a1, 'aa' a2, '' a3
+  SELECT 7,         '1' a1, '1' a2, '' a3
   UNION ALL
-  SELECT 8,         'aa' a1, 'aa' a2, 'aa' a3
+  SELECT 8,         '1' a1, '1' a2, '1' a3
 ), years AS (
   -- all permutations of years for three polygons
   SELECT 1 y_order, 2000 y1, 2000 y2, 2000 y3
@@ -276,8 +276,8 @@ WITH validities AS (
   ORDER BY y_order, v_order, i_order
 )
 -- Generate the first square with the first set of values.
--- Square are rotated arounf their centroid and snapped to a 
--- grid so that its coordinates becomes integers.
+-- Squares are rotated around their centroids and snapped to a 
+-- grid so that their coordinates become integers.
 SELECT all_test_nb test, idx1 + all_test_nb * 3 idx, a1 att, y1 valid_year,
        ST_Translate(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), mod(all_test_nb, 6) * 16, (all_test_nb / 6) * 30) geom
 FROM numbered_tests

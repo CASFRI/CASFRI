@@ -250,12 +250,14 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------
 -- TT_HasPrecedence2()
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_HasPrecedence2(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_HasPrecedence2(text, text, text, text, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_HasPrecedence2(
   inv1 text, 
   uid1 text,
   inv2 text,
-  uid2 text
+  uid2 text,
+  numInv boolean DEFAULT FALSE,
+  numUid boolean DEFAULT FALSE
 )
 RETURNS boolean AS $$
   DECLARE
@@ -284,22 +286,37 @@ RETURNS boolean AS $$
           RETURN FALSE;
         END IF;
       END IF;
-RAISE NOTICE '1 % has precedence on 2', CASE WHEN inv1 > inv2 OR (inv1 = inv2 AND uid1 > uid2) THEN '' ELSE 'does not' END;
-    RETURN inv1 > inv2 OR 
-           (inv1 = inv2 AND uid1 > uid2);
+IF inv1 != inv2 THEN
+  RAISE NOTICE 'inv1 (%) % has precedence on inv2(%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
+                                                                  THEN '' ELSE 'does not' END, inv2;
+ELSE
+  RAISE NOTICE 'uid1(%) % has precedence on uid2(%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2) 
+                                                     THEN '' ELSE 'does not' END, uid2;
+END IF;
+      RETURN ((numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)) OR 
+           (inv1 = inv2 AND ((numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)));
   END
 $$ LANGUAGE plpgsql VOLATILE;
 
---SELECT TT_HasPrecedence2(NULL, NULL, NULL, NULL);
---SELECT TT_HasPrecedence2('AB06', NULL, NULL, NULL);
---SELECT TT_HasPrecedence2('AB06', NULL, 'AB06', NULL);
---SELECT TT_HasPrecedence2('AB06', NULL, 'AB16', NULL);
---SELECT TT_HasPrecedence2('AB16', NULL, 'AB06', NULL);
---SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', NULL);
---SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', 'AA');
---SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', 'AB');
---SELECT TT_HasPrecedence2('AB06', 'AB', 'AB06', 'AA');
---SELECT TT_HasPrecedence2('AB06', '2', 'AB06', '3');
+--SELECT TT_HasPrecedence2(NULL, NULL, NULL, NULL); -- false
+--SELECT TT_HasPrecedence2('AB06', NULL, NULL, NULL); -- true
+--SELECT TT_HasPrecedence2('AB06', NULL, 'AB06', NULL); -- false
+--SELECT TT_HasPrecedence2('AB06', NULL, 'AB16', NULL); -- false
+--SELECT TT_HasPrecedence2('AB16', NULL, 'AB06', NULL); -- true
+--SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', NULL); -- true
+--SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', 'AA'); -- false
+--SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', 'AB'); -- false
+--SELECT TT_HasPrecedence2('AB06', 'AB', 'AB06', 'AA'); -- true
+--SELECT TT_HasPrecedence2('AB06', '2', 'AB06', '3'); -- false
+--SELECT TT_HasPrecedence2('AB06', '3', 'AB06', '2'); -- true
+--SELECT TT_HasPrecedence2('2', '2', '13', '13');  -- true
+--SELECT TT_HasPrecedence2('2', '2', '13', '13', true, true); -- false
+--SELECT TT_HasPrecedence2('13', '2', '2', '13', true, true); -- true
+
+--SELECT TT_HasPrecedence2('1', '2', '1', '13', true, false); -- true
+--SELECT TT_HasPrecedence2('1', '13', '1', '2', true, false); -- false
+--SELECT TT_HasPrecedence2('1', '2', '1', '13', true, true); -- false
+--SELECT TT_HasPrecedence2('1', '13', '1', '2', true, true); -- true
 
 ------------------------------------------------------------------
 -- TT_GeoHistory2()
@@ -458,7 +475,6 @@ RAISE NOTICE '111 currentPolyQuery = %', currentPolyQuery;
                                  'coalesce(' || quote_ident(photoYearColName) || ', ' || refYearBegin || ') gh_photo_year, ' ||
                                  quote_ident(precedenceColName) || '::text gh_inv, ' ||
                                  CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, ',') || '])' END || ' gh_is_valid ' ||
-                           --  'TT_HasPrecedence2($3, $4, $1::text, ' || quote_ident(photoYearColName) || ', ' || quote_ident(precedenceColName) || '::text, ' || quote_ident(idColName) || '::text) gh_currentHasPrecedence ' ||
                     'FROM ' || TT_FullTableName(schemaName, tableName) || 
                    ' WHERE ' || quote_ident(idColName) || '::text != $1 AND ' ||
                           '(' ||
@@ -497,9 +513,9 @@ RAISE NOTICE '333 id=%, py=%, inv=%, isvalid=%', currentRow.gh_row_id, currentRo
 RAISE NOTICE '444 id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;
         -- CASE B - (A - B) RefYB -> RefYE (see logic table above)
         IF (ovlpRow.gh_photo_year = currentRow.gh_photo_year AND 
-           ((TT_HasPrecedence2(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id) AND 
+           ((TT_HasPrecedence2(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
             NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
-           (NOT TT_HasPrecedence2(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id) AND 
+           (NOT TT_HasPrecedence2(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
             (NOT currentRow.gh_is_valid OR (currentRow.gh_is_valid AND ovlpRow.gh_is_valid))))) OR
            (ovlpRow.gh_photo_year < currentRow.gh_photo_year AND NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
            (ovlpRow.gh_photo_year > currentRow.gh_photo_year AND NOT currentRow.gh_is_valid) THEN

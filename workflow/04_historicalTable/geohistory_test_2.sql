@@ -1060,7 +1060,7 @@ UNION ALL
 SELECT '5.11' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''9'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((52 3,52 -1,48 -1,48 3,52 3))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((52 3,52 -1,50 -1,50 0,51 0,51 3,52 3))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -1071,7 +1071,7 @@ UNION ALL
 SELECT '5.12' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''10'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((50 -1,50 -2,46 -2,46 2,47 2,47 0,48 0,48 -1,50 -1))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((50 0,50 -2,46 -2,46 2,47 2,47 0,50 0))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -1082,7 +1082,7 @@ UNION ALL
 SELECT '5.13' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''11'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((51 4,51 3,48 3,48 0,47 0,47 4,51 4))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((51 4,51 0,47 0,47 4,51 4))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -2050,7 +2050,7 @@ UNION ALL
 SELECT '5.101' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''99'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((52 153,52 149,48 149,48 153,52 153))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((52 153,52 149,50 149,50 150,51 150,51 153,52 153))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -2061,7 +2061,7 @@ UNION ALL
 SELECT '5.102' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''100'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((50 149,50 148,46 148,46 152,47 152,47 150,48 150,48 149,50 149))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((50 150,50 148,46 148,46 152,47 152,47 150,50 150))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -2072,7 +2072,7 @@ UNION ALL
 SELECT '5.103' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''101'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((51 154,51 153,48 153,48 150,47 150,47 154,51 154))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((51 154,51 150,47 150,47 154,51 154))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -13216,7 +13216,7 @@ UNION ALL
 SELECT '6.11' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''9'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((52 3,52 -1,48 -1,48 3,52 3))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((52 3,52 -1,50 -1,50 0,51 0,51 3,52 3))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -13227,7 +13227,7 @@ UNION ALL
 SELECT '6.12' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''10'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((50 -1,50 -2,46 -2,46 2,47 2,47 0,48 0,48 -1,50 -1))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((50 0,50 -2,46 -2,46 2,47 2,47 0,50 0))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -13238,7 +13238,7 @@ UNION ALL
 SELECT '6.13' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''11'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((51 4,51 3,48 3,48 0,47 0,47 4,51 4))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((51 4,51 0,47 0,47 4,51 4))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -14206,7 +14206,7 @@ UNION ALL
 SELECT '6.101' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''99'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((52 153,52 149,48 149,48 153,52 153))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((52 153,52 149,50 149,50 152,48 152,48 153,52 153))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
@@ -14217,7 +14217,7 @@ UNION ALL
 SELECT '6.102' number,
        'TT_GeoHistory' function_tested,
        'Test TT_GeoHistory() on polygon ID ''100'' ' description,
-        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((50 149,50 148,46 148,46 152,48 152,48 149,50 149))' AND
+        wkb_geometry IS NOT NULL AND ST_AsText(wkb_geometry) =  'POLYGON((50 152,50 148,46 148,46 152,50 152))' AND
         ref_year IS NOT NULL AND ref_year = 2000 AND
         valid_year_begin IS NOT NULL AND valid_year_begin = 1990 AND 
         valid_year_end IS NOT NULL AND valid_year_end = 3000 passed
