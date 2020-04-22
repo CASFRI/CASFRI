@@ -352,6 +352,212 @@ SELECT * FROM TT_GeoHistoryOblique2('public', 'test_geohistory_3', 'idx', 'geom'
 SELECT * FROM TT_GeoHistoryOblique2('public', 'test_geohistory_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'], 0.2, 0.4);
 
 ---------------------------------------------
+-- test_geohistory_4 - Quatriplet of polygons representing
+-- all permutations of valid/invalid attributes, years and ids
+---------------------------------------------
+DROP TABLE IF EXISTS test_geohistory_4 CASCADE;
+CREATE TABLE test_geohistory_4 AS
+WITH validities AS (
+  -- all permutations of validity for three polygons
+  SELECT 1 v_order, '' a1, '' a2, '' a3, '' a4
+  UNION ALL
+  SELECT 2,         '' a1, '' a2, '' a3, '1' a4
+  UNION ALL
+  SELECT 3,         '' a1, '' a2, '1' a3, '' a4
+  UNION ALL
+  SELECT 4,         '' a1, '' a2, '1' a3, '1' a4
+  UNION ALL
+  SELECT 5,         '' a1, '1' a2, '' a3, '' a4
+  UNION ALL
+  SELECT 6,         '' a1, '1' a2, '' a3, '1' a4
+  UNION ALL
+  SELECT 7,         '' a1, '1' a2, '1' a3, '' a4
+  UNION ALL
+  SELECT 8,         '' a1, '1' a2, '1' a3, '1' a4
+  UNION ALL
+  SELECT 9,         '1' a1, '' a2, '' a3, '' a4
+  UNION ALL
+  SELECT 10,        '1' a1, '' a2, '' a3, '1' a4
+  UNION ALL
+  SELECT 11,        '1' a1, '' a2, '1' a3, '' a4
+  UNION ALL
+  SELECT 12,        '1' a1, '' a2, '1' a3, '1' a4
+  UNION ALL
+  SELECT 13,        '1' a1, '1' a2, '' a3, '' a4
+  UNION ALL
+  SELECT 14,        '1' a1, '1' a2, '' a3, '1' a4
+  UNION ALL
+  SELECT 15,        '1' a1, '1' a2, '1' a3, '' a4
+  UNION ALL
+  SELECT 16,        '1' a1, '1' a2, '1' a3, '1' a4
+), years AS (
+  -- all permutations of years for three polygons
+  SELECT 1 y_order, 1990 y1, 1990 y2, 1990 y3, 1990 y4
+  UNION ALL
+  SELECT 2,         1990 y1, 1990 y2, 1990 y3, 2000 y4
+  UNION ALL
+  SELECT 3,         1990 y1, 1990 y2, 2000 y3, 2000 y4
+  UNION ALL
+  SELECT 4,         1990 y1, 1990 y2, 2000 y3, 2010 y4
+  UNION ALL
+  SELECT 5,         1990 y1, 2000 y2, 2000 y3, 2000 y4
+  UNION ALL
+  SELECT 6,         1990 y1, 2000 y2, 2000 y3, 2010 y4
+  UNION ALL
+  SELECT 7,         1990 y1, 2000 y2, 2010 y3, 2010 y4
+  UNION ALL
+  SELECT 8,         1990 y1, 2000 y2, 2010 y3, 2020 y4
+), ids AS (
+  -- all permutations of ids for three polygons
+  SELECT 1 i_order, 0 idx1, 1 idx2, 2 idx3, 3 idx4
+  UNION ALL
+  SELECT 2,         0 idx1, 1 idx2, 3 idx3, 2 idx4
+  UNION ALL
+  SELECT 3,         0 idx1, 2 idx2, 1 idx3, 3 idx4
+  UNION ALL
+  SELECT 4,         0 idx1, 2 idx2, 3 idx3, 1 idx4
+  UNION ALL
+  SELECT 5,         0 idx1, 3 idx2, 1 idx3, 2 idx4
+  UNION ALL
+  SELECT 6,         0 idx1, 3 idx2, 2 idx3, 1 idx4
+  UNION ALL
+  SELECT 7,         1 idx1, 0 idx2, 2 idx3, 3 idx4
+  UNION ALL
+  SELECT 8,         1 idx1, 0 idx2, 3 idx3, 2 idx4
+  UNION ALL
+  SELECT 9,         1 idx1, 2 idx2, 0 idx3, 3 idx4
+  UNION ALL
+  SELECT 10,        1 idx1, 2 idx2, 3 idx3, 0 idx4
+  UNION ALL
+  SELECT 11,        1 idx1, 3 idx2, 0 idx3, 2 idx4
+  UNION ALL
+  SELECT 12,        1 idx1, 3 idx2, 2 idx3, 0 idx4
+  UNION ALL
+  SELECT 13,        2 idx1, 0 idx2, 1 idx3, 3 idx4
+  UNION ALL
+  SELECT 14,        2 idx1, 0 idx2, 3 idx3, 1 idx4
+  UNION ALL
+  SELECT 15,        2 idx1, 1 idx2, 0 idx3, 3 idx4
+  UNION ALL
+  SELECT 16,        2 idx1, 1 idx2, 3 idx3, 0 idx4
+  UNION ALL
+  SELECT 17,        2 idx1, 3 idx2, 0 idx3, 1 idx4
+  UNION ALL
+  SELECT 18,        2 idx1, 3 idx2, 1 idx3, 0 idx4
+  UNION ALL
+  SELECT 19,        3 idx1, 0 idx2, 1 idx3, 2 idx4
+  UNION ALL
+  SELECT 20,        3 idx1, 0 idx2, 2 idx3, 1 idx4
+  UNION ALL
+  SELECT 21,        3 idx1, 1 idx2, 0 idx3, 2 idx4
+  UNION ALL
+  SELECT 22,        3 idx1, 1 idx2, 2 idx3, 0 idx4
+  UNION ALL
+  SELECT 23,        3 idx1, 2 idx2, 0 idx3, 1 idx4
+  UNION ALL
+  SELECT 24,        3 idx1, 2 idx2, 1 idx3, 0 idx4
+), all_tests AS (
+  SELECT y_order, v_order, i_order,
+         idx1, idx2, idx3, idx4, a1, a2, a3, a4, y1, y2, y3, y4,
+         -- Generate a square that will have to be rotated later
+         ST_Buffer(ST_GeomFromText('POINT(0 0)'), 2*sqrt(2.0), 1) geom
+  FROM validities, years, ids
+  -- Order them by year, validities and ids so they are numbered properly later
+  ORDER BY y_order, v_order, i_order
+), numbered_tests AS (
+  SELECT ROW_NUMBER() OVER() - 1 all_test_nb, *
+  FROM all_tests
+  ORDER BY y_order, v_order, i_order
+)
+-- Generate the first square with the first set of values.
+-- Squares are rotated around their centroids and snapped to a 
+-- grid so that their coordinates become integers.
+SELECT all_test_nb test, idx1 + all_test_nb * 4 idx, a1 att, y1 valid_year,
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2.5), mod(all_test_nb, 24) * 20, (all_test_nb / 24) * 30) geom
+FROM numbered_tests
+UNION ALL
+-- Generate the second square with the second set of values 
+-- (a little bit translated to the upper right)
+SELECT all_test_nb, idx2 + all_test_nb * 4, a2, y2,
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2), mod(all_test_nb, 24) * 20 + 2, (all_test_nb / 24) * 30 + 1) geom
+FROM numbered_tests
+UNION ALL
+-- Generate the third square with the third set of values 
+-- (a little bit translated to the right in between the two first squares so that the three intersects)
+SELECT all_test_nb, idx3 + all_test_nb * 4, a3, y3,
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2, 1), mod(all_test_nb, 24) * 20 + 2, (all_test_nb / 24) * 30 + 2) geom
+FROM numbered_tests
+UNION ALL
+-- Generate the fourth square with the fourth set of values 
+-- (a little bit translated to the right in between the two first squares so that the three intersects)
+SELECT all_test_nb, idx4 + all_test_nb * 4, a4, y4,
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2.5, 1), mod(all_test_nb, 24) * 20 + 3, (all_test_nb / 24) * 30 + 3) geom
+FROM numbered_tests
+ORDER BY test, idx;
+
+CREATE INDEX test_geohistory_4_idx_idx
+  ON test_geohistory_4 USING btree(idx);
+
+CREATE INDEX test_geohistory_4_geom_idx
+  ON test_geohistory_4 USING gist(geom);
+
+-- SELECT * FROM test_geohistory_4;
+
+-- Create a test table for TT_GeoHistory() without taking validity into account
+DROP TABLE IF EXISTS test_geohistory_4_results_without_validity;
+CREATE TABLE test_geohistory_4_results_without_validity AS
+SELECT *
+FROM TT_GeoHistory2('public', 'test_geohistory_4', 'idx', 'geom', 'valid_year', 'idx')
+ORDER BY id::int, poly_id;
+
+ALTER TABLE public.test_geohistory_4_results_without_validity 
+ADD PRIMARY KEY (id, poly_id);
+      
+-- SELECT * FROM test_geohistory_4_results_without_validity;
+
+-- Create a test table for TT_GeoHistory() taking validity into account
+DROP TABLE IF EXISTS test_geohistory_4_results_with_validity;
+CREATE TABLE test_geohistory_4_results_with_validity AS
+SELECT *
+FROM TT_GeoHistory2('public', 'test_geohistory_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+ORDER BY id::int, poly_id;
+
+ALTER TABLE public.test_geohistory_4_results_with_validity 
+ADD PRIMARY KEY (id, poly_id);
+
+-- SELECT * FROM test_geohistory_4_results_with_validity;
+
+---------------------------------------------
+-- Display flat
+SELECT test, idx, att, valid_year, 
+       geom, ST_AsText(geom),
+       test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
+FROM test_geohistory_4;
+
+-- Display oblique
+SELECT test, idx, att, valid_year,
+       TT_GeoOblique(geom, valid_year, 0.2, 0.4), 
+       test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
+FROM test_geohistory_4;
+
+-- Display flat history
+SELECT * FROM TT_GeoHistory('public', 'test_geohistory_4', 'idx', 'geom', 'valid_year');
+
+-- Without taking validity into account (should be the same as TT_GeoHistory())
+SELECT * FROM TT_GeoHistory2('public', 'test_geohistory_4', 'idx', 'geom', 'valid_year', 'idx');
+
+-- Taking validity into account
+SELECT * FROM TT_GeoHistory2('public', 'test_geohistory_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att']);
+
+
+-- Display oblique history
+SELECT * FROM TT_GeoHistoryOblique('public', 'test_geohistory_4', 'idx', 'geom', 'valid_year', 0.2, 0.4);
+
+SELECT * FROM TT_GeoHistoryOblique2('public', 'test_geohistory_4', 'idx', 'geom', 'valid_year', 'idx', NULL, 0.2, 0.4);
+
+SELECT * FROM TT_GeoHistoryOblique2('public', 'test_geohistory_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'], 0.2, 0.4);
+
+---------------------------------------------
 -- Declare TT_GenerateTestsForTable()
 ---------------------------------------------
 DROP FUNCTION IF EXISTS TT_GenerateTestsForTable(name, name, int);
@@ -446,6 +652,18 @@ UNION ALL
 ---------------------------------------------------------
 UNION ALL
 ' || (SELECT TT_GenerateTestsForTable('test_geohistory_3_results_with_validity', 6)) || '
+---------------------------------------------------------
+-- The 7.x test series was generated using
+-- SELECT TT_GenerateTestsForTable(''test_geohistory_4_results_without_validity'', 7);
+---------------------------------------------------------
+UNION ALL
+' || (SELECT TT_GenerateTestsForTable('test_geohistory_4_results_without_validity', 7)) || '
+---------------------------------------------------------
+-- The 8.x test series was generated using
+-- SELECT TT_GenerateTestsForTable(''test_geohistory_4_results_with_validity'', 8);
+---------------------------------------------------------
+UNION ALL
+' || (SELECT TT_GenerateTestsForTable('test_geohistory_4_results_with_validity', 8)) || '
 ) foo
 WHERE NOT passed
 ORDER BY floor(number::double precision), split_part(number, ''.'', 2)::int;';
