@@ -104,10 +104,10 @@ SELECT * FROM TT_Translate_on_geo('rawfri', 'on02_l1_to_on_l1_map_geo', 'ogc_fid
 SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_geo');
 ------------------------
 -- Translate SK01 using UTM translation table
-SELECT TT_CreateMappingView('rawfri', 'sk01', 1, 'sk', 1, NULL, NULL, 'geo');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 1, 'sk_utm', 1, NULL, NULL, 'geo');
 
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_sk_geo('rawfri', 'sk01_l1_to_sk_l1_map_geo', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_geo('rawfri', 'sk01_l1_to_sk_utm_l1_map_geo', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_geo');
 ------------------------

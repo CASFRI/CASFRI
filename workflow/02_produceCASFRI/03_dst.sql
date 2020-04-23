@@ -112,10 +112,10 @@ SELECT * FROM TT_Translate_on_dst('rawfri', 'on02_l1_to_on_l1_map_dst', 'ogc_fid
 SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_dst');
 ------------------------
 -- Translate SK01 using UTM translation table
-SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 'DST');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', 'DST');
 
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_sk_dst('rawfri', 'sk01_l1_to_sk_l1_map_dst', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_dst('rawfri', 'sk01_l1_to_sk_utm_l1_map_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst');
 ------------------------
