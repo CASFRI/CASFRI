@@ -145,10 +145,10 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_nfl');
 ------------------------
 
 -- Translate SK01 using UTM translation table
-SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', 'NFL');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l1_to_sk_l1_map_nfl', 'ogc_fid'); 
+SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l1_to_sk_utm_l1_map_nfl', 'ogc_fid'); 
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl');
 ------------------------

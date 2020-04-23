@@ -124,10 +124,10 @@ SELECT * FROM TT_Translate_on_cas('rawfri', 'on02_l1_to_on_l1_map', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_cas');
 ------------------------
 -- Translate SK01 using UTM translation table
-SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm');
 
 INSERT INTO casfri50.cas_all -- 
-SELECT * FROM TT_Translate_sk_cas('rawfri', 'sk01_l1_to_sk_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_cas('rawfri', 'sk01_l1_to_sk_utm_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_cas');
 ------------------------

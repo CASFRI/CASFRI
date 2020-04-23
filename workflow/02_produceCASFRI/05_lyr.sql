@@ -222,20 +222,20 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_lyr');
 ------------------------
 -- Translate SK01 using UTM translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk', 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', 'LYR');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l1_to_sk_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l1_to_sk_utm_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
 ------------------------
 -- Translate SK01 layer 2 using UTM translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk', 1, 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk_utm', 1, 'LYR');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l2_to_sk_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l2_to_sk_utm_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
