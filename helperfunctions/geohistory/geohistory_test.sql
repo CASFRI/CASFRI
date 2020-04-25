@@ -169,7 +169,7 @@ ORDER BY test, idx;
 -- Create a test table for TT_GeoHistory() without taking validity into account
 DROP TABLE IF EXISTS geohistory.test_2_without_validity_new;
 CREATE TABLE geohistory.test_2_without_validity_new AS
-SELECT ROW_NUMBER() OVER() - 1 row_id, * 
+SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
       FROM TT_GeoHistory2('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
@@ -182,7 +182,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- Create a test table for TT_GeoHistory() taking validity into account
 DROP TABLE IF EXISTS geohistory.test_2_with_validity_new;
 CREATE TABLE geohistory.test_2_with_validity_new AS
-SELECT ROW_NUMBER() OVER() - 1 row_id, * 
+SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
       FROM TT_GeoHistory2('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
@@ -304,7 +304,7 @@ ORDER BY test, idx;
 -- Create a test table for TT_GeoHistory() without taking validity into account
 DROP TABLE IF EXISTS geohistory.test_3_without_validity_new;
 CREATE TABLE geohistory.test_3_without_validity_new AS
-SELECT ROW_NUMBER() OVER() - 1 row_id, * 
+SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
       FROM TT_GeoHistory2('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
@@ -317,7 +317,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- Create a test table for TT_GeoHistory() taking validity into account
 DROP TABLE IF EXISTS geohistory.test_3_with_validity_new;
 CREATE TABLE geohistory.test_3_with_validity_new AS
-SELECT ROW_NUMBER() OVER() - 1 row_id, * 
+SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
       FROM TT_GeoHistory2('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
@@ -479,25 +479,25 @@ WITH validities AS (
 -- Squares are rotated around their centroids and snapped to a 
 -- grid so that their coordinates become integers.
 SELECT all_test_nb test, idx1 + all_test_nb * 4 idx, a1 att, y1 valid_year,
-       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2.5), mod(all_test_nb, 24) * 20, (all_test_nb / 24) * 30) geom
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2.5), mod(all_test_nb, 24) * 25, (all_test_nb / 24) * 35) geom
 FROM numbered_tests
 UNION ALL
 -- Generate the second square with the second set of values 
 -- (a little bit translated to the upper right)
 SELECT all_test_nb, idx2 + all_test_nb * 4, a2, y2,
-       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2), mod(all_test_nb, 24) * 20 + 2, (all_test_nb / 24) * 30 + 1) geom
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2), mod(all_test_nb, 24) * 25 + 2, (all_test_nb / 24) * 35 + 1) geom
 FROM numbered_tests
 UNION ALL
 -- Generate the third square with the third set of values 
 -- (a little bit translated to the right in between the two first squares so that the three intersects)
 SELECT all_test_nb, idx3 + all_test_nb * 4, a3, y3,
-       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2, 1), mod(all_test_nb, 24) * 20 + 2, (all_test_nb / 24) * 30 + 2) geom
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2, 1), mod(all_test_nb, 24) * 25 + 2, (all_test_nb / 24) * 35 + 2) geom
 FROM numbered_tests
 UNION ALL
 -- Generate the fourth square with the fourth set of values 
 -- (a little bit translated to the right in between the two first squares so that the three intersects)
 SELECT all_test_nb, idx4 + all_test_nb * 4, a4, y4,
-       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2.5, 1), mod(all_test_nb, 24) * 20 + 3, (all_test_nb / 24) * 30 + 3) geom
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2.5, 1), mod(all_test_nb, 24) * 25 + 3, (all_test_nb / 24) * 35 + 3) geom
 FROM numbered_tests
 ORDER BY test, idx;
 
@@ -512,7 +512,7 @@ CREATE INDEX test_4_geom_idx
 -- Create a test table for TT_GeoHistory() without taking validity into account
 DROP TABLE IF EXISTS geohistory.test_4_without_validity_new;
 CREATE TABLE geohistory.test_4_without_validity_new AS
-SELECT ROW_NUMBER() OVER() - 1 row_id, * 
+SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
       FROM TT_GeoHistory2('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
@@ -525,7 +525,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- Create a test table for TT_GeoHistory() taking validity into account
 DROP TABLE IF EXISTS geohistory.test_4_with_validity_new;
 CREATE TABLE geohistory.test_4_with_validity_new AS
-SELECT ROW_NUMBER() OVER() - 1 row_id, * 
+SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
       FROM TT_GeoHistory2('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
