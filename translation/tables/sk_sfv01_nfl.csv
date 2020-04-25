@@ -2,7 +2,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(drain);matchList(drain,{'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'})","mapText(drain, {'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'}, {'D','D','D','F','F','F','F','M','M','M','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
-4,LAYER,integer,true(),"countOfNotNull({dummy_sp10, dummy_sp11, dummy_sp12, dummy_sp20, dummy_sp21}, {dummy_u1, dummy_u2}, {dummy_np}, max_layer_number)","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Layers are the canopy species, understory species, and non-forest types.",TRUE
+4,LAYER,integer,true(),"countOfNotNull({dummy_sp10, dummy_sp11, dummy_sp12, dummy_sp20, dummy_sp21}, {dummy_u1, dummy_u2}, {dummy_np}, max_layer_number, 'FALSE')","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Layers are the canopy species, understory species, and non-forest types.",TRUE
 5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),Attribute does not occur,TRUE
 7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur,TRUE
