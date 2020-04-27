@@ -15,20 +15,20 @@ pgversion=${pgversion:=11}
 
 # Run ogr2ogr
 
-rm ./data$pgversion/*.csv
+rm ./testtables$pgversion/*.csv
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_0_polygons_without_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_0_without_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_0_without_validity.csv" "$pg_connection_string" "geohistory.test_0_without_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_0_polygons_with_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_0_with_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_0_with_validity.csv"    "$pg_connection_string" "geohistory.test_0_with_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_2_polygons_without_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_2_without_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_2_without_validity.csv" "$pg_connection_string" "geohistory.test_2_without_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_2_polygons_with_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_2_with_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_2_with_validity.csv"    "$pg_connection_string" "geohistory.test_2_with_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_3_polygons_without_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_3_without_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_3_without_validity.csv" "$pg_connection_string" "geohistory.test_3_without_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_3_polygons_with_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_3_with_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_3_with_validity.csv"    "$pg_connection_string" "geohistory.test_3_with_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_4_polygons_without_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_4_without_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_4_without_validity.csv" "$pg_connection_string" "geohistory.test_4_without_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_4_polygons_with_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_4_with_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_4_with_validity.csv"    "$pg_connection_string" "geohistory.test_4_with_validity_new"
