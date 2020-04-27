@@ -37,7 +37,7 @@ DROP TABLE IF EXISTS geohistory.test_0_without_validity_new;
 CREATE TABLE geohistory.test_0_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory2('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_GeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_0_without_validity_new 
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS geohistory.test_0_with_validity_new;
 CREATE TABLE geohistory.test_0_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory2('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_GeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_0_with_validity_new 
@@ -127,10 +127,10 @@ SELECT TT_GeoOblique(geom, valid_year),
 FROM geohistory.test_1;
 
 -- Display flat history
-SELECT * FROM TT_GeoHistory2('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
+SELECT * FROM TT_GeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
 
 -- Display oblique history
-SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
+SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
 
 ---------------------------------------------
 -- test_2 - Pairs of polygons representing 
@@ -189,7 +189,7 @@ DROP TABLE IF EXISTS geohistory.test_2_without_validity_new;
 CREATE TABLE geohistory.test_2_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory2('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_GeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_2_without_validity_new 
@@ -202,7 +202,7 @@ DROP TABLE IF EXISTS geohistory.test_2_with_validity_new;
 CREATE TABLE geohistory.test_2_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory2('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_GeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_2_with_validity_new 
@@ -330,7 +330,7 @@ DROP TABLE IF EXISTS geohistory.test_3_without_validity_new;
 CREATE TABLE geohistory.test_3_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory2('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_GeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_3_without_validity_new 
@@ -343,7 +343,7 @@ DROP TABLE IF EXISTS geohistory.test_3_with_validity_new;
 CREATE TABLE geohistory.test_3_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory2('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_GeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_3_with_validity_new 
@@ -543,7 +543,7 @@ DROP TABLE IF EXISTS geohistory.test_4_without_validity_new;
 CREATE TABLE geohistory.test_4_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory2('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_GeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_4_without_validity_new 
@@ -556,7 +556,7 @@ DROP TABLE IF EXISTS geohistory.test_4_with_validity_new;
 CREATE TABLE geohistory.test_4_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory2('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_GeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_4_with_validity_new 
@@ -610,13 +610,13 @@ FROM geohistory.test_4_with_validity_new;
 
 -- SELECT * FROM geohistory.test_bug;
 
--- -- 2) Modify the WHERE clause of TT_GeoHistory2() currentPolyQuery to 
+-- -- 2) Modify the WHERE clause of TT_GeoHistory() currentPolyQuery to 
 -- --    ' WHERE ' || quote_ident(idColName) || '::text = ''144'' '
 -- --    and activate the RAISE NOTICEs
 
 -- -- 3) Run this query
 -- SELECT *
--- FROM TT_GeoHistory2('geohistory', 'test_bug', 'idx', 'geom', 'valid_year', 'idx');
+-- FROM TT_GeoHistory('geohistory', 'test_bug', 'idx', 'geom', 'valid_year', 'idx');
 
 ---------------------------------------------
 -- Begin tests
@@ -650,7 +650,7 @@ SELECT '2.1'::text number,
        string_agg(valid_year_begin::text, ', ') = '1990, 1990' AND 
        string_agg(valid_year_end::text, ', ') = '3000, 3000' passed,
         '' check_query
-FROM TT_GeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year')
+FROM TT_GeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx')
 ---------------------------------------------------------
 -- Compare new with old tables
 ---------------------------------------------------------
