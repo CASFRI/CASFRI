@@ -105,13 +105,9 @@ SELECT TT_GeoOblique(geom, valid_year),
 FROM geohistory.test_1;
 
 -- Display flat history
-SELECT * FROM TT_GeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year');
-
 SELECT * FROM TT_GeoHistory2('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
 
 -- Display oblique history
-SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_1', 'idx', 'geom', 'valid_year');
-
 SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
 
 ---------------------------------------------
@@ -193,7 +189,7 @@ ADD PRIMARY KEY (id, poly_id);
 -- SELECT * FROM geohistory.test_2_with_validity_new;
 
 ---------------------------------------------
--- Display flat
+-- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
@@ -205,21 +201,27 @@ SELECT test, idx, att, valid_year,
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
 FROM geohistory.test_2;
 
--- Display flat history
-SELECT * FROM TT_GeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year');
+-- Display geohistory flat 
 
--- Without taking validity into account (should be the same as TT_GeoHistory())
-SELECT * FROM TT_GeoHistory2('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx');
+-- Without taking validity into account
+SELECT * FROM geohistory.test_2_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM TT_GeoHistory2('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att']);
+SELECT * FROM geohistory.test_2_with_validity_new;
 
--- Display oblique history
-SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 0.2, 0.4);
+-- Display geohistory oblique 
 
-SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', NULL, 0.2, 0.4);
+-- Without taking validity into account
+SELECT row_id, id, poly_id, isvalid, 
+       TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM geohistory.test_2_without_validity_new;
 
-SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'], 0.2, 0.4);
+-- Taking validity into account
+SELECT row_id, id, poly_id, isvalid, 
+       TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM geohistory.test_2_without_validity_new;
 
 ---------------------------------------------
 -- test_3 - Triplet of polygons representing
@@ -328,7 +330,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM geohistory.test_3_with_validity_new;
 
 ---------------------------------------------
--- Display flat
+-- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
@@ -340,22 +342,27 @@ SELECT test, idx, att, valid_year,
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
 FROM geohistory.test_3;
 
--- Display flat history
-SELECT * FROM TT_GeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year');
+-- Display geohistory flat 
 
--- Without taking validity into account (should be the same as TT_GeoHistory())
-SELECT * FROM TT_GeoHistory2('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx');
+-- Without taking validity into account
+SELECT * FROM geohistory.test_3_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM TT_GeoHistory2('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att']);
+SELECT * FROM geohistory.test_3_with_validity_new;
 
+-- Display geohistory oblique 
 
--- Display oblique history
-SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 0.2, 0.4);
+-- Without taking validity into account
+SELECT row_id, id, poly_id, isvalid, 
+       TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM geohistory.test_3_without_validity_new;
 
-SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', NULL, 0.2, 0.4);
-
-SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'], 0.2, 0.4);
+-- Taking validity into account
+SELECT row_id, id, poly_id, isvalid, 
+       TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM geohistory.test_3_without_validity_new;
 
 ---------------------------------------------
 -- test_4 - Quatriplet of polygons representing
@@ -536,7 +543,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM geohistory.test_4_with_validity_new;
 
 ---------------------------------------------
--- Display flat
+-- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
@@ -548,22 +555,27 @@ SELECT test, idx, att, valid_year,
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
 FROM geohistory.test_4;
 
--- Display flat history
-SELECT * FROM TT_GeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year');
+-- Display geohistory flat 
 
--- Without taking validity into account (should be the same as TT_GeoHistory())
-SELECT * FROM TT_GeoHistory2('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx');
+-- Without taking validity into account
+SELECT * FROM geohistory.test_4_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM TT_GeoHistory2('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att']);
+SELECT * FROM geohistory.test_4_with_validity_new;
 
+-- Display geohistory oblique 
 
--- Display oblique history
-SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 0.2, 0.4);
+-- Without taking validity into account
+SELECT row_id, id, poly_id, isvalid, 
+       TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM geohistory.test_4_without_validity_new;
 
-SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', NULL, 0.2, 0.4);
-
-SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'], 0.2, 0.4);
+-- Taking validity into account
+SELECT row_id, id, poly_id, isvalid, 
+       TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM geohistory.test_4_without_validity_new;
 
 ---------------------------------------------
 -- Debug procedure
