@@ -221,7 +221,7 @@ FROM geohistory.test_2_without_validity_new;
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_2_without_validity_new;
+FROM geohistory.test_2_with_validity_new;
 
 ---------------------------------------------
 -- test_3 - Triplet of polygons representing
@@ -362,7 +362,7 @@ FROM geohistory.test_3_without_validity_new;
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_3_without_validity_new;
+FROM geohistory.test_3_with_validity_new;
 
 ---------------------------------------------
 -- test_4 - Quatriplet of polygons representing
@@ -575,7 +575,7 @@ FROM geohistory.test_4_without_validity_new;
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_4_without_validity_new;
+FROM geohistory.test_4_with_validity_new;
 
 ---------------------------------------------
 -- Debug procedure
