@@ -17,6 +17,10 @@ pgversion=${pgversion:=11}
 
 rm ./data$pgversion/*.csv
 
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_0_polygons_without_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_0_without_validity_new"
+
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_0_polygons_with_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_0_with_validity_new"
+
 "$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_2_polygons_without_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_2_without_validity_new"
 
 "$gdalFolder/ogr2ogr" -f "CSV" ".\testtables$pgversion\test_2_polygons_with_validity.csv" "$pg_connection_string" "geohistory.test_geohistory_2_with_validity_new"

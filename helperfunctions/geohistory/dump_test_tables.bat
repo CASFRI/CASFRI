@@ -17,6 +17,10 @@ IF "%pgversion%"=="" SET pgversion=11
 
 DEL testtables%pgversion%\*.csv
 
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\test_0_without_validity.csv" %pg_connection_string% "geohistory.test_0_without_validity_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\test_0_with_validity.csv" %pg_connection_string% "geohistory.test_0_with_validity_new"
+
 "%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\test_2_without_validity.csv" %pg_connection_string% "geohistory.test_2_without_validity_new"
 
 "%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\test_2_with_validity.csv" %pg_connection_string% "geohistory.test_2_with_validity_new"

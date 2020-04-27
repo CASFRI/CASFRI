@@ -19,6 +19,14 @@ IF "%pgversion%"=="" SET pgversion=11
 
 ::Run ogr2ogr
 
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables%pgversion%/test_0_without_validity.csv" -nln "geohistory.test_0_without_validity" %overwrite_tab% -lco COLUMN_TYPES="row_id=int,id=int,poly_id=int,isvalid=boolean,wkt_geometry=text,poly_type=text,ref_year=int,valid_year_begin=int,valid_year_end=int,valid_time=text"
+
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.test_0_without_validity DROP COLUMN ogc_fid"
+
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables%pgversion%/test_0_with_validity.csv" -nln "geohistory.test_0_with_validity" %overwrite_tab% -lco COLUMN_TYPES="row_id=int,id=int,poly_id=int,isvalid=boolean,wkt_geometry=text,poly_type=text,ref_year=int,valid_year_begin=int,valid_year_end=int,valid_time=text"
+
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.test_0_with_validity DROP COLUMN ogc_fid"
+
 "%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables%pgversion%/test_2_without_validity.csv" -nln "geohistory.test_2_without_validity" %overwrite_tab% -lco COLUMN_TYPES="row_id=int,id=int,poly_id=int,isvalid=boolean,wkt_geometry=text,poly_type=text,ref_year=int,valid_year_begin=int,valid_year_end=int,valid_time=text"
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.test_2_without_validity DROP COLUMN ogc_fid"

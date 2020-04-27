@@ -14,6 +14,7 @@
 CREATE SCHEMA IF NOT EXISTS geohistory;
 ---------------------------------------------
 -- Create a test table
+-- 2,3 and 4 polygons test table below cover most of the test_0 table but we keep it in order to test very specific cases
 DROP TABLE IF EXISTS geohistory.test_0 CASCADE;
 CREATE TABLE geohistory.test_0 AS
 SELECT 0 idx, 1998 valid_year, '1' att, ST_GeomFromText('POLYGON((24 13, 24 23, 34 23, 34 13, 24 13))') geom
@@ -31,45 +32,66 @@ UNION ALL
 SELECT 6 idx, 1998 valid_year, '7' att, ST_GeomFromText('POLYGON((25 14, 25 21, 32 21, 32 14, 25 14))') geom
 ;
 
--- Display flat
-SELECT *, 
-       idx || '_' || valid_year lbl 
+-- Create a test table for TT_GeoHistory() without taking validity into account
+DROP TABLE IF EXISTS geohistory.test_0_without_validity_new;
+CREATE TABLE geohistory.test_0_without_validity_new AS
+SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
+FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+      FROM TT_GeoHistory2('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
+      ORDER BY id, poly_id) foo;
+
+ALTER TABLE geohistory.test_0_without_validity_new 
+ADD PRIMARY KEY (row_id, id, poly_id);
+      
+-- SELECT * FROM geohistory.test_0_without_validity_new;
+
+-- Create a test table for TT_GeoHistory() taking validity into account
+DROP TABLE IF EXISTS geohistory.test_0_with_validity_new;
+CREATE TABLE geohistory.test_0_with_validity_new AS
+SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
+FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+      FROM TT_GeoHistory2('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      ORDER BY id, poly_id) foo;
+
+ALTER TABLE geohistory.test_0_with_validity_new 
+ADD PRIMARY KEY (id, poly_id);
+
+-- SELECT * FROM geohistory.test_0_with_validity_new;
+
+---------------------------------------------
+-- Display test table flat
+SELECT idx, att, valid_year, 
+       geom, ST_AsText(geom),
+       idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
 FROM geohistory.test_0;
 
 -- Display oblique
-SELECT TT_GeoOblique(geom, valid_year), 
-       idx || '_' || valid_year lbl 
+SELECT idx, att, valid_year,
+       TT_GeoOblique(geom, valid_year, 0.4, 0.4), 
+       idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
 FROM geohistory.test_0;
 
--- Display flat history
-SELECT * FROM TT_GeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year');
+-- Display geohistory flat 
 
-SELECT * FROM TT_GeoHistory2('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx');
+-- Without taking validity into account
+SELECT * FROM geohistory.test_0_without_validity_new;
 
--- Display oblique history
-SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_0', 'idx', 'geom', 'valid_year');
+-- Taking validity into account
+SELECT * FROM geohistory.test_0_with_validity_new;
 
-SELECT * FROM TT_GeoHistoryOblique2('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx');
+-- Display geohistory oblique 
 
-CREATE VIEW geohistory.test_0_0 AS
-SELECT * FROM geohistory.test_0
-WHERE idx = 0;
+-- Without taking validity into account
+SELECT row_id, id, poly_id, isvalid, 
+       TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM geohistory.test_0_without_validity_new;
 
-CREATE VIEW geohistory.test_0_1_3 AS
-SELECT * FROM geohistory.test_0
-WHERE idx = 1 OR idx = 3;
-
-CREATE VIEW geohistory.test_0_2_3 AS
-SELECT * FROM geohistory.test_0
-WHERE idx = 2 OR idx = 3;
-
-CREATE VIEW geohistory.test_0_0_5 AS
-SELECT * FROM geohistory.test_0
-WHERE idx = 0 OR idx = 5;
-
-CREATE VIEW geohistory.test_0_5_6 AS
-SELECT * FROM geohistory.test_0
-WHERE idx = 5 OR idx = 6;
+-- Taking validity into account
+SELECT row_id, id, poly_id, isvalid, 
+       TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM geohistory.test_0_with_validity_new;
 
 ---------------------------------------------
 -- test_1 - Only one polygon
@@ -600,192 +622,24 @@ FROM geohistory.test_4_with_validity_new;
 -- Begin tests
 ---------------------------------------------
 SELECT * FROM (
-SELECT '1.1a'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'One polygon'::text description,
-        ST_AsText(wkb_geometry) = 'POLYGON((24 13,24 23,34 23,34 13,24 13))' AND
-        ref_year = 1998 AND
-        valid_year_begin = 1990 AND 
-        valid_year_end = 3000 passed,
-        '' check_query
-FROM TT_GeoHistory('geohistory', 'test_0_0', 'idx', 'geom', 'valid_year')
+SELECT '1.1'::text number,
+       'TT_GeoHistory'::text function_tested, 
+       'Compare "test_0_without_validity_new" and "test_0_without_validity"' description, 
+       count(*) = 0 passed,
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_without_validity_new'', ''geohistory'' , ''test_0_without_validity'', ''row_id'', TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+      FROM geohistory.test_0_without_validity_new a 
+      FULL OUTER JOIN geohistory.test_0_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '1.1b'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'One polygon'::text description,
-        ST_AsText(wkb_geometry) = 'POLYGON((24 13,24 23,34 23,34 13,24 13))' AND
-        ref_year = 1998 AND
-        valid_year_begin = 1990 AND 
-        valid_year_end = 3000 passed,
-        '' check_query
-FROM TT_GeoHistory2('geohistory', 'test_0_0', 'idx', 'geom', 'valid_year', 'att')
----------------------------------------------------------
-UNION ALL
-SELECT '1.2a'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two overlapping polygons (polygon 1)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((13 20,13 23,23 23,23 13,20 13,20 20,13 20)), POLYGON((13 13,13 23,23 23,23 13,13 13))' AND
-        string_agg(ref_year::text, ', ') = '2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ') = '2010, 1990' AND 
-        string_agg(valid_year_end::text, ', ') = '3000, 2009' passed,
-        '' check_query
-FROM TT_GeoHistory('geohistory', 'test_0_1_3', 'idx', 'geom', 'valid_year')
-WHERE id = '1'
----------------------------------------------------------
-UNION ALL
-SELECT '1.2b'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two overlapping polygons (polygon 1)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((13 20,13 23,23 23,23 13,20 13,20 20,13 20)), POLYGON((13 13,13 23,23 23,23 13,13 13))' AND
-        string_agg(ref_year::text, ', ') = '2000, 2000' AND
-        string_agg(valid_year_begin::text, ', ') = '2010, 1990' AND 
-        string_agg(valid_year_end::text, ', ') = '3000, 2009' passed,
-        '' check_query
-FROM TT_GeoHistory2('geohistory', 'test_0_1_3', 'idx', 'geom', 'valid_year', 'att')
-WHERE id = '1'
----------------------------------------------------------
-UNION ALL
-SELECT '1.3a'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two overlapping polygons (polygon 2)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((10 10,10 20,20 20,20 10,10 10)), POLYGON((10 10,10 20,13 20,13 13,20 13,20 10,10 10))' AND
-        string_agg(ref_year::text, ', ') = '2010, 2010' AND
-        string_agg(valid_year_begin::text, ', ') = '2010, 1990' AND 
-        string_agg(valid_year_end::text, ', ') = '3000, 2009' passed,
-        '' check_query
-FROM TT_GeoHistory('geohistory', 'test_0_1_3', 'idx', 'geom', 'valid_year')
-WHERE id = '3'
----------------------------------------------------------
-UNION ALL
-SELECT '1.3b'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two overlapping polygons (polygon 2)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((10 10,10 20,20 20,20 10,10 10)), POLYGON((10 10,10 20,13 20,13 13,20 13,20 10,10 10))' AND
-        string_agg(ref_year::text, ', ') = '2010, 2010' AND
-        string_agg(valid_year_begin::text, ', ') = '2010, 1990' AND 
-        string_agg(valid_year_end::text, ', ') = '3000, 2009' passed,
-        '' check_query
-FROM TT_GeoHistory2('geohistory', 'test_0_1_3', 'idx', 'geom', 'valid_year', 'att')
-WHERE id = '3'
----------------------------------------------------------
-UNION ALL
-SELECT '1.4a'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons (polygon 1)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((9 19,9 21,11 21,11 20,10 20,10 19,9 19))' AND
-        string_agg(ref_year::text, ', ') = '2010' AND
-        string_agg(valid_year_begin::text, ', ') = '1990' AND 
-        string_agg(valid_year_end::text, ', ') = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory('geohistory', 'test_0_2_3', 'idx', 'geom', 'valid_year')
-WHERE id = '2'
----------------------------------------------------------
-UNION ALL
-SELECT '1.4b'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons (polygon 1)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((9 19,9 21,11 21,11 20,10 20,10 19,9 19))' AND
-        string_agg(ref_year::text, ', ') = '2010' AND
-        string_agg(valid_year_begin::text, ', ') = '1990' AND 
-        string_agg(valid_year_end::text, ', ') = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory2('geohistory', 'test_0_2_3', 'idx', 'geom', 'valid_year', 'att')
-WHERE id = '2'
----------------------------------------------------------
-UNION ALL
-SELECT '1.5a'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons (polygon 2)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((10 10,10 20,20 20,20 10,10 10))' AND
-        string_agg(ref_year::text, ', ') = '2010' AND
-        string_agg(valid_year_begin::text, ', ') = '1990' AND 
-        string_agg(valid_year_end::text, ', ') = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory('geohistory', 'test_0_2_3', 'idx', 'geom', 'valid_year')
-WHERE id = '3'
----------------------------------------------------------
-UNION ALL
-SELECT '1.5b'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons (polygon 2)'::text description,
-        string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((10 10,10 20,20 20,20 10,10 10))' AND
-        string_agg(ref_year::text, ', ') = '2010' AND
-        string_agg(valid_year_begin::text, ', ') = '1990' AND 
-        string_agg(valid_year_end::text, ', ') = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory2('geohistory', 'test_0_2_3', 'idx', 'geom', 'valid_year', 'att')
-WHERE id = '3'
----------------------------------------------------------
-UNION ALL
-SELECT '1.6a'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons one completely inside the other (polygon 1)'::text description,
-        ST_AsText(wkb_geometry) = 'POLYGON((24 13,24 23,34 23,34 13,24 13),(26 15,30 15,30 19,26 19,26 15))' AND
-        ref_year::text = '1998' AND
-        valid_year_begin::text = '1990' AND 
-        valid_year_end::text = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory('geohistory', 'test_0_0_5', 'idx', 'geom', 'valid_year')
-WHERE id = '0'
----------------------------------------------------------
-UNION ALL
-SELECT '1.6b'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons one completely inside the other (polygon 1)'::text description,
-        ST_AsText(wkb_geometry) = 'POLYGON((24 13,24 23,34 23,34 13,24 13),(26 15,30 15,30 19,26 19,26 15))' AND
-        ref_year::text = '1998' AND
-        valid_year_begin::text = '1990' AND 
-        valid_year_end::text = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory2('geohistory', 'test_0_0_5', 'idx', 'geom', 'valid_year', 'att')
-WHERE id = '0'
----------------------------------------------------------
-UNION ALL
-SELECT '1.7a'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons one completely inside the other (polygon 2)'::text description,
-        ST_AsText(wkb_geometry) = 'POLYGON((26 15,26 19,30 19,30 15,26 15))' AND
-        ref_year::text = '1998' AND
-        valid_year_begin::text = '1990' AND 
-        valid_year_end::text = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory('geohistory', 'test_0_0_5', 'idx', 'geom', 'valid_year')
-WHERE id = '5'
----------------------------------------------------------
-UNION ALL
-SELECT '1.7b'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons one completely inside the other (polygon 2)'::text description,
-        ST_AsText(wkb_geometry) = 'POLYGON((26 15,26 19,30 19,30 15,26 15))' AND
-        ref_year::text = '1998' AND
-        valid_year_begin::text = '1990' AND 
-        valid_year_end::text = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory2('geohistory', 'test_0_0_5', 'idx', 'geom', 'valid_year', 'att')
-WHERE id = '5'
----------------------------------------------------------
-UNION ALL
-SELECT '1.8a'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons one with lower priority completely inside the other'::text description,
-        ST_AsText(wkb_geometry) = 'POLYGON((25 14,25 21,32 21,32 14,25 14))' AND
-        ref_year::text = '1998' AND
-        valid_year_begin::text = '1990' AND 
-        valid_year_end::text = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory('geohistory', 'test_0_5_6', 'idx', 'geom', 'valid_year')
----------------------------------------------------------
-UNION ALL
-SELECT '1.8b'::text number,
-       'TT_GeoHistory'::text function_tested,
-       'Two same year polygons one with lower priority completely inside the other'::text description,
-        ST_AsText(wkb_geometry) = 'POLYGON((25 14,25 21,32 21,32 14,25 14))' AND
-        ref_year::text = '1998' AND
-        valid_year_begin::text = '1990' AND 
-        valid_year_end::text = '3000' passed,
-        '' check_query
-FROM TT_GeoHistory2('geohistory', 'test_0_5_6', 'idx', 'geom', 'valid_year', 'att')
+SELECT '1.2'::text number,
+       'TT_GeoHistory'::text function_tested, 
+       'Compare "test_0_with_validity_new" and "test_0_with_validity"' description, 
+       count(*) = 0 passed,
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_with_validity_new'', ''geohistory'' , ''test_0_with_validity'', ''row_id'', TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+      FROM geohistory.test_0_without_validity_new a 
+      FULL OUTER JOIN geohistory.test_0_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '2.1'::text number,
