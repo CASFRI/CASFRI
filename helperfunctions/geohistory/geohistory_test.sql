@@ -486,25 +486,25 @@ WITH validities AS (
 -- Squares are rotated around their centroids and snapped to a 
 -- grid so that their coordinates become integers.
 SELECT all_test_nb test, idx1 + all_test_nb * 4 idx, a1 att, y1 valid_year,
-       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2.5), mod(all_test_nb, 24) * 25, (all_test_nb / 24) * 35) geom
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2.5), mod(all_test_nb, 24) * 25, (all_test_nb / 24) * 50) geom
 FROM numbered_tests
 UNION ALL
 -- Generate the second square with the second set of values 
 -- (a little bit translated to the upper right)
 SELECT all_test_nb, idx2 + all_test_nb * 4, a2, y2,
-       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2), mod(all_test_nb, 24) * 25 + 2, (all_test_nb / 24) * 35 + 1) geom
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 1, 2), mod(all_test_nb, 24) * 25 + 2, (all_test_nb / 24) * 50 + 1) geom
 FROM numbered_tests
 UNION ALL
 -- Generate the third square with the third set of values 
 -- (a little bit translated to the right in between the two first squares so that the three intersects)
 SELECT all_test_nb, idx3 + all_test_nb * 4, a3, y3,
-       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2, 1), mod(all_test_nb, 24) * 25 + 2, (all_test_nb / 24) * 35 + 2) geom
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2, 1), mod(all_test_nb, 24) * 25 + 2, (all_test_nb / 24) * 50 + 2) geom
 FROM numbered_tests
 UNION ALL
 -- Generate the fourth square with the fourth set of values 
 -- (a little bit translated to the right in between the two first squares so that the three intersects)
 SELECT all_test_nb, idx4 + all_test_nb * 4, a4, y4,
-       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2.5, 1), mod(all_test_nb, 24) * 25 + 3, (all_test_nb / 24) * 35 + 3) geom
+       ST_Translate(ST_Scale(ST_SnapToGrid(ST_Rotate(geom, pi()/4, ST_Centroid(geom)), 0.001), 2.5, 1), mod(all_test_nb, 24) * 25 + 3, (all_test_nb / 24) * 50 + 3) geom
 FROM numbered_tests
 ORDER BY test, idx;
 
@@ -551,7 +551,7 @@ FROM geohistory.test_4;
 
 -- Display oblique
 SELECT test, idx, att, valid_year,
-       TT_GeoOblique(geom, valid_year, 0.2, 0.4), 
+       TT_GeoOblique(geom, valid_year, 0.4, 0.4), 
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
 FROM geohistory.test_4;
 
