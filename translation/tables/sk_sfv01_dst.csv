@@ -1,6 +1,6 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,DIST_TYPE_1,text,"notEmpty(dist);matchList(dist,{'SCO','WCO','OCO','SPC','WPC','OPC','BO'})","mapText(dist, {'SCO','WCO','OCO','SPC','WPC','OPC','BO'}, {'CO','CO','CO','PC','PC','PC','BU'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
+2,DIST_TYPE_1,text,"notNull(dist);notEmpty(dist);matchList(dist,{'SCO','WCO','OCO','SPC','WPC','OPC','BO'})","mapText(dist, {'SCO','WCO','OCO','SPC','WPC','OPC','BO'}, {'CO','CO','CO','PC','PC','PC','BU'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
 3,DIST_YEAR_1,integer,"notNull(dyr);isInt(dyr);isBetween(dyr, 1, 2020)",copyInt(dyr),Copies source attribute to DIST_YEAR_1,TRUE
 4,DIST_EXT_UPPER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
 5,DIST_EXT_LOWER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
