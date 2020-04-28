@@ -78,7 +78,8 @@ WITH test_nb AS (
     SELECT 'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,    30 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_avi01_stand_structure_validation'::text function_tested,      31 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_avi01_stand_structure_translation'::text function_tested,     32 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,     33 maj_num,  3 nb_test
+    SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,      33 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_fvi01_countOfNotNull'::text function_tested,                  34 maj_num,  3 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1416,6 +1417,38 @@ SELECT '33.3'::text number,
        'TT_fvi01_stand_structure_validation'::text function_tested,
        'Test not nfl'::text description,
        TT_fvi01_stand_structure_validation('', '') passed
+---------------------------------------------------------
+ -- TT_fvi01_countOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '34.1'::text number,
+       'TT_fvi01_countOfNotNull'::text function_tested,
+       'Count of 4'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', 'ST', '4', 'FALSE') = 4 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '34.2'::text number,
+       'TT_fvi01_countOfNotNull'::text function_tested,
+       'Count of 3'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', 'WRONG', '4', 'FALSE') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '34.3'::text number,
+       'TT_fvi01_countOfNotNull'::text function_tested,
+       'Count of 3 with NULL'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', NULL::text, '4', 'FALSE') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '34.4'::text number,
+       'TT_fvi01_countOfNotNull'::text function_tested,
+       'Count of 2 with NULL and empty string'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', '', NULL::text, '4', 'FALSE') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '34.5'::text number,
+       'TT_fvi01_countOfNotNull'::text function_tested,
+       'Count of 0'::text description,
+       TT_fvi01_countOfNotNull('{'''',''''}', '{'''',''''}', '', NULL::text, '4', 'FALSE') = 0 passed
 ---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

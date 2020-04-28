@@ -78,4 +78,4 @@ DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean, boolean);
 DROP FUNCTION IF EXISTS TT_CountEstimate(text);
 DROP FUNCTION IF EXISTS TT_StackTranslationRules(text, text);
 DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text);
-
+DROP FUNCTION IF EXISTS TT_fvi01_countOfNotNull(text, text, text, text, text, text);
