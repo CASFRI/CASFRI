@@ -11,218 +11,6 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
--- hasPrededence determine if the first polygon has precedence over the second one based on:
-  -- 1) their validity: a valid polygon has always precedence over an invalid polygon, whatever their base year. 
-  --                    A polygon is invalid when all it's key attribute are NULL.
-  -- 2) their base year: when both polygons are valid, newer polygons have precedence over older polygons.
-  -- 3) their inventory rank: when two polygons are valid and have the same base year, an established priority rank among inventories determine which polygon has priority
-  -- 4) their unique ID: when all the above are equivalent for both polygons, the polygon with the highest ID has priority.
-
-------------------------------------------------------------------
--- TT_HasPrecedence()
-------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_HasPrecedence(text[], text[]);
-CREATE OR REPLACE FUNCTION TT_HasPrecedence(
-  val_arr1 text[],
-  val_arr2 text[]
-)
-RETURNS boolean AS $$
-  DECLARE
-  BEGIN
-    RETURN val_arr1[1]::int >= val_arr2[1]::int;
-    --RETURN TRUE;
-  END
-$$ LANGUAGE plpgsql VOLATILE;
-
---SELECT TT_HasPrecedence(ARRAY[1::text], ARRAY[2::text]);
---SELECT TT_HasPrecedence(ARRAY[2::text], ARRAY[1::text]);
-
-------------------------------------------------------------------
--- TT_GeoHistory()
-------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistory(name, name, name, name, name, text);
-CREATE OR REPLACE FUNCTION TT_GeoHistory(
-  schemaName name,
-  tableName name,
-  idColName name,
-  geoColName name,
-  photoYearColName name,
-  hasPrecedenceFct text DEFAULT 'TT_HasPrecedence'
-)
-RETURNS TABLE (id text, 
-               wkb_geometry geometry, 
-               poly_type text,
-               ref_year int,
-               valid_year_begin int, 
-               valid_year_end int, 
-               valid_time text) AS $$
-  DECLARE
-    currentPolyQuery text;
-    ovlpPolyQuery text;
-
-    refYearBegin int = 1990;
-    refYearEnd int = 3000;
-
-    currentPoly geometry;
-    olderPoly geometry; -- current polygon minus older polygons
-    olderPolyYearEnd int;
-
-    newerPoly geometry; -- current polygon minus newer polygons
-    newerPolyYearBegin int;
-
-    oldOvlpPolyYear int;
-
-    currentRow RECORD;
-    ovlpRow RECORD;
-    colNames text[];
-  BEGIN
-    -- TODO
-    -- Try to make a list of all possible overlapping cases and test them
-    -- Build the array of significant attributes to pass to hasPrecedence from the main and the inner loop
-    -- See if we have to check the validity of older and newer polygons
-       -- If they are valid, proceed normally
-       -- If currentPoly is invalid, all older and newer overlapping part have to be removed
-       -- If older or newer polygon are invalid, ignore them
-       -- If both current and older or newer polygon are invalid, hasPrecedence decide which part to keep
-    
-    -- Check that idColName, geoColName and photoYearColName exists
-    colNames = TT_TableColumnNames(schemaName, tableName);
-    IF NOT idColName = ANY (colNames) THEN
-      RAISE EXCEPTION 'TT_GeoHistory(): Column ''%'' not found in table %.%...', idColName, schemaName, tableName;
-    END IF;
-    IF NOT geoColName = ANY (colNames) THEN
-      RAISE EXCEPTION 'TT_GeoHistory(): Column ''%'' not found in table %.%...', geoColName, schemaName, tableName;
-    END IF;
-    IF NOT photoYearColName = ANY (colNames) THEN
-      RAISE EXCEPTION 'TT_GeoHistory(): Column ''%'' not found in table %.%...', photoYearColName, schemaName, tableName;
-    END IF;
-
-    -- LOOP over each polygon of the table
-    currentPolyQuery = 'SELECT ' || idColName || '::text gh_row_id, ' ||
-                            geoColName || ' gh_geom, ' ||
-                           'coalesce(' || photoYearColName || ', ' || refYearBegin || ') gh_photo_year, ' ||
-               '* FROM ' || TT_FullTableName(schemaName, tableName) ||
-             --   ' WHERE id = 2 ' ||
-                ' ORDER BY gh_photo_year DESC;';
-RAISE NOTICE '111 currentPolyQuery = %', currentPolyQuery;
-      ovlpPolyQuery = 'SELECT ' || idColName || '::text gh_row_id, ' ||
-                              geoColName || ' gh_geom, ' ||
-                             'coalesce(' || photoYearColName || ', ' || refYearBegin || ') gh_photo_year, * ' ||
-                 'FROM ' || TT_FullTableName(schemaName, tableName) || 
-                ' WHERE ' || idColName || '::text != $1 AND ' ||
-                '(' || photoYearColName || '!= $3 OR '|| hasPrecedenceFct || '(ARRAY[' || idColName ||'::text], ARRAY[$1::text])) AND ' ||
-                '(' ||
-                 'ST_Overlaps(' || geoColName || ', $2) OR ' ||
-                 'ST_Contains($2, ' || geoColName || ') OR ' ||
-                 'ST_Contains(' || geoColName || ', $2)) ' ||
-                 'ORDER BY CASE WHEN ' || photoYearColName || ' = $3 THEN 1' ||
-                              ' WHEN ' || photoYearColName || ' < $3 THEN 2' ||
-                              ' ELSE 3 END, ' || photoYearColName || ';';
-RAISE NOTICE '222 ovlpPolyQuery = %', ovlpPolyQuery;
-    FOR currentRow IN EXECUTE currentPolyQuery LOOP
-RAISE NOTICE '---------------------';
-RAISE NOTICE '000 currentRow.gh_photo_year = %', currentRow.gh_photo_year;
-        
-      olderPoly = currentRow.gh_geom;
-      olderPolyYearEnd = refYearEnd;
-
-      newerPoly = NULL;
-      currentPoly= NULL;
-      newerPolyYearBegin = currentRow.gh_photo_year;
-
-      oldOvlpPolyYear = NULL;
-      id = currentRow.gh_row_id::text;
-      ref_year = currentRow.gh_photo_year;
-
-RAISE NOTICE '111';
-      -- LOOP over all overlapping polygons sorted by photoYear ASC
-      FOR ovlpRow IN EXECUTE ovlpPolyQuery USING currentRow.gh_row_id, currentRow.gh_geom, currentRow.gh_photo_year LOOP
-RAISE NOTICE '---------';
---RAISE NOTICE '333 ovlpRow.gh_photo_year = %', ovlpRow.gh_photo_year;
-RAISE NOTICE '333 id=%, py=%', currentRow.gh_row_id, currentRow.gh_photo_year;
-RAISE NOTICE '444 id=%, py=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year;
-RAISE NOTICE '555 A hasprecedence=%', TRUE;
-      
-        IF ovlpRow.gh_photo_year = currentRow.gh_photo_year THEN -- Same year polygons
-          -- Blindly remove all same year polygons having precedence
-          olderPoly = ST_Difference(olderPoly, ovlpRow.gh_geom);
-        ELSIF ovlpRow.gh_photo_year < currentRow.gh_photo_year THEN -- Older polygons
-RAISE NOTICE '666 treat older poly = %', ovlpRow.gh_photo_year;
-          IF ST_Intersects(ovlpRow.gh_geom, olderPoly) AND TRUE THEN -- (isValidFct IS NULL OR isValidFct(ovlpPoly))
-            -- If any older polygon has to be removed, initialize a newer polygon to 
-            -- the current polygon (which is the same as olderPoly for now)
-            IF newerPoly IS NULL THEN
-              newerPoly = olderPoly;
-            END IF;
-            olderPoly = ST_Difference(olderPoly, ovlpRow.gh_geom);
-            olderPolyYearEnd = currentRow.gh_photo_year - 1;
-          END IF;
-        ELSE -- Newer polygons
-RAISE NOTICE '666 treat newer poly = %', ovlpRow.gh_photo_year;
-
-            IF newerPoly IS NULL THEN
-              newerPoly = currentRow.gh_geom;
-RAISE NOTICE 'YYY currentRow.gh_photo_year = %', currentRow.gh_photo_year;
-            END IF;
-            IF ST_Intersects(ovlpRow.gh_geom, newerPoly) THEN
-              -- Return the previously computed polygon part if it exists
-              IF NOT oldOvlpPolyYear IS NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year THEN
-                wkb_geometry = newerPoly;
-                poly_type = '2_newer1';
-                valid_year_begin = greatest(oldOvlpPolyYear, currentRow.gh_photo_year);
-                valid_year_end = ovlpRow.gh_photo_year - 1;
-                valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-RAISE NOTICE '---------';
-RAISE NOTICE 'AAA1 newerPoly valid_time=%', valid_time;
-RAISE NOTICE '---------';
-                RETURN NEXT;
-              END IF;
-
-              -- A newer part is always the current part minus the newest overlapping polygon
-              newerPoly = ST_Difference(newerPoly, ovlpRow.gh_geom);
-              
-              -- This part begins the same year as the newest overlapping polygon
-              newerPolyYearBegin = ovlpRow.gh_photo_year;
-              
-            END IF;
-            -- Set or reset the end of the older polygon if it was not set
-            olderPolyYearEnd = least(olderPolyYearEnd, ovlpRow.gh_photo_year - 1);
-        END IF;
-        oldOvlpPolyYear = ovlpRow.gh_photo_year;
-      END LOOP; -- ovlpRow
-
-RAISE NOTICE '---------';
-      ---------------------------------------------------------------------------
-      -- Return the last new polygon (newestPoly, oldCurrentYear, ovlpPoly.photoYear)
-      --IF NOT ST_IsEmpty(coalesce(newerPoly, currentPoly)) THEN
-      IF NOT ST_IsEmpty(newerPoly) THEN
-        --wkb_geometry = coalesce(newerPoly, currentPoly);
-        wkb_geometry = newerPoly;
-        poly_type = '2_newer2';
-        valid_year_begin = newerPolyYearBegin;
-        valid_year_end = refYearEnd;
-        valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-RAISE NOTICE 'AAA2 newerPoly valid_time=%', valid_time;
-        RETURN NEXT;
-      END IF;
-
-      ---------------------------------------------------------------------------
-      -- Return the current polygon (olderPoly, refYearBegin, currentPoly.photoYear - 1))
-      IF NOT ST_IsEmpty(olderPoly) THEN
-        wkb_geometry = olderPoly;
-        poly_type = '1_older';
-        valid_year_begin = refYearBegin;
-        valid_year_end = olderPolyYearEnd;
-        valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-RAISE NOTICE 'CCC olderPoly valid_time=%', valid_time;
-        RETURN NEXT;
-      END IF;
-    END LOOP; -- currentRow
-    RETURN;
-  END
-$$ LANGUAGE plpgsql VOLATILE;
-
-------------------------------------------------------------------
 -- TT_RowIsValid()
 ------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
@@ -248,10 +36,16 @@ $$ LANGUAGE plpgsql VOLATILE;
 --SELECT TT_RowIsValid(ARRAY[att]) FROM test_geohistory;
 
 ------------------------------------------------------------------
--- TT_HasPrecedence2()
+-- TT_HasPrecedence()
+--
+-- Determine if the first polygon has precedence over the second one based on:
+  -- 1) their inventory rank: an established priority rank among inventories 
+  --    determines which polygon has priority.
+  -- 2) their unique ID: when inventory ranks are equivalent for both polygons, 
+  --    the polygon with the highest ID has priority.
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_HasPrecedence2(text, text, text, text, boolean, boolean);
-CREATE OR REPLACE FUNCTION TT_HasPrecedence2(
+DROP FUNCTION IF EXISTS TT_HasPrecedence(text, text, text, text, boolean, boolean);
+CREATE OR REPLACE FUNCTION TT_HasPrecedence(
   inv1 text, 
   uid1 text,
   inv2 text,
@@ -265,24 +59,24 @@ RETURNS boolean AS $$
     refUID text = 'A';
   BEGIN
       IF inv1 IS NULL THEN
-        RAISE NOTICE 'TT_HasPrecedence2() WARNING : inv1 for polygon ''%'' is NULL. Assigning %...', uid1, refInv;
+        RAISE NOTICE 'TT_HasPrecedence() WARNING : inv1 for polygon ''%'' is NULL. Assigning %...', uid1, refInv;
         inv1 = refInv;
       END IF;
       IF inv2 IS NULL THEN
-        RAISE NOTICE 'TT_HasPrecedence2() WARNING : inv2 for polygon ''%'' is NULL. Assigning %...', uid2, refInv;
+        RAISE NOTICE 'TT_HasPrecedence() WARNING : inv2 for polygon ''%'' is NULL. Assigning %...', uid2, refInv;
         inv2 = refInv;
       END IF;
       IF inv1 = inv2 THEN
         IF uid1 IS NULL THEN
-          RAISE NOTICE 'TT_HasPrecedence2() WARNING : uid1 is NULL. Assigning %...', refUID;
+          RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 is NULL. Assigning %...', refUID;
           uid1 = refUID;
         END IF;
         IF uid2 IS NULL THEN
-          RAISE NOTICE 'TT_HasPrecedence2() WARNING : uid2 is NULL. Assigning %...', refUID;
+          RAISE NOTICE 'TT_HasPrecedence() WARNING : uid2 is NULL. Assigning %...', refUID;
           uid2 = refUID;
         END IF;
         IF uid1 = uid2 THEN
-          RAISE NOTICE 'TT_HasPrecedence2() WARNING : uid1 and uid2 are equal (%). Can''t give precedence to a polygon. Returning FALSE...', uid1;
+          RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 and uid2 are equal (%). Can''t give precedence to a polygon. Returning FALSE...', uid1;
           RETURN FALSE;
         END IF;
       END IF;
@@ -298,28 +92,28 @@ END IF;
   END
 $$ LANGUAGE plpgsql VOLATILE;
 
---SELECT TT_HasPrecedence2(NULL, NULL, NULL, NULL); -- false
---SELECT TT_HasPrecedence2('AB06', NULL, NULL, NULL); -- true
---SELECT TT_HasPrecedence2('AB06', NULL, 'AB06', NULL); -- false
---SELECT TT_HasPrecedence2('AB06', NULL, 'AB16', NULL); -- false
---SELECT TT_HasPrecedence2('AB16', NULL, 'AB06', NULL); -- true
---SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', NULL); -- true
---SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', 'AA'); -- false
---SELECT TT_HasPrecedence2('AB06', 'AA', 'AB06', 'AB'); -- false
---SELECT TT_HasPrecedence2('AB06', 'AB', 'AB06', 'AA'); -- true
---SELECT TT_HasPrecedence2('AB06', '2', 'AB06', '3'); -- false
---SELECT TT_HasPrecedence2('AB06', '3', 'AB06', '2'); -- true
---SELECT TT_HasPrecedence2('2', '2', '13', '13');  -- true
---SELECT TT_HasPrecedence2('2', '2', '13', '13', true, true); -- false
---SELECT TT_HasPrecedence2('13', '2', '2', '13', true, true); -- true
+--SELECT TT_HasPrecedence(NULL, NULL, NULL, NULL); -- false
+--SELECT TT_HasPrecedence('AB06', NULL, NULL, NULL); -- true
+--SELECT TT_HasPrecedence('AB06', NULL, 'AB06', NULL); -- false
+--SELECT TT_HasPrecedence('AB06', NULL, 'AB16', NULL); -- false
+--SELECT TT_HasPrecedence('AB16', NULL, 'AB06', NULL); -- true
+--SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', NULL); -- true
+--SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
+--SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
+--SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
+--SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
+--SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
+--SELECT TT_HasPrecedence('2', '2', '13', '13');  -- true
+--SELECT TT_HasPrecedence('2', '2', '13', '13', true, true); -- false
+--SELECT TT_HasPrecedence('13', '2', '2', '13', true, true); -- true
 
---SELECT TT_HasPrecedence2('1', '2', '1', '13', true, false); -- true
---SELECT TT_HasPrecedence2('1', '13', '1', '2', true, false); -- false
---SELECT TT_HasPrecedence2('1', '2', '1', '13', true, true); -- false
---SELECT TT_HasPrecedence2('1', '13', '1', '2', true, true); -- true
+--SELECT TT_HasPrecedence('1', '2', '1', '13', true, false); -- true
+--SELECT TT_HasPrecedence('1', '13', '1', '2', true, false); -- false
+--SELECT TT_HasPrecedence('1', '2', '1', '13', true, true); -- false
+--SELECT TT_HasPrecedence('1', '13', '1', '2', true, true); -- true
 
 ------------------------------------------------------------------
--- TT_GeoHistory2()
+-- TT_GeoHistory()
 ------------------------------------------------------------------
 -- Logic table
 -- Overlapping polygons are treated starting with 1) the same year 
@@ -410,8 +204,8 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
 -- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistory2(name, name, name, name, name, text, text[]);
-CREATE OR REPLACE FUNCTION TT_GeoHistory2(
+DROP FUNCTION IF EXISTS TT_GeoHistory(name, name, name, name, name, text, text[]);
+CREATE OR REPLACE FUNCTION TT_GeoHistory(
   schemaName name,
   tableName name,
   idColName name,
@@ -513,9 +307,9 @@ RAISE NOTICE '333 id=%, py=%, inv=%, isvalid=%', currentRow.gh_row_id, currentRo
 RAISE NOTICE '444 id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;
         -- CASE B - (A - B) RefYB -> RefYE (see logic table above)
         IF (ovlpRow.gh_photo_year = currentRow.gh_photo_year AND 
-           ((TT_HasPrecedence2(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
+           ((TT_HasPrecedence(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
             NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
-           (NOT TT_HasPrecedence2(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
+           (NOT TT_HasPrecedence(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
             (NOT currentRow.gh_is_valid OR (currentRow.gh_is_valid AND ovlpRow.gh_is_valid))))) OR
            (ovlpRow.gh_photo_year < currentRow.gh_photo_year AND NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
            (ovlpRow.gh_photo_year > currentRow.gh_photo_year AND NOT currentRow.gh_is_valid) THEN
@@ -590,7 +384,7 @@ RAISE NOTICE 'CCC prePoly valid_time=%', valid_time;
   END
 $$ LANGUAGE plpgsql VOLATILE;
 
---SELECT * FROM TT_GeoHistoryOblique2('public', 'test_geohistory3', 'id', 'geom', 'valid_year', ARRAY['att'], 'att', 0.1)
+--SELECT * FROM TT_GeoHistoryOblique('public', 'test_geohistory3', 'id', 'geom', 'valid_year', ARRAY['att'], 'att', 0.1)
 --ORDER BY id, valid_year_begin;
 
 --SELECT id gh_row_id, geom gh_geom, valid_year gh_photo_year, TT_RowIsValid(ARRAY[att]) gh_is_valid, * 
@@ -614,38 +408,8 @@ $$ LANGUAGE sql VOLATILE;
 ------------------------------------------------------------------
 -- TT_GeoHistoryOblique()
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistoryOblique(name, name, name, name, name, double precision, double precision);
+DROP FUNCTION IF EXISTS TT_GeoHistoryOblique(name, name, name, name, name, text, text[], double precision, double precision);
 CREATE OR REPLACE FUNCTION TT_GeoHistoryOblique(
-  schemaName name,
-  tableName name,
-  idColName name,
-  geoColName name,
-  photoYearColName name,
-  z_factor double precision DEFAULT 0.4,
-  y_factor double precision DEFAULT 0.4
-)
-RETURNS TABLE (id text, 
-               wkb_geometry geometry, 
-               poly_type text,
-               ref_year int,
-               valid_year_begin int, 
-               valid_year_end int, 
-               valid_time text) AS $$
-    SELECT id, 
-           TT_GeoOblique(wkb_geometry, valid_year_begin, z_factor, y_factor) wkb_geometry,
-           poly_type,
-           ref_year,
-           valid_year_begin, 
-           valid_year_end,
-           valid_time
-    FROM TT_GeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName);
-$$ LANGUAGE sql VOLATILE;
-
-------------------------------------------------------------------
--- TT_GeoHistoryOblique2()
-------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistoryOblique2(name, name, name, name, name, text, text[], double precision, double precision);
-CREATE OR REPLACE FUNCTION TT_GeoHistoryOblique2(
   schemaName name,
   tableName name,
   idColName name,
@@ -672,30 +436,5 @@ RETURNS TABLE (id text,
            valid_year_begin, 
            valid_year_end,
            valid_time
-    FROM TT_GeoHistory2(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
+    FROM TT_GeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
 $$ LANGUAGE sql VOLATILE;
-
-------------------------------------------------------------------
--- Tests
-------------------------------------------------------------------
-
---SELECT id, 
---       ST_Affine(geom, 1, 1, 0, 0.4, 0, (valid_year - 2000) * 0.4) geom,
---       valid_year
---FROM test_geohistory
---ORDER BY ref_year DESC, poly_type DESC
---;
-
--- Display flat
---SELECT *, id || '_' || valid_year idy FROM test_geohistory;
-
--- Display oblique
---SELECT TT_GeoOblique(geom, valid_year), id || '_' || valid_year idy FROM test_geohistory;
-
--- Display flat history
---SELECT * FROM TT_GeoHistory('public', 'test_geohistory', 'id', 'geom', 'valid_year');
-
--- Display oblique history
---SELECT * FROM TT_GeoHistoryOblique('public', 'test_geohistory', 'id', 'geom', 'valid_year');
-
-
