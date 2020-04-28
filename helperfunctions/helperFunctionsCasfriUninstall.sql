@@ -49,6 +49,7 @@ DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_yvi01_non_for_veg_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text);
+DROP FUNCTION IF EXISTS TT_fvi01_countOfNotNull(text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

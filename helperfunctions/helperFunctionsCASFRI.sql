@@ -1289,6 +1289,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'tie01_not_etage_layer1_validation' THEN '-8887'
                   WHEN rulelc = 'tie01_not_etage_dens_layers_validation' THEN '-8887'
                   WHEN rulelc = 'avi01_stand_structure_validation' THEN '8887'
+                  WHEN rulelc = 'fvi01_stand_structure_validation' THEN '-8887'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1301,6 +1302,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'yvi01_nat_non_veg_validation' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'yvi01_nfl_soil_moisture_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'avi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -1751,10 +1753,10 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_avi01_stand_structure_validation(text, text, text, text)
 --
+-- stand_structure text
 -- nfl_l1_1 text
 -- nfl_l1_2 text
 -- nfl_l1_3 text
--- stand_structure text
 --
 -- Catch the cases where stand structure will be NOT_APPLICABLE because row is NFL.
 -- Will be every row where overstory attributes are NFL. Except those
@@ -1765,10 +1767,11 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text,text,text, text);
 CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_validation(
+  stand_structure text,
   nfl_l1_1 text,
   nfl_l1_2 text,
   nfl_l1_3 text,
-  stand_structure text
+  nfl_l1_4 text
 )
 RETURNS boolean AS $$		
   BEGIN
@@ -1778,7 +1781,40 @@ RETURNS boolean AS $$
     END IF;
     
     -- if overstory species is NFL (and stand structure not H), return FALSE 
-    IF tt_notEmpty(nfl_l1_1) OR tt_notEmpty(nfl_l1_2) OR tt_notEmpty(nfl_l1_3) THEN
+    IF tt_notEmpty(nfl_l1_1) OR tt_notEmpty(nfl_l1_2) OR tt_notEmpty(nfl_l1_3) OR tt_notEmpty(nfl_l1_4) THEN
+      RETURN FALSE;
+    END IF;    
+    
+    -- other cases return true
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+-- TT_fvi01_stand_structure_validation(text, text)
+--
+-- stand_structure text
+-- nfl text
+--
+-- Catch the cases where stand structure will be NOT_APPLICABLE because row is NFL.
+-- Will be every row where overstory type class attribute has an NFL value. Except those
+-- cases where stand structure is Horizontal.
+--
+-- e.g. TT_fvi01_stand_structure_validation(nfl, stand_structure)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text);
+CREATE OR REPLACE FUNCTION TT_fvi01_stand_structure_validation(
+  stand_structure text,
+  typeclass text
+)
+RETURNS boolean AS $$		
+  BEGIN
+    -- if stand structure is Horozontal, always return true
+    IF stand_structure IN ('H', 'h') THEN
+      RETURN TRUE;
+    END IF;
+    
+    -- if overstory species is NFL (and stand structure not H), return FALSE 
+    IF tt_matchList(typeclass, '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'', ''AP'',''BP'',''EL'',''GP'',''TS'', ''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}') THEN
       RETURN FALSE;
     END IF;    
     
@@ -2659,7 +2695,11 @@ $$ LANGUAGE plpgsql;
 --
 -- stand_structure text
 -- overstory_sp1 text
+-- overstory_sp2 text
+-- overstory_sp3 text
 -- understory sp1 text
+-- understory sp2 text
+-- understory sp3 text
 -- 
 -- AVI includes NFL as a layer, so a forest caopy with understory shrubs is assigned 
 -- a multi story stand. CASFRI would assign it single story.
@@ -2669,32 +2709,101 @@ $$ LANGUAGE plpgsql;
 -- accordingly.
 -- All other cases should be caught in validation.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_yvi01_non_for_veg_translation(text, text, text);
-CREATE OR REPLACE FUNCTION TT_yvi01_non_for_veg_translation(
+--DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_translation(
   stand_structure text,
   overstory_sp1 text,
-  understory_sp1 text
+  overstory_sp2 text,
+  overstory_sp3 text,
+  understory_sp1 text,
+  understory_sp2 text,
+  understory_sp3 text
 )
 RETURNS text AS $$
   DECLARE
-    count int;
+    _count1 int := 0;
+    _count2 int := 0;
+    _count int;
   BEGIN
     
-    count = tt_countOfNotNull(overstory_sp1, understory_sp1, '2', 'FALSE')
+    -- are there any overstory species? (tried forming a tt_countOfNotNull call here but couldn't get it to run correctly)
+    IF tt_notEmpty(overstory_sp1) OR tt_notEmpty(overstory_sp2) OR tt_notEmpty(overstory_sp3) THEN
+      _count1 = 1;
+    END IF;
     
+    -- are there any understory species?
+    IF tt_notEmpty(understory_sp1) OR tt_notEmpty(understory_sp2) OR tt_notEmpty(understory_sp3) THEN
+      _count2 = 1;
+    END IF;
+
+    _count = _count1 + _count2;
+  
     -- if stand structure is H or C, return H or C
     IF stand_structure IN ('H', 'h', 'C', 'c', 'C4', 'C5') THEN
-      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5''}', '{''H'', ''H'', ''C'', ''C'', ''C'', ''C''}')
+      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5''}', '{''H'', ''H'', ''C'', ''C'', ''C'', ''C''}');
     
     -- if stand structure is not H or C, it must be S or M.
     -- if only one species layer, return S (this should always be sp1)
-    ELSIF count = 1 THEN
+    ELSIF _count = 1 THEN
       RETURN 'S';
-    ELSIF count = 2 THEN
+    ELSIF _count = 2 THEN
       RETURN 'M';
     ELSE
       RETURN NULL;
     END IF; 
+  END; 
+$$ LANGUAGE plpgsql;
+-------------------------------------------------------------------------------
+-- TT_fvi01_countOfNotNull(text, text, text, text, text)
+--
+-- vals1 text
+-- vals2 text
+-- typeclas text
+-- min_typeclas text
+-- max_rank_to_consider text
+-- 
+-- Use match list to determine if typeclas and min_typeclas are NFL values.
+-- If they are assign them a string so they are counted as layers. If not assign
+-- NULL.
+-- 
+-- Pass vals1, vals2 and the string/NULLs to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fvi01_countOfNotNull(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_fvi01_countOfNotNull(
+  vals1 text,
+  vals2 text,
+  typeclas text,
+  min_typeclas text,
+  max_rank_to_consider text,
+  zero_is_null text
+)
+RETURNS int AS $$
+  DECLARE
+    nfl_string_list text;
+    _typeclas text;
+    _min_typeclas text;
+  BEGIN
+
+    -- set up nfl_string_list
+    nfl_string_list = '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'',''AP'',''BP'',''EL'',''GP'',''TS'',''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}';
+    
+    -- is typeclas NFL?
+    IF tt_matchList(typeclas, nfl_string_list) THEN
+      _typeclas = 'a_value';
+    ELSE
+      _typeclas = NULL::text;
+    END IF;
+    
+    -- is min_typeclas NFL?
+    IF tt_matchList(min_typeclas, nfl_string_list) THEN
+      _min_typeclas = 'a_value';
+    ELSE
+      _min_typeclas = NULL::text;
+    END IF;
+    
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(vals1, vals2, _typeclas, _min_typeclas, max_rank_to_consider, zero_is_null);
+
   END; 
 $$ LANGUAGE plpgsql;
 
