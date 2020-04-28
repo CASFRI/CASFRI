@@ -1288,6 +1288,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'tie01_not_etage_notnull_validation' THEN '-8888'
                   WHEN rulelc = 'tie01_not_etage_layer1_validation' THEN '-8887'
                   WHEN rulelc = 'tie01_not_etage_dens_layers_validation' THEN '-8887'
+                  WHEN rulelc = 'avi01_stand_structure_validation' THEN '8887'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1299,6 +1300,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'vri01_non_for_veg_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'yvi01_nat_non_veg_validation' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'yvi01_nfl_soil_moisture_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'avi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -1744,6 +1746,44 @@ RETURNS boolean AS $$
     
     RETURN FALSE;
       
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
+-- TT_avi01_stand_structure_validation(text, text, text, text)
+--
+-- nfl_l1_1 text
+-- nfl_l1_2 text
+-- nfl_l1_3 text
+-- stand_structure text
+--
+-- Catch the cases where stand structure will be NOT_APPLICABLE because row is NFL.
+-- Will be every row where overstory attributes are NFL. Except those
+-- cases where stand structure is Horizontal.
+-- Overstory species should always be absent when there is overstory NFL.
+-- If overstory is NFL then understory should not have sp1, unless stand structure is Horizontal.
+-- e.g. TT_avi01_stand_structure_validation(nfl_l1_1, nfl_l1_2, nfl_l1_2, stand_structure)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text,text,text, text);
+CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_validation(
+  nfl_l1_1 text,
+  nfl_l1_2 text,
+  nfl_l1_3 text,
+  stand_structure text
+)
+RETURNS boolean AS $$		
+  BEGIN
+    -- if stand structure is Horozontal, always return true
+    IF stand_structure IN ('H', 'h') THEN
+      RETURN TRUE;
+    END IF;
+    
+    -- if overstory species is NFL (and stand structure not H), return FALSE 
+    IF tt_notEmpty(nfl_l1_1) OR tt_notEmpty(nfl_l1_2) OR tt_notEmpty(nfl_l1_3) THEN
+      RETURN FALSE;
+    END IF;    
+    
+    -- other cases return true
+    RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -2611,6 +2651,50 @@ RETURNS text AS $$
     
     RETURN NULL;
             
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_avi01_stand_structure_translation(text, text, text, text)
+--
+-- stand_structure text
+-- overstory_sp1 text
+-- understory sp1 text
+-- 
+-- AVI includes NFL as a layer, so a forest caopy with understory shrubs is assigned 
+-- a multi story stand. CASFRI would assign it single story.
+--
+-- If stand structure is H or C, return H or C.
+-- Then count presence of overstoty and understory forest layers and return S or M
+-- accordingly.
+-- All other cases should be caught in validation.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_non_for_veg_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_yvi01_non_for_veg_translation(
+  stand_structure text,
+  overstory_sp1 text,
+  understory_sp1 text
+)
+RETURNS text AS $$
+  DECLARE
+    count int;
+  BEGIN
+    
+    count = tt_countOfNotNull(overstory_sp1, understory_sp1, '2', 'FALSE')
+    
+    -- if stand structure is H or C, return H or C
+    IF stand_structure IN ('H', 'h', 'C', 'c', 'C4', 'C5') THEN
+      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5''}', '{''H'', ''H'', ''C'', ''C'', ''C'', ''C''}')
+    
+    -- if stand structure is not H or C, it must be S or M.
+    -- if only one species layer, return S (this should always be sp1)
+    ELSIF count = 1 THEN
+      RETURN 'S';
+    ELSIF count = 2 THEN
+      RETURN 'M';
+    ELSE
+      RETURN NULL;
+    END IF; 
   END; 
 $$ LANGUAGE plpgsql;
 
