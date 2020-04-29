@@ -156,3 +156,13 @@ SELECT count(*) FROM casfri50.dst_all; -- 12748942
 ALTER TABLE casfri50.dst_all 
 ADD PRIMARY KEY (cas_id, layer);
 --------------------------------------------------------------------------
+-- Add some indexes
+CREATE INDEX dst_all_casid_idx
+ON casfri50.dst_all USING btree(cas_id);
+
+CREATE INDEX dst_all_inventory_idx
+ON casfri50.dst_all USING btree(left(cas_id, 4));
+    
+CREATE INDEX dst_all_province_idx
+ON casfri50.dst_all USING btree(left(cas_id, 2));
+--------------------------------------------------------------------------

@@ -135,3 +135,13 @@ SELECT count(*) FROM casfri50.eco_all; -- 184113
 -- Add primary key constraint
 ALTER TABLE casfri50.eco_all ADD PRIMARY KEY (cas_id);
 --------------------------------------------------------------------------
+-- Add some indexes
+CREATE INDEX eco_all_casid_idx
+ON casfri50.eco_all USING btree(cas_id);
+
+CREATE INDEX eco_all_inventory_idx
+ON casfri50.eco_all USING btree(left(cas_id, 4));
+    
+CREATE INDEX eco_all_province_idx
+ON casfri50.eco_all USING btree(left(cas_id, 2));
+--------------------------------------------------------------------------

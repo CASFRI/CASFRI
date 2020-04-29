@@ -147,3 +147,16 @@ ALTER TABLE casfri50.geo_all ADD PRIMARY KEY (cas_id);
 ALTER TABLE casfri50.geo_all
 ALTER COLUMN geometry TYPE geometry(multipolygon, 900914);
 --------------------------------------------------------------------------
+-- Add some indexes
+CREATE INDEX geo_all_casid_idx
+  ON casfri50.geo_all USING btree(cas_id);
+
+CREATE INDEX geo_all_inventory_idx
+  ON casfri50.geo_all USING btree(left(cas_id, 4));
+    
+CREATE INDEX geo_all_province_idx
+  ON casfri50.geo_all USING btree(left(cas_id, 2));
+
+CREATE INDEX geo_all_geom_idx
+  ON casfri50.geo_all USING gist(geometry);
+--------------------------------------------------------------------------
