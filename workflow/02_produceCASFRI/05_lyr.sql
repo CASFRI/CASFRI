@@ -299,3 +299,13 @@ SELECT count(*) FROM casfri50.lyr_all; -- 14811190
 ALTER TABLE casfri50.lyr_all
 ADD PRIMARY KEY (cas_id, layer);
 --------------------------------------------------------------------------
+-- Add some indexes
+CREATE INDEX lyr_all_casid_idx
+ON casfri50.lyr_all USING btree(cas_id);
+
+CREATE INDEX lyr_all_inventory_idx
+ON casfri50.lyr_all USING btree(left(cas_id, 4));
+    
+CREATE INDEX lyr_all_province_idx
+ON casfri50.lyr_all USING btree(left(cas_id, 2));
+--------------------------------------------------------------------------

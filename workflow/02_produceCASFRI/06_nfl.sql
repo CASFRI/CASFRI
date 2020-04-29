@@ -212,5 +212,17 @@ GROUP BY left(cas_id, 4), layer;
 SELECT count(*) FROM casfri50.nfl_all; -- 15235689
 
 -- Add primary key constraint
-ALTER TABLE casfri50.nfl_all ADD PRIMARY KEY (cas_id, layer);
+ALTER TABLE casfri50.nfl_all
+ADD PRIMARY KEY (cas_id, layer);
 --------------------------------------------------------------------------
+-- Add some indexes
+CREATE INDEX nfl_all_casid_idx
+ON casfri50.nfl_all USING btree(cas_id);
+
+CREATE INDEX nfl_all_inventory_idx
+ON casfri50.nfl_all USING btree(left(cas_id, 4));
+    
+CREATE INDEX nfl_all_province_idx
+ON casfri50.nfl_all USING btree(left(cas_id, 2));
+--------------------------------------------------------------------------
+
