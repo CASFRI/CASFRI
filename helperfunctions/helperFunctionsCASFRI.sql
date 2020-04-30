@@ -2736,9 +2736,9 @@ RETURNS text AS $$
 
     _count = _count1 + _count2;
   
-    -- if stand structure is H or C, return H or C
-    IF stand_structure IN ('H', 'h', 'C', 'c', 'C4', 'C5') THEN
-      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5''}', '{''H'', ''H'', ''C'', ''C'', ''C'', ''C''}');
+    -- if stand structure is H or C, return H or C. Note CX was added so this function can bu re-used in ON02.
+    IF stand_structure IN ('H', 'h', 'C', 'c', 'C4', 'C5', 'CX') THEN
+      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5'', ''CX''}', '{''H'', ''H'', ''C'', ''C'', ''C'', ''C'', ''C''}');
     
     -- if stand structure is not H or C, it must be S or M.
     -- if only one species layer, return S (this should always be sp1)
@@ -2751,6 +2751,16 @@ RETURNS text AS $$
     END IF; 
   END; 
 $$ LANGUAGE plpgsql;
+
+-- single species signature for ON02
+CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_translation(
+  stand_structure text,
+  overstory_sp1 text,
+  understory_sp1 text
+)
+RETURNS text AS $$
+  SELECT TT_avi01_stand_structure_translation(stand_structure, overstory_sp1, NULL::text, NULL::text, understory_sp1, NULL::text, NULL::text);
+$$ LANGUAGE sql;
 -------------------------------------------------------------------------------
 -- TT_fvi01_countOfNotNull(text, text, text, text, text)
 --
