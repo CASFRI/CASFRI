@@ -79,23 +79,23 @@ Table 1. CASFRI schema.
 
 Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  [Click here to view specific error codes for individual attributes](https://edwardsmarc.github.io/CASFRI/specifications/errors/cas_errors_specific.csv).
 
-| Class          | Type               | Description                              | Text code         | Numeric code |
-| -------------- | ------------------ | ---------------------------------------- | ----------------- | ------------ |
-| Special values | -Infinity          | Negative infinity                        | MINUS_INF         | -2222        |
-|                | +Infinity          | Positive infinity                        | PLUS_INF          | -2221        |
-| Missing values | Empty string       | Missing that is not null                 | EMPTY_STRING      | -8889        |
-|                | Null               | Undefined value - true null value        | NULL_VALUE        | -8888        |
-|                | Not applicable     | Target attribute not in source table     | NOT_APPLICABLE    | -8887        |
-|                | Unknown value      | Non-null value that is not known         | UNKNOWN_VALUE     | -8886        |
-| Invalid values | Out of range       | Value is outside the range of values     | OUT_OF_RANGE      | -9999        |
-|                | Not member of set  | Value is not a member of a set or list   | NOT_IN_SET        | -9998        |
-|                | Invalid value      | Invalid value                            | INVALID_VALUE     | -9997        |
-|                | Precision too high | Precision is greater than allowed        | WRONG_PRECISION   | -9996        |
-|                | Wrong data type    | Value is of the wrong data type          | WRONG_TYPE        | -9995        |
-|                | Unused value       | Non-null value that is not used in CAS   | UNUSED_VALUE      | -9994        |
-| Generic        | Translation error  | Generic translation error                | TRANSLATION_ERROR | -3333        |
-| Geometry       | Invalid geometry   | Invalid geometry in one or more polygons | INVALID_GEOMETRY  | -7779        |
-|                | No intersect       | FRI does not intersect any polygons      | NO_INTERSECT      | -7778        |
+| Class          | Type               | Description                                                  | Text code         | Numeric code |
+| -------------- | ------------------ | ------------------------------------------------------------ | ----------------- | ------------ |
+| Special values | -Infinity          | Negative infinity                                            | MINUS_INF         | -2222        |
+|                | +Infinity          | Positive infinity                                            | PLUS_INF          | -2221        |
+| Missing values | Empty string       | Missing that is not null                                     | EMPTY_STRING      | -8889        |
+|                | Null               | Undefined value - true null value                            | NULL_VALUE        | -8888        |
+|                | Not applicable     | Target attribute not in source table or does not apply to this record | NOT_APPLICABLE    | -8887        |
+|                | Unknown value      | Non-null value that is not known                             | UNKNOWN_VALUE     | -8886        |
+| Invalid values | Out of range       | Value is outside the range of values                         | OUT_OF_RANGE      | -9999        |
+|                | Not member of set  | Value is not a member of a set or list                       | NOT_IN_SET        | -9998        |
+|                | Invalid value      | Invalid value                                                | INVALID_VALUE     | -9997        |
+|                | Precision too high | Precision is greater than allowed                            | WRONG_PRECISION   | -9996        |
+|                | Wrong data type    | Value is of the wrong data type                              | WRONG_TYPE        | -9995        |
+|                | Unused value       | Non-null value that is not used in CAS                       | UNUSED_VALUE      | -9994        |
+| Generic        | Translation error  | Generic translation error                                    | TRANSLATION_ERROR | -3333        |
+| Geometry       | Invalid geometry   | Invalid geometry in one or more polygons                     | INVALID_GEOMETRY  | -7779        |
+|                | No intersect       | FRI does not intersect any polygons                          | NO_INTERSECT      | -7778        |
 
 
 
