@@ -1288,8 +1288,6 @@ RETURNS text AS $$
                   WHEN rulelc = 'tie01_not_etage_notnull_validation' THEN '-8888'
                   WHEN rulelc = 'tie01_not_etage_layer1_validation' THEN '-8887'
                   WHEN rulelc = 'tie01_not_etage_dens_layers_validation' THEN '-8887'
-                  WHEN rulelc = 'avi01_stand_structure_validation' THEN '8887'
-                  WHEN rulelc = 'fvi01_stand_structure_validation' THEN '-8887'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
