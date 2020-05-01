@@ -1,7 +1,6 @@
 .gitignore
 config.bat
 config.sh
-sampleWorkFlow_pv.sql
 prv/
 docs/specifications/attributes/
 docs/specifications/inventories/
