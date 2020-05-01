@@ -2,7 +2,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_no);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_no, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,notNull(poly_no),copyText(poly_no),Copies source value to ORIG_STAND_ID,TRUE
-4,STAND_STRUCTURE,text,true(),copyText('S'),"Since NUM_OF_LAYERS is always 1, stand structure is always S",TRUE
+4,STAND_STRUCTURE,text,"matchList(type_lnd, {'VF'}|NOT_APPLICABLE)",copyText('S'),"Since NUM_OF_LAYERS is always 1, stand structure is always S for forested polygons. Validation applies NOT_APPLICABLE unless polygon is forested.",TRUE
 5,NUM_OF_LAYERS,integer,true(),copyInt(1),Always 1,TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),No source attribute for MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
