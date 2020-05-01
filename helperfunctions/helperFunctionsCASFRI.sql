@@ -1203,14 +1203,15 @@ RETURNS TABLE (ttable text,
     nb int = 1;
     nb2 int = 1;
   BEGIN
+    -- Handle when only one keyword parameter is provided instead of a schema and a table
     IF transTableList IS NULL AND lower(schemaName) IN ('cas', 'lyr', 'nfl', 'dst', 'eco', 'geo') THEN
-      transTableList = 'ab_avi01_' || schemaName || ', ' || 
-                       'nt_fvi01_' || schemaName || ', ' || 
-                       'nb_nbi01_' || schemaName || ', ' || 
-                       'bc_vri01_' || schemaName || ', ' || 
-                       'on_fim02_' || schemaName || ', ' || 
-                       'sk_utm01_' || schemaName || ', ' || 
-                       'yt_yvi01_' || schemaName;
+      transTableList = 'ab_avi01_' || lower(schemaName) || ', ' || 
+                       'nt_fvi01_' || lower(schemaName) || ', ' || 
+                       'nb_nbi01_' || lower(schemaName) || ', ' || 
+                       'bc_vri01_' || lower(schemaName) || ', ' || 
+                       'on_fim02_' || lower(schemaName) || ', ' || 
+                       'sk_utm01_' || lower(schemaName) || ', ' || 
+                       'yt_yvi01_' || lower(schemaName);
       schemaName = 'translation';
                        
     END IF;
