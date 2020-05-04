@@ -1,6 +1,6 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(drain);matchList(drain,{'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'})","mapText(drain, {'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'}, {'D','D','D','F','F','F','F','M','M','M','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
+2,SOIL_MOIST_REG,text,"notNull(smr);matchList(smr,{'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'})","mapText(smr, {'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'}, {'D','F','M','F','M','W','D','F','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"countOfNotNull({dummy_sp10, dummy_sp11, dummy_sp12, dummy_sp20, dummy_sp21}, {dummy_u1, dummy_u2}, {dummy_np}, max_layer_number, 'FALSE')","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Layers are the canopy species, understory species, and non-forest types.",TRUE
 5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
@@ -8,6 +8,6 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur,TRUE
 8,HEIGHT_UPPER,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
 9,HEIGHT_LOWER,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
-10,NAT_NON_VEG,text,"notNull(np);notEmpty(np);notMatchList(np, {0}|NULL_VALUE);matchList(np,{3800,5100,3400,5210,5220,5200})","mapText(np, {3800,5100,3400,5210,5220,5200}, {'SA','FL','RK','LA','FL','RI'})",Maps source value to NAT_NON_VEG using list of values. Zero is caught and set to NULL_VALUE.,TRUE
-11,NON_FOR_ANTH,text,"notNull(np);notEmpty(np);notMatchList(np, {0}|NULL_VALUE);matchList(np,{3700,9000,4000})","mapText(np, {3700,9000,4000}, {'OT','OT','CL'})",Maps source value to NON_FOR_ANTH using list of values. Zero is caught and set to NULL_VALUE.,TRUE
-12,NON_FOR_VEG,text,"notNull(np);notEmpty(np);notMatchList(np, {0}|NULL_VALUE);matchList(np,{3300,3500,3600,3900})","mapText(np, {3300,3500,3600,3900}, {'OM','ST','HG','OT'})",Maps source value to NON_FOR_VEG using list of values. Zero is caught and set to NULL_VALUE.,TRUE
+10,NAT_NON_VEG,text,false(),nothingText(),Maps source value to NAT_NON_VEG using list of values. Zero is caught and set to NULL_VALUE.,TRUE
+11,NON_FOR_ANTH,text,false(),nothingText(),Maps source value to NON_FOR_ANTH using list of values. Zero is caught and set to NULL_VALUE.,TRUE
+12,NON_FOR_VEG,text,false(),nothingText(),Maps source value to NON_FOR_VEG using list of values. Zero is caught and set to NULL_VALUE.,TRUE
