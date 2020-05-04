@@ -16,40 +16,40 @@
 CREATE SCHEMA IF NOT EXISTS casfri50_flat;
 -------------------------------------------------------
 -- Create samples of CASFRI50 for development purpose only
---DROP MATERIALIZED VIEW IF EXISTS casfri50_flat.cas_sample CASCADE;
---CREATE MATERIALIZED VIEW casfri50_flat.cas_sample AS
+--DROP MATERIALIZED VIEW IF EXISTS casfri50_flat.cas_sample1 CASCADE;
+--CREATE MATERIALIZED VIEW casfri50_flat.cas_sample1 AS
 --SELECT * 
 --FROM casfri50.cas_all cas
 --TABLESAMPLE SYSTEM ((4000 * 100) / (SELECT count(*) FROM casfri50.cas_all)::double precision) REPEATABLE (1.2);
 
---DROP VIEW IF EXISTS casfri50_flat.dst_sample;
---CREATE VIEW casfri50_flat.dst_sample AS
+--DROP VIEW IF EXISTS casfri50_flat.dst_sample1;
+--CREATE VIEW casfri50_flat.dst_sample1 AS
 --SELECT dst.* 
---FROM casfri50.dst_all dst, casfri50_flat.cas_sample cas
+--FROM casfri50.dst_all dst, casfri50_flat.cas_sample1 cas
 --WHERE dst.cas_id = cas.cas_id;
 
---DROP VIEW IF EXISTS casfri50_flat.eco_sample;
---CREATE VIEW casfri50_flat.eco_sample AS
+--DROP VIEW IF EXISTS casfri50_flat.eco_sample1;
+--CREATE VIEW casfri50_flat.eco_sample1 AS
 --SELECT eco.* 
---FROM casfri50.eco_all eco, casfri50_flat.cas_sample cas
+--FROM casfri50.eco_all eco, casfri50_flat.cas_sample1 cas
 --WHERE eco.cas_id = cas.cas_id;
 
---DROP VIEW IF EXISTS casfri50_flat.lyr_sample;
---CREATE VIEW casfri50_flat.lyr_sample AS
+--DROP VIEW IF EXISTS casfri50_flat.lyr_sample1;
+--CREATE VIEW casfri50_flat.lyr_sample1 AS
 --SELECT lyr.* 
---FROM casfri50.lyr_all lyr, casfri50_flat.cas_sample cas
+--FROM casfri50.lyr_all lyr, casfri50_flat.cas_sample1 cas
 --WHERE lyr.cas_id = cas.cas_id;
 
---DROP VIEW IF EXISTS casfri50_flat.nfl_sample;
---CREATE VIEW casfri50_flat.nfl_sample AS
+--DROP VIEW IF EXISTS casfri50_flat.nfl_sample1;
+--CREATE VIEW casfri50_flat.nfl_sample1 AS
 --SELECT nfl.* 
---FROM casfri50.nfl_all nfl, casfri50_flat.cas_sample cas
+--FROM casfri50.nfl_all nfl, casfri50_flat.cas_sample1 cas
 --WHERE nfl.cas_id = cas.cas_id;
 
---DROP VIEW IF EXISTS casfri50_flat.geo_sample;
---CREATE VIEW casfri50_flat.geo_sample AS
+--DROP VIEW IF EXISTS casfri50_flat.geo_sample1;
+--CREATE VIEW casfri50_flat.geo_sample1 AS
 --SELECT geo.* 
---FROM casfri50.geo_all geo, casfri50_flat.cas_sample cas
+--FROM casfri50.geo_all geo, casfri50_flat.cas_sample1 cas
 --WHERE geo.cas_id = cas.cas_id;
 -------------------------------------------------------
 -- Create a flat table
@@ -63,7 +63,7 @@ DROP MATERIALIZED VIEW IF EXISTS casfri50_flat.cas_flat_one_layer_per_row;
 CREATE MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row AS
 WITH lyr_nfl AS (
   -- Create a LYR_NFL table containing only LYR (707) and NFL (846) rows
-  -- SELECT count(*) FROM casfri50_flat.lyr_sample;
+  -- SELECT count(*) FROM casfri50_flat.lyr_sample1;
   SELECT cas_id,
          soil_moist_reg, structure_per, layer, layer_rank,
          crown_closure_upper, crown_closure_lower, height_upper, height_lower, productive_for,
@@ -73,10 +73,10 @@ WITH lyr_nfl AS (
          'NOT_APPLICABLE' nat_non_veg,
          'NOT_APPLICABLE' non_for_anth,
          'NOT_APPLICABLE' non_for_veg
-  --FROM casfri50_flat.lyr_sample
+  --FROM casfri50_flat.lyr_sample1
   FROM casfri50.lyr_all
   UNION ALL
-  -- SELECT count(*) FROM casfri50_flat.nfl_sample;
+  -- SELECT count(*) FROM casfri50_flat.nfl_sample1;
   SELECT cas_id, 
          soil_moist_reg, structure_per, layer, layer_rank,
          crown_closure_upper, crown_closure_lower, height_upper, height_lower,
@@ -100,7 +100,7 @@ WITH lyr_nfl AS (
          nat_non_veg,
          non_for_anth,
          non_for_veg
-  --FROM casfri50_flat.nfl_sample
+  --FROM casfri50_flat.nfl_sample1
   FROM casfri50.nfl_all
 ), cas_lyr_nfl AS (
   -- LEFT JOIN the cas table (1010 rows) with the lyr_nfl 
@@ -135,7 +135,7 @@ WITH lyr_nfl AS (
          coalesce(nat_non_veg, 'NOT_APPLICABLE') nat_non_veg,
          coalesce(non_for_anth, 'NOT_APPLICABLE') non_for_anth,
          coalesce(non_for_veg, 'NOT_APPLICABLE') non_for_veg
-  --FROM casfri50_flat.cas_sample cas 
+  --FROM casfri50_flat.cas_sample1 cas 
   FROM casfri50.cas_all cas 
   LEFT OUTER JOIN lyr_nfl
   USING (cas_id)
@@ -152,7 +152,7 @@ WITH lyr_nfl AS (
          coalesce(dist_ext_upper_2, -8887) dist_ext_upper_2,
          coalesce(dist_ext_lower_2, -8887) dist_ext_lower_2
   FROM cas_lyr_nfl
-  --LEFT JOIN casfri50_flat.dst_sample dst 
+  --LEFT JOIN casfri50_flat.dst_sample1 dst 
   LEFT JOIN casfri50.dst_all dst 
   ON (cas_lyr_nfl.cas_id = dst.cas_id AND dst.layer = 1)
 ), cas_lyr_nfl_dst_eco AS (
@@ -164,7 +164,7 @@ WITH lyr_nfl AS (
          coalesce(wet_local_mod, 'NOT_APPLICABLE') wet_local_mod,
          coalesce(eco_site, 'NOT_APPLICABLE') eco_site
   FROM cas_lyr_nfl_dst
-  --LEFT JOIN casfri50_flat.eco_sample eco 
+  --LEFT JOIN casfri50_flat.eco_sample1 eco 
   LEFT JOIN casfri50.eco_all eco 
   USING (cas_id)
 )
@@ -172,7 +172,7 @@ WITH lyr_nfl AS (
 SELECT cas_lyr_nfl_dst_eco.*,
        geometry
 FROM cas_lyr_nfl_dst_eco
---LEFT JOIN casfri50_flat.geo_sample geo 
+--LEFT JOIN casfri50_flat.geo_sample1 geo 
 LEFT JOIN casfri50.geo_all geo 
 USING (cas_id);
 
@@ -208,4 +208,14 @@ GROUP BY cas_id;
 
 SELECT *, max(layer) OVER (PARTITION BY cas_id) max_lyr
 FROM casfri50_flat.cas_flat_one_layer_per_row;
--------------------------------------------------------
+--------------------------------------------------------------------------
+-- Make sure the number of layer matches cas.num_of_layers
+SELECT DISTINCT max(layer) layer, max(num_of_layers) num_of_layers
+FROM casfri50_flat.cas_flat_one_layer_per_row
+GROUP BY cas_id;
+
+SELECT cas_id, max(layer) layer, max(num_of_layers) num_of_layers
+FROM casfri50_flat.cas_flat_one_layer_per_row
+GROUP BY cas_id
+HAVING max(layer) != max(num_of_layers);
+

@@ -16,51 +16,53 @@
 CREATE SCHEMA IF NOT EXISTS casfri50_flat;
 -------------------------------------------------------
 -- Create samples of CASFRI50 for development purpose only
-DROP MATERIALIZED VIEW IF EXISTS casfri50_flat.cas_sample2 CASCADE;
-CREATE MATERIALIZED VIEW casfri50_flat.cas_sample2 AS
-SELECT * 
-FROM casfri50.cas_all cas
-TABLESAMPLE SYSTEM ((10000 * 100) / (SELECT count(*) FROM casfri50.cas_all)::double precision) REPEATABLE (1.2);
+--DROP MATERIALIZED VIEW IF EXISTS casfri50_flat.cas_sample2 CASCADE;
+--CREATE MATERIALIZED VIEW casfri50_flat.cas_sample2 AS
+--SELECT * 
+--FROM casfri50.cas_all cas
+--TABLESAMPLE SYSTEM ((10000 * 100) / (SELECT count(*) FROM casfri50.cas_all)::double precision) REPEATABLE (1.2);
 
-DROP VIEW IF EXISTS casfri50_flat.dst_sample2;
-CREATE VIEW casfri50_flat.dst_sample2 AS
-SELECT dst.* 
-FROM casfri50.dst_all dst, casfri50_flat.cas_sample2 cas
-WHERE dst.cas_id = cas.cas_id;
+--DROP VIEW IF EXISTS casfri50_flat.dst_sample2;
+--CREATE VIEW casfri50_flat.dst_sample2 AS
+--SELECT dst.* 
+--FROM casfri50.dst_all dst, casfri50_flat.cas_sample2 cas
+--WHERE dst.cas_id = cas.cas_id;
 
-DROP VIEW IF EXISTS casfri50_flat.eco_sample2;
-CREATE VIEW casfri50_flat.eco_sample2 AS
-SELECT eco.* 
-FROM casfri50.eco_all eco, casfri50_flat.cas_sample2 cas
+--DROP VIEW IF EXISTS casfri50_flat.eco_sample2;
+--CREATE VIEW casfri50_flat.eco_sample2 AS
+--SELECT eco.* 
+--FROM casfri50.eco_all eco, casfri50_flat.cas_sample2 cas
 WHERE eco.cas_id = cas.cas_id;
 
-DROP VIEW IF EXISTS casfri50_flat.lyr_sample2;
-CREATE VIEW casfri50_flat.lyr_sample2 AS
-SELECT lyr.* 
-FROM casfri50.lyr_all lyr, casfri50_flat.cas_sample2 cas
-WHERE lyr.cas_id = cas.cas_id;
+--DROP VIEW IF EXISTS casfri50_flat.lyr_sample2;
+--CREATE VIEW casfri50_flat.lyr_sample2 AS
+--SELECT lyr.* 
+--FROM casfri50.lyr_all lyr, casfri50_flat.cas_sample2 cas
+--WHERE lyr.cas_id = cas.cas_id;
 
-DROP VIEW IF EXISTS casfri50_flat.nfl_sample2;
-CREATE VIEW casfri50_flat.nfl_sample2 AS
-SELECT nfl.* 
-FROM casfri50.nfl_all nfl, casfri50_flat.cas_sample2 cas
-WHERE nfl.cas_id = cas.cas_id;
+--DROP VIEW IF EXISTS casfri50_flat.nfl_sample2;
+--CREATE VIEW casfri50_flat.nfl_sample2 AS
+--SELECT nfl.* 
+--FROM casfri50.nfl_all nfl, casfri50_flat.cas_sample2 cas
+--WHERE nfl.cas_id = cas.cas_id;
 
-DROP VIEW IF EXISTS casfri50_flat.geo_sample2;
-CREATE VIEW casfri50_flat.geo_sample2 AS
-SELECT geo.* 
-FROM casfri50.geo_all geo, casfri50_flat.cas_sample2 cas
-WHERE geo.cas_id = cas.cas_id;
+--DROP VIEW IF EXISTS casfri50_flat.geo_sample2;
+--CREATE VIEW casfri50_flat.geo_sample2 AS
+--SELECT geo.* 
+--FROM casfri50.geo_all geo, casfri50_flat.cas_sample2 cas
+--WHERE geo.cas_id = cas.cas_id;
 -------------------------------------------------------
 -- Create a flat table
 --
 -- This version has only one row per CAS_ID. LYR layer 1, 
--- LYR layer 2, NFL layer 1 and NFL layer 2 are all 
--- stored in the same row, in separate columns.
--- NB01 dst on layer 2 are left out.
+-- LYR layer 2, NFL layer 1 and NFL layer 2, DST and ECO 
+-- data are all stored in the same row, in separate columns.
+-- Third (and higher) NFL layers and layer 2 NB01 DST are 
+-- left out.
+--
+-- The query is basically a big LEFT JOIN from the cas_all 
+-- table to each of those layers.
 -------------------------------------------------------
-SELECT count(*) FROM casfri50_flat.cas_sample; -- 3464
-
 DROP MATERIALIZED VIEW IF EXISTS casfri50_flat.cas_flat_all_layers_same_row;
 CREATE MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row AS
 WITH cas_lyr1 AS (
@@ -205,3 +207,37 @@ FROM cas_lyr1_lyr2_nfl1_nfl2_dst_eco cas
 LEFT JOIN casfri50.geo_all geo 
 USING (cas_id);
 
+-- Have a look at a sample
+SELECT * 
+FROM casfri50_flat.cas_flat_all_layers_same_row
+TABLESAMPLE SYSTEM ((100 * 100) / (SELECT count(*) FROM casfri50_flat.cas_flat_all_layers_same_row)::double precision) 
+REPEATABLE (1.2)
+ORDER BY cas_id;
+
+-- Make sure cas_flat_one_layer_per_row has the right count (XXXX, 17976421)
+SELECT count(*) 
+FROM casfri50.cas_all;
+
+SELECT count(*) 
+FROM casfri50_flat.cas_flat_all_layers_same_row;
+
+--------------------------------------------------------------------------
+-- Add some indexes
+CREATE INDEX cas_flat_all_layers_same_row_casid_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING btree(cas_id);
+
+CREATE INDEX cas_flat_all_layers_same_row_inventory_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 4));
+    
+CREATE INDEX cas_flat_all_layers_same_row_province_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 2));
+
+CREATE INDEX cas_flat_all_layers_same_row_geom_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING gist(geometry);
+--------------------------------------------------------------------------
+-- Check the completeness of STAND_PHOTO_YEAR
+SELECT DISTINCT left(cas_id, 4) inv, stand_photo_year
+FROM casfri50_flat.cas_flat_all_layers_same_row
+ORDER BY inv, stand_photo_year;
+
+-- All inventories except AB06 and BC08 have holes in STAND_PHOTO_YEAR assignation.
