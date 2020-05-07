@@ -1095,13 +1095,13 @@ RETURNS text AS $$
         whereInAttrList = whereInAttrList || ')'  || chr(10) || '       ' || 'AND'  || chr(10) || indentStr || '(';
         attCount = 0;
       ELSE
-        IF attCount != 1 THEN
-          whereInAttrList = whereInAttrList || ' OR ' || chr(10) || indentStr;
-        END IF;
         IF NOT trimmedAttName = ANY (sourceTableCols) THEN
           RAISE NOTICE 'WARNING TT_CreateFilterView(): ''whereInAttrList'' parameter''s ''%'' attribute not found in table ''%.%''. Removed from the WHERE clause...', trimmedAttName, schemaName, tableName;
           --RETURN 'ERROR TT_CreateFilterView(): ''whereInAttrList'' parameter''s ''' || trimmedAttName || ''' attribute not found in table ''' || schemaName || '.' || tableName || '''...';
         ELSE
+          IF attCount != 1 THEN
+            whereInAttrList = whereInAttrList || ' OR ' || chr(10) || indentStr;
+          END IF;
           whereInAttrList = whereInAttrList || '(TT_NotEmpty(' || trimmedAttName || '::text) AND ' || trimmedAttName || '::text != ''0'')';
         END IF;
       END IF;
