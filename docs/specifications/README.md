@@ -340,9 +340,9 @@ The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was 
 The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
 
-### cas_id
+### CAS_ID
 
-The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
 - Inventory id e.g., AB06
 - Source filename i.e., name of shapefile or geodatabase
@@ -360,7 +360,7 @@ Notes:
 
 
 
-### orig_stand_id
+### ORIG_STAND_ID
 
 Original stand identification - unique number for each polygon within the original inventory.
 
@@ -370,7 +370,7 @@ Original stand identification - unique number for each polygon within the origin
 
 
 
-### stand_structure
+### STAND_STRUCTURE
 
 Structure is the physical arrangement or vertical pattern of organization of the vegetation within a polygon. A stand can be identified as single layered, multilayered, complex, or horizontal. A single layered stand has stem heights that do not vary significantly and the vegetation has only one main canopy layer.
 
@@ -389,7 +389,7 @@ Horizontal structure represents vegetated or non-vegetated land with two or more
 
 
 
-### num_of_layers  
+### NUM_OF_LAYERS  
 
 Number of Layers is an attribute related to stand structure and identifies how many layers have been identified for a particular polygon.  
 
@@ -399,7 +399,7 @@ Number of Layers is an attribute related to stand structure and identifies how m
 
 
 
-### identification_id
+### IDENTIFICATION_ID
 
 Unique number for a particular inventory section.
 
@@ -409,7 +409,7 @@ Unique number for a particular inventory section.
 
 
 
-### map_sheet_id
+### MAP_SHEET_ID
 
 Map sheet identification according to original naming convention for an inventory.
 
@@ -419,7 +419,7 @@ Map sheet identification according to original naming convention for an inventor
 
 
 
-### casfri_area
+### CASFRI_AREA
 
 The attribute **casfri_area** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
@@ -429,9 +429,9 @@ The attribute **casfri_area** measures the area of each polygon in hectares (ha)
 
 
 
-### casfri_perimeter
+### CASFRI_PERIMETER
 
-The attribute **casfri_perimeter** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
+The attribute **CASFRI_PERIMETER** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
 | casfri_perimeter                        | values          |
 | :-------------------------------------- | :-------------- |
@@ -439,9 +439,9 @@ The attribute **casfri_perimeter** measures the perimeter of each polygon in met
 
 
 
-### src_inv_area
+### SRC_INV_AREA
 
-The attribute **src_inv_area** measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is measured to 2 decimal places.
+The attribute **SRC_INV_AREA** measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is measured to 2 decimal places.
 
 | src_inv_area                          | values        |
 | :------------------------------------ | :------------ |
@@ -449,9 +449,9 @@ The attribute **src_inv_area** measures the area of each polygon in hectares (ha
 
 
 
-### stand_photo_year
+### STAND_PHOTO_YEAR
 
-The attribute **stand_photo_year** is a identifies the year in which the aerial photography was conducted for a particular polygon. This is in contrast to photo_year_start and photo_year_end which identify the interval for when the inventory was completed.
+The attribute **STAND_PHOTO_YEAR** is a identifies the year in which the aerial photography was conducted for a particular polygon. This is in contrast to photo_year_start and photo_year_end which identify the interval for when the inventory was completed.
 
 | stand_photo_year                                             | values      |
 | :----------------------------------------------------------- | :---------- |
@@ -466,9 +466,9 @@ Forest layer attributes.
 
 
 
-### cas_id  
+### CAS_ID
 
-The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
 - Inventory id e.g., AB06
 - Source filename i.e., name of shapefile or geodatabase
@@ -486,14 +486,14 @@ Notes:
 
 
 
-### structure_per
+### STRUCTURE_PER
 
-The attribute **structure_per** is assigned when a horizontal structured polygon is identified. It is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
+The attribute **STRUCTURE_PER** is assigned when a horizontal structured polygon is identified. It is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
 
 | structure_per                                                | values  |
 | :----------------------------------------------------------- | :------ |
-| When **stand_structure** = "H", used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 100 |
-| When **stand_structure** = "S", "M", "C", value = 100 i.e., when there is no horizontal structure. | 100     |
+| When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 100 |
+| When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal structure. | 100     |
 
 Notes:
 
@@ -504,14 +504,14 @@ Notes:
 
 
 
-### structure_range
+### STRUCTURE_RANGE
 
-The attribute **structure_range** is assigned when a complex structured polygon is identified. It is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.
+The attribute **STRUCTURE_RANGE** is assigned when a complex structured polygon is identified. It is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.
 
 | structure_range                                              | values |
 | :----------------------------------------------------------- | :----- |
-| When **stand_structure** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as the difference between the mean or median heights of the upper and lower layers within the complex stand. | 1 - 99 |
-| When **stand_structure** = "S", "M", or "H", value = -8887 i.e., not applicable | -8887  |
+| When **STAND_STRUCTURE** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as the difference between the mean or median heights of the upper and lower layers within the complex stand. | 1 - 99 |
+| When **STAND_STRUCTURE** = "S", "M", or "H", value = -8887 i.e., not applicable | -8887  |
 
 Notes:
 
@@ -520,9 +520,9 @@ Notes:
 
 
 
-### layer
+### LAYER
 
-Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.
+LAYER is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.
 
 | layer                                                        | values   |
 | :----------------------------------------------------------- | :------- |
@@ -535,9 +535,9 @@ Notes:
 
 
 
-### layer_rank
+### LAYER_RANK
 
-Layer Rank value is an attribute related to stand structure and refers to layer importance for forest management planning, operational, or silvicultural purposes. When a Layer Rank is not specified, layers can be sorted in order of importance by layer number.  
+Layer rank value is an attribute related to stand structure and refers to layer importance for forest management planning, operational, or silvicultural purposes. When a Layer Rank is not specified, layers can be sorted in order of importance by layer number.  
 
 | layer_rank                                                   | values |
 | :----------------------------------------------------------- | :----- |
@@ -550,7 +550,7 @@ Layer Rank value is an attribute related to stand structure and refers to layer 
 
 
 
-### soil_moist_reg  
+### SOIL_MOIST_REG  
 
 Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. *The detailed soil moisture regime table and CAS conversion is presented in Appendix 4*.  
 
@@ -566,7 +566,7 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 
 
 
-### crown_closure 
+### CROWN_CLOSURE 
 
 Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer.Crown closure is commonly represented by classes and differs across Canada therefore, CAS recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.  
 
@@ -577,7 +577,7 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 
 
 
-### height  
+### HEIGHT
 
 Stand height is based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6. 
 
@@ -588,7 +588,7 @@ Stand height is based on an average height of leading species of dominant and co
 
 
 
-### productive_for  
+### PRODUCTUVE_FOR
 
 Unproductive forest is forest land not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. The detailed table, CAS codes, and conversion rule sets are presented in Appendix 12.  
 
@@ -607,7 +607,7 @@ Notes:
 
 
 
-### species
+### SPECIES
 
 Species composition is the percentage of each tree species represented within a forested polygon by layer. Species are listed in descending order according to their contribution based on crown closure, basal area, or volume depending on the province or territory. A total of ten species can be used in one label. The CAS attribute will capture estimation to the nearest percent; however, most inventories across Canada describe species to the nearest 10% (in actual percent value or multiples of 10). Species composition for each forest stand and layer must sum to 100%.  
 
@@ -621,7 +621,7 @@ CAS species codes are derived from the species' Latin name using the first four 
 
 
 
-### species_per
+### SPECIES_PER
 
 | species_per_1 - species_per_10                                                                                                                                      | values |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
@@ -630,7 +630,7 @@ CAS species codes are derived from the species' Latin name using the first four 
 
 
 
-### origin
+### ORIGIN
 
 Stand origin is the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CAS origin. The detailed stand origin table is presented in Appendix 10. 
 
@@ -641,7 +641,7 @@ Stand origin is the average initiation year of codominant and dominant trees of 
 
 
 
-### site_class  
+### SITE_CLASS
 
 Site class is an estimate of the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography, climate, elevation, and moisture availability. See Appendix 11 for the detailed site table.  
 
@@ -654,7 +654,7 @@ Site class is an estimate of the potential productivity of land for tree growth.
 
 
 
-### site_index  
+### SITE_INDEX
 
 Site Index is an estimate of site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada. See Appendix 11 for the detailed site table.  
 
@@ -670,7 +670,7 @@ Non-forested attributes.
 
 
 
-### cas_id
+### CAS_ID
 
 The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
 
@@ -680,7 +680,7 @@ The attribute cas_id is an alpha-numeric identifier that is unique for each poly
 
 
 
-### soil_moist_reg  
+### SOIL_MOSIT_REG
 
 Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. The detailed soil moisture regime table and CAS conversion is presented in Appendix 4.  
 
@@ -695,7 +695,7 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 
 
 
-### structure_per  
+### STRUCTURE_PER
 
 The attribute **structure_per** is assigned when a complex or horizontal structured polygon is identified. Stand structure percent is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
 
@@ -705,7 +705,7 @@ The attribute **structure_per** is assigned when a complex or horizontal structu
 
 
 
-### layer  
+### LAYER
 
 Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on.  
 
@@ -722,7 +722,7 @@ Notes:
 
 
 
-### layer_rank  
+### LAYER_RANK  
 
 Layer Rank value is an attribute related to stand structure and refers to layer importance for forest management planning, operational, or silvicultural purposes. When a Layer Rank is not specified, layers can be sorted in order of importance by layer number.  
 
@@ -738,7 +738,7 @@ Layer Rank value is an attribute related to stand structure and refers to layer 
 
 
 
-### crown_closure _upper, crown_closure_lower 
+### CROWN_CLOSURE 
 
 Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer.Crown closure is commonly represented by classes and differs across Canada therefore, CAS recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.  
 
@@ -750,7 +750,7 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 
 
 
-### height_upper, height_lower  
+### HEIGHT  
 
 Stand height is based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6. 
 
@@ -761,7 +761,7 @@ Stand height is based on an average height of leading species of dominant and co
 
 
 
-### nat_non_veg  
+### NAT_NON_VEG  
 
 The Naturally Non-Vegetated class refers to land types with no vegetation cover. The maximum vegetation cover varies across Canada but is usually less than six or ten percent. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
 
@@ -785,9 +785,9 @@ The Naturally Non-Vegetated class refers to land types with no vegetation cover.
 
 
 
-### non-veg_anth 
+### NON_FOR_ANTH
 
-Non-vegetated anthropogenic areas are influenced or created by humans. These sites may or may not be vegetated. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
+Non-forested anthropogenic areas are influenced or created by humans. These sites may or may not be vegetated. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
 
 | non_veg_anth                                                 | values |
 | :----------------------------------------------------------- | :----- |
@@ -802,7 +802,7 @@ Non-vegetated anthropogenic areas are influenced or created by humans. These sit
 
 
 
-### non_for_veg  
+### NON_FOR_VEG  
 
 Non-forested vegetated areas include all natural lands that have vegetation cover with usually less than 10% tree cover. These cover types can be stand alone or used in multi-layer situations. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.    
 
@@ -823,7 +823,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 <a name=DST_attributes></a>
 ## DST Attributes
 
-### cas_id
+### CAS_ID
 
 The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
 
@@ -833,7 +833,7 @@ The attribute cas_id is an alpha-numeric identifier that is unique for each poly
 
 
 
-### dist_type_1 - dist_type_3
+### DIST_TYPE_1 - DIST_TYPE_3
 
 Disturbance identifies the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human -caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 13.  
 
@@ -856,7 +856,7 @@ Disturbance identifies the type of disturbance history that has occurred or is o
 
 
 
-### dist_year_1 - dist_year_3  
+### DIST_YEAR_1 - DIST_YEAR_3  
 
 Disturbance year is the year a disturbance event occurred. The disturbance year may be unknown. Three disturbance years can be identified, one for each disturbance event.    
 
@@ -866,7 +866,7 @@ Disturbance year is the year a disturbance event occurred. The disturbance year 
 
 
 
-### dist_ext_upper_1 - dist_ext_upper_3
+### DIST_EXT_UPPER_1 - DIST_EXT_UPPER_3
 
 Disturbance extent provides an estimate of the proportion of the polygon that has been affected by the disturbance listed. Extent codes and  classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event.    
 
@@ -876,7 +876,7 @@ Disturbance extent provides an estimate of the proportion of the polygon that ha
 
   
 
-### dist_ext_lower_1 - dist_ext_lower_3
+### DIST_EXT_LOWER_1 - DIST_EXT_LOWER_3
 
 Disturbance extent provides an estimate of the proportion of the polygon that has been affected by the disturbance listed. Extent codes and  classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event.    
 
@@ -886,7 +886,7 @@ Disturbance extent provides an estimate of the proportion of the polygon that ha
 
 
 
-### layer  
+### LAYER
 
 Layer is an attribute related to stand structure that identifies which layer is being referred to in a multi-layered stand. The layer identification creates a link between each polygon attribute and the corresponding layer. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on.  
 
@@ -905,7 +905,7 @@ Ecological attributes are generally not included or are incompletely recorded in
 
 
 
-### cas_id
+### CAS_ID
 
 The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
 
@@ -915,7 +915,7 @@ The attribute cas_id is an alpha-numeric identifier that is unique for each poly
 
 
 
-### wetland_type
+### WETLAND_TYPE
 
 The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>2</sup> and modified by Vitt and Halsey<sup>3,4</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland class, wetland vegetation modifier, wetland landform modifier, and wetland local modifier.  
 
@@ -938,7 +938,7 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 
 
 
-### wet_veg_cover
+### WET_VEG_COVER
 
 | wet_veg_cover                                           | values |
 | :------------------------------------------------------ | :----- |
@@ -951,7 +951,7 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 
 
 
-### wet_landform_mod
+### WET_LANDFORM_MOD
 
 
 | wet_landform_mod                    | values |
@@ -964,7 +964,7 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 
 
 
-### wet_local_mod
+### WET_LOCAL_MOD
 
 
 | wet_local_mod                                        | values |
@@ -987,7 +987,7 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 
   
 
-### ecosite  
+### ECOSITE
 
 Ecosites are site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes:  Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.    
 
@@ -1002,7 +1002,7 @@ Ecosites are site-level descriptions that provide a linkage between vegetation a
 
 Geometry attributes are calculated by the translation engine.
 
-### cas_id
+### CAS_ID
 
 The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database.
 
@@ -1012,9 +1012,9 @@ The attribute **cas_id** is an alpha-numeric identifier that is unique for each 
 
 
 
-### geometry
+### GEOMETRY
 
-The attribute **geometry** returns the geometry and validates if necessary. If valid geometry cannot be made error code is returned.
+The attribute **GEOMETRY** returns the geometry and validates if necessary. If valid geometry cannot be made error code is returned.
 
 
 | geometry             | values      |
