@@ -138,7 +138,7 @@ GROUP BY left(cas_id, 4);
 --YT02	231137
 
 SELECT count(*) FROM casfri50.geo_all; -- 17976421
-SELECT count(*) FROM casfri50.geo_all WHERE geometry = '010300000000000000'; -- 0
+SELECT count(*) FROM casfri50.geo_all WHERE ST_AsTexT(geometry) = 'POLYGON EMPTY'; -- 0
 
 -- Add primary key constraint
 ALTER TABLE casfri50.geo_all ADD PRIMARY KEY (cas_id);

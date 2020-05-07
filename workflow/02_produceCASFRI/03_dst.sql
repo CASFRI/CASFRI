@@ -18,7 +18,7 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
 -------------------------------------------------------
--- Translate all DST tables into a common table. 21h26m
+-- Translate all DST tables into a common table. 23h
 -------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab_avi01_dst', '_ab_dst'); -- used for both AB06 and AB16
@@ -141,8 +141,8 @@ GROUP BY left(cas_id, 4), layer;
 --AB16 1	8873
 --BC08 1	4677411
 --BC10 1	5151772
---NB01 1	250366
---NB01 2	2198
+--NB01 1	370802
+--NB01 2	409830
 --NB02 1	333114
 --NT01 1	77270
 --NT02 1	87974
@@ -150,7 +150,7 @@ GROUP BY left(cas_id, 4), layer;
 --SK01 1	72023
 --YT02 1	19178
 
-SELECT count(*) FROM casfri50.dst_all; -- 12748942
+SELECT count(*) FROM casfri50.dst_all; -- 13277010
 
 -- Add primary key constraint
 ALTER TABLE casfri50.dst_all 
