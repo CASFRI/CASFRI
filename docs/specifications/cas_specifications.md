@@ -4,7 +4,7 @@ Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
 Revised by: The CASFRI Project Team, February 03, 2020
 
-
+<a href="#HDR_attributes">HDR Attributes</a>
 
 
 ## Introduction  
@@ -98,7 +98,7 @@ Error codes are needed during translation if source values are invalid, null, or
 |                | No intersect       | FRI does not intersect any polygons                          | NO_INTERSECT      | -7778        |
 
 
-
+<a name=HDR_attributes></a>
 ## HDR Attributes 
 
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are described below.
