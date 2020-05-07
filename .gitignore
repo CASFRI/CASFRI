@@ -1,6 +1,5 @@
 .gitignore
 config.bat
 config.sh
-prv/
-docs/specifications/attributes/
-docs/specifications/inventories/
+vernier.bat
+vernier.md
