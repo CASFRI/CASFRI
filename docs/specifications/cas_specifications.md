@@ -6,30 +6,22 @@ Revised by: The CASFRI Project Team, February 03, 2020
 
 ## Table of contents
 <a href="#Intro">Introduction</a>
+
 <a href="#HDR_attributes">HDR Attributes</a>
-* <a href="#INVENTORY_ID">INVENTORY_ID</a>
-* <a href="#JURISDICTION">JURISDICTION</a>
-* <a href="#OWNER_TYPE">OWNER_TYPE</a>
-* <a href="#OWNER_NAME">OWNER_NAME</a>
-* <a href="#STANDARD_TYPE">STANDARD_TYPE</a>
-* <a href="#STANDARD_VERSION">STANDARD_VERSION</a>
-* <a href="#STANDARD_ID">STANDARD_ID</a>
-* <a href="#STANDARD_REVISION">STANDARD_REVISION</a>
-* <a href="#INVENTORY_MANUAL">INVENTORY_MANUAL</a>
-* <a href="#SRC_DATA_FORMAT">SRC_DATA_FORMAT</a>
-* <a href="#ACQUISITION_DATE">AQUISITION_DATE</a>
-* <a href="#DATA_TRANSFER">DATA_TRANSFER</a>
-* <a href="#RECEIVED_FROM">RECEIVED_FROM</a>
-* <a href="#CONTACT_INFO">CONTACT_INFO</a>
-* <a href="#DATA_AVAILABILITY">DATA_AVAILABILITY</a>
-* <a href="#REDISTRIBUTION">REDISTRIBUTION</a>
-* <a href="#PERMISSION">PERMISSION</a>
-* <a href="#LICENSE_AGREEMENT">LICENSE_AGREEMENT</a>
-* <a href="#PHOTO_YEAR_SRC">PHOTO_YEAR_SRC</a>
-* <a href="#PHOTO_YEAR_START">PHOTO_YEAR_START</a>
-* <a href="#PHOTO_YEAR_END">PHOTO_YEAR_END</a>
 
+<a href="#CAS_attributes">CAS Attributes</a>
 
+<a href="#LYR_attributes">LYR Attributes</a>
+
+<a href="#NFL_attributes">NFL Attributes</a>
+
+<a href="#DST_attributes">DST Attributes</a>
+
+<a href="#ECO_attributes">ECO Attributes</a>
+
+<a href="#GEO_attributes">GEO Attributes</a>
+
+<a name=Intro></a>
 ## Introduction  
 
 Canada's vast boreal ecosystem hosts one of the most diverse bird communities in North America. Development pressure within the boreal region is on the increase, and there is an urgent need to understand the impact of changing habitats on boreal bird populations and to make sound management decisions. The Boreal Avian Modeling Project was initiated to help address the lack of basic information on boreal birds and their habitats across boreal forests in Canada. The need to effectively manage bird species and their habitats has resulted in the effort to collect and gather data across Canada to develop models that will predict bird abundance and distribution, and that will clarify population and habitat associations with climate and land cover.  
@@ -127,7 +119,6 @@ Error codes are needed during translation if source values are invalid, null, or
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are described below.
 
 
-<a name=INVENTORY_ID></a>
 ### INVENTORY_ID
 
 The attribute **INVENTORY_ID** is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments with newer inventories within a jurisdiction.
@@ -137,7 +128,6 @@ The attribute **INVENTORY_ID** is a unique identifier that is assigned to each f
 | jurisdiction plus 2 digits | e.g., BC08, AB06, AB16, NB01 |
 
 
-<a name=JURISDICTION></a>
 ### JURISDICTION
 
 The attribute **JURISDICTION** identifies the province, territory or national park from which the inventory data came.
@@ -160,7 +150,6 @@ The attribute **JURISDICTION** identifies the province, territory or national pa
 | Prince Albert National Park | PA |
 
 
-<a name=OWNER_TYPE></a>
 ### OWNER_TYPE
 
 The attribute **OWNER_TYPE** identifies who owns the inventory data. Ownership of the inventory can be federal, provincial, territory, industry, private, or First Nation.
@@ -175,7 +164,6 @@ The attribute **OWNER_TYPE** identifies who owns the inventory data. Ownership o
 | Private | PRIVATE |
 
 
-<a name=OWNER_NAME></a>
 ### OWNER_NAME
 
 The attribute **OWNER_NAME** identifies who owns the land that the inventory covers, and degree of permission to which the data can be used. Ownership of the land is identified as being crown, private, military, or First Nation.
@@ -188,7 +176,6 @@ The attribute **OWNER_NAME** identifies who owns the land that the inventory cov
 | First Nation | FN |
 
 
-<a name=STANDARD_TYPE></a>
 ### STANDARD_TYPE
 
 The attribute **STANDARD_TYPE** identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation Inventory or AVI. The inventory type along with a version number usually identifies an inventory.
@@ -198,7 +185,6 @@ The attribute **STANDARD_TYPE** identifies the kind of inventory that was produc
 | Inventory name or type of inventory | Alpha numeric    |
 
 
-<a name=STANDARD_VERSION></a>
 ### STANDARD_VERSION
 
 The attribute **STANDARD_VERSION** identifies the standards used to produce a consistent inventory, usually across large land bases and for a relatively long period of time. The inventory type along with a version number usually identifies an inventory.
@@ -208,7 +194,6 @@ The attribute **STANDARD_VERSION** identifies the standards used to produce a co
 | The standard and version of the standard used to create the inventory | Alpha numeric |
 
 
-<a name=STANDARD_ID></a>
 ### STANDARD_ID
 
 The attribute **STANDARD_ID** identifies...
@@ -218,7 +203,6 @@ The attribute **STANDARD_ID** identifies...
 | The standard and version of the standard used to create the inventory | Alpha numeric |
 
 
-<a name=STANDARD_REVISION></a>
 ### STANDARD_REVISION
 
 The attribute **STANDARD_REVISION** identifies...
@@ -228,7 +212,6 @@ The attribute **STANDARD_REVISION** identifies...
 | The standard and version of the standard used to create the inventory | Alpha numeric |
 
 
-<a name=INVENTORY_MANUAL></a>
 ### INVENTORY_MANUAL
 
 The attribute **INVENTORY_MANUAL** identifies the documentation associated with the inventory data e.g., metadata, data dictionary, manual, etc.
@@ -238,7 +221,6 @@ The attribute **INVENTORY_MANUAL** identifies the documentation associated with 
 | Documentation associated with the inventory data | Text   |
 
 
-<a name=SRC_DATA_FORMAT></a>
 ### SRC_DATA_FORMAT
 
 The attribute **SRC_DATA_FORMAT** identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file.
@@ -251,7 +233,6 @@ The attribute **SRC_DATA_FORMAT** identifies the format of the inventory data e.
 | Microsoft Access database | mdb         |
 
 
-<a name=ACQUISITION_DATE></a>
 ### ACQUISITION_DATE
 
 The attribute **ACQUISITION_DATE** identifies the date at which the inventory data was acquired.
@@ -261,7 +242,6 @@ The attribute **ACQUISITION_DATE** identifies the date at which the inventory da
 | Date at which the inventory data was acquired | Date   |
 
 
-<a name=DATA_TRANSFER></a>
 ### DATA_TRANSFER
 
 The attribute **DATA_TRANSFER** identifies the procedure with which the inventory data was acquired. Examples include direct download, ftp transfer, on DVD, etc.
@@ -271,7 +251,6 @@ The attribute **DATA_TRANSFER** identifies the procedure with which the inventor
 | Procedure with which the inventory data was acquired | Text |
 
 
-<a name=RECEIVED_FROM></a>
 ### RECEIVED_FROM
 
 The attribute **RECEIVED_FROM** identifies the person, entity, or website from which the inventory data was obtained.
@@ -281,7 +260,6 @@ The attribute **RECEIVED_FROM** identifies the person, entity, or website from w
 | Person, entity, or website from which the data was obtained | Text   |
 
 
-<a name=CONTACT_INFO></a>
 ### CONTACT_INFO
 
 The attribute **CONTACT_INFO** identifies the contact information (name, address, phone, email, etc.) associated with the inventory data.
@@ -291,7 +269,6 @@ The attribute **CONTACT_INFO** identifies the contact information (name, address
 | Contact information associated with the inventory data | text   |
 
 
-<a name=DATA_AVAILABILITY></a>
 ### DATA_AVAILABILITY
 
 The attribute **DATA_AVAILABILITY** identifies the type of access to the inventory data e.g., direct contact or open access.
@@ -301,7 +278,6 @@ The attribute **DATA_AVAILABILITY** identifies the type of access to the invento
 | Type of access to the inventory data | Text   |
 
 
-<a name=REDISTRIBUTION></a>
 ### REDISTRIBUTION
 
 The attribute **REDISTRIBUTION** identifies the conditions under which the inventory data can be redistributed to other parties.
@@ -311,7 +287,6 @@ The attribute **REDISTRIBUTION** identifies the conditions under which the inven
 | Conditions under which the inventory data can be redistributed | Text   |
 
 
-<a name=PERMISSION></a>
 ### PERMISSION
 
 The attribute **PERMISSION** identifies the degree of permission to which the data can be used i.e., whether the use of the data is unrestricted, restricted or limited..
@@ -323,7 +298,6 @@ The attribute **PERMISSION** identifies the degree of permission to which the da
 | Use of the data has limitations | LIMITED |
 
 
-<a name=LICENSE_AGREEMENT></a>
 ### LICENSE_AGREEMENT
 
 The attribute **LICENSE_AGREEMENT** identifies the type of license associated with the inventory data.
@@ -333,7 +307,6 @@ The attribute **LICENSE_AGREEMENT** identifies the type of license associated wi
 | Type of license associated with the inventory data | Text |
 
 
-<a name=PHOTO_YEAR_SRC></a>
 ### PHOTO_YEAR_SRC
 
 The attribute **PHOTO_YEAR_SRC** identifies the source data type that is used to define the photo year i.e., the year in which the inventory was considered initiated and completed.
@@ -343,7 +316,6 @@ The attribute **PHOTO_YEAR_SRC** identifies the source data type that is used to
 | Source data type that is used to define the photo year | Text |
 
 
-<a name=PHOTO_YEAR_START></a>
 ### PHOTO_YEAR_START
 
 The attribute **PHOTO_YEAR_START** identifies the year in which the inventory was considered initiated. An inventory can take several years to complete; therefore, start and end dates are included to identify the interval for when the inventory was completed.
@@ -353,7 +325,6 @@ The attribute **PHOTO_YEAR_START** identifies the year in which the inventory wa
 | Earliest year of aerial photo acquisition | 1900 - 2020 |
 
 
-<a name=PHOTO_YEAR_END></a>
 ### PHOTO_YEAR_END
 
 The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was considered completed. An inventory can take several years to complete; therefore, start and end dates are included to identify the interval for when the inventory was completed. 
@@ -363,12 +334,10 @@ The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was 
 | Latest year of aerial photo acquisition | 1900 - 2020 |
 
 
-
+<a name=CAS_attributes></a>
 ## CAS Attributes
 
 The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
-
-
 
 
 ### cas_id
@@ -490,7 +459,7 @@ The attribute **stand_photo_year** is a identifies the year in which the aerial 
 
 
 
-
+<a name=LYR_attributes></a>
 ## LYR Attributes
 
 Forest layer attributes.
@@ -694,7 +663,7 @@ Site Index is an estimate of site productivity for tree growth. It is derived fo
 | Estimate of site productivity for tree growth based on a specified reference age. | 0 - 99          |
 
 
-
+<a name=NFL_attributes></a>
 ## NFL Attributes
 
 Non-forested attributes.
@@ -851,7 +820,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 
 
-
+<a name=DST_attributes></a>
 ## DST Attributes
 
 ### cas_id
@@ -929,7 +898,7 @@ The maximum number of layers recognized is nine. The uppermost layer may also be
 
 
 
-
+<a name=ECO_attributes></a>
 ## ECO Attributes
 
 Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.  
@@ -1028,7 +997,7 @@ Ecosites are site-level descriptions that provide a linkage between vegetation a
 | vegetation characteristics as influenced by environmental factors. | NA          |
 
 
-
+<a name=GEO_attributes></a>
 ## GEO Attributes 
 
 Geometry attributes are calculated by the translation engine.
