@@ -541,7 +541,7 @@ LAYER is calculated for CASFRI based on the presence of forest and non-forest in
 Notes:
 
 - LAYER is a CASFRI specific attribute that we compute based on the presence or absence of values for different layers.
-- One exception is the BC08 inventory where we do not have access to the complete dataset. Only the rank 1 data is available which could represent any canopy layer from the full source inventory. We therefore copy the layer info from the source data in this case so as not to mis-represent the source data by assigning layer 1 to a lower canopy layer. 
+- One exception is the BC08 inventory where we do not have access to the complete dataset. Only the rank 1 data is available which could represent any canopy layer from the full source inventory. We therefore copy the layer info from the source data in this case so as not to mis-represent the source data by assigning layer 1 to a layer that is not actually the top layer. 
 
 <a name=LAYER_RANK></a>
 ### LAYER_RANK
