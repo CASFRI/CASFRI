@@ -309,6 +309,88 @@ ALTER TABLE casfri50.eco_all
 ADD CONSTRAINT cas_id_length
 CHECK (length(cas_id) = 50);
 
+-- Ensure ECO table WETLAND_TYPE values match the corresponding lookup table
+-- Issue 'S' is in the database and not in the specs
+-- 'NA', 'E' and 'Z' are in the specs but not in the database.
+DROP TABLE IF EXISTS casfri50_lookup.wetland_type_codes CASCADE;
+CREATE TABLE casfri50_lookup.wetland_type_codes AS
+SELECT * FROM (VALUES ('B'), ('F'), ('M'), ('O'), ('T'), ('W'),
+                      ('NOT_APPLICABLE')) AS t(code);
+
+ALTER TABLE casfri50_lookup.wetland_type_codes
+ADD PRIMARY KEY (code);
+
+ALTER TABLE casfri50.eco_all DROP CONSTRAINT IF EXISTS eco_wetland_type_fk;
+ALTER TABLE casfri50.eco_all
+ADD CONSTRAINT eco_wetland_type_fk FOREIGN KEY (wetland_type) 
+REFERENCES casfri50_lookup.wetland_type_codes (code);
+
+-- Ensure ECO table WET_VEG_COVER values match the corresponding lookup table
+-- Issue 'P' is in the database and not in the specs
+DROP TABLE IF EXISTS casfri50_lookup.wet_veg_cover_codes CASCADE;
+CREATE TABLE casfri50_lookup.wet_veg_cover_codes AS
+SELECT * FROM (VALUES ('F'), ('T'), ('O'), ('C'), ('M'),
+                      ('NOT_APPLICABLE')) AS t(code);
+
+ALTER TABLE casfri50_lookup.wet_veg_cover_codes
+ADD PRIMARY KEY (code);
+
+ALTER TABLE casfri50.eco_all DROP CONSTRAINT IF EXISTS eco_wet_veg_cover_fk;
+ALTER TABLE casfri50.eco_all
+ADD CONSTRAINT eco_wet_veg_cover_fk FOREIGN KEY (wet_veg_cover) 
+REFERENCES casfri50_lookup.wet_veg_cover_codes (code);
+
+-- Ensure ECO table WET_LANDFORM_MOD values match the corresponding lookup table
+-- Issue 'P' is in the database and not in the specs
+DROP TABLE IF EXISTS casfri50_lookup.wet_landform_mod_codes CASCADE;
+CREATE TABLE casfri50_lookup.wet_landform_mod_codes AS
+SELECT * FROM (VALUES ('X'), ('P'), ('N'), ('A'),
+                      ('NOT_APPLICABLE')) AS t(code);
+
+ALTER TABLE casfri50_lookup.wet_landform_mod_codes
+ADD PRIMARY KEY (code);
+
+ALTER TABLE casfri50.eco_all DROP CONSTRAINT IF EXISTS eco_wet_landform_mod_fk;
+ALTER TABLE casfri50.eco_all
+ADD CONSTRAINT eco_wet_landform_mod_fk FOREIGN KEY (wet_landform_mod) 
+REFERENCES casfri50_lookup.wet_landform_mod_codes (code);
+
+-- Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table
+-- Issue 'B' is found in the database but in the specs.
+DROP TABLE IF EXISTS casfri50_lookup.wet_local_mod_codes CASCADE;
+CREATE TABLE casfri50_lookup.wet_local_mod_codes AS
+SELECT * FROM (VALUES ('C'), ('R'), ('I'), ('N'), ('S'), ('G'),
+                      ('NOT_APPLICABLE')) AS t(code);
+
+ALTER TABLE casfri50_lookup.wet_local_mod_codes
+ADD PRIMARY KEY (code);
+
+ALTER TABLE casfri50.eco_all DROP CONSTRAINT IF EXISTS eco_wet_local_mod_fk;
+ALTER TABLE casfri50.eco_all
+ADD CONSTRAINT eco_wet_local_mod_fk FOREIGN KEY (wet_local_mod) 
+REFERENCES casfri50_lookup.wet_local_mod_codes (code);
+
+-- Ensure ECO table ECO_SITE values match the corresponding lookup table
+DROP TABLE IF EXISTS casfri50_lookup.eco_site_codes CASCADE;
+CREATE TABLE casfri50_lookup.eco_site_codes AS
+SELECT * FROM (VALUES ('C'), ('R'), ('I'), ('N'), ('S'), ('G'),
+                      ('NOT_APPLICABLE')) AS t(code);
+
+ALTER TABLE casfri50_lookup.eco_site_codes
+ADD PRIMARY KEY (code);
+
+ALTER TABLE casfri50.eco_all DROP CONSTRAINT IF EXISTS eco_wet_local_mod_fk;
+ALTER TABLE casfri50.eco_all
+ADD CONSTRAINT eco_wet_local_mod_fk FOREIGN KEY (wet_local_mod) 
+REFERENCES casfri50_lookup.eco_site_codes (code);
+
+-- Ensure ECO table ECO_SITE values match the corresponding lookup table
+-- Issue eco_site does not seems to be translated
+ALTER TABLE casfri50.eco_all DROP CONSTRAINT IF EXISTS eco_site_not_applicable;
+ALTER TABLE casfri50.eco_all
+ADD CONSTRAINT eco_site_not_applicable
+CHECK (eco_site = 'NOT_APPLICABLE');
+
 -------------------------------------------------------
 -- Add different constraints to the LYR_ALL table
 -------------------------------------------------------
