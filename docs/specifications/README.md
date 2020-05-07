@@ -685,7 +685,7 @@ The attribute cas_id is an alpha-numeric identifier that is unique for each poly
 
 ### SOIL_MOIST_REG
 
-See <a href="#SOIL_MOSIT_REG">SOIL_MOIST_REG</a> in the LYR table.
+See <a href="#SOIL_MOIST_REG">SOIL_MOIST_REG</a> in the LYR table.
 
 Soil moisture regime defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
