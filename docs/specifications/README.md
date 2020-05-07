@@ -685,7 +685,8 @@ The attribute cas_id is an alpha-numeric identifier that is unique for each poly
 
 ### SOIL_MOIST_REG
 
-See See <a href="#SOIL_MOSIT_REG">LYR table SOIL_MOIST_REG.</a>
+See <a href="#SOIL_MOSIT_REG">SOIL_MOIST_REG</a> in the LYR table.
+
 Soil moisture regime defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
 | SOIL_MOIST_REG                                               | values |
@@ -703,7 +704,7 @@ Notes:
 
 ### STRUCTURE_PER
 
-See See <a href="#STRUCTURE_PER">LYR table STRUCTURE_PER.</a>
+See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 
 
 | STRUCTURE_PER                                                | values |
@@ -714,7 +715,7 @@ See See <a href="#STRUCTURE_PER">LYR table STRUCTURE_PER.</a>
 
 ### LAYER
 
-See <a href="#LAYER">LYR table LAYER.</a>
+See <a href="#LAYER">LAYER</a> in the LYR table.
 
 | layer                                                        | values   |
 | :----------------------------------------------------------- | :------- |
@@ -723,7 +724,7 @@ See <a href="#LAYER">LYR table LAYER.</a>
 
 
 ### LAYER_RANK  
-See <a href="#LAYER_RANK">LYR table LAYER_RANK.</a>
+See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
 
 | LAYER_RANK                                                   | values |
 | :----------------------------------------------------------- | :----- |
@@ -733,7 +734,8 @@ See <a href="#LAYER_RANK">LYR table LAYER_RANK.</a>
 
 
 ### CROWN_CLOSURE 
-See <a href="#CROWN_CLOSURE ">LYR table CROWN_CLOSURE .</a>
+See <a href="#CROWN_CLOSURE ">CROWN_CLOSURE</a> in the LYR table.
+
 Crown closure defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
 | CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER           | values  |
@@ -745,7 +747,8 @@ Crown closure defined in the NFL table must be a value explicitly assigned to th
 
 
 ### HEIGHT
-See <a href="#HEIGHT ">LYR table HEIGHT.</a>
+See <a href="#HEIGHT ">HEIGHT</a> in the LYR table.
+
 Height defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
 | HEIGHT_UPPER, HEIGHT_LOWER                  | values  |
