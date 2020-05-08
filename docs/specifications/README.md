@@ -546,7 +546,7 @@ Notes:
 <a name=LAYER_RANK></a>
 ### LAYER_RANK
 
-Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assinged in the source data, CASFRI reports an error code.  
+Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code.  
 
 | LAYER_RANK                                                   | values |
 | :----------------------------------------------------------- | :----- |
