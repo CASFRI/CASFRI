@@ -593,11 +593,11 @@ Note:
 * In BC10, separate heights are assigned for the dominant and co-dominant species in a layer. We therefore compute a weighted average based on the dominant and co-dominant heights, weighted by the percent cover of the dominant and co-dominant species in the layer.
 
 
-### PRODUCTUVE_FOR
+### PRODUCTIVE_FOR
 
 Unproductive forest is forest land not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. The detailed table, CAS codes, and conversion rule sets are presented in Appendix 12.  
 
-| PRODUCTUVE_FOR | values |
+| PRODUCTIVE_FOR | values |
 | :-------------------------------------------------------------- | :-------------- |
 | Treed Muskeg - treed wetland sites| TM |
 | Alpine forest - high elevation forest usually above 1800 m | AL |
