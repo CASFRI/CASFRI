@@ -70,12 +70,14 @@ CHECK (length(inventory_id) = 4);
 ALTER TABLE casfri50.cas_all DROP CONSTRAINT IF EXISTS num_of_layers_greater_than_zero;
 ALTER TABLE casfri50.cas_all
 ADD CONSTRAINT num_of_layers_greater_than_zero
-CHECK (num_of_layers > 0 OR num_of_layers = -8886);
+CHECK (num_of_layers > 0 OR 
+       num_of_layers = -8886); -- UNKNOWN_VALUE
 
 -- Ensure CAS table STAND_STRUCTURE values match the corresponding lookup table
 DROP TABLE IF EXISTS casfri50_lookup.stand_structure_codes;
 CREATE TABLE casfri50_lookup.stand_structure_codes AS
-SELECT * FROM (VALUES ('S'), ('M'), ('H'), ('C'), ('NULL_VALUE'), ('EMPTY_STRING'), ('NOT_IN_SET')) AS t(code);
+SELECT * FROM (VALUES ('S'), ('M'), ('H'), ('C'), 
+                      ('NULL_VALUE'), ('EMPTY_STRING'), ('NOT_IN_SET')) AS t(code);
 
 ALTER TABLE casfri50_lookup.stand_structure_codes
 ADD PRIMARY KEY (code);
@@ -91,7 +93,11 @@ ALTER TABLE casfri50.cas_all DROP CONSTRAINT IF EXISTS stand_structure_num_of_la
 ALTER TABLE casfri50.cas_all
 ADD CONSTRAINT stand_structure_num_of_layers 
 CHECK (((stand_structure = 'M' OR stand_structure = 'H' OR stand_structure = 'C') AND num_of_layers > 1) OR 
-       ((stand_structure = 'S' OR stand_structure = 'C') AND num_of_layers = 1) OR num_of_layers = -8886);
+       ((stand_structure = 'S' OR stand_structure = 'C') AND num_of_layers = 1) OR 
+       num_of_layers = -8886 OR -- UNKNOWN_VALUE
+       stand_structure = 'NULL_VALUE' OR
+       stand_structure = 'EMPTY_STRING' OR
+       stand_structure = 'NOT_IN_SET');
 
 -- Ensure CAS table CASFRI_AREA is greater than 0
 ALTER TABLE casfri50.cas_all DROP CONSTRAINT IF EXISTS casfri_area_greater_than_zero;
@@ -109,7 +115,10 @@ CHECK (casfri_perimeter > 0);
 ALTER TABLE casfri50.cas_all DROP CONSTRAINT IF EXISTS src_inv_area_greater_than_zero;
 ALTER TABLE casfri50.cas_all
 ADD CONSTRAINT src_inv_area_greater_than_zero
-CHECK (src_inv_area >= 0 OR src_inv_area = -8887);
+CHECK (src_inv_area >= 0 OR 
+       src_inv_area = -9997 OR -- INVALID_VALUE
+       src_inv_area = -8888 OR -- NULL_VALUE
+       src_inv_area = -8887);  -- NOT_APPLICABLE
 
 -- Ensure CAS table STAND_PHOTO_YEAR is greater than 0
 -- Issue #248
@@ -178,7 +187,8 @@ CHECK (length(cas_id) = 50);
 ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS layer_greater_than_zero;
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT layer_greater_than_zero
-CHECK (layer > 0 OR layer = -8886);
+CHECK (layer > 0 OR 
+       layer = -8886); -- UNKNOWN_VALUE
 
 -- Ensure DST table DIST_TYPE_1 values match the corresponding lookup table
 DROP TABLE IF EXISTS casfri50_lookup.dist_type_1_codes CASCADE;
@@ -221,19 +231,27 @@ ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_year_1_greater_than_
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_year_1_greater_than_1900
 CHECK ((1900 <= dist_year_1 AND dist_year_1 <= 2020) OR 
-       dist_year_1 = -9999 OR dist_year_1 = -8888);
+       dist_year_1 = -9999 OR -- OUT_OF_RANGE
+       dist_year_1 = -9997 OR -- INVALID_VALUE
+       dist_year_1 = -8888);  -- NULL_VALUE
 
 ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_year_2_greater_than_1900;
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_year_2_greater_than_1900
 CHECK ((1900 <= dist_year_2 AND dist_year_2 <= 2020) OR 
-       dist_year_2 = -9999 OR dist_year_2 = -8888 OR dist_year_2 = -8887);
+       dist_year_2 = -9999 OR -- OUT_OF_RANGE
+       dist_year_2 = -9997 OR -- INVALID_VALUE
+       dist_year_2 = -8888 OR -- NULL_VALUE
+       dist_year_2 = -8887);  -- NOT_APPLICABLE
 
 ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_year_3_greater_than_1900;
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_year_3_greater_than_1900
 CHECK ((1900 <= dist_year_3 AND dist_year_3 <= 2020) OR 
-       dist_year_3 = -9999 OR dist_year_3 = -8888 OR dist_year_3 = -8887);
+       dist_year_3 = -9999 OR -- OUT_OF_RANGE
+       dist_year_3 = -9997 OR -- INVALID_VALUE
+       dist_year_3 = -8888 OR -- NULL_VALUE
+       dist_year_3 = -8887);  -- NOT_APPLICABLE
 
 -- Ensure DST table DIST_EXT_UPPER_1, DIST_EXT_UPPER_2 and DIST_EXT_UPPER_3 
 -- are greater than 10 and below 100
@@ -242,20 +260,29 @@ ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_ext_upper_1_betweeen
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_ext_upper_1_betweeen_10_and_100
 CHECK ((10 <= dist_ext_upper_1 AND dist_ext_upper_1 <= 100) OR 
-       dist_ext_upper_1 = -9999 OR dist_ext_upper_1 = -8888 OR dist_ext_upper_1 = -8887);
+       dist_ext_upper_1 = -9999 OR -- OUT_OF_RANGE
+       dist_ext_upper_1 = -9997 OR -- INVALID_VALUE
+       dist_ext_upper_1 = -8888 OR -- NULL_VALUE
+       dist_ext_upper_1 = -8887);  -- NOT_APPLICABLE
 
 ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_ext_upper_2_betweeen_10_and_100;
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_ext_upper_2_betweeen_10_and_100
 CHECK ((10 <= dist_ext_upper_2 AND dist_ext_upper_2 <= 100) OR 
-       dist_ext_upper_2 = -9999 OR dist_ext_upper_2 = -8888 OR dist_ext_upper_2 = -8887);
+       dist_ext_upper_2 = -9999 OR -- OUT_OF_RANGE
+       dist_ext_upper_2 = -9997 OR -- INVALID_VALUE
+       dist_ext_upper_2 = -8888 OR -- NULL_VALUE
+       dist_ext_upper_2 = -8887);  -- NOT_APPLICABLE
 
 ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_ext_upper_3_betweeen_10_and_100;
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_ext_upper_3_betweeen_10_and_100
 CHECK ((10 <= dist_ext_upper_3 AND dist_ext_upper_3 <= 100) OR 
-       dist_ext_upper_3 = -9999 OR dist_ext_upper_3 = -8888 OR dist_ext_upper_3 = -8887);
-       
+       dist_ext_upper_3 = -9999 OR -- OUT_OF_RANGE
+       dist_ext_upper_3 = -9997 OR -- INVALID_VALUE
+       dist_ext_upper_3 = -8888 OR -- NULL_VALUE
+       dist_ext_upper_3 = -8887);  -- NOT_APPLICABLE
+
 -- Ensure DST table DIST_EXT_LOWER_1, DIST_EXT_LOWER_2 and DIST_EXT_LOWER_3 
 -- are greater than 10 and below 100
 -- Issue #338
@@ -263,19 +290,28 @@ ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_ext_lower_1_betweeen
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_ext_lower_1_betweeen_10_and_100
 CHECK ((10 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 100) OR 
-       dist_ext_lower_1 = -9999 OR dist_ext_lower_1 = -8888 OR dist_ext_lower_1 = -8887);
+       dist_ext_lower_1 = -9999 OR -- OUT_OF_RANGE
+       dist_ext_lower_1 = -9997 OR -- INVALID_VALUE
+       dist_ext_lower_1 = -8888 OR -- NULL_VALUE
+       dist_ext_lower_1 = -8887);  -- NOT_APPLICABLE
 
 ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_ext_lower_2_betweeen_10_and_100;
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_ext_lower_2_betweeen_10_and_100
 CHECK ((10 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 100) OR 
-       dist_ext_lower_2 = -9999 OR dist_ext_lower_2 = -8888 OR dist_ext_lower_2 = -8887);
+       dist_ext_lower_2 = -9999 OR -- OUT_OF_RANGE
+       dist_ext_lower_2 = -9997 OR -- INVALID_VALUE
+       dist_ext_lower_2 = -8888 OR -- NULL_VALUE
+       dist_ext_lower_2 = -8887);  -- NOT_APPLICABLE
 
 ALTER TABLE casfri50.dst_all DROP CONSTRAINT IF EXISTS dist_ext_lower_3_betweeen_10_and_100;
 ALTER TABLE casfri50.dst_all
 ADD CONSTRAINT dist_ext_lower_3_betweeen_10_and_100
 CHECK ((10 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 100) OR 
-       dist_ext_lower_3 = -9999 OR dist_ext_lower_3 = -8888 OR dist_ext_lower_3 = -8887);
+       dist_ext_lower_3 = -9999 OR -- OUT_OF_RANGE
+       dist_ext_lower_3 = -9997 OR -- INVALID_VALUE
+       dist_ext_lower_3 = -8888 OR -- NULL_VALUE
+       dist_ext_lower_3 = -8887);  -- NOT_APPLICABLE
 
 -------------------------------------------------------
 -- Add different constraints to the ECO_ALL table
@@ -504,10 +540,85 @@ ALTER TABLE casfri50.lyr_all
 ADD CONSTRAINT cas_id_length
 CHECK (length(cas_id) = 50);
 
+-- Ensure LYR table STRUCTURE_PER is greater than 0 and smaller or equal to 100
+-- Issue 338
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT structure_per_between_0_and_100 -- or NULL_VALUE (-8888) or INVALID_VALUE(-9997) or OUT_OF_RANGE(-9999) 
+CHECK ((structure_per > 0 AND structure_per <= 100) OR 
+       structure_per = -9999 OR -- OUT_OF_RANGE
+       structure_per = -9997 OR -- INVALID_VALUE
+       structure_per = -8888 OR -- NULL_VALUE
+       structure_per = -8887);  -- NOT_APPLICABLE
+
+-- Ensure LYR table SOIL_MOIST_REG values match the corresponding lookup table
+DROP TABLE IF EXISTS casfri50_lookup.soil_moist_reg_codes CASCADE;
+CREATE TABLE casfri50_lookup.soil_moist_reg_codes AS
+SELECT * FROM (VALUES ('D'), ('F'), ('M'), ('W'), ('A'),
+                      ('NULL_VALUE'), ('NOT_IN_SET'), ('NOT_APPLICABLE')) AS t(code);
+
+ALTER TABLE casfri50_lookup.soil_moist_reg_codes
+ADD PRIMARY KEY (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_soil_moist_reg_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_soil_moist_reg_fk FOREIGN KEY (soil_moist_reg) 
+REFERENCES casfri50_lookup.soil_moist_reg_codes (code);
+
 -- Ensure LYR table LAYER is greater than 0
 ALTER TABLE casfri50.lyr_all
 ADD CONSTRAINT layer_greater_than_zero
 CHECK (layer > 0);
+
+-- Ensure LYR table LAYER_RANK is greater than 0 and smaller than 10
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT layer_rank_greater_than_zero
+CHECK ((layer_rank > 0 AND layer_rank < 10) OR 
+       layer_rank = -8888 OR -- NULL_VALUE
+       layer_rank = -8887);  -- NOT_APPLICABLE
+
+-- Ensure LYR table CROWN_CLOSURE_UPPER is greater than 0 and smaller or equal to 100
+-- Issue 338 -9998 (NOT_IN_SET) should not be accepted for an integer
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT crown_closure_upper_between_0_and_100 
+CHECK ((crown_closure_upper >= 0 AND crown_closure_upper <= 100) OR 
+       crown_closure_upper = -9999 OR -- OUT_OF_RANGE
+       crown_closure_upper = -9997 OR -- INVALID_VALUE
+       crown_closure_upper = -8888 OR -- NULL_VALUE
+       crown_closure_upper = -8887);  -- NOT_APPLICABLE
+
+-- Ensure LYR table CROWN_CLOSURE_LOWER is greater than 0 and smaller or equal to 100
+-- Issue 338 -9998 (NOT_IN_SET) should not be accepted for an integer
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT crown_closure_lower_between_0_and_100 
+CHECK ((crown_closure_lower >= 0 AND crown_closure_lower <= 100) OR 
+       crown_closure_lower = -9999 OR -- OUT_OF_RANGE
+       crown_closure_lower = -9997 OR -- INVALID_VALUE
+       crown_closure_lower = -8888 OR -- NULL_VALUE
+       crown_closure_lower = -8887);  -- NOT_APPLICABLE
+
+-- Ensure LYR table HEIGHT_UPPER is greater than 0 and smaller or equal to 100
+-- Issue 338 -9998 (NOT_IN_SET) should not be accepted for an integer
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT height_upper_between_0_and_100 
+CHECK ((height_upper >= 0 AND height_upper <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+-- Ensure LYR table HEIGHT_LOWER is greater than 0 and smaller or equal to 100
+-- Issue 338 -9998 (NOT_IN_SET) should not be accepted for an integer
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT height_lower_between_0_and_100 
+CHECK ((height_lower >= 0 AND height_lower <= 100) OR 
+       height_lower = -9999 OR -- OUT_OF_RANGE
+       height_lower = -9997 OR -- INVALID_VALUE
+       height_lower = -8888 OR -- NULL_VALUE
+       height_lower = -8887);  -- NOT_APPLICABLE
+
+SELECT DISTINCT height_lower
+FROM casfri50.lyr_all
+ORDER BY height_lower;
 
 -------------------------------------------------------
 -- Add different constraints to the NFL_ALL table
