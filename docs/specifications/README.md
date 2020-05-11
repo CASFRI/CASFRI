@@ -96,7 +96,7 @@ Table 1. CASFRI schema.
 <a name=Error_codes></a>
 ## Error Codes  
 
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. Individual error codes are reported for each attribute in the specifications below.  [Click here to view specific error codes for individual attributes](https://edwardsmarc.github.io/CASFRI/specifications/errors/cas_errors_specific.csv).
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. Individual error codes are reported for each attribute in the specifications below.
 
 | Class          | Type               | Description                                                  | Text code         | Numeric code |
 | -------------- | ------------------ | ------------------------------------------------------------ | ----------------- | ---------- |
@@ -125,215 +125,219 @@ Header information is a primary element of CAS. Header information identifies th
 
 The attribute **INVENTORY_ID** is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments with newer inventories within a jurisdiction.
 
-| INVENTORY_ID | values |
-| :-------------------------- | :-------------- |
-| jurisdiction plus 2 digits | e.g., BC08, AB06, AB16, NB01 |
+| Values | Desription |
+| :----- | :-------------- |
+| Alpha numeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
 
 ### JURISDICTION
 
 The attribute **JURISDICTION** identifies the province, territory or national park from which the inventory data came.
 
-| JURISDICTION | values |
+| Values | Description |
 | :-------------------------- | :-------------- |
-| British Columbia | BC |
-| Alberta | AB |
-| Saskatchewan | SK |
-| Manitoba| MB |
-| Ontario | ON |
-| Quebec | QC |
-| Prince Edward Island | PE |
-| New Brunswick| NB |
-| Nova Scotia | NS |
-| Newfoundland and Labrador | NL |
-| Yukon Territory | YK |
-| Northwest Territories | NT |
-| Wood Buffalo National Park | WB |
-| Prince Albert National Park | PA |
+| BC | British Columbia |
+| AB | Alberta |
+| SK | Saskatchewan |
+| MB | Manitoba |
+| ON | Ontario |
+| QC | Quebec |
+| PE | Prince Edward Island |
+| NB | New Brunswick |
+| NS | Nova Scotia |
+| NL | Newfoundland and Labrador |
+| YK | Yukon Territory |
+| NT | Northwest Territories |
+| WB | Wood Buffalo National Park |
+| PA | Prince Albert National Park |
 
 
 ### OWNER_TYPE
 
 The attribute **OWNER_TYPE** identifies who owns the inventory data. Ownership of the inventory can be federal, provincial, territory, industry, private, or First Nation.
 
-| OWNER_TYPE | values |
-| :-------------------------- | :-------------- |
-| Provincial Government | PROV_GOV |
-| Federal Government | FED_GOV |
-| Yukon Territory or Northwest Territories | TERRITORY |
-| First Nations | FN |
-| Industry | INDUSTRY |
-| Private | PRIVATE |
+| Values    | Description |
+| :-------- | :-------------- |
+| PROV_GOV  | Provincial Government |
+| FED_GOV   | Federal Government |
+| TERRITORY | Yukon Territory or Northwest Territories |
+| FN        | First Nation |
+| INDUSTRY  | Industry |
+| PRIVATE   | Private |
 
 
 ### OWNER_NAME
 
 The attribute **OWNER_NAME** identifies who owns the land that the inventory covers, and degree of permission to which the data can be used. Ownership of the land is identified as being crown, private, military, or First Nation.
 
-| OWNER_NAME | values   |
-| :-------------------------- | :-------------- |
-| Crown | CROWN |
-| Private | PRIVATE |
-| Military | MILITARY |
-| First Nation | FN |
+| Values   | Description   |
+| :------- | :-------------- |
+| CROWN    | Crown |
+| PRIVATE  | Private |
+| MILITARY | Military |
+| FN       | First Nation |
 
 
 ### STANDARD_TYPE
 
 The attribute **STANDARD_TYPE** identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation Inventory or AVI. The inventory type along with a version number usually identifies an inventory.
 
-| STANDARD_TYPE | values        |
-| :-------------------------- | :-------------- |
-| Inventory name or type of inventory | Alpha numeric    |
+| Values         | Description        |
+| :------------- | :-------------- |
+|  Alpha numeric | Inventory name or type of inventory |
 
 
 ### STANDARD_VERSION
 
 The attribute **STANDARD_VERSION** identifies the standards used to produce a consistent inventory, usually across large land bases and for a relatively long period of time. The inventory type along with a version number usually identifies an inventory.
 
-| STANDARD_VERSION | values        |
-| :-------------------------- | :-------------- |
-| The standard and version of the standard used to create the inventory | Alpha numeric |
+| Values         | Description        |
+| :------------- | :-------------- |
+|  Alpha numeric | The standard and version of the standard used to create the inventory |
 
 
 ### STANDARD_ID
 
 The attribute **STANDARD_ID** identifies the version of the standard within CASFRI. If a standard is updated such that a new translation table is required, the **STANDRAD_ID** will be incremented.
 
-| STANDARD_ID                                                  | values        |
-| :----------------------------------------------------------- | :------------ |
-| The standard and version of the standard used to create the inventory | Alpha numeric |
+| Values        | Description   |
+| :------------ | :------------ |
+| Alpha numeric | The standard and version of the standard used to create the inventory |
 
 
 ### STANDARD_REVISION
 
 The attribute **STANDARD_REVISION** records whether any revisions have been made to the standard.
 
-| STANDARD_REVISION                                            | values        |
-| :----------------------------------------------------------- | :------------ |
-| The standard and version of the standard used to create the inventory | Alpha numeric |
+| Values        | Description        |
+| :------------ | :------------ |
+| Alpha numeric | The standard and version of the standard used to create the inventory |
 
 
 ### INVENTORY_MANUAL
 
 The attribute **INVENTORY_MANUAL** identifies the documentation associated with the inventory data e.g., metadata, data dictionary, manual, etc.
 
-| INVENTORY_MANUAL | values |
-| :-------------------------- | :-------------- |
-| Documentation associated with the inventory data | Text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Documentation associated with the inventory data |
 
 
 ### SRC_DATA_FORMAT
 
 The attribute **SRC_DATA_FORMAT** identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file.
 
-| SRC_DATA_FORMAT | values      |
-| :-------------------------- | :-------------- |
-| ESRI file geodatabase     | Geodatabase |
-| ESRI shapefile            | Shapefile   |
-| ESRI e00 transfer file    | e00         |
-| Microsoft Access database | mdb         |
+| Values          | Description      |
+| :-------------- | :-------------- |
+| Geodatabase     | ESRI file geodatabase       |
+| Shapefile       | ESRI shapefile              |
+| E00             | ESRI e00 transfer files     |
+| ESRI Coverage   | ESRI Coverage files         |
+| mdb             | Microsoft Access database   |
 
 
 ### ACQUISITION_DATE
 
 The attribute **ACQUISITION_DATE** identifies the date at which the inventory data was acquired.
 
-| ACQUISITION_DATE | values |
-| :-------------------------- | :-------------- |
-| Date at which the inventory data was acquired | Date   |
+| Values | Description |
+| :----- | :-------------- |
+| Date   | Date at which the inventory data was acquired  |
 
 
 ### DATA_TRANSFER
 
 The attribute **DATA_TRANSFER** identifies the procedure with which the inventory data was acquired. Examples include direct download, ftp transfer, on DVD, etc.
 
-| DATA_TRANSFER | values |
-| :-------------------------- | :-------------- |
-| Procedure with which the inventory data was acquired | Text |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Procedure with which the inventory data was acquired |
 
 
 ### RECEIVED_FROM
 
 The attribute **RECEIVED_FROM** identifies the person, entity, or website from which the inventory data was obtained.
 
-| RECEIVED_FROM | values |
-| :-------------------------- | :-------------- |
-| Person, entity, or website from which the data was obtained | Text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Person, entity, or website from which the data was obtained |
 
 
 ### CONTACT_INFO
 
 The attribute **CONTACT_INFO** identifies the contact information (name, address, phone, email, etc.) associated with the inventory data.
 
-| CONTACT_INFO | values |
-| :-------------------------- | :-------------- |
-| Contact information associated with the inventory data | text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Contact information associated with the inventory data   |
 
 
 ### DATA_AVAILABILITY
 
 The attribute **DATA_AVAILABILITY** identifies the type of access to the inventory data e.g., direct contact or open access.
 
-| DATA_AVAILABILITY | values |
-| :-------------------------- | :-------------- |
-| Type of access to the inventory data | Text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Type of access to the inventory data |
 
 
 ### REDISTRIBUTION
 
 The attribute **REDISTRIBUTION** identifies the conditions under which the inventory data can be redistributed to other parties.
 
-| REDISTRIBUTION | values |
-| :-------------------------- | :-------------- |
-| Conditions under which the inventory data can be redistributed | Text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Conditions under which the inventory data can be redistributed |
 
 
 ### PERMISSION
 
 The attribute **PERMISSION** identifies the degree of permission to which the data can be used i.e., whether the use of the data is unrestricted, restricted or limited..
 
-| PERMISSION | permitted values |
-| :-------------------------- | :-------------- |
-| Use of the inventory data is unrestricted | UNRESTRICTED |
-| Use of the inventory data has restrictions | RESTRICTED |
-| Use of the data has limitations | LIMITED |
+| Values | Description |
+| :----- | :-------------- |
+| UNRESTRICTED | Use of the inventory data is unrestricted |
+| RESTRICTED | Use of the inventory data has restrictions |
+| LIMITED | Use of the data has limitations |
 
 
 ### LICENSE_AGREEMENT
 
 The attribute **LICENSE_AGREEMENT** identifies the type of license associated with the inventory data.
 
-| LICENSE_AGREEMENT | values |
-| :-------------------------- | :-------------- |
-| Type of license associated with the inventory data | Text |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Type of license associated with the inventory data |
 
 
 ### PHOTO_YEAR_SRC
 
 The attribute **PHOTO_YEAR_SRC** identifies the source data type that is used to define the photo year i.e., the year in which the inventory was considered initiated and completed.
 
-| PHOTO_YEAR_SRC | values |
-| :-------------------------- | :-------------- |
-| Source data type that is used to define the photo year | Text |
+| Values           | Description |
+| :-------------   | :-------------- |
+| SPATIAL_JOIN     | Photo year is stored as polygons in a separate file that needs to be spatially joined to the data |
+| VALUE_PER_STAND  | Photo year is provided as an attribute in the source data |
+| RELATIONAL_JOIN  | Photo year is stored in a separate table that needs to be joined to the data |
+| GLOBAL_INVENTORY | Photo year is a single value that applies to the entire dataset |
 
 
 ### PHOTO_YEAR_START
 
 The attribute **PHOTO_YEAR_START** identifies the year in which the inventory was considered initiated. An inventory can take several years to complete; therefore, start and end dates are included to identify the interval for when the inventory was completed.
 
-| PHOTO_YEAR_START | values |
-| :-------------------------- | :-------------- |
-| Earliest year of aerial photo acquisition | 1900 - 2020 |
+| Values      | Description |
+| :---------- | :-------------- |
+| 1900 - 2020 | Earliest year of aerial photo acquisition |
 
 
 ### PHOTO_YEAR_END
 
 The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was considered completed. An inventory can take several years to complete; therefore, start and end dates are included to identify the interval for when the inventory was completed. 
 
-| PHOTO_YEAR_END | values |
-| :-------------------------- | :-------------- |
-| Latest year of aerial photo acquisition | 1900 - 2020 |
+| Values      | Description |
+| :---------- | :-------------- |
+| 1900 - 2020 | Latest year of aerial photo acquisition |
 
 
 <a name=CAS_attributes></a>
