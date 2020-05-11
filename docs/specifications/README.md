@@ -7,6 +7,10 @@ Revised by: The CASFRI Project Team, February 03, 2020
 ## Table of contents
 <a href="#Intro">Introduction</a>
 
+<a href="#Intro">CAS</a>
+
+<a href="#Intro">Error codes</a>
+
 <a href="#HDR_attributes">HDR Attributes</a>
 
 <a href="#CAS_attributes">CAS Attributes</a>
@@ -31,8 +35,8 @@ Current national databases developed from satellite-based products using biophys
 Digital forest inventory data can overcome many of the deficiencies identified with satellitebased land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).  
 
 
-
-### Common Attribute Schema  
+<a name=CAS></a>
+## Common Attribute Schema  
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index,  
 non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
@@ -89,15 +93,13 @@ Table 1. CASFRI schema.
 | PHOTO_YEAR_END    |                   |                     |                     |                  |                  |          |
 
 
-
-### Error Codes  
+<a name=Error_codes></a>
+## Error Codes  
 
 Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  [Click here to view specific error codes for individual attributes](https://edwardsmarc.github.io/CASFRI/specifications/errors/cas_errors_specific.csv).
 
 | Class          | Type               | Description                                                  | Text code         | Numeric code |
-| -------------- | ------------------ | ------------------------------------------------------------ | ----------------- | ------------ |
-| Special values | -Infinity          | Negative infinity                                            | MINUS_INF         | -2222        |
-|                | +Infinity          | Positive infinity                                            | PLUS_INF          | -2221        |
+| -------------- | ------------------ | ------------------------------------------------------------ | ----------------- | ---------- |
 | Missing values | Empty string       | Missing that is not null                                     | EMPTY_STRING      | -8889        |
 |                | Null               | Undefined value - true null value                            | NULL_VALUE        | -8888        |
 |                | Not applicable     | Target attribute not in source table or does not apply to this record | NOT_APPLICABLE    | -8887        |
@@ -105,9 +107,9 @@ Error codes are needed during translation if source values are invalid, null, or
 | Invalid values | Out of range       | Value is outside the range of values                         | OUT_OF_RANGE      | -9999        |
 |                | Not member of set  | Value is not a member of a set or list                       | NOT_IN_SET        | -9998        |
 |                | Invalid value      | Invalid value                                                | INVALID_VALUE     | -9997        |
-|                | Precision too high | Precision is greater than allowed                            | WRONG_PRECISION   | -9996        |
 |                | Wrong data type    | Value is of the wrong data type                              | WRONG_TYPE        | -9995        |
 |                | Unused value       | Non-null value that is not used in CAS                       | UNUSED_VALUE      | -9994        |
+|                | Not unique         | Source table values are not unique                           | NOT_UNIQUE        | -9993        |
 | Generic        | Translation error  | Generic translation error                                    | TRANSLATION_ERROR | -3333        |
 | Geometry       | Invalid geometry   | Invalid geometry in one or more polygons                     | INVALID_GEOMETRY  | -7779        |
 |                | No intersect       | FRI does not intersect any polygons                          | NO_INTERSECT      | -7778        |
@@ -350,9 +352,11 @@ The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each 
 - Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
 - Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
-| CAS_ID                                             | values |
-| :----------------------------------------------------------- | :-------------- |
-| CAS stand identification - unique string for each polygon within CAS | alpha numeric           |
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE |  One of the source attributes is null |
+| EMPTY_STRING |  One of the source attributes is an empty string |
 
 Notes:
 
