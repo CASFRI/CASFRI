@@ -372,10 +372,9 @@ Notes:
 
 Original stand identification - unique number for each polygon within the original inventory.
 
-| ORIG_STAND_ID                                             | values |
-| :----------------------------------------------------------- | :-------------- |
-| Unique number for each polygon within the original inventory | 1 - 10,000,000           |
-
+| Values   | Description |
+| :------- | :-------------- |
+| Integer  | Unique number for each polygon within the original inventory |
 
 
 ### STAND_STRUCTURE
@@ -396,15 +395,16 @@ Horizontal structure represents vegetated or non-vegetated land with two or more
 
 If Complex or Horizontal stand structure is assigned in the source data, it is assigned the same value in CASFRI. **Single and Multi-layered stand structure are assigned based on the number of canopy layers identified in the LYR table. If there is one layer, Single-layered is assigned, otherwise Multi-layered.**
 
-| STAND_STRUCTURE | values |
-| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Single layered - vegetation within a polygon where the heights do not vary significantly. | S|
-| Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable and evenly distributed. Each layer is assigned an independent description. | M|
-| Complex - stands exhibit a high variation of heights with no single | C|
-| Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small to delineate as a separate polygon. | H |
+| Values | Description |
+| :------------------- | :-------------- |
+| S                    | Single layered - vegetation within a polygon where the heights do not vary significantly |
+| M                    | Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable                          and evenly distributed. Each layer is assigned an independent description |
+| C                    | Complex - stands exhibit a high variation of heights with no single defined canopy layer |
+| H                    | Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small                          to delineate as a separate polygon |
 
 Notes:
 * In BC08 we do not have the complete dataset so different rules are used for LAYER assignment (see below). The documentation for the BC08 Rank 1 data state that all Rank 1 layers identified in the inventory are from multi-layered stands. We therefore assign M in all cases, even though the LYR table will only contain at most one layer for BC08.
+
 
 ### NUM_OF_LAYERS  
 
@@ -414,72 +414,67 @@ Notes:
 **Proposed new defintion**
 Number of layers counts all CASFRI layers from the the LYR and NFL tables. **Note that NUM_OF_LAYERS is independant of  STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. Stand structure could therefore be S, even when the number of layers is >1.**
 
-| NUM_OF_LAYERS                                                | values |
-| :----------------------------------------------------------- | :----- |
-| Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified. | 1 - 9  |
+| Values | Description |
+| :----  | :----- |
+| 1 - 9  | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be           identified |
 
 Notes:
 
 - In BC08 we do not have the complete source data, only the rank 1 layer. NUM_OF_LAYERS in this case is still assigned as a count of the CASFRI layers available, but it does not represent the count of layers from the full source dataset. 
 
+
 ### IDENTIFICATION_ID
 
 Unique number for a particular inventory section.
 
-| IDENTIFICATION_ID                                | values   |
-| :----------------------------------------------- | :------- |
-| Unique number for a particular inventory section | 1 - 1000 |
-
+| Values   | Description   |
+| :------- | :------- |
+| 1 - 1000 | Unique number for a particular inventory section |
 
 
 ### MAP_SHEET_ID
 
 Map sheet identification according to original naming convention for an inventory.
 
-| MAP_SHEET_ID                                                 | values        |
-| :----------------------------------------------------------- | :------------ |
-| Map sheet identification according to original naming convention for an inventory | alpha numeric |
-
+| Values        | Description        |
+| :------------ | :------------ |
+| Alpha numeric | Map sheet identification according to original naming convention for an inventory |
 
 
 ### CASFRI_AREA
 
 The attribute **CASFRI_AREA** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
-| CASFRI_AREA                           | values        |
-| :------------------------------------ | :------------ |
-| Polygon (stand) area in hectares (ha) | 0.01 - 10,000 |
-
+| Values | Description |
+| :----- | :------------ |
+| >=0.01 | Polygon (stand) area in hectares (ha) |
 
 
 ### CASFRI_PERIMETER
 
 The attribute **CASFRI_PERIMETER** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
-| CASFRI_PERIMETER                        | values          |
-| :-------------------------------------- | :-------------- |
-| Polygon (stand) perimeter in metres (m) | 0.01 - infinity |
-
+| Values | Description |
+| :----- | :-------------- |
+| >=0.01 | Polygon (stand) perimeter in metres (m) |
 
 
 ### SRC_INV_AREA
 
 The attribute **SRC_INV_AREA** measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is measured to 2 decimal places.
 
-| SRC_INV_AREA                          | values        |
-| :------------------------------------ | :------------ |
-| Polygon (stand) area in hectares (ha) | 0.01 - 10,000 |
-
+| Values | Description        |
+| :----- | :------------ |
+| >=0.01 | Polygon (stand) area in hectares (ha) |
 
 
 ### STAND_PHOTO_YEAR
 
 The attribute **STAND_PHOTO_YEAR** is a identifies the year in which the aerial photography was conducted for a particular polygon. This is in contrast to photo_year_start and photo_year_end which identify the interval for when the inventory was completed.
 
-| STAND_PHOTO_YEAR                                             | values      |
-| :----------------------------------------------------------- | :---------- |
-| Identifies the year in which the aerial photography was conducted | 1900 - 2020 |
-
+| Values      | Description      |
+| :---------- | :---------- |
+| 1900 - 2020 | Identifies the year in which the aerial photography was conducted |
 
 
 <a name=LYR_attributes></a>
