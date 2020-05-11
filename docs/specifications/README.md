@@ -7,9 +7,9 @@ Revised by: The CASFRI Project Team, February 03, 2020
 ## Table of contents
 <a href="#Intro">Introduction</a>
 
-<a href="#Intro">CAS</a>
+<a href="#CAS">Common Attribute Schema</a>
 
-<a href="#Intro">Error codes</a>
+<a href="#Error_codes">Error codes</a>
 
 <a href="#HDR_attributes">HDR Attributes</a>
 
@@ -96,7 +96,7 @@ Table 1. CASFRI schema.
 <a name=Error_codes></a>
 ## Error Codes  
 
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  [Click here to view specific error codes for individual attributes](https://edwardsmarc.github.io/CASFRI/specifications/errors/cas_errors_specific.csv).
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. Individual error codes are reported for each attribute in the specifications below.  [Click here to view specific error codes for individual attributes](https://edwardsmarc.github.io/CASFRI/specifications/errors/cas_errors_specific.csv).
 
 | Class          | Type               | Description                                                  | Text code         | Numeric code |
 | -------------- | ------------------ | ------------------------------------------------------------ | ----------------- | ---------- |
