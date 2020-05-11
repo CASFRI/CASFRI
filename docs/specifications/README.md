@@ -152,6 +152,43 @@ The attribute **JURISDICTION** identifies the province, territory or national pa
 
 ### OWNER_TYPE
 
+<div style="float:right;background-color:#e1e4e8;padding:5px;line-height:1em;font-size:12px">
+  <table>
+    <tr style="border:0px;margin:0px;">
+      <td style="border:0px;padding:2px;background-color:#e1e4e8;"><b>Table</b></td>
+      <td style="border:0px;background-color:#e1e4e8;">CAS</td>
+    </tr>
+    <tr style="border:0px;">
+      <td style="border:0px;padding:2px;background-color:#e1e4e8;"><b>Attribute</b></td>
+      <td style="border:0px;background-color:#e1e4e8;">stand_photo_year</td>
+    </tr>
+    <tr style="border:0px;">
+      <td style="border:0px;padding:2px;background-color:#e1e4e8;"><b>Type</b></td>
+      <td style="border:0px;background-color:#e1e4e8;">Integer</td>
+    </tr>
+    <tr style="border:0px;">
+      <td style="border:0px;padding:2px;background-color:#e1e4e8;"><b>Source</b></td>
+      <td style="border:0px;background-color:#e1e4e8;">Translated source value</td>
+    </tr>
+    <tr style="border:0px;">
+      <td style="border:0px;padding:2px;background-color:#e1e4e8;"><b>Presence of attribute<br>in source inventories</b></td>
+      <td style="border:0px;background-color:#e1e4e8;">Most inventories</td>
+    </tr>
+    <tr style="border:0px;">
+      <td style="border:0px;padding:2px;background-color:#e1e4e8;"><b>Present in</b></td>
+      <td style="border:0px;background-color:#e1e4e8;">QC, ON, BC, AB</td>
+    </tr>
+    <tr style="border:0px;">
+      <td style="border:0px;padding:2px;background-color:#e1e4e8;"><b>Values set<br>in source inventories</b></td>
+      <td style="border:0px;background-color:#e1e4e8;">Most of the time</td>
+    </tr>
+    <tr style="border:0px;">
+      <td style="border:0px;padding:2px;background-color:#e1e4e8;"><b>Consistency of attribute definition<br>across source inventories</b></td>
+      <td style="border:0px;background-color:#e1e4e8;">Consistent</td>
+    </tr>
+  </table>
+</div>
+
 The attribute **OWNER_TYPE** identifies who owns the inventory data. Ownership of the inventory can be federal, provincial, territory, industry, private, or First Nation.
 
 | OWNER_TYPE | values |
