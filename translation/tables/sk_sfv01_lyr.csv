@@ -1,6 +1,6 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(smr);matchList(smr,{'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'})","mapText(smr, {'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'}, {'D','F','M','F','M','W','D','F','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
+2,SOIL_MOIST_REG,text,"notNull(smr);notEmpty(smr);matchList(smr,{'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'})","mapText(smr, {'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'}, {'D','F','M','F','M','W','D','F','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"countOfNotNull({dummy_l1_sp1}, {dummy_l2_sp1}, {dummy_l3_sp1}, {shrub1}, {dummy_herbs1}, {nvsl, aquatic_class, luc, transp_class}, 6, 'FALSE')","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Layers are the  canopy species, understory species, and non-forest types.",TRUE
 5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE

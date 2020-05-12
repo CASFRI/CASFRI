@@ -1,6 +1,6 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_no);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_no, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(smr);matchList(smr,{'a','A','d','D','m','M','w','W'})","mapText(smr, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Map source attribute to SOIL_MOIST_REG,TRUE
+2,SOIL_MOIST_REG,text,"notNull(smr);notEmpty(smr);matchList(smr,{'a','A','d','D','m','M','w','W'})","mapText(smr, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Map source attribute to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),copyInt(1),Only 1 layer possible in YT. Every polygon is either LYR or NFL.,TRUE
 5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
