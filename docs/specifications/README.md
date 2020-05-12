@@ -7,6 +7,10 @@ Revised by: The CASFRI Project Team, February 03, 2020
 ## Table of contents
 <a href="#Intro">Introduction</a>
 
+<a href="#CAS">Common Attribute Schema</a>
+
+<a href="#Error_codes">Error codes</a>
+
 <a href="#HDR_attributes">HDR Attributes</a>
 
 <a href="#CAS_attributes">CAS Attributes</a>
@@ -31,8 +35,8 @@ Current national databases developed from satellite-based products using biophys
 Digital forest inventory data can overcome many of the deficiencies identified with satellitebased land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).  
 
 
-
-### Common Attribute Schema  
+<a name=CAS></a>
+## Common Attribute Schema  
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index,  
 non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
@@ -89,28 +93,26 @@ Table 1. CASFRI schema.
 | PHOTO_YEAR_END    |                   |                     |                     |                  |                  |          |
 
 
+<a name=Error_codes></a>
+## Error Codes  
 
-### Error Codes  
-
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause.  [Click here to view specific error codes for individual attributes](https://edwardsmarc.github.io/CASFRI/specifications/errors/cas_errors_specific.csv).
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. Individual error codes are reported for each attribute in the specifications below.
 
 | Class          | Type               | Description                                                  | Text code         | Numeric code |
-| -------------- | ------------------ | ------------------------------------------------------------ | ----------------- | ------------ |
-| Special values | -Infinity          | Negative infinity                                            | MINUS_INF         | -2222        |
-|                | +Infinity          | Positive infinity                                            | PLUS_INF          | -2221        |
-| Missing values | Empty string       | Missing that is not null                                     | EMPTY_STRING      | -8889        |
-|                | Null               | Undefined value - true null value                            | NULL_VALUE        | -8888        |
-|                | Not applicable     | Target attribute not in source table or does not apply to this record | NOT_APPLICABLE    | -8887        |
-|                | Unknown value      | Non-null value that is not known                             | UNKNOWN_VALUE     | -8886        |
-| Invalid values | Out of range       | Value is outside the range of values                         | OUT_OF_RANGE      | -9999        |
-|                | Not member of set  | Value is not a member of a set or list                       | NOT_IN_SET        | -9998        |
-|                | Invalid value      | Invalid value                                                | INVALID_VALUE     | -9997        |
-|                | Precision too high | Precision is greater than allowed                            | WRONG_PRECISION   | -9996        |
-|                | Wrong data type    | Value is of the wrong data type                              | WRONG_TYPE        | -9995        |
-|                | Unused value       | Non-null value that is not used in CAS                       | UNUSED_VALUE      | -9994        |
-| Generic        | Translation error  | Generic translation error                                    | TRANSLATION_ERROR | -3333        |
-| Geometry       | Invalid geometry   | Invalid geometry in one or more polygons                     | INVALID_GEOMETRY  | -7779        |
-|                | No intersect       | FRI does not intersect any polygons                          | NO_INTERSECT      | -7778        |
+| -------------- | ------------------ | ------------------------------------------------------ | ----------------- | ---------- |
+| Missing values | Empty string       | Missing value that is entered as an empty                                                                                             string (e.g. '' or ' ')                                | EMPTY_STRING        | -8889    |
+|                | Null               | Missing value that is a true null value                | NULL_VALUE        | -8888    |
+|                | Not applicable     | Target attribute not in source table or does                                                                                           not apply to this record (e.g. the source                                                                                             inventory does not record information for the                                                                                         attribute                                              | NOT_APPLICABLE    | -8887    |
+|                | Unknown value      | Non-null value that is not known (e.g. if the                                                                                         source data we have is incomplete and we can't                                                                                         be sure of the attributes value without a complete                                                                                     dataset)                                               | UNKNOWN_VALUE     | -8886    |
+| Invalid values | Out of range       | Value is outside the range of values (e.g. a                                                                                           percent value that is >100                             | OUT_OF_RANGE      | -9999    |
+|                | Not member of set  | Value is not a member of a set or list (e.g. when                                                                                     a source value does not match a list of expected                                                                                       strings)                                               | NOT_IN_SET        | -9998    |
+|                | Invalid value      | Invalid value (e.g. input value does match expected                                                                                   format)                                                | INVALID_VALUE     | -9997    |
+|                | Wrong data type    | Value is of the wrong data type (e.g. a text string                                                                                   when we expect an integer)                             | WRONG_TYPE        | -9995    |
+|                | Unused value       | Non-null value that is not used in CAS                 | UNUSED_VALUE      | -9994    |
+|                | Not unique         | Source table values are not unique (e.g. a lookup                                                                                     table that lists a source value twice)                 | NOT_UNIQUE        | -9993    |
+| Generic        | Translation error  | Generic translation error (reported for a failed                                                                                       translation)                                           | TRANSLATION_ERROR | -3333    |
+| Geometry       | Invalid geometry   | Invalid geometry in one or more polygons               | INVALID_GEOMETRY  | -7779    |
+|                | No intersect       | FRI geometry does not intersect any polygons (e.g.                                                                                     when running a spatial join with a photo year geometry)| NO_INTERSECT      | -7778    |
 
 
 <a name=HDR_attributes></a>
@@ -123,215 +125,219 @@ Header information is a primary element of CAS. Header information identifies th
 
 The attribute **INVENTORY_ID** is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments with newer inventories within a jurisdiction.
 
-| INVENTORY_ID | values |
-| :-------------------------- | :-------------- |
-| jurisdiction plus 2 digits | e.g., BC08, AB06, AB16, NB01 |
+| Values | Desription |
+| :----- | :-------------- |
+| Alpha numeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
 
 ### JURISDICTION
 
 The attribute **JURISDICTION** identifies the province, territory or national park from which the inventory data came.
 
-| JURISDICTION | values |
+| Values | Description |
 | :-------------------------- | :-------------- |
-| British Columbia | BC |
-| Alberta | AB |
-| Saskatchewan | SK |
-| Manitoba| MB |
-| Ontario | ON |
-| Quebec | QC |
-| Prince Edward Island | PE |
-| New Brunswick| NB |
-| Nova Scotia | NS |
-| Newfoundland and Labrador | NL |
-| Yukon Territory | YK |
-| Northwest Territories | NT |
-| Wood Buffalo National Park | WB |
-| Prince Albert National Park | PA |
+| BC | British Columbia |
+| AB | Alberta |
+| SK | Saskatchewan |
+| MB | Manitoba |
+| ON | Ontario |
+| QC | Quebec |
+| PE | Prince Edward Island |
+| NB | New Brunswick |
+| NS | Nova Scotia |
+| NL | Newfoundland and Labrador |
+| YK | Yukon Territory |
+| NT | Northwest Territories |
+| WB | Wood Buffalo National Park |
+| PA | Prince Albert National Park |
 
 
 ### OWNER_TYPE
 
 The attribute **OWNER_TYPE** identifies who owns the inventory data. Ownership of the inventory can be federal, provincial, territory, industry, private, or First Nation.
 
-| OWNER_TYPE | values |
-| :-------------------------- | :-------------- |
-| Provincial Government | PROV_GOV |
-| Federal Government | FED_GOV |
-| Yukon Territory or Northwest Territories | TERRITORY |
-| First Nations | FN |
-| Industry | INDUSTRY |
-| Private | PRIVATE |
+| Values    | Description |
+| :-------- | :-------------- |
+| PROV_GOV  | Provincial Government |
+| FED_GOV   | Federal Government |
+| TERRITORY | Yukon Territory or Northwest Territories |
+| FN        | First Nation |
+| INDUSTRY  | Industry |
+| PRIVATE   | Private |
 
 
 ### OWNER_NAME
 
 The attribute **OWNER_NAME** identifies who owns the land that the inventory covers, and degree of permission to which the data can be used. Ownership of the land is identified as being crown, private, military, or First Nation.
 
-| OWNER_NAME | values   |
-| :-------------------------- | :-------------- |
-| Crown | CROWN |
-| Private | PRIVATE |
-| Military | MILITARY |
-| First Nation | FN |
+| Values   | Description   |
+| :------- | :-------------- |
+| CROWN    | Crown |
+| PRIVATE  | Private |
+| MILITARY | Military |
+| FN       | First Nation |
 
 
 ### STANDARD_TYPE
 
 The attribute **STANDARD_TYPE** identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation Inventory or AVI. The inventory type along with a version number usually identifies an inventory.
 
-| STANDARD_TYPE | values        |
-| :-------------------------- | :-------------- |
-| Inventory name or type of inventory | Alpha numeric    |
+| Values         | Description        |
+| :------------- | :-------------- |
+|  Alpha numeric | Inventory name or type of inventory |
 
 
 ### STANDARD_VERSION
 
 The attribute **STANDARD_VERSION** identifies the standards used to produce a consistent inventory, usually across large land bases and for a relatively long period of time. The inventory type along with a version number usually identifies an inventory.
 
-| STANDARD_VERSION | values        |
-| :-------------------------- | :-------------- |
-| The standard and version of the standard used to create the inventory | Alpha numeric |
+| Values         | Description        |
+| :------------- | :-------------- |
+|  Alpha numeric | The standard and version of the standard used to create the inventory |
 
 
 ### STANDARD_ID
 
 The attribute **STANDARD_ID** identifies the version of the standard within CASFRI. If a standard is updated such that a new translation table is required, the **STANDRAD_ID** will be incremented.
 
-| STANDARD_ID                                                  | values        |
-| :----------------------------------------------------------- | :------------ |
-| The standard and version of the standard used to create the inventory | Alpha numeric |
+| Values        | Description   |
+| :------------ | :------------ |
+| Alpha numeric | The standard and version of the standard used to create the inventory |
 
 
 ### STANDARD_REVISION
 
 The attribute **STANDARD_REVISION** records whether any revisions have been made to the standard.
 
-| STANDARD_REVISION                                            | values        |
-| :----------------------------------------------------------- | :------------ |
-| The standard and version of the standard used to create the inventory | Alpha numeric |
+| Values        | Description        |
+| :------------ | :------------ |
+| Alpha numeric | The standard and version of the standard used to create the inventory |
 
 
 ### INVENTORY_MANUAL
 
 The attribute **INVENTORY_MANUAL** identifies the documentation associated with the inventory data e.g., metadata, data dictionary, manual, etc.
 
-| INVENTORY_MANUAL | values |
-| :-------------------------- | :-------------- |
-| Documentation associated with the inventory data | Text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Documentation associated with the inventory data |
 
 
 ### SRC_DATA_FORMAT
 
 The attribute **SRC_DATA_FORMAT** identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file.
 
-| SRC_DATA_FORMAT | values      |
-| :-------------------------- | :-------------- |
-| ESRI file geodatabase     | Geodatabase |
-| ESRI shapefile            | Shapefile   |
-| ESRI e00 transfer file    | e00         |
-| Microsoft Access database | mdb         |
+| Values          | Description      |
+| :-------------- | :-------------- |
+| Geodatabase     | ESRI file geodatabase       |
+| Shapefile       | ESRI shapefile              |
+| E00             | ESRI e00 transfer files     |
+| ESRI Coverage   | ESRI Coverage files         |
+| mdb             | Microsoft Access database   |
 
 
 ### ACQUISITION_DATE
 
 The attribute **ACQUISITION_DATE** identifies the date at which the inventory data was acquired.
 
-| ACQUISITION_DATE | values |
-| :-------------------------- | :-------------- |
-| Date at which the inventory data was acquired | Date   |
+| Values | Description |
+| :----- | :-------------- |
+| Date   | Date at which the inventory data was acquired  |
 
 
 ### DATA_TRANSFER
 
 The attribute **DATA_TRANSFER** identifies the procedure with which the inventory data was acquired. Examples include direct download, ftp transfer, on DVD, etc.
 
-| DATA_TRANSFER | values |
-| :-------------------------- | :-------------- |
-| Procedure with which the inventory data was acquired | Text |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Procedure with which the inventory data was acquired |
 
 
 ### RECEIVED_FROM
 
 The attribute **RECEIVED_FROM** identifies the person, entity, or website from which the inventory data was obtained.
 
-| RECEIVED_FROM | values |
-| :-------------------------- | :-------------- |
-| Person, entity, or website from which the data was obtained | Text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Person, entity, or website from which the data was obtained |
 
 
 ### CONTACT_INFO
 
 The attribute **CONTACT_INFO** identifies the contact information (name, address, phone, email, etc.) associated with the inventory data.
 
-| CONTACT_INFO | values |
-| :-------------------------- | :-------------- |
-| Contact information associated with the inventory data | text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Contact information associated with the inventory data   |
 
 
 ### DATA_AVAILABILITY
 
 The attribute **DATA_AVAILABILITY** identifies the type of access to the inventory data e.g., direct contact or open access.
 
-| DATA_AVAILABILITY | values |
-| :-------------------------- | :-------------- |
-| Type of access to the inventory data | Text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Type of access to the inventory data |
 
 
 ### REDISTRIBUTION
 
 The attribute **REDISTRIBUTION** identifies the conditions under which the inventory data can be redistributed to other parties.
 
-| REDISTRIBUTION | values |
-| :-------------------------- | :-------------- |
-| Conditions under which the inventory data can be redistributed | Text   |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Conditions under which the inventory data can be redistributed |
 
 
 ### PERMISSION
 
 The attribute **PERMISSION** identifies the degree of permission to which the data can be used i.e., whether the use of the data is unrestricted, restricted or limited..
 
-| PERMISSION | permitted values |
-| :-------------------------- | :-------------- |
-| Use of the inventory data is unrestricted | UNRESTRICTED |
-| Use of the inventory data has restrictions | RESTRICTED |
-| Use of the data has limitations | LIMITED |
+| Values | Description |
+| :----- | :-------------- |
+| UNRESTRICTED | Use of the inventory data is unrestricted |
+| RESTRICTED | Use of the inventory data has restrictions |
+| LIMITED | Use of the data has limitations |
 
 
 ### LICENSE_AGREEMENT
 
 The attribute **LICENSE_AGREEMENT** identifies the type of license associated with the inventory data.
 
-| LICENSE_AGREEMENT | values |
-| :-------------------------- | :-------------- |
-| Type of license associated with the inventory data | Text |
+| Values | Description |
+| :----- | :-------------- |
+| Text   | Type of license associated with the inventory data |
 
 
 ### PHOTO_YEAR_SRC
 
 The attribute **PHOTO_YEAR_SRC** identifies the source data type that is used to define the photo year i.e., the year in which the inventory was considered initiated and completed.
 
-| PHOTO_YEAR_SRC | values |
-| :-------------------------- | :-------------- |
-| Source data type that is used to define the photo year | Text |
+| Values           | Description |
+| :-------------   | :-------------- |
+| SPATIAL_JOIN     | Photo year is stored as polygons in a separate file that needs to be spatially joined to the data |
+| VALUE_PER_STAND  | Photo year is provided as an attribute in the source data |
+| RELATIONAL_JOIN  | Photo year is stored in a separate table that needs to be joined to the data |
+| GLOBAL_INVENTORY | Photo year is a single value that applies to the entire dataset |
 
 
 ### PHOTO_YEAR_START
 
 The attribute **PHOTO_YEAR_START** identifies the year in which the inventory was considered initiated. An inventory can take several years to complete; therefore, start and end dates are included to identify the interval for when the inventory was completed.
 
-| PHOTO_YEAR_START | values |
-| :-------------------------- | :-------------- |
-| Earliest year of aerial photo acquisition | 1900 - 2020 |
+| Values      | Description |
+| :---------- | :-------------- |
+| 1900 - 2020 | Earliest year of aerial photo acquisition |
 
 
 ### PHOTO_YEAR_END
 
 The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was considered completed. An inventory can take several years to complete; therefore, start and end dates are included to identify the interval for when the inventory was completed. 
 
-| PHOTO_YEAR_END | values |
-| :-------------------------- | :-------------- |
-| Latest year of aerial photo acquisition | 1900 - 2020 |
+| Values      | Description |
+| :---------- | :-------------- |
+| 1900 - 2020 | Latest year of aerial photo acquisition |
 
 
 <a name=CAS_attributes></a>
@@ -350,9 +356,11 @@ The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each 
 - Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
 - Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
-| CAS_ID                                             | values |
-| :----------------------------------------------------------- | :-------------- |
-| CAS stand identification - unique string for each polygon within CAS | alpha numeric           |
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE |  One of the source attributes is null |
+| EMPTY_STRING |  One of the source attributes is an empty string |
 
 Notes:
 
@@ -364,10 +372,9 @@ Notes:
 
 Original stand identification - unique number for each polygon within the original inventory.
 
-| ORIG_STAND_ID                                             | values |
-| :----------------------------------------------------------- | :-------------- |
-| Unique number for each polygon within the original inventory | 1 - 10,000,000           |
-
+| Values   | Description |
+| :------- | :-------------- |
+| Integer  | Unique number for each polygon within the original inventory |
 
 
 ### STAND_STRUCTURE
@@ -388,15 +395,16 @@ Horizontal structure represents vegetated or non-vegetated land with two or more
 
 If Complex or Horizontal stand structure is assigned in the source data, it is assigned the same value in CASFRI. **Single and Multi-layered stand structure are assigned based on the number of canopy layers identified in the LYR table. If there is one layer, Single-layered is assigned, otherwise Multi-layered.**
 
-| STAND_STRUCTURE | values |
-| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Single layered - vegetation within a polygon where the heights do not vary significantly. | S|
-| Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable and evenly distributed. Each layer is assigned an independent description. | M|
-| Complex - stands exhibit a high variation of heights with no single | C|
-| Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small to delineate as a separate polygon. | H |
+| Values | Description |
+| :------------------- | :-------------- |
+| S                    | Single layered - vegetation within a polygon where the heights do not vary significantly |
+| M                    | Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable                          and evenly distributed. Each layer is assigned an independent description |
+| C                    | Complex - stands exhibit a high variation of heights with no single defined canopy layer |
+| H                    | Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small                          to delineate as a separate polygon |
 
 Notes:
 * In BC08 we do not have the complete dataset so different rules are used for LAYER assignment (see below). The documentation for the BC08 Rank 1 data state that all Rank 1 layers identified in the inventory are from multi-layered stands. We therefore assign M in all cases, even though the LYR table will only contain at most one layer for BC08.
+
 
 ### NUM_OF_LAYERS  
 
@@ -406,72 +414,67 @@ Notes:
 **Proposed new defintion**
 Number of layers counts all CASFRI layers from the the LYR and NFL tables. **Note that NUM_OF_LAYERS is independant of  STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. Stand structure could therefore be S, even when the number of layers is >1.**
 
-| NUM_OF_LAYERS                                                | values |
-| :----------------------------------------------------------- | :----- |
-| Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified. | 1 - 9  |
+| Values | Description |
+| :----  | :----- |
+| 1 - 9  | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be           identified |
 
 Notes:
 
 - In BC08 we do not have the complete source data, only the rank 1 layer. NUM_OF_LAYERS in this case is still assigned as a count of the CASFRI layers available, but it does not represent the count of layers from the full source dataset. 
 
+
 ### IDENTIFICATION_ID
 
 Unique number for a particular inventory section.
 
-| IDENTIFICATION_ID                                | values   |
-| :----------------------------------------------- | :------- |
-| Unique number for a particular inventory section | 1 - 1000 |
-
+| Values   | Description   |
+| :------- | :------- |
+| 1 - 1000 | Unique number for a particular inventory section |
 
 
 ### MAP_SHEET_ID
 
 Map sheet identification according to original naming convention for an inventory.
 
-| MAP_SHEET_ID                                                 | values        |
-| :----------------------------------------------------------- | :------------ |
-| Map sheet identification according to original naming convention for an inventory | alpha numeric |
-
+| Values        | Description        |
+| :------------ | :------------ |
+| Alpha numeric | Map sheet identification according to original naming convention for an inventory |
 
 
 ### CASFRI_AREA
 
 The attribute **CASFRI_AREA** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
-| CASFRI_AREA                           | values        |
-| :------------------------------------ | :------------ |
-| Polygon (stand) area in hectares (ha) | 0.01 - 10,000 |
-
+| Values | Description |
+| :----- | :------------ |
+| >=0.01 | Polygon (stand) area in hectares (ha) |
 
 
 ### CASFRI_PERIMETER
 
 The attribute **CASFRI_PERIMETER** measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
-| CASFRI_PERIMETER                        | values          |
-| :-------------------------------------- | :-------------- |
-| Polygon (stand) perimeter in metres (m) | 0.01 - infinity |
-
+| Values | Description |
+| :----- | :-------------- |
+| >=0.01 | Polygon (stand) perimeter in metres (m) |
 
 
 ### SRC_INV_AREA
 
 The attribute **SRC_INV_AREA** measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is measured to 2 decimal places.
 
-| SRC_INV_AREA                          | values        |
-| :------------------------------------ | :------------ |
-| Polygon (stand) area in hectares (ha) | 0.01 - 10,000 |
-
+| Values | Description        |
+| :----- | :------------ |
+| >=0.01 | Polygon (stand) area in hectares (ha) |
 
 
 ### STAND_PHOTO_YEAR
 
 The attribute **STAND_PHOTO_YEAR** is a identifies the year in which the aerial photography was conducted for a particular polygon. This is in contrast to photo_year_start and photo_year_end which identify the interval for when the inventory was completed.
 
-| STAND_PHOTO_YEAR                                             | values      |
-| :----------------------------------------------------------- | :---------- |
-| Identifies the year in which the aerial photography was conducted | 1900 - 2020 |
-
+| Values      | Description      |
+| :---------- | :---------- |
+| 1900 - 2020 | Identifies the year in which the aerial photography was conducted |
 
 
 <a name=LYR_attributes></a>
