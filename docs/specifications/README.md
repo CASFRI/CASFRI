@@ -719,12 +719,23 @@ Non-forested attributes.
 
 ### CAS_ID
 
-The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-| CAS_ID                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 ### SOIL_MOIST_REG
@@ -733,14 +744,16 @@ See <a href="#SOIL_MOIST_REG">SOIL_MOIST_REG</a> in the LYR table.
 
 Soil moisture regime defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
-| SOIL_MOIST_REG                                               | values |
-| :----------------------------------------------------------- | :----- |
-| Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum. | D      |
-| Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum. | F      |
-| Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration. | M      |
-| Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water. | W      |
-| Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water. | A      |
-| Blank - no value                                             | NA     |
+| Value      | Description |
+| :--------- | :----- |
+| D          | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
+| F          | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
+| M          | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
+| W          | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
+| A          | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
+| NULL_VALUE | Source value is null |
+| NOT_IN_SET | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value does not occur |
 
 Notes:
 * When would NFL be different to LYR? https://github.com/edwardsmarc/CASFRI/issues/328
@@ -750,10 +763,14 @@ Notes:
 
 See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 
-
-| STRUCTURE_PER                                                | values |
-| :----------------------------------------------------------- | :----- |
-| Used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 9  |
+| Values                             | Description  |
+| :--------------------------------- | :------ |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
+| 100                                | When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal                                                structure |
+| -9998                              | Source value is not an expected value (e.g. in cases where structure percent is a coded alpha                                          numeric with an expected list of codes) |
+| -8888                              | Source value is null |
+| -9995                              | Source value is not the expected type (e.g. not an integer) |
+| -9999                              | Source value is outside expected range (e.g. not between 0 and 9) |
 
 
 
@@ -761,19 +778,20 @@ See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 
 See <a href="#LAYER">LAYER</a> in the LYR table.
 
-| layer                                                        | values   |
-| :----------------------------------------------------------- | :------- |
-| Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon. | 1 - 9, V |
+| Values   | Description   |
+| :------- | :------- |
+| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
 
 
 
 ### LAYER_RANK  
 See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
 
-| LAYER_RANK                                                   | values |
-| :----------------------------------------------------------- | :----- |
-| Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc. | 1 - 9  |
-| Blank - no value                                             | NA     |
+| Values | Description |
+| :----- | :----- |
+| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
+| -8888  | Source value is null |
+| -8887  | Translation is not applicable (e.g. no source attribute) |
 
 
 
@@ -782,11 +800,14 @@ See <a href="#CROWN_CLOSURE ">CROWN_CLOSURE</a> in the LYR table.
 
 Crown closure defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
-| CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER           | values  |
-| :------------------------------------------------- | :------ |
-| Upper Bound - upper bound of a crown closure class | 0 - 100 |
-| Lower Bound - lower bound of a crown closure class | 0 - 100 |
-| Blank - no value                                   | NA      |
+| Values    | Description |
+| :-------- | :-------------- |
+| 0 - 100   | Upper and lower bound of a crown closure class |
+| -8888     | Source value is null |
+| -8889     | Source value is empty string (e.g. '') |
+| -9995     | Source value is not the expected type (e.g. not an integer) |
+| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
+| -8887     | Source value is not applicable (e.g. not a forested polygon) |
 
 
 
@@ -795,10 +816,14 @@ See <a href="#HEIGHT ">HEIGHT</a> in the LYR table.
 
 Height defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
-| HEIGHT_UPPER, HEIGHT_LOWER                  | values  |
-| :------------------------------------------ | :------ |
-| Upper Bound - upper bound of a height class | 0 - 100 |
-| Lower Bound - lower bound of a height class | 0 - 100 |
+| Values    | Description |
+| :-------- | :-------------- |
+| 0 - 100   | Upper and lower bound of a height class |
+| -8888     | Source value is null |
+| -8889     | Source value is empty string (e.g. '') |
+| -9995     | Source value is not the expected type (e.g. not an integer) |
+| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
+| -8887     | Source value is not applicable (e.g. not a forested polygon) |
 
 
 
@@ -806,40 +831,47 @@ Height defined in the NFL table must be a value explicitly assigned to the NFL l
 
 The Naturally Non-Vegetated class refers to land types with no vegetation cover. The maximum vegetation cover varies across Canada but is usually less than six or ten percent. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
 
-| NAT_NON_VEG                                                | values |
-| :--------------------------------------------------------- | :----- |
-| Alpine - high elevation exposed land                       | AP     |
-| Lake - ponds, lakes or reservoirs                          | LA     |
-| River - double-lined watercourse                           | RI     |
-| Ocean - coastal waters                                     | OC     |
-| Rock or Rubble - bed rock or talus or boulder field        | RK     |
-| Sand - sand dunes, sand hills, non recent water sediments  | SA     |
-| Snow/Ice - ice fields, glaciers, permanent snow            | SI     |
-| Slide - recent slumps or slides with exposed earth         | SL     |
-| Exposed Land - other non vegetated land                    | EX     |
-| Beach - adjacent to water bodies                           | BE     |
-| Water Sediments - recent sand and gravel bars              | WS     |
-| Flood - recent flooding including beaver ponds             | FL     |
-| Island - vegetated or non vegetated                        | IS     |
-| Tidal Flats - non vegetated feature associated with oceans | TF     |
-| Blank - no value                                           | NA     |
-
+| Values         | Description |
+| :------------- | :----- |
+| AP             | Alpine - high elevation exposed land     |
+| LA             | Lake - ponds, lakes or reservoirs     |
+| RI             | River - double-lined watercourse     |
+| OC             | Ocean - coastal waters     |
+| RK             | Rock or Rubble - bed rock or talus or boulder field     |
+| SA             | Sand - sand dunes, sand hills, non recent water sediments     |
+| SI             | Snow/Ice - ice fields, glaciers, permanent snow     |
+| SL             | Slide - recent slumps or slides with exposed earth     |
+| EX             | Exposed Land - other non vegetated land     |
+| BE             | Beach - adjacent to water bodies     |
+| WS             | Water Sediments - recent sand and gravel bars     |
+| FL             | Flood - recent flooding including beaver ponds     |
+| IS             | Island - vegetated or non vegetated     |
+| TF             | Tidal Flats - non vegetated feature associated with oceans     |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
+| INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                       defined) |
 
 
 ### NON_FOR_ANTH
 
 Non-forested anthropogenic areas are influenced or created by humans. These sites may or may not be vegetated. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
 
-| NON_FOR_ANTH                                                 | values |
-| :----------------------------------------------------------- | :----- |
-| Industrial - industrial sites                                | IN     |
-| Facility/Infrastructure - transportation, transmission, pipeline | FA     |
-| Cultivated - pasture, crops, orchards, plantations           | CL     |
-| Settlement - cities, towns, ribbon development               | SE     |
-| Lagoon - water filled, includes treatment sites              | LG     |
-| Borrow Pit - associated with facility/infrastructure         | BP     |
-| Other - any not listed                                       | OT     |
-| Blank - no value                                             | NA     |
+| Values         | Description |
+| :------------- | :----- |
+| IN             | Industrial - industrial sites     |
+| FA             | Facility/Infrastructure - transportation, transmission, pipeline     |
+| CL             | Cultivated - pasture, crops, orchards, plantations     |
+| SE             | Settlement - cities, towns, ribbon development     |
+| LG             | Lagoon - water filled, includes treatment sites     |
+| BP             | Borrow Pit - associated with facility/infrastructure     |
+| OT             | Other - any not listed     |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
+| INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
 
 
 
@@ -847,18 +879,21 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 
 Non-forested vegetated areas include all natural lands that have vegetation cover with usually less than 10% tree cover. These cover types can be stand alone or used in multi-layer situations. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.    
 
-| NON_FOR_VEG                                          | values |
-| :--------------------------------------------------- | :----- |
-| Tall Shrub - shrub lands with shrubs > 2 meters tall | ST     |
-| Low Shrub - shrub lands with shrubs < 2 meters tall  | SL     |
-| Forbs - herbaceous plants other than graminoids      | HF     |
-| Herbs - no distinction between forbs and graminoids  | HE     |
-| Graminoids - grasses, sedges, rushes, and reeds      | HG     |
-| Bryoid - mosses and lichens                          | BR     |
-| Open Muskeg - wetlands less than 10% tree cover      | OM     |
-| Tundra - flat treeless plains                        | TN     |
-| Blank - no value                                     | NA     |
-
+| Values         | Description |
+| :------------- | :----- |
+| ST             | Tall Shrub - shrub lands with shrubs > 2 meters tall     |
+| SL             | Low Shrub - shrub lands with shrubs < 2 meters tall     |
+| HF             | Forbs - herbaceous plants other than graminoids     |
+| HE             | Herbs - no distinction between forbs and graminoids     |
+| HG             | Graminoids - grasses, sedges, rushes, and reeds     |
+| BR             | Bryoid - mosses and lichens     |
+| OM             | Open Muskeg - wetlands less than 10% tree cover     |
+| TN             | Tundra - flat treeless plains     |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
+| INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
 
 
 <a name=DST_attributes></a>
