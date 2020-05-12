@@ -32,4 +32,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 31,ORIGIN_UPPER,integer,"notNull(age);isInt(age);isBetween(age, 0, 2020)",copyInt(age),Copies source attribute to ORIGIN_UPPER,TRUE
 32,ORIGIN_LOWER,integer,"notNull(age);isInt(age);isBetween(age, 0, 2020)",copyInt(age),Copies source attribute to ORIGIN_LOWER,TRUE
 33,SITE_CLASS,text,"notNull(site_class);notEmpty(site_class);matchList(site_class,{'L','P','M','G'})","mapText(site_class, {'P','P','M','G'}, {'L','P','M','G'})",Maps source value to SITE_CLASS,TRUE
-34,SITE_INDEX,double precision,"notNull(site_index);isNumeric(site_index);isGreaterThan(site_index,'0.1');isLessThan(site_index, 40)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
+34,SITE_INDEX,double precision,"notNull(site_index);isNumeric(site_index);isBetween(site_index,0.1,40)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
