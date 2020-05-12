@@ -359,8 +359,8 @@ The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each 
 | Values               | Description |
 | :------------------- | :---------- |
 | Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
-| NULL_VALUE |  One of the source attributes is null |
-| EMPTY_STRING |  One of the source attributes is an empty string |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
 
 Notes:
 
@@ -372,9 +372,12 @@ Notes:
 
 Original stand identification - unique number for each polygon within the original inventory.
 
-| Values   | Description |
-| :------- | :-------------- |
-| Integer  | Unique number for each polygon within the original inventory |
+| Values       | Description |
+| :----------- | :-------------- |
+| Integer      | Unique number for each polygon within the original inventory |
+| NULL_VALUE   |  Source attribute is null |
+| WRONG_TYPE   |  Source attribute is wrong type (e.g. an integer was expected) |
+| OUT_OF_RANGE |  Source attribute is out of expected range (e.g. an integer greater than zero was expected) |
 
 
 ### STAND_STRUCTURE
@@ -401,6 +404,7 @@ If Complex or Horizontal stand structure is assigned in the source data, it is a
 | M                    | Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable                          and evenly distributed. Each layer is assigned an independent description |
 | C                    | Complex - stands exhibit a high variation of heights with no single defined canopy layer |
 | H                    | Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small                          to delineate as a separate polygon |
+| NOT_APPLICABLE       | No stand structure value is applicable (e.g. polygon does not have canopy information) |
 
 Notes:
 * In BC08 we do not have the complete dataset so different rules are used for LAYER assignment (see below). The documentation for the BC08 Rank 1 data state that all Rank 1 layers identified in the inventory are from multi-layered stands. We therefore assign M in all cases, even though the LYR table will only contain at most one layer for BC08.
@@ -414,40 +418,35 @@ Notes:
 **Proposed new defintion**
 Number of layers counts all CASFRI layers from the the LYR and NFL tables. **Note that NUM_OF_LAYERS is independant of  STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. Stand structure could therefore be S, even when the number of layers is >1.**
 
-| Values | Description |
-| :----  | :----- |
-| 1 - 9  | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be           identified |
+| Values        | Description |
+| :----         | :----- |
+| 1 - 9         | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers                   can be identified |
+| -8886         | The number of layers is not known (e.g. if there is disturbance info, but not reported layers) |
 
 Notes:
 
 - In BC08 we do not have the complete source data, only the rank 1 layer. NUM_OF_LAYERS in this case is still assigned as a count of the CASFRI layers available, but it does not represent the count of layers from the full source dataset. 
 
 
-### IDENTIFICATION_ID
-
-Unique number for a particular inventory section.
-
-| Values   | Description   |
-| :------- | :------- |
-| 1 - 1000 | Unique number for a particular inventory section |
-
-
 ### MAP_SHEET_ID
 
 Map sheet identification according to original naming convention for an inventory.
 
-| Values        | Description        |
-| :------------ | :------------ |
-| Alpha numeric | Map sheet identification according to original naming convention for an inventory |
+| Values         | Description        |
+| :------------  | :------------ |
+| Alpha numeric  | Map sheet identification according to original naming convention for an inventory |
+| NULL_VALUE     | Source value is null |
+| NOT_APPLICABLE | Attribute does not exist in source data |
 
 
 ### CASFRI_AREA
 
 The attribute **CASFRI_AREA** measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
-| Values | Description |
-| :----- | :------------ |
-| >=0.01 | Polygon (stand) area in hectares (ha) |
+| Values        | Description |
+| :-----        | :------------ |
+| >=0.01        | Polygon (stand) area in hectares (ha) |
+| -7779         | Source geometry is not valid |
 
 
 ### CASFRI_PERIMETER
@@ -457,6 +456,7 @@ The attribute **CASFRI_PERIMETER** measures the perimeter of each polygon in met
 | Values | Description |
 | :----- | :-------------- |
 | >=0.01 | Polygon (stand) perimeter in metres (m) |
+| -7779  | Source geometry is not valid |
 
 
 ### SRC_INV_AREA
@@ -466,6 +466,10 @@ The attribute **SRC_INV_AREA** measures the area of each polygon in hectares (ha
 | Values | Description        |
 | :----- | :------------ |
 | >=0.01 | Polygon (stand) area in hectares (ha) |
+| -8888  | Source value is null |
+| -9995  | Source value is not the expected type (e.g. not a numeric) |
+| -9999  | Source value is outside expected range (e.g. it is zero) |
+| -8887  | Attribute does not exist in source data |
 
 
 ### STAND_PHOTO_YEAR
@@ -475,6 +479,11 @@ The attribute **STAND_PHOTO_YEAR** is a identifies the year in which the aerial 
 | Values      | Description      |
 | :---------- | :---------- |
 | 1900 - 2020 | Identifies the year in which the aerial photography was conducted |
+| -8888  | Source value is null |
+| -9995  | Source value is not the expected type (e.g. not an integer) |
+| -9999  | Source value is outside expected range (e.g. not between 1900 and 2020) |
+| -7779  | Source geometry is not valid |
+| -7778  | Source geometry does not intersect the provided geometry (e.g. source polygon does not intersect the photo year geometry) |
 
 
 <a name=LYR_attributes></a>
@@ -493,9 +502,11 @@ The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each 
 - Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
 - Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
-| CAS_ID                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique string for each polygon within CAS | alpha numeric |
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
 
 Notes:
 
@@ -507,28 +518,29 @@ Notes:
 
 The attribute **STRUCTURE_PER** is assigned when a horizontal structured polygon is identified. It is used with horizontal stands and identifies the percentage of stand area, assigned in 10% increments, attributed by each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
 
-| STRUCTURE_PER                                                | values  |
-| :----------------------------------------------------------- | :------ |
-| When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 100 |
-| When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal structure. | 100     |
-
-Notes:
-
-- Applies to the following inventories: AB, NB, NT... 
+| Values                             | Description  |
+| :--------------------------------- | :------ |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
+| 100                                | When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal                                                structure |
+| -9998                              | Source value is not an expected value (e.g. in cases where structure percent is a coded alpha                                          numeric with an expected list of codes) |
+| -8888                              | Source value is null |
+| -9995                              | Source value is not the expected type (e.g. not an integer) |
+| -9999                              | Source value is outside expected range (e.g. not between 0 and 9) |
 
 
 ### STRUCTURE_RANGE
 
 The attribute **STRUCTURE_RANGE** is assigned when a complex structured polygon is identified. It is used with complex stands and represents the height range (m) around the stand midpoint. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.
 
-| STRUCTURE_RANGE                                              | values |
-| :----------------------------------------------------------- | :----- |
-| When **STAND_STRUCTURE** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as the difference between the mean or median heights of the upper and lower layers within the complex stand. | 1 - 99 |
-| When **STAND_STRUCTURE** = "S", "M", or "H", value = -8887 i.e., not applicable | -8887  |
+| Values | Description |
+| :----- | :----- |
+| 1 - 99 | When **STAND_STRUCTURE** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as            the difference between the mean or median heights of the upper and lower layers within the complex stand |
+| -8887  | Translation is not applicable (e.g. when **STAND_STRUCTURE** = "S", "M", or "H") |
 
 Notes:
 
 - Applies to the following inventories: AB, NB, NT, (Wood Buffalo?)
+
 
 <a name=LAYER></a>
 ### LAYER
@@ -537,60 +549,73 @@ LAYER is related to stand structure and number of layers and is recorded for all
 
 LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exsists, an NFL layer will get a value of 1.
 
-| LAYER                                                        | values   |
-| :----------------------------------------------------------- | :------- |
-| Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon. | 1 - 9, V |
+| Values   | Description   |
+| :------- | :------- |
+| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
 
 Notes:
 
 - LAYER is a CASFRI specific attribute that we compute based on the presence or absence of values for different layers.
 - One exception is the BC08 inventory where we do not have access to the complete dataset. Only the rank 1 data is available which could represent any canopy layer from the full source inventory. We therefore copy the layer info from the source data in this case so as not to mis-represent the source data by assigning layer 1 to a layer that is not actually the top layer. 
 
+
 <a name=LAYER_RANK></a>
 ### LAYER_RANK
 
 Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code.  
 
-| LAYER_RANK                                                   | values |
-| :----------------------------------------------------------- | :----- |
-| Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc. | 1 - 9  |
+| Values | Description |
+| :----- | :----- |
+| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
+| -8888  | Source value is null |
+| -8887  | Translation is not applicable (e.g. no source attribute) |
+
 
 <a name=SOIL_MOIST_REG></a>
 ### SOIL_MOIST_REG  
 
 Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. *The detailed soil moisture regime table and CAS conversion is presented in Appendix 4*.  
 
-| SOIL_MOIST_REG                                                   | values |
-| :----------------------------------------------------------- | :----- |
-| Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum.  | D |
-| Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum. | F |
-| Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration. |  M |
-| Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water. | W |
-| Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water. | A |
-| Not member of set | NOT_IN_SET |
-| Null value | NULL_VALUE |
+| Value      | Description |
+| :--------- | :----- |
+| D          | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
+| F          | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
+| M          | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
+| W          | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
+| A          | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
+| NULL_VALUE | Source value is null |
+| NOT_IN_SET | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value does not occur |
 
 
 <a name=CROWN_CLOSURE></a>
-### CROWN_CLOSURE 
+### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER 
 
 Crown closure is an estimate of the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CASFRI recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.  
 
-| CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER    | values |
-| :------------------------------------------------- | :-------------- |
-| Upper Bound - upper bound of a crown closure class | 0 - 100         |
-| Lower Bound - lower bound of a crown closure class | 0 - 100         |
+| Values    | Description |
+| :-------- | :-------------- |
+| 0 - 100   | Upper and lower bound of a crown closure class |
+| -8888     | Source value is null |
+| -8889     | Source value is empty string (e.g. '') |
+| -9995     | Source value is not the expected type (e.g. not an integer) |
+| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
+| -8887     | Source value is not applicable (e.g. not a forested polygon) |
 
 
 <a name=HEIGHT></a>
-### HEIGHT
+### HEIGHT_UPPER, HEIGHT_LOWER
 
 Stand height is based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6. 
 
-| HEIGHT_UPPER, HEIGHT_LOWER             | values |
-| :------------------------------------------ | :-------------- |
-| Upper Bound - upper bound of a height class | 0 - 100         |
-| Lower Bound - lower bound of a height class | 0 - 100         |
+| Values    | Description |
+| :-------- | :-------------- |
+| 0 - 100   | Upper and lower bound of a height class |
+| -8888     | Source value is null |
+| -8889     | Source value is empty string (e.g. '') |
+| -9995     | Source value is not the expected type (e.g. not an integer) |
+| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
+| -8887     | Source value is not applicable (e.g. not a forested polygon) |
 
 Note:
 * In BC10, separate heights are assigned for the dominant and co-dominant species in a layer. We therefore compute a weighted average based on the dominant and co-dominant heights, weighted by the percent cover of the dominant and co-dominant species in the layer.
@@ -600,22 +625,21 @@ Note:
 
 Unproductive forest is forest land not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. The detailed table, CAS codes, and conversion rule sets are presented in Appendix 12.  
 
-| PRODUCTIVE_FOR | values |
-| :-------------------------------------------------------------- | :-------------- |
-| Treed Muskeg - treed wetland sites| TM |
-| Alpine forest - high elevation forest usually above 1800 m | AL |
-| Scrub Deciduous - scrub deciduous trees on poor sites | SD |
-| Scrub Coniferous - scrub coniferous trees on poor sites | SC |
-| Non Productive Forest - poor forest types on rocky or wet sites | NP |
-| Productive Forest - any other forest | P|
+| Values | Description |
+| :----- | :-------------- |
+| TM     | Treed Muskeg - treed wetland sites |
+| AL     | Alpine forest - high elevation forest usually above 1800 m |
+| SD     | Scrub Deciduous - scrub deciduous trees on poor sites |
+| SC     | Scrub Coniferous - scrub coniferous trees on poor sites |
+| NP     | Non Productive Forest - poor forest types on rocky or wet sites |
+| P      | Productive Forest - any other forest |
 
 Notes:
 
-- This attribute needs an overhaul.
+- This attribute needs an overhaul. #181, #295
 
 
-
-### SPECIES
+### SPECIES_1 - SPECIES_10
 
 Species composition is the percentage of each tree species represented within a forested polygon by layer. Species are listed in descending order according to their contribution based on crown closure, basal area, or volume depending on the province or territory. A total of ten species can be used in one label. For the first species for example, CASFRI has a SPECIES_1 attribute to record the species name, and a SPECIES_PER_1 attribute to record the percent cover. Species percent will capture percent estimates to the nearest percent; however, most inventories across Canada describe species to the nearest 10% (in actual percent value or multiples of 10). Species composition for each forest stand and layer must sum to 100%.  
 
@@ -623,51 +647,68 @@ The detailed table for species composition is presented in Appendix 7. Some inve
 
 CAS species codes are derived from the species' Latin name using the first four letters of the Genus and the first four letters of the Species unless there is a conflict, then the last letter of the species portion of the code is changed. Unique codes are required for generic groups and hybrids. A species list has been developed representing every inventory species identified across Canada including hybrids, exotics and generic groups (Appendix 8). Generic groups represent situations where species were not required to be recognized past the generic name or where photo interpreters could not identify an individual species. A list of species that is represented by the generic groups by province, territory, or Park has also been developed and is presented in Appendix 9.  Error and missing value codes:*  
 
-| SPECIES_1 - SPECIES_10                                                                                                | values |
-| :---------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Species code. Example: Populus tremuloides, Trembling Aspen. Ten species can be listed per layer per polygon. | POPU TREM       |
+| Values         | Description |
+| :------------  | :-------------- |
+| Species codes  | **Link to possible values after #211** |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is and empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| INVALID_VALUE  | Soure value is invalid (e.g. code is not the expected format) |
+
+
+### SPECIES_PER_1 - SPECIES_PER_10
+
+| Values     | Description |
+| :--------- | :-------------- |
+| 1 - 100    | Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add                up to 100% |
+| -8888     | Source value is null |
+| -9995     | Source value is not the expected type (e.g. not an integer) |
+| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
+| -9997     | Soure value is invalid (e.g. code is not the expected format) |
+| -8887     | Soure value is not applicable (e.g. no forest info) |
 
 
 
-### SPECIES_PER
-
-| SPECIES_PER_1 - SPECIES_PER_10                                                                                                                                      | values |
-| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100%. | 1-100          |
-
-
-
-### ORIGIN
+### ORIGIN_UPPER, ORIGIN_LOWER
 
 Stand origin is the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CAS origin. The detailed stand origin table is presented in Appendix 10. 
 
-| ORIGIN_UPPER, ORIGIN_LOWER           | values |
-| :---------------------------------------- | :-------------- |
-| Upper Bound - upper bound of an age class | 0 - 2020        |
-| Lower Bound - lower bound of an age class | 0 - 2020        |
-
+| Values    | Description |
+| :-------- | :-------------- |
+| 0 - 2020  | Upper and lower bound of an age class |
+| -8888     | Source value is null |
+| -9995     | Source value is not the expected type (e.g. not an integer) |
+| -9999     | Source value is outside expected range (e.g. not between 0 and 2020) |
+| -9997     | Source value is invalid (e.g. not the correct format) |
 
 
 ### SITE_CLASS
 
 Site class is an estimate of the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography, climate, elevation, and moisture availability. See Appendix 11 for the detailed site table.  
 
-| SITE_CLASS                                                  | values |
-| :----------------------------------------------------------- | :-------------- |
-| Unproductive - cannot support a commercial forest            | U               |
-| Poor - poor tree growth based on age height relationship     | P               |
-| Medium - medium tree growth based on age height relationship | M               |
-| Good - medium tree growth based on age height relationship   | G               |
-
+| Values | Description |
+| :----- | :-------------- |
+| U      | Unproductive - cannot support a commercial forest |
+| P      | Poor - poor tree growth based on age height relationship |
+| M      | Medium - medium tree growth based on age height relationship |
+| G      | Good - medium tree growth based on age height relationship |
+| NOT_NULL | Source value is null |
+| NOT_EMPTY | Source value is an empty string (e.g. '') |
+| NOT_IN_SET | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value does not occur |
 
 
 ### SITE_INDEX
 
 Site Index is an estimate of site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada. See Appendix 11 for the detailed site table.  
 
-| SITE_INDEX                                                                       | values |
-| :-------------------------------------------------------------------------------- | :-------------- |
-| Estimate of site productivity for tree growth based on a specified reference age. | 0 - 99          |
+| Values   | Description |
+| :-------- | :-------------- |
+| 0 - 99 | Estimate of site productivity for tree growth based on a specified reference age |
+| -8888     | Source value is null |
+| -9995     | Source value is not the expected type (e.g. not a number) |
+| -9999     | Source value is outside expected range (e.g. not between 1 and 99) |
+| -8887     | Source value does not occur |
 
 
 <a name=NFL_attributes></a>
@@ -678,12 +719,23 @@ Non-forested attributes.
 
 ### CAS_ID
 
-The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-| CAS_ID                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 ### SOIL_MOIST_REG
@@ -692,14 +744,16 @@ See <a href="#SOIL_MOIST_REG">SOIL_MOIST_REG</a> in the LYR table.
 
 Soil moisture regime defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
-| SOIL_MOIST_REG                                               | values |
-| :----------------------------------------------------------- | :----- |
-| Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum. | D      |
-| Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum. | F      |
-| Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration. | M      |
-| Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water. | W      |
-| Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water. | A      |
-| Blank - no value                                             | NA     |
+| Value      | Description |
+| :--------- | :----- |
+| D          | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
+| F          | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
+| M          | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
+| W          | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
+| A          | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
+| NULL_VALUE | Source value is null |
+| NOT_IN_SET | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value does not occur |
 
 Notes:
 * When would NFL be different to LYR? https://github.com/edwardsmarc/CASFRI/issues/328
@@ -709,10 +763,14 @@ Notes:
 
 See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 
-
-| STRUCTURE_PER                                                | values |
-| :----------------------------------------------------------- | :----- |
-| Used with horizontal stands to identify the percentage, in 10% increments, strata within the polygon. Must add up to 100%. Only two strata represented by each homogeneous descriptions are allowed per polygon. | 1 - 9  |
+| Values                             | Description  |
+| :--------------------------------- | :------ |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
+| 100                                | When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal                                                structure |
+| -9998                              | Source value is not an expected value (e.g. in cases where structure percent is a coded alpha                                          numeric with an expected list of codes) |
+| -8888                              | Source value is null |
+| -9995                              | Source value is not the expected type (e.g. not an integer) |
+| -9999                              | Source value is outside expected range (e.g. not between 0 and 9) |
 
 
 
@@ -720,19 +778,20 @@ See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 
 See <a href="#LAYER">LAYER</a> in the LYR table.
 
-| layer                                                        | values   |
-| :----------------------------------------------------------- | :------- |
-| Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon. | 1 - 9, V |
+| Values   | Description   |
+| :------- | :------- |
+| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
 
 
 
 ### LAYER_RANK  
 See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
 
-| LAYER_RANK                                                   | values |
-| :----------------------------------------------------------- | :----- |
-| Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc. | 1 - 9  |
-| Blank - no value                                             | NA     |
+| Values | Description |
+| :----- | :----- |
+| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
+| -8888  | Source value is null |
+| -8887  | Translation is not applicable (e.g. no source attribute) |
 
 
 
@@ -741,11 +800,14 @@ See <a href="#CROWN_CLOSURE ">CROWN_CLOSURE</a> in the LYR table.
 
 Crown closure defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
-| CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER           | values  |
-| :------------------------------------------------- | :------ |
-| Upper Bound - upper bound of a crown closure class | 0 - 100 |
-| Lower Bound - lower bound of a crown closure class | 0 - 100 |
-| Blank - no value                                   | NA      |
+| Values    | Description |
+| :-------- | :-------------- |
+| 0 - 100   | Upper and lower bound of a crown closure class |
+| -8888     | Source value is null |
+| -8889     | Source value is empty string (e.g. '') |
+| -9995     | Source value is not the expected type (e.g. not an integer) |
+| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
+| -8887     | Source value is not applicable (e.g. not a forested polygon) |
 
 
 
@@ -754,10 +816,14 @@ See <a href="#HEIGHT ">HEIGHT</a> in the LYR table.
 
 Height defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
-| HEIGHT_UPPER, HEIGHT_LOWER                  | values  |
-| :------------------------------------------ | :------ |
-| Upper Bound - upper bound of a height class | 0 - 100 |
-| Lower Bound - lower bound of a height class | 0 - 100 |
+| Values    | Description |
+| :-------- | :-------------- |
+| 0 - 100   | Upper and lower bound of a height class |
+| -8888     | Source value is null |
+| -8889     | Source value is empty string (e.g. '') |
+| -9995     | Source value is not the expected type (e.g. not an integer) |
+| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
+| -8887     | Source value is not applicable (e.g. not a forested polygon) |
 
 
 
@@ -765,40 +831,47 @@ Height defined in the NFL table must be a value explicitly assigned to the NFL l
 
 The Naturally Non-Vegetated class refers to land types with no vegetation cover. The maximum vegetation cover varies across Canada but is usually less than six or ten percent. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
 
-| NAT_NON_VEG                                                | values |
-| :--------------------------------------------------------- | :----- |
-| Alpine - high elevation exposed land                       | AP     |
-| Lake - ponds, lakes or reservoirs                          | LA     |
-| River - double-lined watercourse                           | RI     |
-| Ocean - coastal waters                                     | OC     |
-| Rock or Rubble - bed rock or talus or boulder field        | RK     |
-| Sand - sand dunes, sand hills, non recent water sediments  | SA     |
-| Snow/Ice - ice fields, glaciers, permanent snow            | SI     |
-| Slide - recent slumps or slides with exposed earth         | SL     |
-| Exposed Land - other non vegetated land                    | EX     |
-| Beach - adjacent to water bodies                           | BE     |
-| Water Sediments - recent sand and gravel bars              | WS     |
-| Flood - recent flooding including beaver ponds             | FL     |
-| Island - vegetated or non vegetated                        | IS     |
-| Tidal Flats - non vegetated feature associated with oceans | TF     |
-| Blank - no value                                           | NA     |
-
+| Values         | Description |
+| :------------- | :----- |
+| AP             | Alpine - high elevation exposed land     |
+| LA             | Lake - ponds, lakes or reservoirs     |
+| RI             | River - double-lined watercourse     |
+| OC             | Ocean - coastal waters     |
+| RK             | Rock or Rubble - bed rock or talus or boulder field     |
+| SA             | Sand - sand dunes, sand hills, non recent water sediments     |
+| SI             | Snow/Ice - ice fields, glaciers, permanent snow     |
+| SL             | Slide - recent slumps or slides with exposed earth     |
+| EX             | Exposed Land - other non vegetated land     |
+| BE             | Beach - adjacent to water bodies     |
+| WS             | Water Sediments - recent sand and gravel bars     |
+| FL             | Flood - recent flooding including beaver ponds     |
+| IS             | Island - vegetated or non vegetated     |
+| TF             | Tidal Flats - non vegetated feature associated with oceans     |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
+| INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                       defined) |
 
 
 ### NON_FOR_ANTH
 
 Non-forested anthropogenic areas are influenced or created by humans. These sites may or may not be vegetated. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
 
-| NON_FOR_ANTH                                                 | values |
-| :----------------------------------------------------------- | :----- |
-| Industrial - industrial sites                                | IN     |
-| Facility/Infrastructure - transportation, transmission, pipeline | FA     |
-| Cultivated - pasture, crops, orchards, plantations           | CL     |
-| Settlement - cities, towns, ribbon development               | SE     |
-| Lagoon - water filled, includes treatment sites              | LG     |
-| Borrow Pit - associated with facility/infrastructure         | BP     |
-| Other - any not listed                                       | OT     |
-| Blank - no value                                             | NA     |
+| Values         | Description |
+| :------------- | :----- |
+| IN             | Industrial - industrial sites     |
+| FA             | Facility/Infrastructure - transportation, transmission, pipeline     |
+| CL             | Cultivated - pasture, crops, orchards, plantations     |
+| SE             | Settlement - cities, towns, ribbon development     |
+| LG             | Lagoon - water filled, includes treatment sites     |
+| BP             | Borrow Pit - associated with facility/infrastructure     |
+| OT             | Other - any not listed     |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
+| INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
 
 
 
@@ -806,18 +879,21 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 
 Non-forested vegetated areas include all natural lands that have vegetation cover with usually less than 10% tree cover. These cover types can be stand alone or used in multi-layer situations. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.    
 
-| NON_FOR_VEG                                          | values |
-| :--------------------------------------------------- | :----- |
-| Tall Shrub - shrub lands with shrubs > 2 meters tall | ST     |
-| Low Shrub - shrub lands with shrubs < 2 meters tall  | SL     |
-| Forbs - herbaceous plants other than graminoids      | HF     |
-| Herbs - no distinction between forbs and graminoids  | HE     |
-| Graminoids - grasses, sedges, rushes, and reeds      | HG     |
-| Bryoid - mosses and lichens                          | BR     |
-| Open Muskeg - wetlands less than 10% tree cover      | OM     |
-| Tundra - flat treeless plains                        | TN     |
-| Blank - no value                                     | NA     |
-
+| Values         | Description |
+| :------------- | :----- |
+| ST             | Tall Shrub - shrub lands with shrubs > 2 meters tall     |
+| SL             | Low Shrub - shrub lands with shrubs < 2 meters tall     |
+| HF             | Forbs - herbaceous plants other than graminoids     |
+| HE             | Herbs - no distinction between forbs and graminoids     |
+| HG             | Graminoids - grasses, sedges, rushes, and reeds     |
+| BR             | Bryoid - mosses and lichens     |
+| OM             | Open Muskeg - wetlands less than 10% tree cover     |
+| TN             | Tundra - flat treeless plains     |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
+| INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
 
 
 <a name=DST_attributes></a>
@@ -825,11 +901,23 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 ### CAS_ID
 
-The attribute CAS_ID is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-| CAS_ID                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
+
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 
@@ -837,51 +925,62 @@ The attribute CAS_ID is an alpha-numeric identifier that is unique for each poly
 
 Disturbance identifies the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human -caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 13.  
 
-| DIST_TYPE_1, DIST_TYPE_2, DIST_TYPE_3 | values |
-| :------------------------------------------------------------------------ | :-------------- |
-| Cut - logging with known extent | CO |
-| Partial Cut - portion of forest has been removed, extent known or unknown | PC |
-| Burn - wildfires or escape fires | BU |
-| Windfall - blow down | WF |
-| Disease - root, stem, branch diseases | DI |
-| Insect - root, bark, leader, or defoliation insects | IK |
-| Flood - permanent flooding from blockage or damming | FL |
-| Weather - ice, frost, red belt | WE |
-| Slide - damage from avalanche, slump, earth or rock slides | SL |
-| Other - unknown or other damage | OT |
-| Dead Tops or Trees - dead or dying trees, cause unknown | DT |
-| Silviculture Treatments - Planting, Thinning, Seed Tree | SI |
-
+| Values         | Description |
+| :------------- | :-------------- |
+| CO             | Cut - logging with known extent |
+| PC             | Partial Cut - portion of forest has been removed, extent known or unknown |
+| BU             | Burn - wildfires or escape fires |
+| WF             | Windfall - blow down |
+| DI             | Disease - root, stem, branch diseases |
+| IK             | Insect - root, bark, leader, or defoliation insects |
+| FL             | Flood - permanent flooding from blockage or damming |
+| WE             | Weather - ice, frost, red belt |
+| SL             | Slide - damage from avalanche, slump, earth or rock slides |
+| OT             | Other - unknown or other damage |
+| DT             | Dead Tops or Trees - dead or dying trees, cause unknown |
+| SI             | Silviculture Treatments - Planting, Thinning, Seed Tree |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| INVALID_VALUE  | Source value is invalid (e.g. the disturbance code does not match the expected format) |
 
 
 ### DIST_YEAR_1 - DIST_YEAR_3  
 
 Disturbance year is the year a disturbance event occurred. The disturbance year may be unknown. Three disturbance years can be identified, one for each disturbance event.    
 
-| DIST_YEAR_1, DIST_YEAR_2, DIST_YEAR_3                      | values      |
-| :--------------------------------------------------------- | :---------- |
-| Disturbance Year - year that a disturbance event occurred. | 1900 - 2020 |
+| Values       | Description |
+| :----------- | :---------- |
+|  1900 - 2020 | Disturbance Year - year that a disturbance event occurred |
+| -8888        | Source value is null |
+| -9995        | Source value is not the expected type (e.g. not an integer) |
+| -9999        | Source value is outside expected range (e.g. not between 0 and 100) |
+| -9997        | Source value is not valid (e.g. disturbance code is not the expected length) |
 
 
-
-### DIST_EXT
+### DIST_EXT_UPPER_1 - DIST_EXT_UPPER_3, DIST_EXT_LOWER_1 - DIST_EXT_LOWER_3
 
 Disturbance extent provides an estimate of the proportion of the polygon that has been affected by the disturbance listed. Extent codes and classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event.    
 
-| DIST_EXT_UPPER_1, DIST_EXT_UPPER_2, DIST_EXT_UPPER_3, DIST_EXT_LOWER_1, DIST_EXT_LOWER_2, DIST_EXT_LOWER_3 | values |
+| Values | Description |
 | :--------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Upper bound of extent class | 10 - 100 |
-| Lower bound of extent class | 10 - 100 |
-
+| 10 - 100 | Upper and lower bound of extent class |
+| -8888    | Source value is null |
+| -9995    | Source value is not the expected type (e.g. not an integer) |
+| -9999    | Source value is outside expected range (e.g. not between 0 and 100) |
+| -9998    | Source value is not in the list of expected values |
+| -8887    | Source value is not applicable (e.g. value does not occur in the source data) |
 
 ### LAYER
 
 If a disturbance is linked to a specific layer in the source data, it can be assigned to the corresponding layer in CASFRI (See <a href="#LAYER">LYR table LAYER.</a>). If disturbances are not linked to a specific layer, a CASFRI error code is assigned. In some cases the source inventory may arbitrarily assign all disturbances to layer 1. If this is the case, and it is documented as such in the source data specifications, an error code will be assigned in CASFRI since the true layers associated with disturbance are unknown.
 
-| layer                                                        | values   |
-| :----------------------------------------------------------- | :------- |
-| Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon. | 1 - 9, V |
+| Values   | Description |
+| :------- | :------- |
+| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
 
+Note:
+Update possible values after #272
 
 
 <a name=ECO_attributes></a>
@@ -890,15 +989,24 @@ If a disturbance is linked to a specific layer in the source data, it can be ass
 Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.  
 
 
-
 ### CAS_ID
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
-| cas_id                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
 
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 ### WETLAND_TYPE
@@ -909,60 +1017,50 @@ Five major wetland classes are recognized based on wetland development from hydr
 
 The detailed wetland table, CAS code set, and CAS translation rule set are presented in Appendix 14. Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland classes derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. A rule set for each province or territory that identifies a method to derive wetland attributes using forest attributes or ecosite data is presented in Appendix 15. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database. 
 
-| wetland_type                                                 | values |
-| :----------------------------------------------------------- | :----- |
-| Bog - > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss | B      |
-| Fen - > 40 cm of peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed | F      |
-| Swamp - woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent subsurface water. Various mixtures of mineral sediments and peat. | S     |
-| Marsh - emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water | M      |
-| Shallow Open Water - freshwater lakes < 2 m depth            | O      |
-| Tidal Flats - ocean areas with exposed flats                 | T      |
-| Estuary - mixed freshwater/saltwater marsh areas             | E      |
-| Wetland - no distinction of class                            | W      |
-| Not Wetland - upland areas                                   | Z      |
-| Blank - no value                                             | NA     |
-
+| Values | Description |
+| :----- | :----- |
+| B      | Bog - > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss |
+| F      | Fen - > 40 cm of peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed |
+| S      | Swamp - woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent                subsurface water. Various mixtures of mineral sediments and peat |
+| M      | Marsh - emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water |
+| O      | Shallow Open Water - freshwater lakes < 2 m depth |
+| T      | Tidal Flats - ocean areas with exposed flats |
+| E      | Estuary - mixed freshwater/saltwater marsh areas |
+| W      | Wetland - no distinction of class |
+| Z      | Not Wetland - upland areas |
 
 
 ### WET_VEG_COVER
 
-| wet_veg_cover                                           | values |
-| :------------------------------------------------------ | :----- |
-| Forested - closed canopy > 70% tree cover               | F      |
-| Wooded - open canopy > 6% to 70% tree cover             | T      |
-| Open Non-Treed Freshwater - < 6% tree cover with shrubs | O      |
-| Open Non-Treed Coastal - < 6% tree cover, with shrubs   | C      |
-| Mud - no vegetation cover                               | M      |
-| Blank - no value                                        | NA     |
-
+| Values | Description |
+| :----- | :----- |
+| F      | Forested - closed canopy > 70% tree cover |
+| T      | Wooded - open canopy > 6% to 70% tree cover |
+| O      | Open Non-Treed Freshwater - < 6% tree cover with shrubs |
+| C      | Open Non-Treed Coastal - < 6% tree cover, with shrubs |
+| M      | Mud - no vegetation cover |
 
 
 ### WET_LANDFORM_MOD
 
-
-| wet_landform_mod                    | values |
-| :---------------------------------- | :----- |
-| Permafrost Present                  | X      |
-| Patterning Present                  | P      |
-| No Permafrost or Patterning Present | N      |
-| Saline or Alkaline Present          | A      |
-| Blank - no value                    | NA     |
-
+| Values | Description |
+| :----- | :----- |
+| X      | Permafrost Present |
+| P      | Patterning Present |
+| N      | No Permafrost or Patterning Present |
+| A      | Saline or Alkaline Present |
 
 
 ### WET_LOCAL_MOD
 
-
-| wet_local_mod                                        | values |
-| :--------------------------------------------------- | :----- |
-| Collapse Scar Present in permafrost area             | C      |
-| Internal Lawn With Islands of Forested Peat Plateau  | R      |
-| Internal Lawns Present (permafrost was once present) | I      |
-| Internal Lawns Not Present                           | N      |
-| Shrub Cover > 25%                                    | S      |
-| Graminoids With Shrub Cover < 25%                    | G      |
-| Blank - no value                                     | NA     |
-
+| Values | Description |
+| :----- | :----- |
+| C      | Collapse Scar Present in permafrost area |
+| R      | Internal Lawn With Islands of Forested Peat Plateau |
+| I      | Internal Lawns Present (permafrost was once present) |
+| N      | Internal Lawns Not Present |
+| S      | Shrub Cover > 25% |
+| G      | Graminoids With Shrub Cover < 25%      |
   
 
 <sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  
@@ -977,11 +1075,9 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 
 Ecosites are site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes:  Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.    
 
-| ecosite                                                      | values      |
-| :----------------------------------------------------------- | :---------- |
-| Ecosite - an area defined by a specific combination of site, soil, and | A-Z / 0-199 |
-| vegetation characteristics as influenced by environmental factors. | NA          |
-
+| Values      | Description      |
+| :---------- | :---------- |
+| A-Z / 0-199 | Ecosite - an area defined by a specific combination of site, soil, and vegetation characteristics as influenced by                     environmental factors |
 
 <a name=GEO_attributes></a>
 ## GEO Attributes 
@@ -990,22 +1086,32 @@ Geometry attributes are calculated by the translation engine.
 
 ### CAS_ID
 
-The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-| cas_id                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 ### GEOMETRY
 
 The attribute **GEOMETRY** returns the geometry and validates if necessary. If valid geometry cannot be made error code is returned.
 
-
-| geometry             | values      |
-| :------------------- | :---------- |
-| Returns the geometry | coords etc. |
+| Values                | Description      |
+| :-------------------- | :---------- |
+| postgreSQL geometries | Records the polygon associated with each cas_id |
 
 
 
