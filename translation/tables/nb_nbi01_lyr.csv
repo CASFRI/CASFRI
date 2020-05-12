@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,SOIL_MOIST_REG,text,false(),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"countOfNotNull({dummy_l1s1, dummy_l1s2, dummy_l1s3, dummy_l1s4, dummy_l1s5}, {dummy_l2s1, dummy_l2s2, dummy_l2s3, dummy_l2s4, dummy_l2s5}, {slu, water_code, wc}, max_layer_number, 'FALSE')","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Third grouping represents nfl rows using slu (from FOREST table), water_code (from WATERBODY table), and wc (from WETLAND table). slu and water_code rows will be translated using the NFL table. wc rows will be translated using the ECO table. Dummy names used where values need to be mapped to two different attributes.",TRUE
-5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(l1cc);isNumeric(l1cc);matchList(l1cc,{1,2,3,4,5})","mapInt(l1cc, {1,2,3,4,5}, {30,50,70,90,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(l1cc);isNumeric(l1cc);matchList(l1cc,{1,2,3,4,5})","mapInt(l1cc, {1,2,3,4,5}, {10,31,51,71,91})",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(l1ht);isNumeric(l1ht);isGreaterThan(l1ht,'0.1');isLessThan(l1ht, 100)",copyDouble(l1ht),Copies source value to HEIGHT_UPPER,TRUE
