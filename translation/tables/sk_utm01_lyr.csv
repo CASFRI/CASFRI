@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,SOIL_MOIST_REG,text,"notNull(drain);matchList(drain,{'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'})","mapText(drain, {'VR','VRR','R','RW','W','WMW','MW','MWI','I','IP','P','PVP','VP'}, {'D','D','D','F','F','F','F','M','M','M','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"countOfNotNull({dummy_sp10, dummy_sp11, dummy_sp12, dummy_sp20, dummy_sp21}, {dummy_u1, dummy_u2}, {dummy_np}, max_layer_number, 'TRUE')","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Layers are the  canopy species, understory species, and non-forest types.",TRUE
-5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(d);notEmpty(d);matchList(d,{'A','B','C','D'})","mapInt(d, {'A','B','C','D'}, {30,55,80,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(d);notEmpty(d);matchList(d,{'A','B','C','D'})","mapInt(d, {'A','B','C','D'}, {11,31,56,81})",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(d);notEmpty(d);matchList(hgt,{'5','10','15','20','25'})","mapDouble(hgt, {'5','10','15','20','25'}, {7.5,12.5,17.5,22.5,100.0})",Maps source value to HEIGHT_UPPER,TRUE
