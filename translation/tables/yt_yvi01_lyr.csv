@@ -4,8 +4,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),copyInt(1),Only 1 layer possible in YT. Every polygon is either LYR or NFL.,TRUE
 5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
-6,CROWN_CLOSURE_UPPER,integer,"notNull(cc);isInt(cc);isGreaterThan(cc,'0');isLessThan(cc, 100)",copyInt(cc),Copies source value to CROWN_CLOSURE_UPPER,TRUE
-7,CROWN_CLOSURE_LOWER,integer,"notNull(cc);isInt(cc);isGreaterThan(cc,'0');isLessThan(cc, 100)",copyInt(cc),Copies source value to CROWN_CLOSURE_LOWER,TRUE
+6,CROWN_CLOSURE_UPPER,integer,"notNull(cc);isInt(cc);isBetween(cc,0,100)",copyInt(cc),Copies source value to CROWN_CLOSURE_UPPER,TRUE
+7,CROWN_CLOSURE_LOWER,integer,"notNull(cc);isInt(cc);isBetween(cc,0,100)",copyInt(cc),Copies source value to CROWN_CLOSURE_LOWER,TRUE
 8,HEIGHT_UPPER,double precision,"notNull(avg_ht);isNumeric(avg_ht);isGreaterThan(avg_ht,'1');isLessThan(avg_ht, 100)",copyDouble(avg_ht),Copies source value to HEIGHT_UPPER,TRUE
 9,HEIGHT_LOWER,double precision,"notNull(avg_ht);isNumeric(avg_ht);isGreaterThan(avg_ht,'1');isLessThan(avg_ht, 100)",copyDouble(avg_ht),Copies source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
