@@ -901,11 +901,23 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 ### CAS_ID
 
-The attribute CAS_ID is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-| CAS_ID                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
+
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 
@@ -913,51 +925,62 @@ The attribute CAS_ID is an alpha-numeric identifier that is unique for each poly
 
 Disturbance identifies the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human -caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 13.  
 
-| DIST_TYPE_1, DIST_TYPE_2, DIST_TYPE_3 | values |
-| :------------------------------------------------------------------------ | :-------------- |
-| Cut - logging with known extent | CO |
-| Partial Cut - portion of forest has been removed, extent known or unknown | PC |
-| Burn - wildfires or escape fires | BU |
-| Windfall - blow down | WF |
-| Disease - root, stem, branch diseases | DI |
-| Insect - root, bark, leader, or defoliation insects | IK |
-| Flood - permanent flooding from blockage or damming | FL |
-| Weather - ice, frost, red belt | WE |
-| Slide - damage from avalanche, slump, earth or rock slides | SL |
-| Other - unknown or other damage | OT |
-| Dead Tops or Trees - dead or dying trees, cause unknown | DT |
-| Silviculture Treatments - Planting, Thinning, Seed Tree | SI |
-
+| Values         | Description |
+| :------------- | :-------------- |
+| CO             | Cut - logging with known extent |
+| PC             | Partial Cut - portion of forest has been removed, extent known or unknown |
+| BU             | Burn - wildfires or escape fires |
+| WF             | Windfall - blow down |
+| DI             | Disease - root, stem, branch diseases |
+| IK             | Insect - root, bark, leader, or defoliation insects |
+| FL             | Flood - permanent flooding from blockage or damming |
+| WE             | Weather - ice, frost, red belt |
+| SL             | Slide - damage from avalanche, slump, earth or rock slides |
+| OT             | Other - unknown or other damage |
+| DT             | Dead Tops or Trees - dead or dying trees, cause unknown |
+| SI             | Silviculture Treatments - Planting, Thinning, Seed Tree |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
+| INVALID_VALUE  | Source value is invalid (e.g. the disturbance code does not match the expected format) |
 
 
 ### DIST_YEAR_1 - DIST_YEAR_3  
 
 Disturbance year is the year a disturbance event occurred. The disturbance year may be unknown. Three disturbance years can be identified, one for each disturbance event.    
 
-| DIST_YEAR_1, DIST_YEAR_2, DIST_YEAR_3                      | values      |
-| :--------------------------------------------------------- | :---------- |
-| Disturbance Year - year that a disturbance event occurred. | 1900 - 2020 |
+| Values       | Description |
+| :----------- | :---------- |
+|  1900 - 2020 | Disturbance Year - year that a disturbance event occurred |
+| -8888        | Source value is null |
+| -9995        | Source value is not the expected type (e.g. not an integer) |
+| -9999        | Source value is outside expected range (e.g. not between 0 and 100) |
+| -9997        | Source value is not valid (e.g. disturbance code is not the expected length) |
 
 
-
-### DIST_EXT
+### DIST_EXT_UPPER_1 - DIST_EXT_UPPER_3, DIST_EXT_LOWER_1 - DIST_EXT_LOWER_3
 
 Disturbance extent provides an estimate of the proportion of the polygon that has been affected by the disturbance listed. Extent codes and classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event.    
 
-| DIST_EXT_UPPER_1, DIST_EXT_UPPER_2, DIST_EXT_UPPER_3, DIST_EXT_LOWER_1, DIST_EXT_LOWER_2, DIST_EXT_LOWER_3 | values |
+| Values | Description |
 | :--------------------------------------------------------------------------------------------------------------- | :-------------- |
-| Upper bound of extent class | 10 - 100 |
-| Lower bound of extent class | 10 - 100 |
-
+| 10 - 100 | Upper and lower bound of extent class |
+| -8888    | Source value is null |
+| -9995    | Source value is not the expected type (e.g. not an integer) |
+| -9999    | Source value is outside expected range (e.g. not between 0 and 100) |
+| -9998    | Source value is not in the list of expected values |
+| -8887    | Source value is not applicable (e.g. value does not occur in the source data) |
 
 ### LAYER
 
 If a disturbance is linked to a specific layer in the source data, it can be assigned to the corresponding layer in CASFRI (See <a href="#LAYER">LYR table LAYER.</a>). If disturbances are not linked to a specific layer, a CASFRI error code is assigned. In some cases the source inventory may arbitrarily assign all disturbances to layer 1. If this is the case, and it is documented as such in the source data specifications, an error code will be assigned in CASFRI since the true layers associated with disturbance are unknown.
 
-| layer                                                        | values   |
-| :----------------------------------------------------------- | :------- |
-| Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon. | 1 - 9, V |
+| Values   | Description |
+| :------- | :------- |
+| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
 
+Note:
+Update possible values after #272
 
 
 <a name=ECO_attributes></a>
@@ -966,15 +989,24 @@ If a disturbance is linked to a specific layer in the source data, it can be ass
 Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.  
 
 
-
 ### CAS_ID
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-The attribute cas_id is an alpha-numeric identifier that is unique for each polygon within CAS database.
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
-| cas_id                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
 
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 ### WETLAND_TYPE
@@ -985,60 +1017,50 @@ Five major wetland classes are recognized based on wetland development from hydr
 
 The detailed wetland table, CAS code set, and CAS translation rule set are presented in Appendix 14. Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland classes derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. A rule set for each province or territory that identifies a method to derive wetland attributes using forest attributes or ecosite data is presented in Appendix 15. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database. 
 
-| wetland_type                                                 | values |
-| :----------------------------------------------------------- | :----- |
-| Bog - > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss | B      |
-| Fen - > 40 cm of peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed | F      |
-| Swamp - woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent subsurface water. Various mixtures of mineral sediments and peat. | S     |
-| Marsh - emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water | M      |
-| Shallow Open Water - freshwater lakes < 2 m depth            | O      |
-| Tidal Flats - ocean areas with exposed flats                 | T      |
-| Estuary - mixed freshwater/saltwater marsh areas             | E      |
-| Wetland - no distinction of class                            | W      |
-| Not Wetland - upland areas                                   | Z      |
-| Blank - no value                                             | NA     |
-
+| Values | Description |
+| :----- | :----- |
+| B      | Bog - > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss |
+| F      | Fen - > 40 cm of peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed |
+| S      | Swamp - woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent                subsurface water. Various mixtures of mineral sediments and peat |
+| M      | Marsh - emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water |
+| O      | Shallow Open Water - freshwater lakes < 2 m depth |
+| T      | Tidal Flats - ocean areas with exposed flats |
+| E      | Estuary - mixed freshwater/saltwater marsh areas |
+| W      | Wetland - no distinction of class |
+| Z      | Not Wetland - upland areas |
 
 
 ### WET_VEG_COVER
 
-| wet_veg_cover                                           | values |
-| :------------------------------------------------------ | :----- |
-| Forested - closed canopy > 70% tree cover               | F      |
-| Wooded - open canopy > 6% to 70% tree cover             | T      |
-| Open Non-Treed Freshwater - < 6% tree cover with shrubs | O      |
-| Open Non-Treed Coastal - < 6% tree cover, with shrubs   | C      |
-| Mud - no vegetation cover                               | M      |
-| Blank - no value                                        | NA     |
-
+| Values | Description |
+| :----- | :----- |
+| F      | Forested - closed canopy > 70% tree cover |
+| T      | Wooded - open canopy > 6% to 70% tree cover |
+| O      | Open Non-Treed Freshwater - < 6% tree cover with shrubs |
+| C      | Open Non-Treed Coastal - < 6% tree cover, with shrubs |
+| M      | Mud - no vegetation cover |
 
 
 ### WET_LANDFORM_MOD
 
-
-| wet_landform_mod                    | values |
-| :---------------------------------- | :----- |
-| Permafrost Present                  | X      |
-| Patterning Present                  | P      |
-| No Permafrost or Patterning Present | N      |
-| Saline or Alkaline Present          | A      |
-| Blank - no value                    | NA     |
-
+| Values | Description |
+| :----- | :----- |
+| X      | Permafrost Present |
+| P      | Patterning Present |
+| N      | No Permafrost or Patterning Present |
+| A      | Saline or Alkaline Present |
 
 
 ### WET_LOCAL_MOD
 
-
-| wet_local_mod                                        | values |
-| :--------------------------------------------------- | :----- |
-| Collapse Scar Present in permafrost area             | C      |
-| Internal Lawn With Islands of Forested Peat Plateau  | R      |
-| Internal Lawns Present (permafrost was once present) | I      |
-| Internal Lawns Not Present                           | N      |
-| Shrub Cover > 25%                                    | S      |
-| Graminoids With Shrub Cover < 25%                    | G      |
-| Blank - no value                                     | NA     |
-
+| Values | Description |
+| :----- | :----- |
+| C      | Collapse Scar Present in permafrost area |
+| R      | Internal Lawn With Islands of Forested Peat Plateau |
+| I      | Internal Lawns Present (permafrost was once present) |
+| N      | Internal Lawns Not Present |
+| S      | Shrub Cover > 25% |
+| G      | Graminoids With Shrub Cover < 25%      |
   
 
 <sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  
@@ -1053,11 +1075,9 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 
 Ecosites are site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes:  Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.    
 
-| ecosite                                                      | values      |
-| :----------------------------------------------------------- | :---------- |
-| Ecosite - an area defined by a specific combination of site, soil, and | A-Z / 0-199 |
-| vegetation characteristics as influenced by environmental factors. | NA          |
-
+| Values      | Description      |
+| :---------- | :---------- |
+| A-Z / 0-199 | Ecosite - an area defined by a specific combination of site, soil, and vegetation characteristics as influenced by                     environmental factors |
 
 <a name=GEO_attributes></a>
 ## GEO Attributes 
@@ -1066,22 +1086,32 @@ Geometry attributes are calculated by the translation engine.
 
 ### CAS_ID
 
-The attribute **cas_id** is an alpha-numeric identifier that is unique for each polygon within CAS database.
+The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-| cas_id                                                       | values        |
-| :----------------------------------------------------------- | :------------ |
-| CAS stand identification - unique number for each polygon within CAS | alpha numeric |
+- Inventory id e.g., AB06
+- Source filename i.e., name of shapefile or geodatabase
+- Map ID or some other within inventory identifier; if available, map sheet id
+- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
+- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
 
+| Values               | Description |
+| :------------------- | :---------- |
+| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
+| NULL_VALUE           |  One of the source attributes is null |
+| EMPTY_STRING         |  One of the source attributes is an empty string |
+
+Notes:
+
+- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
 ### GEOMETRY
 
 The attribute **GEOMETRY** returns the geometry and validates if necessary. If valid geometry cannot be made error code is returned.
 
-
-| geometry             | values      |
-| :------------------- | :---------- |
-| Returns the geometry | coords etc. |
+| Values                | Description      |
+| :-------------------- | :---------- |
+| postgreSQL geometries | Records the polygon associated with each cas_id |
 
 
 
