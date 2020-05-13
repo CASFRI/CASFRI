@@ -98,7 +98,7 @@ CREATE TABLE translation_devel.sk03_sfv01_geo_devel AS
 SELECT * FROM translation.sk_sfv01_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk03_sfv01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'sk03_sfv01_geo_devel', '_sk03_geo_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk03', 'sk_sfv', 200, 'geo');
+SELECT TT_CreateMappingView('rawfri', 'sk03', 'sk_sfv', 200); --, 'geo');
 SELECT * FROM TT_Translate_sk03_geo_devel('rawfri', 'sk03_l1_to_sk_sfv_l1_map_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk03_sfv01_geo_devel');
 

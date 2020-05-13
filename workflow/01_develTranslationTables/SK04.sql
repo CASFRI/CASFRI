@@ -68,7 +68,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk04', 'sk_sfv', 200, 'dst');
 SELECT * FROM TT_Translate_sk04_dst_devel('rawfri', 'sk04_l1_to_sk_sfv_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk04_sfv01_dst_devel');
 
--- NFL ATTRIBUTES [PV STOPPED HERE ON 2020-05-08 @ 17:05]
+-- NFL ATTRIBUTES
 SELECT * FROM translation.sk_sfv01_nfl;
 DROP TABLE IF EXISTS translation_devel.sk04_sfv01_nfl_devel;
 CREATE TABLE translation_devel.sk04_sfv01_nfl_devel AS
@@ -76,6 +76,7 @@ SELECT * FROM translation.sk_sfv01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk04_sfv01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'sk04_sfv01_nfl_devel', '_sk04_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'sk04', 'sk_sfv', 200, 'nfl');
+SELECT * FROM rawfri.sk04_l1_to_sk_sfv_l1_map_200_nfl; -- view source table
 SELECT * FROM TT_Translate_sk04_nfl_devel('rawfri', 'sk04_l1_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk04_sfv01_nfl_devel');
 
@@ -99,7 +100,7 @@ CREATE TABLE translation_devel.sk04_sfv01_geo_devel AS
 SELECT * FROM translation.sk_sfv01_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk04_sfv01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'sk04_sfv01_geo_devel', '_sk04_geo_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk04', 'sk_sfv', 200, 'geo');
+SELECT TT_CreateMappingView('rawfri', 'sk04', 'sk_sfv', 200); --, 'geo');
 SELECT * FROM TT_Translate_sk04_geo_devel('rawfri', 'sk04_l1_to_sk_sfv_l1_map_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk04_sfv01_geo_devel');
 
