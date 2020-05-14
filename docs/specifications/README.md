@@ -635,8 +635,9 @@ Unproductive forest is forest land not capable of producing trees for forest ope
 | AL     | Alpine forest - high elevation forest usually above 1800 m |
 | SD     | Scrub Deciduous - scrub deciduous trees on poor sites |
 | SC     | Scrub Coniferous - scrub coniferous trees on poor sites |
-| NP     | Non Productive Forest - poor forest types on rocky or wet sites |
-| P      | Productive Forest - any other forest |
+| NP     | Non Productive forest - poor forest types on rocky or wet sites |
+| PP     | Potentially Productive forest - forest previously affected by some disturbance |
+| PF     | Productive Forest - any other forest |
 
 Notes:
 
