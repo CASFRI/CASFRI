@@ -102,7 +102,7 @@ Table 2. Error codes
 
 | Class          | Type               | Description                                                                                                                                              | Text code         | Numeric code |
 | -------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------------ |
-| Missing values | Empty string       | Missing value that is entered as an empty string (e.g. '' or ' ')                                                                                        | EMPTY_STRING      | -8889        |
+| Missing values | Empty string       | Missing value that is entered as an empty string (e.g. '' or '&#160;')                                                                                        | EMPTY_STRING      | -8889        |
 |                | Null               | Missing value that is a true null value                                                                                                                  | NULL_VALUE        | -8888        |
 |                | Not applicable     | Target attribute not in source table or does not apply to this record (e.g. the source inventory does not record information for the attribute           | NOT_APPLICABLE    | -8887        |
 |                | Unknown value      | Non-null value that is not known (e.g. if the source data we have is incomplete and we can't be sure of the attributes value without a complete dataset) | UNKNOWN_VALUE     | -8886        |
