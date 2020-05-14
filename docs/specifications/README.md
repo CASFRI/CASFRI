@@ -74,7 +74,7 @@ Table 1. CASFRI schema.
 | <sub>JURISDICTION</sub>      | <sub>ORIG_STAND_ID</sub>     | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_TYPE_1</sub>      | <sub>WETLAND_TYPE</sub>     | <sub>GEOMETRY</sub> |
 | <sub>OWNER_TYPE</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_YEAR_1</sub>      | <sub>WET_VEG_COVER</sub>    |                     |
 | <sub>OWNER_NAME</sub>        | <sub>NUM_OF_LAYERS</sub>     | <sub>LAYER</sub>               | <sub>LAYER</sub>               | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LANDFORM_MOD</sub> |                     |
-| <sub>STANDARD_TYPE</sub>     | <sub>IDENTIFICATION_ID</sub> | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_EXT_LOWER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                     |
+| <sub>STANDARD_TYPE</sub>     | <sub>INVENTORY_ID</sub> | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_EXT_LOWER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                     |
 | <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_TYPE_2</sub>      | <sub>ECO_SITE</sub>         |                     |
 | <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_YEAR_2</sub>      |                             |                     |
 | <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>HEIGHT_UPPER</sub>        |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                     |
@@ -343,7 +343,7 @@ The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was 
 <a name=CAS_attributes></a>
 ## CAS Attributes
 
-The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include stand structure, polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
+The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Inventory ID. Polygon attributes include stand structure, polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
 
 ### CAS_ID
