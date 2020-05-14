@@ -616,9 +616,199 @@ CHECK ((height_lower >= 0 AND height_lower <= 100) OR
        height_lower = -8888 OR -- NULL_VALUE
        height_lower = -8887);  -- NOT_APPLICABLE
 
-SELECT DISTINCT height_lower
-FROM casfri50.lyr_all
-ORDER BY height_lower;
+-- Ensure LYR table PRODUCTIVE_FOR values match the corresponding lookup table
+DROP TABLE IF EXISTS casfri50_lookup.productive_for_codes CASCADE;
+CREATE TABLE casfri50_lookup.productive_for_codes AS
+SELECT * FROM (VALUES ('TM'), ('AL'), ('SD'), ('SC'), ('NP'), ('PP'), ('PF'),
+                      ('NULL_VALUE'), ('NOT_IN_SET'), ('NOT_APPLICABLE')) AS t(code);
+
+ALTER TABLE casfri50_lookup.productive_for_codes
+ADD PRIMARY KEY (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_productive_for_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_productive_for_fk FOREIGN KEY (productive_for) 
+REFERENCES casfri50_lookup.productive_for_codes (code);
+
+-- Ensure LYR table SPECIES_1-10 values match the corresponding lookup table
+-- Issue #346 - Some rows get TRANSLATION_ERROR
+DROP TABLE IF EXISTS casfri50_lookup.species_codes CASCADE;
+CREATE TABLE casfri50_lookup.species_codes AS
+SELECT DISTINCT spec1 code
+FROM (
+SELECT spec1 FROM translation.ab_avi01_species
+UNION ALL
+SELECT spec1 FROM translation.bc_vri01_species
+UNION ALL
+SELECT spec1 FROM translation.nb_nbi01_species
+UNION ALL
+SELECT spec1 FROM translation.nt_fvi01_species
+UNION ALL
+SELECT spec1 FROM translation.on_fim02_species
+UNION ALL
+SELECT specie FROM translation.qc03_species
+UNION ALL
+SELECT spec1 FROM translation.sk_utm01_species
+UNION ALL
+SELECT spec1 FROM translation.sk_sfv01_species
+UNION ALL
+SELECT spec1 FROM translation.yt_yvi01_species
+UNION ALL
+SELECT * FROM (VALUES ('NULL_VALUE'), ('EMPTY_STRING'), ('NOT_IN_SET'), ('NOT_APPLICABLE')) AS t(scec1)
+) foo
+ORDER BY code;
+
+ALTER TABLE casfri50_lookup.species_codes
+ADD PRIMARY KEY (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_1_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_1_codes_fk FOREIGN KEY (species_1) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_2_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_2_codes_fk FOREIGN KEY (species_2) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_3_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_3_codes_fk FOREIGN KEY (species_3) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_4_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_4_codes_fk FOREIGN KEY (species_4) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_5_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_5_codes_fk FOREIGN KEY (species_5) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_6_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_6_codes_fk FOREIGN KEY (species_6) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_7_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_7_codes_fk FOREIGN KEY (species_7) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_8_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_8_codes_fk FOREIGN KEY (species_8) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_9_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_9_codes_fk FOREIGN KEY (species_9) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+ALTER TABLE casfri50.lyr_all DROP CONSTRAINT IF EXISTS lyr_species_10_codes_fk;
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT lyr_species_10_codes_fk FOREIGN KEY (species_10) 
+REFERENCES casfri50_lookup.species_codes (code);
+
+-- Ensure LYR table SPECIES_PER_1-10 are greater or equal to 0 and smaller or equal to 100
+-- Issue #346 - Some rows get -3333 (TRANSLATION_ERROR)
+-- Issue #338 - Some rows get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING)
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_1_between_0_and_100 
+CHECK ((species_per_1 >= 0 AND species_per_1 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_2_between_0_and_100 
+CHECK ((species_per_2 >= 0 AND species_per_2 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_3_between_0_and_100 
+CHECK ((species_per_3 >= 0 AND species_per_3 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_4_between_0_and_100 
+CHECK ((species_per_4 >= 0 AND species_per_4 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_4_between_0_and_100 
+CHECK ((species_per_4 >= 0 AND species_per_4 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_4_between_0_and_100 
+CHECK ((species_per_4 >= 0 AND species_per_4 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_5_between_0_and_100 
+CHECK ((species_per_5 >= 0 AND species_per_5 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_6_between_0_and_100 
+CHECK ((species_per_6 >= 0 AND species_per_6 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_7_between_0_and_100 
+CHECK ((species_per_7 >= 0 AND species_per_7 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+       
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_8_between_0_and_100 
+CHECK ((species_per_8 >= 0 AND species_per_8 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_9_between_0_and_100 
+CHECK ((species_per_9 >= 0 AND species_per_9 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
+
+ALTER TABLE casfri50.lyr_all
+ADD CONSTRAINT species_per_10_between_0_and_100 
+CHECK ((species_per_10 >= 0 AND species_per_10 <= 100) OR 
+       height_upper = -9999 OR -- OUT_OF_RANGE
+       height_upper = -9997 OR -- INVALID_VALUE
+       height_upper = -8888 OR -- NULL_VALUE
+       height_upper = -8887);  -- NOT_APPLICABLE
 
 -------------------------------------------------------
 -- Add different constraints to the NFL_ALL table
