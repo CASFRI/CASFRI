@@ -70,7 +70,7 @@ Table 1. CASFRI schema.
 
 | HDR               | CAS               | LYR                 | NFL                 | DST              | ECO              | GEO      |
 | ----------------- | ----------------- | ------------------- | ------------------- | ---------------- | ---------------- | -------- |
-| INVENTORY_ID      | CAS_ID            | CAS_ID              | CAS_ID              | CAS_ID           | CAS_ID           | CAS_ID   |
+| <p style="font-size:100px">INVENTORY_ID</p>      | CAS_ID            | CAS_ID              | CAS_ID              | CAS_ID           | CAS_ID           | CAS_ID   |
 | JURISDICTION      | ORIG_STAND_ID     | SOIL_MOIST_REG      | SOIL_MOIST_REG      | DIST_TYPE_1      | WETLAND_TYPE     | GEOMETRY |
 | OWNER_TYPE        | STAND_STRUCTURE   | STRUCTURE_PER       | STRUCTURE_PER       | DIST_YEAR_1      | WET_VEG_COVER    |          |
 | OWNER_NAME        | NUM_OF_LAYERS     | LAYER               | LAYER               | DIST_EXT_UPPER_1 | WET_LANDFORM_MOD |          |
