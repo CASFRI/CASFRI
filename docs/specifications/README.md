@@ -91,6 +91,10 @@ Table 1. CASFRI schema.
 | PHOTO_YEAR_SRC    |                   |                     |                     |                  |                  |          |
 | PHOTO_YEAR_START  |                   |                     |                     |                  |                  |          |
 | PHOTO_YEAR_END    |                   |                     |                     |                  |                  |          |
+| <ul><li>item1</li><li>item2</li></ul>| |                     |                     |                  |                  |          |
+| <p style="font-size:1px;">This is demo text</p>|             |                     |                     |                  |                  |          |
+
+ 
 
 
 <a name=Error_codes></a>
