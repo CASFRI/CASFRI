@@ -68,31 +68,31 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 
 Table 1. CASFRI schema.
 
-| HDR               | CAS               | LYR                 | NFL                 | DST              | ECO              | GEO      |
-| ----------------- | ----------------- | ------------------- | ------------------- | ---------------- | ---------------- | -------- |
-| INVENTORY_ID      | CAS_ID            | CAS_ID              | CAS_ID              | CAS_ID           | CAS_ID           | CAS_ID   |
-| JURISDICTION      | ORIG_STAND_ID     | SOIL_MOIST_REG      | SOIL_MOIST_REG      | DIST_TYPE_1      | WETLAND_TYPE     | GEOMETRY |
-| OWNER_TYPE        | STAND_STRUCTURE   | STRUCTURE_PER       | STRUCTURE_PER       | DIST_YEAR_1      | WET_VEG_COVER    |          |
-| OWNER_NAME        | NUM_OF_LAYERS     | LAYER               | LAYER               | DIST_EXT_UPPER_1 | WET_LANDFORM_MOD |          |
-| STANDARD_TYPE     | IDENTIFICATION_ID | LAYER_RANK          | LAYER_RANK          | DIST_EXT_LOWER_1 | WET_LOCAL_MOD    |          |
-| STANDARD_VERSION  | MAP_SHEET_ID      | CROWN_CLOSURE_UPPER | CROWN_CLOSURE_UPPER | DIST_TYPE_2      | ECO_SITE         |          |
-| STANDARD_ID       | CASFRI_AREA       | CROWN_CLOSURE_LOWER | CROWN_CLOSURE_LOWER | DIST_YEAR_2      |                  |          |
-| STANDARD_REVISION | CASFRI_PERIMETER  | HEIGHT_UPPER        | HEIGHT_UPPER        | DIST_EXT_UPPER_2 |                  |          |
-| INVENTORY_MANUAL  | SRC_INV_AREA      | HEIGHT_LOWER        | HEIGHT_LOWER        | DIST_EXT_LOWER_2 |                  |          |
-| SRC_DATA_FORMAT   | STAND_PHOTO_YEAR  | PRODUCTIVE_FOR      | NAT_NON_VEG         | DIST_TYPE_3      |                  |          |
-| ACQUISITION_DATE  |                   | SPECIES_1 - 10      | NON_FOR_ANTH        | DIST_YEAR_3      |                  |          |
-| DATA_TRANSFER     |                   | SPECIES_PER_1 - 10  | NON_FOR_VEG         | DIST_EXT_UPPER_3 |                  |          |
-| RECEIVED_FROM     |                   | ORIGIN_UPPER        |                     | DIST_EXT_LOWER_3 |                  |          |
-| CONTACT_INFO      |                   | ORIGIN_LOWER        |                     | LAYER            |                  |          |
-| DATA_AVAILABILITY |                   | SITE_CLASS          |                     |                  |                  |          |
-| REDISTRIBUTION    |                   | SITE_INDEX          |                     |                  |                  |          |
-| PERMISSION        |                   |                     |                     |                  |                  |          |
-| LICENSE_AGREEMENT |                   |                     |                     |                  |                  |          |
-| PHOTO_YEAR_SRC    |                   |                     |                     |                  |                  |          |
-| PHOTO_YEAR_START  |                   |                     |                     |                  |                  |          |
-| PHOTO_YEAR_END    |                   |                     |                     |                  |                  |          |
+| <sub>HDR</sub>               | <sub>CAS</sub>               | <sub>LYR</sub>                 | <sub>NFL</sub>                 | <sub>DST</sub>              | <sub>ECO</sub>              | <sub>GEO</sub>      |
+| ---------------------------- | ---------------------------- | ------------------------------ | ------------------------------ | --------------------------- | --------------------------- | ------------------- |
+| <sub>INVENTORY_ID</sub>      | <sub>CAS_ID</sub>            | <sub>CAS_ID</sub>              | <sub>CAS_ID</sub>              | <sub>CAS_ID</sub>           | <sub>CAS_ID</sub>           | <sub>CAS_ID</sub>   |
+| <sub>JURISDICTION</sub>      | <sub>ORIG_STAND_ID</sub>     | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_TYPE_1</sub>      | <sub>WETLAND_TYPE</sub>     | <sub>GEOMETRY</sub> |
+| <sub>OWNER_TYPE</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_YEAR_1</sub>      | <sub>WET_VEG_COVER</sub>    |                     |
+| <sub>OWNER_NAME</sub>        | <sub>NUM_OF_LAYERS</sub>     | <sub>LAYER</sub>               | <sub>LAYER</sub>               | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LANDFORM_MOD</sub> |                     |
+| <sub>STANDARD_TYPE</sub>     | <sub>INVENTORY_ID</sub> | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_EXT_LOWER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                     |
+| <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_TYPE_2</sub>      | <sub>ECO_SITE</sub>         |                     |
+| <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_YEAR_2</sub>      |                             |                     |
+| <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>HEIGHT_UPPER</sub>        |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                     |
+| <sub>INVENTORY_MANUAL</sub>  | <sub>SRC_INV_AREA</sub>      | <sub>HEIGHT_LOWER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_LOWER_2</sub> |                             |                     |
+| <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>PRODUCTIVE_FOR</sub>      | <sub>NAT_NON_VEG</sub>         | <sub>DIST_TYPE_3</sub>      |                             |                     |
+| <sub>ACQUISITION_DATE</sub>  |                              | <sub>SPECIES_1 - 10</sub>      | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_YEAR_3</sub>      |                             |                     |
+| <sub>DATA_TRANSFER</sub>     |                              | <sub>SPECIES_PER_1 - 10</sub>  | <sub>NON_FOR_VEG</sub>         | <sub>DIST_EXT_UPPER_3</sub> |                             |                     |
+| <sub>RECEIVED_FROM</sub>     |                              | <sub>ORIGIN_UPPER</sub>        |                                | <sub>DIST_EXT_LOWER_3</sub> |                             |                     |
+| <sub>CONTACT_INFO</sub>      |                              | <sub>ORIGIN_LOWER</sub>        |                                | <sub>LAYER</sub>            |                             |                     |
+| <sub>DATA_AVAILABILITY</sub> |                              | <sub>SITE_CLASS</sub>          |                                |                             |                             |                     |
+| <sub>REDISTRIBUTION</sub>    |                              | <sub>SITE_INDEX</sub>          |                                |                             |                             |                     |
+| <sub>PERMISSION</sub>        |                              |                                |                                |                             |                             |                     |
+| <sub>LICENSE_AGREEMENT</sub> |                              |                                |                                |                             |                             |                     |
+| <sub>PHOTO_YEAR_SRC</sub>    |                              |                                |                                |                             |                             |                     |
+| <sub>PHOTO_YEAR_START</sub>  |                              |                                |                                |                             |                             |                     |
+| <sub>PHOTO_YEAR_END</sub>    |                              |                                |                                |                             |                             |                     |
 
-
+ 
 <a name=Error_codes></a>
 ## Error Codes  
 
@@ -100,7 +100,7 @@ Error codes are needed during translation if source values are invalid, null, or
 
 | Class          | Type               | Description                                                  | Text code         | Numeric code |
 | -------------- | ------------------ | ------------------------------------------------------ | ----------------- | ---------- |
-| Missing values | Empty string       | Missing value that is entered as an empty                                                                                             string (e.g. '' or ' ')                                | EMPTY_STRING        | -8889    |
+| Missing values | Empty string       | Missing value that is entered as an empty                                                                                             string (e.g. '' or '&#160;')                                | EMPTY_STRING        | -8889    |
 |                | Null               | Missing value that is a true null value                | NULL_VALUE        | -8888    |
 |                | Not applicable     | Target attribute not in source table or does                                                                                           not apply to this record (e.g. the source                                                                                             inventory does not record information for the                                                                                         attribute                                              | NOT_APPLICABLE    | -8887    |
 |                | Unknown value      | Non-null value that is not known (e.g. if the                                                                                         source data we have is incomplete and we can't                                                                                         be sure of the attributes value without a complete                                                                                     dataset)                                               | UNKNOWN_VALUE     | -8886    |
@@ -343,7 +343,7 @@ The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was 
 <a name=CAS_attributes></a>
 ## CAS Attributes
 
-The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Identification ID. Polygon attributes include stand structure, polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
+The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Inventory ID. Polygon attributes include stand structure, polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
 
 ### CAS_ID
@@ -631,8 +631,9 @@ Unproductive forest is forest land not capable of producing trees for forest ope
 | AL     | Alpine forest - high elevation forest usually above 1800 m |
 | SD     | Scrub Deciduous - scrub deciduous trees on poor sites |
 | SC     | Scrub Coniferous - scrub coniferous trees on poor sites |
-| NP     | Non Productive Forest - poor forest types on rocky or wet sites |
-| P      | Productive Forest - any other forest |
+| NP     | Non Productive forest - poor forest types on rocky or wet sites |
+| PP     | Potentially Productive forest - forest previously affected by some disturbance |
+| PF     | Productive Forest - any other forest |
 
 Notes:
 

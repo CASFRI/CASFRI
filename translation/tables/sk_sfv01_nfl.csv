@@ -3,15 +3,9 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,SOIL_MOIST_REG,text,"notNull(smr);matchList(smr,{'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'})","mapText(smr, {'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'}, {'D','F','M','F','M','W','D','F','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"countOfNotNull({dummy_l1_sp1}, {dummy_l2_sp1}, {dummy_l3_sp1}, {shrub1}, {dummy_herbs1}, {nvsl, aquatic_class, luc, transp_class}, 6, 'FALSE')","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Layers are the canopy species, understory species, and non-forest types.",TRUE
-<<<<<<< HEAD
 5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
-6,CROWN_CLOSURE_UPPER,integer,"notNull(dummy_shrub_herb);isInt(dummy_shrub_herb);isBetween(dummy_shrub_herb,0,100)",copyInt(dummy_shrub_herb),Attribute does not occur,TRUE
-7,CROWN_CLOSURE_LOWER,integer,"notNull(dummy_shrub_herb);isInt(dummy_shrub_herb);isBetween(dummy_shrub_herb,0,100)",copyInt(dummy_shrub_herb),Attribute does not occur,TRUE
-=======
-5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),Attribute does not occur,TRUE
 7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur,TRUE
->>>>>>> 1077f931d45cde1af8b221ce6c3e3574134193f2
 8,HEIGHT_UPPER,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
 9,HEIGHT_LOWER,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
 10,NAT_NON_VEG,text,"notNull(nvsl);notNull(nvsl);notNull(aquatic_class);notEmpty(aquatic_class);notMatchList({nvsl, aquatic_class}, {0}|NULL_VALUE);matchList({nvsl, aquatic_class},{'UK ','CB ','RK ','SA ','MS ','GR ','SB ','WA ',' LA',' RI',' FL',' SL',' FP',' ST'})","mapText({nvsl, aquatic_class}, {'UK ','CB ','RK ','SA ','MS ','GR ','SB ','WA ',' LA',' RI',' FL',' SL',' FP',' ST'}, {'OT','EX','RK','SA','EX','WS','WS','LA','LA','RI','FL','FL','BP','RI'})",Maps source value to NAT_NON_VEG using list of values. Zero is caught and set to NULL_VALUE.,TRUE
