@@ -68,29 +68,29 @@ Each inventory data base has a unique data structure. A conversion procedure mus
 
 Table 1. CASFRI schema.
 
-| <sub>HDR</sub>               | <sub>CAS</sub>               | <sub>LYR</sub>                 | <sub>NFL</sub>                 | <sub>DST</sub>              | <sub>ECO</sub>              | <sub>GEO</sub>      |
-| ---------------------------- | ---------------------------- | ------------------------------ | ------------------------------ | --------------------------- | --------------------------- | ------------------- |
-| <sub>INVENTORY_ID</sub>      | <sub>CAS_ID</sub>            | <sub>CAS_ID</sub>              | <sub>CAS_ID</sub>              | <sub>CAS_ID</sub>           | <sub>CAS_ID</sub>           | <sub>CAS_ID</sub>   |
-| <sub>JURISDICTION</sub>      | <sub>ORIG_STAND_ID</sub>     | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_TYPE_1</sub>      | <sub>WETLAND_TYPE</sub>     | <sub>GEOMETRY</sub> |
-| <sub>OWNER_TYPE</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_YEAR_1</sub>      | <sub>WET_VEG_COVER</sub>    |                     |
-| <sub>OWNER_NAME</sub>        | <sub>NUM_OF_LAYERS</sub>     | <sub>LAYER</sub>               | <sub>LAYER</sub>               | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LANDFORM_MOD</sub> |                     |
-| <sub>STANDARD_TYPE</sub>     | <sub>INVENTORY_ID</sub> | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_EXT_LOWER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                     |
-| <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_TYPE_2</sub>      | <sub>ECO_SITE</sub>         |                     |
-| <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_YEAR_2</sub>      |                             |                     |
-| <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>HEIGHT_UPPER</sub>        |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                     |
-| <sub>INVENTORY_MANUAL</sub>  | <sub>SRC_INV_AREA</sub>      | <sub>HEIGHT_LOWER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_LOWER_2</sub> |                             |                     |
-| <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>PRODUCTIVE_FOR</sub>      | <sub>NAT_NON_VEG</sub>         | <sub>DIST_TYPE_3</sub>      |                             |                     |
-| <sub>ACQUISITION_DATE</sub>  |                              | <sub>SPECIES_1 - 10</sub>      | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_YEAR_3</sub>      |                             |                     |
-| <sub>DATA_TRANSFER</sub>     |                              | <sub>SPECIES_PER_1 - 10</sub>  | <sub>NON_FOR_VEG</sub>         | <sub>DIST_EXT_UPPER_3</sub> |                             |                     |
-| <sub>RECEIVED_FROM</sub>     |                              | <sub>ORIGIN_UPPER</sub>        |                                | <sub>DIST_EXT_LOWER_3</sub> |                             |                     |
-| <sub>CONTACT_INFO</sub>      |                              | <sub>ORIGIN_LOWER</sub>        |                                | <sub>LAYER</sub>            |                             |                     |
-| <sub>DATA_AVAILABILITY</sub> |                              | <sub>SITE_CLASS</sub>          |                                |                             |                             |                     |
-| <sub>REDISTRIBUTION</sub>    |                              | <sub>SITE_INDEX</sub>          |                                |                             |                             |                     |
-| <sub>PERMISSION</sub>        |                              |                                |                                |                             |                             |                     |
-| <sub>LICENSE_AGREEMENT</sub> |                              |                                |                                |                             |                             |                     |
-| <sub>PHOTO_YEAR_SRC</sub>    |                              |                                |                                |                             |                             |                     |
-| <sub>PHOTO_YEAR_START</sub>  |                              |                                |                                |                             |                             |                     |
-| <sub>PHOTO_YEAR_END</sub>    |                              |                                |                                |                             |                             |                     |
+| <sub>HDR</sub>               | <sub>CAS</sub>               | <sub>LYR</sub>                 | <sub>NFL</sub>                 | <sub>DST</sub>              | <sub>ECO</sub>              | <sub>GEO</sub>             |
+| ---------------------------- | ---------------------------- | ------------------------------ | ------------------------------ | --------------------------- | --------------------------- | -------------------------- |
+| <sub>INVENTORY_ID</sub>      | <sub>CAS_ID (PK)</sub>       | <sub>CAS_ID (PK, FK)</sub>     | <sub>CAS_ID (PK, FK)</sub>     | <sub>CAS_ID (PK, FK)</sub>  | <sub>CAS_ID (PK, FK)</sub>  | <sub>CAS_ID (PK, FK)</sub> |
+| <sub>JURISDICTION</sub>      | <sub>ORIG_STAND_ID</sub>     | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>       | <sub>WETLAND_TYPE</sub>     | <sub>GEOMETRY</sub>        |
+| <sub>OWNER_TYPE</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_TYPE_1</sub>      | <sub>WET_VEG_COVER</sub>    |                            |
+| <sub>OWNER_NAME</sub>        | <sub>NUM_OF_LAYERS</sub>     | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_YEAR_1</sub>      | <sub>WET_LANDFORM_MOD</sub> |                            |
+| <sub>STANDARD_TYPE</sub>     | <sub>INVENTORY_ID</sub>      | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                            |
+| <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>ECO_SITE</sub>         |                            |
+| <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      |                             |                            |
+| <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>HEIGHT_UPPER</sub>        |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_YEAR_2</sub>      |                             |                            |
+| <sub>INVENTORY_MANUAL</sub>  | <sub>SRC_INV_AREA</sub>      | <sub>HEIGHT_LOWER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
+| <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>PRODUCTIVE_FOR</sub>      | <sub>NAT_NON_VEG</sub>         | <sub>DIST_EXT_LOWER_2</sub> |                             |                            |
+| <sub>ACQUISITION_DATE</sub>  |                              | <sub>SPECIES_1 - 10</sub>      | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_TYPE_3</sub>      |                             |                            |
+| <sub>DATA_TRANSFER</sub>     |                              | <sub>SPECIES_PER_1 - 10</sub>  | <sub>NON_FOR_VEG</sub>         | <sub>DIST_YEAR_3</sub>      |                             |                            |
+| <sub>RECEIVED_FROM</sub>     |                              | <sub>ORIGIN_UPPER</sub>        |                                | <sub>DIST_EXT_UPPER_3</sub> |                             |                            |
+| <sub>CONTACT_INFO</sub>      |                              | <sub>ORIGIN_LOWER</sub>        |                                | <sub>DIST_EXT_LOWER_3</sub> |                             |                            |
+| <sub>DATA_AVAILABILITY</sub> |                              | <sub>SITE_CLASS</sub>          |                                |                             |                             |                            |
+| <sub>REDISTRIBUTION</sub>    |                              | <sub>SITE_INDEX</sub>          |                                |                             |                             |                            |
+| <sub>PERMISSION</sub>        |                              |                                |                                |                             |                             |                            |
+| <sub>LICENSE_AGREEMENT</sub> |                              |                                |                                |                             |                             |                            |
+| <sub>PHOTO_YEAR_SRC</sub>    |                              |                                |                                |                             |                             |                            |
+| <sub>PHOTO_YEAR_START</sub>  |                              |                                |                                |                             |                             |                            |
+| <sub>PHOTO_YEAR_END</sub>    |                              |                                |                                |                             |                             |                            |
 
  
 <a name=Error_codes></a>
@@ -98,21 +98,23 @@ Table 1. CASFRI schema.
 
 Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. Individual error codes are reported for each attribute in the specifications below.
 
-| Class          | Type               | Description                                                  | Text code         | Numeric code |
-| -------------- | ------------------ | ------------------------------------------------------ | ----------------- | ---------- |
-| Missing values | Empty string       | Missing value that is entered as an empty                                                                                             string (e.g. '' or '&#160;')                                | EMPTY_STRING        | -8889    |
-|                | Null               | Missing value that is a true null value                | NULL_VALUE        | -8888    |
-|                | Not applicable     | Target attribute not in source table or does                                                                                           not apply to this record (e.g. the source                                                                                             inventory does not record information for the                                                                                         attribute                                              | NOT_APPLICABLE    | -8887    |
-|                | Unknown value      | Non-null value that is not known (e.g. if the                                                                                         source data we have is incomplete and we can't                                                                                         be sure of the attributes value without a complete                                                                                     dataset)                                               | UNKNOWN_VALUE     | -8886    |
-| Invalid values | Out of range       | Value is outside the range of values (e.g. a                                                                                           percent value that is >100                             | OUT_OF_RANGE      | -9999    |
-|                | Not member of set  | Value is not a member of a set or list (e.g. when                                                                                     a source value does not match a list of expected                                                                                       strings)                                               | NOT_IN_SET        | -9998    |
-|                | Invalid value      | Invalid value (e.g. input value does match expected                                                                                   format)                                                | INVALID_VALUE     | -9997    |
-|                | Wrong data type    | Value is of the wrong data type (e.g. a text string                                                                                   when we expect an integer)                             | WRONG_TYPE        | -9995    |
-|                | Unused value       | Non-null value that is not used in CAS                 | UNUSED_VALUE      | -9994    |
-|                | Not unique         | Source table values are not unique (e.g. a lookup                                                                                     table that lists a source value twice)                 | NOT_UNIQUE        | -9993    |
-| Generic        | Translation error  | Generic translation error (reported for a failed                                                                                       translation)                                           | TRANSLATION_ERROR | -3333    |
-| Geometry       | Invalid geometry   | Invalid geometry in one or more polygons               | INVALID_GEOMETRY  | -7779    |
-|                | No intersect       | FRI geometry does not intersect any polygons (e.g.                                                                                     when running a spatial join with a photo year geometry)| NO_INTERSECT      | -7778    |
+Table 2. Error codes
+
+| Class          | Type               | Description                                                                                                                                              | Text code         | Numeric code |
+| -------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------------ |
+| Missing values | Empty string       | Missing value that is entered as an empty string (e.g. '' or ' ')                                                                                        | EMPTY_STRING      | -8889        |
+|                | Null               | Missing value that is a true null value                                                                                                                  | NULL_VALUE        | -8888        |
+|                | Not applicable     | Target attribute not in source table or does not apply to this record (e.g. the source inventory does not record information for the attribute           | NOT_APPLICABLE    | -8887        |
+|                | Unknown value      | Non-null value that is not known (e.g. if the source data we have is incomplete and we can't be sure of the attributes value without a complete dataset) | UNKNOWN_VALUE     | -8886        |
+| Invalid values | Out of range       | Value is outside the range of values (e.g. a percent value that is >100                                                                                  | OUT_OF_RANGE      | -9999        |
+|                | Not member of set  | Value is not a member of a set or list (e.g. when a source value does not match a list of expected strings)                                              | NOT_IN_SET        | -9998        |
+|                | Invalid value      | Invalid value (e.g. input value does match expected format)                                                                                              | INVALID_VALUE     | -9997        |
+|                | Wrong data type    | Value is of the wrong data type (e.g. a text string when we expect an integer)                                                                           | WRONG_TYPE        | -9995        |
+|                | Unused value       | Non-null value that is not used in CAS                                                                                                                   | UNUSED_VALUE      | -9994        |
+|                | Not unique         | Source table values are not unique (e.g. a lookup table that lists a source value twice)                                                                 | NOT_UNIQUE        | -9993        |
+| Generic        | Translation error  | Generic translation error (reported for a failed translation)                                                                                            | TRANSLATION_ERROR | -3333        |
+| Geometry       | Invalid geometry   | Invalid geometry in one or more polygons                                                                                                                 | INVALID_GEOMETRY  | -7779        |
+|                | No intersect       | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry)                                               | NO_INTERSECT      | -7778        |
 
 
 <a name=HDR_attributes></a>
@@ -294,11 +296,11 @@ The attribute **REDISTRIBUTION** identifies the conditions under which the inven
 
 The attribute **PERMISSION** identifies the degree of permission to which the data can be used i.e., whether the use of the data is unrestricted, restricted or limited..
 
-| Values | Description |
-| :----- | :-------------- |
+| Values       | Description |
+| :----------- | :-------------- |
 | UNRESTRICTED | Use of the inventory data is unrestricted |
-| RESTRICTED | Use of the inventory data has restrictions |
-| LIMITED | Use of the data has limitations |
+| RESTRICTED   | Use of the inventory data has restrictions |
+| LIMITED      | Use of the data has limitations |
 
 
 ### LICENSE_AGREEMENT
@@ -346,7 +348,7 @@ The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was 
 The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Inventory ID. Polygon attributes include stand structure, polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
 
-### CAS_ID
+### CAS_ID (PK)
 
 The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
@@ -419,7 +421,7 @@ Notes:
 Number of layers counts all CASFRI layers from the the LYR and NFL tables. **Note that NUM_OF_LAYERS is independant of  STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. Stand structure could therefore be S, even when the number of layers is >1.**
 
 | Values        | Description |
-| :----         | :----- |
+| :------------ | :----- |
 | 1 - 9         | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers                   can be identified |
 | -8886         | The number of layers is not known (e.g. if there is disturbance info, but not reported layers) |
 
@@ -479,11 +481,11 @@ The attribute **STAND_PHOTO_YEAR** is a identifies the year in which the aerial 
 | Values      | Description      |
 | :---------- | :---------- |
 | 1900 - 2020 | Identifies the year in which the aerial photography was conducted |
-| -8888  | Source value is null |
-| -9995  | Source value is not the expected type (e.g. not an integer) |
-| -9999  | Source value is outside expected range (e.g. not between 1900 and 2020) |
-| -7779  | Source geometry is not valid |
-| -7778  | Source geometry does not intersect the provided geometry (e.g. source polygon does not intersect the photo year geometry) |
+| -8888       | Source value is null |
+| -9995       | Source value is not the expected type (e.g. not an integer) |
+| -9999       | Source value is outside expected range (e.g. not between 1900 and 2020) |
+| -7779       | Source geometry is not valid |
+| -7778       | Source geometry does not intersect the provided geometry (e.g. source polygon does not intersect the photo year geometry) |
 
 
 <a name=LYR_attributes></a>
@@ -492,7 +494,7 @@ The attribute **STAND_PHOTO_YEAR** is a identifies the year in which the aerial 
 Forest layer attributes.
 
 
-### CAS_ID
+### CAS_ID (PK, FK)
 
 The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
@@ -511,6 +513,35 @@ The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each 
 Notes:
 
 - Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
+
+
+<a name=LAYER></a>
+### LAYER (PK)
+
+LAYER is related to stand structure and number of layers and is recorded for all LYR and NFL records. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.
+
+LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exsists, an NFL layer will get a value of 1.
+
+| Values   | Description   |
+| :------- | :------- |
+| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
+
+Notes:
+
+- LAYER is a CASFRI specific attribute that we compute based on the presence or absence of values for different layers.
+- One exception is the BC08 inventory where we do not have access to the complete dataset. Only the rank 1 data is available which could represent any canopy layer from the full source inventory. We therefore copy the layer info from the source data in this case so as not to mis-represent the source data by assigning layer 1 to a layer that is not actually the top layer. 
+
+
+<a name=LAYER_RANK></a>
+### LAYER_RANK
+
+Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code.  
+
+| Values | Description |
+| :----- | :----- |
+| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
+| -8888  | Source value is null |
+| -8887  | Translation is not applicable (e.g. no source attribute) |
 
 
 <a name=STRUCTURE_PER></a>
@@ -542,49 +573,20 @@ Notes:
 - Applies to the following inventories: AB, NB, NT, (Wood Buffalo?)
 
 
-<a name=LAYER></a>
-### LAYER
-
-LAYER is related to stand structure and number of layers and is recorded for all LYR and NFL records. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.
-
-LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exsists, an NFL layer will get a value of 1.
-
-| Values   | Description   |
-| :------- | :------- |
-| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
-
-Notes:
-
-- LAYER is a CASFRI specific attribute that we compute based on the presence or absence of values for different layers.
-- One exception is the BC08 inventory where we do not have access to the complete dataset. Only the rank 1 data is available which could represent any canopy layer from the full source inventory. We therefore copy the layer info from the source data in this case so as not to mis-represent the source data by assigning layer 1 to a layer that is not actually the top layer. 
-
-
-<a name=LAYER_RANK></a>
-### LAYER_RANK
-
-Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code.  
-
-| Values | Description |
-| :----- | :----- |
-| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
-| -8888  | Source value is null |
-| -8887  | Translation is not applicable (e.g. no source attribute) |
-
-
 <a name=SOIL_MOIST_REG></a>
 ### SOIL_MOIST_REG  
 
 Soil moisture regime describes the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. *The detailed soil moisture regime table and CAS conversion is presented in Appendix 4*.  
 
-| Value      | Description |
-| :--------- | :----- |
-| D          | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
-| F          | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
-| M          | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
-| W          | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
-| A          | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
-| NULL_VALUE | Source value is null |
-| NOT_IN_SET | Source value is not in list of expected values |
+| Value          | Description |
+| :------------- | :----- |
+| D              | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
+| F              | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
+| M              | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
+| W              | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
+| A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
+| NULL_VALUE     | Source value is null |
+| NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value does not occur |
 
 
@@ -659,9 +661,9 @@ CAS species codes are derived from the species' Latin name using the first four 
 
 ### SPECIES_PER_1 - SPECIES_PER_10
 
-| Values     | Description |
-| :--------- | :-------------- |
-| 1 - 100    | Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add                up to 100% |
+| Values    | Description |
+| :-------- | :-------------- |
+| 1 - 100   | Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add                up to 100% |
 | -8888     | Source value is null |
 | -9995     | Source value is not the expected type (e.g. not an integer) |
 | -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
@@ -687,15 +689,15 @@ Stand origin is the average initiation year of codominant and dominant trees of 
 
 Site class is an estimate of the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography, climate, elevation, and moisture availability. See Appendix 11 for the detailed site table.  
 
-| Values | Description |
-| :----- | :-------------- |
-| U      | Unproductive - cannot support a commercial forest |
-| P      | Poor - poor tree growth based on age height relationship |
-| M      | Medium - medium tree growth based on age height relationship |
-| G      | Good - medium tree growth based on age height relationship |
-| NOT_NULL | Source value is null |
-| NOT_EMPTY | Source value is an empty string (e.g. '') |
-| NOT_IN_SET | Source value is not in list of expected values |
+| Values         | Description |
+| :-----         | :-------------- |
+| U              | Unproductive - cannot support a commercial forest |
+| P              | Poor - poor tree growth based on age height relationship |
+| M              | Medium - medium tree growth based on age height relationship |
+| G              | Good - medium tree growth based on age height relationship |
+| NOT_NULL       | Source value is null |
+| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value does not occur |
 
 
@@ -703,9 +705,9 @@ Site class is an estimate of the potential productivity of land for tree growth.
 
 Site Index is an estimate of site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada. See Appendix 11 for the detailed site table.  
 
-| Values   | Description |
+| Values    | Description |
 | :-------- | :-------------- |
-| 0 - 99 | Estimate of site productivity for tree growth based on a specified reference age |
+| 0 - 99    | Estimate of site productivity for tree growth based on a specified reference age |
 | -8888     | Source value is null |
 | -9995     | Source value is not the expected type (e.g. not a number) |
 | -9999     | Source value is outside expected range (e.g. not between 1 and 99) |
@@ -718,7 +720,7 @@ Site Index is an estimate of site productivity for tree growth. It is derived fo
 Non-forested attributes.
 
 
-### CAS_ID
+### CAS_ID (PK, FK)
 
 The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
@@ -739,21 +741,40 @@ Notes:
 - Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
 
+### LAYER (PK)
+
+See <a href="#LAYER">LAYER</a> in the LYR table.
+
+| Values   | Description   |
+| :------- | :------- |
+| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
+
+
+### LAYER_RANK  
+See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
+
+| Values | Description |
+| :----- | :----- |
+| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
+| -8888  | Source value is null |
+| -8887  | Translation is not applicable (e.g. no source attribute) |
+
+
 ### SOIL_MOIST_REG
 
 See <a href="#SOIL_MOIST_REG">SOIL_MOIST_REG</a> in the LYR table.
 
 Soil moisture regime defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
-| Value      | Description |
-| :--------- | :----- |
-| D          | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
-| F          | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
-| M          | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
-| W          | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
-| A          | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
-| NULL_VALUE | Source value is null |
-| NOT_IN_SET | Source value is not in list of expected values |
+| Value          | Description |
+| :------------- | :----- |
+| D              | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
+| F              | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
+| M              | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
+| W              | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
+| A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
+| NULL_VALUE     | Source value is null |
+| NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value does not occur |
 
 Notes:
@@ -774,29 +795,7 @@ See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 | -9999                              | Source value is outside expected range (e.g. not between 0 and 9) |
 
 
-
-### LAYER
-
-See <a href="#LAYER">LAYER</a> in the LYR table.
-
-| Values   | Description   |
-| :------- | :------- |
-| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
-
-
-
-### LAYER_RANK  
-See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
-
-| Values | Description |
-| :----- | :----- |
-| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
-| -8888  | Source value is null |
-| -8887  | Translation is not applicable (e.g. no source attribute) |
-
-
-
-### CROWN_CLOSURE 
+### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER
 See <a href="#CROWN_CLOSURE ">CROWN_CLOSURE</a> in the LYR table.
 
 Crown closure defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
@@ -812,7 +811,7 @@ Crown closure defined in the NFL table must be a value explicitly assigned to th
 
 
 
-### HEIGHT
+### HEIGHT_UPPER, HEIGHT_LOWER
 See <a href="#HEIGHT ">HEIGHT</a> in the LYR table.
 
 Height defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
@@ -900,7 +899,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 <a name=DST_attributes></a>
 ## DST Attributes
 
-### CAS_ID
+### CAS_ID (PK, FK)
 
 The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
@@ -920,6 +919,17 @@ Notes:
 
 - Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
+
+### LAYER (PK)
+
+If a disturbance is linked to a specific layer in the source data, it can be assigned to the corresponding layer in CASFRI (See <a href="#LAYER">LYR table LAYER.</a>). If disturbances are not linked to a specific layer, a CASFRI error code is assigned. In some cases the source inventory may arbitrarily assign all disturbances to layer 1. If this is the case, and it is documented as such in the source data specifications, an error code will be assigned in CASFRI since the true layers associated with disturbance are unknown.
+
+| Values   | Description |
+| :------- | :------- |
+| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
+
+Note:
+Update possible values after #272
 
 
 ### DIST_TYPE_1 - DIST_TYPE_3
@@ -972,17 +982,6 @@ Disturbance extent provides an estimate of the proportion of the polygon that ha
 | -9998    | Source value is not in the list of expected values |
 | -8887    | Source value is not applicable (e.g. value does not occur in the source data) |
 
-### LAYER
-
-If a disturbance is linked to a specific layer in the source data, it can be assigned to the corresponding layer in CASFRI (See <a href="#LAYER">LYR table LAYER.</a>). If disturbances are not linked to a specific layer, a CASFRI error code is assigned. In some cases the source inventory may arbitrarily assign all disturbances to layer 1. If this is the case, and it is documented as such in the source data specifications, an error code will be assigned in CASFRI since the true layers associated with disturbance are unknown.
-
-| Values   | Description |
-| :------- | :------- |
-| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
-
-Note:
-Update possible values after #272
-
 
 <a name=ECO_attributes></a>
 ## ECO Attributes
@@ -990,7 +989,7 @@ Update possible values after #272
 Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.  
 
 
-### CAS_ID
+### CAS_ID (PK, FK)
 The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
 - Inventory id e.g., AB06
@@ -1071,7 +1070,6 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 <sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.  
 
   
-
 ### ECOSITE
 
 Ecosites are site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes:  Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.    
@@ -1085,7 +1083,7 @@ Ecosites are site-level descriptions that provide a linkage between vegetation a
 
 Geometry attributes are calculated by the translation engine.
 
-### CAS_ID
+### CAS_ID (PK, FK)
 
 The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
