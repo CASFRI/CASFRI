@@ -15,12 +15,13 @@
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS translation_devel;
-SELECT TT_DeleteAllViews('rawfri');
 
 -- Validate species dependency tables
 SELECT TT_Prepare('translation', 'sk_sfv01_species_validation', '_sk_species_val');
 SELECT * FROM TT_Translate_sk_species_val('translation', 'sk_sfv01_species');
+--SELECT * FROM translation.sk_sfv01_species;
 
+--SELECT TT_DeleteAllViews('rawfri');
 
 -- CAS ATTRIBUTES
 SELECT * FROM translation.sk_sfv01_cas;
