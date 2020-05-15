@@ -71,10 +71,10 @@ Table 1. CASFRI schema.
 | <sub>HDR</sub>               | <sub>CAS</sub>               | <sub>LYR</sub>                 | <sub>NFL</sub>                 | <sub>DST</sub>              | <sub>ECO</sub>              | <sub>GEO</sub>             |
 | ---------------------------- | ---------------------------- | ------------------------------ | ------------------------------ | --------------------------- | --------------------------- | -------------------------- |
 | <sub>INVENTORY_ID (PK)</sub> | <sub>CAS_ID (PK, FK)</sub>   | <sub>CAS_ID (PK, FK)</sub>     | <sub>CAS_ID (PK, FK)</sub>     | <sub>CAS_ID (PK, FK)</sub>  | <sub>CAS_ID (PK, FK)</sub>  | <sub>CAS_ID (PK, FK)</sub> |
-| <sub>JURISDICTION</sub>      | <sub>ORIG_STAND_ID</sub>     | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>       | <sub>WETLAND_TYPE</sub>     | <sub>GEOMETRY</sub>        |
-| <sub>OWNER_TYPE</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_TYPE_1</sub>      | <sub>WET_VEG_COVER</sub>    |                            |
-| <sub>OWNER_NAME</sub>        | <sub>NUM_OF_LAYERS</sub>     | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_YEAR_1</sub>      | <sub>WET_LANDFORM_MOD</sub> |                            |
-| <sub>STANDARD_TYPE</sub>     | <sub>INVENTORY_ID</sub>      | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                            |
+| <sub>JURISDICTION</sub>      | <sub>INVENTORY_ID (FK)</sub> | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>       | <sub>WETLAND_TYPE</sub>     | <sub>GEOMETRY</sub>        |
+| <sub>OWNER_TYPE</sub>        | <sub>ORIG_STAND_ID</sub>     | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_TYPE_1</sub>      | <sub>WET_VEG_COVER</sub>    |                            |
+| <sub>OWNER_NAME</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_YEAR_1</sub>      | <sub>WET_LANDFORM_MOD</sub> |                            |
+| <sub>STANDARD_TYPE</sub>     | <sub>NUM_OF_LAYERS</sub>     | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                            |
 | <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>ECO_SITE</sub>         |                            |
 | <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      |                             |                            |
 | <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>HEIGHT_UPPER</sub>        |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_YEAR_2</sub>      |                             |                            |
@@ -123,7 +123,7 @@ Table 2. Error codes
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are described below.
 
 
-### INVENTORY_ID
+### INVENTORY_ID (PK)
 
 The attribute **INVENTORY_ID** is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments with newer inventories within a jurisdiction.
 
@@ -368,6 +368,14 @@ Notes:
 
 - Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
 
+
+### INVENTORY_ID (FK)
+
+The attribute **INVENTORY_ID** is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments with newer inventories within a jurisdiction.
+
+| Values | Desription |
+| :----- | :-------------- |
+| Alpha numeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
 
 ### ORIG_STAND_ID
