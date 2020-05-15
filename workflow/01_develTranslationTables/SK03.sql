@@ -78,6 +78,13 @@ SELECT TT_CreateMappingView('rawfri', 'sk03', 'sk_sfv', 200, 'nfl');
 SELECT * FROM TT_Translate_sk03_nfl_devel('rawfri', 'sk03_l1_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk03_sfv01_nfl_devel');
 
+SELECT count(*), nvsl, aquatic_class, CONCAT(nvsl,aquatic_class) FROM rawfri.sk03 GROUP BY nvsl, aquatic_class;
+
+-- Display original values and translated values side-by-side to compare and debug the translation table
+SELECT a.cas_id, b.nvsl, b.aquatic_class, b.luc, b.transp_class, b.shrub1, b.herb1, a.nat_non_veg, a.non_for_anth, a.non_for_veg
+FROM TT_Translate_sk02_nfl_devel('rawfri', 'sk02_l1_to_sk_sfv_l1_map_200_nfl') a, rawfri.sk02_l1_to_sk_sfv_l1_map_200_nfl b
+WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
+
 
 -- ECO ATTRIBUTES
 SELECT * FROM translation.sk_sfv01_eco;
