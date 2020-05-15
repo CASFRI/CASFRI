@@ -79,6 +79,8 @@ SELECT * FROM TT_Translate_sk02_nfl_devel('rawfri', 'sk02_l1_to_sk_sfv_l1_map_20
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk02_sfv01_nfl_devel');
 
 SELECT count(*), nvsl, aquatic_class, CONCAT(nvsl,aquatic_class) FROM rawfri.sk02 GROUP BY nvsl, aquatic_class;
+SELECT count(*), luc, transp_class, CONCAT(luc,transp_class) FROM rawfri.sk02 GROUP BY luc, transp_class;
+SELECT count(*), shrub1, herbs1, CONCAT(shrub1,herbs1) FROM rawfri.sk02 GROUP BY shrub1, herbs1;
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT a.cas_id, b.nvsl, b.aquatic_class, b.luc, b.transp_class, b.shrub1, b.herb1, a.nat_non_veg, a.non_for_anth, a.non_for_veg
