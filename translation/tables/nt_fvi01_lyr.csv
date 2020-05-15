@@ -32,4 +32,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 31,ORIGIN_UPPER,integer,"notNull(origin);isInt(origin);isBetween(origin,1500,2020)",copyInt(origin),Copies (origin) to ORIGIN_UPPER,TRUE
 32,ORIGIN_LOWER,integer,"notNull(origin);isInt(origin);isBetween(origin,1500,2020)",copyInt(origin),Copies (origin) to ORIGIN_LOWER,TRUE
 33,SITE_CLASS,text,"notNull(siteclass);notEmpty(siteclass);matchList(siteclass,{5,4,3,2,1})","mapText(siteclass, {5,4,3,2,1}, {'U','P','M','G','G'})",Maps source value to SITE_CLASS using lists of values,TRUE
-34,SITE_INDEX,double precision,"notNull(si_50);isNumeric(si_50);isBetween(si_50,1.0,99.0)",copyDouble(si_50),Copy source attribute,TRUE
+34,SITE_INDEX,double precision,"notNull(si_50);isNumeric(si_50);isBetween(si_50,1,99)",copyDouble(si_50),Copy source attribute,TRUE

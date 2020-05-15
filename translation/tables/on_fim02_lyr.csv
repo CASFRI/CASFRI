@@ -32,4 +32,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 31,ORIGIN_UPPER,integer,"notNull(oyrorg);isInt(oyrorg);isBetween(oyrorg, 0, 2020)",copyInt(oyrorg),Copies source value to ORIGIN_UPPER,TRUE
 32,ORIGIN_LOWER,integer,"notNull(oyrorg);isInt(oyrorg);isBetween(oyrorg, 0, 2020)",copyInt(oyrorg),Copies source value to ORIGIN_LOWER,TRUE
 33,SITE_CLASS,text,"notNull(osc);notEmpty(osc);matchList(osc,{'0','1','2','3','4'})","mapText(osc, {'0','1','2','3','4'}, {'G','G','M','P','U'})",Maps source value to site class,TRUE
-34,SITE_INDEX,double precision,"notNull(osi);isNumeric(osi);isBetween(osi,0.1,40)",copyDouble(osi),Copies source value to site index,TRUE
+34,SITE_INDEX,double precision,"notNull(osi);isNumeric(osi);isBetween(osi,'0.1',40)",copyDouble(osi),Copies source value to site index,TRUE
