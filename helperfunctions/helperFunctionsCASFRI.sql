@@ -2817,6 +2817,57 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
+-- TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- vals1 text
+-- vals2 text
+-- inventory_standard_cd text
+-- land_cover_class_cd_1 text
+-- bclcs_level_4 text
+-- non_productive_descriptor_cd text
+-- non_veg_cover_type_1 text
+-- zero_is_null
+-- 
+-- Use the custom helper function:  
+-- to determine if the row contains an NFL record. If it does assign a string
+-- so it can be counted as a non-null layer.
+-- 
+-- Pass vals1, vals2 and the string/NULLs to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
+  vals1 text,
+  vals2 text,
+  inventory_standard_cd text,
+  land_cover_class_cd_1 text,
+  bclcs_level_4 text,
+  non_productive_descriptor_cd text,
+  non_veg_cover_type_1 text,
+  max_rank_to_consider text,
+  zero_is_null text
+)
+RETURNS int AS $$
+  DECLARE
+    is_nfl text;
+  BEGIN
+
+    -- if any of the nfl functions return true, we know there is an NFL record.
+    -- set is_nfl to be a valid string.
+    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) 
+    OR tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) 
+    OR tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
+      is_nfl = TRUE;
+    ELSE
+      is_nfl = NULL::text;
+    END IF;
+        
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, zero_is_null);
+
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
 -- TT_sk_utm01_species_percent_translation(text, text, text, text, text, text, text)
 --
 -- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)

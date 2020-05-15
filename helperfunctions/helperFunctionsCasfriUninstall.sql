@@ -51,6 +51,7 @@ DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text, text, text, te
 DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text);
 DROP FUNCTION IF EXISTS TT_fvi01_countOfNotNull(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
