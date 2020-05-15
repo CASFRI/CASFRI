@@ -2819,8 +2819,8 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 -- TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text)
 --
--- vals1 text
--- vals2 text
+-- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
+-- vals2 text - string list of layer 2 attribtues. This is carried through to couneOfNotNull  
 -- inventory_standard_cd text
 -- land_cover_class_cd_1 text
 -- bclcs_level_4 text
@@ -2856,7 +2856,7 @@ RETURNS int AS $$
     IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) 
     OR tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) 
     OR tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
-      is_nfl = TRUE;
+      is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
     END IF;
