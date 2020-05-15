@@ -6,8 +6,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"notNull(l1cc);isNumeric(l1cc);matchList(l1cc,{1,2,3,4,5})","mapInt(l1cc, {1,2,3,4,5}, {30,50,70,90,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"notNull(l1cc);isNumeric(l1cc);matchList(l1cc,{1,2,3,4,5})","mapInt(l1cc, {1,2,3,4,5}, {10,31,51,71,91})",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
-8,HEIGHT_UPPER,double precision,"notNull(l1ht);isNumeric(l1ht);isBetween(l1ht,0.1,100)",copyDouble(l1ht),Copies source value to HEIGHT_UPPER,TRUE
-9,HEIGHT_LOWER,double precision,"notNull(l1ht);isNumeric(l1ht);isBetween(l1ht,0.1,100)",copyDouble(l1ht),Copies source value to HEIGHT_LOWER,TRUE
+8,HEIGHT_UPPER,double precision,"notNull(l1ht);isNumeric(l1ht);isBetween(l1ht,'0.1',100)",copyDouble(l1ht),Copies source value to HEIGHT_UPPER,TRUE
+9,HEIGHT_LOWER,double precision,"notNull(l1ht);isNumeric(l1ht);isBetween(l1ht,'0.1',100)",copyDouble(l1ht),Copies source value to HEIGHT_LOWER,TRUE
 10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
 11,SPECIES_1,text,"notNull(l1s1);notEmpty(l1s1);matchTable(l1s1, 'translation', 'nb_nbi01_species' )","lookupText(l1s1, 'translation', 'nb_nbi01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_1 using lookup table,TRUE
 12,SPECIES_PER_1,integer,"notNull(l1pr1);matchList(l1pr1, {1,2,3,4,5,6,7,8,9,10})","mapInt(l1pr1, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_1 by multiplying by 10,TRUE
