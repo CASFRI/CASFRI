@@ -80,7 +80,10 @@ WITH test_nb AS (
     SELECT 'TT_avi01_stand_structure_translation'::text function_tested,     32 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,      33 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_fvi01_countOfNotNull'::text function_tested,                  34 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_vri01_countOfNotNull'::text function_tested,                  35 maj_num,  16 nb_test
+    SELECT 'TT_vri01_countOfNotNull'::text function_tested,                  35 maj_num, 16 nb_test UNION ALL
+    SELECT 'TT_sk_utm01_species_percent_validation'::text function_tested,   36 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,  37 maj_num, 11 nb_test UNION ALL
+    SELECT 'TT_sk_utm01_species_translation'::text function_tested,          38 maj_num,  3 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1550,7 +1553,123 @@ SELECT '35.16'::text number,
        'Count of 0'::text description,
        TT_vri01_countOfNotNull('{'''',''''}', '{'''',''''}', '', '', '', '', '', '3', 'FALSE') = 0 passed
 ---------------------------------------------------------
-
+---------------------------------------------------------
+ -- TT_sk_utm01_species_percent_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '36.1'::text number,
+       'TT_sk_utm01_species_percent_validation'::text function_tested,
+       'Expected code 1'::text description,
+       TT_sk_utm01_species_percent_validation('WS', '', '', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '36.2'::text number,
+       'TT_sk_utm01_species_percent_validation'::text function_tested,
+       'Expected code 2'::text description,
+       TT_sk_utm01_species_percent_validation('WS', '', '', 'GA', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '36.3'::text number,
+       'TT_sk_utm01_species_percent_validation'::text function_tested,
+       'Non-expected code 1'::text description,
+       TT_sk_utm01_species_percent_validation('WS', 'GA', 'WA', 'GA', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '36.4'::text number,
+       'TT_sk_utm01_species_percent_validation'::text function_tested,
+       'Non-expected code 2'::text description,
+       TT_sk_utm01_species_percent_validation('', '', '', '', '') IS FALSE passed
+---------------------------------------------------------
+---------------------------------------------------------
+ -- TT_sk_utm01_species_percent_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '37.1'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 1'::text description,
+       TT_sk_utm01_species_percent_translation('1', 'WS','','',NULL::text,'') = 100 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.2'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 2, with empty strings and NULLs'::text description,
+       TT_sk_utm01_species_percent_translation('2', 'WS','',NULL::text,'BF','') = 20 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.3'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 3'::text description,
+       TT_sk_utm01_species_percent_translation('1', 'WS','WS','',NULL::text,'') = 70 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.4'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 4'::text description,
+       TT_sk_utm01_species_percent_translation('2', 'WS','WS','',NULL::text,'') = 30 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.5'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 5'::text description,
+       TT_sk_utm01_species_percent_translation('1', 'BS','JP','',NULL::text,'') = 60 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.6'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 6::text description',
+       TT_sk_utm01_species_percent_translation('2', 'WS','WS','',NULL::text,'') = 30 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.7'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 7'::text description,
+       TT_sk_utm01_species_percent_translation('2', 'GA','GA','GA','','') = 30 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.8'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 8'::text description,
+       TT_sk_utm01_species_percent_translation('2', 'GA','GA','GA','WS','') = 25 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.9'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 9'::text description,
+       TT_sk_utm01_species_percent_translation('1', 'WS','WS','WS','GA','GA') = 25 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.10'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 10'::text description,
+       TT_sk_utm01_species_percent_translation('5', 'WS','WS','WS','GA','GA') = 15 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '37.11'::text number,
+       'TT_sk_utm01_species_percent_translation'::text function_tested,
+       'Expected percent 11'::text description,
+       TT_sk_utm01_species_percent_translation('1', '','','','','') IS NULL passed
+---------------------------------------------------------
+---------------------------------------------------------
+ -- TT_sk_utm01_species_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '38.1'::text number,
+       'TT_sk_utm01_species_translation'::text function_tested,
+       'Expected species'::text description,
+       TT_sk_utm01_species_translation('2', 'WS','BF','','','') = 'Abie bals' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '38.2'::text number,
+       'TT_sk_utm01_species_translation'::text function_tested,
+       'Expected species with empty strings'::text description,
+       TT_sk_utm01_species_translation('2', 'WS','','','','BF') = 'Abie bals' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '38.3'::text number,
+       'TT_sk_utm01_species_translation'::text function_tested,
+       'Expected species with empty strings and nulls'::text description,
+       TT_sk_utm01_species_translation('2', 'WS','',NULL::text,'','BF') = 'Abie bals' passed
+---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

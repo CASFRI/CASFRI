@@ -26,6 +26,9 @@ DROP FUNCTION IF EXISTS TT_tie01_not_etage_layer1_validation(text,text);
 DROP FUNCTION IF EXISTS TT_tie01_not_etage_dens_layers_validation(text,text,text,text);
 DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text,text,text);
 DROP FUNCTION IF EXISTS TT_yvi01_nfl_soil_moisture_validation(text,text,text,text);
+DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_validation(text,text,text,text,text);
+DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text);
 -------------------------------------------------------------------------------
 -- Translation functions
 -------------------------------------------------------------------------------
@@ -47,11 +50,10 @@ DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text)
 DROP FUNCTION IF EXISTS TT_fim_species_percent_translation(text, text);
 DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_yvi01_non_for_veg_translation(text, text, text);
-DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text, text, text);
-DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text);
 DROP FUNCTION IF EXISTS TT_fvi01_countOfNotNull(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_translation(text,text,text,text,text,text);
+DROP FUNCTION IF EXISTS TT_sk_utm01_species_translation(text,text,text,text,text,text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

@@ -1289,6 +1289,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'tie01_not_etage_notnull_validation' THEN '-8888'
                   WHEN rulelc = 'tie01_not_etage_layer1_validation' THEN '-8887'
                   WHEN rulelc = 'tie01_not_etage_dens_layers_validation' THEN '-8887'
+                  WHEN rulelc = 'sk_utm01_species_percent_validation' THEN '-9997'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1756,6 +1757,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- nfl_l1_1 text
 -- nfl_l1_2 text
 -- nfl_l1_3 text
+-- nfl_l1_4 text
 --
 -- Catch the cases where stand structure will be NOT_APPLICABLE because row is NFL.
 -- Will be every row where overstory attributes are NFL. Except those
@@ -1764,7 +1766,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- If overstory is NFL then understory should not have sp1, unless stand structure is Horizontal.
 -- e.g. TT_avi01_stand_structure_validation(nfl_l1_1, nfl_l1_2, nfl_l1_2, stand_structure)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text,text,text, text);
+--DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text,text,text, text, text);
 CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_validation(
   stand_structure text,
   nfl_l1_1 text,
@@ -1822,7 +1824,81 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
+-------------------------------------------------------------------------------
+-- TT_sk_utm01_species_percent_validation(text, text, text, text, text)
+--
+-- sp10 text
+-- sp11 text
+-- sp12 text
+-- sp20 text
+-- sp21 text
+--
+-- Checks the combination of hardwood and softwood species is valid and in one of the 
+-- expected codes used in the translation function.
+--
+-- Codes the polygon being processed based on the combination of hardwood and
+-- softwood species in each column.
+-- e.g. concatenates in order either H for hardwood, S for softwood or - for nothing
+-- into a 5 character string such as S----
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_validation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_utm01_species_percent_validation(
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text
+)
+RETURNS boolean AS $$
+  DECLARE
+    hardwoods text[]; -- list of harwood species codes
+    softwoods text[]; -- list of softwood species codes
+    ft10 text; -- assigns hardwood or softwood forest type
+    ft11 text;
+    ft12 text;
+    ft20 text;
+    ft21 text;
+    ft_concat text; -- concatenates the ft values.
+  BEGIN
+    
+    -- assign hardwood and softwood groups
+    softwoods = ARRAY['WS','BS','JP','BF','TL','LP'];
+    hardwoods = ARRAY['GA','TA','BP','WB','WE','MM','BO'];
+    
+    -- assign forest type variables
+    IF sp10 = ANY(hardwoods) THEN ft10 = 'H';
+    ELSIF sp10 = ANY(softwoods) THEN ft10 = 'S';
+    ELSE ft10 = '-';
+    END IF;
+    
+    IF sp11 = ANY(hardwoods) THEN ft11 = 'H';
+    ELSIF sp11 = ANY(softwoods) THEN ft11 = 'S';
+    ELSE ft11 = '-';
+    END IF;
+    
+    IF sp12 = ANY(hardwoods) THEN ft12 = 'H';
+    ELSIF sp12 = ANY(softwoods) THEN ft12 = 'S';
+    ELSE ft12 = '-';
+    END IF;
+    
+    IF sp20 = ANY(hardwoods) THEN ft20 = 'H';
+    ELSIF sp20 = ANY(softwoods) THEN ft20 = 'S';
+    ELSE ft20 = '-';
+    END IF;
+    
+    IF sp21 = ANY(hardwoods) THEN ft21 = 'H';
+    ELSIF sp21 = ANY(softwoods) THEN ft21 = 'S';
+    ELSE ft21 = '-';
+    END IF;
 
+    -- assign forest type code
+    ft_concat = ft10 || ft11 || ft12 || ft20 || ft21;
+    
+    -- Check code is in the expected list based on source data with valid entries
+    RETURN ft_concat = ANY(ARRAY['H----', 'H--S-', 'H--SS', 'HH---', 'HH-S-', 'HH-SS', 'HHH--', 'HHHS-', 'HHHSS', 'HS-S-', 'S----', 'S--H-', 'S--HH', 'SS---', 'SS-H-', 'SS-HH', 'SS-S-', 'SSS--', 'SSSH-', 'SSSHH', 'HS---', 'SH---']);
+
+  END; 
+$$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Translation Function Definitions...
@@ -2763,7 +2839,7 @@ RETURNS text AS $$
   SELECT TT_avi01_stand_structure_translation(stand_structure, overstory_sp1, NULL::text, NULL::text, understory_sp1, NULL::text, NULL::text);
 $$ LANGUAGE sql;
 -------------------------------------------------------------------------------
--- TT_fvi01_countOfNotNull(text, text, text, text, text)
+-- TT_fvi01_countOfNotNull(text, text, text, text, text, text)
 --
 -- vals1 text
 -- vals2 text
@@ -2871,7 +2947,6 @@ $$ LANGUAGE plpgsql;
 -- TT_sk_utm01_species_percent_translation(text, text, text, text, text, text, text)
 --
 -- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
--- sa text
 -- sp10 text
 -- sp11 text
 -- sp12 text
@@ -2879,13 +2954,134 @@ $$ LANGUAGE plpgsql;
 -- sp21 text
 --
 -- returns the species percent based on the requested sp_number and many logical statements
--- to determine the percent based on what species are present. Logical statements taken from
--- casfir04 scripts.
+-- to determine the percent based on what species are present. Logical statements were developed
+-- with John Cosco and are recorded in an appendix doc.
+--
+-- Codes the polygon being processed based on the combination of hardwood and
+-- softwood species in each column.
+-- e.g. concatenates in order either H for hardwood, S for softwood or - for nothing
+-- into a 5 character string such as S----
+--
+-- The code is then used to make a percentage vector and the species requested is returned
+-- as an index from the vector.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_translation(text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_translation(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_sk_utm01_species_percent_translation(
   sp_number text,
-  sa text,
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text
+)
+RETURNS int AS $$
+  DECLARE
+    _sp_number int := sp_number::int;
+    hardwoods text[]; -- list of harwood species codes
+    softwoods text[]; -- list of softwood species codes
+    ft10 text; -- assigns hardwood or softwood forest type
+    ft11 text;
+    ft12 text;
+    ft20 text;
+    ft21 text;
+    ft_concat text; -- concatenates the ft values.
+    percent_vector int[]; -- percentages for the 5 species in a vector
+  BEGIN
+    
+    -- assign hardwood and softwood groups
+    softwoods = ARRAY['WS','BS','JP','BF','TL','LP'];
+    hardwoods = ARRAY['GA','TA','BP','WB','WE','MM','BO'];
+    
+    -- assign forest type variables
+    IF sp10 = ANY(hardwoods) THEN ft10 = 'H';
+    ELSIF sp10 = ANY(softwoods) THEN ft10 = 'S';
+    ELSE ft10 = '-';
+    END IF;
+    
+    IF sp11 = ANY(hardwoods) THEN ft11 = 'H';
+    ELSIF sp11 = ANY(softwoods) THEN ft11 = 'S';
+    ELSE ft11 = '-';
+    END IF;
+    
+    IF sp12 = ANY(hardwoods) THEN ft12 = 'H';
+    ELSIF sp12 = ANY(softwoods) THEN ft12 = 'S';
+    ELSE ft12 = '-';
+    END IF;
+    
+    IF sp20 = ANY(hardwoods) THEN ft20 = 'H';
+    ELSIF sp20 = ANY(softwoods) THEN ft20 = 'S';
+    ELSE ft20 = '-';
+    END IF;
+    
+    IF sp21 = ANY(hardwoods) THEN ft21 = 'H';
+    ELSIF sp21 = ANY(softwoods) THEN ft21 = 'S';
+    ELSE ft21 = '-';
+    END IF;
+
+    -- assign forest type code
+    ft_concat = ft10 || ft11 || ft12 || ft20 || ft21;
+    
+    -- Assign logical tests to make percent vector for each forest type code in the source data
+    IF ft_concat IN('S----', 'H----') THEN
+      percent_vector = ARRAY[100, 0, 0, 0, 0];
+    ELSIF ft_concat IN('HH---') THEN
+      percent_vector = ARRAY[70, 30, 0, 0, 0];
+    ELSIF ft_concat IN('SS---') AND CONCAT(sp10, sp11) NOT IN('JPBS', 'BSJP') THEN
+      percent_vector = ARRAY[70, 30, 0, 0, 0];
+    ELSIF ft_concat IN('SS---') AND CONCAT(sp10, sp11) IN('JPBS', 'BSJP') THEN
+      percent_vector = ARRAY[60, 40, 0, 0, 0];
+    ELSIF ft_concat IN('S--S-') THEN
+      percent_vector = ARRAY[80, 20, 0, 0, 0];
+    ELSIF ft_concat IN('HHH--', 'SSS--') THEN
+      percent_vector = ARRAY[40, 30, 30, 0, 0];
+    ELSIF ft_concat IN('SS-S-') THEN
+      percent_vector = ARRAY[50, 30, 0, 20, 0];
+    ELSIF ft_concat IN('S--H-', 'H--S-') THEN
+      percent_vector = ARRAY[65, 0, 0, 35, 0];
+    ELSIF ft_concat IN('HS-S-') THEN
+      percent_vector = ARRAY[60, 30, 0, 10, 0];
+    ELSIF ft_concat IN('HS-S-') THEN
+      percent_vector = ARRAY[60, 30, 0, 10, 0];
+    ELSIF ft_concat IN('HH-S-', 'SS-H-') THEN
+      percent_vector = ARRAY[50, 25, 0, 25, 0];
+    ELSIF ft_concat IN('H--SS', 'S--HH') THEN
+      percent_vector = ARRAY[70, 0, 0, 20, 10];
+    ELSIF ft_concat IN('HH-SS', 'SS-HH') THEN
+      percent_vector = ARRAY[30, 30, 0, 20, 20];
+    ELSIF ft_concat IN('SSSH-', 'HHHS-') THEN
+      percent_vector = ARRAY[25, 25, 25, 25, 0];
+    ELSIF ft_concat IN('SSSHH', 'HHHSS') THEN
+      percent_vector = ARRAY[25, 25, 20, 15, 15];
+    ELSIF ft_concat IN('SH---', 'HS---') THEN
+      percent_vector = ARRAY[60, 40, 0, 0, 0]; -- this rule needed for layer 2 (u1, u2)
+    ELSE
+      RETURN NULL; -- if code does not match any of the above, it should have been caught by the validation function. Return NULL.
+    END IF;
+    
+    -- return the requested index, after removing all zero values
+    RETURN (array_remove(percent_vector, 0))[_sp_number];
+
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_sk_utm01_species_translation(text, text, text, text, text, text, text)
+--
+-- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
+-- sp10 text
+-- sp11 text
+-- sp12 text
+-- sp20 text
+-- sp21 text
+--
+-- Determines the species code for the requested species, ignoring any preceding slots with
+-- no data. For example, if only sp10 and sp20 are present, sp20 becomes SPECIES_2 in CASFRI.
+--
+-- Once the correct species code is identified, it is run through the lookup table and returned.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_utm01_species_translation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_utm01_species_translation(
+  sp_number text,
   sp10 text,
   sp11 text,
   sp12 text,
@@ -2894,52 +3090,25 @@ CREATE OR REPLACE FUNCTION TT_sk_utm01_species_percent_translation(
 )
 RETURNS text AS $$
   DECLARE
-    hardwoods text[]; -- list of harwood species codes
-    softwoods text[]; -- list of softwood species codes
-    ft10 text; -- assigns hardwood or softwood forest type
-    ft11 text;
-    ft12 text;
-    ft20 text;
-    ft21 text;
-    n_sp1 int; -- counts number of species values in sp10, sp11, sp12
-    n_sp2 int; -- counts number of species values in sp20, sp21
-    n_sp_all int; -- counts number of species in sp10, sp11, sp12, sp20, sp21
+    _sp_number int := sp_number::int;
+    sp_array text[]; -- array to hold species values
+    sp_to_lookup text; -- the species code to be translated
   BEGIN
-    
-    -- assign hardwood and softwood groups
-    --softwoods = ['WS','BS','JP','BF','TL','LP']
-    --hardwoods = ['GA','TA','BP','WB','WE','MM','BO']
-    
-    -- assign forest type variables
-    --IF sp10 = ANY(hardwoods) THEN ft10 = 'hardwood';
-    --ELSIF sp10 = ANY(softwoods) THEN ft10 = 'softwood';
-    --ELSE ft10 = sp10;
-    --END IF;
-    
-    --IF sp11 = ANY(hardwoods) THEN ft11 = 'hardwood';
-    --ELSIF sp11 = ANY(softwoods) THEN ft11 = 'softwood';
-    --ELSE ft11 = sp11;
-    --END IF;
-    
-    --IF sp12 = ANY(hardwoods) THEN ft12 = 'hardwood';
-    --ELSIF sp12 = ANY(softwoods) THEN ft12 = 'softwood';
-    --ELSE ft12 = sp12;
-    --END IF;
-    
-    --IF sp20 = ANY(hardwoods) THEN ft20 = 'hardwood';
-    --ELSIF sp20 = ANY(softwoods) THEN ft20 = 'softwood';
-    --ELSE ft20 = sp20;
-    --END IF;
-    
-    --IF sp21 = ANY(hardwoods) THEN ft21 = 'hardwood';
-    --ELSIF sp21 = ANY(softwoods) THEN ft21 = 'softwood';
-    --ELSE ft21 = sp21;
-    --END IF;
 
-    -- assign species counts
-    --n_sp1 = TT_NotEmpty(sp10)::int + TT_NotEmpty(sp11)::int + TT_NotEmpty(sp12)::int;
-    --n_sp2 = TT_NotEmpty(sp20)::int + TT_NotEmpty(sp21)::int;
-    --n_sp_all = n_sp1 + n_sp2;
+    -- make species array
+    sp_array = ARRAY[sp10, sp11, sp12, sp20, sp21];
+
+    -- remove NULLs
+    sp_array = array_remove(sp_array, NULL);
+    
+    -- remove empty strings
+    sp_array = array_remove(sp_array, '');
+    sp_array = array_remove(sp_array, ' ');
+
+    -- return the requested index, after removing all zero values
+    sp_to_lookup = sp_array[_sp_number];
+    
+    RETURN tt_lookupText(sp_to_lookup, 'translation', 'sk_utm01_species', 'spec1', 'TRUE');
 
   END; 
 $$ LANGUAGE plpgsql;
