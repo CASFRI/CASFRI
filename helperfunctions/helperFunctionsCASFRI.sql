@@ -2121,9 +2121,9 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_nbi01_stand_structure_translation(text, text, text)
 --
--- If src_filename=“Forest” and l2vs=0, then stand_structure=“S”
--- If src_filename=“Forest” and (l1vs>0 and l2vs>0) then stand_structure=“M”
--- If src_filename=“Forest” and (l1vs>1 and l2vs>1) then stand_structure=“C”
+-- If src_filename = 'Forest' and l2vs=0, then stand_structure=“S”
+-- If src_filename = 'Forest' and (l1vs>0 and l2vs>0) then stand_structure=“M”
+-- If src_filename = 'Forest' and (l1vs>1 and l2vs>1) then stand_structure=“C”
 --
 -- For NB01 src_filename should match 'Forest'.
 -- For NB02 src_filename should match 'geonb_forest-foret'.
