@@ -17,7 +17,11 @@ CREATE SCHEMA IF NOT EXISTS casfri50_lookup ;
 -------------------------------------------------------
 -- Add some constraints to the GEO_ALL table
 -------------------------------------------------------
--- Add foreign key to CAS_ALL
+-- Add primary key to GEO_ALL
+SELECT TT_AddConstraint('casfri50', 'geo_all', 'PK', 
+                        ARRAY['cas_id']);
+
+-- Add foreign key from GEO_ALL to CAS_ALL
 SELECT TT_AddConstraint('casfri50', 'geo_all', 'FK', 
                         ARRAY['cas_id', 'casfri50', 'cas_all', 'cas_id']);
 

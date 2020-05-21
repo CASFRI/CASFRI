@@ -158,10 +158,6 @@ GROUP BY left(cas_id, 4);
 --YT02	231137
 
 SELECT count(*) FROM casfri50.cas_all; -- 17976422
-
--- Add primary key constraint
-ALTER TABLE casfri50.cas_all 
-ADD PRIMARY KEY (cas_id);
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX cas_all_casid_idx

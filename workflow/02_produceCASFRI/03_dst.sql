@@ -151,10 +151,6 @@ GROUP BY left(cas_id, 4), layer;
 --YT02 1	19178
 
 SELECT count(*) FROM casfri50.dst_all; -- 13277010
-
--- Add primary key constraint
-ALTER TABLE casfri50.dst_all 
-ADD PRIMARY KEY (cas_id, layer);
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX dst_all_casid_idx
