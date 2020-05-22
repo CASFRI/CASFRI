@@ -713,7 +713,7 @@ RETURNS text AS $$
       SELECT DISTINCT ON (to_att)
          num, key,
          -- Make sure to quote the 'from' part if it is a constant
-         CASE WHEN TT_IsName(from_att) THEN from_att
+         CASE WHEN TT_IsName(from_att) AND lower(key) != 'inventory_id' THEN from_att
               ELSE '''' || btrim(from_att, '''') || ''''
          END from_att,
          -- If the 'to' part is a contant, map the 'from' attribute to itself. They will be fixed later.
