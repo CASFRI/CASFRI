@@ -14,6 +14,8 @@ IF %overwriteFRI% == True (
   SET overwrite_tab=
 )
 
+SET PG_USE_COPY=YES
+
 SET prjFile="%~dp0\..\canadaAlbersEqualAreaConic.prj"
 
 SET pg_connection_string=PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword%"
