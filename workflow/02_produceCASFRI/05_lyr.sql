@@ -294,10 +294,6 @@ GROUP BY left(cas_id, 4), layer;
 -- YT02	1	105102
 
 SELECT count(*) FROM casfri50.lyr_all; -- 14811190
-
--- Add primary key constraint
-ALTER TABLE casfri50.lyr_all
-ADD PRIMARY KEY (cas_id, layer);
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX lyr_all_casid_idx

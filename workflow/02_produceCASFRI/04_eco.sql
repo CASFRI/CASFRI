@@ -131,9 +131,6 @@ GROUP BY left(cas_id, 4);
 --NB02	111135
 
 SELECT count(*) FROM casfri50.eco_all; -- 184113
-
--- Add primary key constraint
-ALTER TABLE casfri50.eco_all ADD PRIMARY KEY (cas_id);
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX eco_all_casid_idx

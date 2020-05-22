@@ -18,6 +18,9 @@ else
   overwrite_tab=
 fi
 
+export PG_USE_COPY=YES
+
+
 prjFile="$scriptDir/../canadaAlbersEqualAreaConic.prj"
 
 pg_connection_string="PG:host=$pghost port=$pgport dbname=${pgdbname} user=${pguser} password=${pgpassword}"
