@@ -727,7 +727,7 @@ RETURNS text AS $$
     ), ordered_maps AS (
       SELECT num, key, 
              from_att || CASE WHEN from_att = to_att THEN '' 
-                              ELSE ' ' || to_att 
+                              ELSE ' AS ' || to_att 
                          END mapstr,
              CASE WHEN key = ANY (ARRAY['inventory_id', 'layer', 'layer_rank', 'cas_id', 'orig_stand_id', 'stand_structure', 'num_of_layers', 'map_sheet_id', 'casfri_area', 'casfri_perimeter', 'src_inv_area', 'stand_photo_year']) THEN 1
                   WHEN key = ANY (ARRAY['soil_moist_reg', 'structure_per', 'crown_closure_upper', 'crown_closure_lower', 'height_upper', 'height_lower', 'productive_for']) THEN 2
