@@ -83,7 +83,9 @@ WITH test_nb AS (
     SELECT 'TT_vri01_countOfNotNull'::text function_tested,                  35 maj_num, 16 nb_test UNION ALL
     SELECT 'TT_sk_utm01_species_percent_validation'::text function_tested,   36 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,  37 maj_num, 11 nb_test UNION ALL
-    SELECT 'TT_sk_utm01_species_translation'::text function_tested,          38 maj_num,  3 nb_test
+    SELECT 'TT_sk_utm01_species_translation'::text function_tested,          38 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  3 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1364,7 +1366,7 @@ SELECT '31.4'::text number,
        'Test nfl'::text description,
        TT_avi01_stand_structure_validation('M', '', 'val', '', '') IS FALSE passed
 ---------------------------------------------------------
-  -- TT_avi01_non_for_veg_translation
+  -- TT_avi01_stand_structure_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.1'::text number,
@@ -1670,6 +1672,52 @@ SELECT '38.3'::text number,
        'Expected species with empty strings and nulls'::text description,
        TT_sk_utm01_species_translation('2', 'WS','',NULL::text,'','BF') = 'Abie bals' passed
 ---------------------------------------------------------
+  -- TT_sfv01_stand_structure_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '39.1'::text number,
+       'TT_sfv01_stand_structure_translation'::text function_tested,
+       'Test Horizontal stand'::text description,
+       TT_sfv01_stand_structure_translation('H', '', '', '') = 'H' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '39.2'::text number,
+       'TT_sfv01_stand_structure_translation'::text function_tested,
+       'Test Complex stand'::text description,
+       TT_sfv01_stand_structure_translation('c', '', '', '') = 'C' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '39.3'::text number,
+       'TT_sfv01_stand_structure_translation'::text function_tested,
+       'Test S stand'::text description,
+       TT_sfv01_stand_structure_translation('M', 'bf', '', '') = 'S' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '39.4'::text number,
+       'TT_sfv01_stand_structure_translation'::text function_tested,
+       'Test M stand'::text description,
+       TT_sfv01_stand_structure_translation('', 'bf', 'bf', 'bf') = 'M' passed
+---------------------------------------------------------
+  -- TT_sfv01_countOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '40.1'::text number,
+       'TT_sfv01_countOfNotNull'::text function_tested,
+       'Test one layer'::text description,
+       TT_sfv01_countOfNotNull('bf', '', '', '', '', '', '', '', '', '6', 'FALSE') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '40.2'::text number,
+       'TT_sfv01_countOfNotNull'::text function_tested,
+       'Test six layers'::text description,
+       TT_sfv01_countOfNotNull('bf', 'bf', 'bf', 'bf', 'bf', 'WA', '', '', '', '6', 'FALSE') = 6 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '40.3'::text number,
+       'TT_sfv01_countOfNotNull'::text function_tested,
+       'Test six layers'::text description,
+       TT_sfv01_countOfNotNull('bf', 'bf', 'bf', 'bf', 'bf', 'xx', '', '', '', '6', 'FALSE') = 5 passed
+
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
