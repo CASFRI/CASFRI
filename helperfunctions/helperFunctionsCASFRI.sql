@@ -2766,54 +2766,66 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
--- TT_avi01_stand_structure_translation(text, text, text, text)
+-- TT_generic_stand_structure_translation(text, text, text, text)
 --
 -- stand_structure text
--- overstory_sp1 text
--- overstory_sp2 text
--- overstory_sp3 text
--- understory sp1 text
--- understory sp2 text
--- understory sp3 text
+-- layer1_sp1 text
+-- layer1_sp2 text
+-- layer1_sp3 text
+-- layer2_sp1 text
+-- layer2_sp2 text
+-- layer2_sp3 text
+-- layer3_sp1 text
+-- layer3_sp2 text
+-- layer3_sp3 text
 -- 
--- AVI includes NFL as a layer, so a forest caopy with understory shrubs is assigned 
--- a multi story stand. CASFRI would assign it single story.
+-- Generic function the passes H or C from source to casfri, otherwise counts not null
+-- forest layers and returns S or M.
 --
--- If stand structure is H or C, return H or C.
--- Then count presence of overstoty and understory forest layers and return S or M
--- accordingly.
 -- All other cases should be caught in validation.
+-- 
+-- Inventory specific signatures are made from this generic version using the correct 
+-- number of species and layers.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_translation(
+--DROP FUNCTION IF EXISTS TT_generic_stand_structure_translation(text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_generic_stand_structure_translation(
   stand_structure text,
-  overstory_sp1 text,
-  overstory_sp2 text,
-  overstory_sp3 text,
-  understory_sp1 text,
-  understory_sp2 text,
-  understory_sp3 text
+  layer1_sp1 text,
+  layer1_sp2 text,
+  layer1_sp3 text,
+  layer2_sp1 text,
+  layer2_sp2 text,
+  layer2_sp3 text,
+  layer3_sp1 text,
+  layer3_sp2 text,
+  layer3_sp3 text
 )
 RETURNS text AS $$
   DECLARE
     _count1 int := 0;
     _count2 int := 0;
+    _count3 int := 0;
     _count int;
   BEGIN
     
-    -- are there any overstory species? (tried forming a tt_countOfNotNull call here but couldn't get it to run correctly)
-    IF tt_notEmpty(overstory_sp1) OR tt_notEmpty(overstory_sp2) OR tt_notEmpty(overstory_sp3) THEN
+    -- are there any layer 1 species? (tried forming a tt_countOfNotNull call here but couldn't get it to run correctly)
+    IF tt_notEmpty(layer1_sp1) OR tt_notEmpty(layer1_sp2) OR tt_notEmpty(layer1_sp3) THEN
       _count1 = 1;
     END IF;
     
-    -- are there any understory species?
-    IF tt_notEmpty(understory_sp1) OR tt_notEmpty(understory_sp2) OR tt_notEmpty(understory_sp3) THEN
+    -- are there any layer 2 species?
+    IF tt_notEmpty(layer2_sp1) OR tt_notEmpty(layer2_sp2) OR tt_notEmpty(layer2_sp3) THEN
       _count2 = 1;
     END IF;
+    
+    -- are there any layer 3 species?
+    IF tt_notEmpty(layer3_sp1) OR tt_notEmpty(layer3_sp2) OR tt_notEmpty(layer3_sp3) THEN
+      _count3 = 1;
+    END IF;
 
-    _count = _count1 + _count2;
+    _count = _count1 + _count2 + _count3;
   
-    -- if stand structure is H or C, return H or C. Note CX was added so this function can bu re-used in ON02.
+    -- if stand structure is H or C, return H or C. Note CX was added so this function can be re-used in ON02.
     IF stand_structure IN ('H', 'h', 'C', 'c', 'C4', 'C5', 'CX') THEN
       RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5'', ''CX''}', '{''H'', ''H'', ''C'', ''C'', ''C'', ''C'', ''C''}');
     
@@ -2821,7 +2833,7 @@ RETURNS text AS $$
     -- if only one species layer, return S (this should always be sp1)
     ELSIF _count = 1 THEN
       RETURN 'S';
-    ELSIF _count = 2 THEN
+    ELSIF _count IN(2, 3) THEN
       RETURN 'M';
     ELSE
       RETURN NULL;
@@ -2829,14 +2841,40 @@ RETURNS text AS $$
   END; 
 $$ LANGUAGE plpgsql;
 
--- single species signature for ON02
+-- avi signature - 2 layers, 3 species
+-- DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_translation(
   stand_structure text,
-  overstory_sp1 text,
-  understory_sp1 text
+  layer1_sp1 text,
+  layer1_sp2 text,
+  layer1_sp3 text,
+  layer2_sp1 text,
+  layer2_sp2 text,
+  layer2_sp3 text
 )
 RETURNS text AS $$
-  SELECT TT_avi01_stand_structure_translation(stand_structure, overstory_sp1, NULL::text, NULL::text, understory_sp1, NULL::text, NULL::text);
+  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, NULL::text, NULL::text, NULL::text);
+$$ LANGUAGE sql;
+
+-- ON02 signature - 2 layers, 1 species
+CREATE OR REPLACE FUNCTION TT_fim02_stand_structure_translation(
+  stand_structure text,
+  layer1_sp1 text,
+  layer2_sp1 text
+)
+RETURNS text AS $$
+  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, NULL::text, NULL::text, layer2_sp1, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
+$$ LANGUAGE sql;
+
+-- SK SFVI signature - 3 layers, 1 species
+CREATE OR REPLACE FUNCTION TT_sfv01_stand_structure_translation(
+  stand_structure text,
+  layer1_sp1 text,
+  layer2_sp1 text,
+  layer3_sp1 text
+)
+RETURNS text AS $$
+  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, NULL::text, NULL::text, layer2_sp1, NULL::text, NULL::text, layer3_sp1, NULL::text, NULL::text);
 $$ LANGUAGE sql;
 -------------------------------------------------------------------------------
 -- TT_fvi01_countOfNotNull(text, text, text, text, text, text)
@@ -3109,6 +3147,62 @@ RETURNS text AS $$
     sp_to_lookup = sp_array[_sp_number];
     
     RETURN tt_lookupText(sp_to_lookup, 'translation', 'sk_utm01_species', 'spec1', 'TRUE');
+
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_sfv01_countOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
+-- vals2 text - string list of layer 2 attribtues. This is carried through to couneOfNotNull  
+-- vals3 text - string list of layer 3 attributes. This is carried through to couneOfNotNull
+-- vals4 text - string list of layer 4 (shrub) attributes. This is carried through to couneOfNotNull
+-- vals5 text - string list of layer 5 (herb) attributes. This is carried through to couneOfNotNull
+-- nvsl text
+-- aquatic_class text
+-- luc text
+-- transp_class text
+-- zero_is_null
+-- 
+-- Use the custom helper function:  
+-- to determine if the row contains an NFL record. If it does assign a string
+-- so it can be counted as a non-null layer.
+-- 
+-- Pass vals1-vals5 and the string/NULLs to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sfv01_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sfv01_countOfNotNull(
+  vals1 text,
+  vals2 text,
+  vals3 text,
+  vals4 text,
+  vals5 text,
+  nvsl text,
+  aquatic_class text,
+  luc text,
+  transp_class text,
+  max_rank_to_consider text,
+  zero_is_null text
+)
+RETURNS int AS $$
+  DECLARE
+    is_nfl text;
+  BEGIN
+
+    -- if any of the nfl functions return true, we know there is an NFL record.
+    -- set is_nfl to be a valid string.
+    IF tt_matchList(nvsl,'{''UK'',''CB'',''RK'',''SA'',''MS'',''GR'',''SB'',''WA''}') 
+    OR tt_matchList(aquatic_class,'{''LA'',''RI'',''FL'',''SF'',''FP'',''ST''}') 
+    OR tt_matchList(transp_class,'{''ALA'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC''}')
+    OR tt_matchList(luc,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW''}') THEN
+      is_nfl = 'a_value';
+    ELSE
+      is_nfl = NULL::text;
+    END IF;
+        
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, zero_is_null);
 
   END; 
 $$ LANGUAGE plpgsql;
