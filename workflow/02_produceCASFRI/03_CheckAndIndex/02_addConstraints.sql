@@ -283,11 +283,13 @@ FROM (SELECT *
                                  stand_structure = ''H'' OR 
                                  stand_structure = ''C'') AND 
                                 num_of_layers > 1) OR 
-                               ((stand_structure = ''S'' OR stand_structure = ''C'') AND num_of_layers = 1) OR 
-                                num_of_layers = -8886 OR -- UNKNOWN_VALUE
-                                stand_structure = ''NULL_VALUE'' OR
-                                stand_structure = ''EMPTY_STRING'' OR
-                                stand_structure = ''NOT_IN_SET''']) AS (passed boolean, cstr_query text)) foo
+                               ((stand_structure = ''S'' OR 
+                                 stand_structure = ''C'') AND 
+                                num_of_layers = 1) OR 
+                               num_of_layers = -8886 OR -- UNKNOWN_VALUE
+                               stand_structure = ''NULL_VALUE'' OR
+                               stand_structure = ''EMPTY_STRING'' OR
+                               stand_structure = ''NOT_IN_SET''']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.18'::text number,
