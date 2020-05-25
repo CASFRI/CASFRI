@@ -290,15 +290,15 @@ DROP TABLE IF EXISTS %tableName_D%;
 -nln %tableName_L1% %layer_creation_option% ^
 -progress %overwrite_tab%
 
-:: "%gdalFolder%\ogr2ogr" ^
-:: -f PostgreSQL %pg_connection_string% %srcFullPath_L2% ^
-:: -nln %tableName_L2% %layer_creation_option% ^
-:: -progress %overwrite_tab%
+"%gdalFolder%\ogr2ogr" ^
+-f PostgreSQL %pg_connection_string% %srcFullPath_L2% ^
+-nln %tableName_L2% %layer_creation_option% ^
+-progress %overwrite_tab%
 
-:: "%gdalFolder%\ogr2ogr" ^
-:: -f PostgreSQL %pg_connection_string% %srcFullPath_D% ^
-:: -nln %tableName_D% %layer_creation_option% ^
-:: -progress %overwrite_tab%
+"%gdalFolder%\ogr2ogr" ^
+-f PostgreSQL %pg_connection_string% %srcFullPath_D% ^
+-nln %tableName_D% %layer_creation_option% ^
+-progress %overwrite_tab%
 
 ::  Join loaded tables
 
