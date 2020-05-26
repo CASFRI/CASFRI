@@ -22,7 +22,6 @@ SELECT TT_DeleteAllViews('rawfri');
 SELECT TT_Prepare('translation', 'sk_sfv01_species_validation', '_sk_species_val');
 SELECT * FROM TT_Translate_sk_species_val('translation', 'sk_sfv01_species');
 
-
 -- CAS ATTRIBUTES
 SELECT * FROM translation.sk_sfv01_cas;
 DROP TABLE IF EXISTS translation_devel.sk05_sfv01_cas_devel;
@@ -51,10 +50,29 @@ SELECT * FROM TT_Translate_sk05_lyr_devel('rawfri', 'sk05_l2_to_sk_sfv_l1_map_20
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk05_sfv01_lyr_devel');
 
 -- LYR3 ATTRIBUTES
--- ERROR: ERROR TT_RandomInt(): nb (200) must be smaller or equal to the range of values (165)...
--- FIXED: BY REDUCING SAMPLE FROM 200 TO 100 (could be 165 but may fail with other SK inventories)
-SELECT TT_CreateMappingView('rawfri', 'sk05', 3, 'sk_sfv', 1, 100, 'lyr');
-SELECT * FROM TT_Translate_sk05_lyr_devel('rawfri', 'sk05_l3_to_sk_sfv_l1_map_100_lyr', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'sk05', 3, 'sk_sfv', 1, 200, 'lyr');
+SELECT * FROM TT_Translate_sk05_lyr_devel('rawfri', 'sk05_l3_to_sk_sfv_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'sk05_sfv01_lyr_devel');
+
+-- NFL1 ATTRIBUTES
+SELECT * FROM translation.sk_sfv01_nfl;
+DROP TABLE IF EXISTS translation_devel.sk05_sfv01_nfl_devel;
+CREATE TABLE translation_devel.sk05_sfv01_nfl_devel AS
+SELECT * FROM translation.sk_sfv01_nfl; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.sk05_sfv01_nfl_devel;
+SELECT TT_Prepare('translation_devel', 'sk05_sfv01_nfl_devel', '_sk05_nfl_devel');
+SELECT TT_CreateMappingView('rawfri', 'sk05', 4, 'sk_sfv', 1, 200, 'nfl');
+SELECT * FROM TT_Translate_sk05_nfl_devel('rawfri', 'sk05_l4_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'sk05_sfv01_nfl_devel');
+
+-- NFL2 ATTRIBUTES
+SELECT TT_CreateMappingView('rawfri', 'sk05', 5, 'sk_sfv', 1, 200, 'nfl');
+SELECT * FROM TT_Translate_sk05_nfl_devel('rawfri', 'sk05_l5_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'sk05_sfv01_lyr_devel');
+
+-- NFL3 ATTRIBUTES - layer 6 can either be nat_non_veg or non_for_anth, not both.
+SELECT TT_CreateMappingView('rawfri', 'sk05', 6, 'sk_sfv', 1, 200, 'nfl');
+SELECT * FROM TT_Translate_sk05_nfl_devel('rawfri', 'sk05_l6_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk05_sfv01_lyr_devel');
 
 -- DST ATTRIBUTES
@@ -67,21 +85,6 @@ SELECT TT_Prepare('translation_devel', 'sk05_sfv01_dst_devel', '_sk05_dst_devel'
 SELECT TT_CreateMappingView('rawfri', 'sk05', 'sk_sfv', 200, 'dst');
 SELECT * FROM TT_Translate_sk05_dst_devel('rawfri', 'sk05_l1_to_sk_sfv_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk05_sfv01_dst_devel');
-
--- NFL ATTRIBUTES
-SELECT * FROM translation.sk_sfv01_nfl;
-DROP TABLE IF EXISTS translation_devel.sk05_sfv01_nfl_devel;
-CREATE TABLE translation_devel.sk05_sfv01_nfl_devel AS
-SELECT * FROM translation.sk_sfv01_nfl; --WHERE rule_id::int = 1
-SELECT * FROM translation_devel.sk05_sfv01_nfl_devel;
-SELECT TT_Prepare('translation_devel', 'sk05_sfv01_nfl_devel', '_sk05_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk05', 'sk_sfv', 200, 'nfl');
-SELECT * FROM TT_Translate_sk05_nfl_devel('rawfri', 'sk05_l1_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'sk05_sfv01_nfl_devel');
-
-SELECT count(*), nvsl, aquatic_class, CONCAT(nvsl,aquatic_class) FROM rawfri.sk05 GROUP BY nvsl, aquatic_class;
-SELECT count(*), luc, transp_class, CONCAT(luc,transp_class) FROM rawfri.sk02 GROUP BY luc, transp_class;
-SELECT count(*), shrub1, herbs1, CONCAT(shrub1,herbs1) FROM rawfri.sk02 GROUP BY shrub1, herbs1;
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT a.cas_id, b.nvsl, b.aquatic_class, b.luc, b.transp_class, b.shrub1, b.herb1, a.nat_non_veg, a.non_for_anth, a.non_for_veg
