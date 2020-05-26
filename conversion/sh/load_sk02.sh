@@ -149,4 +149,6 @@ ALTER TABLE $fullTargetTableName
   DROP COLUMN poly_id_wetland;
 "
 
+createSQLSpatialIndex=True
+
 source ./common_postprocessing.sh

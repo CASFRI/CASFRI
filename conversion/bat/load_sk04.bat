@@ -114,6 +114,8 @@ SET query1=SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS invento
 CALL .\sk_sfvi_join_code.bat
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query2%"
 
+SET createSQLSpatialIndex=True
+
 CALL .\common_postprocessing.bat
 
 ENDLOCAL

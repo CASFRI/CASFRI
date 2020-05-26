@@ -139,4 +139,6 @@ DROP TABLE IF EXISTS $tableName_sup;
 DROP TABLE IF EXISTS $tableName_inf;
 "
 
+createSQLSpatialIndex=True
+
 source ./common_postprocessing.sh

@@ -307,5 +307,7 @@ DROP TABLE IF EXISTS ${tableName_L2};
 DROP TABLE IF EXISTS ${tableName_D};
 "
 
+createSQLSpatialIndex=True
+
 source ./common_postprocessing.sh
 

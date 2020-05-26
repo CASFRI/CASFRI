@@ -68,6 +68,8 @@ DROP TABLE IF EXISTS %temp_table%;
 
 "%gdalFolder%\ogrinfo" %pg_connection_string% -sql "%query%"
 
+SET createSQLSpatialIndex=True
+
 CALL .\common_postprocessing.bat
 
 ENDLOCAL

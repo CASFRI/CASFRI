@@ -19,6 +19,8 @@
 
 ::######################################## Set variables #######################################
 
+SETLOCAL
+
 CALL ./common.bat
 
 SET inventoryID=QC03
@@ -123,4 +125,8 @@ DROP TABLE IF EXISTS %tableName_inf%;
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query1%"
 
+SET createSQLSpatialIndex=True
+
 CALL .\common_postprocessing.bat
+
+ENDLOCAL

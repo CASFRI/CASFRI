@@ -153,6 +153,8 @@ DROP TABLE IF EXISTS ${fullTargetTableName}_unique_att;
 DROP TABLE IF EXISTS ${fullTargetTableName}_geom_att;
 "
 
+createSQLSpatialIndex=True
+
 source ./common_postprocessing.sh
 
 

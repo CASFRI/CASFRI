@@ -141,6 +141,8 @@ ALTER TABLE %fullTargetTableName% DROP COLUMN poly_id_wetland;
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query3%"
 
+SET createSQLSpatialIndex=True
+
 CALL .\common_postprocessing.bat
 
 ENDLOCAL

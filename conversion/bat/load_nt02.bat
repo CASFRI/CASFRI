@@ -148,6 +148,8 @@ DROP TABLE IF EXISTS %fullTargetTableName%_geom_att;
 :: original tables are deleted
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query%"
 
+SET createSQLSpatialIndex=True
+
 CALL .\common_postprocessing.bat
 
 ENDLOCAL
