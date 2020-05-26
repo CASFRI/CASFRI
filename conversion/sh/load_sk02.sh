@@ -24,8 +24,8 @@ source ./common.sh
 
 inventoryID=SK02
 srcFileName=SFVI_Island_Forest
-fullTargetTableName=$targetFRISchema.sk02_temp
-actualFullTargetTableName=$targetFRISchema.sk02
+fullTargetTableName=$targetFRISchema.sk02
+tempTableName=${fullTargetTableName}_temp
 
 gdbFileName_poly=STAND
 gdbFileName_meta=FEATURE_METADATA
@@ -37,15 +37,15 @@ gdbFileName_l3=LAYER_3
 gdbFileName_shrubs=SHRUBS
 gdbFileName_wetland=WETLAND
 
-TableName_poly=${fullTargetTableName}_poly
-TableName_meta=${fullTargetTableName}_meta
-TableName_dist=${fullTargetTableName}_dist
-TableName_herbs=${fullTargetTableName}_herbs
-TableName_l1=${fullTargetTableName}_l1
-TableName_l2=${fullTargetTableName}_l2
-TableName_l3=${fullTargetTableName}_l3
-TableName_shrubs=${fullTargetTableName}_shrubs
-TableName_wetland=${fullTargetTableName}_wetland
+TableName_poly=${tempTableName}_poly
+TableName_meta=${tempTableName}_meta
+TableName_dist=${tempTableName}_dist
+TableName_herbs=${tempTableName}_herbs
+TableName_l1=${tempTableName}_l1
+TableName_l2=${tempTableName}_l2
+TableName_l3=${tempTableName}_l3
+TableName_shrubs=${tempTableName}_shrubs
+TableName_wetland=${tempTableName}_wetland
 
 srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 
@@ -108,9 +108,14 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 -sql "SELECT *, poly_id AS poly_id_shrubs FROM '$gdbFileName_shrubs'" \
 -progress $overwrite_tab
 
-# join tables by sourcing the join code
+# Temporarily swap fullTargetTableName with tempTableName
+swap=$fullTargetTableName
+fullTargetTableName=$tempTableName
+
+# Join tables by sourcing the join code
 source ./sk_SFVI_join_code.sh
 
+fullTargetTableName=$swap
 
 # Now load and join the wetland table. This table only occurs in SK02.
 
@@ -122,24 +127,28 @@ source ./sk_SFVI_join_code.sh
 -progress $overwrite_tab
 
 
-# Join wetland to the temp table and save as actualFullTargetTableName.
+# Join wetland to the temp table and save as fullTargetTableName.
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 -- delete ogc and poly_id, joins don't work with matching names
-ALTER TABLE $TableName_wetland DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id;
+ALTER TABLE $TableName_wetland 
+DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id;
 
--- join
-DROP TABLE IF EXISTS $actualFullTargetTableName; 
-CREATE TABLE $actualFullTargetTableName AS
-SELECT *
-    FROM $fullTargetTableName A 
-	LEFT JOIN $TableName_wetland I ON A.poly_id = I.poly_id_wetland;
+-- Join
+DROP TABLE IF EXISTS $fullTargetTableName; 
+CREATE TABLE $fullTargetTableName AS
+SELECT * FROM $tempTableName A 
+LEFT JOIN $TableName_wetland I ON A.poly_id = I.poly_id_wetland;
 
 --drop tables
 DROP TABLE IF EXISTS $TableName_wetland;
-DROP TABLE IF EXISTS $fullTargetTableName;
+DROP TABLE IF EXISTS $tempTableName;
 
 -- drop duplicate poly_ids
-ALTER TABLE $actualFullTargetTableName  
+ALTER TABLE $fullTargetTableName  
   DROP COLUMN poly_id_wetland;
 "
+
+createSQLSpatialIndex=True
+
+source ./common_postprocessing.sh

@@ -48,8 +48,10 @@ do
   -f PostgreSQL "$pg_connection_string" "$F/forest" \
   -nln $fullTargetTableName \
   -t_srs $prjFile \
-  -sql "SELECT *, '${F##*/}' as src_filename, '$inventoryID' AS inventory_id, 'FOREST#' as 'forest_id_1', 'FOREST-ID' as 'forest_id_2' FROM $ogrTab" \
+  -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id, 'FOREST#' as 'forest_id_1', 'FOREST-ID' AS 'forest_id_2' FROM $ogrTab" \
   $ogr_options
 
   ogr_options="-update -append"  
 done
+
+source ./common_postprocessing.sh

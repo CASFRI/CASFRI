@@ -108,6 +108,12 @@ SET query1=SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS invento
 -sql "SELECT *, poly_id AS poly_id_shrubs FROM %gdbFileName_shrubs%" ^
 -progress %overwrite_tab%
 
-:: run sourced join query
+:: Run sourced join query
 CALL .\sk_sfvi_join_code.bat
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query2%"
+
+SET createSQLSpatialIndex=True
+
+CALL .\common_postprocessing.bat
+
+ENDLOCAL

@@ -43,10 +43,10 @@ gdbFileName_attributes=NT_FORCOV_ATT
 gdbFileName_photoyear=Inventory_Extents
 srcFullPath="$friDir/NT/$inventoryID/data/inventory/NT_FORCOV.gdb"
 
-targetTableName=$targetFRISchema.nt02
-geometryTableName=${targetTableName}_geometry
-attributeTableName=${targetTableName}_attributes
-photoyearTableName=${targetTableName}_photoyear
+fullTargetTableName=$targetFRISchema.nt02
+geometryTableName=${fullTargetTableName}_geometry
+attributeTableName=${fullTargetTableName}_attributes
+photoyearTableName=${fullTargetTableName}_photoyear
 
 ########################################## Process ######################################
 
@@ -87,8 +87,8 @@ ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS invproj_id;
 ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS seam_id;
 ALTER TABLE $geometryTableName DROP COLUMN IF EXISTS ogc_fid;
 
-DROP TABLE IF EXISTS ${targetTableName}_geom_merged; 
-CREATE TABLE ${targetTableName}_geom_merged AS
+DROP TABLE IF EXISTS ${fullTargetTableName}_geom_merged; 
+CREATE TABLE ${fullTargetTableName}_geom_merged AS
 WITH dup AS (
   SELECT fc_id::int
   FROM $geometryTableName
@@ -116,42 +116,46 @@ FROM $geometryTableName
 GROUP BY fc_id::int
 HAVING count(*) = 1;
 
-DROP TABLE IF EXISTS ${targetTableName}_unique_att;
-CREATE TABLE ${targetTableName}_unique_att AS
+DROP TABLE IF EXISTS ${fullTargetTableName}_unique_att;
+CREATE TABLE ${fullTargetTableName}_unique_att AS
 SELECT DISTINCT ON (fc_id) *
 FROM $attributeTableName;
 
-CREATE INDEX ON ${targetTableName}_unique_att (fc_id);
+CREATE INDEX ON ${fullTargetTableName}_unique_att (fc_id);
 
-DROP TABLE IF EXISTS ${targetTableName}_geom_att;
-CREATE TABLE ${targetTableName}_geom_att AS
+DROP TABLE IF EXISTS ${fullTargetTableName}_geom_att;
+CREATE TABLE ${fullTargetTableName}_geom_att AS
 SELECT a.fc_id afc_id, a.invproj_id ainvproj_id, a.wkb_geometry, a.areaha, a.inventory_id, a.src_filename, b.*
-FROM ${targetTableName}_geom_merged a 
-LEFT OUTER JOIN ${targetTableName}_unique_att b USING (fc_id);
+FROM ${fullTargetTableName}_geom_merged a 
+LEFT OUTER JOIN ${fullTargetTableName}_unique_att b USING (fc_id);
 
-DROP TABLE IF EXISTS $targetTableName; 
-CREATE TABLE $targetTableName AS
+DROP TABLE IF EXISTS $fullTargetTableName; 
+CREATE TABLE $fullTargetTableName AS
 SELECT *
-FROM ${targetTableName}_geom_att a
+FROM ${fullTargetTableName}_geom_att a
 LEFT JOIN (SELECT project_id, project_label FROM $photoyearTableName) b ON a.ainvproj_id=b.project_id;
 
-ALTER TABLE $targetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
-ALTER TABLE $targetTableName ADD COLUMN ogc_fid INT;
-UPDATE $targetTableName SET ogc_fid=temp_key;
-ALTER TABLE $targetTableName DROP COLUMN IF EXISTS temp_key;
+ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
+ALTER TABLE $fullTargetTableName ADD COLUMN ogc_fid INT;
+UPDATE $fullTargetTableName SET ogc_fid=temp_key;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
 
-ALTER TABLE IF EXISTS $targetTableName DROP COLUMN IF EXISTS fc_id;
-ALTER TABLE IF EXISTS $targetTableName RENAME COLUMN afc_id TO fc_id;
-ALTER TABLE IF EXISTS $targetTableName DROP COLUMN IF EXISTS invproj_id;
-ALTER TABLE IF EXISTS $targetTableName RENAME COLUMN ainvproj_id TO invproj_id;
+ALTER TABLE IF EXISTS $fullTargetTableName DROP COLUMN IF EXISTS fc_id;
+ALTER TABLE IF EXISTS $fullTargetTableName RENAME COLUMN afc_id TO fc_id;
+ALTER TABLE IF EXISTS $fullTargetTableName DROP COLUMN IF EXISTS invproj_id;
+ALTER TABLE IF EXISTS $fullTargetTableName RENAME COLUMN ainvproj_id TO invproj_id;
 
 DROP TABLE IF EXISTS $photoyearTableName;
 DROP TABLE IF EXISTS $geometryTableName;
 DROP TABLE IF EXISTS $attributeTableName;
-DROP TABLE IF EXISTS ${targetTableName}_geom_merged; 
-DROP TABLE IF EXISTS ${targetTableName}_unique_att;
-DROP TABLE IF EXISTS ${targetTableName}_geom_att;
+DROP TABLE IF EXISTS ${fullTargetTableName}_geom_merged; 
+DROP TABLE IF EXISTS ${fullTargetTableName}_unique_att;
+DROP TABLE IF EXISTS ${fullTargetTableName}_geom_att;
 "
+
+createSQLSpatialIndex=True
+
+source ./common_postprocessing.sh
 
 
 

@@ -301,9 +301,13 @@ td.data_source_height_cd AS d_data_source_height_cd
 FROM ${targetTableName}_l1_l2 l1_l2
 LEFT OUTER JOIN ${tableName_D} td USING (feature_id);
 
---DROP TABLE IF EXISTS ${targetTableName}_l1_l2;
---DROP TABLE IF EXISTS ${tableName_L1};
---DROP TABLE IF EXISTS ${tableName_L2};
---DROP TABLE IF EXISTS ${tableName_D};
+DROP TABLE IF EXISTS ${targetTableName}_l1_l2;
+DROP TABLE IF EXISTS ${tableName_L1};
+DROP TABLE IF EXISTS ${tableName_L2};
+DROP TABLE IF EXISTS ${tableName_D};
 "
+
+createSQLSpatialIndex=True
+
+source ./common_postprocessing.sh
 

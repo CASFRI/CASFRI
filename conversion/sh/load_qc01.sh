@@ -54,7 +54,7 @@ do
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
     -nln $fullTargetTableName \
     -t_srs $prjFile \
-    -sql "SELECT *, '${F##*/}' as src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
+    -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
     -progress $ogr_options
 
     ogr_options="-update -append"
@@ -75,6 +75,8 @@ do
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
     -nln $fullTargetTableName \
     -t_srs $prjFile \
-    -sql "SELECT *, '${F##*/}' as src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
+    -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
     -progress $ogr_options
 done
+
+source ./common_postprocessing.sh

@@ -32,3 +32,5 @@ fullTargetTableName=$targetFRISchema.qc02
 -nln $fullTargetTableName $layer_creation_option \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcFileName'" \
 -progress $overwrite_tab
+
+source ./common_postprocessing.sh
