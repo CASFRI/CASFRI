@@ -26,215 +26,284 @@ source ./common.sh
 
 inventoryID=BC10
 
-srcFileName_L1=VEG_COMP_LYR_L1_POLY
+srcFileName=VEG_COMP_LYR
+
+srcFileName_L1=${srcFileName}_L1_POLY
 srcFullPath_L1="$friDir/BC/$inventoryID/data/inventory/$srcFileName_L1.gdb"
 
-srcFileName_L2=VEG_COMP_LYR_L2_POLY
+srcFileName_L2=${srcFileName}_L2_POLY
 srcFullPath_L2="$friDir/BC/$inventoryID/data/inventory/$srcFileName_L2.gdb"
 
-srcFileName_D=VEG_COMP_LYR_D_POLY
+srcFileName_D=${srcFileName}_D_POLY
 srcFullPath_D="$friDir/BC/$inventoryID/data/inventory/$srcFileName_D.gdb"
 
 targetTableName=$targetFRISchema.bc10
 tableName_L1=${targetTableName}_layer_1
 tableName_L2=${targetTableName}_layer_2
-tableName_D=${targetTableName}_layer_D
+tableName_D=${targetTableName}_layer_d
 
 ########################################## Process ######################################
 
 # Run ogr2ogr to load all 3 tables
+
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_L1" \
 -nln $tableName_L1 $layer_creation_option \
--progress $overwrite_tab \
--sql "SELECT MAP_ID, POLYGON_ID, OPENING_IND, OPENING_SOURCE, OPENING_NUMBER,
-FEATURE_CLASS_SKEY, INVENTORY_STANDARD_CD, POLYGON_AREA, NON_PRODUCTIVE_DESCRIPTOR_CD, NON_PRODUCTIVE_CD,
-INPUT_DATE, COAST_INTERIOR_CD, SURFACE_EXPRESSION, MODIFYING_PROCESS, SITE_POSITION_MESO, ALPINE_DESIGNATION,
-SOIL_NUTRIENT_REGIME, ECOSYS_CLASS_DATA_SRC_CD, BCLCS_LEVEL_1, BCLCS_LEVEL_2, BCLCS_LEVEL_3, BCLCS_LEVEL_4,
-BCLCS_LEVEL_5, INTERPRETER, INTERPRETATION_DATE, PROJECT, REFERENCE_YEAR, SPECIAL_CRUISE_NUMBER,
-SPECIAL_CRUISE_NUMBER_CD, INVENTORY_REGION, COMPARTMENT, COMPARTMENT_LETTER, FIZ_CD, FOR_MGMT_LAND_BASE_IND,
-ATTRIBUTION_BASE_DATE, PROJECTED_DATE, SHRUB_HEIGHT, SHRUB_CROWN_CLOSURE, SHRUB_COVER_PATTERN, HERB_COVER_TYPE,
-HERB_COVER_PATTERN, HERB_COVER_PCT, BRYOID_COVER_PCT, NON_VEG_COVER_PATTERN_1, NON_VEG_COVER_PCT_1,
-NON_VEG_COVER_TYPE_1, NON_VEG_COVER_PATTERN_2, NON_VEG_COVER_PCT_2, NON_VEG_COVER_TYPE_2, NON_VEG_COVER_PATTERN_3,
-NON_VEG_COVER_PCT_3, NON_VEG_COVER_TYPE_3, LAND_COVER_CLASS_CD_1, EST_COVERAGE_PCT_1, SOIL_MOISTURE_REGIME_1,
-LAND_COVER_CLASS_CD_2, EST_COVERAGE_PCT_2, SOIL_MOISTURE_REGIME_2, LAND_COVER_CLASS_CD_3, EST_COVERAGE_PCT_3,
-SOIL_MOISTURE_REGIME_3, AVAIL_LABEL_HEIGHT, AVAIL_LABEL_WIDTH, FULL_LABEL, LABEL_CENTRE_X, LABEL_CENTRE_Y,
-LABEL_HEIGHT, LABEL_WIDTH, LINE_1_OPENING_NUMBER, LINE_1_OPENING_SYMBOL_CD, LINE_2_POLYGON_ID, LINE_3_TREE_SPECIES,
-LINE_4_CLASSES_INDEXES, LINE_5_VEGETATION_COVER, LINE_6_SITE_PREP_HISTORY, LINE_7_ACTIVITY_HIST_SYMBOL,
-LINE_7A_STAND_TENDING_HISTORY, LINE_7B_DISTURBANCE_HISTORY, LINE_8_PLANTING_HISTORY, PRINTABLE_IND, SMALL_LABEL,
-OPENING_ID, ORG_UNIT_NO, ORG_UNIT_CODE, ADJUSTED_IND, BEC_ZONE_CODE, BEC_SUBZONE, BEC_VARIANT, BEC_PHASE,
-EARLIEST_NONLOGGING_DIST_TYPE, EARLIEST_NONLOGGING_DIST_DATE, STAND_PERCENTAGE_DEAD, FREE_TO_GROW_IND,
-HARVEST_DATE, FEATURE_AREA_SQM, FEATURE_LENGTH_M,
-FEATURE_ID AS L1_FEATURE_ID,
-LAYER_ID AS L1_LAYER_ID,
-FOR_COVER_RANK_CD AS L1_FOR_COVER_RANK_CD,
-NON_FOREST_DESCRIPTOR AS L1_NON_FOREST_DESCRIPTOR,
-INTERPRETED_DATA_SRC_CD AS L1_INTERPRETED_DATA_SRC_CD,
-EST_SITE_INDEX_SPECIES_CD AS L1_EST_SITE_INDEX_SPECIES_CD,
-EST_SITE_INDEX AS L1_EST_SITE_INDEX,
-EST_SITE_INDEX_SOURCE_CD AS L1_EST_SITE_INDEX_SOURCE_CD,
-CROWN_CLOSURE AS L1_CROWN_CLOSURE,
-CROWN_CLOSURE_CLASS_CD AS L1_CROWN_CLOSURE_CLASS_CD,
-REFERENCE_DATE AS L1_REFERENCE_DATE,
-SITE_INDEX AS L1_SITE_INDEX,
-VRI_LIVE_STEMS_PER_HA AS L1_VRI_LIVE_STEMS_PER_HA,
-DATA_SRC_VRI_LIVE_STEM_HA_CD AS L1_DATA_SRC_VRI_LIVE_STEM_HA_CD,
-VRI_DEAD_STEMS_PER_HA AS L1_VRI_DEAD_STEMS_PER_HA,
-TREE_COVER_PATTERN AS L1_TREE_COVER_PATTERN,
-VERTICAL_COMPLEXITY AS L1_VERTICAL_COMPLEXITY,
-SPECIES_CD_1 AS L1_SPECIES_CD_1,
-SPECIES_PCT_1 AS L1_SPECIES_PCT_1,
-SPECIES_CD_2 AS L1_SPECIES_CD_2,
-SPECIES_PCT_2 AS L1_SPECIES_PCT_2,
-SPECIES_CD_3 AS L1_SPECIES_CD_3,
-SPECIES_PCT_3 AS L1_SPECIES_PCT_3,
-SPECIES_CD_4 AS L1_SPECIES_CD_4,
-SPECIES_PCT_4 AS L1_SPECIES_PCT_4,
-SPECIES_CD_5 AS L1_SPECIES_CD_5,
-SPECIES_PCT_5 AS L1_SPECIES_PCT_5,
-SPECIES_CD_6 AS L1_SPECIES_CD_6,
-SPECIES_PCT_6 AS L1_SPECIES_PCT_6,
-PROJ_AGE_1 AS L1_PROJ_AGE_1,
-PROJ_AGE_CLASS_CD_1 AS L1_PROJ_AGE_CLASS_CD_1,
-PROJ_AGE_2 AS L1_PROJ_AGE_2,
-PROJ_AGE_CLASS_CD_2 AS L1_PROJ_AGE_CLASS_CD_2,
-DATA_SOURCE_AGE_CD AS L1_DATA_SOURCE_AGE_CD,
-PROJ_HEIGHT_1 AS L1_PROJ_HEIGHT_1,
-PROJ_HEIGHT_CLASS_CD_1 AS L1_PROJ_HEIGHT_CLASS_CD_1,
-PROJ_HEIGHT_2 AS L1_PROJ_HEIGHT_2,
-PROJ_HEIGHT_CLASS_CD_2 AS L1_PROJ_HEIGHT_CLASS_CD_2,
-DATA_SOURCE_HEIGHT_CD AS L1_DATA_SOURCE_HEIGHT_CD,
-GEOMETRY_Length AS L1_GEOMETRY_Length,
-GEOMETRY_Area AS L1_GEOMETRY_Area,
-'$srcFileName_L1' AS L1_src_filename,
-'$inventoryID' AS inventory_id
-FROM '$srcFileName_L1'
-"
+-progress $overwrite_tab
 
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_L2" \
 -nln $tableName_L2 $layer_creation_option \
--progress $overwrite_tab \
--sql "SELECT FEATURE_ID AS L2_FEATURE_ID,
-LAYER_ID AS L2_LAYER_ID,
-FOR_COVER_RANK_CD AS L2_FOR_COVER_RANK_CD,
-NON_FOREST_DESCRIPTOR AS L2_NON_FOREST_DESCRIPTOR,
-INTERPRETED_DATA_SRC_CD AS L2_INTERPRETED_DATA_SRC_CD,
-EST_SITE_INDEX_SPECIES_CD AS L2_EST_SITE_INDEX_SPECIES_CD,
-EST_SITE_INDEX AS L2_EST_SITE_INDEX,
-EST_SITE_INDEX_SOURCE_CD AS L2_EST_SITE_INDEX_SOURCE_CD,
-CROWN_CLOSURE AS L2_CROWN_CLOSURE,
-CROWN_CLOSURE_CLASS_CD AS L2_CROWN_CLOSURE_CLASS_CD,
-REFERENCE_DATE AS L2_REFERENCE_DATE,
-SITE_INDEX AS L2_SITE_INDEX,
-VRI_LIVE_STEMS_PER_HA AS L2_VRI_LIVE_STEMS_PER_HA,
-DATA_SRC_VRI_LIVE_STEM_HA_CD AS L2_DATA_SRC_VRI_LIVE_STEM_HA_CD,
-VRI_DEAD_STEMS_PER_HA AS L2_VRI_DEAD_STEMS_PER_HA,
-TREE_COVER_PATTERN AS L2_TREE_COVER_PATTERN,
-VERTICAL_COMPLEXITY AS L2_VERTICAL_COMPLEXITY,
-SPECIES_CD_1 AS L2_SPECIES_CD_1,
-SPECIES_PCT_1 AS L2_SPECIES_PCT_1,
-SPECIES_CD_2 AS L2_SPECIES_CD_2,
-SPECIES_PCT_2 AS L2_SPECIES_PCT_2,
-SPECIES_CD_3 AS L2_SPECIES_CD_3,
-SPECIES_PCT_3 AS L2_SPECIES_PCT_3,
-SPECIES_CD_4 AS L2_SPECIES_CD_4,
-SPECIES_PCT_4 AS L2_SPECIES_PCT_4,
-SPECIES_CD_5 AS L2_SPECIES_CD_5,
-SPECIES_PCT_5 AS L2_SPECIES_PCT_5,
-SPECIES_CD_6 AS L2_SPECIES_CD_6,
-SPECIES_PCT_6 AS L2_SPECIES_PCT_6,
-PROJ_AGE_1 AS L2_PROJ_AGE_1,
-PROJ_AGE_CLASS_CD_1 AS L2_PROJ_AGE_CLASS_CD_1,
-PROJ_AGE_2 AS L2_PROJ_AGE_2,
-PROJ_AGE_CLASS_CD_2 AS L2_PROJ_AGE_CLASS_CD_2,
-DATA_SOURCE_AGE_CD AS L2_DATA_SOURCE_AGE_CD,
-PROJ_HEIGHT_1 AS L2_PROJ_HEIGHT_1,
-PROJ_HEIGHT_CLASS_CD_1 AS L2_PROJ_HEIGHT_CLASS_CD_1,
-PROJ_HEIGHT_2 AS L2_PROJ_HEIGHT_2,
-PROJ_HEIGHT_CLASS_CD_2 AS L2_PROJ_HEIGHT_CLASS_CD_2,
-DATA_SOURCE_HEIGHT_CD AS L2_DATA_SOURCE_HEIGHT_CD,
-GEOMETRY_Length AS L2_GEOMETRY_Length,
-GEOMETRY_Area AS L2_GEOMETRY_Area, 
-'$srcFileName_L2' AS L2_src_filename
-FROM '$srcFileName_L2'
-"
+-progress $overwrite_tab
 
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_D" \
 -nln $tableName_D $layer_creation_option \
--progress $overwrite_tab \
--sql "SELECT FEATURE_ID AS D_FEATURE_ID,
-LAYER_ID AS D_LAYER_ID,
-FOR_COVER_RANK_CD AS D_FOR_COVER_RANK_CD,
-NON_FOREST_DESCRIPTOR AS D_NON_FOREST_DESCRIPTOR,
-INTERPRETED_DATA_SRC_CD AS D_INTERPRETED_DATA_SRC_CD,
-EST_SITE_INDEX_SPECIES_CD AS D_EST_SITE_INDEX_SPECIES_CD,
-EST_SITE_INDEX AS D_EST_SITE_INDEX,
-EST_SITE_INDEX_SOURCE_CD AS D_EST_SITE_INDEX_SOURCE_CD,
-CROWN_CLOSURE AS D_CROWN_CLOSURE,
-CROWN_CLOSURE_CLASS_CD AS D_CROWN_CLOSURE_CLASS_CD,
-REFERENCE_DATE AS D_REFERENCE_DATE,
-SITE_INDEX AS D_SITE_INDEX,
-VRI_LIVE_STEMS_PER_HA AS D_VRI_LIVE_STEMS_PER_HA,
-DATA_SRC_VRI_LIVE_STEM_HA_CD AS D_DATA_SRC_VRI_LIVE_STEM_HA_CD,
-VRI_DEAD_STEMS_PER_HA AS D_VRI_DEAD_STEMS_PER_HA,
-TREE_COVER_PATTERN AS D_TREE_COVER_PATTERN,
-VERTICAL_COMPLEXITY AS D_VERTICAL_COMPLEXITY,
-SPECIES_CD_1 AS D_SPECIES_CD_1,
-SPECIES_PCT_1 AS D_SPECIES_PCT_1,
-SPECIES_CD_2 AS D_SPECIES_CD_2,
-SPECIES_PCT_2 AS D_SPECIES_PCT_2,
-SPECIES_CD_3 AS D_SPECIES_CD_3,
-SPECIES_PCT_3 AS D_SPECIES_PCT_3,
-SPECIES_CD_4 AS D_SPECIES_CD_4,
-SPECIES_PCT_4 AS D_SPECIES_PCT_4,
-SPECIES_CD_5 AS D_SPECIES_CD_5,
-SPECIES_PCT_5 AS D_SPECIES_PCT_5,
-SPECIES_CD_6 AS D_SPECIES_CD_6,
-SPECIES_PCT_6 AS D_SPECIES_PCT_6,
-PROJ_AGE_1 AS D_PROJ_AGE_1,
-PROJ_AGE_CLASS_CD_1 AS D_PROJ_AGE_CLASS_CD_1,
-PROJ_AGE_2 AS D_PROJ_AGE_2,
-PROJ_AGE_CLASS_CD_2 AS D_PROJ_AGE_CLASS_CD_2,
-DATA_SOURCE_AGE_CD AS D_DATA_SOURCE_AGE_CD,
-PROJ_HEIGHT_1 AS D_PROJ_HEIGHT_1,
-PROJ_HEIGHT_CLASS_CD_1 AS D_PROJ_HEIGHT_CLASS_CD_1,
-PROJ_HEIGHT_2 AS D_PROJ_HEIGHT_2,
-PROJ_HEIGHT_CLASS_CD_2 AS D_PROJ_HEIGHT_CLASS_CD_2,
-DATA_SOURCE_HEIGHT_CD AS D_DATA_SOURCE_HEIGHT_CD,
-GEOMETRY_Length AS D_GEOMETRY_Length,
-GEOMETRY_Area AS D_GEOMETRY_Area, 
-'$srcFileName_D' AS D_src_filename
-FROM '$srcFileName_D'
-"
+-progress $overwrite_tab
+
+# Join layer 1 and layer 2 into l1_l2
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
--- drop all ogr_fid columns
-ALTER TABLE rawfri.bc10_layer_1 DROP COLUMN IF EXISTS ogc_fid;
-ALTER TABLE rawfri.bc10_layer_2 DROP COLUMN IF EXISTS ogc_fid;
-ALTER TABLE rawfri.bc10_layer_d DROP COLUMN IF EXISTS ogc_fid;
-
--- drop geometry columns from L2 and D
-ALTER TABLE rawfri.bc10_layer_2 DROP COLUMN IF EXISTS wkb_geometry;
-ALTER TABLE rawfri.bc10_layer_d DROP COLUMN IF EXISTS wkb_geometry;
-
---3 way join
-DROP TABLE IF EXISTS $targetTableName; 
-CREATE TABLE $targetTableName AS
-SELECT *
-FROM rawfri.bc10_layer_1 t1 INNER JOIN rawfri.bc10_layer_2 t2 ON t1.l1_feature_id = t2.l2_feature_id
-INNER JOIN rawfri.bc10_layer_d td ON t2.l2_feature_id = td.d_feature_id;
-
---update ogc_fid
-ALTER TABLE $targetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
-ALTER TABLE $targetTableName ADD COLUMN ogc_fid INT;
-UPDATE $targetTableName SET ogc_fid=temp_key;
-ALTER TABLE $targetTableName DROP COLUMN IF EXISTS temp_key;
-
---drop tables
-DROP TABLE IF EXISTS $tableName_L1;
-DROP TABLE IF EXISTS $tableName_L2; 
-DROP TABLE IF EXISTS $tableName_D;
+CREATE INDEX ON ${tableName_L2} (feature_id);
+CREATE INDEX ON ${tableName_D} (feature_id);
+DROP TABLE IF EXISTS ${targetTableName}_l1_l2;
+CREATE TABLE ${targetTableName}_l1_l2 AS
+SELECT '${srcFileName}' AS src_filename,
+'${inventoryID}' AS inventory_id,
+t1.wkb_geometry,
+t1.ogc_fid,
+t1.map_id,
+t1.polygon_id,
+t1.feature_id,
+t1.opening_ind,
+t1.opening_source,
+t1.opening_number,
+t1.feature_class_skey,
+t1.inventory_standard_cd,
+t1.polygon_area,
+t1.non_productive_descriptor_cd,
+t1.non_productive_cd,
+t1.input_date,
+t1.coast_interior_cd,
+t1.surface_expression,
+t1.modifying_process,
+t1.site_position_meso,
+t1.alpine_designation,
+t1.soil_nutrient_regime,
+t1.ecosys_class_data_src_cd,
+t1.bclcs_level_1,
+t1.bclcs_level_2,
+t1.bclcs_level_3,
+t1.bclcs_level_4,
+t1.bclcs_level_5,
+t1.interpreter,
+t1.interpretation_date,
+t1.project,
+t1.reference_year,
+t1.special_cruise_number,
+t1.special_cruise_number_cd,
+t1.inventory_region,
+t1.compartment,
+t1.compartment_letter,
+t1.fiz_cd,
+t1.for_mgmt_land_base_ind,
+t1.attribution_base_date,
+t1.projected_date,
+t1.shrub_height,
+t1.shrub_crown_closure,
+t1.shrub_cover_pattern,
+t1.herb_cover_type,
+t1.herb_cover_pattern,
+t1.herb_cover_pct,
+t1.bryoid_cover_pct,
+t1.non_veg_cover_pattern_1,
+t1.non_veg_cover_pct_1,
+t1.non_veg_cover_type_1,
+t1.non_veg_cover_pattern_2,
+t1.non_veg_cover_pct_2,
+t1.non_veg_cover_type_2,
+t1.non_veg_cover_pattern_3,
+t1.non_veg_cover_pct_3,
+t1.non_veg_cover_type_3,
+t1.land_cover_class_cd_1,
+t1.est_coverage_pct_1,
+t1.soil_moisture_regime_1,
+t1.land_cover_class_cd_2,
+t1.est_coverage_pct_2,
+t1.soil_moisture_regime_2,
+t1.land_cover_class_cd_3,
+t1.est_coverage_pct_3,
+t1.soil_moisture_regime_3,
+t1.avail_label_height,
+t1.avail_label_width,
+t1.full_label,
+t1.label_centre_x,
+t1.label_centre_y,
+t1.label_height,
+t1.label_width,
+t1.line_1_opening_number,
+t1.line_1_opening_symbol_cd,
+t1.line_2_polygon_id,
+t1.line_3_tree_species,
+t1.line_4_classes_indexes,
+t1.line_5_vegetation_cover,
+t1.line_6_site_prep_history,
+t1.line_7_activity_hist_symbol,
+t1.line_7a_stand_tending_history,
+t1.line_7b_disturbance_history,
+t1.line_8_planting_history,
+t1.printable_ind,
+t1.small_label,
+t1.opening_id,
+t1.org_unit_no,
+t1.org_unit_code,
+t1.adjusted_ind,
+t1.bec_zone_code,
+t1.bec_subzone,
+t1.bec_variant,
+t1.bec_phase,
+t1.earliest_nonlogging_dist_type,
+t1.earliest_nonlogging_dist_date,
+t1.stand_percentage_dead,
+t1.free_to_grow_ind,
+t1.harvest_date,
+t1.feature_area_sqm,
+t1.feature_length_m,
+t1.layer_id AS l1_layer_id,
+t1.for_cover_rank_cd AS l1_for_cover_rank_cd,
+t1.non_forest_descriptor AS l1_non_forest_descriptor,
+t1.interpreted_data_src_cd AS l1_interpreted_data_src_cd,
+t1.est_site_index_species_cd AS l1_est_site_index_species_cd,
+t1.est_site_index AS l1_est_site_index,
+t1.est_site_index_source_cd AS l1_est_site_index_source_cd,
+t1.crown_closure AS l1_crown_closure,
+t1.crown_closure_class_cd AS l1_crown_closure_class_cd,
+t1.reference_date AS l1_reference_date,
+t1.site_index AS l1_site_index,
+t1.vri_live_stems_per_ha AS l1_vri_live_stems_per_ha,
+t1.data_src_vri_live_stem_ha_cd AS l1_data_src_vri_live_stem_ha_cd,
+t1.vri_dead_stems_per_ha AS l1_vri_dead_stems_per_ha,
+t1.tree_cover_pattern AS l1_tree_cover_pattern,
+t1.vertical_complexity AS l1_vertical_complexity,
+t1.species_cd_1 AS l1_species_cd_1,
+t1.species_pct_1 AS l1_species_pct_1,
+t1.species_cd_2 AS l1_species_cd_2,
+t1.species_pct_2 AS l1_species_pct_2,
+t1.species_cd_3 AS l1_species_cd_3,
+t1.species_pct_3 AS l1_species_pct_3,
+t1.species_cd_4 AS l1_species_cd_4,
+t1.species_pct_4 AS l1_species_pct_4,
+t1.species_cd_5 AS l1_species_cd_5,
+t1.species_pct_5 AS l1_species_pct_5,
+t1.species_cd_6 AS l1_species_cd_6,
+t1.species_pct_6 AS l1_species_pct_6,
+t1.proj_age_1 AS l1_proj_age_1,
+t1.proj_age_class_cd_1 AS l1_proj_age_class_cd_1,
+t1.proj_age_2 AS l1_proj_age_2,
+t1.proj_age_class_cd_2 AS l1_proj_age_class_cd_2,
+t1.data_source_age_cd AS l1_data_source_age_cd,
+t1.proj_height_1 AS l1_proj_height_1,
+t1.proj_height_class_cd_1 AS l1_proj_height_class_cd_1,
+t1.proj_height_2 AS l1_proj_height_2,
+t1.proj_height_class_cd_2 AS l1_proj_height_class_cd_2,
+t1.data_source_height_cd AS l1_data_source_height_cd,
+t1.geometry_length AS l1_geometry_length,
+t1.geometry_area AS l1_geometry_area,
+t2.layer_id AS l2_layer_id,
+t2.for_cover_rank_cd AS l2_for_cover_rank_cd,
+t2.non_forest_descriptor AS l2_non_forest_descriptor,
+t2.interpreted_data_src_cd AS l2_interpreted_data_src_cd,
+t2.est_site_index_species_cd AS l2_est_site_index_species_cd,
+t2.est_site_index AS l2_est_site_index,
+t2.est_site_index_source_cd AS l2_est_site_index_source_cd,
+t2.crown_closure AS l2_crown_closure,
+t2.crown_closure_class_cd AS l2_crown_closure_class_cd,
+t2.reference_date AS l2_reference_date,
+t2.site_index AS l2_site_index,
+t2.vri_live_stems_per_ha AS l2_vri_live_stems_per_ha,
+t2.data_src_vri_live_stem_ha_cd AS l2_data_src_vri_live_stem_ha_cd,
+t2.vri_dead_stems_per_ha AS l2_vri_dead_stems_per_ha,
+t2.tree_cover_pattern AS l2_tree_cover_pattern,
+t2.vertical_complexity AS l2_vertical_complexity,
+t2.species_cd_1 AS l2_species_cd_1,
+t2.species_pct_1 AS l2_species_pct_1,
+t2.species_cd_2 AS l2_species_cd_2,
+t2.species_pct_2 AS l2_species_pct_2,
+t2.species_cd_3 AS l2_species_cd_3,
+t2.species_pct_3 AS l2_species_pct_3,
+t2.species_cd_4 AS l2_species_cd_4,
+t2.species_pct_4 AS l2_species_pct_4,
+t2.species_cd_5 AS l2_species_cd_5,
+t2.species_pct_5 AS l2_species_pct_5,
+t2.species_cd_6 AS l2_species_cd_6,
+t2.species_pct_6 AS l2_species_pct_6,
+t2.proj_age_1 AS l2_proj_age_1,
+t2.proj_age_class_cd_1 AS l2_proj_age_class_cd_1,
+t2.proj_age_2 AS l2_proj_age_2,
+t2.proj_age_class_cd_2 AS l2_proj_age_class_cd_2,
+t2.data_source_age_cd AS l2_data_source_age_cd,
+t2.proj_height_1 AS l2_proj_height_1,
+t2.proj_height_class_cd_1 AS l2_proj_height_class_cd_1,
+t2.proj_height_2 AS l2_proj_height_2,
+t2.proj_height_class_cd_2 AS l2_proj_height_class_cd_2,
+t2.data_source_height_cd AS l2_data_source_height_cd
+FROM ${tableName_L1} t1
+LEFT OUTER JOIN ${tableName_L2} t2 USING (feature_id);
 "
+
+# Join layer l1_l2 and the d (dead) layer
+
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "
+CREATE INDEX ON ${targetTableName}_l1_l2 (feature_id);
+DROP TABLE IF EXISTS ${targetTableName};
+CREATE TABLE ${targetTableName} AS
+SELECT l1_l2.*,
+td.layer_id AS d_layer_id,
+td.for_cover_rank_cd AS d_for_cover_rank_cd,
+td.non_forest_descriptor AS d_non_forest_descriptor,
+td.interpreted_data_src_cd AS d_interpreted_data_src_cd,
+td.est_site_index_species_cd AS d_est_site_index_species_cd,
+td.est_site_index AS d_est_site_index,
+td.est_site_index_source_cd AS d_est_site_index_source_cd,
+td.crown_closure AS d_crown_closure,
+td.crown_closure_class_cd AS d_crown_closure_class_cd,
+td.reference_date AS d_reference_date,
+td.site_index AS d_site_index,
+td.vri_live_stems_per_ha AS d_vri_live_stems_per_ha,
+td.data_src_vri_live_stem_ha_cd AS d_data_src_vri_live_stem_ha_cd,
+td.vri_dead_stems_per_ha AS d_vri_dead_stems_per_ha,
+td.tree_cover_pattern AS d_tree_cover_pattern,
+td.vertical_complexity AS d_vertical_complexity,
+td.species_cd_1 AS d_species_cd_1,
+td.species_pct_1 AS d_species_pct_1,
+td.species_cd_2 AS d_species_cd_2,
+td.species_pct_2 AS d_species_pct_2,
+td.species_cd_3 AS d_species_cd_3,
+td.species_pct_3 AS d_species_pct_3,
+td.species_cd_4 AS d_species_cd_4,
+td.species_pct_4 AS d_species_pct_4,
+td.species_cd_5 AS d_species_cd_5,
+td.species_pct_5 AS d_species_pct_5,
+td.species_cd_6 AS d_species_cd_6,
+td.species_pct_6 AS d_species_pct_6,
+td.proj_age_1 AS d_proj_age_1,
+td.proj_age_class_cd_1 AS d_proj_age_class_cd_1,
+td.proj_age_2 AS d_proj_age_2,
+td.proj_age_class_cd_2 AS d_proj_age_class_cd_2,
+td.data_source_age_cd AS d_data_source_age_cd,
+td.proj_height_1 AS d_proj_height_1,
+td.proj_height_class_cd_1 AS d_proj_height_class_cd_1,
+td.proj_height_2 AS d_proj_height_2,
+td.proj_height_class_cd_2 AS d_proj_height_class_cd_2,
+td.data_source_height_cd AS d_data_source_height_cd
+FROM ${targetTableName}_l1_l2 l1_l2
+LEFT OUTER JOIN ${tableName_D} td USING (feature_id);
+
+--DROP TABLE IF EXISTS ${targetTableName}_l1_l2;
+--DROP TABLE IF EXISTS ${tableName_L1};
+--DROP TABLE IF EXISTS ${tableName_L2};
+--DROP TABLE IF EXISTS ${tableName_D};
+"
+
