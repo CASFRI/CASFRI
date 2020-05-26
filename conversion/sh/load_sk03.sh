@@ -109,3 +109,5 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 
 # join tables by sourcing the join code
 source ./sk_SFVI_join_code.sh
+
+source ./common_postprocessing.sh

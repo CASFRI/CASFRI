@@ -33,4 +33,6 @@ SET fullTargetTableName=%targetFRISchema%.qc02
 -sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcFileName%""" ^
 -progress %overwrite_tab%
 
+CALL .\common_postprocessing.bat
+
 ENDLOCAL

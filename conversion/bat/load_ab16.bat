@@ -62,10 +62,12 @@ FOR /D %%F IN (%srcFullPath%\t*) DO (
   -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" "%%F\forest" ^
   -nln %fullTargetTableName% ^
   -t_srs %prjFile% ^
-  -sql "SELECT *, '%%~nF' as src_filename, '%inventoryID%' AS inventory_id, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
+  -sql "SELECT *, '%%~nF' AS src_filename, '%inventoryID%' AS inventory_id, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
   !ogr_options!
   
   SET ogr_options=-update -append
 )
+
+CALL .\common_postprocessing.bat
 
 ENDLOCAL

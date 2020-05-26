@@ -10,7 +10,7 @@
 :: in the configuration file.
 
 :: CURRENTLY SET TO LOAD ENTIRE DATABASE. CAN CHANGE THIS TO FILTER ON INVENTORY_STANDARD_ID 
-:: IF NEEDED USING -sql "SELECT *, '$fileName' as src_filename FROM '$fileName' WHERE Inventory_Standard_CD='V'"
+:: IF NEEDED USING -sql "SELECT *, '$fileName' AS src_filename FROM '$fileName' WHERE inventory_standard_cd='V'"
 
 :: #################################### Set variables ######################################
 
@@ -32,5 +32,7 @@ SET fullTargetTableName=%targetFRISchema%.bc08
 -nln %fullTargetTableName% %layer_creation_option% ^
 -sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcFileName%""" ^
 -progress %overwrite_tab%
+
+CALL .\common_postprocessing.bat
 
 ENDLOCAL

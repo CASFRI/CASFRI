@@ -306,4 +306,6 @@ DROP TABLE IF EXISTS %tableName_D%;
 
 "%gdalFolder%\ogrinfo" %pg_connection_string% -sql "%query2%"
 
+CALL .\common_postprocessing.bat
+
 ENDLOCAL

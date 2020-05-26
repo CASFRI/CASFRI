@@ -24,8 +24,8 @@ CALL .\common.bat
 
 SET inventoryID=SK02
 SET srcFileName=SFVI_Island_Forest
-SET fullTargetTableName=%targetFRISchema%.sk02_temp
-SET actualFullTargetTableName=%targetFRISchema%.sk02
+SET fullTargetTableName=%targetFRISchema%.sk02
+SET tempTableName=%fullTargetTableName%_temp
 
 SET gdbFileName_poly=STAND
 SET gdbFileName_meta=FEATURE_METADATA
@@ -37,15 +37,15 @@ SET gdbFileName_l3=LAYER_3
 SET gdbFileName_shrubs=SHRUBS
 SET gdbFileName_wetland=WETLAND
 
-SET TableName_poly=%fullTargetTableName%_poly
-SET TableName_meta=%fullTargetTableName%_meta
-SET TableName_dist=%fullTargetTableName%_dist
-SET TableName_herbs=%fullTargetTableName%_herbs
-SET TableName_l1=%fullTargetTableName%_l1
-SET TableName_l2=%fullTargetTableName%_l2
-SET TableName_l3=%fullTargetTableName%_l3
-SET TableName_shrubs=%fullTargetTableName%_shrubs
-SET TableName_wetland=%fullTargetTableName%_wetland
+SET TableName_poly=%tempTableName%_poly
+SET TableName_meta=%tempTableName%_meta
+SET TableName_dist=%tempTableName%_dist
+SET TableName_herbs=%tempTableName%_herbs
+SET TableName_l1=%tempTableName%_l1
+SET TableName_l2=%tempTableName%_l2
+SET TableName_l3=%tempTableName%_l3
+SET TableName_shrubs=%tempTableName%_shrubs
+SET TableName_wetland=%tempTableName%_wetland
 
 SET srcFullPath="%friDir%/SK/%inventoryID%/data/inventory/%srcFileName%.gdb"
 
@@ -109,10 +109,15 @@ SET query1=SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS invento
 -sql "SELECT *, poly_id AS poly_id_shrubs FROM %gdbFileName_shrubs%" ^
 -progress %overwrite_tab%
 
-:: run sourced join query
+:: Temporarily swap fullTargetTableName with tempTableName
+SET swap=%fullTargetTableName%
+SET fullTargetTableName=%tempTableName%
+
+:: Run sourced join query
 CALL .\sk_sfvi_join_code.bat
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query2%"
 
+SET fullTargetTableName=%swap%
 
 :: Now load and join the wetland table. This table only occurs in SK02.
 
@@ -123,12 +128,19 @@ CALL .\sk_sfvi_join_code.bat
 -sql "SELECT *, poly_id AS poly_id_wetland FROM %gdbFileName_wetland%" ^
 -progress %overwrite_tab%
 
-:: Join wetland to the temp table and save as actualFullTargetTableName.
-SET query3=ALTER TABLE %TableName_wetland% DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id; ^
-DROP TABLE IF EXISTS %actualFullTargetTableName%; ^
-CREATE TABLE %actualFullTargetTableName% AS SELECT * FROM %fullTargetTableName% A LEFT JOIN %TableName_wetland% I ON A.poly_id = I.poly_id_wetland; ^
-DROP TABLE IF EXISTS %TableName_wetland%; ^
+:: Join wetland to the temp table and save as fullTargetTableName.
+SET query3=ALTER TABLE %TableName_wetland% ^
+DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id; ^
 DROP TABLE IF EXISTS %fullTargetTableName%; ^
-ALTER TABLE %actualFullTargetTableName% DROP COLUMN poly_id_wetland;
+CREATE TABLE %fullTargetTableName% AS ^
+SELECT * FROM %tempTableName% A ^
+LEFT JOIN %TableName_wetland% I ON A.poly_id = I.poly_id_wetland; ^
+DROP TABLE IF EXISTS %TableName_wetland%; ^
+DROP TABLE IF EXISTS %tempTableName%; ^
+ALTER TABLE %fullTargetTableName% DROP COLUMN poly_id_wetland;
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query3%"
+
+CALL .\common_postprocessing.bat
+
+ENDLOCAL

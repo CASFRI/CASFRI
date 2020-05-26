@@ -31,12 +31,12 @@ gdbFileName_poly=PEE_MAJ_PROV
 gdbFileName_meta=META_MAJ_PROV
 gdbFileName_etage=ETAGE_MAJ_PROV
 
-targetTableName=$targetFRISchema.qc03
-tableName_poly=${targetTableName}_poly
-tableName_meta=${targetTableName}_meta
-tableName_etage=${targetTableName}_etage
-tableName_sup=${targetTableName}_etage_sup
-tableName_inf=${targetTableName}_etage_inf
+fullTargetTableName=$targetFRISchema.qc03
+tableName_poly=${fullTargetTableName}_poly
+tableName_meta=${fullTargetTableName}_meta
+tableName_etage=${fullTargetTableName}_etage
+tableName_sup=${fullTargetTableName}_etage_sup
+tableName_inf=${fullTargetTableName}_etage_inf
 
 ########################################## Process ######################################
 
@@ -109,27 +109,27 @@ ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS wkb_geometry;
 ALTER TABLE $tableName_meta RENAME COLUMN geoc_maj TO meta_geoc_maj;
 
 -- join qc03_poly, qc03_meta, qc03_etage_sup, and qc03_etage_inf
-DROP TABLE IF EXISTS $targetTableName;
-CREATE TABLE $targetTableName AS
+DROP TABLE IF EXISTS $fullTargetTableName;
+CREATE TABLE $fullTargetTableName AS
 SELECT *
-FROM $tableName_poly as poly
-LEFT join $tableName_meta as meta 
+FROM $tableName_poly AS poly
+LEFT join $tableName_meta AS meta 
   on poly.geoc_maj = meta.meta_geoc_maj
-LEFT join $tableName_sup as sup 
+LEFT join $tableName_sup AS sup 
   on poly.geoc_maj = sup.sup_geoc_maj
-LEFT join $tableName_inf as inf 
+LEFT join $tableName_inf AS inf 
   on poly.geoc_maj = inf.inf_geoc_maj;
   
 --update ogc_fid
-ALTER TABLE $targetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
-ALTER TABLE $targetTableName ADD COLUMN ogc_fid INT;
-UPDATE $targetTableName SET ogc_fid=temp_key;
-ALTER TABLE $targetTableName DROP COLUMN IF EXISTS temp_key;
+ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
+ALTER TABLE $fullTargetTableName ADD COLUMN ogc_fid INT;
+UPDATE $fullTargetTableName SET ogc_fid=temp_key;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
 
 --drop extra geoc_maj attributes
-ALTER TABLE $targetTableName DROP COLUMN IF EXISTS sup_geoc_maj;
-ALTER TABLE $targetTableName DROP COLUMN IF EXISTS inf_geoc_maj;
-ALTER TABLE $targetTableName DROP COLUMN IF EXISTS meta_geoc_maj;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS sup_geoc_maj;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS inf_geoc_maj;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geoc_maj;
 
 --drop tables
 DROP TABLE IF EXISTS $tableName_poly;
@@ -138,3 +138,5 @@ DROP TABLE IF EXISTS $tableName_etage;
 DROP TABLE IF EXISTS $tableName_sup;
 DROP TABLE IF EXISTS $tableName_inf;
 "
+
+source ./common_postprocessing.sh

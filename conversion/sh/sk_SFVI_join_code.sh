@@ -14,7 +14,7 @@ ALTER TABLE $TableName_l2 DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS p
 ALTER TABLE $TableName_l3 DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id;
 ALTER TABLE $TableName_shrubs DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id, DROP COLUMN IF EXISTS crown_closure;
 
--- join
+-- Join
 DROP TABLE IF EXISTS $fullTargetTableName; 
 CREATE TABLE $fullTargetTableName AS
 SELECT *
@@ -27,7 +27,7 @@ SELECT *
 	LEFT JOIN $TableName_l3 G ON A.poly_id = G.poly_id_l3
 	LEFT JOIN $TableName_shrubs H ON A.poly_id = H.poly_id_shrubs;
 
---drop tables
+-- Drop tables
 DROP TABLE IF EXISTS $TableName_poly;
 DROP TABLE IF EXISTS $TableName_meta;
 DROP TABLE IF EXISTS $TableName_dist; 
@@ -37,7 +37,7 @@ DROP TABLE IF EXISTS $TableName_l2;
 DROP TABLE IF EXISTS $TableName_l3;
 DROP TABLE IF EXISTS $TableName_shrubs;
 
--- drop duplicate poly_ids
+-- Drop duplicate poly_ids
 ALTER TABLE $fullTargetTableName 
   DROP COLUMN poly_id_meta, 
   DROP COLUMN poly_id_dist, 
