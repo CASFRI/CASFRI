@@ -33,3 +33,5 @@ fullTargetTableName=$targetFRISchema.sk01
 -nln $fullTargetTableName $layer_creation_option \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbTableName' WHERE CZONE NOT LIKE '0'" \
 -progress $overwrite_tab
+
+source ./common_postprocessing.sh

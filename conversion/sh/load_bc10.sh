@@ -37,10 +37,10 @@ srcFullPath_L2="$friDir/BC/$inventoryID/data/inventory/$srcFileName_L2.gdb"
 srcFileName_D=${srcFileName}_D_POLY
 srcFullPath_D="$friDir/BC/$inventoryID/data/inventory/$srcFileName_D.gdb"
 
-targetTableName=$targetFRISchema.bc10
-tableName_L1=${targetTableName}_layer_1
-tableName_L2=${targetTableName}_layer_2
-tableName_D=${targetTableName}_layer_d
+fullTargetTableName=$targetFRISchema.bc10
+tableName_L1=${fullTargetTableName}_layer_1
+tableName_L2=${fullTargetTableName}_layer_2
+tableName_D=${fullTargetTableName}_layer_d
 
 ########################################## Process ######################################
 
@@ -67,8 +67,8 @@ tableName_D=${targetTableName}_layer_d
 -sql "
 CREATE INDEX ON ${tableName_L2} (feature_id);
 CREATE INDEX ON ${tableName_D} (feature_id);
-DROP TABLE IF EXISTS ${targetTableName}_l1_l2;
-CREATE TABLE ${targetTableName}_l1_l2 AS
+DROP TABLE IF EXISTS ${fullTargetTableName}_l1_l2;
+CREATE TABLE ${fullTargetTableName}_l1_l2 AS
 SELECT '${srcFileName}' AS src_filename,
 '${inventoryID}' AS inventory_id,
 t1.wkb_geometry,
@@ -256,9 +256,9 @@ LEFT OUTER JOIN ${tableName_L2} t2 USING (feature_id);
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-CREATE INDEX ON ${targetTableName}_l1_l2 (feature_id);
-DROP TABLE IF EXISTS ${targetTableName};
-CREATE TABLE ${targetTableName} AS
+CREATE INDEX ON ${fullTargetTableName}_l1_l2 (feature_id);
+DROP TABLE IF EXISTS ${fullTargetTableName};
+CREATE TABLE ${fullTargetTableName} AS
 SELECT l1_l2.*,
 td.layer_id AS d_layer_id,
 td.for_cover_rank_cd AS d_for_cover_rank_cd,
@@ -298,12 +298,16 @@ td.proj_height_class_cd_1 AS d_proj_height_class_cd_1,
 td.proj_height_2 AS d_proj_height_2,
 td.proj_height_class_cd_2 AS d_proj_height_class_cd_2,
 td.data_source_height_cd AS d_data_source_height_cd
-FROM ${targetTableName}_l1_l2 l1_l2
+FROM ${fullTargetTableName}_l1_l2 l1_l2
 LEFT OUTER JOIN ${tableName_D} td USING (feature_id);
 
---DROP TABLE IF EXISTS ${targetTableName}_l1_l2;
---DROP TABLE IF EXISTS ${tableName_L1};
---DROP TABLE IF EXISTS ${tableName_L2};
---DROP TABLE IF EXISTS ${tableName_D};
+DROP TABLE IF EXISTS ${fullTargetTableName}_l1_l2;
+DROP TABLE IF EXISTS ${tableName_L1};
+DROP TABLE IF EXISTS ${tableName_L2};
+DROP TABLE IF EXISTS ${tableName_D};
 "
+
+createSQLSpatialIndex=True
+
+source ./common_postprocessing.sh
 

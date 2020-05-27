@@ -60,7 +60,7 @@ FOR /D %%F IN (%srcFullPath%\*) DO (
     -f "PostgreSQL" %pg_connection_string% "%%F\%ogrTab%.shp" ^
     -nln %fullTargetTableName% ^
     -t_srs %prjFile% ^
-    -sql "SELECT *, '%%~nF' as src_filename, '%inventoryID%' AS inventory_id FROM %ogrTab%" ^
+    -sql "SELECT *, '%%~nF' AS src_filename, '%inventoryID%' AS inventory_id FROM %ogrTab%" ^
     -progress !ogr_options!
 
     SET ogr_options=-update -append
@@ -80,8 +80,10 @@ FOR /D %%F IN (%srcFullPath%\11*) DO (
     -f "PostgreSQL" %pg_connection_string% "%%F\%ogrTab%.shp" ^
     -nln %fullTargetTableName% ^
     -t_srs %prjFile% ^
-    -sql "SELECT *, '%%~nF' as src_filename, '%inventoryID%' AS inventory_id FROM %ogrTab%" ^
+    -sql "SELECT *, '%%~nF' AS src_filename, '%inventoryID%' AS inventory_id FROM %ogrTab%" ^
     -progress !ogr_options!
 )
+
+CALL .\common_postprocessing.bat
 
 ENDLOCAL

@@ -122,4 +122,6 @@ if %add_unique_source_id% == true (
 -sql "SELECT *, '%srcNameForest%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcNameForest%""" ^
 -progress
 
+CALL .\common_postprocessing.bat
+
 ENDLOCAL

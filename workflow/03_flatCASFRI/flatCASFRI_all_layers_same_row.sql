@@ -32,7 +32,7 @@ CREATE SCHEMA IF NOT EXISTS casfri50_flat;
 --CREATE VIEW casfri50_flat.eco_sample2 AS
 --SELECT eco.* 
 --FROM casfri50.eco_all eco, casfri50_flat.cas_sample2 cas
-WHERE eco.cas_id = cas.cas_id;
+--WHERE eco.cas_id = cas.cas_id;
 
 --DROP VIEW IF EXISTS casfri50_flat.lyr_sample2;
 --CREATE VIEW casfri50_flat.lyr_sample2 AS

@@ -35,7 +35,7 @@ do
 	-f PostgreSQL "$pg_connection_string" "$srcFullPath" \
 	-nln $temp_table $ogr_options \
 	-progress \
-	-sql "SELECT *, '$F' as src_filename, '$inventoryID' AS inventory_id FROM '$F'"
+	-sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM '$F'"
 	
 	ogr_options="-update -append -addfields"
 done
@@ -47,7 +47,7 @@ do
 	-f PostgreSQL "$pg_connection_string" "$srcFullPath" \
 	-nln $temp_table $ogr_options \
 	-progress \
-	-sql "SELECT *, '$F' as src_filename, '$inventoryID' AS inventory_id, Shape_Leng AS PERIMETER FROM '$F'"
+	-sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id, shape_leng AS perimeter FROM '$F'"
 done
 
 # Use sql to select inventory columns for final on02 table
@@ -55,11 +55,13 @@ done
 -sql "
 DROP TABLE IF EXISTS $fullTargetTableName; 
 CREATE TABLE $fullTargetTableName AS
-SELECT  wkb_geometry, ogc_fid, inventory_id, src_filename, AREA, PERIMETER, FMFOBJID, POLYID, POLYTYPE, YRSOURCE, SOURCE, FORMOD, DEVSTAGE, YRDEP, DEPTYPE,
-OYRORG, OSPCOMP, OLEADSPC, OAGE, OHT, OCCLO, OSI, OSC, UYRORG, USPCOMP, ULEADSPC, UAGE, UHT, UCCLO, USI, USC,
-INCIDSPC, VERT, HORIZ, PRI_ECO, SEC_ECO, ACCESS1, ACCESS2, MGMTCON1, MGMTCON2, MGMTCON3, VERDATE, SENSITIV, BED
+SELECT wkb_geometry, ogc_fid, inventory_id, src_filename, area, perimeter, fmfobjid, polyid, polytype, yrsource, source, formod, devstage, yrdep, deptype,
+oyrorg, ospcomp, oleadspc, oage, oht, occlo, osi, osc, uyrorg, uspcomp, uleadspc, uage, uht, ucclo, usi, usc,
+incidspc, vert, horiz, pri_eco, sec_eco, access1, access2, mgmtcon1, mgmtcon2, mgmtcon3, verdate, sensitiv, bed
 FROM $temp_table
-WHERE POLYID IS NOT NULL;
+WHERE polyid IS NOT NULL;
 
 DROP TABLE IF EXISTS $temp_table;
 "
+
+source ./common_postprocessing.sh

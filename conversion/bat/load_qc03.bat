@@ -19,6 +19,8 @@
 
 ::######################################## Set variables #######################################
 
+SETLOCAL
+
 CALL ./common.bat
 
 SET inventoryID=QC03
@@ -29,12 +31,12 @@ SET gdbFileName_poly=PEE_MAJ_PROV
 SET gdbFileName_meta=META_MAJ_PROV
 SET gdbFileName_etage=ETAGE_MAJ_PROV
 
-SET targetTableName=%targetFRISchema%.qc03
-SET tableName_poly=%targetTableName%_poly
-SET tableName_meta=%targetTableName%_meta
-SET tableName_etage=%targetTableName%_etage
-SET tableName_sup=%targetTableName%_etage_sup
-SET tableName_inf=%targetTableName%_etage_inf
+SET fullTargetTableName=%targetFRISchema%.qc03
+SET tableName_poly=%fullTargetTableName%_poly
+SET tableName_meta=%fullTargetTableName%_meta
+SET tableName_etage=%fullTargetTableName%_etage
+SET tableName_sup=%fullTargetTableName%_etage_sup
+SET tableName_inf=%fullTargetTableName%_etage_inf
 
 ::########################################## Process ######################################
 
@@ -98,22 +100,22 @@ ALTER TABLE %tableName_meta% DROP COLUMN IF EXISTS wkb_geometry;^
  ^
 ALTER TABLE %tableName_meta% RENAME COLUMN geoc_maj TO meta_geoc_maj;^
  ^
-DROP TABLE IF EXISTS %targetTableName%;^
-CREATE TABLE %targetTableName% AS ^
+DROP TABLE IF EXISTS %fullTargetTableName%;^
+CREATE TABLE %fullTargetTableName% AS ^
 SELECT * ^
-FROM %tableName_poly% as poly ^
-LEFT join %tableName_meta% as meta ON poly.geoc_maj = meta.meta_geoc_maj ^
-LEFT join %tableName_sup% as sup ON poly.geoc_maj = sup.sup_geoc_maj ^
-LEFT join %tableName_inf% as inf ON poly.geoc_maj = inf.inf_geoc_maj; ^
+FROM %tableName_poly% AS poly ^
+LEFT join %tableName_meta% AS meta ON poly.geoc_maj = meta.meta_geoc_maj ^
+LEFT join %tableName_sup% AS sup ON poly.geoc_maj = sup.sup_geoc_maj ^
+LEFT join %tableName_inf% AS inf ON poly.geoc_maj = inf.inf_geoc_maj; ^
  ^
-ALTER TABLE %targetTableName% ADD COLUMN temp_key BIGSERIAL PRIMARY KEY; ^
-ALTER TABLE %targetTableName% ADD COLUMN ogc_fid INT; ^
-UPDATE %targetTableName% SET ogc_fid=temp_key; ^
-ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS temp_key; ^
+ALTER TABLE %fullTargetTableName% ADD COLUMN temp_key BIGSERIAL PRIMARY KEY; ^
+ALTER TABLE %fullTargetTableName% ADD COLUMN ogc_fid INT; ^
+UPDATE %fullTargetTableName% SET ogc_fid=temp_key; ^
+ALTER TABLE %fullTargetTableName% DROP COLUMN IF EXISTS temp_key; ^
  ^
-ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS sup_geoc_maj;^
-ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS inf_geoc_maj;^
-ALTER TABLE %targetTableName% DROP COLUMN IF EXISTS meta_geoc_maj;^
+ALTER TABLE %fullTargetTableName% DROP COLUMN IF EXISTS sup_geoc_maj;^
+ALTER TABLE %fullTargetTableName% DROP COLUMN IF EXISTS inf_geoc_maj;^
+ALTER TABLE %fullTargetTableName% DROP COLUMN IF EXISTS meta_geoc_maj;^
  ^
 DROP TABLE IF EXISTS %tableName_poly%; ^
 DROP TABLE IF EXISTS %tableName_meta%; ^
@@ -122,3 +124,9 @@ DROP TABLE IF EXISTS %tableName_sup%; ^
 DROP TABLE IF EXISTS %tableName_inf%;
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query1%"
+
+SET createSQLSpatialIndex=True
+
+CALL .\common_postprocessing.bat
+
+ENDLOCAL

@@ -34,4 +34,6 @@ SET fullTargetTableName=%targetFRISchema%.sk01
 -sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbTableName%' WHERE CZONE NOT LIKE '0'" ^
 -progress %overwrite_tab%
 
+CALL .\common_postprocessing.bat
+
 ENDLOCAL

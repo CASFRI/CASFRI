@@ -33,3 +33,5 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 -nln $fullTargetTableName $layer_creation_option \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName'" \
 -progress $overwrite_tab
+
+source ./common_postprocessing.sh

@@ -39,7 +39,7 @@ for %%F in (AL_615_2D AP_451_2D ARF_110_2D BA_220_2D BSF_030_2D CF_175_2D CL_noF
 	-f PostgreSQL %pg_connection_string% %srcFullPath% ^
 	-nln %temp_table% ^
 	-progress ^
-	-sql "SELECT *, '%%F' as src_filename, '%inventoryID%' AS inventory_id FROM %%F" ^
+	-sql "SELECT *, '%%F' AS src_filename, '%inventoryID%' AS inventory_id FROM %%F" ^
 	!ogr_options!
 	
 	SET ogr_options=-update -append -addfields
@@ -52,20 +52,24 @@ for %%F in (TMF_280_2D) do (
 	-f PostgreSQL %pg_connection_string% %srcFullPath% ^
 	-nln %temp_table% ^
 	-progress ^
-	-sql "SELECT *, '%%F' as src_filename, '%inventoryID%' AS inventory_id, Shape_Leng as PERIMETER FROM %%F" ^
+	-sql "SELECT *, '%%F' AS src_filename, '%inventoryID%' AS inventory_id, shape_leng AS perimeter FROM %%F" ^
 	!ogr_options!
 )
 
 SET query=DROP TABLE IF EXISTS %fullTargetTableName%; ^
 CREATE TABLE %fullTargetTableName% AS ^
-SELECT  wkb_geometry, ogc_fid, inventory_id, src_filename, AREA, PERIMETER, FMFOBJID, POLYID, POLYTYPE, YRSOURCE, SOURCE, FORMOD, DEVSTAGE, YRDEP, DEPTYPE, ^
-OYRORG, OSPCOMP, OLEADSPC, OAGE, OHT, OCCLO, OSI, OSC, UYRORG, USPCOMP, ULEADSPC, UAGE, UHT, UCCLO, USI, USC, ^
-INCIDSPC, VERT, HORIZ, PRI_ECO, SEC_ECO, ACCESS1, ACCESS2, MGMTCON1, MGMTCON2, MGMTCON3, VERDATE, SENSITIV, BED ^
+SELECT wkb_geometry, ogc_fid, inventory_id, src_filename, area, perimeter, fmfobjid, polyid, polytype, yrsource, source, formod, devstage, yrdep, deptype, ^
+oyrorg, ospcomp, oleadspc, oage, oht, occlo, osi, osc, uyrorg, uspcomp, uleadspc, uage, uht, ucclo, usi, usc, ^
+incidspc, vert, horiz, pri_eco, sec_eco, access1, access2, mgmtcon1, mgmtcon2, mgmtcon3, verdate, sensitiv, bed ^
 FROM %temp_table% ^
-WHERE POLYID IS NOT NULL ^
+WHERE polyid IS NOT NULL ^
 ; ^
 DROP TABLE IF EXISTS %temp_table%;
 
 "%gdalFolder%\ogrinfo" %pg_connection_string% -sql "%query%"
+
+SET createSQLSpatialIndex=True
+
+CALL .\common_postprocessing.bat
 
 ENDLOCAL

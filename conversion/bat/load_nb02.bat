@@ -122,4 +122,6 @@ if not exist "%friDir%\%NB_subFolder%poly_id_added.txt" (
 -sql "SELECT *, '%srcNameForest%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcNameForest%""" ^
 -progress
 
+CALL .\common_postprocessing.bat
+
 ENDLOCAL
