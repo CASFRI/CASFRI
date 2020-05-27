@@ -34,28 +34,24 @@ SET srcFullPath_L1="%friDir%\BC\%inventoryID%\data\inventory\%srcFileName_L1%.gd
 SET srcFileName_L2=%srcFileName%_L2_POLY
 SET srcFullPath_L2="%friDir%\BC\%inventoryID%\data\inventory\%srcFileName_L2%.gdb"
 
-SET srcFileName_D=%srcFileName%_D_POLY
-SET srcFullPath_D="%friDir%\BC\%inventoryID%\data\inventory\%srcFileName_D%.gdb"
-
 SET fullTargetTableName=%targetFRISchema%.bc10
 SET tableName_L1=%fullTargetTableName%_layer_1
 SET tableName_L2=%fullTargetTableName%_layer_2
-SET tableName_D=%fullTargetTableName%_layer_d
 
 :: ########################################## Process ######################################
 
-:: Define query joining layer 1 and layer 2 into l1_l2
+:: Define query joining layer 1 and layer 2 into the final table
 
-SET query1=CREATE INDEX ON %tableName_L2% (feature_id); ^
-CREATE INDEX ON %tableName_D% (feature_id); ^
-DROP TABLE IF EXISTS %fullTargetTableName%_l1_l2; ^
-CREATE TABLE %fullTargetTableName%_l1_l2 AS ^
+SET query=CREATE INDEX ON %tableName_L2% (feature_id); ^
+DROP TABLE IF EXISTS %fullTargetTableName%; ^
+CREATE TABLE %fullTargetTableName% AS ^
 SELECT '%srcFileName%' AS src_filename, ^
 '%inventoryID%' AS inventory_id, ^
 t1.wkb_geometry, ^
 t1.ogc_fid, ^
 t1.map_id, ^
 t1.polygon_id, ^
+t1.feature_id, ^
 t1.opening_ind, ^
 t1.opening_source, ^
 t1.opening_number, ^
@@ -151,7 +147,6 @@ t1.harvest_date, ^
 t1.feature_area_sqm, ^
 t1.feature_length_m, ^
 t1.layer_id AS l1_layer_id, ^
-t1.feature_id AS feature_id, ^
 t1.for_cover_rank_cd AS l1_for_cover_rank_cd, ^
 t1.non_forest_descriptor AS l1_non_forest_descriptor, ^
 t1.interpreted_data_src_cd AS l1_interpreted_data_src_cd, ^
@@ -189,7 +184,7 @@ t1.proj_height_class_cd_1 AS l1_proj_height_class_cd_1, ^
 t1.proj_height_2 AS l1_proj_height_2, ^
 t1.proj_height_class_cd_2 AS l1_proj_height_class_cd_2, ^
 t1.data_source_height_cd AS l1_data_source_height_cd, ^
-t1.geometry_length AS l1_geometry_length, ^
+t1.geometry_len AS l1_geometry_len, ^
 t1.geometry_area AS l1_geometry_area, ^
 t2.layer_id AS l2_layer_id, ^
 t2.for_cover_rank_cd AS l2_for_cover_rank_cd, ^
@@ -230,60 +225,11 @@ t2.proj_height_2 AS l2_proj_height_2, ^
 t2.proj_height_class_cd_2 AS l2_proj_height_class_cd_2, ^
 t2.data_source_height_cd AS l2_data_source_height_cd ^
 FROM %tableName_L1% t1 ^
-LEFT OUTER JOIN %tableName_L2% t2 USING (feature_id);
-
-:: Define query joining layer l1_l2 and the d (dead) layer
-
-SET query2=CREATE INDEX ON %fullTargetTableName%_l1_l2 (feature_id); ^
-DROP TABLE IF EXISTS %fullTargetTableName%; ^
-CREATE TABLE %fullTargetTableName% AS ^
-SELECT l1_l2.*, ^
-td.layer_id AS d_layer_id, ^
-td.for_cover_rank_cd AS d_for_cover_rank_cd, ^
-td.non_forest_descriptor AS d_non_forest_descriptor, ^
-td.interpreted_data_src_cd AS d_interpreted_data_src_cd, ^
-td.est_site_index_species_cd AS d_est_site_index_species_cd, ^
-td.est_site_index AS d_est_site_index, ^
-td.est_site_index_source_cd AS d_est_site_index_source_cd, ^
-td.crown_closure AS d_crown_closure, ^
-td.crown_closure_class_cd AS d_crown_closure_class_cd, ^
-td.reference_date AS d_reference_date, ^
-td.site_index AS d_site_index, ^
-td.vri_live_stems_per_ha AS d_vri_live_stems_per_ha, ^
-td.data_src_vri_live_stem_ha_cd AS d_data_src_vri_live_stem_ha_cd, ^
-td.vri_dead_stems_per_ha AS d_vri_dead_stems_per_ha, ^
-td.tree_cover_pattern AS d_tree_cover_pattern, ^
-td.vertical_complexity AS d_vertical_complexity, ^
-td.species_cd_1 AS d_species_cd_1, ^
-td.species_pct_1 AS d_species_pct_1, ^
-td.species_cd_2 AS d_species_cd_2, ^
-td.species_pct_2 AS d_species_pct_2, ^
-td.species_cd_3 AS d_species_cd_3, ^
-td.species_pct_3 AS d_species_pct_3, ^
-td.species_cd_4 AS d_species_cd_4, ^
-td.species_pct_4 AS d_species_pct_4, ^
-td.species_cd_5 AS d_species_cd_5, ^
-td.species_pct_5 AS d_species_pct_5, ^
-td.species_cd_6 AS d_species_cd_6, ^
-td.species_pct_6 AS d_species_pct_6, ^
-td.proj_age_1 AS d_proj_age_1, ^
-td.proj_age_class_cd_1 AS d_proj_age_class_cd_1, ^
-td.proj_age_2 AS d_proj_age_2, ^
-td.proj_age_class_cd_2 AS d_proj_age_class_cd_2, ^
-td.data_source_age_cd AS d_data_source_age_cd, ^
-td.proj_height_1 AS d_proj_height_1, ^
-td.proj_height_class_cd_1 AS d_proj_height_class_cd_1, ^
-td.proj_height_2 AS d_proj_height_2, ^
-td.proj_height_class_cd_2 AS d_proj_height_class_cd_2, ^
-td.data_source_height_cd AS d_data_source_height_cd ^
-FROM %fullTargetTableName%_l1_l2 l1_l2 ^
-LEFT OUTER JOIN %tableName_D% td USING (feature_id); ^
-DROP TABLE IF EXISTS %fullTargetTableName%_l1_l2; ^
+LEFT OUTER JOIN %tableName_L2% t2 USING (feature_id); ^
 DROP TABLE IF EXISTS %tableName_L1%; ^
-DROP TABLE IF EXISTS %tableName_L2%; ^
-DROP TABLE IF EXISTS %tableName_D%;
+DROP TABLE IF EXISTS %tableName_L2%;
 
-::  Run ogr2ogr to load all 3 tables
+:: Run ogr2ogr to load the two tables
 
 "%gdalFolder%\ogr2ogr" ^
 -f PostgreSQL %pg_connection_string% %srcFullPath_L1% ^
@@ -295,16 +241,9 @@ DROP TABLE IF EXISTS %tableName_D%;
 -nln %tableName_L2% %layer_creation_option% ^
 -progress %overwrite_tab%
 
-"%gdalFolder%\ogr2ogr" ^
--f PostgreSQL %pg_connection_string% %srcFullPath_D% ^
--nln %tableName_D% %layer_creation_option% ^
--progress %overwrite_tab%
-
 ::  Join loaded tables
 
-"%gdalFolder%\ogrinfo" %pg_connection_string% -sql "%query1%"
-
-"%gdalFolder%\ogrinfo" %pg_connection_string% -sql "%query2%"
+"%gdalFolder%\ogrinfo" %pg_connection_string% -sql "%query%"
 
 SET createSQLSpatialIndex=True
 
