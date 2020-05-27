@@ -64,4 +64,6 @@ WHERE polyid IS NOT NULL;
 DROP TABLE IF EXISTS $temp_table;
 "
 
+createSQLSpatialIndex=True
+
 source ./common_postprocessing.sh
