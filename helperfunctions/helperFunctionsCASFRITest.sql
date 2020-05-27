@@ -1372,37 +1372,37 @@ UNION ALL
 SELECT '32.1'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test Horizontal stand'::text description,
-       TT_avi01_stand_structure_translation('H', '', '') = 'H' passed
+       TT_avi01_stand_structure_translation('H', '', '', '', '', '', '') = 'H' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.2'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test Complex stand'::text description,
-       TT_avi01_stand_structure_translation('C4', '', '') = 'C' passed
+       TT_avi01_stand_structure_translation('C4', '', '', '', '', '', '') = 'C' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.3'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test S stand'::text description,
-       TT_avi01_stand_structure_translation('M', 'bf', '') = 'S' passed
+       TT_avi01_stand_structure_translation('M', 'bf', '', '', '', '', '') = 'S' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.4'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test S stand'::text description,
-       TT_avi01_stand_structure_translation('', '', 'bs') = 'S' passed
+       TT_avi01_stand_structure_translation('', '', 'bs', '', '', '', '') = 'S' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.5'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test M stand'::text description,
-       TT_avi01_stand_structure_translation('M', 'bf', 'bs') = 'M' passed
+       TT_avi01_stand_structure_translation('', 'bf', 'bs', '', 'bf', '', '') = 'M' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.6'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test M stand'::text description,
-       TT_avi01_stand_structure_translation('S', 'bf', 'bs') = 'M' passed
+       TT_avi01_stand_structure_translation('S', 'bf', 'bs', 'bs', 'bf', 'bs', 'ws') = 'M' passed
 ---------------------------------------------------------
  -- TT_fvi01_stand_structure_validation
 ---------------------------------------------------------

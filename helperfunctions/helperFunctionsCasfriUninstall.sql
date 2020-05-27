@@ -54,6 +54,7 @@ DROP FUNCTION IF EXISTS TT_fvi01_countOfNotNull(text, text, text, text, text, te
 DROP FUNCTION IF EXISTS TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_translation(text,text,text,text,text,text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_species_translation(text,text,text,text,text,text);
+DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
@@ -82,5 +83,3 @@ DROP FUNCTION IF EXISTS TT_DeleteAllViews(text);
 DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean, boolean);
 DROP FUNCTION IF EXISTS TT_CountEstimate(text);
 DROP FUNCTION IF EXISTS TT_StackTranslationRules(text, text);
-DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text);
-DROP FUNCTION IF EXISTS TT_fvi01_countOfNotNull(text, text, text, text, text, text);
