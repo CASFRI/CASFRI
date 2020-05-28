@@ -118,13 +118,13 @@ SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 600, 'DST');
 INSERT INTO casfri50_test.dst_all_new
 SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb02_l1_to_nb_l1_map_600_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 1000, 'DST');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 1000, 'line_7b_disturbance_history');
 INSERT INTO casfri50_test.dst_all_new
-SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc08_l1_to_bc_l1_map_1000_dst');
+SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc08_l1_to_bc_l1_map_1000_l');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 1000, 'DST');
+SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 1000, 'line_7b_disturbance_history');
 INSERT INTO casfri50_test.dst_all_new
-SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc10_l1_to_bc_l1_map_1000_dst');
+SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc10_l1_to_bc_l1_map_1000_l');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, 'DST');
 INSERT INTO casfri50_test.dst_all_new
