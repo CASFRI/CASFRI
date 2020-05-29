@@ -78,12 +78,12 @@ SELECT * FROM TT_Translate_sk06_nfl_devel('rawfri', 'sk06_l4_to_sk_sfv_l1_map_20
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_nfl_devel');
 
 -- NFL2 ATTRIBUTES
-SELECT TT_CreateMappingView('rawfri', 'sk06', 5, 'sk_sfv', 1, 200, 'nfl');
-SELECT * FROM TT_Translate_sk06_nfl_devel('rawfri', 'sk06_l5_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'sk06', 5, 'sk_sfv', 1, 'nfl');
+SELECT * FROM TT_Translate_sk06_nfl_devel('rawfri', 'sk06_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_nfl_devel');
 
 -- NFL3 ATTRIBUTES - layer 6 can either be nat_non_veg or non_for_anth, not both.
-SELECT TT_CreateMappingView('rawfri', 'sk63', 6, 'sk_sfv', 1, 200, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 6, 'sk_sfv', 1, 200, 'nfl');
 SELECT * FROM TT_Translate_sk06_nfl_devel('rawfri', 'sk06_l6_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_nfl_devel');
 SELECT count(*), sp1_h, sp1_s, CONCAT(sp1_h, sp1_s) FROM rawfri.sk06 GROUP BY sp1_h, sp1_s;
