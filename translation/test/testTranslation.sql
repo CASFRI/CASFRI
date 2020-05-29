@@ -84,6 +84,11 @@ SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 600);
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_yt02_cas_test('rawfri', 'yt02_l1_to_yt_l1_map_600');
 ------------------------
+-- Create an ordered VIEW on the CAS table
+CREATE OR REPLACE VIEW casfri50_test.cas_all_new_ordered AS
+SELECT * FROM casfri50_test.cas_all_new
+ORDER BY cas_id;
+------------------------
 SELECT count(*) FROM casfri50_test.cas_all_new; -- 3800
 -------------------------------------------------------
 -- Translate all DST tables into a common table
@@ -118,13 +123,13 @@ SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 600, 'DST');
 INSERT INTO casfri50_test.dst_all_new
 SELECT * FROM TT_Translate_nb01_dst_test('rawfri', 'nb02_l1_to_nb_l1_map_600_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 1000, 'line_7b_disturbance_history');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 1000, 'DST');
 INSERT INTO casfri50_test.dst_all_new
-SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc08_l1_to_bc_l1_map_1000_l');
+SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc08_l1_to_bc_l1_map_1000_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 1000, 'line_7b_disturbance_history');
+SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 1000, 'DST');
 INSERT INTO casfri50_test.dst_all_new
-SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc10_l1_to_bc_l1_map_1000_l');
+SELECT * FROM TT_Translate_bc08_dst_test('rawfri', 'bc10_l1_to_bc_l1_map_1000_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, 'DST');
 INSERT INTO casfri50_test.dst_all_new
@@ -149,6 +154,11 @@ SELECT * FROM TT_Translate_sk01_dst_test('rawfri', 'sk01_l1_to_sk_utm_l1_map_700
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 600, 'DST');
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_yt02_dst_test('rawfri', 'yt02_l1_to_yt_l1_map_600_dst');
+------------------------
+-- Create an ordered VIEW on the DST table
+CREATE OR REPLACE VIEW casfri50_test.dst_all_new_ordered AS
+SELECT * FROM casfri50_test.dst_all_new
+ORDER BY cas_id, layer;
 ------------------------
 SELECT count(*) FROM casfri50_test.dst_all_new; -- 4900
 -------------------------------------------------------
@@ -203,6 +213,11 @@ SELECT * FROM TT_Translate_sk01_eco_test('rawfri', 'sk01_l1_to_sk_utm_l1_map_700
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 600, 'ECO');
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_yt02_eco_test('rawfri', 'yt02_l1_to_yt_l1_map_600_eco');
+------------------------
+-- Create an ordered VIEW on the ECO table
+CREATE OR REPLACE VIEW casfri50_test.eco_all_new_ordered AS
+SELECT * FROM casfri50_test.eco_all_new
+ORDER BY cas_id;
 ------------------------
 SELECT count(*) FROM casfri50_test.eco_all_new; -- 1200
 -------------------------------------------------------
@@ -298,6 +313,11 @@ SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 600, 'LYR');
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_yt02_lyr_test('rawfri', 'yt02_l1_to_yt_l1_map_600_lyr');
 ------------------------
+-- Create an ordered VIEW on the LYR table
+CREATE OR REPLACE VIEW casfri50_test.lyr_all_new_ordered AS
+SELECT * FROM casfri50_test.lyr_all_new
+ORDER BY cas_id, layer;
+------------------------
 SELECT count(*) FROM casfri50_test.lyr_all_new; -- 6600
 -------------------------------------------------------
 -- Translate all NFL tables into a common table
@@ -372,28 +392,14 @@ SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 600, 'NFL');
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_yt02_nfl_test('rawfri', 'yt02_l1_to_yt_l1_map_600_nfl');
 ------------------------
-SELECT count(*) FROM casfri50_test.nfl_all_new; -- 4200
----------------------------------------------------------
--- Create ordered VIEWs
-CREATE OR REPLACE VIEW casfri50_test.cas_all_new_ordered AS
-SELECT * FROM casfri50_test.cas_all_new
-ORDER BY cas_id;
-
-CREATE OR REPLACE VIEW casfri50_test.dst_all_new_ordered AS
-SELECT * FROM casfri50_test.dst_all_new
-ORDER BY cas_id, layer;
-
-CREATE OR REPLACE VIEW casfri50_test.eco_all_new_ordered AS
-SELECT * FROM casfri50_test.eco_all_new
-ORDER BY cas_id;
-
-CREATE OR REPLACE VIEW casfri50_test.lyr_all_new_ordered AS
-SELECT * FROM casfri50_test.lyr_all_new
-ORDER BY cas_id, layer;
-
+-- Create an ordered VIEW on the NFL table
 CREATE OR REPLACE VIEW casfri50_test.nfl_all_new_ordered AS
 SELECT * FROM casfri50_test.nfl_all_new
 ORDER BY cas_id, layer;
+------------------------
+SELECT count(*) FROM casfri50_test.nfl_all_new; -- 4200
+---------------------------------------------------------
+
 ---------------------------------------------------------
 -- Compare new with old tables
 ---------------------------------------------------------
