@@ -1466,7 +1466,7 @@ RETURNS text AS $$
            WHEN wc='FE' AND vt='EV' THEN 'FO--'
            WHEN wc IN ('FE', 'BO') AND vt='OV' THEN 'OO--'
            WHEN wc IN ('FE', 'BO') AND vt='OW' THEN 'O---'
-           WHEN wc='BO' AND vt='EV' THEN 'BP--'
+           WHEN wc='BO' AND vt='EV' THEN 'BO--'
            WHEN wc='BO' AND vt='AW' THEN 'BT--'
            WHEN wc='AB' THEN 'OONN'
            WHEN wc='FM' THEN 'MONG'
