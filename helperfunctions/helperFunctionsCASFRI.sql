@@ -1466,7 +1466,7 @@ RETURNS text AS $$
            WHEN wc='FE' AND vt='EV' THEN 'FO--'
            WHEN wc IN ('FE', 'BO') AND vt='OV' THEN 'OO--'
            WHEN wc IN ('FE', 'BO') AND vt='OW' THEN 'O---'
-           WHEN wc='BO' AND vt='EV' THEN 'BP--'
+           WHEN wc='BO' AND vt='EV' THEN 'BO--'
            WHEN wc='BO' AND vt='AW' THEN 'BT--'
            WHEN wc='AB' THEN 'OONN'
            WHEN wc='FM' THEN 'MONG'
@@ -3192,15 +3192,15 @@ RETURNS int AS $$
 
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF tt_matchList(nvsl,'{''UK'',''CB'',''RK'',''SA'',''MS'',''GR'',''SB'',''WA''}') 
-    OR tt_matchList(aquatic_class,'{''LA'',''RI'',''FL'',''SF'',''FP'',''ST''}') 
-    OR tt_matchList(transp_class,'{''ALA'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC''}')
-    OR tt_matchList(luc,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW''}') THEN
+    IF tt_matchList(nvsl,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R'',''FL''}') 
+    OR tt_matchList(aquatic_class,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R'',''FL''}') 
+    OR tt_matchList(luc,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}')
+    OR tt_matchList(transp_class,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
     END IF;
-        
+    
     -- call countOfNotNull
     RETURN tt_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, zero_is_null);
 
