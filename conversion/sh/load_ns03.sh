@@ -16,8 +16,8 @@
 # Annapolis.shp also has AGE and MATURITY.
 # Load Annapolis.shp first since it has the most columns.
 
-# The combination of FOREST_ and FOREST_ID is a unique identifier across all counties (FOREST_ 
-# a unique ID in all counties except Halifax_West and Hants).
+# The combination of FOREST_, FOREST_ID, MAPSHEET and SRC_FILENAME is a unique identifier across all counties 
+# and should be used in the cas_id. All four are needed to create the unique id.
 ######################################## Set variables #######################################
 
 source ./common.sh
@@ -28,17 +28,18 @@ inventoryID=NS03
 srcFolder="$friDir/NS/$inventoryID/data/inventory/"
 fullTargetTableName=$targetFRISchema.ns03
 
+ogr_options="-nlt PROMOTE_TO_MULTI $overwrite_tab -progress"
+
 for F in Annapolis Antigonish Cape_Breton Colchester Cumberland Digby Guyborough Halifax_East Halifax_West Hants Inverness Kings Lunenburg Pictou Queens Richmond Shelburne St_Marys Victoria Yarmouth
 do
 	srcFullPath="$srcFolder$F.shp"
 	
 	"$gdalFolder/ogr2ogr" \
 	-f PostgreSQL "$pg_connection_string" "$srcFullPath" \
-	-nln $fullTargetTableName $layer_creation_option \
-	-nlt PROMOTE_TO_MULTI \
-	-sql "SELECT *, CONCAT(CAST(FOREST_ AS character(5)), '-', CAST(FOREST_ID AS character(4))) AS poly_id, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM '$F'" \
-	-progress $overwrite_tab
-
+	-nln $fullTargetTableName $layer_creation_option $ogr_options \
+	-sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM '$F'" \
+	
+    ogr_options="-nlt PROMOTE_TO_MULTI -update -append -progress"
 done
 
 createSQLSpatialIndex=True
