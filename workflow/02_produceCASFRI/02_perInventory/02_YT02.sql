@@ -37,7 +37,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_cas');
 ------------------------
 SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 'DST');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
 
 -- Delete existing entries
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'YT02';
@@ -53,7 +53,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_dst');
 ------------------------
 SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt_eco', 'ab_avi01_eco');
 
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 'ECO');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
 
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'YT02';
@@ -69,7 +69,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco');
 ------------------------
 SELECT TT_Prepare('translation', 'yt_yvi01_lyr', '_yt_lyr', 'ab_avi01_lyr'); 
 
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
 
 -- Delete existing entries
 DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'YT02';
@@ -85,7 +85,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr');
 ------------------------
 SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt_nfl', 'ab_avi01_nfl');
 
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'YT02';

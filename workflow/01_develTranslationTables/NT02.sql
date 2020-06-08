@@ -33,27 +33,27 @@ SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200);
 SELECT * FROM TT_Translate_nt01_cas_devel('rawfri', 'nt02_l1_to_nt_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_cas_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200, 'dst');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200);
 SELECT * FROM TT_Translate_nt01_dst_devel('rawfri', 'nt02_l1_to_nt_l1_map_200_dst', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_dst_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200, 'eco');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200);
 SELECT * FROM TT_Translate_nt01_eco_devel('rawfri', 'nt02_l1_to_nt_l1_map_200_eco', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_eco_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200);
 SELECT * FROM TT_Translate_nt01_lyr_devel('rawfri', 'nt02_l1_to_nt_l1_map_200_lyr', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1, 200, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1, 200);
 SELECT * FROM TT_Translate_nt01_lyr_devel('rawfri', 'nt02_l2_to_nt_l1_map_200_lyr', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 200);
 SELECT * FROM TT_Translate_nt01_nfl_devel('rawfri', 'nt02_l1_to_nt_l1_map_200_nfl', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_nfl_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1, 200, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1, 200);
 SELECT * FROM TT_Translate_nt01_nfl_devel('rawfri', 'nt02_l2_to_nt_l1_map_200_nfl', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nt01_fvi01_nfl_devel');
 

@@ -41,17 +41,17 @@ CREATE TABLE translation_devel.sk06_sfv01_lyr_devel AS
 SELECT * FROM translation.sk_sfv01_lyr; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk06_sfv01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'sk06_sfv01_lyr_devel', '_sk06_lyr_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 200, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 200);
 SELECT * FROM TT_Translate_sk06_lyr_devel('rawfri', 'sk06_l1_to_sk_sfv_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_lyr_devel');
 
 -- LYR2 ATTRIBUTES
-SELECT TT_CreateMappingView('rawfri', 'sk06', 2, 'sk_sfv', 1, 200, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 2, 'sk_sfv', 1, 200);
 SELECT * FROM TT_Translate_sk06_lyr_devel('rawfri', 'sk06_l2_to_sk_sfv_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_lyr_devel');
 
 -- LYR3 ATTRIBUTES
-SELECT TT_CreateMappingView('rawfri', 'sk06', 3, 'sk_sfv', 1, 200, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 3, 'sk_sfv', 1, 200);
 SELECT * FROM TT_Translate_sk06_lyr_devel('rawfri', 'sk06_l3_to_sk_sfv_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_lyr_devel');
 
@@ -62,7 +62,7 @@ CREATE TABLE translation_devel.sk06_sfv01_dst_devel AS
 SELECT * FROM translation.sk_sfv01_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk06_sfv01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'sk06_sfv01_dst_devel', '_sk06_dst_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 200, 'dst');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 200);
 SELECT * FROM TT_Translate_sk06_dst_devel('rawfri', 'sk06_l1_to_sk_sfv_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_dst_devel');
 
@@ -73,17 +73,17 @@ CREATE TABLE translation_devel.sk06_sfv01_nfl_devel AS
 SELECT * FROM translation.sk_sfv01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk06_sfv01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'sk06_sfv01_nfl_devel', '_sk06_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk06', 4, 'sk_sfv', 1, 200, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 4, 'sk_sfv', 1, 200);
 SELECT * FROM TT_Translate_sk06_nfl_devel('rawfri', 'sk06_l4_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_nfl_devel');
 
 -- NFL2 ATTRIBUTES
-SELECT TT_CreateMappingView('rawfri', 'sk06', 5, 'sk_sfv', 1, 200, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 5, 'sk_sfv', 1, 200);
 SELECT * FROM TT_Translate_sk06_nfl_devel('rawfri', 'sk06_l5_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_nfl_devel');
 
 -- NFL3 ATTRIBUTES - layer 6 can either be nat_non_veg or non_for_anth, not both.
-SELECT TT_CreateMappingView('rawfri', 'sk06', 6, 'sk_sfv', 1, 200, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 6, 'sk_sfv', 1, 200);
 SELECT * FROM TT_Translate_sk06_nfl_devel('rawfri', 'sk06_l6_to_sk_sfv_l1_map_200_nfl', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_nfl_devel');
 SELECT count(*), sp1_h, sp1_s, CONCAT(sp1_h, sp1_s) FROM rawfri.sk06 GROUP BY sp1_h, sp1_s;
@@ -100,7 +100,7 @@ CREATE TABLE translation_devel.sk06_sfv01_eco_devel AS
 SELECT * FROM translation.sk_sfv01_eco; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk06_sfv01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'sk06_sfv01_eco_devel', '_sk06_eco_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 200, 'eco');
+SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 200);
 SELECT * FROM TT_Translate_sk06_eco_devel('rawfri', 'sk06_l1_to_sk_sfv_l1_map_200_eco', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk06_sfv01_eco_devel');
 

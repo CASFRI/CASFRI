@@ -115,27 +115,27 @@ SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 200);
 SELECT * FROM TT_Translate_nb01_cas_devel('rawfri', 'nb01_l1_to_nb_l1_map_200', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_cas_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 200, 'dst');
+SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 200);
 SELECT * FROM TT_Translate_nb01_dst_devel('rawfri', 'nb01_l1_to_nb_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_dst_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1, 200, 'dst');
+SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1, 200);
 SELECT * FROM TT_Translate_nb01_dst_devel('rawfri', 'nb01_l2_to_nb_l1_map_200_dst', 'ogc_fid'); -- 3 s
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_dst_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nb01', 200, 'eco');
+SELECT TT_CreateMappingView('rawfri', 'nb01', 200);
 SELECT * FROM TT_Translate_nb01_eco_devel('rawfri', 'nb01_min_200_eco', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_eco_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 200, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 200);
 SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb01_l1_to_nb_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1, 200, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'nb01', 2, 'nb', 1, 200);
 SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb01_l2_to_nb_l1_map_200_lyr', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 200, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'nb01', 'nb', 200);
 SELECT * FROM TT_Translate_nb01_nfl_devel('rawfri', 'nb01_l1_to_nb_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_nfl_devel');
 

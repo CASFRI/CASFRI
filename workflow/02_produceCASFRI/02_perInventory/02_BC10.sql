@@ -40,7 +40,7 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_dst', '_bc10_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 'DST');
+SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc');
 
 -- Delete existing entries
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'BC10';
@@ -58,7 +58,7 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_eco', '_bc10_eco', 'ab_avi01_eco'); -- used for both BC08 and BC10
 
-SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 'ECO'); -- only rows with eco attributes
+SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc'); -- only rows with eco attributes
 
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'BC10';
@@ -82,7 +82,7 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'BC10';
 -- Add translated ones
 -- Layer 1
 
-SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 'LYR'); -- only rows with LYR attributes
+SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc'); -- only rows with LYR attributes
 
 INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc10_lyr('rawfri', 'bc10_l1_to_bc_l1_map_lyr', 'ogc_fid');
@@ -91,7 +91,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr');
 
 -- Layer 2 reusing BC10 layer 1 translation table
 
-SELECT TT_CreateMappingView('rawfri', 'bc10', 2, 'bc', 1, 'LYR'); -- only rows with LYR attributes
+SELECT TT_CreateMappingView('rawfri', 'bc10', 2, 'bc', 1); -- only rows with LYR attributes
 
 INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc10_lyr('rawfri', 'bc10_l2_to_bc_l1_map_lyr', 'ogc_fid');
@@ -105,7 +105,7 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_nfl', '_bc10_nfl', 'ab_avi01_nfl'); -- used for both BC08 and BC10
 
-SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'bc10', 'bc');
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'BC10';

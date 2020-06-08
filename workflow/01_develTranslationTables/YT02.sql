@@ -39,7 +39,7 @@ DROP TABLE IF EXISTS translation_devel.yt02_yvi01_lyr_devel;
 CREATE TABLE translation_devel.yt02_yvi01_lyr_devel AS SELECT * FROM translation.yt_yvi01_lyr; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.yt02_yvi01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_lyr_devel', '_yt02_lyr_devel');
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200);
 SELECT * FROM TT_Translate_yt02_lyr_devel('rawfri', 'yt02_l1_to_yt_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_lyr_devel');
 
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS translation_devel.yt02_yvi01_dst_devel;
 CREATE TABLE translation_devel.yt02_yvi01_dst_devel AS SELECT * FROM translation.yt_yvi01_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.yt02_yvi01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_dst_devel', '_yt02_dst_devel');
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200, 'dst');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200);
 SELECT * FROM TT_Translate_yt02_dst_devel('rawfri', 'yt02_l1_to_yt_l1_map_200_dst', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_dst_devel');
 
@@ -62,7 +62,7 @@ CREATE TABLE translation_devel.yt02_yvi01_nfl_devel AS
 SELECT * FROM translation.yt_yvi01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.yt02_yvi01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_nfl_devel', '_yt02_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200);
 SELECT * FROM TT_Translate_yt02_nfl_devel('rawfri', 'yt02_l1_to_yt_l1_map_200_nfl', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_nfl_devel');
 
@@ -74,7 +74,7 @@ CREATE TABLE translation_devel.yt02_yvi01_eco_devel AS
 SELECT * FROM translation.yt_yvi01_eco; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.yt02_yvi01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_eco_devel', '_yt02_eco_devel');
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200, 'eco');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200);
 SELECT * FROM TT_Translate_yt02_eco_devel('rawfri', 'yt02_l1_to_yt_l1_map_200_eco', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_eco_devel');
 

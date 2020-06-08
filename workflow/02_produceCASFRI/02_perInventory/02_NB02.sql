@@ -37,7 +37,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_cas');
 ------------------------
 SELECT TT_Prepare('translation', 'nb_nbi01_dst', '_nb_dst', 'ab_avi01_dst'); -- used for both NB01 and NB02
 
-SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 'DST');
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb');
 
 -- Delete existing entries
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'NB02';
@@ -53,7 +53,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_dst');
 ------------------------
 SELECT TT_Prepare('translation', 'nb_nbi01_eco', '_nb_eco', 'ab_avi01_eco'); -- used for both NB01 and NB02
 
-SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 'ECO'); -- only rows with eco attributes
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb'); -- only rows with eco attributes
 
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'NB02';
@@ -75,7 +75,7 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NB02';
 -- Add translated ones
 -- Layer 1 reusing NB01 layer 1 translation table
 
-SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb');
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb02_l1_to_nb_l1_map_lyr', 'ogc_fid');
@@ -85,7 +85,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr');
 
 -- Layer 2 reusing NB01 layer 1 translation table
 
-SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb', 1, 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb', 1);
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb02_l2_to_nb_l1_map_lyr', 'ogc_fid');
@@ -97,7 +97,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr');
 ------------------------
 SELECT TT_Prepare('translation', 'nb_nbi01_nfl', '_nb_nfl', 'ab_avi01_nfl'); -- used for both NB01 and NB02
 
-SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb');
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NB02';

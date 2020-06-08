@@ -41,7 +41,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_cas');
 ------------------------
 SELECT TT_Prepare('translation', 'sk_sfv01_dst', '_sk_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'sk02', 'sk_sfv', 'DST');
+SELECT TT_CreateMappingView('rawfri', 'sk02', 'sk_sfv');
 
 -- Delete existing entries
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'SK02';
@@ -57,7 +57,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_dst');
 ------------------------
 SELECT TT_Prepare('translation', 'sk_sfv01_eco', '_sk_eco', 'ab_avi01_eco');
 
-SELECT TT_CreateMappingView('rawfri', 'sk02', 'sk_sfv', 'ECO');
+SELECT TT_CreateMappingView('rawfri', 'sk02', 'sk_sfv');
 
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'SK02';
@@ -78,7 +78,7 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'SK02';
 
 -- Add translated ones
 -- Layer 1
-SELECT TT_CreateMappingView('rawfri', 'sk02', 'sk_sfv', 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'sk02', 'sk_sfv');
 
 INSERT INTO casfri50.lyr_all -- 9min 11s
 SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk02_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
@@ -86,7 +86,7 @@ SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk02_l1_to_sk_sfv_l1_map_lyr', 'ogc
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr');
 
 -- Layer 2 using SFVI translation table
-SELECT TT_CreateMappingView('rawfri', 'sk02', 2, 'sk_sfv', 1, 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'sk02', 2, 'sk_sfv', 1);
 
 INSERT INTO casfri50.lyr_all -- 1min 56s
 SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk02_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
@@ -94,7 +94,7 @@ SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk02_l2_to_sk_sfv_l1_map_lyr', 'ogc
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr');
 
 -- Layer 3 using SFVI translation table
-SELECT TT_CreateMappingView('rawfri', 'sk02', 3, 'sk_sfv', 1, 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'sk02', 3, 'sk_sfv', 1);
 
 INSERT INTO casfri50.lyr_all -- 6s
 SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk02_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
@@ -111,7 +111,7 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'SK02';
 
 -- Add translated ones
 --layer 1 - non_for_veg: shrubs
-SELECT TT_CreateMappingView('rawfri', 'sk02', 4, 'sk_sfv', 1, 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'sk02', 4, 'sk_sfv', 1);
 
 INSERT INTO casfri50.nfl_all -- 2min 8s
 SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk02_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid'); 
@@ -119,7 +119,7 @@ SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk02_l4_to_sk_sfv_l1_map_nfl', 'ogc
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl');
 
 --layer 2 - non_for_veg: herbs
-SELECT TT_CreateMappingView('rawfri', 'sk02', 5, 'sk_sfv', 1, 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'sk02', 5, 'sk_sfv', 1);
 
 INSERT INTO casfri50.nfl_all -- 1min 18s
 SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk02_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid'); 
@@ -127,7 +127,7 @@ SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk02_l5_to_sk_sfv_l1_map_nfl', 'ogc
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl');
 
 --layer 3 - nat_non_veg and non_for_anth
-SELECT TT_CreateMappingView('rawfri', 'sk02', 6, 'sk_sfv', 1, 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'sk02', 6, 'sk_sfv', 1);
 
 INSERT INTO casfri50.nfl_all -- 9s
 SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk02_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid'); 

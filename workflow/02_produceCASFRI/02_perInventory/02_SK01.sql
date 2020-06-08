@@ -37,7 +37,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_cas');
 ------------------------
 SELECT TT_Prepare('translation', 'sk_utm01_dst', '_sk_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', 'DST');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm');
 
 -- Delete existing entries
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'SK01';
@@ -53,7 +53,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst');
 ------------------------
 SELECT TT_Prepare('translation', 'sk_utm01_eco', '_sk_eco', 'ab_avi01_eco');
 
-SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', 'ECO');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm');
 
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'SK01';
@@ -75,7 +75,7 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'SK01';
 -- Add translated ones
 -- Layer 1
 
-SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm');
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l1_to_sk_utm_l1_map_lyr', 'ogc_fid');
@@ -85,7 +85,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
 
 -- Layer 2 using UTM translation table
 
-SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk_utm', 1, 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk_utm', 1);
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l2_to_sk_utm_l1_map_lyr', 'ogc_fid');
@@ -97,7 +97,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
 ------------------------
 SELECT TT_Prepare('translation', 'sk_utm01_nfl', '_sk_nfl', 'ab_avi01_nfl');
 
-SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm');
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'SK01';

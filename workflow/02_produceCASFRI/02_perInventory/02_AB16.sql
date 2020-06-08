@@ -58,7 +58,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas');
 ------------------------
 SELECT TT_Prepare('translation', 'ab_avi01_dst', '_ab_dst'); -- used for both AB06 and AB16
 
-SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab', 'DST'); -- Only rows with a disturbance
+SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab'); -- Only rows with a disturbance
 
 -- Delete existing entries
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB16';
@@ -75,7 +75,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst');
 ------------------------
 SELECT TT_Prepare('translation', 'ab_avi01_eco', '_ab_eco'); -- used for both AB06 and AB16
 
-SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab', 'ECO'); -- only rows with eco attributes
+SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab'); -- only rows with eco attributes
 
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'AB16';
@@ -97,7 +97,7 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'AB16';
 -- Add translated ones
 -- Layer 1
 
-SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab', 'LYR'); -- only rows with LYR attributes
+SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab'); -- only rows with LYR attributes
 
 INSERT INTO casfri50.lyr_all -- 46m20s
 SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab16_l1_to_ab_l1_map_lyr', 'ogc_fid');
@@ -106,7 +106,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr');
 
 -- Layer 2
 
-SELECT TT_CreateMappingView('rawfri', 'AB16', 2, 'ab', 1, 'LYR'); -- only rows with LYR attributes
+SELECT TT_CreateMappingView('rawfri', 'AB16', 2, 'ab', 1); -- only rows with LYR attributes
 
 INSERT INTO casfri50.lyr_all -- 3m56s
 SELECT * FROM TT_Translate_ab_lyr('rawfri', 'AB16_l2_to_ab_l1_map_lyr', 'ogc_fid');
@@ -124,7 +124,7 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'AB16';
 -- Add translated ones
 -- Layer 1
 
-SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab');
 
 INSERT INTO casfri50.nfl_all -- 23m43s
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab16_l1_to_ab_l1_map_nfl', 'ogc_fid');
@@ -133,7 +133,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl');
 
 -- Layer 2 reusing AB16 layer 1 translation table
 
-SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab', 1, 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab', 1);
 
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab16_l2_to_ab_l1_map_nfl', 'ogc_fid');

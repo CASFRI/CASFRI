@@ -40,7 +40,7 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_dst', '_bc08_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 'DST');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');
 
 -- Delete existing entries
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'BC08';
@@ -58,7 +58,7 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_eco', '_bc08_eco', 'ab_avi01_eco'); -- used for both BC08 and BC10
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 'ECO'); -- only rows with eco attributes
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc'); -- only rows with eco attributes
 
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'BC08';
@@ -76,7 +76,7 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_lyr', '_bc08_lyr', 'ab_avi01_lyr'); -- used for both BC08 and BC10, layer 1 and 2
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');
 
 -- Delete existing entries
 DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'BC08';
@@ -94,7 +94,7 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_nfl', '_bc08_nfl', 'ab_avi01_nfl'); -- used for both BC08 and BC10
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'BC08';

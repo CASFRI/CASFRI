@@ -37,7 +37,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_cas');
 ------------------------
 SELECT TT_Prepare('translation', 'on_fim02_dst', '_on_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 'DST');
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on');
 
 -- Delete existing entries
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'ON02';
@@ -53,7 +53,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_dst');
 ------------------------
 SELECT TT_Prepare('translation', 'on_fim02_eco', '_on_eco', 'ab_avi01_eco');
 
-SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 'ECO');
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on');
 
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'ON02';
@@ -74,7 +74,7 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'ON02';
 
 -- Add translated ones
 -- Layer 1
-SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on');
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_on_lyr('rawfri', 'on02_l1_to_on_l1_map_lyr', 'ogc_fid');
@@ -83,7 +83,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_lyr');
 
 -- Layer 2 using ON translation table
 
-SELECT TT_CreateMappingView('rawfri', 'on02', 2, 'on', 1, 'LYR');
+SELECT TT_CreateMappingView('rawfri', 'on02', 2, 'on', 1);
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_on_lyr('rawfri', 'on02_l2_to_on_l1_map_lyr', 'ogc_fid');
@@ -95,7 +95,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_lyr');
 ------------------------
 SELECT TT_Prepare('translation', 'on_fim02_nfl', '_on_nfl', 'ab_avi01_nfl');
 
-SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 'NFL');
+SELECT TT_CreateMappingView('rawfri', 'on02', 'on');
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'ON02';
