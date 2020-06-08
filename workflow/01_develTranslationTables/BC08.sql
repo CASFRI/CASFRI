@@ -104,28 +104,23 @@ SELECT TT_Prepare('translation_devel', 'bc08_vri01_geo_devel', '_bc08_geo_devel'
 -- the generic bc row of the dependency table and in the translation table.
 -- These are set to null in the bc08 workflow because there is no layer 2. In the
 -- bc10 workflow they are mapped to the layer 2 species attributes.
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200);
+SELECT TT_CreateMappingView('rawfri', 'bc08', 1, 'bc', 1, 200);
 SELECT * FROM TT_Translate_bc08_cas_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_cas_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200, 'DST');
-SELECT * FROM TT_Translate_bc08_dst_devel('rawfri', 'bc08_l1_to_bc_l1_map_200_dst', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_bc08_dst_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_dst_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200, 'ECO');
-SELECT * FROM TT_Translate_bc08_eco_devel('rawfri', 'bc08_l1_to_bc_l1_map_200_eco', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_bc08_eco_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_eco_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200, 'LYR');
-SELECT * FROM TT_Translate_bc08_lyr_devel('rawfri', 'bc08_l1_to_bc_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_bc08_lyr_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc', 200, 'NFL');
-SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l1_to_bc_l1_map_200_nfl', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_nfl_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 200);
-SELECT * FROM TT_Translate_bc08_geo_devel('rawfri', 'bc08_min_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_bc08_geo_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_geo_devel');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table

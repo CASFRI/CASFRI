@@ -108,24 +108,20 @@ SELECT TT_Prepare('translation_devel', 'bc09_vri01_nfl_devel', '_bc09_nfl_devel'
 SELECT TT_Prepare('translation_devel', 'bc09_vri01_geo_devel', '_bc09_geo_devel');
 
 -- Translate the samples
-SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200);
+SELECT TT_CreateMappingView('rawfri', 'bc09', 1, 'bc08', 1, 200);
 SELECT * FROM TT_Translate_bc09_cas_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc09_vri01_cas_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200, 'dst');
-SELECT * FROM TT_Translate_bc09_dst_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200_dst', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_bc09_dst_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc09_vri01_dst_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200, 'eco');
-SELECT * FROM TT_Translate_bc09_eco_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200_eco', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_bc09_eco_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc09_vri01_eco_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200, 'lyr');
-SELECT * FROM TT_Translate_bc09_lyr_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_bc09_lyr_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc09_vri01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'bc09', 'bc08', 200, 'nfl');
-SELECT * FROM TT_Translate_bc09_nfl_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200_nfl', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_bc09_nfl_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc09_vri01_nfl_devel');
 
 SELECT * FROM TT_Translate_bc09_geo_devel('rawfri', 'bc09_l1_to_bc08_l1_map_200', 'ogc_fid'); -- 2 s.
