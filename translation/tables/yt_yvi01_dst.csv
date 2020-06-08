@@ -1,5 +1,5 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-0,ROW_TRANSLATION_RULE,NA,"notEmpty(dist_code1)",NA,"Translate only rows where dist_code1 is not empty", TRUE
+0,ROW_TRANSLATION_RULE,NA,notEmpty(dist_code1),NA,Translate only rows where dist_code1 is not empty, TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_no);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_no, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,DIST_TYPE_1,text,"notNull(dist_code1);notEmpty(dist_code1);matchList(dist_code1,{'DB','DD','DF','DI','DL','DS','DW'})","mapText(dist_code1, {'DB','DD','DF','DI','DL','DS','DW'}, {'BU','DI','FL','IK','CO','SL','WF'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
 3,DIST_YEAR_1,integer,"notNull(dist_year1);isInt(dist_year1);isBetween(dist_year1, 1, 2020)",copyInt(dist_year1),Copies source attribute to DIST_YEAR_1,TRUE
@@ -13,4 +13,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 11,DIST_YEAR_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 12,DIST_EXT_UPPER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 13,DIST_EXT_LOWER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
-14,LAYER,integer,true(),copyInt(1),Assign disturbances to layer 1 unless inventory specifies otherwise. This allows all disturbance to be queried with layer 1 info.,TRUE
+14,LAYER,integer,true(),nothingInt(|-8886),Disturbance layer is unknown,TRUE
