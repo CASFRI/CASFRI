@@ -1796,16 +1796,20 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- stand_structure text
 -- nfl text
 --
--- Catch the cases where stand structure will be NOT_APPLICABLE because row is NFL.
--- Will be every row where overstory type class attribute has an NFL value. Except those
--- cases where stand structure is Horizontal.
+-- Catch the cases where stand structure will be NOT_APPLICABLE because stand is
+-- not horizontal and there is no species info.
 --
--- e.g. TT_fvi01_stand_structure_validation(nfl, stand_structure)
+-- e.g. TT_fvi01_stand_structure_validation(stand_structure, species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1, species_1_layer2, species_2_layer2, species_3_layer2, species_4_layer2)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text);
+--DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text,text,text,text,text,text);
 CREATE OR REPLACE FUNCTION TT_fvi01_stand_structure_validation(
   stand_structure text,
-  typeclass text
+  species_1_layer1 text, 
+  species_2_layer1 text, 
+  species_3_layer1 text,
+  species_1_layer2 text,
+  species_2_layer2 text,
+  species_3_layer2 text
 )
 RETURNS boolean AS $$		
   BEGIN
@@ -1814,13 +1818,14 @@ RETURNS boolean AS $$
       RETURN TRUE;
     END IF;
     
-    -- if overstory species is NFL (and stand structure not H), return FALSE 
-    IF tt_matchList(typeclass, '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'', ''AP'',''BP'',''EL'',''GP'',''TS'', ''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}') THEN
-      RETURN FALSE;
+    -- if any species info, return TRUE 
+    IF tt_notEmpty(species_1_layer1) OR tt_notEmpty(species_2_layer1) OR tt_notEmpty(species_3_layer1) OR tt_notEmpty(species_4_layer1)
+     OR tt_notEmpty(species_1_layer2) OR tt_notEmpty(species_2_layer2) OR tt_notEmpty(species_3_layer2) OR tt_notEmpty(species_4_layer2)THEN
+      RETURN TRUE;
     END IF;    
     
-    -- other cases return true
-    RETURN TRUE;
+    -- other cases return false
+    RETURN FALSE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
