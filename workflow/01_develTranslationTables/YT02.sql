@@ -92,12 +92,12 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_geo_devel');
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id, 
-       b.l1cc, a.crown_closure_lower, a.crown_closure_upper, 
-       b.l1ht, a.height_upper, a.height_lower, 
-       b.l1s1, a.species_1,
-       b.l1pr1, a.species_per_1
-FROM TT_Translate_on01_lyr_devel('rawfri', 'yt02_l1_to_yt_l1_map_200') a, rawfri.yt02_l1_to_yt_l1_map_200 b
+SELECT b.src_filename, b.inventory_id, b.poly_no, b.ogc_fid, a.cas_id, 
+       b.cc, a.crown_closure_lower, a.crown_closure_upper, 
+       b.avg_ht, a.height_upper, a.height_lower, 
+       b.sp1, a.species_1,
+       b.sp1_per, a.species_per_1
+FROM TT_Translate_yt02_lyr_devel('rawfri', 'yt02_l1_to_yt_l1_map_200') a, rawfri.yt02_l1_to_yt_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------
