@@ -1819,8 +1819,8 @@ RETURNS boolean AS $$
     END IF;
     
     -- if any species info, return TRUE 
-    IF tt_notEmpty(species_1_layer1) OR tt_notEmpty(species_2_layer1) OR tt_notEmpty(species_3_layer1) OR tt_notEmpty(species_4_layer1)
-     OR tt_notEmpty(species_1_layer2) OR tt_notEmpty(species_2_layer2) OR tt_notEmpty(species_3_layer2) OR tt_notEmpty(species_4_layer2)THEN
+    IF tt_notEmpty(species_1_layer1) OR tt_notEmpty(species_2_layer1) OR tt_notEmpty(species_3_layer1)
+     OR tt_notEmpty(species_1_layer2) OR tt_notEmpty(species_2_layer2) OR tt_notEmpty(species_3_layer2) THEN
       RETURN TRUE;
     END IF;    
     
