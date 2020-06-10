@@ -1466,7 +1466,7 @@ RETURNS text AS $$
            WHEN wc='FE' AND vt='EV' THEN 'FO--'
            WHEN wc IN ('FE', 'BO') AND vt='OV' THEN 'OO--'
            WHEN wc IN ('FE', 'BO') AND vt='OW' THEN 'O---'
-           WHEN wc='BO' AND vt='EV' THEN 'BP--'
+           WHEN wc='BO' AND vt='EV' THEN 'BO--'
            WHEN wc='BO' AND vt='AW' THEN 'BT--'
            WHEN wc='AB' THEN 'OONN'
            WHEN wc='FM' THEN 'MONG'
@@ -1796,16 +1796,20 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- stand_structure text
 -- nfl text
 --
--- Catch the cases where stand structure will be NOT_APPLICABLE because row is NFL.
--- Will be every row where overstory type class attribute has an NFL value. Except those
--- cases where stand structure is Horizontal.
+-- Catch the cases where stand structure will be NOT_APPLICABLE because stand is
+-- not horizontal and there is no species info.
 --
--- e.g. TT_fvi01_stand_structure_validation(nfl, stand_structure)
+-- e.g. TT_fvi01_stand_structure_validation(stand_structure, species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1, species_1_layer2, species_2_layer2, species_3_layer2, species_4_layer2)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text);
+--DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text,text,text,text,text,text);
 CREATE OR REPLACE FUNCTION TT_fvi01_stand_structure_validation(
   stand_structure text,
-  typeclass text
+  species_1_layer1 text, 
+  species_2_layer1 text, 
+  species_3_layer1 text,
+  species_1_layer2 text,
+  species_2_layer2 text,
+  species_3_layer2 text
 )
 RETURNS boolean AS $$		
   BEGIN
@@ -1814,13 +1818,14 @@ RETURNS boolean AS $$
       RETURN TRUE;
     END IF;
     
-    -- if overstory species is NFL (and stand structure not H), return FALSE 
-    IF tt_matchList(typeclass, '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'', ''AP'',''BP'',''EL'',''GP'',''TS'', ''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}') THEN
-      RETURN FALSE;
+    -- if any species info, return TRUE 
+    IF tt_notEmpty(species_1_layer1) OR tt_notEmpty(species_2_layer1) OR tt_notEmpty(species_3_layer1)
+     OR tt_notEmpty(species_1_layer2) OR tt_notEmpty(species_2_layer2) OR tt_notEmpty(species_3_layer2) THEN
+      RETURN TRUE;
     END IF;    
     
-    -- other cases return true
-    RETURN TRUE;
+    -- other cases return false
+    RETURN FALSE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -2943,8 +2948,8 @@ $$ LANGUAGE plpgsql;
 -- zero_is_null
 -- 
 -- Use the custom helper function:  
--- to determine if the row contains an NFL record. If it does assign a string
--- so it can be counted as a non-null layer.
+-- to determine if the row contains 1 - 3 NFL records. If it does assign a string
+-- for each NFL layer so they can be counted as a non-null layer.
 -- 
 -- Pass vals1, vals2 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
@@ -2962,21 +2967,34 @@ CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
 )
 RETURNS int AS $$
   DECLARE
-    is_nfl text;
+    is_nfl1 text;
+    is_nfl2 text;
+    is_nfl3 text;
   BEGIN
 
-    -- if any of the nfl functions return true, we know there is an NFL record.
-    -- set is_nfl to be a valid string.
-    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) 
-    OR tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) 
-    OR tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
-      is_nfl = 'a_value';
+    -- if non_for_veg is present, add a string.
+    IF tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
+      is_nfl1 = 'a_value';
     ELSE
-      is_nfl = NULL::text;
+      is_nfl1 = NULL::text;
     END IF;
-        
+
+    -- if nat_non_veg is present, add a string.
+    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
+      is_nfl2 = 'a_value';
+    ELSE
+      is_nfl2 = NULL::text;
+    END IF;
+
+    -- if non_for_anth is present, add a string.
+    IF tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
+      is_nfl3 = 'a_value';
+    ELSE
+      is_nfl3 = NULL::text;
+    END IF;
+
     -- call countOfNotNull
-    RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, zero_is_null);
+    RETURN tt_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
 
   END; 
 $$ LANGUAGE plpgsql;
@@ -3192,15 +3210,15 @@ RETURNS int AS $$
 
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF tt_matchList(nvsl,'{''UK'',''CB'',''RK'',''SA'',''MS'',''GR'',''SB'',''WA''}') 
-    OR tt_matchList(aquatic_class,'{''LA'',''RI'',''FL'',''SF'',''FP'',''ST''}') 
-    OR tt_matchList(transp_class,'{''ALA'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC''}')
-    OR tt_matchList(luc,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW''}') THEN
+    IF tt_matchList(nvsl,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R'',''FL''}') 
+    OR tt_matchList(aquatic_class,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R'',''FL''}') 
+    OR tt_matchList(luc,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}')
+    OR tt_matchList(transp_class,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
     END IF;
-        
+    
     -- call countOfNotNull
     RETURN tt_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, zero_is_null);
 

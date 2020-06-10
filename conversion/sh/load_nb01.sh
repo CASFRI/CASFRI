@@ -55,11 +55,11 @@ fullTargetTableName=$targetFRISchema.nb01
 # Standard SQL code used to add and drop columns in shapefiles. If column is not present the DROP command
 # will return an error which can be ignored.
 # SQLite is needed to add the id based on rowid.
-# Only needed the first time data is loaded. No need to re-add the id on every load. 
-# Use add_unique_source_id = true to add the source poly_id.
+# Should be activated only at the first load otherwise it would brake the translation tables tests. 
+# Only runs once, when flag file poly_id_added.txt does not exist.
 
-if [ "$add_unique_source_id" = true ]
-then
+if [ ! -e "$friDir/$NB_subFolder/poly_id_added.txt" ]; then
+
 	# Waterbody
 	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater DROP COLUMN poly_id"
 	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater ADD COLUMN poly_id integer"
@@ -79,6 +79,8 @@ then
 	"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE $srcNameForest DROP COLUMN poly_id"
 	"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE $srcNameForest ADD COLUMN poly_id integer"
 	"$gdalFolder/ogrinfo" $srcForestFullPath -dialect SQLite -sql "UPDATE $srcNameForest set poly_id = rowid+1"
+	
+	echo " " > "$friDir/$NB_subFolder/poly_id_added.txt"
 fi
 
 ### FILE 1 ###

@@ -132,7 +132,7 @@ SELECT TT_Prepare('translation_test', 'qc03_geo_test', '_qc03_geo_test');
 
 -- Create VIEW 'qc03_l2_to_qc03_l1_map_200' mapping the NT01 layer 2 
 -- attributes to the QC03 layer 1 attributes
---SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'nt', 1, 200);
+--SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'qc', 1, 200);
 
 -- Translate the samples
 SELECT TT_CreateMappingView('rawfri', 'qc03', 'qc', 200);
@@ -145,12 +145,11 @@ SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_dst_test');
 SELECT * FROM TT_Translate_qc03_eco_test('rawfri', 'qc03_min_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_eco_test');
 
-SELECT TT_CreateMappingView('rawfri', 'qc03', 'qc', 200, 'lyr');
-SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l1_to_qc_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l1_to_qc_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_lyr_test');
 
-SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'qc', 1, 200, 'lyr');
-SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l2_to_qc_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'qc', 1, 200);
+SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l2_to_qc_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_test', 'qc03_lyr_test');
 
 --SELECT * FROM TT_Translate_qc03_lyr_test('rawfri', 'qc03_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.

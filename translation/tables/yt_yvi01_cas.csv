@@ -1,11 +1,11 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-1,CAS_ID,text,notEmpty(inventory_id);notNull(poly_no);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', poly_no, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
-3,ORIG_STAND_ID,text,notNull(poly_no),copyText(poly_no),Copies source value to ORIG_STAND_ID,TRUE
+3,ORIG_STAND_ID,text,notNull(orig_stand_id),copyText(orig_stand_id),Copies source value to ORIG_STAND_ID,TRUE
 4,STAND_STRUCTURE,text,"matchList(type_lnd, {'VF'}|NOT_APPLICABLE)",copyText('S'),"Since NUM_OF_LAYERS is always 1, stand structure is always S for forested polygons. Validation applies NOT_APPLICABLE unless polygon is forested.",TRUE
 5,NUM_OF_LAYERS,integer,true(),copyInt(1),Always 1,TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),No source attribute for MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,false(),nothingDouble(),No source attribute for SRC_INV_AREA,TRUE
-10,STAND_PHOTO_YEAR,integer,"notNull(ref_year);isInt(ref_year);isBetween(ref_year, 1900, 2020)",copyInt(ref_year),Copies source value to STAND_PHOTO_YEAR,TRUE
+10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isInt(stand_photo_year);isBetween(stand_photo_year, 1900, 2020)",copyInt(stand_photo_year),Copies source value to STAND_PHOTO_YEAR,TRUE

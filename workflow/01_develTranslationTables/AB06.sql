@@ -130,32 +130,29 @@ SELECT TT_Prepare('translation_devel', 'ab06_avi01_nfl_devel', '_ab06_nfl_devel'
 SELECT TT_Prepare('translation_devel', 'ab06_avi01_geo_devel', '_ab06_geo_devel');
 
 -- Translate the samples
-SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab', 200);
+SELECT TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, 200);
 SELECT * FROM TT_Translate_ab06_cas_devel('rawfri', 'ab06_l1_to_ab_l1_map_200', 'ogc_fid'); -- 6 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_cas_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab', 200, 'DST'); -- Only rows with a dst
-SELECT * FROM TT_Translate_ab06_dst_devel('rawfri', 'ab06_l1_to_ab_l1_map_200_dst', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_Translate_ab06_dst_devel('rawfri', 'ab06_l1_to_ab_l1_map_200', 'ogc_fid'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_dst_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab', 200, 'ECO'); -- Only rows with eco (none in this case)
-SELECT * FROM TT_Translate_ab06_eco_devel('rawfri', 'ab06_l1_to_ab_l1_map_200_eco', 'ogc_fid'); -- 1 s.
+SELECT * FROM TT_Translate_ab06_eco_devel('rawfri', 'ab06_l1_to_ab_l1_map_200', 'ogc_fid'); -- 1 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_eco_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab', 200, 'LYR');
-SELECT * FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l1_to_ab_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l1_to_ab_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab', 1, 200, 'LYR');
-SELECT * FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l2_to_ab_l1_map_200_lyr', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab', 1, 200);
+SELECT * FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l2_to_ab_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_lyr_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab', 200, 'NFL');
-SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_l1_to_ab_l1_map_200_nfl', 'ogc_fid'); -- 2 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 3, 'ab', 1, 200);
+SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_l3_to_ab_l1_map_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_nfl_devel');
 
-SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab', 1, 200, 'NFL');
-SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_l2_to_ab_l1_map_200_nfl', 'ogc_fid'); -- 2 s.
+SELECT TT_CreateMappingView('rawfri', 'ab06', 4, 'ab', 1, 200);
+SELECT * FROM TT_Translate_ab06_nfl_devel('rawfri', 'ab06_l4_to_ab_l1_map_200', 'ogc_fid'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'ab06_avi01_nfl_devel');
 
 SELECT * FROM TT_Translate_ab06_geo_devel('rawfri', 'ab06_l1_to_ab_l1_map_200', 'ogc_fid'); -- 2 s.
@@ -167,7 +164,7 @@ SELECT b.src_filename, b.trm_1, b.poly_num, a.cas_id,
        b.height, a.height_upper, a.height_lower,
        b.sp1, a.species_1,
        b.sp1_per, a.species_per_1
-FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l2_to_ab_l1_map_200_lyr') a, rawfri.ab06_l2_to_ab_l1_map_200_lyr b
+FROM TT_Translate_ab06_lyr_devel('rawfri', 'ab06_l2_to_ab_l1_map_200') a, rawfri.ab06_l2_to_ab_l1_map_200_lyr b
 WHERE b.poly_num = substr(a.cas_id, 33, 10)::int;
 
 --------------------------------------------------------------------------
