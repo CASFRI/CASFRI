@@ -661,8 +661,8 @@ CAS species codes are derived from the species' Latin name using the first four 
 | Values         | Description |
 | :------------  | :-------------- |
 | Species codes  | **Link to possible values after #211** |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is and empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING      | Source value is and empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | INVALID_VALUE  | Soure value is invalid (e.g. code is not the expected format) |
 
@@ -703,8 +703,8 @@ Site class is an estimate of the potential productivity of land for tree growth.
 | P              | Poor - poor tree growth based on age height relationship |
 | M              | Medium - medium tree growth based on age height relationship |
 | G              | Good - medium tree growth based on age height relationship |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING      | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value does not occur |
 
@@ -855,8 +855,8 @@ The Naturally Non-Vegetated class refers to land types with no vegetation cover.
 | FL             | Flood - recent flooding including beaver ponds     |
 | IS             | Island - vegetated or non vegetated     |
 | TF             | Tidal Flats - non vegetated feature associated with oceans     |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING      | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                       defined) |
@@ -875,8 +875,8 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 | LG             | Lagoon - water filled, includes treatment sites     |
 | BP             | Borrow Pit - associated with facility/infrastructure     |
 | OT             | Other - any not listed     |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING      | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
@@ -897,8 +897,8 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 | BR             | Bryoid - mosses and lichens     |
 | OM             | Open Muskeg - wetlands less than 10% tree cover     |
 | TN             | Tundra - flat treeless plains     |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
@@ -958,8 +958,8 @@ Disturbance identifies the type of disturbance history that has occurred or is o
 | OT             | Other - unknown or other damage |
 | DT             | Dead Tops or Trees - dead or dying trees, cause unknown |
 | SI             | Silviculture Treatments - Planting, Thinning, Seed Tree |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | INVALID_VALUE  | Source value is invalid (e.g. the disturbance code does not match the expected format) |
 
