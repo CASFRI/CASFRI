@@ -1410,19 +1410,19 @@ UNION ALL
 SELECT '33.1'::text number,
        'TT_fvi01_stand_structure_validation'::text function_tested,
        'Test Horizontal stand'::text description,
-       TT_fvi01_stand_structure_validation('H', '') passed
+       TT_fvi01_stand_structure_validation('H', '', '', '', '', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '33.2'::text number,
        'TT_fvi01_stand_structure_validation'::text function_tested,
        'Test nfl'::text description,
-       TT_fvi01_stand_structure_validation('S', 'ST') IS FALSE passed
+       TT_fvi01_stand_structure_validation('S', 'ST','', '', '', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '33.3'::text number,
        'TT_fvi01_stand_structure_validation'::text function_tested,
        'Test not nfl'::text description,
-       TT_fvi01_stand_structure_validation('', '') passed
+       TT_fvi01_stand_structure_validation('', '', '', '', '', '', '') IS FALSE passed
 ---------------------------------------------------------
  -- TT_fvi01_countOfNotNull
 ---------------------------------------------------------
