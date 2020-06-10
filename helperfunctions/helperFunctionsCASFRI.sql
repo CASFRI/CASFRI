@@ -1269,6 +1269,92 @@ RETURNS TABLE (ttable text,
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
+-------------------------------------------------------
+-- Create a function that create the constraint in a non 
+-- blocking way and return TRUE or FALSE upon succesfull completion
+-------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_AddConstraint(name, name, text, text[], text[]);
+CREATE OR REPLACE FUNCTION TT_AddConstraint(
+  schemaName name,
+  tableName name,
+  cType text,
+  args text[],
+  lookup_vals text[] DEFAULT NULL
+)
+RETURNS RECORD AS $$ 
+  DECLARE
+    acceptableCType text[] = ARRAY['PK', 'FK', 'NOTNULL', 'CHECK', 'LOOKUP', 'LOOKUPTABLE'];
+    nbArgs int[] = ARRAY[1, 4, 1, 2, 2, 2];
+    queryStr text;
+  BEGIN
+    cType = upper(cType);
+    BEGIN
+      IF NOT cType = ANY (acceptableCType) THEN
+        RAISE EXCEPTION 'TT_AddConstraint(): ERROR invalid constraint type (%)...', cType;
+      END IF;
+      IF cardinality(args) != nbArgs[array_position(acceptableCType, cType)] THEN
+        RAISE EXCEPTION 'TT_AddConstraint(): ERROR invalid number of arguments (%). Should be %...', cardinality(args), nbArgs[array_position(acceptableCType, cType)];
+      END IF;
+      queryStr = 'ALTER TABLE ' || schemaName || '.' || tableName || chr(10); 
+      CASE WHEN cType = 'PK' THEN
+             queryStr = 'SELECT constraint_name FROM information_schema.table_constraints
+                         WHERE table_schema = ''' || schemaName || '''
+                         AND table_name = ''' || tableName || '''
+                         AND constraint_type = ''PRIMARY KEY'';';
+RAISE NOTICE '11 queryStr = %', queryStr;
+             EXECUTE queryStr INTO queryStr;
+RAISE NOTICE '22 queryStr = %', queryStr;
+             IF queryStr IS NULL THEN
+               queryStr = '';
+             ELSE 
+               queryStr = 'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                        'DROP CONSTRAINT IF EXISTS ' || queryStr || ' CASCADE;' || chr(10);
+             END IF;
+             queryStr = queryStr || 'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                                    'ADD PRIMARY KEY (' || args[1] || ');';
+RAISE NOTICE '33 queryStr = %', queryStr;
+
+           WHEN cType = 'FK' THEN
+             queryStr = queryStr || 'ADD FOREIGN KEY (' || args[1] || ') ' ||
+                                    'REFERENCES ' || args[2] || '.' || args[3] || ' (' || args[4] || ') MATCH FULL;';
+           
+           WHEN cType = 'NOTNULL' THEN
+             queryStr = queryStr || 'ALTER COLUMN ' || args[1] || ' SET NOT NULL;';
+           
+           WHEN cType = 'CHECK' THEN
+             queryStr = queryStr || 'DROP CONSTRAINT IF EXISTS ' || args[1] || ';' || chr(10) ||
+                                    'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                                    'ADD CONSTRAINT ' || args[1] || chr(10) ||
+                                    'CHECK (' || args[2] || ');';
+
+           WHEN cType = 'LOOKUP' THEN
+             queryStr = 'DROP TABLE IF EXISTS ' || args[1] || '.' || args[2] || '_codes CASCADE;' || chr(10) || chr(10) ||
+
+                        'CREATE TABLE ' || args[1] || '.' || args[2] || '_codes AS' || chr(10) ||
+                        'SELECT * FROM (VALUES (''' || array_to_string(lookup_vals, '''), (''') || ''')) AS t(code);' || chr(10) || chr(10) ||
+
+                        'ALTER TABLE ' || args[1] || '.' || args[2] || '_codes' || chr(10) ||
+                        'ADD PRIMARY KEY (code);' || chr(10) || chr(10) ||
+
+                        'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                        'DROP CONSTRAINT IF EXISTS ' || tableName || '_' || args[2] || '_fk;' || chr(10) || chr(10) ||
+
+                        'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                        'ADD CONSTRAINT ' || tableName || '_' || args[2] || '_fk' || chr(10) ||
+                        'FOREIGN KEY (' || args[2] || ')' || chr(10) ||
+                        'REFERENCES ' || args[1] || '.' || args[2] || '_codes (code);';
+           ELSE
+             RAISE EXCEPTION 'TT_AddConstraint(): ERROR invalid constraint type (%)...', cType;
+      END CASE;
+      RAISE NOTICE 'TT_AddConstraint(): EXECUTING ''%''...', queryStr; 
+      EXECUTE queryStr;
+      RETURN (TRUE, queryStr);
+    EXCEPTION WHEN OTHERS THEN
+      RAISE NOTICE '%', SQLERRM;
+      RETURN (FALSE, queryStr);
+    END;
+  END; 
+$$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- Overwrite the TT_DefaultProjectErrorCode() function to define default error 
 -- codes for these helper functions...
