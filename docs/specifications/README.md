@@ -330,7 +330,7 @@ The attribute **PHOTO_YEAR_START** identifies the year in which the inventory wa
 
 | Values      | Description |
 | :---------- | :-------------- |
-| 1900 - 2020 | Earliest year of aerial photo acquisition |
+| 1900&#8209;2020 | Earliest year of aerial photo acquisition |
 
 
 ### PHOTO_YEAR_END
