@@ -65,8 +65,8 @@ CREATE TABLE translation_devel.sk01_utm01_nfl_devel AS
 SELECT * FROM translation.sk_utm01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.sk01_utm01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'sk01_utm01_nfl_devel', '_sk01_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'sk01', 1, 'sk_utm', 1, 200);
-SELECT * FROM TT_Translate_sk01_nfl_devel('rawfri', 'sk01_l1_to_sk_utm_l1_map_200', 'ogc_fid'); -- 3 s.
+SELECT TT_CreateMappingView('rawfri', 'sk01', 3, 'sk_utm', 1, 200);
+SELECT * FROM TT_Translate_sk01_nfl_devel('rawfri', 'sk01_l3_to_sk_utm_l1_map_200', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'sk01_utm01_nfl_devel');
 
 

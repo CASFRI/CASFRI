@@ -97,14 +97,14 @@ SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr');
 ------------------------
 SELECT TT_Prepare('translation', 'nb_nbi01_nfl', '_nb_nfl', 'ab_avi01_nfl'); -- used for both NB01 and NB02
 
-SELECT TT_CreateMappingView('rawfri', 'nb02', 1, 'nb', 1);
+SELECT TT_CreateMappingView('rawfri', 'nb02', 3, 'nb', 1);
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NB02';
 
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02_l1_to_nb_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02_l3_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl');
 

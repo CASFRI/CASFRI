@@ -117,7 +117,17 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_eco_devel');
 SELECT * FROM TT_Translate_bc08_lyr_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_lyr_devel');
 
-SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
+-- NFL needs one translation for each attribute
+SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, 200);
+SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l2_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_nfl_devel');
+
+SELECT TT_CreateMappingView('rawfri', 'bc08', 3, 'bc', 1, 200);
+SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l3_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_nfl_devel');
+
+SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1, 200);
+SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l4_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_nfl_devel');
 
 SELECT * FROM TT_Translate_bc08_geo_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 2 s.

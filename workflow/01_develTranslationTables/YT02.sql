@@ -62,8 +62,8 @@ CREATE TABLE translation_devel.yt02_yvi01_nfl_devel AS
 SELECT * FROM translation.yt_yvi01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.yt02_yvi01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_nfl_devel', '_yt02_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, 200);
-SELECT * FROM TT_Translate_yt02_nfl_devel('rawfri', 'yt02_l1_to_yt_l1_map_200', 'ogc_fid'); -- 3 s.
+SELECT TT_CreateMappingView('rawfri', 'yt02', 2, 'yt', 1, 200);
+SELECT * FROM TT_Translate_yt02_nfl_devel('rawfri', 'yt02_l2_to_yt_l1_map_200', 'ogc_fid'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_nfl_devel');
 
 

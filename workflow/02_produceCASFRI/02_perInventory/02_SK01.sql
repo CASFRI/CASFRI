@@ -97,14 +97,14 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
 ------------------------
 SELECT TT_Prepare('translation', 'sk_utm01_nfl', '_sk_nfl', 'ab_avi01_nfl');
 
-SELECT TT_CreateMappingView('rawfri', 'sk01', 1, 'sk_utm', 1);
+SELECT TT_CreateMappingView('rawfri', 'sk01', 3, 'sk_utm', 1);
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'SK01';
 
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l1_to_sk_utm_l1_map', 'ogc_fid'); 
+SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l3_to_sk_utm_l1_map', 'ogc_fid'); 
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl');
 

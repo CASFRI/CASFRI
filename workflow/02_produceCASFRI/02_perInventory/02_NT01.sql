@@ -100,19 +100,19 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NT01';
 
 -- Add translated ones
 -- Layer 1
-SELECT TT_CreateMappingView('rawfri', 'nt01', 1, 'nt', 1); 
+SELECT TT_CreateMappingView('rawfri', 'nt01', 3, 'nt', 1); 
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l1_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l3_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl');
 
 -- Layer 2 using NT layer 1 generic translation table
 
-SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt', 1);
+SELECT TT_CreateMappingView('rawfri', 'nt01', 4, 'nt', 1);
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l2_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l4_to_nt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl');
 

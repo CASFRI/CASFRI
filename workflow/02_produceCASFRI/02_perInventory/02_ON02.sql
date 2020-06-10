@@ -95,14 +95,14 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_lyr');
 ------------------------
 SELECT TT_Prepare('translation', 'on_fim02_nfl', '_on_nfl', 'ab_avi01_nfl');
 
-SELECT TT_CreateMappingView('rawfri', 'on02', 1, 'on', 1);
+SELECT TT_CreateMappingView('rawfri', 'on02', 3, 'on', 1);
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'ON02';
 
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_on_nfl('rawfri', 'on02_l1_to_on_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_on_nfl('rawfri', 'on02_l3_to_on_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_nfl');
 

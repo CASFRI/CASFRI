@@ -1269,6 +1269,92 @@ RETURNS TABLE (ttable text,
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
+-------------------------------------------------------
+-- Create a function that create the constraint in a non 
+-- blocking way and return TRUE or FALSE upon succesfull completion
+-------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_AddConstraint(name, name, text, text[], text[]);
+CREATE OR REPLACE FUNCTION TT_AddConstraint(
+  schemaName name,
+  tableName name,
+  cType text,
+  args text[],
+  lookup_vals text[] DEFAULT NULL
+)
+RETURNS RECORD AS $$ 
+  DECLARE
+    acceptableCType text[] = ARRAY['PK', 'FK', 'NOTNULL', 'CHECK', 'LOOKUP', 'LOOKUPTABLE'];
+    nbArgs int[] = ARRAY[1, 4, 1, 2, 2, 2];
+    queryStr text;
+  BEGIN
+    cType = upper(cType);
+    BEGIN
+      IF NOT cType = ANY (acceptableCType) THEN
+        RAISE EXCEPTION 'TT_AddConstraint(): ERROR invalid constraint type (%)...', cType;
+      END IF;
+      IF cardinality(args) != nbArgs[array_position(acceptableCType, cType)] THEN
+        RAISE EXCEPTION 'TT_AddConstraint(): ERROR invalid number of arguments (%). Should be %...', cardinality(args), nbArgs[array_position(acceptableCType, cType)];
+      END IF;
+      queryStr = 'ALTER TABLE ' || schemaName || '.' || tableName || chr(10); 
+      CASE WHEN cType = 'PK' THEN
+             queryStr = 'SELECT constraint_name FROM information_schema.table_constraints
+                         WHERE table_schema = ''' || schemaName || '''
+                         AND table_name = ''' || tableName || '''
+                         AND constraint_type = ''PRIMARY KEY'';';
+RAISE NOTICE '11 queryStr = %', queryStr;
+             EXECUTE queryStr INTO queryStr;
+RAISE NOTICE '22 queryStr = %', queryStr;
+             IF queryStr IS NULL THEN
+               queryStr = '';
+             ELSE 
+               queryStr = 'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                        'DROP CONSTRAINT IF EXISTS ' || queryStr || ' CASCADE;' || chr(10);
+             END IF;
+             queryStr = queryStr || 'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                                    'ADD PRIMARY KEY (' || args[1] || ');';
+RAISE NOTICE '33 queryStr = %', queryStr;
+
+           WHEN cType = 'FK' THEN
+             queryStr = queryStr || 'ADD FOREIGN KEY (' || args[1] || ') ' ||
+                                    'REFERENCES ' || args[2] || '.' || args[3] || ' (' || args[4] || ') MATCH FULL;';
+           
+           WHEN cType = 'NOTNULL' THEN
+             queryStr = queryStr || 'ALTER COLUMN ' || args[1] || ' SET NOT NULL;';
+           
+           WHEN cType = 'CHECK' THEN
+             queryStr = queryStr || 'DROP CONSTRAINT IF EXISTS ' || args[1] || ';' || chr(10) ||
+                                    'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                                    'ADD CONSTRAINT ' || args[1] || chr(10) ||
+                                    'CHECK (' || args[2] || ');';
+
+           WHEN cType = 'LOOKUP' THEN
+             queryStr = 'DROP TABLE IF EXISTS ' || args[1] || '.' || args[2] || '_codes CASCADE;' || chr(10) || chr(10) ||
+
+                        'CREATE TABLE ' || args[1] || '.' || args[2] || '_codes AS' || chr(10) ||
+                        'SELECT * FROM (VALUES (''' || array_to_string(lookup_vals, '''), (''') || ''')) AS t(code);' || chr(10) || chr(10) ||
+
+                        'ALTER TABLE ' || args[1] || '.' || args[2] || '_codes' || chr(10) ||
+                        'ADD PRIMARY KEY (code);' || chr(10) || chr(10) ||
+
+                        'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                        'DROP CONSTRAINT IF EXISTS ' || tableName || '_' || args[2] || '_fk;' || chr(10) || chr(10) ||
+
+                        'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
+                        'ADD CONSTRAINT ' || tableName || '_' || args[2] || '_fk' || chr(10) ||
+                        'FOREIGN KEY (' || args[2] || ')' || chr(10) ||
+                        'REFERENCES ' || args[1] || '.' || args[2] || '_codes (code);';
+           ELSE
+             RAISE EXCEPTION 'TT_AddConstraint(): ERROR invalid constraint type (%)...', cType;
+      END CASE;
+      RAISE NOTICE 'TT_AddConstraint(): EXECUTING ''%''...', queryStr; 
+      EXECUTE queryStr;
+      RETURN (TRUE, queryStr);
+    EXCEPTION WHEN OTHERS THEN
+      RAISE NOTICE '%', SQLERRM;
+      RETURN (FALSE, queryStr);
+    END;
+  END; 
+$$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- Overwrite the TT_DefaultProjectErrorCode() function to define default error 
 -- codes for these helper functions...
@@ -1796,16 +1882,20 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- stand_structure text
 -- nfl text
 --
--- Catch the cases where stand structure will be NOT_APPLICABLE because row is NFL.
--- Will be every row where overstory type class attribute has an NFL value. Except those
--- cases where stand structure is Horizontal.
+-- Catch the cases where stand structure will be NOT_APPLICABLE because stand is
+-- not horizontal and there is no species info.
 --
--- e.g. TT_fvi01_stand_structure_validation(nfl, stand_structure)
+-- e.g. TT_fvi01_stand_structure_validation(stand_structure, species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1, species_1_layer2, species_2_layer2, species_3_layer2, species_4_layer2)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text);
+--DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text,text,text,text,text,text);
 CREATE OR REPLACE FUNCTION TT_fvi01_stand_structure_validation(
   stand_structure text,
-  typeclass text
+  species_1_layer1 text, 
+  species_2_layer1 text, 
+  species_3_layer1 text,
+  species_1_layer2 text,
+  species_2_layer2 text,
+  species_3_layer2 text
 )
 RETURNS boolean AS $$		
   BEGIN
@@ -1814,13 +1904,14 @@ RETURNS boolean AS $$
       RETURN TRUE;
     END IF;
     
-    -- if overstory species is NFL (and stand structure not H), return FALSE 
-    IF tt_matchList(typeclass, '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'', ''AP'',''BP'',''EL'',''GP'',''TS'', ''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}') THEN
-      RETURN FALSE;
+    -- if any species info, return TRUE 
+    IF tt_notEmpty(species_1_layer1) OR tt_notEmpty(species_2_layer1) OR tt_notEmpty(species_3_layer1)
+     OR tt_notEmpty(species_1_layer2) OR tt_notEmpty(species_2_layer2) OR tt_notEmpty(species_3_layer2) THEN
+      RETURN TRUE;
     END IF;    
     
-    -- other cases return true
-    RETURN TRUE;
+    -- other cases return false
+    RETURN FALSE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -2943,8 +3034,8 @@ $$ LANGUAGE plpgsql;
 -- zero_is_null
 -- 
 -- Use the custom helper function:  
--- to determine if the row contains an NFL record. If it does assign a string
--- so it can be counted as a non-null layer.
+-- to determine if the row contains 1 - 3 NFL records. If it does assign a string
+-- for each NFL layer so they can be counted as a non-null layer.
 -- 
 -- Pass vals1, vals2 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
@@ -2962,21 +3053,34 @@ CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
 )
 RETURNS int AS $$
   DECLARE
-    is_nfl text;
+    is_nfl1 text;
+    is_nfl2 text;
+    is_nfl3 text;
   BEGIN
 
-    -- if any of the nfl functions return true, we know there is an NFL record.
-    -- set is_nfl to be a valid string.
-    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) 
-    OR tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) 
-    OR tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
-      is_nfl = 'a_value';
+    -- if non_for_veg is present, add a string.
+    IF tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
+      is_nfl1 = 'a_value';
     ELSE
-      is_nfl = NULL::text;
+      is_nfl1 = NULL::text;
     END IF;
-        
+
+    -- if nat_non_veg is present, add a string.
+    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
+      is_nfl2 = 'a_value';
+    ELSE
+      is_nfl2 = NULL::text;
+    END IF;
+
+    -- if non_for_anth is present, add a string.
+    IF tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
+      is_nfl3 = 'a_value';
+    ELSE
+      is_nfl3 = NULL::text;
+    END IF;
+
     -- call countOfNotNull
-    RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, zero_is_null);
+    RETURN tt_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
 
   END; 
 $$ LANGUAGE plpgsql;
