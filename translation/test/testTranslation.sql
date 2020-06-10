@@ -87,7 +87,10 @@ SELECT * FROM TT_Translate_yt_cas_test('rawfri', 'yt02_l1_to_yt_l1_map_600');
 -- Create an ordered VIEW on the CAS table
 CREATE OR REPLACE VIEW casfri50_test.cas_all_new_ordered AS
 SELECT * FROM casfri50_test.cas_all_new
-ORDER BY cas_id;
+-- ORDER BY all columns to ensure that only identical row can be intermixed
+ORDER BY cas_id, inventory_id, orig_stand_id, stand_structure, 
+         num_of_layers, map_sheet_id, casfri_area, 
+         casfri_perimeter, src_inv_area, stand_photo_year; 
 ------------------------
 SELECT count(*) FROM casfri50_test.cas_all_new; -- 7100
 -------------------------------------------------------
@@ -155,7 +158,11 @@ SELECT * FROM TT_Translate_yt_dst_test('rawfri', 'yt02_l1_to_yt_l1_map_7230');
 -- Create an ordered VIEW on the DST table
 CREATE OR REPLACE VIEW casfri50_test.dst_all_new_ordered AS
 SELECT * FROM casfri50_test.dst_all_new
-ORDER BY cas_id, layer;
+-- ORDER BY all columns to ensure that only identical row can be intermixed
+ORDER BY cas_id, layer, 
+         dist_type_1, dist_year_1, dist_ext_upper_1, dist_ext_lower_1,
+         dist_type_2, dist_year_2, dist_ext_upper_2, dist_ext_lower_2,
+         dist_type_3, dist_year_3, dist_ext_upper_3, dist_ext_lower_3;
 ------------------------
 SELECT count(*) FROM casfri50_test.dst_all_new; -- 7860
 -------------------------------------------------------
@@ -218,7 +225,8 @@ SELECT * FROM TT_Translate_yt_eco_test('rawfri', 'yt02_l1_to_yt_l1_map_600');
 -- Create an ordered VIEW on the ECO table
 CREATE OR REPLACE VIEW casfri50_test.eco_all_new_ordered AS
 SELECT * FROM casfri50_test.eco_all_new
-ORDER BY cas_id;
+-- ORDER BY all columns to ensure that only identical row can be intermixed
+ORDER BY cas_id, wetland_type, wet_veg_cover, wet_landform_mod, wet_local_mod, eco_site;
 ------------------------
 SELECT count(*) FROM casfri50_test.eco_all_new; -- 1203
 -------------------------------------------------------
@@ -317,7 +325,11 @@ SELECT * FROM TT_Translate_yt_lyr_test('rawfri', 'yt02_l1_to_yt_l1_map_1300');
 -- Create an ordered VIEW on the LYR table
 CREATE OR REPLACE VIEW casfri50_test.lyr_all_new_ordered AS
 SELECT * FROM casfri50_test.lyr_all_new
-ORDER BY cas_id, layer;
+-- ORDER BY all columns to ensure that only identical row can be intermixed
+ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_closure_upper, crown_closure_lower, height_upper, height_lower, productive_for, 
+         species_1, species_per_1, species_2, species_per_2, species_3, species_per_3, species_4, species_per_4, species_5, species_per_5, 
+         species_6, species_per_6, species_7, species_per_7, species_8, species_per_8, species_9, species_per_9, species_10, species_per_10, 
+         origin_upper, origin_lower, site_class, site_index;
 ------------------------
 SELECT count(*) FROM casfri50_test.lyr_all_new; -- 12912
 -------------------------------------------------------
@@ -396,7 +408,9 @@ SELECT * FROM TT_Translate_yt_nfl_test('rawfri', 'yt02_l1_to_yt_l1_map_1850');
 -- Create an ordered VIEW on the NFL table
 CREATE OR REPLACE VIEW casfri50_test.nfl_all_new_ordered AS
 SELECT * FROM casfri50_test.nfl_all_new
-ORDER BY cas_id, layer;
+-- ORDER BY all columns to ensure that only identical row can be intermixed
+ORDER BY cas_id, layer, layer_rank, soil_moist_reg, structure_per, crown_closure_upper, crown_closure_lower, 
+         height_upper, height_lower, nat_non_veg, non_for_anth, non_for_veg;
 ------------------------
 SELECT count(*) FROM casfri50_test.nfl_all_new; -- 8777
 ---------------------------------------------------------
