@@ -90,7 +90,7 @@ SELECT count(*), sp1_h, sp1_s, CONCAT(sp1_h, sp1_s) FROM rawfri.sk06 GROUP BY sp
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT a.cas_id, b.nvsl, b.aquatic_class, b.luc, b.transp_class, b.shrub1, b.herb1, a.nat_non_veg, a.non_for_anth, a.non_for_veg
-FROM TT_Translate_sk02_nfl_devel('rawfri', 'sk02_l1_to_sk_sfv_l1_map_200') a, rawfri.sk02_l1_to_sk_sfv_l1_map_200_nfl b
+FROM TT_Translate_sk06_nfl_devel('rawfri', 'sk02_l1_to_sk_sfv_l1_map_200') a, rawfri.sk06_l1_to_sk_sfv_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 -- ECO ATTRIBUTES

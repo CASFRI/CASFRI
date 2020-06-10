@@ -1,15 +1,15 @@
 ------------------------------------------------------------------------------
--- PostgreSQL Table Tranlation Engine - Test file
--- Version 0.1 for PostgreSQL 9.x
+-- CASFRI Helper functions test file for CASFR v5 beta
+-- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
+-- https://github.com/edwardsmarc/casfri
 --
 -- This is free software; you can redistribute and/or modify it under
 -- the terms of the GNU General Public Licence. See the COPYING file.
 --
--- Copyright (C) 2018-2020 Pierre Racine <pierre.racine@sbf.ulaval.ca>,
+-- Copyright (C) 2018-2020 Pierre Racine <pierre.racine@sbf.ulaval.ca>, 
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
---
 -------------------------------------------------------------------------------
 SET lc_messages TO 'en_US.UTF-8';
 
@@ -47,21 +47,21 @@ SELECT * FROM (
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'TT_vri01_non_for_veg_validation'::text function_tested,           1 maj_num, 4 nb_test UNION ALL
-    SELECT 'TT_vri01_nat_non_veg_validation'::text function_tested,           2 maj_num, 5 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_anth_validation'::text function_tested,          3 maj_num, 3 nb_test UNION ALL
-    SELECT 'TT_vri01_origin_translation'::text function_tested,               4 maj_num, 1 nb_test UNION ALL
-    SELECT 'TT_vri01_site_index_translation'::text function_tested,           5 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,          6 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,          7 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,         8 maj_num, 2 nb_test UNION ALL
-    SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,         9 maj_num, 9 nb_test UNION ALL
-    SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,     10 maj_num, 5 nb_test UNION ALL
-    SELECT 'TT_nbi01_wetland_validation'::text function_tested,              12 maj_num, 4 nb_test UNION ALL
-    SELECT 'TT_nbi01_wetland_translation'::text function_tested,             13 maj_num, 4 nb_test UNION ALL
+    SELECT 'TT_vri01_non_for_veg_validation'::text function_tested,           1 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_vri01_nat_non_veg_validation'::text function_tested,           2 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_vri01_non_for_anth_validation'::text function_tested,          3 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_vri01_origin_translation'::text function_tested,               4 maj_num,  1 nb_test UNION ALL
+    SELECT 'TT_vri01_site_index_translation'::text function_tested,           5 maj_num,  2 nb_test UNION ALL
+    SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,          6 maj_num,  2 nb_test UNION ALL
+    SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,          7 maj_num,  2 nb_test UNION ALL
+    SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,         8 maj_num,  2 nb_test UNION ALL
+    SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,         9 maj_num,  9 nb_test UNION ALL
+    SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,     10 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_nbi01_wetland_validation'::text function_tested,              12 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_nbi01_wetland_translation'::text function_tested,             13 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
-    SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num, 5 nb_test UNION ALL
-    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 20 nb_test UNION ALL
+    SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 23 nb_test UNION ALL
     SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_tie01_crownclosure_translation'::text function_tested,        18 maj_num,  8 nb_test UNION ALL
     SELECT 'TT_tie01_height_translation'::text function_tested,              19 maj_num,  9 nb_test UNION ALL
@@ -513,8 +513,8 @@ UNION ALL
 SELECT '16.2'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple nfl1 first argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'nfl1', NULL, NULL, 'nfl1') = 'DROP VIEW IF EXISTS rawfri.ab06_nfl1 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_nfl1 AS
+       TT_CreateFilterView('rawfri', 'ab06', 'nfl3', NULL, NULL, 'nfl3') = 'DROP VIEW IF EXISTS rawfri.ab06_nfl3 CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_nfl3 AS
 SELECT nat_non, anth_veg, anth_non, nfl
 FROM rawfri.ab06;' passed
 ---------------------------------------------------------
@@ -531,8 +531,8 @@ UNION ALL
 SELECT '16.4'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Group of many attributes for selectAttrList'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1, nfl1, dst1', NULL, NULL, 'lyr1_nfl1_dst1') = 'DROP VIEW IF EXISTS rawfri.ab06_lyr1_nfl1_dst1 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_nfl1_dst1 AS
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1, nfl3, dst1', NULL, NULL, 'lyr1_nfl3_dst1') = 'DROP VIEW IF EXISTS rawfri.ab06_lyr1_nfl3_dst1 CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_nfl3_dst1 AS
 SELECT sp1, sp2, sp3, nat_non, anth_veg, anth_non, nfl, mod1, mod1_yr, mod1_ext, mod2, mod2_yr, mod2_ext
 FROM rawfri.ab06;' passed
 ---------------------------------------------------------
@@ -554,9 +554,9 @@ UNION ALL
 SELECT '16.5'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl1', NULL, 'lyr1_for_nfl1') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1 AS
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl3', NULL, 'lyr1_for_nfl3') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3 CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3 AS
 SELECT sp1, sp2, sp3
 FROM rawfri.ab06
 WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
@@ -578,9 +578,9 @@ UNION ALL
 SELECT '16.7'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl1, nfl2', NULL, 'lyr1_for_nfl1_nfl2') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_nfl2 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1_nfl2 AS
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl3, nfl4', NULL, 'lyr1_for_nfl3_nfl4') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_nfl4 CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_nfl4 AS
 SELECT sp1, sp2, sp3
 FROM rawfri.ab06
 WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
@@ -596,9 +596,9 @@ UNION ALL
 SELECT '16.8'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''and'' second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl1, nfl2]', NULL, 'lyr1_for_nfl1_and_nfl2') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_and_nfl2 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1_and_nfl2 AS
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl3, nfl4]', NULL, 'lyr1_for_nfl3_and_nfl4') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4 CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_and_nfl4 AS
 SELECT sp1, sp2, sp3
 FROM rawfri.ab06
 WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
@@ -616,9 +616,9 @@ UNION ALL
 SELECT '16.9'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''or/and'' second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'dst1, [nfl1, nfl2]', NULL, 'lyr1_for_dst_or_nfl1_and_nfl2') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_dst_or_nfl1_and_nfl2 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_dst_or_nfl1_and_nfl2 AS
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'dst1, [nfl3, nfl4]', NULL, 'lyr1_for_dst_or_nfl3_and_nfl4') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_dst_or_nfl3_and_nfl4 CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_dst_or_nfl3_and_nfl4 AS
 SELECT sp1, sp2, sp3
 FROM rawfri.ab06
 WHERE (TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR 
@@ -648,6 +648,22 @@ SELECT '16.10'::text number,
 CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1_and_nfl2_or_dst AS
 SELECT sp1, sp2, sp3
 FROM rawfri.ab06
+WHERE (TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR 
+      (TT_NotEmpty(mod1_yr::text) AND mod1_yr::text != ''0'') OR 
+      (TT_NotEmpty(mod1_ext::text) AND mod1_ext::text != ''0'') OR 
+      (TT_NotEmpty(mod2::text) AND mod2::text != ''0'') OR 
+      (TT_NotEmpty(mod2_yr::text) AND mod2_yr::text != ''0'') OR 
+      (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0'');' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '16.11'::text number,
+       'TT_CreateFilterView'::text function_tested,
+       'Complex ''and/or'' second argument test'::text description,
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl3, nfl4], dst1', NULL, 'lyr1_for_nfl3_and_nfl4_or_dst') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4_or_dst CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_and_nfl4_or_dst AS
+SELECT sp1, sp2, sp3
+FROM rawfri.ab06
 WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
         (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
         (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -666,12 +682,29 @@ WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
         (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.11'::text number,
+SELECT '16.12'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple third argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl1, nfl2', 'dst1', 'lyr1_for_nfl1_or_nfl2_not_dst') = 
        'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_or_nfl2_not_dst CASCADE;
 CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1_or_nfl2_not_dst AS
+SELECT sp1, sp2, sp3
+FROM rawfri.ab06
+WHERE NOT
+       ((TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR 
+      (TT_NotEmpty(mod1_yr::text) AND mod1_yr::text != ''0'') OR 
+      (TT_NotEmpty(mod1_ext::text) AND mod1_ext::text != ''0'') OR 
+      (TT_NotEmpty(mod2::text) AND mod2::text != ''0'') OR 
+      (TT_NotEmpty(mod2_yr::text) AND mod2_yr::text != ''0'') OR 
+      (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0''));' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '16.13'::text number,
+       'TT_CreateFilterView'::text function_tested,
+       'Simple third argument test'::text description,
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl3, nfl4', 'dst1', 'lyr1_for_nfl3_or_nfl4_not_dst') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_or_nfl4_not_dst CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_or_nfl4_not_dst AS
 SELECT sp1, sp2, sp3
 FROM rawfri.ab06
 WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
@@ -691,12 +724,29 @@ WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.12'::text number,
+SELECT '16.14'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple ''and'' second argument with third argument test'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl1, nfl2]', 'dst1', 'lyr1_for_nfl1_and_nfl2_not_dst') = 
        'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_and_nfl2_not_dst CASCADE;
 CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1_and_nfl2_not_dst AS
+SELECT sp1, sp2, sp3
+FROM rawfri.ab06
+WHERE NOT
+       ((TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR 
+      (TT_NotEmpty(mod1_yr::text) AND mod1_yr::text != ''0'') OR 
+      (TT_NotEmpty(mod1_ext::text) AND mod1_ext::text != ''0'') OR 
+      (TT_NotEmpty(mod2::text) AND mod2::text != ''0'') OR 
+      (TT_NotEmpty(mod2_yr::text) AND mod2_yr::text != ''0'') OR 
+      (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0''));' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '16.15'::text number,
+       'TT_CreateFilterView'::text function_tested,
+       'Simple ''and'' second argument with third argument test'::text description,
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl3, nfl4]', 'dst1', 'lyr1_for_nfl3_and_nfl4_not_dst') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4_not_dst CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_and_nfl4_not_dst AS
 SELECT sp1, sp2, sp3
 FROM rawfri.ab06
 WHERE (((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
@@ -718,12 +768,12 @@ WHERE (((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
         (TT_NotEmpty(mod2_ext::text) AND mod2_ext::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.13'::text number,
+SELECT '16.16'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test empty ''eco'' keywords'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'eco', 'nfl1, eco', NULL, 'eco_for_nfl1_or_eco') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl1_or_eco CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_eco_for_nfl1_or_eco AS
+       TT_CreateFilterView('rawfri', 'ab06', 'eco', 'nfl3, eco', NULL, 'eco_for_nfl3_or_eco') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl3_or_eco CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_eco_for_nfl3_or_eco AS
 SELECT *
 FROM rawfri.ab06
 WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
@@ -732,12 +782,12 @@ WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       (TT_NotEmpty(nfl::text) AND nfl::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.14'::text number,
+SELECT '16.17'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test empty keywords in ''and'' second argument'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'eco', '[nfl1, eco]', 'dst2', 'eco_for_nfl1_and_eco_not_dst2') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl1_and_eco_not_dst2 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_eco_for_nfl1_and_eco_not_dst2 AS
+       TT_CreateFilterView('rawfri', 'ab06', 'eco', '[nfl3, eco]', 'dst2', 'eco_for_nfl3_and_eco_not_dst2') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl3_and_eco_not_dst2 CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_eco_for_nfl3_and_eco_not_dst2 AS
 SELECT *
 FROM rawfri.ab06
 WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
@@ -746,12 +796,12 @@ WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
       (TT_NotEmpty(nfl::text) AND nfl::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.15'::text number,
+SELECT '16.18'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with some source attributes in each parameter'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1, wkb_geometry', '[nfl1, inventory_id, nfl2]', 'dst1, trm', 'extra_lyr1_for_nfl1_and_nfl2_not_dst') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_extra_lyr1_for_nfl1_and_nfl2_not_dst CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_extra_lyr1_for_nfl1_and_nfl2_not_dst AS
+       TT_CreateFilterView('rawfri', 'ab06', 'lyr1, wkb_geometry', '[nfl3, inventory_id, nfl4]', 'dst1, trm', 'extra_lyr1_for_nfl3_and_nfl4_not_dst') = 
+       'DROP VIEW IF EXISTS rawfri.ab06_extra_lyr1_for_nfl3_and_nfl4_not_dst CASCADE;
+CREATE OR REPLACE VIEW rawfri.ab06_extra_lyr1_for_nfl3_and_nfl4_not_dst AS
 SELECT sp1, sp2, sp3, wkb_geometry
 FROM rawfri.ab06
 WHERE (((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
@@ -776,7 +826,7 @@ WHERE (((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR
         (TT_NotEmpty(trm::text) AND trm::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.16'::text number,
+SELECT '16.19'::text number,
        'TT_CreateFilterView'::text function_tested,
        'All arguments NULL'::text description,
        TT_CreateFilterView('rawfri', 'ab06', NULL, NULL, NULL, 'null') = 
@@ -786,7 +836,7 @@ SELECT *
 FROM rawfri.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.17'::text number,
+SELECT '16.20'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test one CASFRI attribute to be replaced by source attributes'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'CAS_ID', NULL, NULL, 'cas_id') = 
@@ -796,7 +846,7 @@ SELECT inventory_id, src_filename, trm_1, poly_num, ogc_fid
 FROM rawfri.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.18'::text number,
+SELECT '16.21'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test CASFRI attribute inside ''and'' braquets'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'cas_id', '[lyr1, cas_id]', 'nat_non_veg', 'lyr1_cas_id_nfl') = 
@@ -804,7 +854,7 @@ SELECT '16.18'::text number,
 CREATE OR REPLACE VIEW rawfri.ab06_lyr1_cas_id_nfl AS
 SELECT inventory_id, src_filename, trm_1, poly_num, ogc_fid
 FROM rawfri.ab06
-WHERE (((TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR 
+WHERE ((TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR 
         (TT_NotEmpty(sp2::text) AND sp2::text != ''0'') OR 
         (TT_NotEmpty(sp3::text) AND sp3::text != ''0''))
        AND
@@ -813,12 +863,10 @@ WHERE (((TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR
         (TT_NotEmpty(trm_1::text) AND trm_1::text != ''0'') OR 
         (TT_NotEmpty(poly_num::text) AND poly_num::text != ''0'') OR 
         (TT_NotEmpty(ogc_fid::text) AND ogc_fid::text != ''0''))
-      )
-      AND NOT
-       ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0''));' passed
+      ;' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.19'::text number,
+SELECT '16.22'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with whereOutAttrList attribute only'::text description,
        TT_CreateFilterView('rawfri', 'ab06', NULL, NULL, 'LYR1', 'not_lyr1') = 
@@ -832,7 +880,7 @@ WHERE NOT
       (TT_NotEmpty(sp3::text) AND sp3::text != ''0''));' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '16.20'::text number,
+SELECT '16.23'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with whereOutAttrList attribute only'::text description,
        TT_CreateFilterView('rawfri', 'ab06', 'site_class, LYR1', NULL, NULL, 'site_class') = 
