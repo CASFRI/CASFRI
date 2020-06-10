@@ -94,14 +94,33 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_nfl', '_bc08_nfl', 'ab_avi01_nfl'); -- used for both BC08 and BC10
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1, 'bc', 1);
-
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'BC08';
 
+-- layer 1
+SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1);
+
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 16h38m
-SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l2_to_bc_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
+
+-- layer 2
+SELECT TT_CreateMappingView('rawfri', 'bc08', 3, 'bc', 1);
+
+-- Add translated ones
+INSERT INTO casfri50.nfl_all -- 16h38m
+SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l3_to_bc_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
+
+-- layer 4
+SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1);
+
+-- Add translated ones
+INSERT INTO casfri50.nfl_all -- 16h38m
+SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l4_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
 COMMIT;
