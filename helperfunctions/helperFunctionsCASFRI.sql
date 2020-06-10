@@ -2948,8 +2948,8 @@ $$ LANGUAGE plpgsql;
 -- zero_is_null
 -- 
 -- Use the custom helper function:  
--- to determine if the row contains an NFL record. If it does assign a string
--- so it can be counted as a non-null layer.
+-- to determine if the row contains 1 - 3 NFL records. If it does assign a string
+-- for each NFL layer so they can be counted as a non-null layer.
 -- 
 -- Pass vals1, vals2 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
@@ -2967,21 +2967,34 @@ CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
 )
 RETURNS int AS $$
   DECLARE
-    is_nfl text;
+    is_nfl1 text;
+    is_nfl2 text;
+    is_nfl3 text;
   BEGIN
 
-    -- if any of the nfl functions return true, we know there is an NFL record.
-    -- set is_nfl to be a valid string.
-    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) 
-    OR tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) 
-    OR tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
-      is_nfl = 'a_value';
+    -- if non_for_veg is present, add a string.
+    IF tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
+      is_nfl1 = 'a_value';
     ELSE
-      is_nfl = NULL::text;
+      is_nfl1 = NULL::text;
     END IF;
-        
+
+    -- if nat_non_veg is present, add a string.
+    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
+      is_nfl2 = 'a_value';
+    ELSE
+      is_nfl2 = NULL::text;
+    END IF;
+
+    -- if non_for_anth is present, add a string.
+    IF tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
+      is_nfl3 = 'a_value';
+    ELSE
+      is_nfl3 = NULL::text;
+    END IF;
+
     -- call countOfNotNull
-    RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, zero_is_null);
+    RETURN tt_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
 
   END; 
 $$ LANGUAGE plpgsql;

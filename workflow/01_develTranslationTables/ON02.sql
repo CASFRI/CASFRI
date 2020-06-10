@@ -76,9 +76,9 @@ CREATE TABLE translation_devel.on02_fim02_nfl_devel AS
 SELECT * FROM translation.on_fim02_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.on02_fim02_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'on02_fim02_nfl_devel', '_on02_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'on02', 1, 'on', 1, 200);
-SELECT * FROM TT_Translate_on01_nfl_devel('rawfri', 'on02_l1_to_on_l1_map_200', 'ogc_fid'); -- 3 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_nfl_devel');
+SELECT TT_CreateMappingView('rawfri', 'on02', 3, 'on', 1, 200);
+SELECT * FROM TT_Translate_on02_nfl_devel('rawfri', 'on02_l3_to_on_l1_map_200', 'ogc_fid'); -- 3 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'on02_fim02_nfl_devel');
 
 
 -- ECO ATTRIBUTES
