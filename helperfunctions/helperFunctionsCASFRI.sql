@@ -932,7 +932,7 @@ RETURNS text AS $$
     fullTableName text = TT_FullTableName(schemaName, tableName);
     mappingRec RECORD;
     sourceTableCols text[] = '{}';
-    keywordArr text[] = ARRAY['lyr1', 'lyr2', 'nfl1', 'nfl2', 'dst1', 'dst2', 'eco'];
+    keywordArr text[] = ARRAY['lyr1', 'lyr2', 'lyr3', 'nfl1', 'nfl2', 'nfl3', 'nfl4', 'nfl5', 'nfl6', 'dst1', 'dst2', 'eco'];
     keyword text;
     nb int;
     layer text;
@@ -989,7 +989,7 @@ RETURNS text AS $$
     FOREACH keyword IN ARRAY keywordArr LOOP
       -- Determine from which layer to grab the attributes
       layer = right(keyword, 1);
-      IF NOT layer IN ('1', '2') THEN layer = '1'; END IF;
+      IF NOT layer IN ('1', '2', '3', '4', '5', '6') THEN layer = '1'; END IF;
       
       -- Initialize the two attribute arrays, one for all of them and one for only contributing ones
       attArr = '{}';
@@ -1001,8 +1001,9 @@ RETURNS text AS $$
                         WHERE TT_NotEmpty(from_att)
       LOOP
         -- Pick attributes corresponding to keywords
-        IF ((keyword = 'lyr1' OR keyword = 'lyr2') AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
-           ((keyword = 'nfl1' OR keyword = 'nfl2') AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg')) OR
+        IF ((keyword = 'lyr1' OR keyword = 'lyr2' OR keyword = 'lyr3') AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
+           ((keyword = 'nfl1' OR keyword = 'nfl2' OR keyword = 'nfl3' OR 
+             keyword = 'nfl4' OR keyword = 'nfl5' OR keyword = 'nfl6') AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg')) OR
            ((keyword = 'dst1' OR keyword = 'dst2') AND (mappingRec.key = 'dist_type_1' OR mappingRec.key = 'dist_year_1' OR 
                                                         mappingRec.key = 'dist_ext_upper_1' OR mappingRec.key = 'dist_ext_lower_1' OR
                                                         mappingRec.key = 'dist_type_2' OR mappingRec.key = 'dist_year_2' OR 
@@ -1041,6 +1042,8 @@ RETURNS text AS $$
       whereInAttrList = regexp_replace(lower(whereInAttrList), '\s*(,)?\s*(casfri_and)?\s*(,)?\s*' || keyword || '\s*(,)?\s*', CASE WHEN sigAttList != '' THEN '\1\2\3' || sigAttList || '\4' ELSE '' END, 'g');
       -- Standardise commas and spaces
       whereInAttrList = regexp_replace(whereInAttrList, '\s*,\s*', ', ', 'g');
+      -- Remove remaining empty brackets
+      whereInAttrList = regexp_replace(whereInAttrList, '\[\s*\],?\s*', '', 'g');
 
       -- Warn if some whereOutAttrList keywords do not correspond to any attribute
       IF strpos(lower(whereOutAttrList), keyword) != 0 AND sigAttList IS NULL THEN
