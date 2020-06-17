@@ -85,7 +85,8 @@ WITH test_nb AS (
     SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,  37 maj_num, 11 nb_test UNION ALL
     SELECT 'TT_sk_utm01_species_translation'::text function_tested,          38 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  3 nb_test
+    SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  3 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1765,6 +1766,26 @@ SELECT '40.3'::text number,
        'TT_sfv01_countOfNotNull'::text function_tested,
        'Test six layers'::text description,
        TT_sfv01_countOfNotNull('bf', 'bf', 'bf', 'bf', 'bf', 'xx', '', '', '', '6', 'FALSE') = 5 passed
+---------------------------------------------------------
+  -- TT_ns_nsi01_countOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '40.1'::text number,
+       'TT_ns_nsi01_countOfNotNull'::text function_tested,
+       'Test one layer'::text description,
+       TT_ns_nsi01_countOfNotNull('bf', '', '', '3', 'FALSE') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '40.2'::text number,
+       'TT_ns_nsi01_countOfNotNull'::text function_tested,
+       'Test 3 layers'::text description,
+       TT_ns_nsi01_countOfNotNull('bf', 'bf', '89', '3', 'FALSE') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '40.3'::text number,
+       'TT_ns_nsi01_countOfNotNull'::text function_tested,
+       'Test 0 layers'::text description,
+       TT_ns_nsi01_countOfNotNull('', '', '', '3', 'FALSE') = 0 passed
 
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
