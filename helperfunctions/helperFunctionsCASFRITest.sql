@@ -1770,19 +1770,19 @@ SELECT '40.3'::text number,
   -- TT_ns_nsi01_countOfNotNull
 ---------------------------------------------------------
 UNION ALL
-SELECT '40.1'::text number,
+SELECT '41.1'::text number,
        'TT_ns_nsi01_countOfNotNull'::text function_tested,
        'Test one layer'::text description,
        TT_ns_nsi01_countOfNotNull('bf', '', '', '3', 'FALSE') = 1 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '40.2'::text number,
+SELECT '41.2'::text number,
        'TT_ns_nsi01_countOfNotNull'::text function_tested,
        'Test 3 layers'::text description,
        TT_ns_nsi01_countOfNotNull('bf', 'bf', '89', '3', 'FALSE') = 3 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '40.3'::text number,
+SELECT '41.3'::text number,
        'TT_ns_nsi01_countOfNotNull'::text function_tested,
        'Test 0 layers'::text description,
        TT_ns_nsi01_countOfNotNull('', '', '', '3', 'FALSE') = 0 passed
