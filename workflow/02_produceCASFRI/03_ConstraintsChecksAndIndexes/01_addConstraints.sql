@@ -183,7 +183,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.16'::text number,
        'cas_all' target_table,
-       'Ensure CAS table STAND_STRUCTURE values match the corresponding lookup table' description, 
+       'Issue #374. Ensure CAS table STAND_STRUCTURE values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'LOOKUP', 
@@ -261,7 +261,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.1'::text number,
        'dst_all' target_table,
-       'Add primary key to DST_ALL' description, 
+       'Issue #305. Add primary key to DST_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'PK', 
@@ -412,14 +412,14 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.19'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_TYPE_1 values match the corresponding lookup table' description, 
+       'Issue #359. Ensure DST table DIST_TYPE_1 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'dist_type_1'],
                         ARRAY['CO', 'PC', 'BU', 'WF', 'DI', 'IK', 'FL', 
-                              'WE', 'SL', 'OT', 'DT', 'SI', 'CL', 'UK',
+                              'WE', 'SL', 'OT', 'DT', 'SI',
                               'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -432,7 +432,7 @@ FROM (SELECT *
                         ARRAY['casfri50_lookup', 
                               'dist_type_2'],
                         ARRAY['CO', 'PC', 'BU', 'WF', 'DI', 'IK', 'FL', 
-                              'WE', 'SL', 'OT', 'DT', 'SI', 'CL', 'UK',
+                              'WE', 'SL', 'OT', 'DT', 'SI',
                               'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -566,7 +566,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.30'::text number,
        'dst_all' target_table,
-       'Issue #338. Ensure DST table DIST_EXT_LOWER_3 is greater than 10 and below 100' description, 
+       'Ensure DST table DIST_EXT_LOWER_3 is greater than 10 and below 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -658,19 +658,19 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.10'::text number,
        'eco_all' target_table,
-       'Issue ''S'' is in the database and not in the specs ''NA'', ''E'' and ''Z'' are in the specs but not in the database. Ensure ECO table WETLAND_TYPE values match the corresponding lookup table' description, 
+       'Ensure ECO table WETLAND_TYPE values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wetland_type'],
-                        ARRAY['B', 'F', 'M', 'O', 'T', 'W',
+                        ARRAY['B', 'F', 'S', 'M', 'O', 'T', 'W',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '3.11'::text number,
        'eco_all' target_table,
-       'Issue ''P'' is in the database and not in the specs. Ensure ECO table WET_VEG_COVER values match the corresponding lookup table' description, 
+       'Ensure ECO table WET_VEG_COVER values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
@@ -694,7 +694,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.13'::text number,
        'eco_all' target_table,
-       'Issue ''B'' is found in the database but not in the specs. Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table' description, 
+       'Issue #359. ''B'' is found in the database but not in the specs. Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
@@ -706,18 +706,18 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.14'::text number,
        'eco_all' target_table,
-       'Issue eco_site does not seems to be translated. Ensure ECO table ECO_SITE values match the corresponding lookup table' description, 
+       'Issue #376. eco_site does not seems to be translated. Ensure ECO table ECO_SITE values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'CHECK', 
-                        ARRAY['eco_site_not_applicable', 'eco_site = ''NOT_APPLICABLE''']) AS (passed boolean, cstr_query text)) foo
+                        ARRAY['eco_site_not_applicable', 'eco_site != ''NOT_APPLICABLE''']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the LYR_ALL table
 -------------------------------------------------------
 UNION ALL
 SELECT '4.1'::text number,
        'lyr_all' target_table,
-       'Add primary key to LYR_ALL' description, 
+       'Issue #305. Add primary key to LYR_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'PK', 
@@ -726,7 +726,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.2'::text number,
        'lyr_all' target_table,
-       'Issue #330. Add foreign key from LYR_ALL to CAS_ALL' description, 
+       'Add foreign key from LYR_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -998,7 +998,7 @@ FROM (SELECT *
                         ARRAY['casfri50_lookup', 
                               'soil_moist_reg'],
                         ARRAY['D', 'F', 'M', 'W', 'A',
-                              'NULL_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
+                              'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET', 'UNKNOWN_VALUE', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '4.35'::text number,
@@ -1055,7 +1055,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.39'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table HEIGHT_UPPER is greater than 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table HEIGHT_UPPER is greater than 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1070,7 +1070,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.40'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table HEIGHT_LOWER is greater than 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table HEIGHT_LOWER is greater than 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1369,7 +1369,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.1'::text number,
        'nfl_all' target_table,
-       'Add primary key to NFL_ALL' description, 
+       'Issue #305. Add primary key to NFL_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'PK', 
@@ -1493,7 +1493,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.16'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table LAYER is greater than 0' description, 
+       'Issue #365. Ensure NFL table LAYER is greater than 0' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
@@ -1545,7 +1545,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.20'::text number,
        'nfl_all' target_table,
-       'Issue #325: Some rows return TRANSLATION_ERROR. Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
+       'Issue #359: Some rows returns DW. Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
@@ -1558,7 +1558,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.21'::text number,
        'nfl_all' target_table,
-       'Issue #325: Some rows return TRANSLATION_ERROR. Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
+       'Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
@@ -1570,7 +1570,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.22'::text number,
        'nfl_all' target_table,
-       'Issue #325: Some rows return TRANSLATION_ERROR. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
+       'Issue #347: Invalid or undocumented codes. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 

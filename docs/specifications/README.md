@@ -595,6 +595,7 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 | A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
 | NULL_VALUE     | Source value is null |
 | NOT_IN_SET     | Source value is not in list of expected values |
+| UNKNOWN_VALUE  | Source value is unknown |
 | NOT_APPLICABLE | Source value does not occur |
 
 
@@ -783,6 +784,7 @@ Soil moisture regime defined in the NFL table must be a value explicitly assigne
 | A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
 | NULL_VALUE     | Source value is null |
 | NOT_IN_SET     | Source value is not in list of expected values |
+| UNKNOWN_VALUE  | Source value is unknown |
 | NOT_APPLICABLE | Source value does not occur |
 
 Notes:

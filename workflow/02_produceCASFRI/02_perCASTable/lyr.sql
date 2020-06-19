@@ -242,10 +242,10 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
 ------------------------
 -- Translate YT02 using YVI translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1);
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt02_l1_to_yt_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr');
@@ -261,11 +261,11 @@ GROUP BY left(cas_id, 4);
 -- BC08	4113383
 -- BC10	4744673
 -- NB01	932271
--- NB02	1053553
+-- NB02	1053554
 -- NT01	246179
 -- NT02	350967
 -- ON02	2240815
--- SK01	860394
+-- SK01	1692982
 -- YT02	105102
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
@@ -281,7 +281,7 @@ GROUP BY left(cas_id, 4), layer;
 -- BC10	2	174610
 -- NB01	1	767392
 -- NB01	2	164879
--- NB02	1	870924
+-- NB02	1	870925
 -- NB02	2	182629
 -- NT01	1	236939
 -- NT01	2	9240
@@ -289,11 +289,11 @@ GROUP BY left(cas_id, 4), layer;
 -- NT02	2	84808
 -- ON02	1	2066888
 -- ON02	2	173927
--- SK01	1	846500
+-- SK01	1	1679088
 -- SK01	2	13894
 -- YT02	1	105102
 
-SELECT count(*) FROM casfri50.lyr_all; -- 14811190
+SELECT count(*) FROM casfri50.lyr_all; -- 15643779
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX lyr_all_casid_idx
