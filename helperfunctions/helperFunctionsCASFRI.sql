@@ -3052,7 +3052,8 @@ CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
   non_productive_descriptor_cd text,
   non_veg_cover_type_1 text,
   max_rank_to_consider text,
-  zero_is_null text
+  zero_is_null text,
+  inventory_id text
 )
 RETURNS int AS $$
   DECLARE
@@ -3081,9 +3082,14 @@ RETURNS int AS $$
     ELSE
       is_nfl3 = NULL::text;
     END IF;
-
+    
     -- call countOfNotNull
-    RETURN tt_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
+    -- if BC08 there is only 1 forest layer so remove the second forest layer from the count
+    IF inventory_id = 'BC08' THEN
+      RETURN tt_countOfNotNull(vals1, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
+    ELSE
+      RETURN tt_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
+    END IF;
 
   END; 
 $$ LANGUAGE plpgsql;
@@ -3310,6 +3316,47 @@ RETURNS int AS $$
     
     -- call countOfNotNull
     RETURN tt_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, zero_is_null);
+
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-- TT_ns_nsi01_countOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
+-- vals2 text - string list of layer 2 attribtues. This is carried through to couneOfNotNull  
+-- fornon text
+-- max_rank_to_consider text
+-- zero_is_null
+-- 
+-- Determine if the row contains an NFL record. If it does assign a string
+-- so it can be counted as a non-null layer.
+-- 
+-- Pass vals1-vals2 and the string/NULLs to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ns_nsi01_countOfNotNull(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ns_nsi01_countOfNotNull(
+  vals1 text,
+  vals2 text,
+  fornon text,
+  max_rank_to_consider text,
+  zero_is_null text
+)
+RETURNS int AS $$
+  DECLARE
+    is_nfl text;
+  BEGIN
+
+    -- if any of the nfl functions return true, we know there is an NFL record.
+    -- set is_nfl to be a valid string.
+    IF tt_matchList(fornon,'{''71'',''76'',''77'',''78'',''84'',''85'',''94'', ''5'',''86'',''87'',''91'',''92'',''93'',''95'',''96'',''97'',''98'',''99'', ''33'',''38'',''39'',''70'',''72'',''74'',''75'',''83'',''88'',''89''}') THEN
+      is_nfl = 'a_value';
+    ELSE
+      is_nfl = NULL::text;
+    END IF;
+    
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, zero_is_null);
 
   END; 
 $$ LANGUAGE plpgsql;

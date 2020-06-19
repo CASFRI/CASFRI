@@ -330,7 +330,7 @@ The attribute **PHOTO_YEAR_START** identifies the year in which the inventory wa
 
 | Values      | Description |
 | :---------- | :-------------- |
-| 1900 - 2020 | Earliest year of aerial photo acquisition |
+| 1900&#8209;2020 | Earliest year of aerial photo acquisition |
 
 
 ### PHOTO_YEAR_END
@@ -339,7 +339,7 @@ The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was 
 
 | Values      | Description |
 | :---------- | :-------------- |
-| 1900 - 2020 | Latest year of aerial photo acquisition |
+| 1900&#8209;2020 | Latest year of aerial photo acquisition |
 
 
 <a name=CAS_attributes></a>
@@ -430,7 +430,7 @@ Number of layers counts all CASFRI layers from the the LYR and NFL tables. **Not
 
 | Values        | Description |
 | :------------ | :----- |
-| 1 - 9         | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers                   can be identified |
+| 1&#8209;9         | Identifies the number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers                   can be identified |
 | -8886         | The number of layers is not known (e.g. if there is disturbance info, but not reported layers) |
 
 Notes:
@@ -488,7 +488,7 @@ The attribute **STAND_PHOTO_YEAR** is a identifies the year in which the aerial 
 
 | Values      | Description      |
 | :---------- | :---------- |
-| 1900 - 2020 | Identifies the year in which the aerial photography was conducted |
+| 1900&#8209;2020 | Identifies the year in which the aerial photography was conducted |
 | -8888       | Source value is null |
 | -9995       | Source value is not the expected type (e.g. not an integer) |
 | -9999       | Source value is outside expected range (e.g. not between 1900 and 2020) |
@@ -532,7 +532,7 @@ LAYER is calculated for CASFRI based on the presence of forest and non-forest in
 
 | Values   | Description   |
 | :------- | :------- |
-| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
+| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
 
 Notes:
 
@@ -547,7 +547,7 @@ Layer rank is an attribute related to LAYER and refers to the layer importance f
 
 | Values | Description |
 | :----- | :----- |
-| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
+| 1&#8209;9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
 | -8888  | Source value is null |
 | -8887  | Translation is not applicable (e.g. no source attribute) |
 
@@ -573,7 +573,7 @@ The attribute **STRUCTURE_RANGE** is assigned when a complex structured polygon 
 
 | Values | Description |
 | :----- | :----- |
-| 1 - 99 | When **STAND_STRUCTURE** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as            the difference between the mean or median heights of the upper and lower layers within the complex stand |
+| 1&#8209;99 | When **STAND_STRUCTURE** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as            the difference between the mean or median heights of the upper and lower layers within the complex stand |
 | -8887  | Translation is not applicable (e.g. when **STAND_STRUCTURE** = "S", "M", or "H") |
 
 Notes:
@@ -595,6 +595,7 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 | A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
 | NULL_VALUE     | Source value is null |
 | NOT_IN_SET     | Source value is not in list of expected values |
+| UNKNOWN_VALUE  | Source value is unknown |
 | NOT_APPLICABLE | Source value does not occur |
 
 
@@ -605,7 +606,7 @@ Crown closure is an estimate of the percentage of ground area covered by vertica
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 0 - 100   | Upper and lower bound of a crown closure class |
+| 0&#8209;100   | Upper and lower bound of a crown closure class |
 | -8888     | Source value is null |
 | -8889     | Source value is empty string (e.g. '') |
 | -9995     | Source value is not the expected type (e.g. not an integer) |
@@ -620,7 +621,7 @@ Stand height is based on an average height of leading species of dominant and co
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 0 - 100   | Upper and lower bound of a height class |
+| 0&#8209;100   | Upper and lower bound of a height class |
 | -8888     | Source value is null |
 | -8889     | Source value is empty string (e.g. '') |
 | -9995     | Source value is not the expected type (e.g. not an integer) |
@@ -661,8 +662,8 @@ CAS species codes are derived from the species' Latin name using the first four 
 | Values         | Description |
 | :------------  | :-------------- |
 | Species codes  | **Link to possible values after #211** |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is and empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING      | Source value is and empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | INVALID_VALUE  | Soure value is invalid (e.g. code is not the expected format) |
 
@@ -671,7 +672,7 @@ CAS species codes are derived from the species' Latin name using the first four 
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 1 - 100   | Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add                up to 100% |
+| 1&#8209;100   | Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add                up to 100% |
 | -8888     | Source value is null |
 | -9995     | Source value is not the expected type (e.g. not an integer) |
 | -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
@@ -686,7 +687,7 @@ Stand origin is the average initiation year of codominant and dominant trees of 
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 0 - 2020  | Upper and lower bound of an age class |
+| 0&#8209;2020  | Upper and lower bound of an age class |
 | -8888     | Source value is null |
 | -9995     | Source value is not the expected type (e.g. not an integer) |
 | -9999     | Source value is outside expected range (e.g. not between 0 and 2020) |
@@ -703,8 +704,8 @@ Site class is an estimate of the potential productivity of land for tree growth.
 | P              | Poor - poor tree growth based on age height relationship |
 | M              | Medium - medium tree growth based on age height relationship |
 | G              | Good - medium tree growth based on age height relationship |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING      | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value does not occur |
 
@@ -715,7 +716,7 @@ Site Index is an estimate of site productivity for tree growth. It is derived fo
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 0 - 99    | Estimate of site productivity for tree growth based on a specified reference age |
+| 0&#8209;99    | Estimate of site productivity for tree growth based on a specified reference age |
 | -8888     | Source value is null |
 | -9995     | Source value is not the expected type (e.g. not a number) |
 | -9999     | Source value is outside expected range (e.g. not between 1 and 99) |
@@ -755,7 +756,7 @@ See <a href="#LAYER">LAYER</a> in the LYR table.
 
 | Values   | Description   |
 | :------- | :------- |
-| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
+| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
 
 
 ### LAYER_RANK  
@@ -763,7 +764,7 @@ See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
 
 | Values | Description |
 | :----- | :----- |
-| 1 - 9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
+| 1&#8209;9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
 | -8888  | Source value is null |
 | -8887  | Translation is not applicable (e.g. no source attribute) |
 
@@ -783,6 +784,7 @@ Soil moisture regime defined in the NFL table must be a value explicitly assigne
 | A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
 | NULL_VALUE     | Source value is null |
 | NOT_IN_SET     | Source value is not in list of expected values |
+| UNKNOWN_VALUE  | Source value is unknown |
 | NOT_APPLICABLE | Source value does not occur |
 
 Notes:
@@ -810,7 +812,7 @@ Crown closure defined in the NFL table must be a value explicitly assigned to th
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 0 - 100   | Upper and lower bound of a crown closure class |
+| 0&#8209;100   | Upper and lower bound of a crown closure class |
 | -8888     | Source value is null |
 | -8889     | Source value is empty string (e.g. '') |
 | -9995     | Source value is not the expected type (e.g. not an integer) |
@@ -826,7 +828,7 @@ Height defined in the NFL table must be a value explicitly assigned to the NFL l
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 0 - 100   | Upper and lower bound of a height class |
+| 0&#8209;100   | Upper and lower bound of a height class |
 | -8888     | Source value is null |
 | -8889     | Source value is empty string (e.g. '') |
 | -9995     | Source value is not the expected type (e.g. not an integer) |
@@ -855,8 +857,8 @@ The Naturally Non-Vegetated class refers to land types with no vegetation cover.
 | FL             | Flood - recent flooding including beaver ponds     |
 | IS             | Island - vegetated or non vegetated     |
 | TF             | Tidal Flats - non vegetated feature associated with oceans     |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING      | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                       defined) |
@@ -875,8 +877,8 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 | LG             | Lagoon - water filled, includes treatment sites     |
 | BP             | Borrow Pit - associated with facility/infrastructure     |
 | OT             | Other - any not listed     |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING      | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
@@ -897,8 +899,8 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 | BR             | Bryoid - mosses and lichens     |
 | OM             | Open Muskeg - wetlands less than 10% tree cover     |
 | TN             | Tundra - flat treeless plains     |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
@@ -934,7 +936,7 @@ If a disturbance is linked to a specific layer in the source data, it can be ass
 
 | Values   | Description |
 | :------- | :------- |
-| 1 - 9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
+| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
 
 Note:
 Update possible values after #272
@@ -958,8 +960,8 @@ Disturbance identifies the type of disturbance history that has occurred or is o
 | OT             | Other - unknown or other damage |
 | DT             | Dead Tops or Trees - dead or dying trees, cause unknown |
 | SI             | Silviculture Treatments - Planting, Thinning, Seed Tree |
-| NOT_NULL       | Source value is null |
-| NOT_EMPTY      | Source value is an empty string (e.g. '') |
+| NULL_VALUE     | Source value is null |
+| EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | INVALID_VALUE  | Source value is invalid (e.g. the disturbance code does not match the expected format) |
 
@@ -970,7 +972,7 @@ Disturbance year is the year a disturbance event occurred. The disturbance year 
 
 | Values       | Description |
 | :----------- | :---------- |
-|  1900 - 2020 | Disturbance Year - year that a disturbance event occurred |
+|  1900&#8209;2020 | Disturbance Year - year that a disturbance event occurred |
 | -8888        | Source value is null |
 | -9995        | Source value is not the expected type (e.g. not an integer) |
 | -9999        | Source value is outside expected range (e.g. not between 0 and 100) |
@@ -983,7 +985,7 @@ Disturbance extent provides an estimate of the proportion of the polygon that ha
 
 | Values | Description |
 | :--------------------------------------------------------------------------------------------------------------- | :-------------- |
-| 10 - 100 | Upper and lower bound of extent class |
+| 10&#8209;100 | Upper and lower bound of extent class |
 | -8888    | Source value is null |
 | -9995    | Source value is not the expected type (e.g. not an integer) |
 | -9999    | Source value is outside expected range (e.g. not between 0 and 100) |

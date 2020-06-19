@@ -1,0 +1,16 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+0,ROW_TRANSLATION_RULE,NA,"matchList(fornon,{1,2,6,7,8,9,12,13,14,15,60,61,62})",NA,Translate only rows where fornon has an NFL value,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(forest_),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, forest_}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+2,DIST_TYPE_1,text,"notNull(dist_type_1);notEmpty(dist_type_1);matchList(dist_type_1,{1,2,6,7,8,9,12,13,14,15,60,61,62})","mapText(dist_type_1, {1,2,6,7,8,9,12,13,14,15,60,61,62}, {'SI','BU','WF','OT','OT','OT','SI','OT','OT','OT','CO','PC','PC'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
+3,DIST_YEAR_1,integer,false(|-8886),nothingInt(),Year is unknown,TRUE
+4,DIST_EXT_UPPER_1,integer,"notNull(dist_ext_upper_1);notEmpty(dist_ext_upper_1);matchList(dist_ext_upper_1,{2,7,8,9,13,14,15,60,61,62})","mapInt(dist_ext_upper_1, {2,7,8,9,13,14,15,60,61,62}, {25,25,50,100,50,75,100,25,100})",Maps extent values based on the disturbance description in the manual.,TRUE
+5,DIST_EXT_LOWER_1,integer,"notNull(dist_ext_lower_1);notEmpty(dist_ext_lower_1);matchList(dist_ext_lower_1,{2,7,8,9,13,14,15,60,61,62})","mapInt(dist_ext_lower_1, {2,7,8,9,13,14,15,60,61,62}, {1,1,26,51,26,51,76,1,26})",Maps extent values based on the disturbance description in the manual.,TRUE
+6,DIST_TYPE_2,text,false(),nothingText(),Attribute does not occur,TRUE
+7,DIST_YEAR_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
+8,DIST_EXT_UPPER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
+9,DIST_EXT_LOWER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
+10,DIST_TYPE_3,text,false(),nothingText(),Attribute does not occur,TRUE
+11,DIST_YEAR_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
+12,DIST_EXT_UPPER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
+13,DIST_EXT_LOWER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
+14,LAYER,integer,true(),nothingInt(|-8886),Disturbance layer is unknown,TRUE
