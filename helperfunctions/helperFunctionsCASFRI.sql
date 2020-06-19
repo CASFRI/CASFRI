@@ -3052,7 +3052,8 @@ CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
   non_productive_descriptor_cd text,
   non_veg_cover_type_1 text,
   max_rank_to_consider text,
-  zero_is_null text
+  zero_is_null text,
+  inventory_id text
 )
 RETURNS int AS $$
   DECLARE
@@ -3081,9 +3082,14 @@ RETURNS int AS $$
     ELSE
       is_nfl3 = NULL::text;
     END IF;
-
+    
     -- call countOfNotNull
-    RETURN tt_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
+    -- if BC08 there is only 1 forest layer so remove the second forest layer from the count
+    IF inventory_id = 'BC08' THEN
+      RETURN tt_countOfNotNull(vals1, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
+    ELSE
+      RETURN tt_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, zero_is_null);
+    END IF;
 
   END; 
 $$ LANGUAGE plpgsql;
