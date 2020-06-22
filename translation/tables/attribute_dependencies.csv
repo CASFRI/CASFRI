@@ -83,3 +83,6 @@ NS_NSI,1,,yes,"inventory_id, src_filename, map_sheet_id, orig_stand_id, forest_"
 NS03,1,LYR',no,"inventory_id, src_filename, mapsheet, forest_id, forest_",forest_id,"sp1, sp2, sp3, sp4, ss_species","sp1, sp2, sp3, sp4, ss_species, fornon","sp1, sp2, sp3, sp4, ss_species, fornon",,mapsheet,wkb_geometry,wkb_geometry,hectares,photoyr,,,crncl,crncl,height,height,,sp1,sp1p,sp2,sp2p,sp3,sp3p,sp4,sp4p,,,,,,,,,,,,,"age, photoyr","age, photoyr","site_sw, site_hw",,,,,,,fornon,fornon,fornon,,,,,,,,,,,,,,,wkb_geometry
 NS03,2,LYR',no,"inventory_id, src_filename, mapsheet, forest_id, forest_",,,,"sp1, sp2, sp3, sp4, ss_species, fornon",,,,,,,,,ss_crncl,ss_crncl,ss_height,ss_height,,ss_species,ss_species,ss_species,ss_species,NULL,NULL,NULL,NULL,,,,,,,,,,,,,"999,999","999,999","site_sw, site_hw",,,,,,,,,,,,,,,,,,,,,,,,
 NS03,3,NFL',no,"inventory_id, src_filename, mapsheet, forest_id, forest_",,,,"sp1, sp2, sp3, sp4, ss_species, fornon",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,fornon,fornon,fornon,fornon,fornon,,,,,,,,,,,,,,,,,,
+PE_PEI,1,,yes,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PE01,1,LYR',no,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PE01,2,NFL',no,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
