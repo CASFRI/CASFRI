@@ -139,18 +139,18 @@ GROUP BY left(cas_id, 4), layer;
 --inv lyr nb
 --AB06 1	1875
 --AB16 1	8873
---BC08 1	4677411
---BC10 1	5151772
---NB01 1	370802
+--BC08 1	1142604
+--BC10 1	1421223
+--NB01 1	252564
 --NB01 2	409830
 --NB02 1	333114
 --NT01 1	77270
---NT02 1	87974
---ON02 1	2066888
---SK01 1	72023
+--NT02 1	129867
+--ON02 1	3576398
+--SK01 1	64052
 --YT02 1	19178
 
-SELECT count(*) FROM casfri50.dst_all; -- 13277010
+SELECT count(*) FROM casfri50.dst_all; -- 7027013
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX dst_all_casid_idx

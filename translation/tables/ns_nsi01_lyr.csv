@@ -1,0 +1,36 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+0,ROW_TRANSLATION_RULE,NA,"notEmpty({species_1, species_2, species_3, species_4}, TRUE)",NA,"Translate only rows where sp1, sp2, sp3, sp4 or sp5 is not empty",TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(forest_),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, forest_}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
+3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
+4,LAYER,integer,true(),"ns_nsi01_countOfNotNull({species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1 }, {species_1_layer2}, fornon, layer, 'FALSE')",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,TRUE
+5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
+6,CROWN_CLOSURE_UPPER,integer,notNull(crown_closure_upper);notEmpty(crown_closure_upper|-8888);isInt(crown_closure_upper),copyInt(crown_closure_upper),Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
+7,CROWN_CLOSURE_LOWER,integer,notNull(crown_closure_lower);notEmpty(crown_closure_upper|-8888);isInt(crown_closure_lower),copyInt(crown_closure_lower),Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
+8,HEIGHT_UPPER,double precision,"notNull(height_upper);isNumeric(height_upper);isBetween(height_upper,'0.1',100)",copyDouble(height_upper),Copies source value to HEIGHT_UPPER,TRUE
+9,HEIGHT_LOWER,double precision,"notNull(height_lower);isNumeric(height_lower);isBetween(height_lower,'0.1',100)",copyDouble(height_lower),Copies source value to HEIGHT_LOWER,TRUE
+10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,TRUE
+11,SPECIES_1,text,"notNull(species_1);notEmpty(species_1);matchTable(species_1, 'translation', 'ns_nsi01_species' )","lookupText(species_1, 'translation', 'ns_nsi01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_1 using lookup table,TRUE
+12,SPECIES_PER_1,integer,"notNull(species_per_1);matchList(species_per_1, {1,2,3,4,5,6,7,8,9,10,'S','SH','HS','H'}|-9999)","mapInt(species_per_1, {1,2,3,4,5,6,7,8,9,10,'S','SH','HS','H'}, {10,20,30,40,50,60,70,80,90,100,85,60,60,85})",Maps source value to SPECIES_PER_1 by multiplying by 10,TRUE
+13,SPECIES_2,text,"notNull(species_2);notEmpty(species_2);matchTable(species_2, 'translation', 'ns_nsi01_species')","lookupText(species_2, 'translation', 'ns_nsi01_species', 'spec2', 'TRUE')",Maps source value to SPECIES_2 using lookup table. Uses a second column in the lookup table to allow the layer 2 source values to be translated to different target values for species 1 and species 2.,TRUE
+14,SPECIES_PER_2,integer,"notNull(species_per_2);matchList(species_per_2, {1,2,3,4,5,6,7,8,9,10,'S','SH','HS','H'}|-9999)","mapInt(species_per_2, {1,2,3,4,5,6,7,8,9,10,'S','SH','HS','H'}, {10,20,30,40,50,60,70,80,90,100,15,40,40,15})",Maps source value to SPECIES_PER_2 by multiplying by 10,TRUE
+15,SPECIES_3,text,"notNull(species_3);notEmpty(species_3);matchTable(species_3, 'translation', 'ns_nsi01_species')","lookupText(species_3, 'translation', 'ns_nsi01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_3 using lookup table,TRUE
+16,SPECIES_PER_3,integer,"notNull(species_per_3);isBetween(species_per_3, 1, 10)","mapInt(species_per_3, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_3 by multiplying by 10. Layer 2 only has 2 species so rules for species 3 and 4 only need to account for layer 1.,TRUE
+17,SPECIES_4,text,"notNull(species_4);notEmpty(species_4);matchTable(species_4, 'translation', 'ns_nsi01_species')","lookupText(species_4, 'translation', 'ns_nsi01_species', 'spec1', 'TRUE')",Maps source value to SPECIES_4 using lookup table,TRUE
+18,SPECIES_PER_4,integer,"notNull(species_per_4);isBetween(species_per_4, 1, 10)","mapInt(species_per_4, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_4 by multiplying by 10. Layer 2 only has 2 species so rules for species 3 and 4 only need to account for layer 1.,TRUE
+19,SPECIES_5,text,false(),nothingText(),Attribute does not occur,TRUE
+20,SPECIES_PER_5,integer,false(),nothingInt(),Attribute does not occur,TRUE
+21,SPECIES_6,text,false(),nothingText(),Attribute does not occur,TRUE
+22,SPECIES_PER_6,integer,false(),nothingInt(),Attribute does not occur,TRUE
+23,SPECIES_7,text,false(),nothingText(),Attribute does not occur,TRUE
+24,SPECIES_PER_7,integer,false(),nothingInt(),Attribute does not occur,TRUE
+25,SPECIES_8,text,false(),nothingText(),Attribute does not occur,TRUE
+26,SPECIES_PER_8,integer,false(),nothingInt(),Attribute does not occur,TRUE
+27,SPECIES_9,text,false(),nothingText(),Attribute does not occur,TRUE
+28,SPECIES_PER_9,integer,false(),nothingInt(),Attribute does not occur,TRUE
+29,SPECIES_10,text,false(),nothingText(),Attribute does not occur,TRUE
+30,SPECIES_PER_10,integer,false(),nothingInt(),Attribute does not occur,TRUE
+31,ORIGIN_UPPER,integer,"notNull(age);isInt(age);notNull(stand_photo_year);isInt(stand_photo_year);notMatchList(age, 0|-8888);notMatchList(age, 999|-8886)","xMinusYInt(stand_photo_year, age)",Calculates origin as photo year minus age. Catch zero values as nulls and 999 as unknown values,TRUE
+32,ORIGIN_LOWER,integer,"notNull(age);isInt(age);notNull(stand_photo_year);isInt(stand_photo_year);notMatchList(age, 0|-8888);notMatchList(age, 999|-8886)","xMinusYInt(stand_photo_year, age)",Calculates origin as photo year minus age. Catch zero values as nulls and 999 as unknown values,TRUE
+33,SITE_CLASS,text,"notNull({site_sw, site_hw});notEmpty({site_sw, site_hw});matchList({site_sw, site_hw}, {'00', '01', '02', '03', '04', '05', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '110', '120', '130'})","mapText({site_sw, site_hw}, {'00', '01', '02', '03', '04', '05', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '110', '120', '130'}, {'P', 'P', 'M', 'M', 'G', 'G', 'P', 'P', 'P', 'P', 'M', 'M', 'M', 'M', 'M', 'G', 'G', 'G', 'G'})","Concatenates values from 2 attributes and maps to SITE_CLASS using list of values. Usually only one of the attributes will occur per row in the source data, the other will be set to 0. Target values are based on the translation for the non-zero value.",TRUE
+34,SITE_INDEX,double precision,false(),nothingDouble(),Attribute does not occur,TRUE

@@ -23,8 +23,6 @@
 source ./common.sh
 
 inventoryID=NS03
-#srcFileName=ON_FRI_forest
-#srcFullPath="$friDir/ON/$inventoryID/data/inventory/$srcFileName.gdb"
 srcFolder="$friDir/NS/$inventoryID/data/inventory/"
 fullTargetTableName=$targetFRISchema.ns03
 
