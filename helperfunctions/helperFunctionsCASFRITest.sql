@@ -1202,37 +1202,37 @@ UNION ALL
 SELECT '25.1'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Get species code 1'::text description,
-       TT_fim_species_translation('Sw  10Sb  90', '1', 'public', 'test_lookup_on_species', 'spec1') = 'Pice glau' passed
+       TT_fim_species_translation('Sw  10Sb  90', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'Pice glau' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.2'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Get species code 2'::text description,
-       TT_fim_species_translation('Sw  10Sb  90', '2', 'public', 'test_lookup_on_species', 'spec1') = 'Pice mari' passed
+       TT_fim_species_translation('Sw  10Sb  90', '2', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'Pice mari' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.3'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Get species code 100'::text description,
-       TT_fim_species_translation('Sw 100', '1', 'public', 'test_lookup_on_species', 'spec1') = 'Pice glau' passed
+       TT_fim_species_translation('Sw 100', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'Pice glau' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.4'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Species code doesnt exist'::text description,
-       TT_fim_species_translation('Sw 100', '2', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
+       TT_fim_species_translation('Sw 100', '2', 'public', 'test_lookup_on_species', 'source_val', 'spec1') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.5'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Species code not in table'::text description,
-       TT_fim_species_translation('Ss 100', '1', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
+       TT_fim_species_translation('Ss 100', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.6'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Null string'::text description,
-       TT_fim_species_translation(null::text, '1', 'public', 'test_lookup_on_species', 'spec1') IS NULL passed
+       TT_fim_species_translation(null::text, '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') IS NULL passed
 ---------------------------------------------------------
   -- TT_fim_species_percent_translation
 ---------------------------------------------------------

@@ -2734,13 +2734,14 @@ $$ LANGUAGE plpgsql;
 -- then extracts the species code as the first two characters. Then runs TT_LookupText() to
 -- convert the ON code into the CASFRI code using a lookup table.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_fim_species_translation(
   sp_string text,
   sp_number text,
   lookup_schema text, 
   lookup_table text,
-  lookup_col text
+  lookup_col text,
+  retrieveCol text
 )
 RETURNS text AS $$
   DECLARE
@@ -2756,7 +2757,7 @@ RETURNS text AS $$
     END IF;
     
     -- transform species to casfri species using lookup table
-    RETURN TT_LookupText(species, lookup_schema, lookup_table, lookup_col, TRUE::text);
+    RETURN TT_LookupText(species, lookup_schema, lookup_table, lookup_col, retrieveCol, TRUE::text);
   END; 
 $$ LANGUAGE plpgsql;
 
@@ -3259,7 +3260,7 @@ RETURNS text AS $$
     -- return the requested index, after removing all zero values
     sp_to_lookup = sp_array[_sp_number];
     
-    RETURN tt_lookupText(sp_to_lookup, 'translation', 'sk_utm01_species', 'spec1', 'TRUE');
+    RETURN TT_LookupText(sp_to_lookup, 'translation', 'species_code_mapping', 'sk_species_codes', 'casfri_species_codes', 'TRUE');
 
   END; 
 $$ LANGUAGE plpgsql;
