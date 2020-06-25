@@ -67,6 +67,14 @@ SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of NS species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ns_species_codes)
+WHERE TT_NotEmpty(ns_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ns2_species_codes)
+WHERE TT_NotEmpty(ns2_species_codes);
+
+-- Prepare the translation function
 SELECT TT_Prepare('translation', 'ns_nsi01_lyr', '_ns_lyr', 'ab_avi01_lyr'); 
 
 -- Delete existing entries

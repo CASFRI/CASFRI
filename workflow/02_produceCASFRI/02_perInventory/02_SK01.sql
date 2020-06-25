@@ -67,6 +67,11 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of SK species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (sk_species_codes)
+WHERE TT_NotEmpty(sk_species_codes);
+
+-- Prepare the translation function
 SELECT TT_Prepare('translation', 'sk_utm01_lyr', '_sk_lyr', 'ab_avi01_lyr'); 
 
 -- Delete existing entries
