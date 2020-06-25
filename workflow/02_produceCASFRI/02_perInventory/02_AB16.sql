@@ -89,6 +89,10 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of AB species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ab_species_codes)
+WHERE TT_NotEmpty(ab_species_codes);
+
 SELECT TT_Prepare('translation', 'ab_avi01_lyr', '_ab_lyr'); -- used for both AB06 and AB16 layer 1 and 2
 
 -- Delete existing entries

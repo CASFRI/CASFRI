@@ -88,11 +88,11 @@ SELECT * FROM translation_devel.nb01_nbi01_geo_devel;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Validate the NB species dependency tables
+-- Check the uniqueness of NB species codes
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'nb_nbi01_species_validation', '_nb_species_val');
-SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (nb_species_codes)
+WHERE TT_NotEmpty(nb_species_codes);
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------

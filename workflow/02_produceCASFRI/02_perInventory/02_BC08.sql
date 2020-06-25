@@ -73,6 +73,10 @@ COMMIT;
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of BC species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (bc_species_codes)
+WHERE TT_NotEmpty(bc_species_codes);
+
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_lyr', '_bc08_lyr', 'ab_avi01_lyr'); -- used for both BC08 and BC10, layer 1 and 2
 

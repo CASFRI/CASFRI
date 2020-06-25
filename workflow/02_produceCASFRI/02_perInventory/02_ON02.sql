@@ -67,6 +67,11 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of ON species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (on_species_codes)
+WHERE TT_NotEmpty(on_species_codes);
+
+-- Prepare the translation function
 SELECT TT_Prepare('translation', 'on_fim02_lyr', '_on_lyr', 'ab_avi01_lyr'); 
 
 -- Delete existing entries

@@ -16,9 +16,12 @@ SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS translation_devel;
 
--- Validate species dependency tables
-SELECT TT_Prepare('translation', 'ns_nsi01_species_validation', '_ns_species_val');
-SELECT * FROM TT_Translate_ns_species_val('translation', 'ns_nsi01_species');
+-- Check the uniqueness of NS species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ns_species_codes)
+WHERE TT_NotEmpty(ns_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ns2_species_codes)
+WHERE TT_NotEmpty(ns2_species_codes);
 
 -- CAS ATTRIBUTES
 SELECT * FROM translation.ns_nsi01_cas;

@@ -16,10 +16,9 @@ SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS translation_devel;
 
--- Validate species dependency tables
-SELECT TT_Prepare('translation', 'sk_sfv01_species_validation', '_sk_species_val');
-SELECT * FROM TT_Translate_sk_species_val('translation', 'sk_sfv01_species');
---SELECT * FROM translation.sk_sfv01_species;
+-- Check the uniqueness of SK species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (sk_species_codes)
+WHERE TT_NotEmpty(sk_species_codes);
 
 --SELECT TT_DeleteAllViews('rawfri');
 

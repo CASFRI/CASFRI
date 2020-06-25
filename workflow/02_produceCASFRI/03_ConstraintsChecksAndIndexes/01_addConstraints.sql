@@ -19,27 +19,10 @@ CREATE SCHEMA IF NOT EXISTS casfri50_lookup;
 -------------------------------------------------------
 DROP TABLE IF EXISTS casfri50_lookup.species_codes CASCADE;
 CREATE TABLE casfri50_lookup.species_codes AS
-SELECT DISTINCT spec1 code
-FROM (
-SELECT spec1 FROM translation.ab_avi01_species
-UNION ALL
-SELECT spec1 FROM translation.bc_vri01_species
-UNION ALL
-SELECT spec1 FROM translation.nb_nbi01_species
-UNION ALL
-SELECT spec1 FROM translation.nt_fvi01_species
-UNION ALL
-SELECT spec1 FROM translation.on_fim02_species
-UNION ALL
-SELECT specie FROM translation.qc03_species
-UNION ALL
-SELECT spec1 FROM translation.sk_utm01_species
-UNION ALL
-SELECT spec1 FROM translation.sk_sfv01_species
-UNION ALL
-SELECT spec1 FROM translation.yt_yvi01_species
-UNION ALL
-SELECT * FROM (VALUES ('NULL_VALUE'), ('EMPTY_STRING'), ('NOT_IN_SET'), ('NOT_APPLICABLE')) AS t(scec1)
+SELECT code
+FROM (SELECT DISTINCT casfri_species_codes code FROM translation.species_code_mapping
+      UNION ALL
+      SELECT * FROM (VALUES ('NULL_VALUE'), ('EMPTY_STRING'), ('NOT_IN_SET'), ('NOT_APPLICABLE')) AS t(code)
 ) foo
 ORDER BY code;
 
