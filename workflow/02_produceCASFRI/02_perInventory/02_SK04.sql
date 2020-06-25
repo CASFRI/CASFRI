@@ -17,10 +17,6 @@ SET tt.debug TO FALSE;
 --------------------------------------------------------------------------
 -- Translate all SK04. XXhXXm
 --------------------------------------------------------------------------
--- Validate species dependency tables
-SELECT TT_Prepare('translation', 'sk_sfv01_species_validation', '_sk_species_val');
-SELECT * FROM TT_Translate_sk_species_val('translation', 'sk_sfv01_species');
-------------------------
 -- CAS
 ------------------------
 SELECT TT_Prepare('translation', 'sk_sfv01_cas', '_sk_cas', 'ab_avi01_cas'); 
@@ -71,6 +67,11 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of SK species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (sk_species_codes)
+WHERE TT_NotEmpty(sk_species_codes);
+
+-- Prepare the translation function
 SELECT TT_Prepare('translation', 'sk_sfv01_lyr', '_sk_lyr', 'ab_avi01_lyr'); 
 
 -- Delete existing entries

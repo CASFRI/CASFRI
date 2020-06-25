@@ -88,10 +88,9 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_eco');
 ------------------------
 -- LYR
 ------------------------
--- Validate species lookup tables
-SELECT TT_Prepare('translation', 'ab_avi01_species_validation', '_ab_species_val');
-
-SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species');
+-- Check the uniqueness of AB species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ab_species_codes)
+WHERE TT_NotEmpty(ab_species_codes);
 
 -- Delete existing entries
 DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'AB06';

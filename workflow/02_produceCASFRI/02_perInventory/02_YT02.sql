@@ -67,6 +67,11 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of YT species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (yt_species_codes)
+WHERE TT_NotEmpty(yt_species_codes);
+
+-- Prepare the translation function
 SELECT TT_Prepare('translation', 'yt_yvi01_lyr', '_yt_lyr', 'ab_avi01_lyr'); 
 
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1);

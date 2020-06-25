@@ -16,11 +16,9 @@ SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS translation_devel;
 
-
--- Validate species dependency tables
-SELECT TT_Prepare('translation', 'yt_yvi01_species_validation', '_yt_species_val');
-SELECT * FROM TT_Translate_yt_species_val('translation', 'yt_yvi01_species');
-
+-- Check the uniqueness of YT species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (yt_species_codes)
+WHERE TT_NotEmpty(yt_species_codes);
 
 -- CAS ATTRIBUTES
 SELECT * FROM translation.yt_yvi01_cas;
