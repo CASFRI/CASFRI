@@ -86,7 +86,8 @@ WITH test_nb AS (
     SELECT 'TT_sk_utm01_species_translation'::text function_tested,          38 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  3 nb_test
+    SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num,  7 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1792,7 +1793,93 @@ SELECT '41.3'::text number,
        'TT_ns_nsi01_countOfNotNull'::text function_tested,
        'Test 0 layers'::text description,
        TT_ns_nsi01_countOfNotNull('', '', '', '3', 'FALSE') = 0 passed
-
+---------------------------------------------------------
+-- TT_HasNFLInfo
+---------------------------------------------------------
+UNION ALL
+SELECT '42.1'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'BC - nat_non_veg, passes'::text description,
+       TT_HasNFLInfo('BC08', '{''nat_non_veg''}', '{''V'', ''BE'', '''', '''', ''''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.2'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'BC - nat_non_veg, fails'::text description,
+       TT_HasNFLInfo('BC08', '{''nat_non_veg''}', '{''V'', ''B'', '''', '''', ''''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.3'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'BC - non_for_anth, passes. Also tests two attributes.'::text description,
+       TT_HasNFLInfo('BC08', '{''nat_non_veg'', ''non_for_anth''}', '{''F'', '''', '''', ''C'', ''''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.4'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'BC - non_for_anth, fails. Also tests two attributes.'::text description,
+       TT_HasNFLInfo('BC08', '{''nat_non_veg'', ''non_for_anth''}', '{''V'', '''', '''', ''C'', ''''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.5'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'BC - non_for_veg, passes.'::text description,
+       TT_HasNFLInfo('BC08', '{''non_for_veg''}', '{''I'', '''', ''ST'', '''', ''''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.6'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'BC - non_for_veg, passes with 2 attributes.'::text description,
+       TT_HasNFLInfo('BC08', '{''non_for_veg'',''nat_non_veg''}', '{''I'', '''', ''ST'', '''', ''LL''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.7'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'BC - non_for_veg, fails.'::text description,
+       TT_HasNFLInfo('BC08', '{''non_for_veg'',''nat_non_veg''}', '{'''', '''', ''ST'', '''', ''LL''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.8'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'SK - non_for_veg, passes.'::text description,
+       TT_HasNFLInfo('SK02', '{''non_for_veg''}', '{''Ts'', '''', '''', '''', ''''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.9'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'SK - non_for_veg, fails.'::text description,
+       TT_HasNFLInfo('SK02', '{''non_for_veg''}', '{''T'', '''', '''', '''', ''''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.9'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'SK - non_for_anth, passes.'::text description,
+       TT_HasNFLInfo('SK02', '{''non_for_anth, nat_non_veg''}', '{'''', '''', '''', ''POP'', ''''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.10'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'SK - non_for_veg, fails.'::text description,
+       TT_HasNFLInfo('SK02', '{''non_for_veg''}', '{'''', '''', '''', ''PO'', ''''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.11'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'SK - nat_non_veg, passes.'::text description,
+       TT_HasNFLInfo('SK02', '{''non_for_anth, nat_non_veg''}', '{'''', ''WA'', ''SF'', '''', ''''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.12'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'SK - nat_non_veg, passes.'::text description,
+       TT_HasNFLInfo('SK02', '{''non_for_veg, nat_non_veg''}', '{'''', ''WA'', '''', '''', ''''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '42.13'::text number,
+       'TT_HasNFLInfo'::text function_tested,
+       'SK - nat_non_veg, fails.'::text description,
+       TT_HasNFLInfo('SK02', '{''non_for_veg, nat_non_veg''}', '{'''', ''W'', '''', '''', ''''}') IS FALSE passed
+  
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
