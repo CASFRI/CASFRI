@@ -87,7 +87,7 @@ WITH test_nb AS (
     SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num,  7 nb_test
+    SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num,  13 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
