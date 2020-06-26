@@ -100,21 +100,21 @@ Error codes are needed during translation to report invalid or missing source in
 
 Table 2. CASFRI error codes
 
-| Class          | Description | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;text | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;int&nbsp;and&nbsp;double |
-|:-------------- | ----------- |:---------:|:------------:|
-| Missing&nbsp;values | Missing value that is stored as an empty string (e.g. '' or '&#160;') | EMPTY_STRING | -8889 |
-|                | Missing value that is a true null value | NULL_VALUE | -8888 |
-|                | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute | NOT_APPLICABLE | -8887 |
-|                | Non-null value that is not known (e.g. it is not possible to determine the correct attributes value because the source data is incomplete) | UNKNOWN_VALUE | -8886 |
-| Invalid&nbsp;values | Value is outside the range of valid values (e.g. a percent value that is greater than 100 | OUT_OF_RANGE | -9999 |
-|                | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory) | NOT_IN_SET | -9998 |
-|                | Non-null invalid value (e.g. input value does match expected format) | INVALID_VALUE | -9997 |
-|                | Value is of the wrong data type (e.g. a string or decimal value when an integer is expected) | WRONG_TYPE | -9995 |
-|                | Non-null value that is not used in CASFRI | UNUSED_VALUE | -9994        |
-|                | Source table values are not unique (e.g. a lookup table that lists a source value twice) | NOT_UNIQUE | -9993 |
-| Geometry       | Invalid geometry in one or more polygons | INVALID_GEOMETRY | -7779        |
-|                | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry) | NO_INTERSECT | -7778 |
-| Generic        | Generic translation error (reported for a failed translation) | TRANSLATION_ERROR | -3333 |
+| Class          | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;text | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;int&nbsp;and&nbsp;double | Description |
+|:-------------- |:---------:|:------------:|:----------- |
+| Missing&nbsp;values | EMPTY_STRING | -8889 | Missing value that is stored as an empty string (e.g. '' or '&#160;') |
+|                | NULL_VALUE        | -8888 | Missing value that is a true null value |
+|                | NOT_APPLICABLE    | -8887 | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute |
+|                | UNKNOWN_VALUE     | -8886 | Non-null value that is not known (e.g. it is not possible to determine the correct attributes value because the source data is incomplete) |
+| Invalid&nbsp;values | OUT_OF_RANGE | -9999 | Value is outside the range of valid values (e.g. a percent value that is greater than 100 |
+|                |  NOT_IN_SET       | -9998 | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory) |
+|                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does match expected format) |
+|                | WRONG_TYPE        | -9995 | Value is of the wrong data type (e.g. a string or decimal value when an integer is expected) |
+|                | UNUSED_VALUE      | -9994 | Non-null value that is not used in CASFRI |
+|                | NOT_UNIQUE        | -9993 | Source table values are not unique (e.g. a lookup table that lists a source value twice) |
+| Geometry       | INVALID_GEOMETRY  | -7779 | Invalid geometry in one or more polygons |
+|                | NO_INTERSECT      | -7778 | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry) |
+| Generic        | TRANSLATION_ERROR | -3333 | Generic translation error (reported for a failed translation) |
 
 
 <a name=HDR_attributes></a>
