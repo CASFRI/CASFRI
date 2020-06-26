@@ -100,19 +100,19 @@ Error codes are needed during translation to report invalid or missing source in
 
 Table 2. CASFRI error codes
 
-| Class          | Type              | Description | Code for attributes of type text | Code for attributes of type int and double |
-| -------------- | ----------------- | ----------- | --------- |------------ |
-| Missing values | Empty&nbsp;string | Missing value that is stored as an empty string (e.g. '' or '&#160;') | EMPTY_STRING | -8889 |
+| Class          | Type              | Description | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;text | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;int&nbsp;and&nbsp;double |
+|:-------------- |:-----------------:| ----------- |:---------:|------------:|
+| Missing&nbsp;values | Empty&nbsp;string | Missing value that is stored as an empty string (e.g. '' or '&#160;') | EMPTY_STRING | -8889 |
 |                | Null              | Missing value that is a true null value | NULL_VALUE | -8888 |
 |                | Not&nbsp;applicable | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute | NOT_APPLICABLE | -8887 |
 |                | Unknown&nbsp;value | Non-null value that is not known (e.g. it is not possible to determine the correct attributes value because the source data is incomplete) | UNKNOWN_VALUE | -8886 |
-| Invalid values | Out&nbsp;of&nbsp;range | Value is outside the range of valid values (e.g. a percent value that is greater than 100 | OUT_OF_RANGE | -9999 |
+| Invalid&nbsp;values | Out&nbsp;of&nbsp;range | Value is outside the range of valid values (e.g. a percent value that is greater than 100 | OUT_OF_RANGE | -9999 |
 |                | Not&nbsp;member&nbsp;of&nbsp;valid&nbsp;set | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory) | NOT_IN_SET | -9998 |
-|                | Invalid&nbsp;value | Non-null invalid value (e.g. input value does match expected format) | INVALID_VALUE | -9997        |
+|                | Invalid&nbsp;value | Non-null invalid value (e.g. input value does match expected format) | INVALID_VALUE | -9997 |
 |                | Wrong&nbsp;data&nbsp;type | Value is of the wrong data type (e.g. a string or decimal value when an integer is expected) | WRONG_TYPE | -9995 |
 |                | Unused&nbsp;value       | Non-null value that is not used in CASFRI | UNUSED_VALUE | -9994        |
 |                | Not&nbsp;unique         | Source table values are not unique (e.g. a lookup table that lists a source value twice) | NOT_UNIQUE | -9993 |
-| Geometry       | Invalid&nbsp;geometry   | Invalid geometry in one or more polygons | INVALID_GEOMETRY  | -7779        |
+| Geometry       | Invalid&nbsp;geometry   | Invalid geometry in one or more polygons | INVALID_GEOMETRY | -7779        |
 |                | No&nbsp;intersect       | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry) | NO_INTERSECT | -7778 |
 | Generic        | Translation&nbsp;error  | Generic translation error (reported for a failed translation) | TRANSLATION_ERROR | -3333 |
 
