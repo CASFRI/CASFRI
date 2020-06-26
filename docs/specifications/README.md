@@ -857,6 +857,7 @@ The Naturally Non-Vegetated class refers to land types with no vegetation cover.
 | FL             | Flood - recent flooding including beaver ponds     |
 | IS             | Island - vegetated or non vegetated     |
 | TF             | Tidal Flats - non vegetated feature associated with oceans     |
+| OT             | Other - any not listed     |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING      | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
@@ -878,7 +879,7 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 | BP             | Borrow Pit - associated with facility/infrastructure     |
 | OT             | Other - any not listed     |
 | NULL_VALUE     | Source value is null |
-| EMPTY_STRING      | Source value is an empty string (e.g. '') |
+| EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
@@ -899,6 +900,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 | BR             | Bryoid - mosses and lichens     |
 | OM             | Open Muskeg - wetlands less than 10% tree cover     |
 | TN             | Tundra - flat treeless plains     |
+| OT             | Other - any not listed     |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in list of expected values |
