@@ -94,19 +94,19 @@ Table 1. CASFRI schema.
 
  
 <a name=Error_codes></a>
-## Error Codes  
+## CASFRI Error Codes  
 
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. Individual error codes are reported for each attribute in the specifications below.
+Error codes are needed during translation to report invalid or missing source inventory values. Error codes have been designed to match the CASFRI attribute type and to reflect the type of error that was encountered in the source inventory. Integer attributes will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as strings (e.g. 'INVALID_VALUE'). Possible error codes for each CASFRI attribute are listed in the attribute descriptions below.
 
-Table 2. Error codes
+Table 2. CASFRI error codes
 
-| Class          | Type               | Description                                                                                                                                              | Text code         | Numeric code |
-| -------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------------ |
-| Missing values | Empty&nbsp;string       | Missing value that is entered as an empty string (e.g. '' or '&#160;')                                                                                        | EMPTY_STRING      | -8889        |
-|                | Null               | Missing value that is a true null value                                                                                                                  | NULL_VALUE        | -8888        |
-|                | Not&nbsp;applicable     | Target attribute not in source table or does not apply to this record (e.g. the source inventory does not record information for the attribute           | NOT_APPLICABLE    | -8887        |
-|                | Unknown&nbsp;value      | Non-null value that is not known (e.g. if the source data we have is incomplete and we can't be sure of the attributes value without a complete dataset) | UNKNOWN_VALUE     | -8886        |
-| Invalid values | Out&nbsp;of&nbsp;range       | Value is outside the range of values (e.g. a percent value that is >100                                                                                  | OUT_OF_RANGE      | -9999        |
+| Class          | Type              | Description | Code for attributes of type text | Code for attributes of type int and double |
+| -------------- | ----------------- | ----------- | --------- |------------ |
+| Missing values | Null              | Missing value that is a true null value | NULL_VALUE | -8888 |
+|                | Empty&nbsp;string | Missing value that is entered as an empty string (e.g. '' or '&#160;') | EMPTY_STRING | -8889 |
+|                | Not&nbsp;applicable | Target attribute not in source table or does not apply to this record (e.g. the source inventory does not record information for the attribute | NOT_APPLICABLE | -8887 |
+|                | Unknown&nbsp;value | Non-null value that is not known (e.g. if the source data we have is incomplete and we can't be sure of the attributes value without a complete dataset) | UNKNOWN_VALUE | -8886 |
+| Invalid values | Out&nbsp;of&nbsp;range       | Value is outside the range of values (e.g. a percent value that is >100 | OUT_OF_RANGE | -9999 |
 |                | Not&nbsp;member of set  | Value is not a member of a set or list (e.g. when a source value does not match a list of expected strings)                                              | NOT_IN_SET        | -9998        |
 |                | Invalid&nbsp;value      | Invalid value (e.g. input value does match expected format)                                                                                              | INVALID_VALUE     | -9997        |
 |                | Wrong&nbsp;data&nbsp;type    | Value is of the wrong data type (e.g. a text string when we expect an integer)                                                                           | WRONG_TYPE        | -9995        |
