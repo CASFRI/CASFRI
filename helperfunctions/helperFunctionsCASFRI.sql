@@ -1995,6 +1995,133 @@ RETURNS boolean AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
+-- ROW_TRANSLATION_RULE Function Definitions...
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_HasNFLInfo(text, text, text)
+--
+-- inventory_id
+-- filter_attributes text - string list of nfl attributes to filter by ('non_for_veg', 'non_for_anth', 'nat_non_veg')
+-- source_vals text - string list of the source values needed to run the filtering helper functions 
+-- 
+-- Only called in ROW_TRANSLATION_RULE.
+-- For the requested inventory_id, runs the helper functions for all requested nfl attributes. If all helper functions for at least
+-- one of the provided attributes return TRUE, the function returns TRUE.
+-- This filters the source data so it only includes rows being translated for a given attribute. Needed in cases like BC and SK 
+-- where translations are run for individual nfl attributes in turn. Without this we end up with duplicate cas_id-layer combinations
+-- in CASFRI.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_HasNFLInfo(text, text, text);
+CREATE OR REPLACE FUNCTION TT_HasNFLInfo(
+  inventory_id text,
+  filter_attributes text,
+  source_vals text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _fiter_attributes text[];
+    _source_vals text[];
+    _nat_non_veg_boolean boolean := FALSE;
+    _non_for_veg_boolean boolean := FALSE;
+    _non_for_anth_boolean boolean := FALSE;
+    _inventory_standard_cd text; -- BC - needs to be 1st in string list 
+    _land_cover_class_cd_1 text; -- BC - needs to be 2nd in string list
+    _bclcs_level_4 text; -- BC - needs to be 3rd in string list
+    _non_productive_descriptor_cd text; -- BC - needs to be 4th in string list
+    _non_veg_cover_type_1 text; -- BC - needs to be 5th in string list
+    _shrub_herb text; -- SK - needs to be 1st in string list
+    _nvsl_aquatic_class text; -- SK - nvsl needs to be 2nd in string list, aquatic_class needs to be 3rd
+    _luc_transp_class text; -- SK - luc needs to be 4th in string list, transp_class needs to be 5th
+  BEGIN
+    -- parse string lists
+    _fiter_attributes = TT_ParseStringList(filter_attributes, TRUE);
+    _source_vals = TT_ParseStringList(source_vals, TRUE);
+        
+    -- run validations for the requestesd inventory and attributes
+    -- If all validations for a given attribute return TRUE, then set the declared
+    -- variable to true. Once run if any of the decared variables are TRUE, return
+    -- TRUE from the function.
+    
+    -----------
+    -- BC
+    -----------
+    -- assign source values to variables depending on the inventory id
+    IF inventory_id IN('BC08','BC10') THEN
+      _inventory_standard_cd = _source_vals[1]; 
+      _land_cover_class_cd_1 = _source_vals[2];
+      _bclcs_level_4 = _source_vals[3];
+      _non_productive_descriptor_cd = _source_vals[4];
+      _non_veg_cover_type_1 = _source_vals[5];
+    
+      -- run validations
+      IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
+        IF tt_vri01_nat_non_veg_validation(_inventory_standard_cd, _land_cover_class_cd_1, _bclcs_level_4, _non_productive_descriptor_cd, _non_veg_cover_type_1)
+        THEN
+          _nat_non_veg_boolean = TRUE;
+        END IF;
+      END IF;
+      
+      IF 'non_for_anth' = ANY (_fiter_attributes) THEN
+        IF tt_vri01_non_for_anth_validation(_inventory_standard_cd, _land_cover_class_cd_1, _non_productive_descriptor_cd, _non_veg_cover_type_1)
+        THEN
+          _non_for_anth_boolean = TRUE;
+        END IF;
+      END IF;
+      
+      IF 'non_for_veg' = ANY (_fiter_attributes) THEN
+        IF tt_vri01_non_for_veg_validation(_inventory_standard_cd, _land_cover_class_cd_1, _bclcs_level_4, _non_productive_descriptor_cd)
+        THEN
+          _non_for_veg_boolean = TRUE;
+        END IF;
+      END IF;
+    END IF;
+    
+    -----------
+    -- SK
+    -----------
+    -- assign source values to variables depending on the inventory id
+    IF inventory_id IN('SK02','SK03','SK04','SK05','SK06') THEN
+      _shrub_herb = _source_vals[1];
+      _nvsl_aquatic_class = _source_vals[2] || _source_vals[3]; -- concatenate for use in matchList
+      _luc_transp_class = _source_vals[4] || _source_vals[5]; -- concatenate for use in matchList
+    END IF;
+    
+    -- run validations
+    IF inventory_id IN('SK02', 'SK03', 'SK04', 'SK05', 'SK06') THEN
+      IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
+        IF tt_matchList(_nvsl_aquatic_class,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R''}')
+        THEN
+          _nat_non_veg_boolean = TRUE;
+        END IF;
+      END IF;
+      
+      IF 'non_for_anth' = ANY (_fiter_attributes) THEN
+        IF tt_matchList(_luc_transp_class,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}')
+        THEN
+          _non_for_anth_boolean = TRUE;
+        END IF;
+      END IF;
+      
+      IF 'non_for_veg' = ANY (_fiter_attributes) THEN
+        IF tt_matchList(_shrub_herb,'{''Ts'',''Al'',''Bh'',''Ma'',''Sa'',''Pc'',''Cr'',''Wi'',''Ls'',''Ro'',''Bi'',''Bu'',''Dw'',''Ra'',''Cu'',''Sn'',''Bb'',''Ci'',''Bl'',''La'',''Le'',''Be'',''Lc'',''Lb'',''He'',''Fe'',''Gr'',''Mo'',''Li'',''Av'',''Se''}')
+        THEN
+          _non_for_veg_boolean = TRUE;
+        END IF;
+      END IF;
+    END IF;
+    
+    -- return TRUE if any of the nfl attribute validations passed
+    IF _nat_non_veg_boolean OR _non_for_veg_boolean OR _non_for_anth_boolean THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+    
+  END; 
+$$ LANGUAGE plpgsql;
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 -- Begin Translation Function Definitions...
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------

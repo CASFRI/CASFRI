@@ -1,5 +1,5 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-0,ROW_TRANSLATION_RULE,NA,"notEmpty({nvsl, aquatic_class}, 'TRUE');notEmpty({luc, transp_class}, 'TRUE');notEmpty(shrub_herb)",NA,Translate only rows where np is not empty, TRUE
+0,ROW_TRANSLATION_RULE,NA,"hasNFLInfo(inventory_id, {nfl_att1, nfl_att2, nfl_att3}, {filter1, filter2, filter3, filter4, filter5}|NOT_APPLICABLE)",NA,Translate only rows where np is not empty, TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(soil_moist_reg);notEmpty(soil_moist_reg);matchList(soil_moist_reg,{'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'})","mapText(soil_moist_reg, {'D','F','M','MF','MM','MW','VD','VF','VM','VW','W'}, {'D','F','M','F','M','W','D','F','M','W','W'})",Maps soure value to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
