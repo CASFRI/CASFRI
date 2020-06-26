@@ -67,6 +67,11 @@ SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of NT species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (nt_species_codes)
+WHERE TT_NotEmpty(nt_species_codes);
+
+-- Prepare the translation function
 SELECT TT_Prepare('translation', 'nt_fvi01_lyr', '_nt_lyr', 'ab_avi01_lyr'); -- used for both NT01 and NT02, layer 1 and 2
 
 -- Delete existing entries

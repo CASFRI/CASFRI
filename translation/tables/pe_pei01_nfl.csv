@@ -1,0 +1,14 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+0,ROW_TRANSLATION_RULE,NA,notEmpty(landtype),NA,Translate only rows where landtype is not empty, TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(forest_),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, forest_}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
+3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
+4,LAYER,integer,true(),"pe_pei01_countOfNotNull({species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1, species_5_layer1 }, {}, landtype, layer, 'FALSE')",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,TRUE
+5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),Attribute does not occur,TRUE
+7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur,TRUE
+8,HEIGHT_UPPER,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
+9,HEIGHT_LOWER,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
+10,NAT_NON_VEG,text,"notNull(landtype);matchList(landtype,{'SO','SD','WW','FL'}|NOT_APPLICABLE)","mapText(landtype, {'SO','SD','WW','FL'}, {'SL','SA','LA','FL'})",Maps source value to NAT_NON_VEG using list of values.,TRUE
+11,NON_FOR_ANTH,text,"notNull(landtype);matchList(landtype,{'CL','WF','PL','RN','RD','RR','AG','EP','UR'}|NOT_APPLICABLE)","mapText(landtype, {'CL','WF','PL','RN','RD','RR','AG','EP','UR'}, {'OT','OT','FA','FA','FA','FA','CL','BP','SE'})",Maps source value to NON_FOR_ANTH using list of values.,TRUE
+12,NON_FOR_VEG,text,"notNull(landtype);matchList(landtype,{'AL','BO'}|NOT_APPLICABLE)","mapText(landtype,{'AL','BO'}, {'ST','OM'})",Maps source value to NON_FOR_VEG using list of values.,TRUE

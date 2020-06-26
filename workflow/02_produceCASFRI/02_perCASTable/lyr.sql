@@ -18,23 +18,28 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
 -------------------------------------------------------
--- Validate all species lookup tables
+-- Check the uniqueness of all species codes
 -------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab_avi01_species_validation', '_ab_species_val');
-SELECT TT_Prepare('translation', 'bc_vri01_species_validation', '_bc_species_val');
-SELECT TT_Prepare('translation', 'nb_nbi01_species_validation', '_nb_species_val');
-SELECT TT_Prepare('translation', 'nt_fvi01_species_validation', '_nt_species_val');
-SELECT TT_Prepare('translation', 'on_fim02_species_validation', '_on_species_val');
-SELECT TT_Prepare('translation', 'sk_utm01_species_validation', '_sk_species_val');
-SELECT TT_Prepare('translation', 'yt_yvi01_species_validation', '_yt_species_val');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ab_species_codes)
+WHERE TT_NotEmpty(ab_species_codes);
 
-SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species');
-SELECT * FROM TT_Translate_bc_species_val('translation', 'bc_vri01_species');
-SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species');
-SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_fvi01_species');
-SELECT * FROM TT_Translate_on_species_val('translation', 'on_fim02_species');
-SELECT * FROM TT_Translate_sk_species_val('translation', 'sk_utm01_species');
-SELECT * FROM TT_Translate_yt_species_val('translation', 'yt_yvi01_species');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (bc_species_codes)
+WHERE TT_NotEmpty(bc_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (nb_species_codes)
+WHERE TT_NotEmpty(nb_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (nt_species_codes)
+WHERE TT_NotEmpty(nt_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (on_species_codes)
+WHERE TT_NotEmpty(on_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (sk_species_codes)
+WHERE TT_NotEmpty(sk_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (yt_species_codes)
+WHERE TT_NotEmpty(yt_species_codes);
 
 -------------------------------------------------------
 -- Translate all LYR tables into a common table. 32h

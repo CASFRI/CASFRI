@@ -17,11 +17,11 @@ SET tt.debug TO FALSE;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Validate NT species dependency tables
+-- Check the uniqueness of NT species codes
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'nt_fvi01_species_validation', '_nt_species_val');
-SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_fvi01_species');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (nt_species_codes)
+WHERE TT_NotEmpty(nt_species_codes);
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------

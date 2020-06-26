@@ -32,7 +32,7 @@ CREATE OR REPLACE FUNCTION TT_TableColumnType(
 RETURNS text AS $$ 
   SELECT data_type FROM information_schema.columns
   WHERE table_schema = schemaName AND table_name = tableName AND column_name = columnName;
-$$ LANGUAGE sql VOLATILE; 
+$$ LANGUAGE sql STABLE; 
 -------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------- 
@@ -87,7 +87,7 @@ RETURNS boolean AS $$
     INTO isUnique;
     RETURN isUnique; 
   END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------- 
@@ -106,7 +106,7 @@ RETURNS TABLE (col_name text, is_unique boolean) AS $$
   )
   SELECT cname, TT_TableColumnIsUnique(schemaName, tableName, cname) is_unique
 FROM column_names;
-$$ LANGUAGE sql;
+$$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -325,7 +325,7 @@ RETURNS TABLE (id int) AS $$
                    FROM rd LIMIT nb
                  ) SELECT * FROM list ORDER BY id;
   END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
 CREATE OR REPLACE FUNCTION TT_RandomInt(
@@ -335,7 +335,7 @@ CREATE OR REPLACE FUNCTION TT_RandomInt(
 )
 RETURNS SETOF int AS $$
   SELECT TT_RandomInt(nb, val_min, val_max, random());
-$$ LANGUAGE sql;
+$$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1395,7 +1395,7 @@ RETURNS text AS $$
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- Begin Validation Function Definitions...
@@ -1440,7 +1440,7 @@ RETURNS boolean AS $$
     END IF;
     RETURN FALSE;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1491,7 +1491,7 @@ RETURNS boolean AS $$
     END IF;
     RETURN FALSE;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1526,7 +1526,7 @@ RETURNS boolean AS $$
     END IF;    
     RETURN FALSE;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1566,7 +1566,7 @@ RETURNS text AS $$
            WHEN wc IN ('NP', 'WL') THEN 'W---'
            ELSE NULL
          END;
-$$ LANGUAGE sql VOLATILE;
+$$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1598,7 +1598,7 @@ RETURNS boolean AS $$
 		END IF;
     RETURN TRUE;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1668,7 +1668,7 @@ RETURNS boolean AS $$
     
     RETURN TRUE; -- this rule only applies in etage table where cl_age has 2 layers defined, and et_domi ir null or EQU. For all other cases return TRUE to skip this validation.
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1695,7 +1695,7 @@ RETURNS boolean AS $$
     
     RETURN TRUE; -- if row is in_etage = 'O', return true.
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1728,7 +1728,7 @@ RETURNS boolean AS $$
     
     RETURN TRUE; -- if row is in_etage = 'O', or layer = 1, return true.
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1764,7 +1764,7 @@ RETURNS boolean AS $$
     
     RETURN TRUE; -- if row is in_etage = 'O', or layer = 1, return true.
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql STABLE;
 -------------------------------------------------------------------------------
 -- TT_yvi01_nat_non_veg_validation()
 --
@@ -1793,7 +1793,7 @@ RETURNS boolean AS $$
     END IF;
     RETURN FALSE;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_yvi01_nfl_soil_moisture_validation()
@@ -1838,7 +1838,7 @@ RETURNS boolean AS $$
     RETURN FALSE;
       
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_avi01_stand_structure_validation(text, text, text, text)
 --
@@ -1878,7 +1878,7 @@ RETURNS boolean AS $$
     -- other cases return true
     RETURN TRUE;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_fvi01_stand_structure_validation(text, text)
 --
@@ -1916,7 +1916,7 @@ RETURNS boolean AS $$
     -- other cases return false
     RETURN FALSE;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_sk_utm01_species_percent_validation(text, text, text, text, text)
@@ -1992,7 +1992,134 @@ RETURNS boolean AS $$
     RETURN ft_concat = ANY(ARRAY['H----', 'H--S-', 'H--SS', 'HH---', 'HH-S-', 'HH-SS', 'HHH--', 'HHHS-', 'HHHSS', 'HS-S-', 'S----', 'S--H-', 'S--HH', 'SS---', 'SS-H-', 'SS-HH', 'SS-S-', 'SSS--', 'SSSH-', 'SSSHH', 'HS---', 'SH---']);
 
   END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- ROW_TRANSLATION_RULE Function Definitions...
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_HasNFLInfo(text, text, text)
+--
+-- inventory_id
+-- filter_attributes text - string list of nfl attributes to filter by ('non_for_veg', 'non_for_anth', 'nat_non_veg')
+-- source_vals text - string list of the source values needed to run the filtering helper functions 
+-- 
+-- Only called in ROW_TRANSLATION_RULE.
+-- For the requested inventory_id, runs the helper functions for all requested nfl attributes. If all helper functions for at least
+-- one of the provided attributes return TRUE, the function returns TRUE.
+-- This filters the source data so it only includes rows being translated for a given attribute. Needed in cases like BC and SK 
+-- where translations are run for individual nfl attributes in turn. Without this we end up with duplicate cas_id-layer combinations
+-- in CASFRI.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_HasNFLInfo(text, text, text);
+CREATE OR REPLACE FUNCTION TT_HasNFLInfo(
+  inventory_id text,
+  filter_attributes text,
+  source_vals text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _fiter_attributes text[];
+    _source_vals text[];
+    _nat_non_veg_boolean boolean := FALSE;
+    _non_for_veg_boolean boolean := FALSE;
+    _non_for_anth_boolean boolean := FALSE;
+    _inventory_standard_cd text; -- BC - needs to be 1st in string list 
+    _land_cover_class_cd_1 text; -- BC - needs to be 2nd in string list
+    _bclcs_level_4 text; -- BC - needs to be 3rd in string list
+    _non_productive_descriptor_cd text; -- BC - needs to be 4th in string list
+    _non_veg_cover_type_1 text; -- BC - needs to be 5th in string list
+    _shrub_herb text; -- SK - needs to be 1st in string list
+    _nvsl_aquatic_class text; -- SK - nvsl needs to be 2nd in string list, aquatic_class needs to be 3rd
+    _luc_transp_class text; -- SK - luc needs to be 4th in string list, transp_class needs to be 5th
+  BEGIN
+    -- parse string lists
+    _fiter_attributes = TT_ParseStringList(filter_attributes, TRUE);
+    _source_vals = TT_ParseStringList(source_vals, TRUE);
+        
+    -- run validations for the requestesd inventory and attributes
+    -- If all validations for a given attribute return TRUE, then set the declared
+    -- variable to true. Once run if any of the decared variables are TRUE, return
+    -- TRUE from the function.
+    
+    -----------
+    -- BC
+    -----------
+    -- assign source values to variables depending on the inventory id
+    IF inventory_id IN('BC08','BC10') THEN
+      _inventory_standard_cd = _source_vals[1]; 
+      _land_cover_class_cd_1 = _source_vals[2];
+      _bclcs_level_4 = _source_vals[3];
+      _non_productive_descriptor_cd = _source_vals[4];
+      _non_veg_cover_type_1 = _source_vals[5];
+    
+      -- run validations
+      IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
+        IF tt_vri01_nat_non_veg_validation(_inventory_standard_cd, _land_cover_class_cd_1, _bclcs_level_4, _non_productive_descriptor_cd, _non_veg_cover_type_1)
+        THEN
+          _nat_non_veg_boolean = TRUE;
+        END IF;
+      END IF;
+      
+      IF 'non_for_anth' = ANY (_fiter_attributes) THEN
+        IF tt_vri01_non_for_anth_validation(_inventory_standard_cd, _land_cover_class_cd_1, _non_productive_descriptor_cd, _non_veg_cover_type_1)
+        THEN
+          _non_for_anth_boolean = TRUE;
+        END IF;
+      END IF;
+      
+      IF 'non_for_veg' = ANY (_fiter_attributes) THEN
+        IF tt_vri01_non_for_veg_validation(_inventory_standard_cd, _land_cover_class_cd_1, _bclcs_level_4, _non_productive_descriptor_cd)
+        THEN
+          _non_for_veg_boolean = TRUE;
+        END IF;
+      END IF;
+    END IF;
+    
+    -----------
+    -- SK
+    -----------
+    -- assign source values to variables depending on the inventory id
+    IF inventory_id IN('SK02','SK03','SK04','SK05','SK06') THEN
+      _shrub_herb = _source_vals[1];
+      _nvsl_aquatic_class = _source_vals[2] || _source_vals[3]; -- concatenate for use in matchList
+      _luc_transp_class = _source_vals[4] || _source_vals[5]; -- concatenate for use in matchList
+    END IF;
+    
+    -- run validations
+    IF inventory_id IN('SK02', 'SK03', 'SK04', 'SK05', 'SK06') THEN
+      IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
+        IF tt_matchList(_nvsl_aquatic_class,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R''}')
+        THEN
+          _nat_non_veg_boolean = TRUE;
+        END IF;
+      END IF;
+      
+      IF 'non_for_anth' = ANY (_fiter_attributes) THEN
+        IF tt_matchList(_luc_transp_class,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}')
+        THEN
+          _non_for_anth_boolean = TRUE;
+        END IF;
+      END IF;
+      
+      IF 'non_for_veg' = ANY (_fiter_attributes) THEN
+        IF tt_matchList(_shrub_herb,'{''Ts'',''Al'',''Bh'',''Ma'',''Sa'',''Pc'',''Cr'',''Wi'',''Ls'',''Ro'',''Bi'',''Bu'',''Dw'',''Ra'',''Cu'',''Sn'',''Bb'',''Ci'',''Bl'',''La'',''Le'',''Be'',''Lc'',''Lb'',''He'',''Fe'',''Gr'',''Mo'',''Li'',''Av'',''Se''}')
+        THEN
+          _non_for_veg_boolean = TRUE;
+        END IF;
+      END IF;
+    END IF;
+    
+    -- return TRUE if any of the nfl attribute validations passed
+    IF _nat_non_veg_boolean OR _non_for_veg_boolean OR _non_for_anth_boolean THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+    
+  END; 
 $$ LANGUAGE plpgsql;
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Translation Function Definitions...
@@ -2018,7 +2145,7 @@ RETURNS integer AS $$
   EXCEPTION WHEN OTHERS THEN
     RETURN NULL;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2044,7 +2171,7 @@ RETURNS double precision AS $$
 	  END IF;
 		RETURN NULL;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2087,7 +2214,7 @@ RETURNS text AS $$
     END IF;
     RETURN result;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2108,7 +2235,7 @@ RETURNS text AS $$
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'DW', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RS', 'TA') THEN
-        result = TT_MapText(non_veg_cover_type_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''DW'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RS'', ''TA''}', '{''BE'', ''RK'', ''RK'', ''EX'', ''EX'', ''DW'', ''EX'', ''SI'', ''LA'', ''RK'', ''EX'', ''WS'', ''EX'', ''WS'', ''OC'', ''SI'', ''LA'', ''RI'', ''EX'', ''WS'', ''RK''}');
+        result = TT_MapText(non_veg_cover_type_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''DW'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RS'', ''TA''}', '{''BE'', ''RK'', ''RK'', ''EX'', ''EX'', ''EX'', ''EX'', ''SI'', ''LA'', ''RK'', ''EX'', ''WS'', ''EX'', ''WS'', ''OC'', ''SI'', ''LA'', ''RI'', ''EX'', ''WS'', ''RK''}');
       END IF;
     END IF;
 
@@ -2137,7 +2264,7 @@ RETURNS text AS $$
     END IF;
     RETURN result;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2175,7 +2302,7 @@ RETURNS text AS $$
     
     RETURN result;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2209,7 +2336,7 @@ RETURNS text AS $$
     END IF;
     RETURN NULL;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2253,7 +2380,7 @@ RETURNS text AS $$
 	END IF;				
 	RETURN NULL;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2290,7 +2417,7 @@ RETURNS text AS $$
     END IF;
     RETURN result;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2329,7 +2456,7 @@ RETURNS text AS $$
     END IF;
     RETURN 'PF';
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_nbi01_nb02_productive_for_translation(text, text, text, text, text)
@@ -2361,7 +2488,7 @@ RETURNS text AS $$
 	END IF;
 	RETURN NULL;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_vri01_dist_yr_translation(text)
 --
@@ -2403,7 +2530,7 @@ RETURNS int AS $$
     RETURN TT_Concat('{''19'', ' || _val_text || '}'::text, ''::text)::int;
   END IF;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_tie01_crownclosure_translation(text)
 --
@@ -2719,7 +2846,7 @@ RETURNS text AS $$
     RETURN NULL;
   END IF;
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_fim_species_translation(text, text, text, text, text)
@@ -2734,13 +2861,14 @@ $$ LANGUAGE plpgsql;
 -- then extracts the species code as the first two characters. Then runs TT_LookupText() to
 -- convert the ON code into the CASFRI code using a lookup table.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_fim_species_translation(
   sp_string text,
   sp_number text,
   lookup_schema text, 
   lookup_table text,
-  lookup_col text
+  lookup_col text,
+  retrieveCol text
 )
 RETURNS text AS $$
   DECLARE
@@ -2756,9 +2884,9 @@ RETURNS text AS $$
     END IF;
     
     -- transform species to casfri species using lookup table
-    RETURN TT_LookupText(species, lookup_schema, lookup_table, lookup_col, TRUE::text);
+    RETURN TT_LookupText(species, lookup_schema, lookup_table, lookup_col, retrieveCol, TRUE::text);
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_fim_species_percent_translation(text, text)
@@ -2787,7 +2915,7 @@ RETURNS int AS $$
       RETURN NULL;
     END IF;
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_yvi01_nat_non_veg_translation(text, text, text)
@@ -2821,7 +2949,7 @@ RETURNS text AS $$
     RETURN NULL;
       
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_yvi01_non_for_veg_translation(text, text)
@@ -2857,7 +2985,7 @@ RETURNS text AS $$
     RETURN NULL;
             
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_generic_stand_structure_translation(text, text, text, text)
@@ -2933,7 +3061,7 @@ RETURNS text AS $$
       RETURN NULL;
     END IF; 
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -- avi signature - 2 layers, 3 species
 -- DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text, text, text, text, text);
@@ -2948,7 +3076,7 @@ CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_translation(
 )
 RETURNS text AS $$
   SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, NULL::text, NULL::text, NULL::text);
-$$ LANGUAGE sql;
+$$ LANGUAGE sql IMMUTABLE;
 
 -- ON02 signature - 2 layers, 1 species
 CREATE OR REPLACE FUNCTION TT_fim02_stand_structure_translation(
@@ -2958,7 +3086,7 @@ CREATE OR REPLACE FUNCTION TT_fim02_stand_structure_translation(
 )
 RETURNS text AS $$
   SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, NULL::text, NULL::text, layer2_sp1, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
-$$ LANGUAGE sql;
+$$ LANGUAGE sql IMMUTABLE;
 
 -- SK SFVI signature - 3 layers, 1 species
 CREATE OR REPLACE FUNCTION TT_sfv01_stand_structure_translation(
@@ -2969,7 +3097,7 @@ CREATE OR REPLACE FUNCTION TT_sfv01_stand_structure_translation(
 )
 RETURNS text AS $$
   SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, NULL::text, NULL::text, layer2_sp1, NULL::text, NULL::text, layer3_sp1, NULL::text, NULL::text);
-$$ LANGUAGE sql;
+$$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_fvi01_countOfNotNull(text, text, text, text, text, text)
 --
@@ -3022,7 +3150,7 @@ RETURNS int AS $$
     RETURN tt_countOfNotNull(vals1, vals2, _typeclas, _min_typeclas, max_rank_to_consider, zero_is_null);
 
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text)
@@ -3092,7 +3220,7 @@ RETURNS int AS $$
     END IF;
 
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_sk_utm01_species_percent_translation(text, text, text, text, text, text, text)
@@ -3213,7 +3341,7 @@ RETURNS int AS $$
     RETURN (array_remove(percent_vector, 0))[_sp_number];
 
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_sk_utm01_species_translation(text, text, text, text, text, text, text)
@@ -3259,10 +3387,10 @@ RETURNS text AS $$
     -- return the requested index, after removing all zero values
     sp_to_lookup = sp_array[_sp_number];
     
-    RETURN tt_lookupText(sp_to_lookup, 'translation', 'sk_utm01_species', 'spec1', 'TRUE');
+    RETURN TT_LookupText(sp_to_lookup, 'translation', 'species_code_mapping', 'sk_species_codes', 'casfri_species_codes', 'TRUE');
 
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql STABLE;
 
 -------------------------------------------------------------------------------
 -- TT_sfv01_countOfNotNull(text, text, text, text, text, text, text, text)
@@ -3318,7 +3446,7 @@ RETURNS int AS $$
     RETURN tt_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, zero_is_null);
 
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_ns_nsi01_countOfNotNull(text, text, text, text, text, text, text, text)
@@ -3359,4 +3487,4 @@ RETURNS int AS $$
     RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, zero_is_null);
 
   END; 
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;

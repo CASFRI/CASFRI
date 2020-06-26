@@ -1,0 +1,11 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(forest_),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, forest_}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')","The combination of FOREST_, FOREST_ID, MAPSHEET and SRC_FILENAME is a unique identifier across all counties. All four are needed to create the unique id that traces back to the source polygon.",TRUE
+2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
+3,ORIG_STAND_ID,text,"notNull(orig_stand_id);isInt(orig_stand_id);isGreaterThan(orig_stand_id, 0)",copyText(orig_stand_id),Copies source value to ORIG_STAND_ID,TRUE
+4,STAND_STRUCTURE,text,"hasCountOfNotNull({species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1 }, {species_1_layer2}, 1, 'FALSE'|NOT_APPLICABLE)","ifElseCountOfNotNullText({species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1 }, {species_1_layer2}, 2, 1, 'S', 'M')","Translation runs countOfNotNull for the two forest layers. If one layer, returns S, if two layers returns M.",TRUE
+5,NUM_OF_LAYERS,integer,true(),"ns_nsi01_countOfNotNull({species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1 }, {species_1_layer2}, fornon, 3, 'FALSE')",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,TRUE
+6,MAP_SHEET_ID,text,notNull(map_sheet_id),copyText(map_sheet_id),Copies source value,TRUE
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
+9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0)",copyDouble(src_inv_area),Copies source value to SRC_INV_AREA,TRUE
+10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isInt(stand_photo_year);isBetween(stand_photo_year, 1900, 2020)",copyInt(stand_photo_year),Copies source value to STAND_PHOTO_YEAR,TRUE

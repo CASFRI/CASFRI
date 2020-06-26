@@ -91,10 +91,10 @@ SELECT * FROM translation_devel.ab16_avi01_geo_devel;
 -- Validate dependency tables
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- AB species table
+-- Check the uniqueness of AB species codes
 -------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab_avi01_species_validation', '_ab_species_val');
-SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ab_species_codes)
+WHERE TT_NotEmpty(ab_species_codes);
 
 -------------------------------------------------------
 -- AB photo year
