@@ -112,7 +112,7 @@ Table 2. CASFRI error codes
 |                | WRONG_TYPE        | -9995 | Value is of the wrong data type (e.g. a string or decimal value when an integer is expected). |
 |                | UNUSED_VALUE      | -9994 | Non-null value that is not used in CASFRI |
 |                | NOT_UNIQUE        | -9993 | Source table values are not unique (e.g. a lookup table that lists a source value twice). |
-| Geometric error | INVALID_GEOMETRY  | -7779 | Invalid geometry in one or more polygons. |
+| Geometric&nbsp;error | INVALID_GEOMETRY  | -7779 | Invalid geometry in one or more polygons. |
 |                | NO_INTERSECT      | -7778 | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry). |
 | Translation    | TRANSLATION_ERROR | -3333 | Generic translation error (reported for a failed translation). |
 
