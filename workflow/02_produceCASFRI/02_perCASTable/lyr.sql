@@ -247,10 +247,10 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
 ------------------------
 -- Translate YT02 using YVI translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1);
+SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt02_l1_to_yt_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr');
