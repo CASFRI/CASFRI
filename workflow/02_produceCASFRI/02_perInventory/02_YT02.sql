@@ -118,7 +118,7 @@ SELECT * FROM TT_Translate_yt_geo('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_geo');
 --------------------------------------------------------------------------
 -- Check
-SELECT 'cas_all', count(*) nb
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'YT02'
 UNION ALL
