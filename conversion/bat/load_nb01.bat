@@ -89,7 +89,7 @@ if not exist "%friDir%\%NB_subFolder%poly_id_added.txt" (
 ::Solution is to load the Waterbody table first with -lco PRECISION=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
 "%gdalFolder%\ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcWaterFullPath% ^
--nln %fullTargetTableName% %layer_creation_option% ^
+-nln %fullTargetTableName% %layer_creation_options% %other_options% ^
 -nlt PROMOTE_TO_MULTI ^
 -sql "SELECT *, '%srcNameWater%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcNameWater%""" ^
 -progress %overwrite_tab%
@@ -99,7 +99,7 @@ if not exist "%friDir%\%NB_subFolder%poly_id_added.txt" (
 -update -append -addfields ^
 -f "PostgreSQL" %pg_connection_string% %srcNonForestFullPath% ^
 -nln %fullTargetTableName% ^
--t_srs %prjFile% ^
+%other_options% ^
 -nlt PROMOTE_TO_MULTI ^
 -sql "SELECT *, '%srcNameNonForest%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcNameNonForest%""" ^
 -progress
@@ -109,7 +109,7 @@ if not exist "%friDir%\%NB_subFolder%poly_id_added.txt" (
 -update -append -addfields ^
 -f "PostgreSQL" %pg_connection_string% %srcWetlandFullPath% ^
 -nln %fullTargetTableName% ^
--t_srs %prjFile% ^
+%other_options% ^
 -nlt PROMOTE_TO_MULTI ^
 -sql "SELECT *, '%srcNameWetland%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcNameWetland%""" ^
 -progress
@@ -119,7 +119,7 @@ if not exist "%friDir%\%NB_subFolder%poly_id_added.txt" (
 -update -append -addfields ^
 -f "PostgreSQL" %pg_connection_string% %srcForestFullPath% ^
 -nln %fullTargetTableName% ^
--t_srs %prjFile% ^
+%other_options% ^
 -nlt PROMOTE_TO_MULTI ^
 -sql "SELECT *, '%srcNameForest%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcNameForest%""" ^
 -progress

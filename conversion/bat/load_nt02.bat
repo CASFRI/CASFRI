@@ -126,7 +126,7 @@ DROP TABLE IF EXISTS %fullTargetTableName%_geom_att;
 :: Run ogr2ogr for geometries
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% ^
--nln %geometryTableName% %layer_creation_option% ^
+-nln %geometryTableName% %layer_creation_options% %other_options% ^
 -sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%gdbFileName_geometry%""" ^
 -progress %overwrite_tab%
 
@@ -139,7 +139,7 @@ DROP TABLE IF EXISTS %fullTargetTableName%_geom_att;
 ::Run ogr2ogr for photo year
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% "%gdbFileName_photoyear%" ^
--nln %photoyearTableName% %layer_creation_option% ^
+-nln %photoyearTableName% %layer_creation_options% %other_options% ^
 -progress %overwrite_tab%
 
 :: join attributes and photo year tables to geometries

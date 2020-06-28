@@ -26,6 +26,6 @@ fullTargetTableName=$targetFRISchema.ab_photoYear
 # Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName $layer_creation_option \
+-nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab

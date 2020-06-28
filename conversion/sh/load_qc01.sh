@@ -30,6 +30,8 @@ inventoryID=QC01
 srcFullPath=$friDir/QC/$inventoryID/data/inventory/
 fullTargetTableName=$targetFRISchema.qc01
 
+overwrite_option="$overwrite_tab"
+
 # PostgreSQL variables
 ogrTab='c08peefo'
 
@@ -39,8 +41,6 @@ ogrTab='c08peefo'
 # For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
 # Set -overwrite for first load if requested in config
 # After first load, remove -overwrite and add -update -append
-
-ogr_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry $overwrite_tab"
 
 for F in "$srcFullPath/"*
 do
@@ -53,11 +53,13 @@ do
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
     -nln $fullTargetTableName \
-    -t_srs $prjFile \
     -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
-    -progress $ogr_options
+    -progress \
+    $layer_creation_options $other_options \
+    $overwrite_option
 
-    ogr_options="-update -append"
+    overwrite_option="-update -append"
+    layer_creation_options=""
   else
     echo '***********************************************************************'
     echo '*********************** Skipping '${F##*/}'... ****************************'
@@ -74,9 +76,10 @@ do
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
     -nln $fullTargetTableName \
-    -t_srs $prjFile \
     -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
-    -progress $ogr_options
+    -progress \
+    $layer_creation_options $other_options \
+    $overwrite_option
 done
 
 source ./common_postprocessing.sh

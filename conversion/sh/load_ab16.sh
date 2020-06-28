@@ -27,6 +27,8 @@ srcFullPath=$friDir/AB/$inventoryID/data/inventory
 
 fullTargetTableName=$targetFRISchema.ab16
 
+overwrite_option="$overwrite_tab"
+
 # PostgreSQL variables
 ogrTab='PAL'
 
@@ -40,18 +42,17 @@ ogrTab='PAL'
 # Original columns will be loaded as forest_ and forest_id, they will be NULL because ogr2ogr cannot append the values from the invalid field names.
 # New fields will be added to the right of the table
 
-ogr_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry $overwrite_tab"
-
 for F in "$srcFullPath/t"* 
 do
   "$gdalFolder/ogr2ogr" \
   -f PostgreSQL "$pg_connection_string" "$F/forest" \
   -nln $fullTargetTableName \
-  -t_srs $prjFile \
   -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id, 'FOREST#' as 'forest_id_1', 'FOREST-ID' AS 'forest_id_2' FROM $ogrTab" \
-  $ogr_options
+  $layer_creation_options $other_options \
+  $overwrite_option
 
-  ogr_options="-update -append"  
+  overwrite_option="-update -append"  
+  layer_creation_options=""
 done
 
 source ./common_postprocessing.sh
