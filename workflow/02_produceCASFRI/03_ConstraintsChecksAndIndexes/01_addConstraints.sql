@@ -172,7 +172,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'cas_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'stand_structure'],
-                        ARRAY['S', 'M', 'H', 'C',
+                        ARRAY['SINGLE_LAYERED', 'MULTI_LAYERED', 'HORIZONTAL', 'COMPLEX',
                              'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 UNION ALL
@@ -183,12 +183,12 @@ SELECT '1.17'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
                         ARRAY['num_of_layers_greater_than_zero', 
-                              '((stand_structure = ''M'' OR 
-                                 stand_structure = ''H'' OR 
-                                 stand_structure = ''C'') AND 
+                              '((stand_structure = ''MULTI_LAYERED'' OR 
+                                 stand_structure = ''HORIZONTAL'' OR 
+                                 stand_structure = ''COMPLEX'') AND 
                                 num_of_layers > 1) OR 
-                               ((stand_structure = ''S'' OR 
-                                 stand_structure = ''C'') AND 
+                               ((stand_structure = ''SINGLE_LAYERED'' OR 
+                                 stand_structure = ''COMPLEX'') AND 
                                 num_of_layers = 1) OR 
                                num_of_layers = -8886 OR -- UNKNOWN_VALUE
                                stand_structure = ''NULL_VALUE'' OR

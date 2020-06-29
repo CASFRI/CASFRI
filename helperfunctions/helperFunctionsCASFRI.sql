@@ -2342,9 +2342,9 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_nbi01_stand_structure_translation(text, text, text)
 --
--- If src_filename = 'Forest' and l2vs=0, then stand_structure=“S”
--- If src_filename = 'Forest' and (l1vs>0 and l2vs>0) then stand_structure=“M”
--- If src_filename = 'Forest' and (l1vs>1 and l2vs>1) then stand_structure=“C”
+-- If src_filename = 'Forest' and l2vs=0, then stand_structure=“SINGLE_LAYERED”
+-- If src_filename = 'Forest' and (l1vs>0 and l2vs>0) then stand_structure=“MULTI_LAYERED”
+-- If src_filename = 'Forest' and (l1vs>1 and l2vs>1) then stand_structure=“COMPLEX”
 --
 -- For NB01 src_filename should match 'Forest'.
 -- For NB02 src_filename should match 'geonb_forest-foret'.
@@ -2371,11 +2371,11 @@ RETURNS text AS $$
 		
 	IF src_filename IN ('Forest', 'geonb_forest-foret') THEN
 	  IF _l2vs = 0 THEN
-		RETURN 'S';
+		RETURN 'SINGLE_LAYERED';
 	  ELSIF _l1vs > 1 AND _l2vs > 1 THEN
-		  RETURN 'C';
+		  RETURN 'COMPLEX';
 	  ELSIF _l1vs > 0 AND _l2vs > 0 THEN
-		  RETURN 'M';
+		  RETURN 'MULTI_LAYERED';
 	  END IF;
 	END IF;				
 	RETURN NULL;
@@ -3049,14 +3049,14 @@ RETURNS text AS $$
   
     -- if stand structure is H or C, return H or C. Note CX was added so this function can be re-used in ON02.
     IF stand_structure IN ('H', 'h', 'C', 'c', 'C4', 'C5', 'CX') THEN
-      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5'', ''CX''}', '{''H'', ''H'', ''C'', ''C'', ''C'', ''C'', ''C''}');
+      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5'', ''CX''}', '{''HORIZONTAL'', ''HORIZONTAL'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX''}');
     
-    -- if stand structure is not H or C, it must be S or M.
+    -- if stand structure is not HORIZONTAL or COMPLEX, it must be SINGLE_LAYERED or MULTI_LAYERED.
     -- if only one species layer, return S (this should always be sp1)
     ELSIF _count = 1 THEN
-      RETURN 'S';
+      RETURN 'SINGLE_LAYERED';
     ELSIF _count IN(2, 3) THEN
-      RETURN 'M';
+      RETURN 'MULTI_LAYERED';
     ELSE
       RETURN NULL;
     END IF; 

@@ -410,10 +410,10 @@ If Complex or Horizontal stand structure is assigned in the source data, it is a
 
 | Values | Description |
 | :------------------- | :-------------- |
-| S                    | Single layered - vegetation within a polygon where the heights do not vary significantly |
-| M                    | Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable                          and evenly distributed. Each layer is assigned an independent description |
-| C                    | Complex - stands exhibit a high variation of heights with no single defined canopy layer |
-| H                    | Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small                          to delineate as a separate polygon |
+| SINGLE_LAYERED       | Vegetation within a polygon where the heights do not vary significantly |
+| MULTI_LAYERED        | Two or more distinct layers of vegetation occur. Each layer is significant, clearly observable                          and evenly distributed. Each layer is assigned an independent description |
+| COMPLEX              | Stands exhibit a high variation of heights with no single defined canopy layer |
+| HORIZONTAL           | Two or more significant strata within the same polygon; at least one of the strata is too small                          to delineate as a separate polygon |
 | NOT_APPLICABLE       | No stand structure value is applicable (e.g. polygon does not have canopy information) |
 
 Notes:
@@ -559,8 +559,8 @@ The attribute **STRUCTURE_PER** is assigned when a horizontal structured polygon
 
 | Values                             | Description  |
 | :--------------------------------- | :------ |
-| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
-| 100                                | When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal                                                structure |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
+| 100                                | When **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", "COMPLEX", value = 100 i.e., when there is no horizontal                                                structure |
 | -9998                              | Source value is not an expected value (e.g. in cases where structure percent is a coded alpha                                          numeric with an expected list of codes) |
 | -8888                              | Source value is null |
 | -9995                              | Source value is not the expected type (e.g. not an integer) |
@@ -573,8 +573,8 @@ The attribute **STRUCTURE_RANGE** is assigned when a complex structured polygon 
 
 | Values | Description |
 | :----- | :----- |
-| 1&#8209;99 | When **STAND_STRUCTURE** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as            the difference between the mean or median heights of the upper and lower layers within the complex stand |
-| -8887  | Translation is not applicable (e.g. when **STAND_STRUCTURE** = "S", "M", or "H") |
+| 1&#8209;99 | When **STAND_STRUCTURE** = "COMPLEX", measures the height range (m) around the midpoint height of the stand. It is calculated as            the difference between the mean or median heights of the upper and lower layers within the complex stand |
+| -8887  | Translation is not applicable (e.g. when **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", or "HORIZONTAL") |
 
 Notes:
 
@@ -797,8 +797,8 @@ See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 
 | Values                             | Description  |
 | :--------------------------------- | :------ |
-| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
-| 100                                | When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal                                                structure |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
+| 100                                | When **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", "COMPLEX", value = 100 i.e., when there is no horizontal                                                structure |
 | -9998                              | Source value is not an expected value (e.g. in cases where structure percent is a coded alpha                                          numeric with an expected list of codes) |
 | -8888                              | Source value is null |
 | -9995                              | Source value is not the expected type (e.g. not an integer) |

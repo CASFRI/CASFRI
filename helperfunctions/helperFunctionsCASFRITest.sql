@@ -328,25 +328,25 @@ UNION ALL
 SELECT '10.2'::text number,
        'TT_nbi01_stand_structure_translation'::text function_tested,
        'Single layer all zero'::text description,
-       TT_nbi01_stand_structure_translation('Forest'::text, '0'::text, '0'::text) = 'S' passed
+       TT_nbi01_stand_structure_translation('Forest'::text, '0'::text, '0'::text) = 'SINGLE_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '10.3'::text number,
        'TT_nbi01_stand_structure_translation'::text function_tested,
        'Single layer l1vs > 0'::text description,
-       TT_nbi01_stand_structure_translation('geonb_forest-foret'::text, '2'::text, '0'::text) = 'S' passed
+       TT_nbi01_stand_structure_translation('geonb_forest-foret'::text, '2'::text, '0'::text) = 'SINGLE_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '10.4'::text number,
        'TT_nbi01_stand_structure_translation'::text function_tested,
        'Multi layer'::text description,
-       TT_nbi01_stand_structure_translation('Forest'::text, '1'::text, '1'::text) = 'M' passed
+       TT_nbi01_stand_structure_translation('Forest'::text, '1'::text, '1'::text) = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '10.5'::text number,
        'TT_nbi01_stand_structure_translation'::text function_tested,
        'Complex layer'::text description,
-       TT_nbi01_stand_structure_translation('geonb_forest-foret'::text, '2'::text, '2'::text) = 'C' passed
+       TT_nbi01_stand_structure_translation('geonb_forest-foret'::text, '2'::text, '2'::text) = 'COMPLEX' passed
 ---------------------------------------------------------
   -- TT_nbi01_wetland_validation
 ---------------------------------------------------------
@@ -1422,37 +1422,37 @@ UNION ALL
 SELECT '32.1'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test Horizontal stand'::text description,
-       TT_avi01_stand_structure_translation('H', '', '', '', '', '', '') = 'H' passed
+       TT_avi01_stand_structure_translation('H', '', '', '', '', '', '') = 'HORIZONTAL' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.2'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test Complex stand'::text description,
-       TT_avi01_stand_structure_translation('C4', '', '', '', '', '', '') = 'C' passed
+       TT_avi01_stand_structure_translation('C4', '', '', '', '', '', '') = 'COMPLEX' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.3'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test S stand'::text description,
-       TT_avi01_stand_structure_translation('M', 'bf', '', '', '', '', '') = 'S' passed
+       TT_avi01_stand_structure_translation('M', 'bf', '', '', '', '', '') = 'SINGLE_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.4'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test S stand'::text description,
-       TT_avi01_stand_structure_translation('', '', 'bs', '', '', '', '') = 'S' passed
+       TT_avi01_stand_structure_translation('', '', 'bs', '', '', '', '') = 'SINGLE_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.5'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test M stand'::text description,
-       TT_avi01_stand_structure_translation('', 'bf', 'bs', '', 'bf', '', '') = 'M' passed
+       TT_avi01_stand_structure_translation('', 'bf', 'bs', '', 'bf', '', '') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '32.6'::text number,
        'TT_avi01_stand_structure_translation'::text function_tested,
        'Test M stand'::text description,
-       TT_avi01_stand_structure_translation('S', 'bf', 'bs', 'bs', 'bf', 'bs', 'ws') = 'M' passed
+       TT_avi01_stand_structure_translation('S', 'bf', 'bs', 'bs', 'bf', 'bs', 'ws') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
  -- TT_fvi01_stand_structure_validation
 ---------------------------------------------------------
@@ -1734,25 +1734,25 @@ UNION ALL
 SELECT '39.1'::text number,
        'TT_sfv01_stand_structure_translation'::text function_tested,
        'Test Horizontal stand'::text description,
-       TT_sfv01_stand_structure_translation('H', '', '', '') = 'H' passed
+       TT_sfv01_stand_structure_translation('H', '', '', '') = 'HORIZONTAL' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '39.2'::text number,
        'TT_sfv01_stand_structure_translation'::text function_tested,
        'Test Complex stand'::text description,
-       TT_sfv01_stand_structure_translation('c', '', '', '') = 'C' passed
+       TT_sfv01_stand_structure_translation('c', '', '', '') = 'COMPLEX' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '39.3'::text number,
        'TT_sfv01_stand_structure_translation'::text function_tested,
        'Test S stand'::text description,
-       TT_sfv01_stand_structure_translation('M', 'bf', '', '') = 'S' passed
+       TT_sfv01_stand_structure_translation('M', 'bf', '', '') = 'SINGLE_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '39.4'::text number,
        'TT_sfv01_stand_structure_translation'::text function_tested,
        'Test M stand'::text description,
-       TT_sfv01_stand_structure_translation('', 'bf', 'bf', 'bf') = 'M' passed
+       TT_sfv01_stand_structure_translation('', 'bf', 'bf', 'bf') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
   -- TT_sfv01_countOfNotNull
 ---------------------------------------------------------
