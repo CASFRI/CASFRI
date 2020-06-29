@@ -588,11 +588,11 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 
 | Value          | Description |
 | :------------- | :----- |
-| D              | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
-| F              | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
-| M              | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
-| W              | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
-| A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
+| DRY            | Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
+| MESIC          | Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum |
+| MOIST          | Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
+| WET            | Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water |
+| AQUATIC        | Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water |
 | NULL_VALUE     | Source value is null |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | UNKNOWN_VALUE  | Source value is unknown |

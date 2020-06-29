@@ -980,7 +980,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'soil_moist_reg'],
-                        ARRAY['D', 'F', 'M', 'W', 'A',
+                        ARRAY['DRY', 'MESIC', 'MOIST', 'WET', 'AQUATIC',
                               'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET', 'UNKNOWN_VALUE', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL

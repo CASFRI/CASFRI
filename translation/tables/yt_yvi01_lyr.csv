@@ -1,7 +1,7 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 0,ROW_TRANSLATION_RULE,NA,"notEmpty({species_1, species_2, species_3, species_4}, TRUE)",NA,"Translate only rows where sp1, sp2, sp3 or sp4 is not empty", TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(soil_moist_reg);notEmpty(soil_moist_reg);matchList(soil_moist_reg,{'a','A','d','D','m','M','w','W'})","mapText(soil_moist_reg, {'a','A','d','D','m','M','w','W'}, {'A','A','D','D','F','F','W','W'})",Map source attribute to SOIL_MOIST_REG,TRUE
+2,SOIL_MOIST_REG,text,"notNull(soil_moist_reg);notEmpty(soil_moist_reg);matchList(soil_moist_reg,{'a','A','d','D','m','M','w','W'})","mapText(soil_moist_reg, {'a','A','d','D','m','M','w','W'}, {'AQUATIC','AQUATIC','DRY','DRY','MESIC','MESIC','WET','WET'})",Map source attribute to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),copyInt(1),Only 1 layer possible in YT. Every polygon is either LYR or NFL.,TRUE
 5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
