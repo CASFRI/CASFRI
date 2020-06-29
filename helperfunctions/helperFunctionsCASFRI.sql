@@ -2440,21 +2440,21 @@ CREATE OR REPLACE FUNCTION TT_nbi01_nb01_productive_for_translation(
 RETURNS text AS $$
   BEGIN
     IF NOT TT_NotNull(l1cc) THEN
-      RETURN 'PP';
+      RETURN 'POTENTIALLY_PRODUCTIVE';
     ELSIF NOT TT_MatchList(l1cc, '{''1'', ''2'', ''3'', ''4'', ''5''}') THEN
-      RETURN 'PP';
+      RETURN 'POTENTIALLY_PRODUCTIVE';
     ELSEIF NOT TT_NotNull(l1ht) THEN
-      RETURN 'PP';
+      RETURN 'POTENTIALLY_PRODUCTIVE';
     ELSIF NOT TT_IsGreaterThan(l1ht, '0.1') THEN
-      RETURN 'PP';
+      RETURN 'POTENTIALLY_PRODUCTIVE';
     ELSIF NOT TT_IsLessThan(l1ht, '100') THEN
-      RETURN 'PP';
+      RETURN 'POTENTIALLY_PRODUCTIVE';
     ELSIF fst = '0'::text AND l1trt != 'CC' AND btrim(l1trt, ' ') != '' THEN
-      RETURN 'PP';
+      RETURN 'POTENTIALLY_PRODUCTIVE';
     ELSIF fst = '0'::text AND l2trt != 'CC' AND btrim(l2trt, ' ') != '' THEN
-      RETURN 'PP';
+      RETURN 'POTENTIALLY_PRODUCTIVE';
     END IF;
-    RETURN 'PF';
+    RETURN 'PRODUCTIVE_FOREST';
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -2482,9 +2482,9 @@ RETURNS text AS $$
     _fst = fst::int;
 	
     IF _fst IN (1, 2) THEN
-	  RETURN 'PF';
+	  RETURN 'PRODUCTIVE_FOREST';
 	ELSIF _fst = 3 THEN
-	  RETURN 'PP';
+	  RETURN 'POTENTIALLY_PRODUCTIVE';
 	END IF;
 	RETURN NULL;
   END;

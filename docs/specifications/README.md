@@ -638,13 +638,13 @@ Unproductive forest is forest land not capable of producing trees for forest ope
 
 | Values | Description |
 | :----- | :-------------- |
-| TM     | Treed Muskeg - treed wetland sites |
-| AL     | Alpine forest - high elevation forest usually above 1800 m |
-| SD     | Scrub Deciduous - scrub deciduous trees on poor sites |
-| SC     | Scrub Coniferous - scrub coniferous trees on poor sites |
-| NP     | Non Productive forest - poor forest types on rocky or wet sites |
-| PP     | Potentially Productive forest - forest previously affected by some disturbance |
-| PF     | Productive Forest - any other forest |
+| TREED_MUSKEG           | Treed wetland sites |
+| ALPINE_FOREST          | High elevation forest usually above 1800 m |
+| SCRUB_DECIDUOUS        | Scrub deciduous trees on poor sites |
+| SCRUB_CONIFEROUS       | Scrub coniferous trees on poor sites |
+| NON_PRODUCTIVE_FOREST  | Poor forest types on rocky or wet sites |
+| POTENTIALLY_PRODUCTIVE | Potentially productive forest previously affected by some disturbance |
+| PRODUCTIVE_FOREST      | Any other forest |
 
 Notes:
 

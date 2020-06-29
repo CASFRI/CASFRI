@@ -1074,7 +1074,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'productive_for'],
-                        ARRAY['TM', 'AL', 'SD', 'SC', 'NP', 'PP', 'PF',
+                        ARRAY['TREED_MUSKEG', 'ALPINE_FOREST', 'SCRUB_DECIDUOUS', 'SCRUB_CONIFEROUS', 'NON_PRODUCTIVE_FOREST', 'POTENTIALLY_PRODUCTIVE', 'PRODUCTIVE_FOREST',
                               'NULL_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL

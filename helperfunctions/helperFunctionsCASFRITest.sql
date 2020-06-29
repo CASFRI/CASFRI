@@ -406,67 +406,67 @@ UNION ALL
 SELECT '14.1'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 1'::text description,
-       TT_nbi01_nb01_productive_for_translation(NULL::text, '10'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation(NULL::text, '10'::text, 'CC'::text, 'XX'::text, '5'::text) = 'POTENTIALLY_PRODUCTIVE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.2'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 2'::text description,
-       TT_nbi01_nb01_productive_for_translation('6'::text, '10'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('6'::text, '10'::text, 'CC'::text, 'XX'::text, '5'::text) = 'POTENTIALLY_PRODUCTIVE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.3'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 3'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, NULL::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, NULL::text, 'CC'::text, 'XX'::text, '5'::text) = 'POTENTIALLY_PRODUCTIVE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.4'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 4'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, '0.05'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '0.05'::text, 'CC'::text, 'XX'::text, '5'::text) = 'POTENTIALLY_PRODUCTIVE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.5'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 5'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, '101'::text, 'CC'::text, 'XX'::text, '5'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '101'::text, 'CC'::text, 'XX'::text, '5'::text) = 'POTENTIALLY_PRODUCTIVE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.6'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 6a'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, ''::text, 'CC'::text, '0'::text) = 'PF' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, ''::text, 'CC'::text, '0'::text) = 'PRODUCTIVE_FOREST' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.7'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 6b'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, 'CC'::text, '0'::text) = 'PF' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, 'CC'::text, '0'::text) = 'PRODUCTIVE_FOREST' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.8'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 6c'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'F'::text, 'CC'::text, '1'::text) = 'PF' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'F'::text, 'CC'::text, '1'::text) = 'PRODUCTIVE_FOREST' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.9'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 6d'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'F'::text, 'CC'::text, '0'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'F'::text, 'CC'::text, '0'::text) = 'POTENTIALLY_PRODUCTIVE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.10'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 7a'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, ''::text, '0'::text) = 'PF' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, ''::text, '0'::text) = 'PRODUCTIVE_FOREST' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '14.11'::text number,
        'TT_nbi01_nb01_productive_for_translation'::text function_tested,
        'Test PP if statement 7b'::text description,
-       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, 'F'::text, '0'::text) = 'PP' passed
+       TT_nbi01_nb01_productive_for_translation('5'::text, '100'::text, 'CC'::text, 'F'::text, '0'::text) = 'POTENTIALLY_PRODUCTIVE' passed
 ---------------------------------------------------------
   -- TT_nbi01_nb02_productive_for_translation
 ---------------------------------------------------------
@@ -474,19 +474,19 @@ UNION ALL
 SELECT '15.1'::text number,
        'TT_nbi01_nb02_productive_for_translation'::text function_tested,
        'Test fst = 1'::text description,
-       TT_nbi01_nb02_productive_for_translation(1::text) = 'PF' passed
+       TT_nbi01_nb02_productive_for_translation(1::text) = 'PRODUCTIVE_FOREST' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '15.2'::text number,
        'TT_nbi01_nb02_productive_for_translation'::text function_tested,
        'Test fst = 2'::text description,
-       TT_nbi01_nb02_productive_for_translation(2::text) = 'PF' passed
+       TT_nbi01_nb02_productive_for_translation(2::text) = 'PRODUCTIVE_FOREST' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '15.3'::text number,
        'TT_nbi01_nb02_productive_for_translation'::text function_tested,
        'Test fst = 3'::text description,
-       TT_nbi01_nb02_productive_for_translation(3::text) = 'PP' passed
+       TT_nbi01_nb02_productive_for_translation(3::text) = 'POTENTIALLY_PRODUCTIVE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '15.4'::text number,
