@@ -950,18 +950,18 @@ Disturbance identifies the type of disturbance history that has occurred or is o
 
 | Values         | Description |
 | :------------- | :-------------- |
-| CO             | Cut - logging with known extent |
-| PC             | Partial Cut - portion of forest has been removed, extent known or unknown |
-| BU             | Burn - wildfires or escape fires |
-| WF             | Windfall - blow down |
-| DI             | Disease - root, stem, branch diseases |
-| IK             | Insect - root, bark, leader, or defoliation insects |
-| FL             | Flood - permanent flooding from blockage or damming |
-| WE             | Weather - ice, frost, red belt |
-| SL             | Slide - damage from avalanche, slump, earth or rock slides |
-| OT             | Other - unknown or other damage |
-| DT             | Dead Tops or Trees - dead or dying trees, cause unknown |
-| SI             | Silviculture Treatments - Planting, Thinning, Seed Tree |
+| BURN           | Wildfires or escape fires |
+| CUT            | Logging with known extent |
+| DISEASE        | Root, stem or branch diseases |
+| FLOOD          | Permanent flooding from blockage or damming |
+| INSECT         | Root, bark, leader or defoliation insects |
+| PARTIAL_CUT    | Portion of forest has been removed, extent known or unknown |
+| SLIDE          | Damage from avalanche, slump, earth or rock slides |
+| WINDFALL       | Blow down |
+| WEATHER        | Ice, frost, red belt |
+| DEAD_UNKNOWN   | Dead or dying trees, cause unknown |
+| SILVICULTURE_TREATMENT | Planting, Thinning, Seed Tree |
+| OTHER          | Other type of damage |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |

@@ -401,8 +401,8 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'dist_type_1'],
-                        ARRAY['CO', 'PC', 'BU', 'WF', 'DI', 'IK', 'FL', 
-                              'WE', 'SL', 'OT', 'DT', 'SI',
+                        ARRAY['CUT', 'PARTIAL_CUT', 'BURN', 'WINDFALL', 'DISEASE', 'INSECT', 'FLOOD', 
+                              'WEATHER', 'SLIDE', 'OTHER', 'DEAD_UNKNOWN', 'SILVICULTURE_TREATMENT',
                               'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -414,8 +414,8 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'dist_type_2'],
-                        ARRAY['CO', 'PC', 'BU', 'WF', 'DI', 'IK', 'FL', 
-                              'WE', 'SL', 'OT', 'DT', 'SI',
+                        ARRAY['CUT', 'PARTIAL_CUT', 'BURN', 'WINDFALL', 'DISEASE', 'INSECT', 'FLOOD', 
+                              'WEATHER', 'SLIDE', 'OTHER', 'DEAD_UNKNOWN', 'SILVICULTURE_TREATMENT',
                               'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
