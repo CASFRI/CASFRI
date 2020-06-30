@@ -700,10 +700,10 @@ Site class is an estimate of the potential productivity of land for tree growth.
 
 | Values         | Description |
 | :-----         | :-------------- |
-| U              | Unproductive - cannot support a commercial forest |
-| P              | Poor - poor tree growth based on age height relationship |
-| M              | Medium - medium tree growth based on age height relationship |
-| G              | Good - medium tree growth based on age height relationship |
+| UNPRODUCTIVE   | Cannot support a commercial forest |
+| POOR           | Poor tree growth based on age height relationship |
+| MEDIUM         | Medium tree growth based on age height relationship |
+| GOOD           | Good tree growth based on age height relationship |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |

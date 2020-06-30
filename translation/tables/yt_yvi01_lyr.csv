@@ -32,5 +32,5 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 30,SPECIES_PER_10,integer,false(),nothingInt(),Attribute does not occur,TRUE
 31,ORIGIN_UPPER,integer,"notNull(origin_upper);isInt(origin_upper);isBetween(origin_upper, 0, 2020)",copyInt(origin_upper),Copies source attribute to ORIGIN_UPPER,TRUE
 32,ORIGIN_LOWER,integer,"notNull(origin_lower);isInt(origin_lower);isBetween(origin_lower, 0, 2020)",copyInt(origin_lower),Copies source attribute to ORIGIN_LOWER,TRUE
-33,SITE_CLASS,text,"notNull(site_class);notEmpty(site_class);matchList(site_class,{'L','P','M','G'})","mapText(site_class, {'L','P','M','G'}, {'P','P','M','G'})",Maps source value to SITE_CLASS,TRUE
+33,SITE_CLASS,text,"notNull(site_class);notEmpty(site_class);matchList(site_class,{'L','P','M','G'})","mapText(site_class, {'L','P','M','G'}, {'POOR','POOR','MEDIUM','GOOD'})",Maps source value to SITE_CLASS,TRUE
 34,SITE_INDEX,double precision,"notNull(site_index);isNumeric(site_index);isBetween(site_index,'0.1',40)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
