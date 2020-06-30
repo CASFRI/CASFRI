@@ -44,7 +44,7 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'NB02';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 34m
-SELECT * FROM TT_Translate_nb02_dst('rawfri', 'nb02_l1_to_nb_l1_map_dst', 'ogc_fid');
+SELECT * FROM TT_Translate_nb02_dst('rawfri', 'nb02_l1_to_nb_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_dst');
 
