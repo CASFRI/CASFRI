@@ -239,7 +239,7 @@ UNION ALL
 SELECT '8.1'::text number,
        'TT_vri01_non_for_anth_translation'::text function_tested,
        'Good test'::text description,
-       TT_vri01_non_for_anth_translation('V'::text, 'AP'::text, ''::text, ''::text) = 'FA' passed
+       TT_vri01_non_for_anth_translation('V'::text, 'AP'::text, ''::text, ''::text) = 'FACILITY_INFRASTRUCTURE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.2'::text number,

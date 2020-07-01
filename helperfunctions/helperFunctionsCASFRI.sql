@@ -2280,23 +2280,26 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_anth_translation(
 RETURNS text AS $$
   DECLARE
     result text = NULL;
+	src_cover_types text[] = '{AP, GP, MI, MZ, OT, RN, RZ, TZ, UR}';
+	tgt_cover_types text[] = '{FACILITY_INFRASTRUCTURE, INDUSTRIAL, INDUSTRIAL, INDUSTRIAL, OTHER, FACILITY_INFRASTRUCTURE, FACILITY_INFRASTRUCTURE, INDUSTRIAL, FACILITY_INFRASTRUCTURE}';
+    src_non_prod_types text[] = '{C, GR, P, U}';
   BEGIN
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
-      IF non_veg_cover_type_1 IN ('AP', 'GP', 'MI', 'MZ', 'OT', 'RN', 'RZ', 'TZ', 'UR') THEN
-        result = TT_MapText(non_veg_cover_type_1, '{''AP'', ''GP'', ''MI'', ''MZ'', ''OT'', ''RN'', ''RZ'', ''TZ'', ''UR''}', '{''FA'', ''IN'', ''IN'', ''IN'', ''OT'', ''FA'', ''FA'', ''IN'', ''FA''}');
+      IF non_veg_cover_type_1 = ANY(src_cover_types) THEN
+        result = TT_MapText(non_veg_cover_type_1, src_cover_types::text, tgt_cover_types::text);
       END IF;
     END IF;
         
     IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
-      IF land_cover_class_cd_1 IN ('AP', 'GP', 'MI', 'MZ', 'OT', 'RN', 'RZ', 'TZ', 'UR') THEN
-        result = TT_MapText(land_cover_class_cd_1, '{''AP'', ''GP'', ''MI'', ''MZ'', ''OT'', ''RN'', ''RZ'', ''TZ'', ''UR''}', '{''FA'', ''IN'', ''IN'', ''IN'', ''OT'', ''FA'', ''FA'', ''IN'', ''FA''}');
+      IF land_cover_class_cd_1 = ANY(src_cover_types) THEN
+        result = TT_MapText(land_cover_class_cd_1, src_cover_types::text, tgt_cover_types::text);
       END IF;
     END IF;
         
-    IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd IN ('C', 'GR', 'P', 'U') THEN
-        result = TT_MapText(non_productive_descriptor_cd, '{''C'', ''GR'', ''P'', ''U''}', '{''CL'', ''IN'', ''CL'', ''FA''}');
+    IF inventory_standard_cd = 'F' AND non_productive_descriptor_cd IS NOT NULL THEN
+      IF non_productive_descriptor_cd = ANY(src_non_prod_types) THEN
+        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_types::text, '{''CL'', ''IN'', ''CL'', ''FA''}');
       END IF;
     END IF;
     

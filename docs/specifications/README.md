@@ -871,13 +871,13 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 
 | Values         | Description |
 | :------------- | :----- |
-| IN             | Industrial - industrial sites |
-| FA             | Facility/Infrastructure - transportation, transmission, pipeline |
-| CL             | Cultivated - pasture, crops, orchards, plantations |
-| SE             | Settlement - cities, towns, ribbon development |
-| LG             | Lagoon - water filled, includes treatment sites |
-| BP             | Borrow Pit - associated with facility/infrastructure |
-| OT             | Other - any other source inventory site type not supported by CASFRI |
+| INDUSTRIAL     | Industrial sites |
+| FACILITY_INFRASTRUCTURE | Transportation, transmission, pipeline |
+| CULTIVATED     | Pasture, crops, orchards, plantations |
+| SETTLEMENT     | Cities, towns, ribbon development |
+| LAGOON         | Water filled, includes treatment sites |
+| BORROW_PIT     | Associated with facility/infrastructure |
+| OTHER          | Other - any other source inventory site type not supported by CASFRI |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
