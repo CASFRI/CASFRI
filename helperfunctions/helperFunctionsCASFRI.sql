@@ -2415,13 +2415,24 @@ RETURNS text AS $$
     -- substring wetland_code
     IF wetland_code IS NOT NULL THEN
       result = substring(wetland_code from ret_char_pos::int for 1);
+      IF result = '-' THEN
+        RETURN NULL;
+      END IF;
+	  CASE WHEN ret_char_pos = '1' THEN -- WETLAND_TYPE
+	         result = TT_MapText(result, '{''B'', ''F'', ''S'', ''M'', ''O'', ''T'', ''E'', ''W'', ''Z''}', '{''BOG'', ''FEN'', ''SWAMP'', ''MARSH'', ''SHALLOW_WATER'', ''TIDAL_FLATS'', ''ESTUARY'', ''WETLAND'', ''NOT_WETLAND''}');
+	       WHEN ret_char_pos = '2' THEN -- WET_VEG_COVER
+	         result = TT_MapText(result, '{''F'', ''T'', ''O'', ''C'', ''M''}', '{''FORESTED'', ''WOODED'', ''OPEN_NON_TREED_FRESHWATER'', ''OPEN_NON_TREED_COASTAL'', ''MUD''}');
+	       WHEN ret_char_pos = '3' THEN -- WET_LANDFORM_MOD
+	         result = TT_MapText(result, '{''X'', ''P'', ''N'', ''A''}', '{''PERMAFROST_PRESENT'', ''PATTERNING_PRESENT'', ''NO_PERMAFROST_PATTERNING'', ''SALINE_ALKALINE''}');
+	       WHEN ret_char_pos = '4' THEN -- WET_LOCAL_MOD
+	         result = TT_MapText(result, '{''C'', ''R'', ''I'', ''N'', ''S'', ''G''}', '{''INT_LAWN_SCAR'', ''INT_LAWN_ISLAND'', ''INT_LAWN'', ''NO_LAWN'', ''SHRUB_COVER'', ''GRAMMINOIDS''}');
+	  END CASE;
+	ELSE
+	  RETURN NULL;
     END IF;
     
     -- return value or null
-    IF wetland_code IS NULL OR result = '-' THEN
-      RETURN NULL;
-    END IF;
-    RETURN result;
+     RETURN result;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------

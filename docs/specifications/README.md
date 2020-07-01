@@ -894,9 +894,9 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 | :------------- | :----- |
 | TALL_SHRUB     | Shrub lands with shrubs > 2 meters tall |
 | LOW_SHRUB      | Shrub lands with shrubs < 2 meters tall |
-| FORBS          | Herbaceous plants other than graminoids |
-| HERBS          | No distinction between forbs and graminoids |
 | GRAMMINOIDS    | Grasses, sedges, rushes, and reeds |
+| FORBS          | Herbaceous plants other than graminoids |
+| HERBS          | Undistinguishable family of herbs |
 | BRYOID         | Mosses and lichens |
 | OPEN_MUSKED    | Wetlands with less than 10% tree cover |
 | TUNDRA         | Flat treeless plains |
@@ -1031,48 +1031,48 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 
 | Values | Description |
 | :----- | :----- |
-| B      | Bog - > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss |
-| F      | Fen - > 40 cm of peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed |
-| S      | Swamp - woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent                subsurface water. Various mixtures of mineral sediments and peat |
-| M      | Marsh - emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water |
-| O      | Shallow Open Water - freshwater lakes < 2 m depth |
-| T      | Tidal Flats - ocean areas with exposed flats |
-| E      | Estuary - mixed freshwater/saltwater marsh areas |
-| W      | Wetland - no distinction of class |
-| Z      | Not Wetland - upland areas |
+| BOG    | > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss |
+| FEN    | > 40 cm peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed |
+| SWAMP  | Woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent subsurface water. Various mixtures of mineral sediments and peat |
+| MARSH  | Emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water |
+| SHALLOW_WATER | Freshwater lakes < 2 m depth |
+| TIDAL_FLATS | Ocean areas with exposed flats |
+| ESTUARY | Mixed freshwater/saltwater marsh areas |
+| WETLAND | Wetland without distinction of class |
+| NOT_WETLAND | Upland areas |
 
 
 ### WET_VEG_COVER
 
 | Values | Description |
 | :----- | :----- |
-| F      | Forested - closed canopy > 70% tree cover |
-| T      | Wooded - open canopy > 6% to 70% tree cover |
-| O      | Open Non-Treed Freshwater - < 6% tree cover with shrubs |
-| C      | Open Non-Treed Coastal - < 6% tree cover, with shrubs |
-| M      | Mud - no vegetation cover |
+| FORESTED | Closed canopy forests > 70% tree cover |
+| WOODED   | Open canopy forests > 6% to 70% tree cover |
+| OPEN_NON_TREED_FRESHWATER | Open canopy forests < 6% tree cover with shrubs |
+| OPEN_NON_TREED_COASTAL | Open canopy coastal forests - < 6% tree cover, with shrubs |
+| MUD      | No vegetation cover |
 
 
 ### WET_LANDFORM_MOD
 
 | Values | Description |
-| :----- | :----- |
-| X      | Permafrost Present |
-| P      | Patterning Present |
-| N      | No Permafrost or Patterning Present |
-| A      | Saline or Alkaline Present |
+| :----- | :---------- |
+| PERMAFROST_PRESENT       | Permafrost present |
+| PATTERNING_PRESENT       | Patterning present |
+| NO_PERMAFROST_PATTERNING | No permafrost or patterning present |
+| SALINE_ALKALINE          | Saline or alkaline Present |
 
 
 ### WET_LOCAL_MOD
 
 | Values | Description |
 | :----- | :----- |
-| C      | Collapse Scar Present in permafrost area |
-| R      | Internal Lawn With Islands of Forested Peat Plateau |
-| I      | Internal Lawns Present (permafrost was once present) |
-| N      | Internal Lawns Not Present |
-| S      | Shrub Cover > 25% |
-| G      | Graminoids With Shrub Cover < 25%      |
+| INT_LAWN_SCAR   | Collapse scar present in permafrost area |
+| INT_LAWN_ISLAND | Internal lawn with islands of forested peat plateau |
+| INT_LAWN        | Internal lawns present (permafrost was once present) |
+| NO_LAWN         | Internal lawns not present |
+| SHRUB_COVER     | Shrub cover > 25% |
+| GRAMMINOIDS     | Graminoids with shrub cover < 25%      |
   
 
 <sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  

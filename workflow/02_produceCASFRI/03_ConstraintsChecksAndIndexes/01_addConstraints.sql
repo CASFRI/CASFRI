@@ -647,7 +647,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wetland_type'],
-                        ARRAY['B', 'F', 'S', 'M', 'O', 'T', 'W',
+                        ARRAY['BOG', 'FEN', 'SWAMP', 'MARSH', 'SHALLOW_WATER', 'TIDAL_FLATS', 'ESTUARY', 'WETLAND', 'NOT_WETLAND',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -659,7 +659,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wet_veg_cover'],
-                        ARRAY['F', 'T', 'O', 'C', 'M',
+                        ARRAY['FORESTED', 'WOODED', 'OPEN_NON_TREED_FRESHWATER', 'OPEN_NON_TREED_COASTAL', 'MUD',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -671,7 +671,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wet_landform_mod'],
-                        ARRAY['X', 'P', 'N', 'A',
+                        ARRAY['PERMAFROST_PRESENT', 'PATTERNING_PRESENT', 'NO_PERMAFROST_PATTERNING', 'SALINE_ALKALINE',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -683,7 +683,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wet_local_mod'],
-                        ARRAY['C', 'R', 'I', 'N', 'S', 'G',
+                        ARRAY['INT_LAWN_SCAR', 'INT_LAWN_ISLAND', 'INT_LAWN', 'NO_LAWN', 'SHRUB_COVER', 'GRAMMINOIDS',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL

@@ -380,13 +380,13 @@ UNION ALL
 SELECT '13.1'::text number,
        'TT_nbi01_wetland_translation'::text function_tested,
        'pass 1'::text description,
-       TT_nbi01_wetland_translation('FE'::text, 'EV'::text, 'BP'::text, '1'::text) = 'F' passed
+       TT_nbi01_wetland_translation('FE'::text, 'EV'::text, 'BP'::text, '1'::text) = 'FEN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '13.2'::text number,
        'TT_nbi01_wetland_translation'::text function_tested,
        'pass 2'::text description,
-       TT_nbi01_wetland_translation('BO'::text, 'OV'::text, 'MI'::text, '2'::text) = 'O'  passed
+       TT_nbi01_wetland_translation('BO'::text, 'OV'::text, 'MI'::text, '2'::text) = 'OPEN_NON_TREED_FRESHWATER'  passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '13.3'::text number,
