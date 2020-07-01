@@ -2187,8 +2187,8 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_veg_translation(
 RETURNS text AS $$
   DECLARE
     result text = NULL;
-	src_cover_types text[] = '{BL, BM, BY, HE, HF, HG, SL, ST}';
-	tgt_cover_types text[] = '{BRYOID, BRYOID, BRYOID, HERBS, FORBS, GRAMMINOIDS, LOW_SHRUB, TALL_SHRUB}';
+	  src_cover_types text[] = '{BL, BM, BY, HE, HF, HG, SL, ST}';
+	  tgt_cover_types text[] = '{BRYOID, BRYOID, BRYOID, HERBS, FORBS, GRAMMINOIDS, LOW_SHRUB, TALL_SHRUB}';
     src_non_prod_desc text[] = '{AF, M, NPBR, OR}';
   BEGIN
     -- run if statements
@@ -2205,8 +2205,8 @@ RETURNS text AS $$
     END IF;
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd = ANY (src_non_prod_desc) THEN
-        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::Text, '{''AF'', ''HG'', ''ST'', ''HG''}');
+      IF non_productive_descriptor_cd = ANY(src_non_prod_desc) THEN
+        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::Text, '{''ALPINE_FOREST'', ''GRAMMINOIDS'', ''LOW_SHRUB'', ''GRAMMINOIDS''}');
       END IF;
     END IF;
 
