@@ -843,21 +843,21 @@ The Naturally Non-Vegetated class refers to land types with no vegetation cover.
 
 | Values         | Description |
 | :------------- | :----- |
-| AP             | Alpine - high elevation exposed land |
-| LA             | Lake - ponds, lakes or reservoirs |
-| RI             | River - double-lined watercourse |
-| OC             | Ocean - coastal waters |
-| RK             | Rock or Rubble - bed rock or talus or boulder field |
-| SA             | Sand - sand dunes, sand hills, non recent water sediments |
-| SI             | Snow/Ice - ice fields, glaciers, permanent snow |
-| SL             | Slide - recent slumps or slides with exposed earth |
-| EX             | Exposed Land - other non vegetated land |
-| BE             | Beach - adjacent to water bodies |
-| WS             | Water Sediments - recent sand and gravel bars |
-| FL             | Flood - recent flooding including beaver ponds |
-| IS             | Island - vegetated or non vegetated |
-| TF             | Tidal Flats - non vegetated feature associated with oceans |
-| OT             | Other - any other source inventory land type not supported by CASFRI |
+| ALPINE         | High elevation exposed land |
+| LAKE           | Ponds, lakes or reservoirs |
+| RIVER          | Double-lined watercourse |
+| OCEAN          | Coastal waters |
+| ROCK_RUBBLE    | Bed rock or talus or boulder field |
+| SAND           | Sand dunes, sand hills, non recent water sediments |
+| SNOW_ICE       | Ice fields, glaciers, permanent snow |
+| SLIDE          | Recent slumps or slides with exposed earth |
+| EXPOSED_LAND   | Other non vegetated land |
+| BEACH          | Sand areas adjacent to water bodies |
+| WATER_SEDIMENT | Recent sand and gravel bars |
+| FLOOD          | Recent flooding including beaver ponds |
+| ISLAND         | Vegetated or non vegetated islands |
+| TIDAL_FLATS    | Non vegetated feature associated with oceans |
+| OTHER          | Any other source inventory land type not supported by CASFRI |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |

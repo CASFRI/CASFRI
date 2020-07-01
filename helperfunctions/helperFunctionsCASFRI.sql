@@ -1829,7 +1829,7 @@ RETURNS boolean AS $$
     -- If row has nat_non_veg attribute of EX, return true
     IF type_lnd IN('NW','NS','NE') THEN
       IF TT_yvi01_nat_non_veg_validation(type_lnd, class_, landpos) THEN
-        IF TT_yvi01_nat_non_veg_translation(type_lnd, class_, landpos) = 'EX' THEN
+        IF TT_yvi01_nat_non_veg_translation(type_lnd, class_, landpos) = 'EXPOSED_LAND' THEN
           RETURN TRUE;
         END IF;
       END IF;
@@ -2235,31 +2235,31 @@ RETURNS text AS $$
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'DW', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RS', 'TA') THEN
-        result = TT_MapText(non_veg_cover_type_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''DW'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RS'', ''TA''}', '{''BE'', ''RK'', ''RK'', ''EX'', ''EX'', ''EX'', ''EX'', ''SI'', ''LA'', ''RK'', ''EX'', ''WS'', ''EX'', ''WS'', ''OC'', ''SI'', ''LA'', ''RI'', ''EX'', ''WS'', ''RK''}');
+        result = TT_MapText(non_veg_cover_type_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''DW'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RS'', ''TA''}', '{''BEACH'', ''ROCK_RUBBLE'', ''ROCK_RUBBLE'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''SNOW_ICE'', ''LAKE'', ''ROCK_RUBBLE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''OCEAN'', ''SNOW_ICE'', ''LAKE'', ''RIVER'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''ROCK_RUBBLE''}');
       END IF;
     END IF;
 
     IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
       IF land_cover_class_cd_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'EL', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RO', 'RS', 'SI', 'TA') THEN
-        result = TT_MapText(land_cover_class_cd_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''EL'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RO'', ''RS'', ''SI'', ''TA''}', '{''BE'', ''RK'', ''RK'', ''EX'', ''EX'', ''EX'', ''EX'', ''SI'', ''LA'', ''RK'', ''EX'', ''WS'', ''EX'', ''WS'', ''OC'', ''SI'', ''LA'', ''RI'', ''EX'', ''RK'', ''WS'', ''SI'', ''RK''}');
+        result = TT_MapText(land_cover_class_cd_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''EL'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RO'', ''RS'', ''SI'', ''TA''}', '{''BEACH'', ''ROCK_RUBBLE'', ''ROCK_RUBBLE'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''SNOW_ICE'', ''LAKE'', ''ROCK_RUBBLE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''OCEAN'', ''SNOW_ICE'', ''LAKE'', ''RIVER'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''ROCK_RUBBLE''}');
       END IF;
     END IF;
     
     IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
       IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
-        result = TT_MapText(bclcs_level_4, '{''EL'', ''RO'', ''SI''}', '{''EX'', ''RK'', ''SI''}');
+        result = TT_MapText(bclcs_level_4, '{''EL'', ''RO'', ''SI''}', '{''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''SNOW_ICE''}');
       END IF;
     END IF;
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd IN ('A', 'CL', 'G', 'ICE', 'L', 'MUD', 'R', 'RIV', 'S', 'SAND', 'TIDE') THEN
-        result = TT_MapText(non_productive_descriptor_cd, '{''A'', ''CL'', ''G'', ''ICE'', ''L'', ''MUD'', ''R'', ''RIV'', ''S'', ''SAND'', ''TIDE''}', '{''AP'', ''EX'', ''WS'', ''SI'', ''LA'', ''EX'', ''RK'', ''RI'', ''SL'', ''SA'', ''TF''}');
+        result = TT_MapText(non_productive_descriptor_cd, '{''A'', ''CL'', ''G'', ''ICE'', ''L'', ''MUD'', ''R'', ''RIV'', ''S'', ''SAND'', ''TIDE''}', '{''ALPINE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''SNOW_ICE'', ''LAKE'', ''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''RIVER'', ''SLIDE'', ''SAND'', ''TIDAL_FLATS''}');
       END IF;
     END IF;
 
     IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
       IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
-        result = TT_MapText(bclcs_level_4, '{''EL'', ''RO'', ''SI''}', '{''EX'', ''RK'', ''SI''}');
+        result = TT_MapText(bclcs_level_4, '{''EL'', ''RO'', ''SI''}', '{''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''SNOW_ICE''}');
       END IF;
     END IF;
     RETURN result;
@@ -2926,7 +2926,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Assigns nat non veg casfri attributes based on source attribute from various columns.
 -- landpos of A becomes AP
--- classes of 'R','L','RS','E','S','B','RR' become 'RI,'LA,'WS,EX,SA,'EX','RK'
+-- classes of 'R','L','RS','E','S','B','RR' become 'RIVER,'LAKE,'WATER_SEDIMENT','EXPOSED_LAND','SAND','EXPOSED_LAND','ROCK_RUBBLE'
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text, text, text);
 CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_translation(
@@ -2938,11 +2938,11 @@ RETURNS text AS $$
   BEGIN
     IF type_lnd IN('NW', 'NS', 'NE') THEN
       IF landpos = 'A' THEN
-        RETURN 'AP';
+        RETURN 'ALPINE';
       END IF;
       
       IF class_ IN('R','L','RS','E','S','B','RR') THEN
-        RETURN TT_mapText(class_, '{''R'',''L'',''RS'',''E'',''S'',''B'',''RR''}', '{''RI'',''LA'',''WS'',''EX'',''SA'',''EX'',''RK''}');
+        RETURN TT_mapText(class_, '{''R'',''L'',''RS'',''E'',''S'',''B'',''RR''}', '{''RIVER'',''LAKE'',''WATER_SEDIMENT'',''EXPOSED_LAND'',''SAND'',''EXPOSED_LAND'',''ROCK_RUBBLE''}');
       END IF;
     END IF;
       

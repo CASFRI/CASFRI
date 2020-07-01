@@ -225,7 +225,7 @@ UNION ALL
 SELECT '7.1'::text number,
        'TT_vri01_nat_non_veg_translation'::text function_tested,
        'Good test'::text description,
-       TT_vri01_nat_non_veg_translation('V'::text, 'BE'::text, ''::text, ''::text, ''::text) = 'BE' passed
+       TT_vri01_nat_non_veg_translation('V'::text, 'BE'::text, ''::text, ''::text, ''::text) = 'BEACH' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '7.2'::text number,
@@ -1305,13 +1305,13 @@ UNION ALL
 SELECT '28.2'::text number,
        'TT_yvi01_nat_non_veg_translation'::text function_tested,
        'test Alpine'::text description,
-       TT_yvi01_nat_non_veg_translation('NE', '', 'A') = 'AP' passed
+       TT_yvi01_nat_non_veg_translation('NE', '', 'A') = 'ALPINE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '28.3'::text number,
        'TT_yvi01_nat_non_veg_translation'::text function_tested,
        'test class true'::text description,
-       TT_yvi01_nat_non_veg_translation('NE', 'R', '') = 'RI' passed
+       TT_yvi01_nat_non_veg_translation('NE', 'R', '') = 'RIVER' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '28.4'::text number,
