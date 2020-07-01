@@ -2187,29 +2187,32 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_veg_translation(
 RETURNS text AS $$
   DECLARE
     result text = NULL;
+	src_cover_types text[] = '{BL, BM, BY, HE, HF, HG, SL, ST}';
+	tgt_cover_types text[] = '{BRYOID, BRYOID, BRYOID, HERBS, FORBS, GRAMMINOIDS, LOW_SHRUB, TALL_SHRUB}';
+    src_non_prod_desc text[] = '{AF, M, NPBR, OR}';
   BEGIN
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
-      IF land_cover_class_cd_1 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
-        result = TT_MapText(land_cover_class_cd_1, '{''BL'', ''BM'', ''BY'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}', '{''BR'', ''BR'', ''BR'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}');
+      IF land_cover_class_cd_1 = ANY(src_cover_types) THEN
+        result = TT_MapText(land_cover_class_cd_1, src_cover_types::text, tgt_cover_types::text);
       END IF;
     END IF;
     
     IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
-      IF bclcs_level_4 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
-        result = TT_MapText(bclcs_level_4, '{''BL'', ''BM'', ''BY'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}', '{''BR'', ''BR'', ''BR'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}');
+      IF bclcs_level_4  = ANY(src_cover_types) THEN
+        result = TT_MapText(bclcs_level_4, src_cover_types::text, tgt_cover_types::text);
       END IF;
     END IF;
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd IN ('AF', 'M', 'NPBR', 'OR') THEN
-        result = TT_MapText(non_productive_descriptor_cd, '{''AF'', ''M'', ''NPBR'', ''OR''}', '{''AF'', ''HG'', ''ST'', ''HG''}');
+      IF non_productive_descriptor_cd = ANY (src_non_prod_desc) THEN
+        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::Text, '{''AF'', ''HG'', ''ST'', ''HG''}');
       END IF;
     END IF;
 
     IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
-      IF bclcs_level_4 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
-        result = TT_MapText(bclcs_level_4, '{''BL'', ''BM'', ''BY'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}', '{''BR'', ''BR'', ''BR'', ''HE'', ''HF'', ''HG'', ''SL'', ''ST''}');
+      IF bclcs_level_4  = ANY(src_cover_types) THEN
+        result = TT_MapText(bclcs_level_4, src_cover_types::text, tgt_cover_types::text);
       END IF;
     END IF;
     RETURN result;
@@ -2282,7 +2285,7 @@ RETURNS text AS $$
     result text = NULL;
 	src_cover_types text[] = '{AP, GP, MI, MZ, OT, RN, RZ, TZ, UR}';
 	tgt_cover_types text[] = '{FACILITY_INFRASTRUCTURE, INDUSTRIAL, INDUSTRIAL, INDUSTRIAL, OTHER, FACILITY_INFRASTRUCTURE, FACILITY_INFRASTRUCTURE, INDUSTRIAL, FACILITY_INFRASTRUCTURE}';
-    src_non_prod_types text[] = '{C, GR, P, U}';
+    src_non_prod_desc text[] = '{C, GR, P, U}';
   BEGIN
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
@@ -2298,8 +2301,8 @@ RETURNS text AS $$
     END IF;
         
     IF inventory_standard_cd = 'F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd = ANY(src_non_prod_types) THEN
-        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_types::text, '{''CL'', ''IN'', ''CL'', ''FA''}');
+      IF non_productive_descriptor_cd = ANY(src_non_prod_desc) THEN
+        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::text, '{''CL'', ''IN'', ''CL'', ''FA''}');
       END IF;
     END IF;
     
@@ -2962,8 +2965,8 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Assigns non for veg casfri attributes based on source attribute from various columns.
 -- assumes type_lnd is VN and class is in 'S','H','C','M'
--- then translates cl_mod 'TS','TSo','TSc','LS' to 'ST','ST','ST','SL'
--- and class 'C','H','M' to 'BR','HE','HE'
+-- then translates cl_mod 'TS','TSo','TSc','LS' to 'TALL_SHRUB','TALL_SHRUB','TALL_SHRUB','LOW_SHRUB'
+-- and class 'C','H','M' to 'BRYOID','HERBS','HERBS'
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_yvi01_non_for_veg_translation(text, text, text);
 CREATE OR REPLACE FUNCTION TT_yvi01_non_for_veg_translation(
@@ -2976,17 +2979,16 @@ RETURNS text AS $$
     IF type_lnd IN('VN') THEN
       IF class_ IN('S','H','C','M') THEN
         IF cl_mod IN('TS','TSo','TSc','LS') THEN
-          RETURN TT_mapText(cl_mod, '{''TS'',''TSo'',''TSc'',''LS''}', '{''ST'',''ST'',''ST'',''SL''}');
+          RETURN TT_mapText(cl_mod, '{''TS'',''TSo'',''TSc'',''LS''}', '{''TALL_SHRUB'',''TALL_SHRUB'',''TALL_SHRUB'',''LOW_SHRUB''}');
         END IF;
         
         IF class_ IN('C','H','M') THEN
-          RETURN TT_mapText(class_, '{''C'',''H'',''M''}', '{''BR'',''HE'',''HE''}');
+          RETURN TT_mapText(class_, '{''C'',''H'',''M''}', '{''BRYOID'',''HERBS'',''HERBS''}');
         END IF;
       END IF;
     END IF;
     
     RETURN NULL;
-            
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 

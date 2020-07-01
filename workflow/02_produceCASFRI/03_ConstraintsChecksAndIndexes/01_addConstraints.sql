@@ -1624,8 +1624,8 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'nat_non_veg'],
-                        ARRAY['AP', 'LA', 'RI', 'OC', 'RK', 'SA', 'SI',
-                              'SL', 'EX', 'BE', 'WS', 'FL', 'IS', 'TF',
+                        ARRAY['ALPINE', 'LAKE', 'RIVER', 'OCEAN', 'ROCK_RUBBLE', 'SAND', 'SNOW_ICE',
+                              'SLIDE', 'EXPOSED_LAND', 'BEACH', 'WATER_SEDIMENT', 'FLOOD', 'ISLAND', 'TIDAL_FLATS', 'OTHER',
                               'NULL_VALUE', 'EMPTY_STRING', 'INVALID_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -1637,7 +1637,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'non_for_anth'],
-                        ARRAY['IN', 'FA', 'CL', 'SE', 'LG', 'PB', 'OT',
+                        ARRAY['INDUSTRIAL', 'FACILITY_INFRASTRUCTURE', 'CULTIVATED', 'SETTLEMENT', 'LAGOON', 'BORROW_PIT', 'OTHER',
                               'NULL_VALUE', 'EMPTY_STRING', 'INVALID_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -1649,7 +1649,8 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'non_for_veg'],
-                        ARRAY['ST', 'SL', 'HF', 'HE', 'HG', 'BR', 'OM', 'TN',
+                        ARRAY['OPEN_SHRUB', 'CLOSED_SHRUB', 'ALPINE_FOREST', 'TALL_SHRUB', 'LOW_SHRUB', 
+						      'FORBS', 'HERBS', 'GRAMMINOIDS', 'BRYOID', 'OPEN_MUSKED', 'TUNDRA', 'OTHER',
                               'NULL_VALUE', 'EMPTY_STRING', 'INVALID_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 --) foo WHERE NOT passed;

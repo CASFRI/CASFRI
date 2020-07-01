@@ -11,4 +11,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 9,HEIGHT_LOWER,double precision,false(),nothingDouble(),No height value for nfl,TRUE
 10,NAT_NON_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'ISL','RCK','WAT'})","mapText(polytype, {'ISL','RCK','WAT'}, {'ISLAND','ROCK_RUBBLE','RIVER'})",Maps source value to NAT_NON_VEG using list of values,TRUE
 11,NON_FOR_ANTH,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'DAL','UCL'})","mapText(polytype, {'DAL','UCL'}, {'CULTIVATED','OTHER'})",Maps source value to NON_FOR_ANTH using list of values,TRUE
-12,NON_FOR_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'BSH','GRS','OMS','TMS'})","mapText(polytype, {'BSH','GRS','OMS','TMS'}, {'HG','HG','OM','OM'})",Maps source value to NON_FOR_VEG using list of values.,TRUE
+12,NON_FOR_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'BSH','GRS','OMS','TMS'})","mapText(polytype, {'BSH','GRS','OMS','TMS'}, {'GRAMMINOIDS','GRAMMINOIDS','OPEN_MUSKED','OPEN_MUSKED'})",Maps source value to NON_FOR_VEG using list of values.,TRUE

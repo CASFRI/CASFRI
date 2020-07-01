@@ -877,7 +877,7 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 | SETTLEMENT     | Cities, towns, ribbon development |
 | LAGOON         | Water filled, includes treatment sites |
 | BORROW_PIT     | Associated with facility/infrastructure |
-| OTHER          | Other - any other source inventory site type not supported by CASFRI |
+| OTHER          | Any other source inventory site type not supported by CASFRI |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
@@ -892,15 +892,15 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 | Values         | Description |
 | :------------- | :----- |
-| ST             | Tall Shrub - shrub lands with shrubs > 2 meters tall |
-| SL             | Low Shrub - shrub lands with shrubs < 2 meters tall |
-| HF             | Forbs - herbaceous plants other than graminoids |
-| HE             | Herbs - no distinction between forbs and graminoids |
-| HG             | Graminoids - grasses, sedges, rushes, and reeds |
-| BR             | Bryoid - mosses and lichens |
-| OM             | Open Muskeg - wetlands less than 10% tree cover |
-| TN             | Tundra - flat treeless plains |
-| OT             | Other - any other source inventory cover type not supported by CASFRI  |
+| TALL_SHRUB     | Shrub lands with shrubs > 2 meters tall |
+| LOW_SHRUB      | Shrub lands with shrubs < 2 meters tall |
+| FORBS          | Herbaceous plants other than graminoids |
+| HERBS          | No distinction between forbs and graminoids |
+| GRAMMINOIDS    | Grasses, sedges, rushes, and reeds |
+| BRYOID         | Mosses and lichens |
+| OPEN_MUSKED    | Wetlands with less than 10% tree cover |
+| TUNDRA         | Flat treeless plains |
+| OTHER          | Any other source inventory cover type not supported by CASFRI  |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |

@@ -211,7 +211,7 @@ UNION ALL
 SELECT '6.1'::text number,
        'TT_vri01_non_for_veg_translation'::text function_tested,
        'Good test'::text description,
-       TT_vri01_non_for_veg_translation('V'::text, 'BL'::text, ''::text, ''::text) = 'BR' passed
+       TT_vri01_non_for_veg_translation('V'::text, 'BL'::text, ''::text, ''::text) = 'BRYOID' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '6.2'::text number,
@@ -1343,13 +1343,13 @@ UNION ALL
 SELECT '29.4'::text number,
        'TT_yvi01_non_for_veg_translation'::text function_tested,
        'Test correct cl_mod'::text description,
-       TT_yvi01_non_for_veg_translation('VN', 'C', 'TS') = 'ST' passed
+       TT_yvi01_non_for_veg_translation('VN', 'C', 'TS') = 'TALL_SHRUB' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '29.5'::text number,
        'TT_yvi01_non_for_veg_translation'::text function_tested,
        'Test correct class with no cl_mod match'::text description,
-       TT_yvi01_non_for_veg_translation('VN', 'C', 'TSS') = 'BR' passed
+       TT_yvi01_non_for_veg_translation('VN', 'C', 'TSS') = 'BRYOID' passed
 ---------------------------------------------------------
 ---------------------------------------------------------
   -- TT_yvi01_nfl_soil_moisture_validation
