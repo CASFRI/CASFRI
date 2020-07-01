@@ -270,7 +270,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.4'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_TYPE_1 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_type_1']) AS (passed boolean, cstr_query text)) foo
@@ -278,7 +278,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.5'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_YEAR_1 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_year_1']) AS (passed boolean, cstr_query text)) foo
@@ -286,7 +286,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.6'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_UPPER_1 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_upper_1']) AS (passed boolean, cstr_query text)) foo
@@ -294,7 +294,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.7'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_LOWER_1 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_lower_1']) AS (passed boolean, cstr_query text)) foo
@@ -302,7 +302,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.8'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_TYPE_2 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_type_2']) AS (passed boolean, cstr_query text)) foo
@@ -310,7 +310,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.9'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_YEAR_2 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_year_2']) AS (passed boolean, cstr_query text)) foo
@@ -318,7 +318,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.10'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_UPPER_2 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_upper_2']) AS (passed boolean, cstr_query text)) foo
@@ -326,7 +326,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.11'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_LOWER_2 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_lower_2']) AS (passed boolean, cstr_query text)) foo
@@ -334,7 +334,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.12'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_TYPE_3 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_type_3']) AS (passed boolean, cstr_query text)) foo
@@ -342,7 +342,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.13'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_YEAR_3 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_year_3']) AS (passed boolean, cstr_query text)) foo
@@ -350,7 +350,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.14'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_UPPER_3 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_upper_3']) AS (passed boolean, cstr_query text)) foo
@@ -358,7 +358,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.15'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_LOWER_3 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_lower_3']) AS (passed boolean, cstr_query text)) foo
@@ -366,7 +366,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.16'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure LAYER is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['layer']) AS (passed boolean, cstr_query text)) foo
@@ -592,7 +592,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.4'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure WETLAND_TYPE is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['wetland_type']) AS (passed boolean, cstr_query text)) foo
@@ -600,7 +600,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.5'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure WET_VEG_COVER is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['wet_veg_cover']) AS (passed boolean, cstr_query text)) foo
@@ -608,7 +608,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.6'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure WET_LANDFORM_MOD is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['wet_landform_mod']) AS (passed boolean, cstr_query text)) foo
@@ -616,7 +616,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.7'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure WET_LOCAL_MOD is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['wet_local_mod']) AS (passed boolean, cstr_query text)) foo
@@ -624,7 +624,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.8'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure ECO_SITE is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['eco_site']) AS (passed boolean, cstr_query text)) foo
