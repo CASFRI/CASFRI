@@ -29,27 +29,22 @@ WHERE TT_NotEmpty(pe2_species_codes);
 SELECT * FROM translation.pe_pei01_cas;
 DROP TABLE IF EXISTS translation_devel.pe_pei01_cas_devel;
 CREATE TABLE translation_devel.pe_pei01_cas_devel AS
-SELECT * FROM translation.pe_pei01_cas; --WHERE rule_id::int = 1
+SELECT * FROM translation.pe_pei01_cas WHERE rule_id::int <> 5;
 SELECT * FROM translation_devel.pe_pei01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'pe_pei01_cas_devel', '_pe01_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei', 200);
-SELECT * FROM TT_Translate_pe01_cas_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_Translate_pe01_cas_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_nsi01_cas_devel');
 
 -- LYR1 ATTRIBUTES
 SELECT * FROM translation.pe_pei01_lyr;
 DROP TABLE IF EXISTS translation_devel.pe_pei01_lyr_devel;
 CREATE TABLE translation_devel.pe_pei01_lyr_devel AS
-SELECT * FROM translation.pe_pei01_lyr; --WHERE rule_id::int = 1
+SELECT * FROM translation.pe_pei01_lyr WHERE rule_id::int != 4;
 SELECT * FROM translation_devel.pe_pei01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'pe_pei01_lyr_devel', '_pe01_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_lyr_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe_pei01_lyr_devel');
-
--- LYR2 ATTRIBUTES
-SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_lyr_devel('rawfri', 'pe01_l2_to_pe_pei_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_pe01_lyr_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pe_pei01_lyr_devel');
 
 -- DST ATTRIBUTES
@@ -67,11 +62,11 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'pe_pei01_dst_devel');
 SELECT * FROM translation.pe_pei01_nfl;
 DROP TABLE IF EXISTS translation_devel.pe_pei01_nfl_devel;
 CREATE TABLE translation_devel.pe_pei01_nfl_devel AS
-SELECT * FROM translation.pe_pei01_nfl; --WHERE rule_id::int = 1
+SELECT * FROM translation.pe_pei01_nfl WHERE rule_id::int != 4; --IN (0,1,2,3);
 SELECT * FROM translation_devel.pe_pei01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'pe_pei01_nfl_devel', '_pe01_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'pe01', 3, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_nfl_devel('rawfri', 'pe01_l3_to_pe_pei_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1, 200);
+SELECT * FROM TT_Translate_pe01_nfl_devel('rawfri', 'pe01_l2_to_pe_pei_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pe_pei01_nfl_devel');
 
 -- ECO ATTRIBUTES
