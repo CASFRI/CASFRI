@@ -33,9 +33,9 @@ SELECT '1010'::text, '2'::text, '10'::text, '10'::text;
 -- Create some test lookup table
 DROP TABLE IF EXISTS test_lookup_on_species;
 CREATE TABLE test_lookup_on_species AS
-SELECT 'Sw'::text source_val, 'Pice glau'::text spec1
+SELECT 'Sw'::text source_val, 'PICE_GLAU'::text spec1
 UNION ALL
-SELECT 'Sb'::text, 'Pice mari'::text;
+SELECT 'Sb'::text, 'PICE_MARI'::text;
 
 -----------------------------------------------------------
 -- Comment out the following line and the last one of the file to display 
@@ -1203,19 +1203,19 @@ UNION ALL
 SELECT '25.1'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Get species code 1'::text description,
-       TT_fim_species_translation('Sw  10Sb  90', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'Pice glau' passed
+       TT_fim_species_translation('Sw  10Sb  90', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_GLAU' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.2'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Get species code 2'::text description,
-       TT_fim_species_translation('Sw  10Sb  90', '2', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'Pice mari' passed
+       TT_fim_species_translation('Sw  10Sb  90', '2', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_MARI' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.3'::text number,
        'TT_fim_species_translation'::text function_tested,
        'Get species code 100'::text description,
-       TT_fim_species_translation('Sw 100', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'Pice glau' passed
+       TT_fim_species_translation('Sw 100', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_GLAU' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '25.4'::text number,
@@ -1714,19 +1714,19 @@ UNION ALL
 SELECT '38.1'::text number,
        'TT_sk_utm01_species_translation'::text function_tested,
        'Expected species'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','BF','','','') = 'Abie bals' passed
+       TT_sk_utm01_species_translation('2', 'WS','BF','','','') = 'ABIE_BALS' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '38.2'::text number,
        'TT_sk_utm01_species_translation'::text function_tested,
        'Expected species with empty strings'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','','','','BF') = 'Abie bals' passed
+       TT_sk_utm01_species_translation('2', 'WS','','','','BF') = 'ABIE_BALS' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '38.3'::text number,
        'TT_sk_utm01_species_translation'::text function_tested,
        'Expected species with empty strings and nulls'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','',NULL::text,'','BF') = 'Abie bals' passed
+       TT_sk_utm01_species_translation('2', 'WS','',NULL::text,'','BF') = 'ABIE_BALS' passed
 ---------------------------------------------------------
   -- TT_sfv01_stand_structure_translation
 ---------------------------------------------------------
