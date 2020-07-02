@@ -526,57 +526,64 @@ RETURNS integer AS $$
       EXIT WHEN rows IS NOT NULL;
     END LOOP;
     RETURN rows;
-END;
+  END;
 $$ LANGUAGE plpgsql VOLATILE STRICT;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_CreateMapping
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_CreateMapping(text, text, int, name, int); 
+--DROP FUNCTION IF EXISTS TT_CreateMapping(text, int, name, int); 
 CREATE OR REPLACE FUNCTION TT_CreateMapping( 
-  schemaName text, 
   fromTableName text,
   fromLayer int,
   toTableName text,
   toLayer int
 ) 
 RETURNS TABLE (num int, key text, from_att text, to_att text, contributing boolean) AS $$
-  WITH colnames AS (
-    SELECT TT_TableColumnNames('translation', 'attribute_dependencies') col_name_arr
+  DECLARE
+    queryStr text;
+  BEGIN
+    IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
+      RAISE EXCEPTION 'ERROR TT_CreateMapping(): Could not find table ''translation.dependencies''...';
+    END IF;
+    queryStr = 'WITH colnames AS (
+    SELECT TT_TableColumnNames(''translation'', ''attribute_dependencies'') col_name_arr
   ), colnames_num AS (
     SELECT generate_series(1, cardinality(col_name_arr)) num, unnest(col_name_arr) colname
     FROM colnames
   ), from_att AS (
-    -- Vertical table of all 'from' attribute mapping
+    -- Vertical table of all ''from'' attribute mapping
     SELECT (jsonb_each(to_jsonb(a.*))).*
     FROM translation.attribute_dependencies a
-    WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(fromTableName) AND layer = fromLayer::text
+    WHERE lower(btrim(btrim(inventory_id, '' ''), '''''''')) = lower(''' || fromTableName || ''') AND layer = ' || fromLayer || '::text
   ), to_att AS (
-    -- Vertical table of all 'to' attribute mapping
+    -- Vertical table of all ''to'' attribute mapping
     SELECT (jsonb_each(to_jsonb(a.*))).*
     FROM translation.attribute_dependencies a
-    WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(toTableName) AND layer = toLayer::text
+    WHERE lower(btrim(btrim(inventory_id, '' ''), '''''''')) = lower(''' || toTableName || ''') AND layer = ' || toLayer || '::text
   ), splitted AS (
     -- Splitted by comma, still vertically
     SELECT colnames_num.num, from_att.key, 
-           --rtrim(ltrim(trim(regexp_split_to_table(btrim(from_att.value::text, '"'), E',')), '['), ']') from_att, 
-           trim(regexp_split_to_table(btrim(from_att.value::text, '"'), E',')) from_att, 
-           trim(regexp_split_to_table(btrim(to_att.value::text, '"'), E',')) to_att
+           --rtrim(ltrim(trim(regexp_split_to_table(btrim(from_att.value::text, ''"''), E'','')), ''[''), '']'') from_att, 
+           trim(regexp_split_to_table(btrim(from_att.value::text, ''"''), E'','')) from_att, 
+           trim(regexp_split_to_table(btrim(to_att.value::text, ''"''), E'','')) to_att
     FROM from_att, to_att, colnames_num
     WHERE colnames_num.colname = from_att.key AND 
           from_att.key = to_att.key AND 
-          from_att.key != 'ogc_fid' AND 
-          from_att.key != 'ttable_exists'
+          from_att.key != ''ogc_fid'' AND 
+          from_att.key != ''ttable_exists''
   )
   SELECT num, key,
-         rtrim(ltrim(from_att, '['), ']') from_att,
-         rtrim(ltrim(to_att, '['), ']') to_att,
-         CASE WHEN left(from_att, 1) = '[' AND right(from_att, 1) = ']' THEN FALSE
+         rtrim(ltrim(from_att, ''[''), '']'') from_att,
+         rtrim(ltrim(to_att, ''[''), '']'') to_att,
+         CASE WHEN left(from_att, 1) = ''['' AND right(from_att, 1) = '']'' THEN FALSE
               ELSE TRUE
          END contributing
-  FROM splitted;
-$$ LANGUAGE sql VOLATILE;
+  FROM splitted;';
+    RETURN QUERY EXECUTE queryStr;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -707,7 +714,7 @@ RETURNS text AS $$
 
     -- Build the attribute mapping string
       WITH mapping AS (
-        SELECT * FROM TT_CreateMapping(schemaName, fromTableName, fromLayer, toTableName, toLayer)
+        SELECT * FROM TT_CreateMapping(fromTableName, fromLayer, toTableName, toLayer)
       ), unique_att AS (
       -- Create only one map for each 'to' attribute (there can not be more than one)
       SELECT DISTINCT ON (to_att)
@@ -756,7 +763,7 @@ RETURNS text AS $$
     -- Build the WHERE string
     IF validRowSubset AND NOT attributeList THEN
       FOR mappingRec IN SELECT * 
-                        FROM TT_CreateMapping(schemaName, fromTableName, fromLayer, toTableName, toLayer)
+                        FROM TT_CreateMapping(fromTableName, fromLayer, toTableName, toLayer)
                         WHERE TT_NotEmpty(from_att) LOOP
         IF mappingRec.contributing AND (((rowSubset = 'lyr' OR rowSubset = 'lyr2') AND (mappingRec.key = 'species_1' OR mappingRec.key = 'species_2' OR mappingRec.key = 'species_3')) OR
            (rowSubset = 'nfl' AND (mappingRec.key = 'nat_non_veg' OR mappingRec.key = 'non_for_anth' OR mappingRec.key = 'non_for_veg')) OR
@@ -968,7 +975,7 @@ RETURNS text AS $$
 
     -- Replace selectAttrList CASFRI attribute with their mapping attributes
     FOR mappingRec IN SELECT key, string_agg(from_att, ', ') attrs
-                      FROM TT_CreateMapping(schemaName, tableName, 1, tableName, 1)
+                      FROM TT_CreateMapping(tableName, 1, tableName, 1)
                       WHERE TT_NotEmpty(from_att) AND key != 'inventory_id' AND key != 'layer'
                       GROUP BY key
     LOOP
@@ -977,7 +984,7 @@ RETURNS text AS $$
 
     -- Replace whereInAttrList and whereOutAttrList CASFRI attributes with their mapping attribute. only the 
     FOR mappingRec IN SELECT key, string_agg(from_att, ', ') attrs
-                      FROM TT_CreateMapping(schemaName, tableName, 1, tableName, 1)
+                      FROM TT_CreateMapping(tableName, 1, tableName, 1)
                       WHERE TT_NotEmpty(from_att) AND contributing AND key != 'inventory_id' AND key != 'layer'
                       GROUP BY key
     LOOP
@@ -997,7 +1004,7 @@ RETURNS text AS $$
       
       -- Loop through all attribute_dependencies row mapping
       FOR mappingRec IN SELECT *
-                        FROM TT_CreateMapping(schemaName, tableName, layer::int, tableName, layer::int)
+                        FROM TT_CreateMapping(tableName, layer::int, tableName, layer::int)
                         WHERE TT_NotEmpty(from_att)
       LOOP
         -- Pick attributes corresponding to keywords
