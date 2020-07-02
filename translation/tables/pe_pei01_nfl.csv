@@ -9,6 +9,6 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur,TRUE
 8,HEIGHT_UPPER,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
 9,HEIGHT_LOWER,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
-10,NAT_NON_VEG,text,"notNull(landtype);matchList(landtype,{'SO','SD','WW','FL'}|NOT_APPLICABLE)","mapText(landtype, {'SO','SD','WW','FL'}, {'SL','SA','LA','FL'})",Maps source value to NAT_NON_VEG using list of values.,TRUE
-11,NON_FOR_ANTH,text,"notNull(landtype);matchList(landtype,{'CL','WF','PL','RN','RD','RR','AG','EP','UR'}|NOT_APPLICABLE)","mapText(landtype, {'CL','WF','PL','RN','RD','RR','AG','EP','UR'}, {'OT','OT','FA','FA','FA','FA','CL','BP','SE'})",Maps source value to NON_FOR_ANTH using list of values.,TRUE
-12,NON_FOR_VEG,text,"notNull(landtype);matchList(landtype,{'AL','BO'}|NOT_APPLICABLE)","mapText(landtype,{'AL','BO'}, {'ST','OM'})",Maps source value to NON_FOR_VEG using list of values.,TRUE
+10,NAT_NON_VEG,text,"notNull(landtype);matchList(landtype,{'SO','SD','WW','FL'}|NOT_APPLICABLE)","mapText(landtype, {'SO','SD','WW','FL'}, {'SLIDE','SAND','LAKE','FLOOD'})",Maps source value to NAT_NON_VEG using list of values.,TRUE
+11,NON_FOR_ANTH,text,"notNull(landtype);matchList(landtype,{'CL','WF','PL','RN','RD','RR','AG','EP','UR'}|NOT_APPLICABLE)","mapText(landtype, {'CL','WF','PL','RN','RD','RR','AG','EP','UR'}, {'OTHER','OTHER','FACILITY_INFRASTRUCTURE','FACILITY_INFRASTRUCTURE','FACILITY_INFRASTRUCTURE','FACILITY_INFRASTRUCTURE','CULTIVATED','BORROW_PIT','SETTLEMENT'})",Maps source value to NON_FOR_ANTH using list of values.,TRUE
+12,NON_FOR_VEG,text,"notNull(landtype);matchList(landtype,{'AL','BO'}|NOT_APPLICABLE)","mapText(landtype,{'AL','BO'}, {'TALL_SHRUB','OPEN_MUSKED'})",Maps source value to NON_FOR_VEG using list of values.,TRUE
