@@ -1228,7 +1228,7 @@ RETURNS TABLE (ttable text,
       IF NOT TT_TableExists(schemaName, tTable) THEN
         RAISE EXCEPTION 'TT_StackTranslationRules() ERROR: Table ''%.%'' does not exist...', schemaName, tTable;
       END IF;
-      
+      RAISE NOTICE 'TT_StackTranslationRules(): Anlysing %...', schemaName || '.' || tTable;
       -- Build a list of all target attributes for this table
       EXECUTE 'SELECT array_agg(target_attribute)' ||
               ' FROM ' || TT_FullTableName(schemaName, tTable) 

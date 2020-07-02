@@ -1048,7 +1048,7 @@ UNION ALL
 SELECT '19.11'::text number,
        'TT_tie01_height_translation'::text function_tested,
        'test using et_domi INF'::text description,
-       TT_tie01_height_translation('2010', 'translation', 'qc03_standstructure', 'layer_1_age', 'O', 'INF', '', '', '15', '20', 'A', '1', 'lower') = 20::int passed
+       TT_tie01_height_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'INF', '', '', '15', '20', 'A', '1', 'lower') = 20::int passed
 ---------------------------------------------------------
 ---------------------------------------------------------
   -- TT_tie01_2layer_age_codes_validation
