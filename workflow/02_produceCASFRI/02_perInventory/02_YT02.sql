@@ -67,6 +67,11 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of YT species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (yt_species_codes)
+WHERE TT_NotEmpty(yt_species_codes);
+
+-- Prepare the translation function
 SELECT TT_Prepare('translation', 'yt_yvi01_lyr', '_yt_lyr', 'ab_avi01_lyr'); 
 
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1);
@@ -113,7 +118,7 @@ SELECT * FROM TT_Translate_yt_geo('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_geo');
 --------------------------------------------------------------------------
 -- Check
-SELECT 'cas_all', count(*) nb
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'YT02'
 UNION ALL

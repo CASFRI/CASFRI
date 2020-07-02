@@ -88,11 +88,11 @@ SELECT * FROM translation_devel.bc09_vri01_geo_devel;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Validate the BC species dependency tables
+-- Check the uniqueness of BC species codes
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'bc_vri01_species_validation', '_bc_species_val');
-SELECT * FROM TT_Translate_bc_species_val('translation', 'bc_vri01_species');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (bc_species_codes)
+WHERE TT_NotEmpty(bc_species_codes);
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------

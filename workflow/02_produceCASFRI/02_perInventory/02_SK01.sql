@@ -44,7 +44,7 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'SK01';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_sk_dst('rawfri', 'sk01_l1_to_sk_utm_l1_map_dst', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_dst('rawfri', 'sk01_l1_to_sk_utm_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst');
 
@@ -67,6 +67,11 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_eco');
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of SK species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (sk_species_codes)
+WHERE TT_NotEmpty(sk_species_codes);
+
+-- Prepare the translation function
 SELECT TT_Prepare('translation', 'sk_utm01_lyr', '_sk_lyr', 'ab_avi01_lyr'); 
 
 -- Delete existing entries

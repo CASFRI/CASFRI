@@ -18,23 +18,28 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
 -------------------------------------------------------
--- Validate all species lookup tables
+-- Check the uniqueness of all species codes
 -------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab_avi01_species_validation', '_ab_species_val');
-SELECT TT_Prepare('translation', 'bc_vri01_species_validation', '_bc_species_val');
-SELECT TT_Prepare('translation', 'nb_nbi01_species_validation', '_nb_species_val');
-SELECT TT_Prepare('translation', 'nt_fvi01_species_validation', '_nt_species_val');
-SELECT TT_Prepare('translation', 'on_fim02_species_validation', '_on_species_val');
-SELECT TT_Prepare('translation', 'sk_utm01_species_validation', '_sk_species_val');
-SELECT TT_Prepare('translation', 'yt_yvi01_species_validation', '_yt_species_val');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (ab_species_codes)
+WHERE TT_NotEmpty(ab_species_codes);
 
-SELECT * FROM TT_Translate_ab_species_val('translation', 'ab_avi01_species');
-SELECT * FROM TT_Translate_bc_species_val('translation', 'bc_vri01_species');
-SELECT * FROM TT_Translate_nb_species_val('translation', 'nb_nbi01_species');
-SELECT * FROM TT_Translate_nt_species_val('translation', 'nt_fvi01_species');
-SELECT * FROM TT_Translate_on_species_val('translation', 'on_fim02_species');
-SELECT * FROM TT_Translate_sk_species_val('translation', 'sk_utm01_species');
-SELECT * FROM TT_Translate_yt_species_val('translation', 'yt_yvi01_species');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (bc_species_codes)
+WHERE TT_NotEmpty(bc_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (nb_species_codes)
+WHERE TT_NotEmpty(nb_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (nt_species_codes)
+WHERE TT_NotEmpty(nt_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (on_species_codes)
+WHERE TT_NotEmpty(on_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (sk_species_codes)
+WHERE TT_NotEmpty(sk_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (yt_species_codes)
+WHERE TT_NotEmpty(yt_species_codes);
 
 -------------------------------------------------------
 -- Translate all LYR tables into a common table. 32h
@@ -242,7 +247,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
 ------------------------
 -- Translate YT02 using YVI translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
+SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt02_l1_to_yt_l1_map_lyr', 'ogc_fid');
@@ -261,11 +266,11 @@ GROUP BY left(cas_id, 4);
 -- BC08	4113383
 -- BC10	4744673
 -- NB01	932271
--- NB02	1053553
+-- NB02	1053554
 -- NT01	246179
 -- NT02	350967
 -- ON02	2240815
--- SK01	860394
+-- SK01	1692982
 -- YT02	105102
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
@@ -281,7 +286,7 @@ GROUP BY left(cas_id, 4), layer;
 -- BC10	2	174610
 -- NB01	1	767392
 -- NB01	2	164879
--- NB02	1	870924
+-- NB02	1	870925
 -- NB02	2	182629
 -- NT01	1	236939
 -- NT01	2	9240
@@ -289,11 +294,11 @@ GROUP BY left(cas_id, 4), layer;
 -- NT02	2	84808
 -- ON02	1	2066888
 -- ON02	2	173927
--- SK01	1	846500
+-- SK01	1	1679088
 -- SK01	2	13894
 -- YT02	1	105102
 
-SELECT count(*) FROM casfri50.lyr_all; -- 14811190
+SELECT count(*) FROM casfri50.lyr_all; -- 15643779
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX lyr_all_casid_idx

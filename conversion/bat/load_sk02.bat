@@ -56,56 +56,56 @@ SET query1=SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS invento
 
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_poly% ^
--nln %TableName_poly% %layer_creation_option% ^
+-nln %TableName_poly% %layer_creation_options% %other_options% ^
 -sql "%query1%" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for meta data
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_meta% ^
--nln %TableName_meta% %layer_creation_option% ^
+-nln %TableName_meta% %layer_creation_options% %other_options% ^
 -sql "SELECT *, poly_id AS poly_id_meta FROM %gdbFileName_meta%" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for dist data
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_dist% ^
--nln %TableName_dist% %layer_creation_option% ^
+-nln %TableName_dist% %layer_creation_options% %other_options% ^
 -sql "SELECT *, poly_id AS poly_id_dist FROM %gdbFileName_dist%" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for herbs data
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_herbs% ^
--nln %TableName_herbs% %layer_creation_option% ^
+-nln %TableName_herbs% %layer_creation_options% %other_options% ^
 -sql "SELECT *, poly_id AS poly_id_herbs FROM %gdbFileName_herbs%" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for layer 1 data
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_l1% ^
--nln %TableName_l1% %layer_creation_option% ^
+-nln %TableName_l1% %layer_creation_options% %other_options% ^
 -sql "SELECT *, poly_id AS poly_id_l1 FROM %gdbFileName_l1%" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for layer 2 data
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_l2% ^
--nln %TableName_l2% %layer_creation_option% ^
+-nln %TableName_l2% %layer_creation_options% %other_options% ^
 -sql "SELECT *, poly_id AS poly_id_l2 FROM %gdbFileName_l2%" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for layer 3 data
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_l3% ^
--nln %TableName_l3% %layer_creation_option% ^
+-nln %TableName_l3% %layer_creation_options% %other_options% ^
 -sql "SELECT *, poly_id AS poly_id_l3 FROM %gdbFileName_l3%" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for shrubs data
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_shrubs% ^
--nln %TableName_shrubs% %layer_creation_option% ^
+-nln %TableName_shrubs% %layer_creation_options% %other_options% ^
 -sql "SELECT *, poly_id AS poly_id_shrubs FROM %gdbFileName_shrubs%" ^
 -progress %overwrite_tab%
 
@@ -124,7 +124,7 @@ SET fullTargetTableName=%swap%
 :: Run ogr2ogr for wetland data
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFullPath% %gdbFileName_wetland% ^
--nln %TableName_wetland% %layer_creation_option% ^
+-nln %TableName_wetland% %layer_creation_options% %other_options% ^
 -sql "SELECT *, poly_id AS poly_id_wetland FROM %gdbFileName_wetland%" ^
 -progress %overwrite_tab%
 

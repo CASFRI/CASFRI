@@ -34,7 +34,7 @@ SET srcFullPath=%friDir%\AB\%inventoryID%\data\inventory
 
 SET fullTargetTableName=%targetFRISchema%.ab16
 
-SET ogr_options=-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry %overwrite_tab%
+SET overwrite_option=%overwrite_tab%
 
 IF "%pgpassword4ab16%"=="" SET pgpassword4ab16=%pgpassword%
 
@@ -61,11 +61,12 @@ FOR /D %%F IN (%srcFullPath%\t*) DO (
   "%gdalFolder%/ogr2ogr" ^
   -f "PostgreSQL" PG:"host=%pghost% port=%pgport% dbname=%pgdbname% user=%pguser% password=%pgpassword4ab16%" "%%F\forest" ^
   -nln %fullTargetTableName% ^
-  -t_srs %prjFile% ^
   -sql "SELECT *, '%%~nF' AS src_filename, '%inventoryID%' AS inventory_id, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM %ogrTab%" ^
-  !ogr_options!
+  !layer_creation_options! %other_options% ^
+  !overwrite_option!
   
-  SET ogr_options=-update -append
+  SET overwrite_option=-update -append
+  SET layer_creation_options=
 )
 
 CALL .\common_postprocessing.bat

@@ -19,27 +19,10 @@ CREATE SCHEMA IF NOT EXISTS casfri50_lookup;
 -------------------------------------------------------
 DROP TABLE IF EXISTS casfri50_lookup.species_codes CASCADE;
 CREATE TABLE casfri50_lookup.species_codes AS
-SELECT DISTINCT spec1 code
-FROM (
-SELECT spec1 FROM translation.ab_avi01_species
-UNION ALL
-SELECT spec1 FROM translation.bc_vri01_species
-UNION ALL
-SELECT spec1 FROM translation.nb_nbi01_species
-UNION ALL
-SELECT spec1 FROM translation.nt_fvi01_species
-UNION ALL
-SELECT spec1 FROM translation.on_fim02_species
-UNION ALL
-SELECT specie FROM translation.qc03_species
-UNION ALL
-SELECT spec1 FROM translation.sk_utm01_species
-UNION ALL
-SELECT spec1 FROM translation.sk_sfv01_species
-UNION ALL
-SELECT spec1 FROM translation.yt_yvi01_species
-UNION ALL
-SELECT * FROM (VALUES ('NULL_VALUE'), ('EMPTY_STRING'), ('NOT_IN_SET'), ('NOT_APPLICABLE')) AS t(scec1)
+SELECT code
+FROM (SELECT DISTINCT casfri_species_codes code FROM translation.species_code_mapping
+      UNION ALL
+      SELECT * FROM (VALUES ('NULL_VALUE'), ('EMPTY_STRING'), ('NOT_IN_SET'), ('NOT_APPLICABLE')) AS t(code)
 ) foo
 ORDER BY code;
 
@@ -189,8 +172,8 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'cas_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'stand_structure'],
-                        ARRAY['S', 'M', 'H', 'C',
-                             'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET']) AS (passed boolean, cstr_query text)) foo
+                        ARRAY['SINGLE_LAYERED', 'MULTI_LAYERED', 'HORIZONTAL', 'COMPLEX',
+                             'NULL_VALUE', 'INVALID_VALUE', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.17'::text number,
@@ -200,12 +183,12 @@ SELECT '1.17'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
                         ARRAY['num_of_layers_greater_than_zero', 
-                              '((stand_structure = ''M'' OR 
-                                 stand_structure = ''H'' OR 
-                                 stand_structure = ''C'') AND 
+                              '((stand_structure = ''MULTI_LAYERED'' OR 
+                                 stand_structure = ''HORIZONTAL'' OR 
+                                 stand_structure = ''COMPLEX'') AND 
                                 num_of_layers > 1) OR 
-                               ((stand_structure = ''S'' OR 
-                                 stand_structure = ''C'') AND 
+                               ((stand_structure = ''SINGLE_LAYERED'' OR 
+                                 stand_structure = ''COMPLEX'') AND 
                                 num_of_layers = 1) OR 
                                num_of_layers = -8886 OR -- UNKNOWN_VALUE
                                stand_structure = ''NULL_VALUE'' OR
@@ -287,7 +270,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.4'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_TYPE_1 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_type_1']) AS (passed boolean, cstr_query text)) foo
@@ -295,7 +278,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.5'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_YEAR_1 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_year_1']) AS (passed boolean, cstr_query text)) foo
@@ -303,7 +286,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.6'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_UPPER_1 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_upper_1']) AS (passed boolean, cstr_query text)) foo
@@ -311,7 +294,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.7'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_LOWER_1 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_lower_1']) AS (passed boolean, cstr_query text)) foo
@@ -319,7 +302,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.8'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_TYPE_2 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_type_2']) AS (passed boolean, cstr_query text)) foo
@@ -327,7 +310,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.9'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_YEAR_2 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_year_2']) AS (passed boolean, cstr_query text)) foo
@@ -335,7 +318,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.10'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_UPPER_2 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_upper_2']) AS (passed boolean, cstr_query text)) foo
@@ -343,7 +326,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.11'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_LOWER_2 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_lower_2']) AS (passed boolean, cstr_query text)) foo
@@ -351,7 +334,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.12'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_TYPE_3 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_type_3']) AS (passed boolean, cstr_query text)) foo
@@ -359,7 +342,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.13'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_YEAR_3 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_year_3']) AS (passed boolean, cstr_query text)) foo
@@ -367,7 +350,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.14'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_UPPER_3 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_upper_3']) AS (passed boolean, cstr_query text)) foo
@@ -375,7 +358,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.15'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure DIST_EXT_LOWER_3 is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['dist_ext_lower_3']) AS (passed boolean, cstr_query text)) foo
@@ -383,7 +366,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.16'::text number,
        'dst_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure LAYER is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'NOTNULL', ARRAY['layer']) AS (passed boolean, cstr_query text)) foo
@@ -412,14 +395,14 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.19'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_TYPE_1 values match the corresponding lookup table' description, 
+       'Issue #386. Ensure DST table DIST_TYPE_1 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'dist_type_1'],
-                        ARRAY['CO', 'PC', 'BU', 'WF', 'DI', 'IK', 'FL', 
-                              'WE', 'SL', 'OT', 'DT', 'SI', 'CL', 'UK',
+                        ARRAY['CUT', 'PARTIAL_CUT', 'BURN', 'WINDFALL', 'DISEASE', 'INSECT', 'FLOOD', 
+                              'WEATHER', 'SLIDE', 'OTHER', 'DEAD_UNKNOWN', 'SILVICULTURE_TREATMENT',
                               'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -431,8 +414,8 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'dist_type_2'],
-                        ARRAY['CO', 'PC', 'BU', 'WF', 'DI', 'IK', 'FL', 
-                              'WE', 'SL', 'OT', 'DT', 'SI', 'CL', 'UK',
+                        ARRAY['CUT', 'PARTIAL_CUT', 'BURN', 'WINDFALL', 'DISEASE', 'INSECT', 'FLOOD', 
+                              'WEATHER', 'SLIDE', 'OTHER', 'DEAD_UNKNOWN', 'SILVICULTURE_TREATMENT',
                               'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -491,7 +474,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.25'::text number,
        'dst_all' target_table,
-       'Issue #338. Ensure DST table DIST_EXT_UPPER_1 is greater than 10 and below 100' description, 
+       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10 and below 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -506,7 +489,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.26'::text number,
        'dst_all' target_table,
-       'Issue #338. Ensure DST table DIST_EXT_UPPER_2 is greater than 10 and below 100' description, 
+       'Ensure DST table DIST_EXT_UPPER_2 is greater than 10 and below 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -536,7 +519,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.28'::text number,
        'dst_all' target_table,
-       'Issue #338. Ensure DST table DIST_EXT_LOWER_1 is greater than 10 and below 100' description, 
+       'Issue #387. Ensure DST table DIST_EXT_LOWER_1 is greater than 10 and below 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -551,7 +534,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.29'::text number,
        'dst_all' target_table,
-       'Issue #338. Ensure DST table DIST_EXT_LOWER_2 is greater than 10 and below 100' description, 
+       'Issue #387. Ensure DST table DIST_EXT_LOWER_2 is greater than 10 and below 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -566,7 +549,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.30'::text number,
        'dst_all' target_table,
-       'Issue #338. Ensure DST table DIST_EXT_LOWER_3 is greater than 10 and below 100' description, 
+       'Ensure DST table DIST_EXT_LOWER_3 is greater than 10 and below 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -609,7 +592,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.4'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure WETLAND_TYPE is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['wetland_type']) AS (passed boolean, cstr_query text)) foo
@@ -617,7 +600,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.5'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure WET_VEG_COVER is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['wet_veg_cover']) AS (passed boolean, cstr_query text)) foo
@@ -625,7 +608,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.6'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure WET_LANDFORM_MOD is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['wet_landform_mod']) AS (passed boolean, cstr_query text)) foo
@@ -633,7 +616,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.7'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure WET_LOCAL_MOD is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['wet_local_mod']) AS (passed boolean, cstr_query text)) foo
@@ -641,7 +624,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.8'::text number,
        'eco_all' target_table,
-       'Ensure CAS_ID is NOT NULL' description, 
+       'Ensure ECO_SITE is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'NOTNULL', ARRAY['eco_site']) AS (passed boolean, cstr_query text)) foo
@@ -658,25 +641,25 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.10'::text number,
        'eco_all' target_table,
-       'Issue ''S'' is in the database and not in the specs ''NA'', ''E'' and ''Z'' are in the specs but not in the database. Ensure ECO table WETLAND_TYPE values match the corresponding lookup table' description, 
+       'Ensure ECO table WETLAND_TYPE values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wetland_type'],
-                        ARRAY['B', 'F', 'M', 'O', 'T', 'W',
+                        ARRAY['BOG', 'FEN', 'SWAMP', 'MARSH', 'SHALLOW_WATER', 'TIDAL_FLATS', 'ESTUARY', 'WETLAND', 'NOT_WETLAND',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '3.11'::text number,
        'eco_all' target_table,
-       'Issue ''P'' is in the database and not in the specs. Ensure ECO table WET_VEG_COVER values match the corresponding lookup table' description, 
+       'Ensure ECO table WET_VEG_COVER values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wet_veg_cover'],
-                        ARRAY['F', 'T', 'O', 'C', 'M',
+                        ARRAY['FORESTED', 'WOODED', 'OPEN_NON_TREED_FRESHWATER', 'OPEN_NON_TREED_COASTAL', 'MUD',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -688,36 +671,36 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wet_landform_mod'],
-                        ARRAY['X', 'P', 'N', 'A',
+                        ARRAY['PERMAFROST_PRESENT', 'PATTERNING_PRESENT', 'NO_PERMAFROST_PATTERNING', 'SALINE_ALKALINE',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '3.13'::text number,
        'eco_all' target_table,
-       'Issue ''B'' is found in the database but not in the specs. Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table' description, 
+       'Issue #377. ''B'' is found in the database but not in the specs. Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wet_local_mod'],
-                        ARRAY['C', 'R', 'I', 'N', 'S', 'G',
+                        ARRAY['INT_LAWN_SCAR', 'INT_LAWN_ISLAND', 'INT_LAWN', 'NO_LAWN', 'SHRUB_COVER', 'GRAMMINOIDS',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '3.14'::text number,
        'eco_all' target_table,
-       'Issue eco_site does not seems to be translated. Ensure ECO table ECO_SITE values match the corresponding lookup table' description, 
+       'Issue #376. eco_site does not seems to be translated. Ensure ECO table ECO_SITE values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'CHECK', 
-                        ARRAY['eco_site_not_applicable', 'eco_site = ''NOT_APPLICABLE''']) AS (passed boolean, cstr_query text)) foo
+                        ARRAY['eco_site_not_applicable', 'eco_site != ''NOT_APPLICABLE''']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the LYR_ALL table
 -------------------------------------------------------
 UNION ALL
 SELECT '4.1'::text number,
        'lyr_all' target_table,
-       'Add primary key to LYR_ALL' description, 
+       'Issue #305. Add primary key to LYR_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'PK', 
@@ -726,7 +709,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.2'::text number,
        'lyr_all' target_table,
-       'Issue #330. Add foreign key from LYR_ALL to CAS_ALL' description, 
+       'Add foreign key from LYR_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -743,7 +726,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.4'::text number,
        'lyr_all' target_table,
-       'Ensure SOILMOIST_REG is NOT NULL' description, 
+       'Ensure SOIL_MOIST_REG is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'NOTNULL', ARRAY['soil_moist_reg']) AS (passed boolean, cstr_query text)) foo
@@ -967,6 +950,38 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.32'::text number,
        'lyr_all' target_table,
+       'Ensure ORIGIN_UPPER is NOT NULL' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'NOTNULL', ARRAY['origin_upper']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.33'::text number,
+       'lyr_all' target_table,
+       'Ensure ORIGIN_LOWER is NOT NULL' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'NOTNULL', ARRAY['origin_lower']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.34'::text number,
+       'lyr_all' target_table,
+       'Ensure SITE_CLASS is NOT NULL' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'NOTNULL', ARRAY['site_class']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.35'::text number,
+       'lyr_all' target_table,
+       'Ensure SITE_INDEX is NOT NULL' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'NOTNULL', ARRAY['site_index']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.36'::text number,
+       'lyr_all' target_table,
        'Ensure LYR table CAS_ID is 50 characters long' description, 
        passed, cstr_query
 FROM (SELECT * 
@@ -974,7 +989,7 @@ FROM (SELECT *
                         ARRAY['cas_id_length', 'length(cas_id) = 50']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.33'::text number,
+SELECT '4.37'::text number,
        'lyr_all' target_table,
        'Issue #338. Ensure LYR table STRUCTURE_PER is greater than 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -989,7 +1004,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.34'::text number,
+SELECT '4.38'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SOIL_MOIST_REG values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -997,11 +1012,11 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'soil_moist_reg'],
-                        ARRAY['D', 'F', 'M', 'W', 'A',
-                              'NULL_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
+                        ARRAY['DRY', 'MESIC', 'MOIST', 'WET', 'AQUATIC',
+                              'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET', 'UNKNOWN_VALUE', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.35'::text number,
+SELECT '4.39'::text number,
        'lyr_all' target_table,
        'Ensure LYR table LAYER is greater than 0' description, 
        passed, cstr_query
@@ -1010,7 +1025,7 @@ FROM (SELECT *
                         ARRAY['layer_greater_than_zero', 'layer > 0']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.36'::text number,
+SELECT '4.40'::text number,
        'lyr_all' target_table,
        'Ensure LYR table LAYER_RANK is greater than 0 and smaller than 10' description, 
        passed, cstr_query
@@ -1023,7 +1038,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.37'::text number,
+SELECT '4.41'::text number,
        'lyr_all' target_table,
        'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table CROWN_CLOSURE_UPPER is greater than 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1038,7 +1053,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.38'::text number,
+SELECT '4.42'::text number,
        'lyr_all' target_table,
        'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table CROWN_CLOSURE_LOWER is greater than 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1053,9 +1068,9 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.39'::text number,
+SELECT '4.43'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table HEIGHT_UPPER is greater than 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table HEIGHT_UPPER is greater than 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1068,9 +1083,9 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.40'::text number,
+SELECT '4.44'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table HEIGHT_LOWER is greater than 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table HEIGHT_LOWER is greater than 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1083,7 +1098,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.41'::text number,
+SELECT '4.45'::text number,
        'lyr_all' target_table,
        'Ensure LYR table PRODUCTIVE_FOR values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1091,11 +1106,11 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'productive_for'],
-                        ARRAY['TM', 'AL', 'SD', 'SC', 'NP', 'PP', 'PF',
+                        ARRAY['TREED_MUSKEG', 'ALPINE_FOREST', 'SCRUB_DECIDUOUS', 'SCRUB_CONIFEROUS', 'NON_PRODUCTIVE_FOREST', 'POTENTIALLY_PRODUCTIVE', 'PRODUCTIVE_FOREST',
                               'NULL_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.42'::text number,
+SELECT '4.46'::text number,
        'lyr_all' target_table,
        'Issue #346: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1104,7 +1119,7 @@ FROM (SELECT *
                         ARRAY['species_1', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.43'::text number,
+SELECT '4.47'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_2 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1113,7 +1128,7 @@ FROM (SELECT *
                         ARRAY['species_2', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.44'::text number,
+SELECT '4.48'::text number,
        'lyr_all' target_table,
        'Issue #346: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_3 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1122,7 +1137,7 @@ FROM (SELECT *
                         ARRAY['species_3', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.45'::text number,
+SELECT '4.49'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_4 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1131,7 +1146,7 @@ FROM (SELECT *
                         ARRAY['species_4', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.46'::text number,
+SELECT '4.50'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_5 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1140,7 +1155,7 @@ FROM (SELECT *
                         ARRAY['species_5', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.47'::text number,
+SELECT '4.51'::text number,
        'lyr_all' target_table,
        'Issue #346: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_6 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1149,7 +1164,7 @@ FROM (SELECT *
                         ARRAY['species_6', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.48'::text number,
+SELECT '4.52'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_7 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1158,7 +1173,7 @@ FROM (SELECT *
                         ARRAY['species_7', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.49'::text number,
+SELECT '4.53'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_8 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1167,7 +1182,7 @@ FROM (SELECT *
                         ARRAY['species_8', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.50'::text number,
+SELECT '4.54'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_9 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1176,7 +1191,7 @@ FROM (SELECT *
                         ARRAY['species_9', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.51'::text number,
+SELECT '4.55'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_10 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1185,9 +1200,9 @@ FROM (SELECT *
                         ARRAY['species_10', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.52'::text number,
+SELECT '4.56'::text number,
        'lyr_all' target_table,
-       'Issue #346 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_1 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_1 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1200,9 +1215,9 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.53'::text number,
+SELECT '4.57'::text number,
        'lyr_all' target_table,
-       'Issue #346 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_2 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_2 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1215,9 +1230,9 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.54'::text number,
+SELECT '4.58'::text number,
        'lyr_all' target_table,
-       'Issue #346 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_3 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_3 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1230,9 +1245,9 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.55'::text number,
+SELECT '4.59'::text number,
        'lyr_all' target_table,
-       'Issue #346 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_4 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_4 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1245,9 +1260,9 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.56'::text number,
+SELECT '4.60'::text number,
        'lyr_all' target_table,
-       'Issue #346 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_5 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_5 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1260,7 +1275,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.57'::text number,
+SELECT '4.61'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_6 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1275,7 +1290,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.58'::text number,
+SELECT '4.62'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_7 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1290,7 +1305,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.59'::text number,
+SELECT '4.63'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_8 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1305,7 +1320,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.60'::text number,
+SELECT '4.64'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_9 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1320,7 +1335,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.61'::text number,
+SELECT '4.65'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_10 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1335,33 +1350,61 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.62'::text number,
+SELECT '4.66'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure NFL table HEIGHT_UPPER is greater than 0 and smaller than or equal to 100' description, 
+       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table ORIGIN_UPPER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
 FROM (SELECT * 
-      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['height_upper_between_0_and_100',
-                              '(height_upper >= 0 AND height_upper <= 100) OR 
-                               height_upper = -9999 OR -- OUT_OF_RANGE
-                               height_upper = -9997 OR -- INVALID_VALUE
-                               height_upper = -8888 OR -- NULL_VALUE
-                               height_upper = -8887    -- NOT_APPLICABLE
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
+                        ARRAY['origin_upper_between_1000_and_2050',
+                              '(origin_upper > 1000 AND origin_upper <= 2050) OR 
+                               origin_upper = -9999 OR -- OUT_OF_RANGE
+                               origin_upper = -9997 OR -- INVALID_VALUE
+                               origin_upper = -8888 OR -- NULL_VALUE
+                               origin_upper = -8887    -- NOT_APPLICABLE
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.63'::text number,
+SELECT '4.67'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure NFL table HEIGHT_LOWER is greater than 0 and smaller than or equal to 100' description, 
+       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table ORIGIN_LOWER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
 FROM (SELECT * 
-      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['height_lower_between_0_and_100',
-                              '(height_lower >= 0 AND height_lower <= 100) OR 
-                               height_lower = -9999 OR -- OUT_OF_RANGE
-                               height_lower = -9997 OR -- INVALID_VALUE
-                               height_lower = -8888 OR -- NULL_VALUE
-                               height_lower = -8887    -- NOT_APPLICABLE
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
+                        ARRAY['origin_lower_between_0_and_2050',
+                              '(origin_lower > 1000 AND origin_lower <= 2050) OR 
+                               origin_lower = -9999 OR -- OUT_OF_RANGE
+                               origin_lower = -9997 OR -- INVALID_VALUE
+                               origin_lower = -8888 OR -- NULL_VALUE
+                               origin_lower = -8887    -- NOT_APPLICABLE
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.68'::text number,
+       'lyr_all' target_table,
+       'Ensure LYR table SITE_CLASS values match the corresponding lookup table' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
+                        ARRAY['casfri50_lookup', 
+                              'site_class'],
+                        ARRAY['UNPRODUCTIVE', 'POOR', 'MEDIUM', 'GOOD',
+                              'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.69'::text number,
+       'lyr_all' target_table,
+       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table SITE_INDEX is greater than 0 and smaller than 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
+                        ARRAY['site_index_between_0_and_100',
+                              '(site_index >= 0 AND site_index < 100) OR 
+                               site_index = -9999 OR -- OUT_OF_RANGE
+                               site_index = -9995 OR -- WRONG_TYPE
+                               site_index = -9997 OR -- INVALID_VALUE
+                               site_index = -8888 OR -- NULL_VALUE
+                               site_index = -8887    -- NOT_APPLICABLE
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the NFL_ALL table
@@ -1369,7 +1412,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.1'::text number,
        'nfl_all' target_table,
-       'Add primary key to NFL_ALL' description, 
+       'Issue #305. Add primary key to NFL_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'PK', 
@@ -1493,11 +1536,11 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.16'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table LAYER is greater than 0' description, 
+       'Ensure NFL table LAYER is greater than or equal to 0' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['layer_greater_than_zero', 'layer > 0']) AS (passed boolean, cstr_query text)) foo
+                        ARRAY['layer_greater_than_zero', 'layer >= 0']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.17'::text number,
@@ -1545,38 +1588,69 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.20'::text number,
        'nfl_all' target_table,
-       'Issue #325: Some rows return TRANSLATION_ERROR. Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
+       'Ensure NFL table HEIGHT_UPPER is greater than 0 and smaller than or equal to 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
+                        ARRAY['height_upper_between_0_and_100',
+                              '(height_upper >= 0 AND height_upper <= 100) OR 
+                               height_upper = -9999 OR -- OUT_OF_RANGE
+                               height_upper = -9997 OR -- INVALID_VALUE
+                               height_upper = -8888 OR -- NULL_VALUE
+                               height_upper = -8887    -- NOT_APPLICABLE
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '5.21'::text number,
+       'nfl_all' target_table,
+       'Ensure NFL table HEIGHT_LOWER is greater than 0 and smaller than or equal to 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
+                        ARRAY['height_lower_between_0_and_100',
+                              '(height_lower >= 0 AND height_lower <= 100) OR 
+                               height_lower = -9999 OR -- OUT_OF_RANGE
+                               height_lower = -9997 OR -- INVALID_VALUE
+                               height_lower = -8888 OR -- NULL_VALUE
+                               height_lower = -8887    -- NOT_APPLICABLE
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '5.22'::text number,
+       'nfl_all' target_table,
+       'Issue #359: Some rows returns DW. Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'nat_non_veg'],
-                        ARRAY['AP', 'LA', 'RI', 'OC', 'RK', 'SA', 'SI',
-                              'SL', 'EX', 'BE', 'WS', 'FL', 'IS', 'TF',
+                        ARRAY['ALPINE', 'LAKE', 'RIVER', 'OCEAN', 'ROCK_RUBBLE', 'SAND', 'SNOW_ICE',
+                              'SLIDE', 'EXPOSED_LAND', 'BEACH', 'WATER_SEDIMENT', 'FLOOD', 'ISLAND', 'TIDAL_FLATS', 'OTHER',
                               'NULL_VALUE', 'EMPTY_STRING', 'INVALID_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '5.21'::text number,
+SELECT '5.23'::text number,
        'nfl_all' target_table,
-       'Issue #325: Some rows return TRANSLATION_ERROR. Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
+       'Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'non_for_anth'],
-                        ARRAY['IN', 'FA', 'CL', 'SE', 'LG', 'PB', 'OT',
+                        ARRAY['INDUSTRIAL', 'FACILITY_INFRASTRUCTURE', 'CULTIVATED', 'SETTLEMENT', 'LAGOON', 'BORROW_PIT', 'OTHER',
                               'NULL_VALUE', 'EMPTY_STRING', 'INVALID_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '5.22'::text number,
+SELECT '5.24'::text number,
        'nfl_all' target_table,
-       'Issue #325: Some rows return TRANSLATION_ERROR. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
+       'Issue #347: Invalid or undocumented codes. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'non_for_veg'],
-                        ARRAY['ST', 'SL', 'HF', 'HE', 'HG', 'BR', 'OM', 'TN',
+                        ARRAY['OPEN_SHRUB', 'CLOSED_SHRUB', 'ALPINE_FOREST', 'TALL_SHRUB', 'LOW_SHRUB', 
+						      'FORBS', 'HERBS', 'GRAMMINOIDS', 'BRYOID', 'OPEN_MUSKED', 'TUNDRA', 'OTHER',
                               'NULL_VALUE', 'EMPTY_STRING', 'INVALID_VALUE', 'NOT_IN_SET', 'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 --) foo WHERE NOT passed;

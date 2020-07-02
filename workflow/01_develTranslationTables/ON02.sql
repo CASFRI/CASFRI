@@ -17,10 +17,9 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS translation_devel;
 
 
--- Validate species dependency tables
-SELECT TT_Prepare('translation', 'on_fim02_species_validation', '_on_species_val');
-SELECT * FROM TT_Translate_on_species_val('translation', 'on_fim02_species');
-
+-- Check the uniqueness of ON species codes
+CREATE UNIQUE INDEX ON translation.species_code_mapping (on_species_codes)
+WHERE TT_NotEmpty(on_species_codes);
 
 -- CAS ATTRIBUTES
 SELECT * FROM translation.on_fim02_cas;

@@ -179,7 +179,7 @@ GROUP BY left(cas_id, 4);
 --SK01	1501667
 --YT02	231137
 
-SELECT count(*) FROM casfri50.cas_all; -- 17976422
+SELECT count(*) FROM casfri50.cas_all; -- 17976421
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX cas_all_casid_idx

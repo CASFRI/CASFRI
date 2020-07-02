@@ -43,7 +43,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 :: Set -overwrite for first load if requested in config
 :: After first load, remove -overwrite and add -update -append
 
-SET ogr_options=-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry %overwrite_tab%
+SET overwrite_option=%overwrite_tab%
 
 ECHO OFF
 FOR /D %%F IN (%srcFullPath%\*) DO (
@@ -59,11 +59,13 @@ FOR /D %%F IN (%srcFullPath%\*) DO (
     "%gdalFolder%/ogr2ogr" ^
     -f "PostgreSQL" %pg_connection_string% "%%F\%ogrTab%.shp" ^
     -nln %fullTargetTableName% ^
-    -t_srs %prjFile% ^
     -sql "SELECT *, '%%~nF' AS src_filename, '%inventoryID%' AS inventory_id FROM %ogrTab%" ^
-    -progress !ogr_options!
+    -progress ^
+    !layer_creation_options! %other_options% ^
+    !overwrite_option!
 
-    SET ogr_options=-update -append
+    SET overwrite_option=-update -append
+    SET layer_creation_options=
   ) ELSE (
     ECHO ***********************************************************************
     ECHO *********************** Skipping %%~nF... ****************************
@@ -79,9 +81,10 @@ FOR /D %%F IN (%srcFullPath%\11*) DO (
     "%gdalFolder%/ogr2ogr" ^
     -f "PostgreSQL" %pg_connection_string% "%%F\%ogrTab%.shp" ^
     -nln %fullTargetTableName% ^
-    -t_srs %prjFile% ^
     -sql "SELECT *, '%%~nF' AS src_filename, '%inventoryID%' AS inventory_id FROM %ogrTab%" ^
-    -progress !ogr_options!
+    -progress ^
+    !layer_creation_options! %other_options% ^
+    !overwrite_option!
 )
 
 CALL .\common_postprocessing.bat

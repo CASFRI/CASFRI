@@ -38,8 +38,7 @@ Digital forest inventory data can overcome many of the deficiencies identified w
 <a name=CAS></a>
 ## Common Attribute Schema  
 
-The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index,  
-non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
+The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
 
 Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada. Gillis and Leckie<sup>1</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography. A summary of recent or current inventories across Canada are presented in Appendix 1. These inventories are the most likely sources for data that can contribute to the avian bird modeling project.  
 
@@ -94,27 +93,27 @@ Table 1. CASFRI schema.
 
  
 <a name=Error_codes></a>
-## Error Codes  
+## CASFRI Error Codes  
 
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI v5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as text (e.g. INVALID). Different error codes are reported depending on the cause. Individual error codes are reported for each attribute in the specifications below.
+Error codes are needed during translation to report invalid or missing source inventory values. Error codes have been designed to match the CASFRI attribute type and to reflect the type of error that was encountered in the source inventory. Integer attributes will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as strings (e.g. 'INVALID_VALUE'). Possible error codes for each CASFRI attribute are listed in the attribute descriptions below.
 
-Table 2. Error codes
+Table 2. CASFRI error codes
 
-| Class          | Type               | Description                                                                                                                                              | Text code         | Numeric code |
-| -------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------------ |
-| Missing values | Empty string       | Missing value that is entered as an empty string (e.g. '' or '&#160;')                                                                                        | EMPTY_STRING      | -8889        |
-|                | Null               | Missing value that is a true null value                                                                                                                  | NULL_VALUE        | -8888        |
-|                | Not applicable     | Target attribute not in source table or does not apply to this record (e.g. the source inventory does not record information for the attribute           | NOT_APPLICABLE    | -8887        |
-|                | Unknown value      | Non-null value that is not known (e.g. if the source data we have is incomplete and we can't be sure of the attributes value without a complete dataset) | UNKNOWN_VALUE     | -8886        |
-| Invalid values | Out of range       | Value is outside the range of values (e.g. a percent value that is >100                                                                                  | OUT_OF_RANGE      | -9999        |
-|                | Not member of set  | Value is not a member of a set or list (e.g. when a source value does not match a list of expected strings)                                              | NOT_IN_SET        | -9998        |
-|                | Invalid value      | Invalid value (e.g. input value does match expected format)                                                                                              | INVALID_VALUE     | -9997        |
-|                | Wrong data type    | Value is of the wrong data type (e.g. a text string when we expect an integer)                                                                           | WRONG_TYPE        | -9995        |
-|                | Unused value       | Non-null value that is not used in CAS                                                                                                                   | UNUSED_VALUE      | -9994        |
-|                | Not unique         | Source table values are not unique (e.g. a lookup table that lists a source value twice)                                                                 | NOT_UNIQUE        | -9993        |
-| Generic        | Translation error  | Generic translation error (reported for a failed translation)                                                                                            | TRANSLATION_ERROR | -3333        |
-| Geometry       | Invalid geometry   | Invalid geometry in one or more polygons                                                                                                                 | INVALID_GEOMETRY  | -7779        |
-|                | No intersect       | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry)                                               | NO_INTERSECT      | -7778        |
+| Class          | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;text | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;int&nbsp;and&nbsp;double | Description |
+|:-------------- |:---------:|:------------:|:----------- |
+| Missing&nbsp;values | EMPTY_STRING | -8889 | Missing value that is stored as an empty string (e.g. '' or '&#160;'). |
+|                | NULL_VALUE        | -8888 | Missing value that is a true null value. |
+|                | NOT_APPLICABLE    | -8887 | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute. |
+|                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK). Might also mean that the value can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct attributes value because the source data is incomplete). |
+| Invalid&nbsp;values | OUT_OF_RANGE | -9999 | Value is outside the range of valid values (e.g. a percent value that is greater than 100. |
+|                |  NOT_IN_SET       | -9998 | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory). |
+|                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does match expected format). |
+|                | WRONG_TYPE        | -9995 | Value is of the wrong data type (e.g. a string or decimal value when an integer is expected). |
+|                | UNUSED_VALUE      | -9994 | Non-null value that is not used in CASFRI |
+|                | NOT_UNIQUE        | -9993 | Source table values are not unique (e.g. a lookup table that lists a source value twice). |
+| Geometric&nbsp;error | INVALID_GEOMETRY  | -7779 | Invalid geometry in one or more polygons. |
+|                | NO_INTERSECT      | -7778 | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry). |
+| Translation    | TRANSLATION_ERROR | -3333 | Generic translation error (reported for a failed translation). |
 
 
 <a name=HDR_attributes></a>
@@ -410,10 +409,10 @@ If Complex or Horizontal stand structure is assigned in the source data, it is a
 
 | Values | Description |
 | :------------------- | :-------------- |
-| S                    | Single layered - vegetation within a polygon where the heights do not vary significantly |
-| M                    | Multilayered - two or more distinct layers of vegetation occur. Each layer is significant, clearly observable                          and evenly distributed. Each layer is assigned an independent description |
-| C                    | Complex - stands exhibit a high variation of heights with no single defined canopy layer |
-| H                    | Horizontal - two or more significant strata within the same polygon; at least one of the strata is too small                          to delineate as a separate polygon |
+| SINGLE_LAYERED       | Vegetation within a polygon where the heights do not vary significantly |
+| MULTI_LAYERED        | Two or more distinct layers of vegetation occur. Each layer is significant, clearly observable                          and evenly distributed. Each layer is assigned an independent description |
+| COMPLEX              | Stands exhibit a high variation of heights with no single defined canopy layer |
+| HORIZONTAL           | Two or more significant strata within the same polygon; at least one of the strata is too small                          to delineate as a separate polygon |
 | NOT_APPLICABLE       | No stand structure value is applicable (e.g. polygon does not have canopy information) |
 
 Notes:
@@ -559,8 +558,8 @@ The attribute **STRUCTURE_PER** is assigned when a horizontal structured polygon
 
 | Values                             | Description  |
 | :--------------------------------- | :------ |
-| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
-| 100                                | When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal                                                structure |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
+| 100                                | When **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", "COMPLEX", value = 100 i.e., when there is no horizontal                                                structure |
 | -9998                              | Source value is not an expected value (e.g. in cases where structure percent is a coded alpha                                          numeric with an expected list of codes) |
 | -8888                              | Source value is null |
 | -9995                              | Source value is not the expected type (e.g. not an integer) |
@@ -573,8 +572,8 @@ The attribute **STRUCTURE_RANGE** is assigned when a complex structured polygon 
 
 | Values | Description |
 | :----- | :----- |
-| 1&#8209;99 | When **STAND_STRUCTURE** = "C", measures the height range (m) around the midpoint height of the stand. It is calculated as            the difference between the mean or median heights of the upper and lower layers within the complex stand |
-| -8887  | Translation is not applicable (e.g. when **STAND_STRUCTURE** = "S", "M", or "H") |
+| 1&#8209;99 | When **STAND_STRUCTURE** = "COMPLEX", measures the height range (m) around the midpoint height of the stand. It is calculated as            the difference between the mean or median heights of the upper and lower layers within the complex stand |
+| -8887  | Translation is not applicable (e.g. when **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", or "HORIZONTAL") |
 
 Notes:
 
@@ -588,13 +587,14 @@ Soil moisture regime describes the available moisture supply for plant growth ov
 
 | Value          | Description |
 | :------------- | :----- |
-| D              | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
-| F              | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
-| M              | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
-| W              | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
-| A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
+| DRY            | Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
+| MESIC          | Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum |
+| MOIST          | Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
+| WET            | Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water |
+| AQUATIC        | Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water |
 | NULL_VALUE     | Source value is null |
-| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| UNKNOWN_VALUE  | Source value is unknown |
 | NOT_APPLICABLE | Source value does not occur |
 
 
@@ -637,13 +637,13 @@ Unproductive forest is forest land not capable of producing trees for forest ope
 
 | Values | Description |
 | :----- | :-------------- |
-| TM     | Treed Muskeg - treed wetland sites |
-| AL     | Alpine forest - high elevation forest usually above 1800 m |
-| SD     | Scrub Deciduous - scrub deciduous trees on poor sites |
-| SC     | Scrub Coniferous - scrub coniferous trees on poor sites |
-| NP     | Non Productive forest - poor forest types on rocky or wet sites |
-| PP     | Potentially Productive forest - forest previously affected by some disturbance |
-| PF     | Productive Forest - any other forest |
+| TREED_MUSKEG           | Treed wetland sites |
+| ALPINE_FOREST          | High elevation forest usually above 1800 m |
+| SCRUB_DECIDUOUS        | Scrub deciduous trees on poor sites |
+| SCRUB_CONIFEROUS       | Scrub coniferous trees on poor sites |
+| NON_PRODUCTIVE_FOREST  | Poor forest types on rocky or wet sites |
+| POTENTIALLY_PRODUCTIVE | Potentially productive forest previously affected by some disturbance |
+| PRODUCTIVE_FOREST      | Any other forest |
 
 Notes:
 
@@ -662,8 +662,8 @@ CAS species codes are derived from the species' Latin name using the first four 
 | :------------  | :-------------- |
 | Species codes  | **Link to possible values after #211** |
 | NULL_VALUE     | Source value is null |
-| EMPTY_STRING      | Source value is and empty string (e.g. '') |
-| NOT_IN_SET     | Source value is not in list of expected values |
+| EMPTY_STRING   | Source value is and empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | INVALID_VALUE  | Soure value is invalid (e.g. code is not the expected format) |
 
 
@@ -699,13 +699,13 @@ Site class is an estimate of the potential productivity of land for tree growth.
 
 | Values         | Description |
 | :-----         | :-------------- |
-| U              | Unproductive - cannot support a commercial forest |
-| P              | Poor - poor tree growth based on age height relationship |
-| M              | Medium - medium tree growth based on age height relationship |
-| G              | Good - medium tree growth based on age height relationship |
+| UNPRODUCTIVE   | Cannot support a commercial forest |
+| POOR           | Poor tree growth based on age height relationship |
+| MEDIUM         | Medium tree growth based on age height relationship |
+| GOOD           | Good tree growth based on age height relationship |
 | NULL_VALUE     | Source value is null |
-| EMPTY_STRING      | Source value is an empty string (e.g. '') |
-| NOT_IN_SET     | Source value is not in list of expected values |
+| EMPTY_STRING   | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Source value does not occur |
 
 
@@ -755,7 +755,7 @@ See <a href="#LAYER">LAYER</a> in the LYR table.
 
 | Values   | Description   |
 | :------- | :------- |
-| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers                can be identified. No two layers can have the same value within the same polygon |
+| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon |
 
 
 ### LAYER_RANK  
@@ -763,7 +763,7 @@ See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
 
 | Values | Description |
 | :----- | :----- |
-| 1&#8209;9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
+| 1&#8209;9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc.  |
 | -8888  | Source value is null |
 | -8887  | Translation is not applicable (e.g. no source attribute) |
 
@@ -777,12 +777,13 @@ Soil moisture regime defined in the NFL table must be a value explicitly assigne
 | Value          | Description |
 | :------------- | :----- |
 | D              | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
-| F              | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well                      drained substratum |
+| F              | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum |
 | M              | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
-| W              | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by                    shallow water |
-| A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface                of water |
+| W              | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water |
+| A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water |
 | NULL_VALUE     | Source value is null |
-| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| UNKNOWN_VALUE  | Source value is unknown |
 | NOT_APPLICABLE | Source value does not occur |
 
 Notes:
@@ -795,8 +796,8 @@ See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 
 | Values                             | Description  |
 | :--------------------------------- | :------ |
-| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "H", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
-| 100                                | When **STAND_STRUCTURE** = "S", "M", "C", value = 100 i.e., when there is no horizontal                                                structure |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
+| 100                                | When **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", "COMPLEX", value = 100 i.e., when there is no horizontal                                                structure |
 | -9998                              | Source value is not an expected value (e.g. in cases where structure percent is a coded alpha                                          numeric with an expected list of codes) |
 | -8888                              | Source value is null |
 | -9995                              | Source value is not the expected type (e.g. not an integer) |
@@ -841,25 +842,26 @@ The Naturally Non-Vegetated class refers to land types with no vegetation cover.
 
 | Values         | Description |
 | :------------- | :----- |
-| AP             | Alpine - high elevation exposed land     |
-| LA             | Lake - ponds, lakes or reservoirs     |
-| RI             | River - double-lined watercourse     |
-| OC             | Ocean - coastal waters     |
-| RK             | Rock or Rubble - bed rock or talus or boulder field     |
-| SA             | Sand - sand dunes, sand hills, non recent water sediments     |
-| SI             | Snow/Ice - ice fields, glaciers, permanent snow     |
-| SL             | Slide - recent slumps or slides with exposed earth     |
-| EX             | Exposed Land - other non vegetated land     |
-| BE             | Beach - adjacent to water bodies     |
-| WS             | Water Sediments - recent sand and gravel bars     |
-| FL             | Flood - recent flooding including beaver ponds     |
-| IS             | Island - vegetated or non vegetated     |
-| TF             | Tidal Flats - non vegetated feature associated with oceans     |
+| ALPINE         | High elevation exposed land |
+| LAKE           | Ponds, lakes or reservoirs |
+| RIVER          | Double-lined watercourse |
+| OCEAN          | Coastal waters |
+| ROCK_RUBBLE    | Bed rock or talus or boulder field |
+| SAND           | Sand dunes, sand hills, non recent water sediments |
+| SNOW_ICE       | Ice fields, glaciers, permanent snow |
+| SLIDE          | Recent slumps or slides with exposed earth |
+| EXPOSED_LAND   | Other non vegetated land |
+| BEACH          | Sand areas adjacent to water bodies |
+| WATER_SEDIMENT | Recent sand and gravel bars |
+| FLOOD          | Recent flooding including beaver ponds |
+| ISLAND         | Vegetated or non vegetated islands |
+| TIDAL_FLATS    | Non vegetated feature associated with oceans |
+| OTHER          | Any other source inventory land type not supported by CASFRI |
 | NULL_VALUE     | Source value is null |
-| EMPTY_STRING      | Source value is an empty string (e.g. '') |
-| NOT_IN_SET     | Source value is not in list of expected values |
+| EMPTY_STRING   | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
-| INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                       defined) |
+| INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule defined) |
 
 
 ### NON_FOR_ANTH
@@ -868,16 +870,16 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 
 | Values         | Description |
 | :------------- | :----- |
-| IN             | Industrial - industrial sites     |
-| FA             | Facility/Infrastructure - transportation, transmission, pipeline     |
-| CL             | Cultivated - pasture, crops, orchards, plantations     |
-| SE             | Settlement - cities, towns, ribbon development     |
-| LG             | Lagoon - water filled, includes treatment sites     |
-| BP             | Borrow Pit - associated with facility/infrastructure     |
-| OT             | Other - any not listed     |
+| INDUSTRIAL     | Industrial sites |
+| FACILITY_INFRASTRUCTURE | Transportation, transmission, pipeline |
+| CULTIVATED     | Pasture, crops, orchards, plantations |
+| SETTLEMENT     | Cities, towns, ribbon development |
+| LAGOON         | Water filled, includes treatment sites |
+| BORROW_PIT     | Associated with facility/infrastructure |
+| OTHER          | Any other source inventory site type not supported by CASFRI |
 | NULL_VALUE     | Source value is null |
-| EMPTY_STRING      | Source value is an empty string (e.g. '') |
-| NOT_IN_SET     | Source value is not in list of expected values |
+| EMPTY_STRING   | Source value is an empty string (e.g. '') |
+| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
 
@@ -889,17 +891,18 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 | Values         | Description |
 | :------------- | :----- |
-| ST             | Tall Shrub - shrub lands with shrubs > 2 meters tall     |
-| SL             | Low Shrub - shrub lands with shrubs < 2 meters tall     |
-| HF             | Forbs - herbaceous plants other than graminoids     |
-| HE             | Herbs - no distinction between forbs and graminoids     |
-| HG             | Graminoids - grasses, sedges, rushes, and reeds     |
-| BR             | Bryoid - mosses and lichens     |
-| OM             | Open Muskeg - wetlands less than 10% tree cover     |
-| TN             | Tundra - flat treeless plains     |
+| TALL_SHRUB     | Shrub lands with shrubs > 2 meters tall |
+| LOW_SHRUB      | Shrub lands with shrubs < 2 meters tall |
+| GRAMMINOIDS    | Grasses, sedges, rushes, and reeds |
+| FORBS          | Herbaceous plants other than graminoids |
+| HERBS          | Undistinguishable family of herbs |
+| BRYOID         | Mosses and lichens |
+| OPEN_MUSKED    | Wetlands with less than 10% tree cover |
+| TUNDRA         | Flat treeless plains |
+| OTHER          | Any other source inventory cover type not supported by CASFRI  |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
-| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Source value is not applicable (e.g. no NFL values to report) |
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
 
@@ -946,21 +949,21 @@ Disturbance identifies the type of disturbance history that has occurred or is o
 
 | Values         | Description |
 | :------------- | :-------------- |
-| CO             | Cut - logging with known extent |
-| PC             | Partial Cut - portion of forest has been removed, extent known or unknown |
-| BU             | Burn - wildfires or escape fires |
-| WF             | Windfall - blow down |
-| DI             | Disease - root, stem, branch diseases |
-| IK             | Insect - root, bark, leader, or defoliation insects |
-| FL             | Flood - permanent flooding from blockage or damming |
-| WE             | Weather - ice, frost, red belt |
-| SL             | Slide - damage from avalanche, slump, earth or rock slides |
-| OT             | Other - unknown or other damage |
-| DT             | Dead Tops or Trees - dead or dying trees, cause unknown |
-| SI             | Silviculture Treatments - Planting, Thinning, Seed Tree |
+| BURN           | Wildfires or escape fires |
+| CUT            | Logging with known extent |
+| DISEASE        | Root, stem or branch diseases |
+| FLOOD          | Permanent flooding from blockage or damming |
+| INSECT         | Root, bark, leader or defoliation insects |
+| PARTIAL_CUT    | Portion of forest has been removed, extent known or unknown |
+| SLIDE          | Damage from avalanche, slump, earth or rock slides |
+| WINDFALL       | Blow down |
+| WEATHER        | Ice, frost, red belt |
+| DEAD_UNKNOWN   | Dead or dying trees, cause unknown |
+| SILVICULTURE_TREATMENT | Planting, Thinning, Seed Tree |
+| OTHER          | Other type of damage |
 | NULL_VALUE     | Source value is null |
 | EMPTY_STRING   | Source value is an empty string (e.g. '') |
-| NOT_IN_SET     | Source value is not in list of expected values |
+| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | INVALID_VALUE  | Source value is invalid (e.g. the disturbance code does not match the expected format) |
 
 
@@ -1027,48 +1030,48 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 
 | Values | Description |
 | :----- | :----- |
-| B      | Bog - > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss |
-| F      | Fen - > 40 cm of peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed |
-| S      | Swamp - woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent                subsurface water. Various mixtures of mineral sediments and peat |
-| M      | Marsh - emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water |
-| O      | Shallow Open Water - freshwater lakes < 2 m depth |
-| T      | Tidal Flats - ocean areas with exposed flats |
-| E      | Estuary - mixed freshwater/saltwater marsh areas |
-| W      | Wetland - no distinction of class |
-| Z      | Not Wetland - upland areas |
+| BOG    | > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss |
+| FEN    | > 40 cm peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed |
+| SWAMP  | Woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent subsurface water. Various mixtures of mineral sediments and peat |
+| MARSH  | Emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water |
+| SHALLOW_WATER | Freshwater lakes < 2 m depth |
+| TIDAL_FLATS | Ocean areas with exposed flats |
+| ESTUARY | Mixed freshwater/saltwater marsh areas |
+| WETLAND | Wetland without distinction of class |
+| NOT_WETLAND | Upland areas |
 
 
 ### WET_VEG_COVER
 
 | Values | Description |
 | :----- | :----- |
-| F      | Forested - closed canopy > 70% tree cover |
-| T      | Wooded - open canopy > 6% to 70% tree cover |
-| O      | Open Non-Treed Freshwater - < 6% tree cover with shrubs |
-| C      | Open Non-Treed Coastal - < 6% tree cover, with shrubs |
-| M      | Mud - no vegetation cover |
+| FORESTED | Closed canopy forests > 70% tree cover |
+| WOODED   | Open canopy forests > 6% to 70% tree cover |
+| OPEN_NON_TREED_FRESHWATER | Open canopy forests < 6% tree cover with shrubs |
+| OPEN_NON_TREED_COASTAL | Open canopy coastal forests - < 6% tree cover, with shrubs |
+| MUD      | No vegetation cover |
 
 
 ### WET_LANDFORM_MOD
 
 | Values | Description |
-| :----- | :----- |
-| X      | Permafrost Present |
-| P      | Patterning Present |
-| N      | No Permafrost or Patterning Present |
-| A      | Saline or Alkaline Present |
+| :----- | :---------- |
+| PERMAFROST_PRESENT       | Permafrost present |
+| PATTERNING_PRESENT       | Patterning present |
+| NO_PERMAFROST_PATTERNING | No permafrost or patterning present |
+| SALINE_ALKALINE          | Saline or alkaline Present |
 
 
 ### WET_LOCAL_MOD
 
 | Values | Description |
 | :----- | :----- |
-| C      | Collapse Scar Present in permafrost area |
-| R      | Internal Lawn With Islands of Forested Peat Plateau |
-| I      | Internal Lawns Present (permafrost was once present) |
-| N      | Internal Lawns Not Present |
-| S      | Shrub Cover > 25% |
-| G      | Graminoids With Shrub Cover < 25%      |
+| INT_LAWN_SCAR   | Collapse scar present in permafrost area |
+| INT_LAWN_ISLAND | Internal lawn with islands of forested peat plateau |
+| INT_LAWN        | Internal lawns present (permafrost was once present) |
+| NO_LAWN         | Internal lawns not present |
+| SHRUB_COVER     | Shrub cover > 25% |
+| GRAMMINOIDS     | Graminoids with shrub cover < 25%      |
   
 
 <sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  

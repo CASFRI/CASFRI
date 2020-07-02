@@ -23,23 +23,26 @@
 source ./common.sh
 
 inventoryID=NS03
-#srcFileName=ON_FRI_forest
-#srcFullPath="$friDir/ON/$inventoryID/data/inventory/$srcFileName.gdb"
 srcFolder="$friDir/NS/$inventoryID/data/inventory/"
 fullTargetTableName=$targetFRISchema.ns03
 
-ogr_options="-nlt PROMOTE_TO_MULTI $overwrite_tab -progress"
+overwrite_option="$overwrite_tab"
 
 for F in Annapolis Antigonish Cape_Breton Colchester Cumberland Digby Guyborough Halifax_East Halifax_West Hants Inverness Kings Lunenburg Pictou Queens Richmond Shelburne St_Marys Victoria Yarmouth
 do
-	srcFullPath="$srcFolder$F.shp"
+    srcFullPath="$srcFolder$F.shp"
+
+    "$gdalFolder/ogr2ogr" \
+    -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
+    -nln $fullTargetTableName \
+    -nlt PROMOTE_TO_MULTI \
+    -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM '$F'" \
+    -progress \
+    $layer_creation_options $other_options \
+    $overwrite_option 
 	
-	"$gdalFolder/ogr2ogr" \
-	-f PostgreSQL "$pg_connection_string" "$srcFullPath" \
-	-nln $fullTargetTableName $layer_creation_option $ogr_options \
-	-sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM '$F'" \
-	
-    ogr_options="-nlt PROMOTE_TO_MULTI -update -append -progress"
+    overwrite_option="-update -append"
+    layer_creation_options=""
 done
 
 createSQLSpatialIndex=True

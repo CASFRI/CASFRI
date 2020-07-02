@@ -43,20 +43,20 @@ SET tableName_inf=%fullTargetTableName%_etage_inf
 :: Run ogr2ogr for polygons
 "%gdalFolder%\ogr2ogr" ^
 -f PostgreSQL %pg_connection_string% %srcFullPath% %gdbFileName_poly% ^
--nln %tableName_poly% %layer_creation_option% ^
+-nln %tableName_poly% %layer_creation_options% %other_options% ^
 -sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbFileName_poly%'" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for meta table
 "%gdalFolder%\ogr2ogr" ^
 -f PostgreSQL %pg_connection_string% %srcFullPath% %gdbFileName_meta% ^
--nln %tableName_meta% %layer_creation_option% ^
+-nln %tableName_meta% %layer_creation_options% %other_options% ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for etage table
 "%gdalFolder%\ogr2ogr" ^
 -f PostgreSQL %pg_connection_string% %srcFullPath% %gdbFileName_etage% ^
--nln %tableName_etage% %layer_creation_option% ^
+-nln %tableName_etage% %layer_creation_options% %other_options% ^
 -progress %overwrite_tab%
 
 :: Join META and ETAGE tables to polygons using the GEOC_MAJ attribute.

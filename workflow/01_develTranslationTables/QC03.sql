@@ -88,7 +88,7 @@ SELECT * FROM translation_devel.qc03_ipf05_geo_devel;
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
--- Validate the QC species dependency tables
+-- Check the uniqueness of QC species codes
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 SELECT TT_Prepare('translation', 'qc_ipf05_species_validation', '_qc_species_val');
