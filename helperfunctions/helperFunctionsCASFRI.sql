@@ -3146,7 +3146,7 @@ RETURNS int AS $$
   BEGIN
 
     -- set up nfl_string_list
-    nfl_string_list = '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'',''AP'',''BP'',''EL'',''GP'',''TS'',''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}';
+    nfl_string_list = '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'',''SW'',''AP'',''BP'',''EL'',''GP'',''TS'',''RD'',''SH'',''SU'',''PM'',''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}';
     
     -- is typeclas NFL?
     IF tt_matchList(typeclas, nfl_string_list) THEN

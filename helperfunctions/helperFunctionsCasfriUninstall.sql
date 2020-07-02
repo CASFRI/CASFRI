@@ -30,6 +30,10 @@ DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_validation(text,text,text,te
 DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text,text,text,text,text,text);
 -------------------------------------------------------------------------------
+-- ROW_TRANSLATION_RULE functions
+-------------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS TT_HasNFLInfo(text, text, text);
+-------------------------------------------------------------------------------
 -- Translation functions
 -------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_vri01_origin_translation(text, text);
