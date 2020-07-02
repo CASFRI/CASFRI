@@ -91,8 +91,8 @@ SELECT * FROM translation_devel.qc03_ipf05_geo_devel;
 -- Check the uniqueness of QC species codes
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'qc_ipf05_species_validation', '_qc_species_val');
-SELECT * FROM TT_Translate_qc_species_val('translation', 'qc_ipf05_species');
+CREATE UNIQUE INDEX ON translation.species_code_mapping (qc_species_codes)
+WHERE TT_NotEmpty(qc_species_codes);
 
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
