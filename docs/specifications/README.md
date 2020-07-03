@@ -986,7 +986,8 @@ Disturbance extent provides an estimate of the proportion of the polygon that ha
 
 | Values | Description |
 | :--------------------------------------------------------------------------------------------------------------- | :-------------- |
-| 10&#8209;100 | Upper and lower bound of extent class |
+| 10&#8209;100 | Upper bound of extent class |
+| 1&#8209;95 | Lower bound of extent class |
 | -8888    | Source value is null |
 | -9995    | Source value is not the expected type (e.g. not an integer) |
 | -9999    | Source value is outside expected range (e.g. not between 0 and 100) |
