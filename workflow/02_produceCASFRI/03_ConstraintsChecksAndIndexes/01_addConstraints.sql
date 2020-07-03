@@ -1609,7 +1609,7 @@ FROM (SELECT *
                         ARRAY['casfri50_lookup', 
                               'non_for_veg'],
                         ARRAY['OPEN_SHRUB', 'CLOSED_SHRUB', 'ALPINE_FOREST', 'TALL_SHRUB', 'LOW_SHRUB', 
-						                  'FORBS', 'HERBS', 'GRAMMINOIDS', 'BRYOID', 'OPEN_MUSKED', 'TUNDRA', 'OTHER'] ||
+						                  'FORBS', 'HERBS', 'GRAMMINOIDS', 'BRYOID', 'OPEN_MUSKEG', 'TUNDRA', 'OTHER'] ||
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 --) foo WHERE NOT passed;
