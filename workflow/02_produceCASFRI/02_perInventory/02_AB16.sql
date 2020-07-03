@@ -29,8 +29,8 @@ FROM rawfri.ab_photoyear
 WHERE TT_IsInt(photo_yr);
 
 CREATE INDEX IF NOT EXISTS ab_photoyear_idx 
- ON rawfri.new_photo_year
- USING GIST(wkb_geometry);
+ON rawfri.new_photo_year
+USING GIST(wkb_geometry);
 
 DROP TABLE rawfri.ab_photoyear;
 ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
