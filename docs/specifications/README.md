@@ -897,7 +897,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 | FORBS          | Herbaceous plants other than graminoids |
 | HERBS          | Undistinguishable family of herbs |
 | BRYOID         | Mosses and lichens |
-| OPEN_MUSKED    | Wetlands with less than 10% tree cover |
+| OPEN_MUSKEG    | Wetlands with less than 10% tree cover |
 | TUNDRA         | Flat treeless plains |
 | OTHER          | Any other source inventory cover type not supported by CASFRI  |
 | NULL_VALUE     | Source value is null |

@@ -13,6 +13,50 @@
 -------------------------------------------------------------------------------
 -- Begin Tools Function Definitions...
 ------------------------------------------------------------------------------- 
+-- TT_IsMissingOrInvalidText
+-- TT_IsMissingOrNotInSetCode
+-- TT_IsMissingOrInvalidInt
+-- TT_IsMissingOrInvalidRange
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidText();
+CREATE OR REPLACE FUNCTION TT_IsMissingOrInvalidText() 
+RETURNS text[] AS $$ 
+  SELECT ARRAY['NULL_VALUE', 
+               'EMPTY_STRING', 
+               'NOT_APPLICABLE', 
+               'UNKNOWN_VALUE', 
+               'INVALID_VALUE'];
+$$ LANGUAGE sql IMMUTABLE;
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_IsMissingOrNotInSetCode();
+CREATE OR REPLACE FUNCTION TT_IsMissingOrNotInSetCode() 
+RETURNS text[] AS $$ 
+  SELECT ARRAY['NULL_VALUE', 
+               'EMPTY_STRING', 
+               'NOT_APPLICABLE', 
+               'UNKNOWN_VALUE', 
+               'NOT_IN_SET'];
+$$ LANGUAGE sql IMMUTABLE; 
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidNumber();
+CREATE OR REPLACE FUNCTION TT_IsMissingOrInvalidNumber() 
+RETURNS int[] AS $$ 
+  SELECT ARRAY[-8888, -- NULL_VALUE
+               -8887, -- NOT_APPLICABLE
+               -8886, -- UNKNOWN_VALUE
+               -9997] -- INVALID_VALUE
+$$ LANGUAGE sql IMMUTABLE; 
+------------------------------------------------------------ 
+--DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidRange();
+CREATE OR REPLACE FUNCTION TT_IsMissingOrInvalidRange() 
+RETURNS int[] AS $$ 
+  SELECT ARRAY[-8888, -- NULL_VALUE
+               -8887, -- NOT_APPLICABLE
+               -8886, -- UNKNOWN_VALUE
+               -9997, -- INVALID_VALUE
+               -9999] -- OUT_OF_RANGE
+$$ LANGUAGE sql IMMUTABLE; 
+------------------------------------------------------------
 -- TT_TableColumnType 
 -- 
 --   tableSchema name - Name of the schema containing the table. 
