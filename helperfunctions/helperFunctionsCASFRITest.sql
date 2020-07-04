@@ -87,7 +87,8 @@ WITH test_nb AS (
     SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num,  13 nb_test
+    SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num, 13 nb_test UNION ALL
+    SELECT 'TT_pe_pei01_countOfNotNull'::text function_tested,               43 maj_num,  3 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1879,7 +1880,26 @@ SELECT '42.13'::text number,
        'TT_HasNFLInfo'::text function_tested,
        'SK - nat_non_veg, fails.'::text description,
        TT_HasNFLInfo('SK02', '{''non_for_veg, nat_non_veg''}', '{'''', ''W'', '''', '''', ''''}') IS FALSE passed
-  
+---------------------------------------------------------
+  -- TT_pe_pei01_countOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '43.1'::text number,
+       'TT_pe_pei01_countOfNotNull'::text function_tested,
+       'Test one layer'::text description,
+       TT_pe_pei01_countOfNotNull('bf', '', '2', 'FALSE') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.2'::text number,
+       'TT_pe_pei01_countOfNotNull'::text function_tested,
+       'Test 3 layers'::text description,
+       TT_pe_pei01_countOfNotNull('bf', 'SO', '2', 'FALSE') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.3'::text number,
+       'TT_pe_pei01_countOfNotNull'::text function_tested,
+       'Test 0 layers'::text description,
+       TT_pe_pei01_countOfNotNull('', '', '2', 'FALSE') = 0 passed
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

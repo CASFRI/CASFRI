@@ -64,6 +64,7 @@ DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_translation(text,text,text,t
 DROP FUNCTION IF EXISTS TT_sk_utm01_species_translation(text,text,text,text,text,text);
 DROP FUNCTION IF EXISTS TT_generic_stand_structure_translation(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_countOfNotNull(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
