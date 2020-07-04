@@ -55,8 +55,12 @@ SELECT * FROM translation.pe_pei01_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.pe_pei01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'pe_pei01_dst_devel', '_pe01_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_dst_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_pe01_dst_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pe_pei01_dst_devel');
+
+SELECT a.cas_id, b.dist_type_1, a.dist_type_1, a.dist_type_2 
+FROM TT_Translate_pe01_dst_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200') a, rawfri.pe01_l1_to_pe_pei_l1_map_200 b
+WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 -- NFL ATTRIBUTES
 SELECT * FROM translation.pe_pei01_nfl;
