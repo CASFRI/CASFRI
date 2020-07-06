@@ -19,7 +19,7 @@ SET tt.debug TO FALSE;
 --------------------------------------------------------------------------
 -- CAS
 ------------------------
-SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt_cas', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt02_cas', 'ab_avi01_cas'); 
 
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
 
@@ -28,14 +28,14 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'YT02';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
-SELECT * FROM TT_Translate_yt_cas('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_yt02_cas('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_cas');
 
 ------------------------
 -- DST
 ------------------------
-SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt02_dst', 'ab_avi01_dst');
 
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1);
 
@@ -44,14 +44,14 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'YT02';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_yt_dst('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_yt02_dst('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_dst');
 
 ------------------------
 -- ECO
 ------------------------
-SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt02_eco', 'ab_avi01_eco');
 
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt');
 
@@ -60,7 +60,7 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'YT02';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_yt_eco('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_yt02_eco('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco');
 
@@ -72,7 +72,7 @@ CREATE UNIQUE INDEX ON translation.species_code_mapping (yt_species_codes)
 WHERE TT_NotEmpty(yt_species_codes);
 
 -- Prepare the translation function
-SELECT TT_Prepare('translation', 'yt_yvi01_lyr', '_yt_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'yt_yvi01_lyr', '_yt02_lyr', 'ab_avi01_lyr'); 
 
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1);
 
@@ -81,14 +81,14 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'YT02';
 
 -- Add translated ones
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_yt02_lyr('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr');
 
 ------------------------
 -- NFL
 ------------------------
-SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt02_nfl', 'ab_avi01_nfl');
 
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1);
 
@@ -97,14 +97,14 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'YT02';
 
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_yt_nfl('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_yt02_nfl('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl');
 
 ------------------------
 -- GEO
 ------------------------
-SELECT TT_Prepare('translation', 'yt_yvi01_geo', '_yt_geo', 'ab_avi01_geo'); 
+SELECT TT_Prepare('translation', 'yt_yvi01_geo', '_yt02_geo', 'ab_avi01_geo'); 
 
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1);
 
@@ -113,7 +113,7 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'YT02';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_yt_geo('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_yt02_geo('rawfri', 'yt02_l1_to_yt_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_geo');
 --------------------------------------------------------------------------
