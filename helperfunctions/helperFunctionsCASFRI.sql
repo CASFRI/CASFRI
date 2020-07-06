@@ -3555,3 +3555,42 @@ RETURNS int AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_pe_pie01_countOfNotNull(text, text, text, text)
+--
+-- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
+-- landtype text
+-- max_rank_to_consider text
+-- zero_is_null
+-- 
+-- Determine if the row contains an NFL record. If it does assign a string
+-- so it can be counted as a non-null layer.
+-- 
+-- Pass vals1-vals2 and the string/NULLs to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_pe_pei01_countOfNotNull(
+  vals1 text,
+  landtype text,
+  max_rank_to_consider text,
+  zero_is_null text
+)
+RETURNS int AS $$
+  DECLARE
+    is_nfl text;
+  BEGIN
+
+    -- if landtype matches any of the nfl values, we know there is an NFL record.
+    -- set is_nfl to be a valid string.
+    IF tt_matchList(landtype,'{''SO'',''SD'',''WW'',''FL'',''CL'',''WF'',''PL'',''RN'',''RD'',''RR'',''AG'',''EP'',''UR'',''AL'',''BO''}') THEN
+      is_nfl = 'a_value';
+    ELSE
+      is_nfl = NULL::text;
+    END IF;
+    
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(vals1, is_nfl, max_rank_to_consider, zero_is_null);
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
