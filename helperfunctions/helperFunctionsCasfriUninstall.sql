@@ -10,9 +10,6 @@
 -- Copyright (C) 2018-2020 Pierre Racine <pierre.racine@sbf.ulaval.ca>, 
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
---
---
---
 -------------------------------------------------------------------------------
 -- Validation functions
 -------------------------------------------------------------------------------
@@ -88,7 +85,7 @@ DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, text, int, text, text);
 DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, text, text);
 DROP FUNCTION IF EXISTS TT_CreateMappingView(text, text, int, text, int, int, text, text);
 DROP FUNCTION IF EXISTS TT_CreateFilterView(text, text, text, text, text, text); 
-DROP FUNCTION IF EXISTS TT_CreateMapping(text, text, int, text, int);
+DROP FUNCTION IF EXISTS TT_CreateMapping(text, int, text, int);
 DROP FUNCTION IF EXISTS TT_DeleteAllViews(text);
 DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean, boolean);
 DROP FUNCTION IF EXISTS TT_CountEstimate(text);
