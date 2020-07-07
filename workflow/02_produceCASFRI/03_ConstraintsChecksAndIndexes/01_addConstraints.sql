@@ -391,7 +391,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.19'::text number,
        'dst_all' target_table,
-       'Issue #386. Ensure DST table DIST_TYPE_1 values match the corresponding lookup table. Cannot be NOT_APPLICABLE' description, 
+       'Ensure DST table DIST_TYPE_1 values match the corresponding lookup table. Cannot be NOT_APPLICABLE' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
@@ -399,7 +399,7 @@ FROM (SELECT *
                               'dist_type_1'],
                         ARRAY['CUT', 'PARTIAL_CUT', 'BURN', 'WINDFALL', 'DISEASE', 'INSECT', 'FLOOD', 
                               'WEATHER', 'SLIDE', 'OTHER', 'DEAD_UNKNOWN', 'SILVICULTURE_TREATMENT',
-                              'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET']) AS (passed boolean, cstr_query text)) foo
+                              'NULL_VALUE', 'EMPTY_STRING', 'NOT_IN_SET', 'UNKNOWN_VALUE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.20'::text number,
