@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------- 
 -- TT_IsMissingOrInvalidText
 -- TT_IsMissingOrNotInSetCode
--- TT_IsMissingOrInvalidInt
+-- TT_IsMissingOrInvalidNumber
 -- TT_IsMissingOrInvalidRange
 ------------------------------------------------------------ 
 --DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidText();
