@@ -104,7 +104,7 @@ Table 2. CASFRI error codes
 | Missing&nbsp;values | EMPTY_STRING | -8889 | Missing value that is stored as an empty string (e.g. '' or '&#160;'). |
 |                | NULL_VALUE        | -8888 | Missing value that is a true null value. |
 |                | NOT_APPLICABLE    | -8887 | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute. |
-|                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK). Might also mean that the value can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct attributes value because the source data is incomplete). |
+|                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK) or that the value should exist but can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct value because the source dataset is incomplete). This is different from NOT_APPLICABLE where the values clearly does not exist. |
 | Invalid&nbsp;values | OUT_OF_RANGE | -9999 | Value is outside the range of valid values (e.g. a percent value that is greater than 100. |
 |                |  NOT_IN_SET       | -9998 | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory). |
 |                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does match expected format). |
