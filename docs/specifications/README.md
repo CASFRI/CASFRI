@@ -503,7 +503,7 @@ Forest layer attributes.
 
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
+See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 <a name=LAYER></a>
 ### LAYER (PK)
@@ -712,7 +712,7 @@ Non-forested attributes.
 
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
+See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 ### LAYER (PK)
 
@@ -823,7 +823,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
+See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 
 ### LAYER (PK)
@@ -898,7 +898,7 @@ Ecological attributes are generally not included or are incompletely recorded in
 
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
+See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 
 ### WETLAND_TYPE
@@ -977,7 +977,7 @@ Geometry attributes are calculated by the translation engine.
 
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
+See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 ### GEOMETRY
 
