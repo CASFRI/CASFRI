@@ -37,7 +37,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab06', 3, 'ab', 1, NULL, 'nfl');
 CREATE TABLE casfri50.nfl_all AS -- 2m24s
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab06_l3_to_ab_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab06_l3_to_ab_l1_map_nfl');
 
 -- Translate AB06 layer 4
 SELECT TT_CreateMappingView('rawfri', 'ab06', 4, 'ab', 1, NULL, 'nfl');
@@ -45,7 +45,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab06', 4, 'ab', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 2m1s
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab06_l4_to_ab_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab06_l4_to_ab_l1_map_nfl');
 ------------------------
 
 -- Translate AB16 layer 3
@@ -54,7 +54,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab16', 3, 'ab', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 23m43s
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab16_l3_to_ab_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l3_to_ab_l1_map_nfl');
 
 -- Translate AB16 layer 4 reusing AB16 layer 3 translation table
 SELECT TT_CreateMappingView('rawfri', 'ab16', 4, 'ab', 1, NULL, 'nfl');
@@ -62,7 +62,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab16', 4, 'ab', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab16_l4_to_ab_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l4_to_ab_l1_map_nfl');
 ------------------------
 
 -- Translate NB01
@@ -71,7 +71,7 @@ SELECT TT_CreateMappingView('rawfri', 'nb01', 3, 'nb', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 1h4m
 SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb01_l3_to_nb_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl', 'nb01_l3_to_nb_l1_map_nfl');
 ------------------------
 
 -- Translate NB02 using NB generic translation table
@@ -80,7 +80,7 @@ SELECT TT_CreateMappingView('rawfri', 'nb02', 3, 'nb', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02_l3_to_nb_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl', 'nb02_l3_to_nb_l1_map_nfl');
 ------------------------
 
 -- Translate BC08 layer 2
@@ -89,7 +89,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 16h38m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l2_to_bc_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l2_to_bc_l1_map_nfl');
 
 -- Translate BC08 layer 3
 SELECT TT_CreateMappingView('rawfri', 'bc08', 3, 'bc', 1, NULL, 'nfl');
@@ -97,7 +97,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 3, 'bc', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 16h38m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l3_to_bc_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l3_to_bc_l1_map_nfl');
 
 -- Translate BC08 layer 4
 SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1, NULL, 'nfl');
@@ -105,7 +105,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 16h38m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l4_to_bc_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l4_to_bc_l1_map_nfl');
 ------------------------
 
 -- Translate BC10 layer 3
@@ -114,7 +114,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc10', 3, 'bc', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc10_l3_to_bc_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l3_to_bc_l1_map_nfl');
 
 -- Translate BC10 layer 4
 SELECT TT_CreateMappingView('rawfri', 'bc10', 4, 'bc', 1, NULL, 'nfl');
@@ -122,7 +122,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc10', 4, 'bc', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc10_l4_to_bc_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l4_to_bc_l1_map_nfl');
 
 -- Translate BC10 layer 5
 SELECT TT_CreateMappingView('rawfri', 'bc10', 5, 'bc', 1, NULL, 'nfl');
@@ -130,7 +130,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc10', 5, 'bc', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc10_l5_to_bc_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l5_to_bc_l1_map_nfl');
 ------------------------
 
 -- Translate NT01 layer 3
@@ -139,7 +139,7 @@ SELECT TT_CreateMappingView('rawfri', 'nt01', 3, 'nt', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l3_to_nt_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l3_to_nt_l1_map_nfl');
 
 -- Translate NT01 layer 4
 SELECT TT_CreateMappingView('rawfri', 'nt01', 4, 'nt', 1, NULL, 'nfl');
@@ -147,7 +147,7 @@ SELECT TT_CreateMappingView('rawfri', 'nt01', 4, 'nt', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l4_to_nt_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l4_to_nt_l1_map_nfl');
 ------------------------
 
 -- Translate NT02 layer 3
@@ -156,7 +156,7 @@ SELECT TT_CreateMappingView('rawfri', 'nt02', 3, 'nt', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l3_to_nt_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt02_l3_to_nt_l1_map_nfl');
 
 -- Translate NT02 layer 4
 SELECT TT_CreateMappingView('rawfri', 'nt02', 4, 'nt', 1, NULL, 'nfl');
@@ -164,7 +164,7 @@ SELECT TT_CreateMappingView('rawfri', 'nt02', 4, 'nt', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l4_to_nt_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt02_l4_to_nt_l1_map_nfl');
 ------------------------
 
 -- Translate ON02 layer 3
@@ -173,7 +173,7 @@ SELECT TT_CreateMappingView('rawfri', 'on02', 3, 'on', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_on_nfl('rawfri', 'on02_l3_to_on_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_nfl', 'on02_l3_to_on_l1_map_nfl');
 ------------------------
 
 -- Translate SK01 layer 3
@@ -182,7 +182,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk01', 3, 'sk_utm', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l3_to_sk_utm_l1_map_nfl', 'ogc_fid'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl', 'sk01_l3_to_sk_utm_l1_map_nfl');
 ------------------------
 
 -- Translate YT02 layer 2
@@ -191,7 +191,7 @@ SELECT TT_CreateMappingView('rawfri', 'yt02', 2, 'yt', 1, NULL, 'nfl');
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_yt_nfl('rawfri', 'yt02_l2_to_yt_l1_map_nfl', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl', 'yt02_l2_to_yt_l1_map_nfl');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

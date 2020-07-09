@@ -63,7 +63,7 @@ CREATE TABLE casfri50.lyr_all AS -- 4m41s
 SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab06_l1_to_ab_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab06_l1_to_ab_l1_map_lyr');
 ------------------------
 -- Translate AB06 layer 2 reusing AB06 layer 1 translation table
 BEGIN;
@@ -73,7 +73,7 @@ INSERT INTO casfri50.lyr_all -- 3m56s
 SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab06_l2_to_ab_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab06_l2_to_ab_l1_map_lyr');
 ------------------------
 -- Translate AB16 layer 1
 BEGIN;
@@ -83,7 +83,7 @@ INSERT INTO casfri50.lyr_all -- 46m20s
 SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab16_l1_to_ab_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab16_l1_to_ab_l1_map_lyr');
 ------------------------
 -- Translate AB16 layer 2 reusing AB16 layer 1 translation table and only rows having LYR attributes
 BEGIN;
@@ -93,7 +93,7 @@ INSERT INTO casfri50.lyr_all -- 3m56s
 SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab16_l2_to_ab_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab16_l2_to_ab_l1_map_lyr');
 ------------------------
 -- Translate NB01 using NB generic translation table and only rows with LYR attributes
 BEGIN;
@@ -103,7 +103,7 @@ INSERT INTO casfri50.lyr_all -- 5h32m
 SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb01_l1_to_nb_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr', 'nb01_l1_to_nb_l1_map_lyr');
 ------------------------
 -- Translate NB01 layer 2 using NB layer 1 generic translation table and only rows having LYR attributes
 BEGIN;
@@ -113,7 +113,7 @@ INSERT INTO casfri50.lyr_all --
 SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb01_l2_to_nb_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr', 'nb01_l2_to_nb_l1_map_lyr');
 ------------------------
 -- Translate NB02 using NB generic translation table and only rows having LYR attributes
 BEGIN;
@@ -123,7 +123,7 @@ INSERT INTO casfri50.lyr_all --
 SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb02_l1_to_nb_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr', 'nb02_l1_to_nb_l1_map_lyr');
 ------------------------
 -- Translate NB02 layer 2 reusing NB01 layer 1 translation table
 BEGIN;
@@ -133,7 +133,7 @@ INSERT INTO casfri50.lyr_all --
 SELECT * FROM TT_Translate_nb_lyr('rawfri', 'nb02_l2_to_nb_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr', 'nb02_l2_to_nb_l1_map_lyr');
 ------------------------
 -- Translate BC08
 BEGIN;
@@ -143,7 +143,7 @@ INSERT INTO casfri50.lyr_all -- 30h19m
 SELECT * FROM TT_Translate_bc_lyr('rawfri', 'bc08_l1_to_bc_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l1_to_bc_l1_map_lyr');
 ------------------------
 -- Translate BC10 layer 1
 BEGIN;
@@ -153,7 +153,7 @@ INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc_lyr('rawfri', 'bc10_l1_to_bc_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc10_l1_to_bc_l1_map_lyr');
 ------------------------
 -- Translate BC10 layer 2 reusing BC10 layer 1 translation table
 BEGIN;
@@ -163,7 +163,7 @@ INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc_lyr('rawfri', 'bc10_l2_to_bc_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc10_l2_to_bc_l1_map_lyr');
 ------------------------
 -- Translate NT01 using NT generic translation table
 BEGIN;
@@ -173,7 +173,7 @@ INSERT INTO casfri50.lyr_all -- 1h49m
 SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt01_l1_to_nt_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt01_l1_to_nt_l1_map_lyr');
 ------------------------
 -- Translate NT01 layer 2 using NT layer 1 generic translation table
 BEGIN;
@@ -183,7 +183,7 @@ INSERT INTO casfri50.lyr_all -- 1h24m
 SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt01_l2_to_nt_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt01_l2_to_nt_l1_map_lyr');
 ------------------------
 -- Translate NT02 using NT generic translation table
 BEGIN;
@@ -193,7 +193,7 @@ INSERT INTO casfri50.lyr_all -- 1h45m
 SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_l1_to_nt_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt02_l1_to_nt_l1_map_lyr');
 ------------------------
 -- Translate NT02 layer 2 using NT layer 1 generic translation table
 BEGIN;
@@ -203,7 +203,7 @@ INSERT INTO casfri50.lyr_all -- 1h34m
 SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_l2_to_nt_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt02_l2_to_nt_l1_map_lyr');
 ------------------------
 -- Translate ON02 using ON translation table
 BEGIN;
@@ -213,7 +213,7 @@ INSERT INTO casfri50.lyr_all --
 SELECT * FROM TT_Translate_on_lyr('rawfri', 'on02_l1_to_on_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_lyr', 'on02_l1_to_on_l1_map_lyr');
 ------------------------
 -- Translate ON02 layer 2 using ON translation table
 BEGIN;
@@ -223,7 +223,7 @@ INSERT INTO casfri50.lyr_all --
 SELECT * FROM TT_Translate_on_lyr('rawfri', 'on02_l2_to_on_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_lyr', 'on02_l2_to_on_l1_map_lyr');
 ------------------------
 -- Translate SK01 using UTM translation table
 BEGIN;
@@ -233,7 +233,7 @@ INSERT INTO casfri50.lyr_all --
 SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l1_to_sk_utm_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr', 'sk01_l1_to_sk_utm_l1_map_lyr');
 ------------------------
 -- Translate SK01 layer 2 using UTM translation table
 BEGIN;
@@ -243,7 +243,7 @@ INSERT INTO casfri50.lyr_all --
 SELECT * FROM TT_Translate_sk_lyr('rawfri', 'sk01_l2_to_sk_utm_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_lyr', 'sk01_l2_to_sk_utm_l1_map_lyr');
 ------------------------
 -- Translate YT02 using YVI translation table
 BEGIN;
@@ -253,7 +253,7 @@ INSERT INTO casfri50.lyr_all --
 SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt02_l1_to_yt_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr', 'yt02_l1_to_yt_l1_map_lyr');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
