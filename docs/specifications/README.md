@@ -346,7 +346,7 @@ The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was 
 
 The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Inventory ID. Polygon attributes include stand structure, polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
-
+<a name=CAS_ID></a>
 ### CAS_ID (PK)
 
 The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
@@ -503,24 +503,7 @@ Forest layer attributes.
 
 ### CAS_ID (PK, FK)
 
-The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
-
-- Inventory id e.g., AB06
-- Source filename i.e., name of shapefile or geodatabase
-- Map ID or some other within inventory identifier; if available, map sheet id
-- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
-- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
-
-| Values               | Description |
-| :------------------- | :---------- |
-| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
-| NULL_VALUE           |  One of the source attributes is null |
-| EMPTY_STRING         |  One of the source attributes is an empty string |
-
-Notes:
-
-- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
-
+See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
 
 <a name=LAYER></a>
 ### LAYER (PK)
@@ -727,64 +710,20 @@ Site Index is an estimate of site productivity for tree growth. It is derived fo
 
 Non-forested attributes.
 
-
 ### CAS_ID (PK, FK)
 
-The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
-
-- Inventory id e.g., AB06
-- Source filename i.e., name of shapefile or geodatabase
-- Map ID or some other within inventory identifier; if available, map sheet id
-- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
-- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
-
-| Values               | Description |
-| :------------------- | :---------- |
-| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
-| NULL_VALUE           |  One of the source attributes is null |
-| EMPTY_STRING         |  One of the source attributes is an empty string |
-
-Notes:
-
-- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
-
+See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
 
 ### LAYER (PK)
 
 See <a href="#LAYER">LAYER</a> in the LYR table.
 
-| Values   | Description   |
-| :------- | :------- |
-| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon |
-
-
 ### LAYER_RANK  
 See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
-
-| Values | Description |
-| :----- | :----- |
-| 1&#8209;9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc.  |
-| -8888  | Source value is null |
-| -8887  | Translation is not applicable (e.g. no source attribute) |
-
 
 ### SOIL_MOIST_REG
 
 See <a href="#SOIL_MOIST_REG">SOIL_MOIST_REG</a> in the LYR table.
-
-Soil moisture regime defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
-
-| Value          | Description |
-| :------------- | :----- |
-| D              | Dry - Soil retains moisture for a negligible period following precipitation with very rapid drained substratum |
-| F              | Mesic - Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum |
-| M              | Moist - Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
-| W              | Wet - Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water |
-| A              | Aquatic - Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water |
-| NULL_VALUE     | Source value is null |
-| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
-| UNKNOWN_VALUE  | Source value is unknown |
-| NOT_APPLICABLE | Source value does not occur |
 
 Notes:
 * When would NFL be different to LYR? https://github.com/edwardsmarc/CASFRI/issues/328
@@ -794,46 +733,19 @@ Notes:
 
 See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
 
-| Values                             | Description  |
-| :--------------------------------- | :------ |
-| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
-| 100                                | When **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", "COMPLEX", value = 100 i.e., when there is no horizontal                                                structure |
-| -9998                              | Source value is not an expected value (e.g. in cases where structure percent is a coded alpha                                          numeric with an expected list of codes) |
-| -8888                              | Source value is null |
-| -9995                              | Source value is not the expected type (e.g. not an integer) |
-| -9999                              | Source value is outside expected range (e.g. not between 0 and 9) |
-
 
 ### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER
+
 See <a href="#CROWN_CLOSURE ">CROWN_CLOSURE</a> in the LYR table.
 
 Crown closure defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
-| Values    | Description |
-| :-------- | :-------------- |
-| 0&#8209;100   | Upper and lower bound of a crown closure class |
-| -8888     | Source value is null |
-| -8889     | Source value is empty string (e.g. '') |
-| -9995     | Source value is not the expected type (e.g. not an integer) |
-| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
-| -8887     | Source value is not applicable (e.g. not a forested polygon) |
-
-
 
 ### HEIGHT_UPPER, HEIGHT_LOWER
+
 See <a href="#HEIGHT ">HEIGHT</a> in the LYR table.
 
 Height defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
-
-| Values    | Description |
-| :-------- | :-------------- |
-| 0&#8209;100   | Upper and lower bound of a height class |
-| -8888     | Source value is null |
-| -8889     | Source value is empty string (e.g. '') |
-| -9995     | Source value is not the expected type (e.g. not an integer) |
-| -9999     | Source value is outside expected range (e.g. not between 0 and 100) |
-| -8887     | Source value is not applicable (e.g. not a forested polygon) |
-
 
 
 ### NAT_NON_VEG  
@@ -884,7 +796,6 @@ Non-forested anthropogenic areas are influenced or created by humans. These site
 | INVALID_VALUE  | Source value is invalid (e.g. the combination of source attribute values does not have a valid translation rule                        defined) |
 
 
-
 ### NON_FOR_VEG  
 
 Non-forested vegetated areas include all natural lands that have vegetation cover with usually less than 10% tree cover. These cover types can be stand alone or used in multi-layer situations. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.    
@@ -912,23 +823,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 
 ### CAS_ID (PK, FK)
 
-The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
-
-- Inventory id e.g., AB06
-- Source filename i.e., name of shapefile or geodatabase
-- Map ID or some other within inventory identifier; if available, map sheet id
-- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
-- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
-
-| Values               | Description |
-| :------------------- | :---------- |
-| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
-| NULL_VALUE           |  One of the source attributes is null |
-| EMPTY_STRING         |  One of the source attributes is an empty string |
-
-Notes:
-
-- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
+See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
 
 
 ### LAYER (PK)
@@ -1002,23 +897,8 @@ Ecological attributes are generally not included or are incompletely recorded in
 
 
 ### CAS_ID (PK, FK)
-The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-- Inventory id e.g., AB06
-- Source filename i.e., name of shapefile or geodatabase
-- Map ID or some other within inventory identifier; if available, map sheet id
-- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
-- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
-
-| Values               | Description |
-| :------------------- | :---------- |
-| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
-| NULL_VALUE           |  One of the source attributes is null |
-| EMPTY_STRING         |  One of the source attributes is an empty string |
-
-Notes:
-
-- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
+See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
 
 
 ### WETLAND_TYPE
@@ -1097,24 +977,7 @@ Geometry attributes are calculated by the translation engine.
 
 ### CAS_ID (PK, FK)
 
-The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
-
-- Inventory id e.g., AB06
-- Source filename i.e., name of shapefile or geodatabase
-- Map ID or some other within inventory identifier; if available, map sheet id
-- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
-- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
-
-| Values               | Description |
-| :------------------- | :---------- |
-| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
-| NULL_VALUE           |  One of the source attributes is null |
-| EMPTY_STRING         |  One of the source attributes is an empty string |
-
-Notes:
-
-- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
-
+See <a href="#CAS_ID">CAS_ID"</a> in the CAS table.
 
 ### GEOMETRY
 
