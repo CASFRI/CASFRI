@@ -10,7 +10,7 @@ ABIE_MAGN,,BM,,,,,,,,,
 ABIE_PICE,,,FS,,,*BF,*BF,,,*BF,SE
 ABIE_PICE,,,SF,,,,,,,,
 ABIE_PROC,,BP,,,,,,,,,
-ABIE SUBS,,B,DF,AB,,,,,,,
+ABIE_SUBS,,B,DF,AB,,,,,,,
 ACER_CIRC,,MV,,,,,,,,,
 ACER_FREE,,,,,MF,,,,,,
 ACER_MACR,,MB,,,,,,,,,
@@ -23,14 +23,14 @@ ACER_SACC,,,SM,,MH,SM,SM,,,SM,ES
 ACER_SACH,,,*MA,,MS,,,,,,EA
 ACER_SACH,,,*MS,,,,,,,,
 ACER_SPIC,,,,,MT,,,,,,
-ACER SUBS,,M,MA,,*M,,,,,,ER
-ACER SUBS,,,,,M,,,,,,
-ACER SUBS,,,,,MX,,,,,,
+ACER_SUBS,,M,MA,,*M,,,,,,ER
+ACER_SUBS,,,,,M,,,,,,
+ACER_SUBS,,,,,MX,,,,,,
 AESC_HIPP,,,,,HC,,,,,,
 AESC_HIPP,,,,,*HC,,,,,,
 ALNU_INCA,,DM,,,,,,,,,
 ALNU_RUBR,,DR,,,,,,,,,
-ALNU SUBS,AL,D,AL,AL,AL,,,,,AL,
+ALNU_SUBS,AL,D,AL,AL,AL,,,,,AL,
 ARBU_MENZ,,RA,,,,,,,,,
 ARBU_MENZ,,R,,,,,,,,,
 ASIM_TRIL,,,,,PA,,,,,,
@@ -43,7 +43,7 @@ BETU_PAPY,BP,,,,,,,,,,
 BETU_PEND,,EE,EB,,BP,,,,,,
 BETU_POPU,,,GB,,BG,GB,GB,,,GB,BG
 BETU_PUBE,,ES,,,,,,,,,
-BETU SUBS,,E,BI,,,,,,,,
+BETU_SUBS,,E,BI,,,,,,,,
 CALC_DECU,,OA,,,,,,,,,
 CARP_CARO,,,,,BB,,,,,,
 CARY_CORD,,,,,HB,,,,,,CC
@@ -51,13 +51,13 @@ CARY_GLAB,,,,,HP,,,,,,
 CARY_LACI,,,,,HL,,,,,,
 CARY_ORAV,,,,,*HS,,,,,,CF
 CARY_OVAT,,,,,HS,,,,,,
-CARY SUBS,,,,,HI,,,,,,
+CARY_SUBS,,,,,HI,,,,,,
 CARY_TOME,,,,,HM,,,,,,
 CAST_DENT,,,,,CD,,,,,,
 CATA_SPEC,,,,,CAT,,,,,,
 CELT_OCCI,,,,,HK,,,,,,
 CERC_CANA,,,,,RED,,,,,,
-CRAT SUBS,,,,,HT,,,,,,
+CRAT_SUBS,,,,,HT,,,,,,
 CHAM_NOOT,,YC,,,,,,,,,
 CHAM_NOOT,,Y,,,,,,,,,
 CORN_NUTT,,G,,,,,,,,,
@@ -68,8 +68,8 @@ FRAX_NIGR,,,BA,,AB,,,,,,FO
 FRAX_PENN,,,,,AG,,,GA,,,FP
 FRAX_PROF,,,,,AP,,,,,,
 FRAX_QUAD,,,,,AQ,,,,,,
-FRAX SUBS,,,AS,,AH,AS,AS,,,,FR
-FRAX SUBS,,,,,AX,,,,,,
+FRAX_SUBS,,,AS,,AH,AS,AS,,,,FR
+FRAX_SUBS,,,,,AX,,,,,,
 GLED_TRIA,,,HL,,GT,,,,,,
 GYMN_DIOI,,,,,KK,,,,,,
 HAMA_VIRG,,,,,HAZ,,,,,,
@@ -94,12 +94,12 @@ LARI_LARI,,,,LW,LA,,,,,,
 LARI_LYAL,LA,LA,,,,,,,,,
 LARI_OCCI,LW,LW,,,,WL,WL,,,,
 LARI_SIBI,,LS,,,,,,,,,
-LARI SUBS,,L,,,,,,,,,
+LARI_SUBS,,L,,,,,,,,,
 LARI_XMAR,,,,,,*XL,*XL,,,,
 LIRI_TULI,,,,,TP,,,,,,
 MAGN_ACUM,,,,,CT,,,,,,
 MALU_PUMI,,U,,,,,,,,MA,
-MALU SUBS,,,,,,,,,,*MA,
+MALU_SUBS,,,,,,,,,,*MA,
 MORU_RUBR,,,,,MO,,,,,,
 NYSS_SYLV,,,,,GB,,,,,,
 OSTR_VIRG,,,*I,,IW,IW,IW,,,,OV
@@ -122,8 +122,8 @@ PICE_RUBR,,,,,SR,,,,,,
 PICE_SITC,,SS,,,,SS,SS,,,,
 PICE_SITX,,SXL,,,,,,,,,
 PICE_SITX,,SXS,,,,,,,,,
-PICE SUBS,,S,DS,S,S,XS,XS,,,,EP
-PICE SUBS,,*SX,SP,,SX,,,,,,
+PICE_SUBS,,S,DS,S,S,XS,XS,,,,EP
+PICE_SUBS,,*SX,SP,,SX,,,,,,
 PILI_AMER,,,,,,,,,,*LI,
 PINU_ALBI,PA,PA,,,,,,,,,
 PINU_BANK,PJ,PJ,JP,PJ,PJ,JP,JP,JP,,JP,PG
@@ -140,8 +140,8 @@ PINU_POND,,PY,,,,,,,,,
 PINU_RADI,,PM,,,,,,,,,
 PINU_RESI,,PR,RP,,PR,RP,RP,RP,,RP,PR
 PINU_RIGI,,,PR,,PP,,,,,,PC
-PINU SUBS,P,P,PI,P,P,,,,,,PI
-PINU SUBS,,,,,PX,,,,,,
+PINU_SUBS,P,P,PI,P,P,,,,,,PI
+PINU_SUBS,,,,,PX,,,,,,
 PINU_STRO,,,WP,,PW,WP,WP,,,WP,PB
 PINU_STRO,,,WO,,,,,,,,
 PINU_SYLV,,,PS,,PS,SP,SP,SP,,SP,PS
@@ -158,7 +158,7 @@ POPU_DELX,,*AX,,,,,,,,,
 POPU_GRAN,,,LA,,PL,,,,,,PD
 POPU_HYBR,,AX,,,PH,,,,,,PH
 POPU_NIGR,,,,,,,,,,,PO
-POPU SUBS,A,A,PO,,PO,TA,TA,,,PO,PE
+POPU_SUBS,A,A,PO,,PO,TA,TA,,,PO,PE
 POPU_TREM,AW,AT,TA,A,PT,*TA,*TA,TA,A,,PT
 POPU_TREM,,,,AW,,,,,,,
 PRUN_AVIU,,VS,,,CM,,,,,,
@@ -169,11 +169,11 @@ PRUN_PENN,,,,,CP,,,,,,
 PRUN_PENS,,VP,,,,,,,,PC,
 PRUN_PENS,,*X,,,,,,,,,
 PRUN_SERO,,,,,CB,BC,BC,,,,CT
-PRUN SUBS,,V,*NC,,CH,,,,,,
-PRUN SUBS,,,,,CHB,,,,,,
+PRUN_SUBS,,V,*NC,,CH,,,,,,
+PRUN_SUBS,,,,,CHB,,,,,,
 PRUN_VIRG,,,,,CC,,,,,,
-PSEU MEN,,*FDC,,,,,,,,,
-PSEU MEN,,*FDI,,,,,,,,,
+PSEU_MENG,,*FDC,,,,,,,,,
+PSEU_MENG MEN,,*FDI,,,,,,,,,
 PSEU_MENG,,FDI,,,,,,,,,
 PSEU_MENM,,FDC,,,,,,,,,
 PSEU_MENZ,FD,FD,FD,,,DF,DF,,,DF,
@@ -186,18 +186,18 @@ QUER_MUEH,,,,,OCH,,,,,,
 QUER_PALU,,,,,OP,,,,,,
 QUER_RUBR,,,,,OR,RO,RO,,,RO,CR
 QUER_SHUM,,,,,OS,,,,,,
-QUER SUBS,,Q,O,,*OX,,,,,,CH
-QUER SUBS,,,Oa,,O,,,,,,
-QUER SUBS,,,,,OX,,,,,,
+QUER_SUBS,,Q,O,,*OX,,,,,,CH
+QUER_SUBS,,,Oa,,O,,,,,,
+QUER_SUBS,,,,,OX,,,,,,
 QUER_VELU,,,,,OBL,,,,,,
 RHAM_PURS,,K,,,,,,,,,
 ROBI_PSEU,,,BL,,LB,,,,,,
-ROBI SUBS,,,,,LO,,,,,,
+ROBI_SUBS,,,,,LO,,,,,,
 SALI_BEBB,,WB,,,,,,,,,
 SALI_LUCI,,WP,,,,,,,,,
 SALI_SCOU,,WS,,,,,,,,,
-SALI SUBS,WI,WA,,SA,W,WI,WI,,,,
-SALI SUBS,,W,,,WI,,,,,,
+SALI_SUBS,WI,WA,,SA,W,WI,WI,,,,
+SALI_SUBS,,W,,,WI,,,,,,
 SASS_ALBI,,,,,*SA,,,,,,
 SASS_ALBI,,,,,SS,,,,,,
 SOFT_UNKN,,XC,OS,,OC,OS,OS,,,,RX
@@ -205,7 +205,7 @@ SOFT_UNKN,,ZC,SW,,,US,US,,,,RZ
 SOFT_UNKN,,,,,,S,H,,,,
 SOFT_UNKN,,,,,,SH,HS,,,,
 SORB_AUCU,,,,,EMA,,,,,,
-SORB SUBS,,,,,AM,,,,,,
+SORB_SUBS,,,,,AM,,,,,,
 SPEC_UNKN,*UN,,,,,,,,,,
 TAXU_BREV,,T,,,,,,,,,
 TAXU_BREV,,TW,,,,,,,,,
@@ -222,11 +222,11 @@ TSUG_CANA,,,,,H,,,,,,
 TSUG_HETE,,HW,,,,,,,,,
 TSUG_MERT,,HM,,,,,,,,,
 TSUG_MERX,,HXM,,,,,,,,,
-TSUG SUBS,,H,,,*H,,,,,,
+TSUG_SUBS,,H,,,*H,,,,,,
 ULMU_AMER,,,,,E,WE,WE,WE,,EM,OA
 ULMU_AMER,,,,,EW,,,,,,
 ULMU_RUBR,,,,,ER,,,,,,OO
-ULMU SUBS,,,,,EX,,,,,,OR
+ULMU_SUBS,,,,,EX,,,,,,OR
 ULMU_THOM,,,,,EU,,,,,,OT
-UNCL SUBS,,X,MS,BG,,UC,UC,,,,
-UNCL SUBS,,Z,NR,XX,,,,,,,
+UNCL_SUBS,,X,MS,BG,,UC,UC,,,,
+UNCL_SUBS,,Z,NR,XX,,,,,,,
