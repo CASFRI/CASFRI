@@ -2900,19 +2900,19 @@ RETURNS text AS $$
     _sp_number int;
     start_char int;
   BEGIN
-    
-  _sp_number = sp_number::int;
+    sp_string = trim(sp_string);
+   _sp_number = sp_number::int;
   
-  IF TT_Length(sp_string) > 1 THEN -- any empty cells will return null
-    IF _sp_number = 1 THEN -- first species is characters 1 to 6
-      RETURN substring(sp_string, 1, 6);
+    IF TT_Length(sp_string) > 1 THEN -- any empty cells will return null
+      IF _sp_number = 1 THEN -- first species is characters 1 to 6
+        RETURN substring(sp_string, 1, 6);
+      ELSE
+        start_char = 1 + ((_sp_number - 1)*6); -- calculate start character for substring
+        RETURN substring(sp_string, start_char, 6); -- following species are start character + 6
+      END IF;
     ELSE
-      start_char = 1 + ((_sp_number - 1)*6); -- calculate start character for substring
-      RETURN substring(sp_string, start_char, 6); -- following species are start character + 6
+      RETURN NULL;
     END IF;
-  ELSE
-    RETURN NULL;
-  END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 
