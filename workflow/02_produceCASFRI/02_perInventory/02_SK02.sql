@@ -68,7 +68,8 @@ SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco', 'sk02_l1_to_sk_sfv_l
 -- LYR
 ------------------------
 -- Check the uniqueness of SK species codes
-CREATE UNIQUE INDEX ON translation.species_code_mapping (sk_species_codes)
+CREATE UNIQUE INDEX species_code_mapping_sk02_species_codes_idx
+ON translation.species_code_mapping (sk_species_codes)
 WHERE TT_NotEmpty(sk_species_codes);
 
 -- Prepare the translation function

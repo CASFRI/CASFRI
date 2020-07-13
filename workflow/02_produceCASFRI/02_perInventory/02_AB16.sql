@@ -28,7 +28,7 @@ SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photo_yr
 FROM rawfri.ab_photoyear
 WHERE TT_IsInt(photo_yr);
 
-CREATE INDEX IF NOT EXISTS ab_photoyear_idx 
+CREATE INDEX IF NOT EXISTS ab16_photoyear_idx 
 ON rawfri.new_photo_year
 USING GIST(wkb_geometry);
 
@@ -90,7 +90,8 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_eco', 'ab16_l1_to_ab_l1_ma
 -- LYR
 ------------------------
 -- Check the uniqueness of AB species codes
-CREATE UNIQUE INDEX ON translation.species_code_mapping (ab_species_codes)
+CREATE UNIQUE INDEX species_code_mapping_ab16_species_codes_idx
+ON translation.species_code_mapping (ab_species_codes)
 WHERE TT_NotEmpty(ab_species_codes);
 
 SELECT TT_Prepare('translation', 'ab_avi01_lyr', '_ab16_lyr'); -- used for both AB06 and AB16 layer 1 and 2

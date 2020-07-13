@@ -68,7 +68,8 @@ SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_eco', 'pe01_l1_to_pe_pei_l
 -- LYR
 ------------------------
 -- Check the uniqueness of NS species codes
-CREATE UNIQUE INDEX ON translation.species_code_mapping (pe_species_codes)
+CREATE UNIQUE INDEX species_code_mapping_pe01_species_codes_idx
+ON translation.species_code_mapping (pe_species_codes)
 WHERE TT_NotEmpty(pe_species_codes);
 
 -- Prepare the translation function

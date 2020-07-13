@@ -68,7 +68,8 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_eco', 'on02_l1_to_on_l1_ma
 -- LYR
 ------------------------
 -- Check the uniqueness of ON species codes
-CREATE UNIQUE INDEX ON translation.species_code_mapping (on_species_codes)
+CREATE UNIQUE INDEX species_code_mapping_on02_species_codes_idx
+ON translation.species_code_mapping (on_species_codes)
 WHERE TT_NotEmpty(on_species_codes);
 
 -- Prepare the translation function

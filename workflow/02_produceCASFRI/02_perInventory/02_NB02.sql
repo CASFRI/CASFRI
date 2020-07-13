@@ -68,7 +68,8 @@ SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi02_eco', 'nb02_l1_to_nb_l1_ma
 -- LYR
 ------------------------
 -- Check the uniqueness of NB species codes
-CREATE UNIQUE INDEX ON translation.species_code_mapping (nb_species_codes)
+CREATE UNIQUE INDEX species_code_mapping_nb02_species_codes_idx
+ON translation.species_code_mapping (nb_species_codes)
 WHERE TT_NotEmpty(nb_species_codes);
 
 -- Prepare the translation function
