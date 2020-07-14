@@ -74,7 +74,8 @@ COMMIT;
 -- LYR
 ------------------------
 -- Check the uniqueness of BC species codes
-CREATE UNIQUE INDEX ON translation.species_code_mapping (bc_species_codes)
+CREATE UNIQUE INDEX species_code_mapping_bc10_species_codes_idx
+ON translation.species_code_mapping (bc_species_codes)
 WHERE TT_NotEmpty(bc_species_codes);
 
 BEGIN;
