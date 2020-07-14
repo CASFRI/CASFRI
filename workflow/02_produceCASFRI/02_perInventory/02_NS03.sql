@@ -101,7 +101,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_lyr', 'ns03_l2_to_ns_nsi_l
 ------------------------
 -- NFL
 ------------------------
-SELECT TT_Prepare('translation', 'ns_nsi03_nfl', '_ns03_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'ns_nsi01_nfl', '_ns03_nfl', 'ab_avi01_nfl');
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NS03';
@@ -112,12 +112,12 @@ SELECT TT_CreateMappingView('rawfri', 'ns03', 3, 'ns_nsi', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_ns03_nfl('rawfri', 'ns03_l3_to_ns_nsi_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi03_nfl', 'ns03_l3_to_ns_nsi_l1_map');
+SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_nfl', 'ns03_l3_to_ns_nsi_l1_map');
 
 ------------------------
 -- GEO
 ------------------------
-SELECT TT_Prepare('translation', 'ns_nsi03_geo', '_ns03_geo', 'ab_avi01_geo'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'ns_nsi01_geo', '_ns03_geo', 'ab_avi01_geo'); -- used for both NT01 and NT02
 
 SELECT TT_CreateMappingView('rawfri', 'ns03', 'ns_nsi');
 
@@ -128,7 +128,7 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NS03';
 INSERT INTO casfri50.geo_all -- 
 SELECT * FROM TT_Translate_ns03_geo('rawfri', 'ns03_l1_to_ns_nsi_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi03_geo', 'ns03_l1_to_ns_nsi_l1_map');
+SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_geo', 'ns03_l1_to_ns_nsi_l1_map');
 --------------------------------------------------------------------------
 -- Check
 SELECT 'cas_all', count(*) nb
