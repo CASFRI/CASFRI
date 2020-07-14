@@ -37,6 +37,7 @@ RETURNS TABLE (number text,
     END IF;
     -- Make the expected count for GEO_ALL the same as for CAS_ALL
     expectedCnts = array_append(expectedCnts, expectedCnts[1]);
+
     FOREACH exptCnt IN ARRAY (expectedCnts) LOOP
       number = majorNb::text || '.' || minorNb::text;
       list_query = 'SELECT count(*) ' ||
@@ -47,12 +48,16 @@ RETURNS TABLE (number text,
       list_query = list_query || ';';
       RAISE NOTICE 'TT_TestCount(): Executing ''%''...', list_query;
       EXECUTE list_query INTO cnt;
+
       passed = cnt = exptCnt;
       description = tableNames[minorNb] || ' rows count';
       IF NOT inv IS NULL THEN
         description = description || ' for ' || upper(inv);
       END IF;
       description = description || ' = ' || cnt::text;
+      IF NOT passed THEN
+        description = description || ' (expected ' || exptCnt || ')';
+      END IF;
       RETURN NEXT;
       minorNb = minorNb + 1;
     END LOOP;
@@ -65,11 +70,13 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- Uncomment to display only failing tests (at the end also)
 --SELECT * FROM (
 -------------------------------------------------------
--- Checks count for main CASFRI tables
+-- Checks counts for main CASFRI tables
+-- Order of counts in the provided ARRAY is CAS, DST, ECO, LYR and NFL.
+-- GEO is the same as CAS.
 -------------------------------------------------------
 SELECT * FROM TT_TestCount(1, ARRAY[17976421, 7027013, 184113, 15643779, 12963950])
 -------------------------------------------------------
--- Checks count for main CASFRI tables per inventory
+-- Checks counts for main CASFRI tables per inventory
 -- Order of counts in the provided ARRAY is CAS, DST, ECO, LYR and NFL.
 -- GEO is the same as CAS.
 -------------------------------------------------------
