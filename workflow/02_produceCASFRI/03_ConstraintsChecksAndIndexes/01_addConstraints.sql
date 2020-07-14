@@ -166,7 +166,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.16'::text number,
        'cas_all' target_table,
-       'Ensure CAS table STAND_STRUCTURE values match the corresponding lookup table' description, 
+       'Issue #407. INVALID_VALUE is not an acceptable code for attributes containing codes. Ensure CAS table STAND_STRUCTURE values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'LOOKUP', 
@@ -426,7 +426,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.22'::text number,
        'dst_all' target_table,
-       'Issue #337. Ensure DST table DIST_YEAR_1 is greater than 1900, below 2020 and smaller than or equal to DIST_YEAR_2' description, 
+       'Issue #337 & #408. DIST_YEAR_1 is sometimes invalid and not well ordered in time. Ensure DST table DIST_YEAR_1 is greater than 1900, below 2020 and smaller than or equal to DIST_YEAR_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -441,7 +441,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.23'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_YEAR_2 is greater than 1900, below 2020 and smaller than or equal to DIST_YEAR_3' description, 
+       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 is greater than 1900, below 2020 and smaller than or equal to DIST_YEAR_3' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -456,7 +456,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.24'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_YEAR_3 is greater than 1900, below 2020 and greater than or equal to DIST_YEAR_1' description, 
+       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_3 is greater than 1900, below 2020 and greater than or equal to DIST_YEAR_1' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -516,7 +516,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.28'::text number,
        'dst_all' target_table,
-       'Issue #387. Ensure DST table DIST_EXT_LOWER_1 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_1' description, 
+       'Issue #387. DIST_EXT_LOWER_3 sometimes = 1. Ensure DST table DIST_EXT_LOWER_1 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_1' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -531,7 +531,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.29'::text number,
        'dst_all' target_table,
-       'Issue #387. Ensure DST table DIST_EXT_LOWER_2 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_2' description, 
+       'Issue #387. DIST_EXT_LOWER_2 sometimes = 1. Ensure DST table DIST_EXT_LOWER_2 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -546,7 +546,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.30'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_LOWER_3 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_3' description, 
+       'Issue #387. DIST_EXT_LOWER_3 sometimes = 1. Ensure DST table DIST_EXT_LOWER_3 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_3' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -697,7 +697,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.1'::text number,
        'lyr_all' target_table,
-       'Issue #305. Add primary key to LYR_ALL' description, 
+       'Add primary key to LYR_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'PK', 
@@ -988,7 +988,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.37'::text number,
        'lyr_all' target_table,
-       'Issue #338. Ensure LYR table STRUCTURE_PER is greater than 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table STRUCTURE_PER is greater than 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1033,7 +1033,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.41'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table CROWN_CLOSURE_UPPER is greater than 0, smaller than or equal to 100 and greater than CROWN_CLOSURE_LOWER' description, 
+       'Ensure LYR table CROWN_CLOSURE_UPPER is greater than 0, smaller than or equal to 100 and greater than CROWN_CLOSURE_LOWER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1048,7 +1048,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.42'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table CROWN_CLOSURE_LOWER is greater than 0, smaller than or equal to 100 and smaller than CROWN_CLOSURE_UPPER' description, 
+       'Ensure LYR table CROWN_CLOSURE_LOWER is greater than 0, smaller than or equal to 100 and smaller than CROWN_CLOSURE_UPPER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1106,7 +1106,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.46'::text number,
        'lyr_all' target_table,
-       'Issue #346: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
+       'Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -1196,7 +1196,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.56'::text number,
        'lyr_all' target_table,
-       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_1 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_1 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1208,7 +1208,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.57'::text number,
        'lyr_all' target_table,
-       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_2 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_2 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1220,7 +1220,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.58'::text number,
        'lyr_all' target_table,
-       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_3 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_3 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1232,7 +1232,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.59'::text number,
        'lyr_all' target_table,
-       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_4 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_4 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1244,7 +1244,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.60'::text number,
        'lyr_all' target_table,
-       'Issue #389 & #338: Some rows get TRANSLATION_ERROR and others get -9998 (NOT_IN_SET) and -8889 (EMPTY_STRING). Ensure LYR table SPECIES_PER_5 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Issue #389: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_PER_5 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1256,7 +1256,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.61'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table SPECIES_PER_6 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Issue #389: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_PER_6 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1316,7 +1316,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.66'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table ORIGIN_UPPER is greater than 1000, smaller than 2050 and greater than ORIGIN_LOWER' description, 
+       'Issue #409: ORIGIN_UPPER is sometimes below 1000. Ensure LYR table ORIGIN_UPPER is greater than 1000, smaller than 2050 and greater than ORIGIN_LOWER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1331,7 +1331,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.67'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table ORIGIN_LOWER is greater than 1000, smaller than 2050 and smaller than ORIGIN_UPPER' description, 
+       'Issue #409: ORIGIN_LOWER is sometimes below 1000. Ensure LYR table ORIGIN_LOWER is greater than 1000, smaller than 2050 and smaller than ORIGIN_UPPER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1358,13 +1358,13 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.69'::text number,
        'lyr_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure LYR table SITE_INDEX is greater than 0 and smaller than 100' description, 
+       'Ensure LYR table SITE_INDEX is greater than 0 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
                         ARRAY['site_index_between_0_and_100',
                               '(site_index >= 0 AND site_index < 100) OR 
-                               site_index = ANY(TT_IsMissingOrNotInSetRange())
+                               site_index = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the NFL_ALL table
@@ -1372,7 +1372,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.1'::text number,
        'nfl_all' target_table,
-       'Issue #305. Add primary key to NFL_ALL' description, 
+       'Add primary key to NFL_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'PK', 
@@ -1517,7 +1517,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.18'::text number,
        'nfl_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure NFL table CROWN_CLOSURE_UPPER is greater than 0, smaller than or equal to 100 and greater than CROWN_CLOSURE_LOWER' description, 
+       'Ensure NFL table CROWN_CLOSURE_UPPER is greater than 0, smaller than or equal to 100 and greater than CROWN_CLOSURE_LOWER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
@@ -1532,7 +1532,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.19'::text number,
        'nfl_all' target_table,
-       'Issue #338: -9998 (NOT_IN_SET) should not be accepted for an integer. Ensure NFL table CROWN_CLOSURE_LOWER is greater than 0, smaller than or equal to 100 and smaller than CROWN_CLOSURE_UPPER' description, 
+       'Ensure NFL table CROWN_CLOSURE_LOWER is greater than 0, smaller than or equal to 100 and smaller than CROWN_CLOSURE_UPPER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
@@ -1577,7 +1577,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.22'::text number,
        'nfl_all' target_table,
-       'Issue #359: Some rows returns DW. Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
+       'Issue #400: Some BC08 and BC10 rows produce TRANSLATION_ERROR. Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
@@ -1590,7 +1590,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.23'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
+       'Issue #407 & #211. NON_FOR_ANTH is sometimes set to INVALID_VALUE and some long code were missing. Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
