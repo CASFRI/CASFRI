@@ -2334,8 +2334,8 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_anth_translation(
 RETURNS text AS $$
   DECLARE
     result text = NULL;
-	src_cover_types text[] = '{AP, GP, MI, MZ, OT, RN, RZ, TZ, UR}';
-	tgt_cover_types text[] = '{FACILITY_INFRASTRUCTURE, INDUSTRIAL, INDUSTRIAL, INDUSTRIAL, OTHER, FACILITY_INFRASTRUCTURE, FACILITY_INFRASTRUCTURE, INDUSTRIAL, FACILITY_INFRASTRUCTURE}';
+    src_cover_types text[] = '{AP, GP, MI, MZ, OT, RN, RZ, TZ, UR}';
+    tgt_cover_types text[] = '{FACILITY_INFRASTRUCTURE, INDUSTRIAL, INDUSTRIAL, INDUSTRIAL, OTHER, FACILITY_INFRASTRUCTURE, FACILITY_INFRASTRUCTURE, INDUSTRIAL, FACILITY_INFRASTRUCTURE}';
     src_non_prod_desc text[] = '{C, GR, P, U}';
   BEGIN
     -- run if statements
@@ -2353,7 +2353,7 @@ RETURNS text AS $$
         
     IF inventory_standard_cd = 'F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd = ANY(src_non_prod_desc) THEN
-        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::text, '{''CL'', ''IN'', ''CL'', ''FA''}');
+        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::text, '{''CULTIVATED'', ''INDUSTRIAL'', ''CULTIVATED'', ''FACILITY_INFRASTRUCTURE''}');
       END IF;
     END IF;
     
