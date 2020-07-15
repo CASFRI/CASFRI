@@ -143,9 +143,9 @@ SELECT TT_CreateMappingView('rawfri', 'nt02', 1, 'nt', 1, 1300); -- Generates ab
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_nt_dst_test('rawfri', 'nt02_l1_to_nt_l1_map_1300');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'on02', 1, 'on', 1, 1030); -- Generates about 1000 (1015) DST rows
+SELECT TT_CreateMappingView('rawfri', 'on02', 1, 'on', 1, 1800); -- Generates about 1000 (985) DST rows
 INSERT INTO casfri50_test.dst_all_new 
-SELECT * FROM TT_Translate_on_dst_test('rawfri', 'on02_l1_to_on_l1_map_1030');
+SELECT * FROM TT_Translate_on_dst_test('rawfri', 'on02_l1_to_on_l1_map_1800');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'sk01', 1, 'sk_utm', 1, 16500); -- Generates about 700 (703) DST rows
 INSERT INTO casfri50_test.dst_all_new 
