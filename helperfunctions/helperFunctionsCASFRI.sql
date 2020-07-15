@@ -2903,18 +2903,18 @@ RETURNS text AS $$
     sp_string = trim(sp_string);
    _sp_number = sp_number::int;
   
-    IF TT_Length(sp_string) > 1 THEN -- any empty cells will return null
+    IF TT_Length(sp_string) > 1 THEN -- a zero length string will return null
       IF _sp_number = 1 THEN -- first species is characters 1 to 6
-        RETURN substring(sp_string, 1, 6);
+        RETURN trim(substring(sp_string, 1, 6));
       ELSE
         start_char = 1 + ((_sp_number - 1)*6); -- calculate start character for substring
-        RETURN substring(sp_string, start_char, 6); -- following species are start character + 6
+        RETURN trim(substring(sp_string, start_char, 6)); -- following species are start character + 6
       END IF;
     ELSE
       RETURN NULL;
     END IF;
   END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql IMMUTABLE STRICT;
 
 -------------------------------------------------------------------------------
 -- TT_fim_species_translation(text, text, text, text, text)

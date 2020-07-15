@@ -69,7 +69,7 @@ WITH test_nb AS (
     SELECT 'TT_tie01_not_etage_notnull_validation'::text function_tested,    21 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_tie01_not_etage_layer1_validation'::text function_tested,     22 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_tie01_not_etage_dens_layers_validation'::text function_tested,23 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  7 nb_test UNION ALL
     SELECT 'TT_fim_species_translation'::text function_tested,               25 maj_num,  6 nb_test UNION ALL
     SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_yvi01_nat_non_veg_validation'::text function_tested,          27 maj_num,  4 nb_test UNION ALL
@@ -1197,6 +1197,18 @@ SELECT '24.5'::text number,
        'TT_fim_species_code'::text function_tested,
        'Species code null'::text description,
        TT_fim_species_code('', '1') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '24.6'::text number,
+       'TT_fim_species_code'::text function_tested,
+       'Species code with preceding space in the middle. Issue #346'::text description,
+       TT_fim_species_code('Sb  40Pj  20 Sw 20Bf  10Pt  10', '3') = 'Sw 20' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '24.7'::text number,
+       'TT_fim_species_code'::text function_tested,
+       'Species code with preceding space at the beginning. Issue #346'::text description,
+       TT_fim_species_code(' PO 100', '1') = 'PO 100' passed
 ---------------------------------------------------------
   -- TT_fim_species_translation
 ---------------------------------------------------------
