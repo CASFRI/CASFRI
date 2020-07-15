@@ -680,7 +680,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'wet_local_mod'],
-                        ARRAY['INT_LAWN_SCAR', 'INT_LAWN_ISLAND', 'INT_LAWN', 'NO_LAWN', 'SHRUB_COVER', 'GRAMMINOIDS',
+                        ARRAY['INT_LAWN_SCAR', 'INT_LAWN_ISLAND', 'INT_LAWN', 'NO_LAWN', 'SHRUB_COVER', 'GRAMINOIDS',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -1609,7 +1609,7 @@ FROM (SELECT *
                         ARRAY['casfri50_lookup', 
                               'non_for_veg'],
                         ARRAY['OPEN_SHRUB', 'CLOSED_SHRUB', 'ALPINE_FOREST', 'TALL_SHRUB', 'LOW_SHRUB', 
-						                  'FORBS', 'HERBS', 'GRAMMINOIDS', 'BRYOID', 'OPEN_MUSKEG', 'TUNDRA', 'OTHER'] ||
+						                  'FORBS', 'HERBS', 'GRAMINOIDS', 'BRYOID', 'OPEN_MUSKEG', 'TUNDRA', 'OTHER'] ||
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 --) foo WHERE NOT passed;
