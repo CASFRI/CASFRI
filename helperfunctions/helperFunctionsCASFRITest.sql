@@ -88,7 +88,7 @@ WITH test_nb AS (
     SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num, 13 nb_test UNION ALL
-    SELECT 'TT_pe_pei01_countOfNotNull'::text function_tested,               43 maj_num,  3 nb_test
+    SELECT 'TT_pe_pei01_countOfNotNull'::text function_tested,               43 maj_num,  8 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1898,20 +1898,50 @@ SELECT '42.13'::text number,
 UNION ALL
 SELECT '43.1'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
-       'Test one layer'::text description,
-       TT_pe_pei01_countOfNotNull('bf', '', '2', 'FALSE') = 1 passed
+       'Test spec1'::text description,
+       TT_pe_pei01_countOfNotNull('BS', '', '', '', '', '', '2', 'FALSE') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.2'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
-       'Test 3 layers'::text description,
-       TT_pe_pei01_countOfNotNull('bf', 'SO', '2', 'FALSE') = 2 passed
+       'Test spec2'::text description,
+       TT_pe_pei01_countOfNotNull('', 'BS', '', '', '', '', '2', 'FALSE') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.3'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
+       'Test spec3'::text description,
+       TT_pe_pei01_countOfNotNull('', '', 'BS', '', '', '', '2', 'FALSE') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.4'::text number,
+       'TT_pe_pei01_countOfNotNull'::text function_tested,
+       'Test spec4'::text description,
+       TT_pe_pei01_countOfNotNull('', '', '', 'BS', '', '', '2', 'FALSE') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.5'::text number,
+       'TT_pe_pei01_countOfNotNull'::text function_tested,
+       'Test spec5'::text description,
+       TT_pe_pei01_countOfNotNull('', '', '', '', 'BS', '', '2', 'FALSE') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.6'::text number,
+       'TT_pe_pei01_countOfNotNull'::text function_tested,
+       'Test spec1 and nfl'::text description,
+       TT_pe_pei01_countOfNotNull('BS', '', '', '', '', 'SO', '2', 'FALSE') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.7'::text number,
+       'TT_pe_pei01_countOfNotNull'::text function_tested,
+       'Test 3 layers'::text description,
+       TT_pe_pei01_countOfNotNull('', '', '', '', '', 'SO', '2', 'FALSE') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.8'::text number,
+       'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test 0 layers'::text description,
-       TT_pe_pei01_countOfNotNull('', '', '2', 'FALSE') = 0 passed
+       TT_pe_pei01_countOfNotNull('', '', '', '', '', '', '2', 'FALSE') = 0 passed
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

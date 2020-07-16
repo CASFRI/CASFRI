@@ -3559,38 +3559,60 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_pe_pie01_countOfNotNull(text, text, text, text)
 --
--- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
+-- spec1 text
+-- spec2 text
+-- spec3 text
+-- spec4 text
+-- spec5 text
 -- landtype text
 -- max_rank_to_consider text
 -- zero_is_null
 -- 
+-- Determine if spec1/2/3/4/5 contain a valid species code. Note that the
+-- value needs to be checked against the valid codes because spec1 in pe01
+-- contains non-species codes. If a valid species code is present, assign
+-- a string to indicate a layer in countOfNotNull.
 -- Determine if the row contains an NFL record. If it does assign a string
 -- so it can be counted as a non-null layer.
 -- 
--- Pass vals1-vals2 and the string/NULLs to countOfNotNull().
+-- Pass species and nfl variables to countOfNotNull().
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text, text,text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_countOfNotNull(
-  vals1 text,
+  spec1 text,
+  spec2 text,
+  spec3 text,
+  spec4 text,
+  spec5 text,
   landtype text,
   max_rank_to_consider text,
   zero_is_null text
 )
 RETURNS int AS $$
   DECLARE
+    species_codes text[] := '{AL,AP,BE,BF,BN,BS,CE,DF,EL,EM,GB,HE,JP,LA,LI,LP,MA,NS,PC,PO,RM,RO,RP,RS,SM,SP,WA,WB,WP,WS,YB}'; --codes copied from lookup table
+    nfl_codes text[] := '{SO,SD,WW,FL,CL,WF,PL,RN,RD,RR,AG,EP,UR,BO}';
+    is_lyr text;
     is_nfl text;
   BEGIN
 
+    -- if any of the species have a valid species code, set is_lyr to be a valid string.
+    IF spec1 = ANY(species_codes) OR spec2 = ANY(species_codes) OR spec3 = ANY(species_codes) OR spec4 = ANY(species_codes) OR spec5 = ANY(species_codes) THEN
+      is_lyr = 'a_value';
+    ELSE
+      is_lyr = NULL::text;
+    END IF;
+    
     -- if landtype matches any of the nfl values, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF tt_matchList(landtype,'{''SO'',''SD'',''WW'',''FL'',''CL'',''WF'',''PL'',''RN'',''RD'',''RR'',''AG'',''EP'',''UR'',''AL'',''BO''}') THEN
+    IF landtype = ANY(nfl_codes) THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
     END IF;
     
     -- call countOfNotNull
-    RETURN tt_countOfNotNull(vals1, is_nfl, max_rank_to_consider, zero_is_null);
+    RETURN tt_countOfNotNull(is_lyr, is_nfl, max_rank_to_consider, zero_is_null);
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
