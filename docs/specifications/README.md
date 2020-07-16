@@ -804,7 +804,7 @@ Non-forested vegetated areas include all natural lands that have vegetation cove
 | :------------- | :----- |
 | TALL_SHRUB     | Shrub lands with shrubs > 2 meters tall |
 | LOW_SHRUB      | Shrub lands with shrubs < 2 meters tall |
-| GRAMMINOIDS    | Grasses, sedges, rushes, and reeds |
+| GRAMINOIDS     | Grasses, sedges, rushes, and reeds |
 | FORBS          | Herbaceous plants other than graminoids |
 | HERBS          | Undistinguishable family of herbs |
 | BRYOID         | Mosses and lichens |
@@ -952,7 +952,7 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 | INT_LAWN        | Internal lawns present (permafrost was once present) |
 | NO_LAWN         | Internal lawns not present |
 | SHRUB_COVER     | Shrub cover > 25% |
-| GRAMMINOIDS     | Graminoids with shrub cover < 25%      |
+| GRAMINOIDS     | Graminoids with shrub cover < 25%      |
   
 
 <sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  

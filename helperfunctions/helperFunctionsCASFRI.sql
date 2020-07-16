@@ -2239,7 +2239,7 @@ RETURNS text AS $$
   DECLARE
     result text = NULL;
 	  src_cover_types text[] = '{BL, BM, BY, HE, HF, HG, SL, ST}';
-	  tgt_cover_types text[] = '{BRYOID, BRYOID, BRYOID, HERBS, FORBS, GRAMMINOIDS, LOW_SHRUB, TALL_SHRUB}';
+	  tgt_cover_types text[] = '{BRYOID, BRYOID, BRYOID, HERBS, FORBS, GRAMINOIDS, LOW_SHRUB, TALL_SHRUB}';
     src_non_prod_desc text[] = '{AF, M, NPBR, OR}';
   BEGIN
     -- run if statements
@@ -2257,7 +2257,7 @@ RETURNS text AS $$
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd = ANY(src_non_prod_desc) THEN
-        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::Text, '{''ALPINE_FOREST'', ''GRAMMINOIDS'', ''LOW_SHRUB'', ''GRAMMINOIDS''}');
+        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::Text, '{''ALPINE_FOREST'', ''GRAMINOIDS'', ''LOW_SHRUB'', ''GRAMINOIDS''}');
       END IF;
     END IF;
 
@@ -2285,35 +2285,39 @@ CREATE OR REPLACE FUNCTION TT_vri01_nat_non_veg_translation(
 RETURNS text AS $$
   DECLARE
     result text = NULL;
+    src_cover_types text[] = '{BE, BI, BR, BU, CB, ES, GL, LA, LB, LL, LS, MN, MU, OC, PN, RE, RI, RM, RS, TA}';
+    tgt_cover_types text[] = '{BEACH, ROCK_RUBBLE, ROCK_RUBBLE, EXPOSED_LAND, EXPOSED_LAND, EXPOSED_LAND, SNOW_ICE, LAKE, ROCK_RUBBLE, EXPOSED_LAND, WATER_SEDIMENT, EXPOSED_LAND, WATER_SEDIMENT, OCEAN, SNOW_ICE, LAKE, RIVER, EXPOSED_LAND, WATER_SEDIMENT, ROCK_RUBBLE}';
+    src_non_productive_descriptor_cd text[] = '{A, CL, G, ICE, L, MUD, R, RIV, S, SAND, TIDE}';
+    src_bclcs_level_4 text[] = '{EL, RO, SI}';
   BEGIN
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
-      IF non_veg_cover_type_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'DW', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RS', 'TA') THEN
-        result = TT_MapText(non_veg_cover_type_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''DW'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RS'', ''TA''}', '{''BEACH'', ''ROCK_RUBBLE'', ''ROCK_RUBBLE'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''SNOW_ICE'', ''LAKE'', ''ROCK_RUBBLE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''OCEAN'', ''SNOW_ICE'', ''LAKE'', ''RIVER'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''ROCK_RUBBLE''}');
+      IF non_veg_cover_type_1 = ANY(src_cover_types || ARRAY['DW']) THEN
+        result = TT_MapText(non_veg_cover_type_1, (src_cover_types || ARRAY['DW'])::text, (tgt_cover_types || ARRAY['EXPOSED_LAND'])::text);
       END IF;
     END IF;
 
     IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL AND result IS NULL THEN
-      IF land_cover_class_cd_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'EL', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RO', 'RS', 'SI', 'TA') THEN
-        result = TT_MapText(land_cover_class_cd_1, '{''BE'', ''BI'', ''BR'', ''BU'', ''CB'', ''EL'', ''ES'', ''GL'', ''LA'', ''LB'', ''LL'', ''LS'', ''MN'', ''MU'', ''OC'', ''PN'', ''RE'', ''RI'', ''RM'', ''RO'', ''RS'', ''SI'', ''TA''}', '{''BEACH'', ''ROCK_RUBBLE'', ''ROCK_RUBBLE'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''EXPOSED_LAND'', ''SNOW_ICE'', ''LAKE'', ''ROCK_RUBBLE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''OCEAN'', ''SNOW_ICE'', ''LAKE'', ''RIVER'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''ROCK_RUBBLE''}');
+      IF land_cover_class_cd_1 = ANY(src_cover_types || ARRAY['EL', 'RO', 'SI']) THEN
+        result = TT_MapText(land_cover_class_cd_1, (src_cover_types || ARRAY['EL', 'RO', 'SI'])::text, (tgt_cover_types || ARRAY['EXPOSED_LAND', 'ROCK_RUBBLE', 'SNOW_ICE'])::text);
       END IF;
     END IF;
-    
+
     IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
-      IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
-        result = TT_MapText(bclcs_level_4, '{''EL'', ''RO'', ''SI''}', '{''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''SNOW_ICE''}');
+      IF bclcs_level_4 = ANY(src_bclcs_level_4) THEN
+        result = TT_MapText(bclcs_level_4, src_bclcs_level_4::text, '{''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''SNOW_ICE''}');
       END IF;
     END IF;
     
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd IN ('A', 'CL', 'G', 'ICE', 'L', 'MUD', 'R', 'RIV', 'S', 'SAND', 'TIDE') THEN
-        result = TT_MapText(non_productive_descriptor_cd, '{''A'', ''CL'', ''G'', ''ICE'', ''L'', ''MUD'', ''R'', ''RIV'', ''S'', ''SAND'', ''TIDE''}', '{''ALPINE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''SNOW_ICE'', ''LAKE'', ''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''RIVER'', ''SLIDE'', ''SAND'', ''TIDAL_FLATS''}');
+      IF non_productive_descriptor_cd = ANY(src_non_productive_descriptor_cd) THEN
+        result = TT_MapText(non_productive_descriptor_cd, src_non_productive_descriptor_cd::text, '{''ALPINE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''SNOW_ICE'', ''LAKE'', ''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''RIVER'', ''SLIDE'', ''SAND'', ''TIDAL_FLATS''}');
       END IF;
     END IF;
 
     IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL AND result IS NULL THEN
-      IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
-        result = TT_MapText(bclcs_level_4, '{''EL'', ''RO'', ''SI''}', '{''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''SNOW_ICE''}');
+      IF bclcs_level_4 = ANY(src_bclcs_level_4) THEN
+        result = TT_MapText(bclcs_level_4, src_bclcs_level_4::text, '{''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''SNOW_ICE''}');
       END IF;
     END IF;
     RETURN result;
@@ -2476,7 +2480,7 @@ RETURNS text AS $$
 	       WHEN ret_char_pos = '3' THEN -- WET_LANDFORM_MOD
 	         result = TT_MapText(result, '{''X'', ''P'', ''N'', ''A''}', '{''PERMAFROST_PRESENT'', ''PATTERNING_PRESENT'', ''NO_PERMAFROST_PATTERNING'', ''SALINE_ALKALINE''}');
 	       WHEN ret_char_pos = '4' THEN -- WET_LOCAL_MOD
-	         result = TT_MapText(result, '{''C'', ''R'', ''I'', ''N'', ''S'', ''G''}', '{''INT_LAWN_SCAR'', ''INT_LAWN_ISLAND'', ''INT_LAWN'', ''NO_LAWN'', ''SHRUB_COVER'', ''GRAMMINOIDS''}');
+	         result = TT_MapText(result, '{''C'', ''R'', ''I'', ''N'', ''S'', ''G''}', '{''INT_LAWN_SCAR'', ''INT_LAWN_ISLAND'', ''INT_LAWN'', ''NO_LAWN'', ''SHRUB_COVER'', ''GRAMINOIDS''}');
 	  END CASE;
 	ELSE
 	  RETURN NULL;
