@@ -669,7 +669,7 @@ Stand origin is the average initiation year of codominant and dominant trees of 
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 0&#8209;2020  | Upper and lower bound of an age class |
+| 1000&#8209;2020  | Upper and lower bound of an age class |
 | -8888     | Source value is null |
 | -9995     | Source value is not the expected type (e.g. not an integer) |
 | -9999     | Source value is outside expected range (e.g. not between 0 and 2020) |
