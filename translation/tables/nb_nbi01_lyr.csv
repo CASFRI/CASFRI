@@ -30,7 +30,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 28,SPECIES_PER_9,integer,false(),nothingInt(),Attribute does not occur,TRUE
 29,SPECIES_10,text,false(),nothingText(),Attribute does not occur,TRUE
 30,SPECIES_PER_10,integer,false(),nothingInt(),Attribute does not occur,TRUE
-31,ORIGIN_UPPER,integer,"notNull(origin_upper);isInt(origin_upper);isBetween(origin_upper, 0, 2020)",copyInt(origin_lower),origin_lower,TRUE
-32,ORIGIN_LOWER,integer,"notNull(origin_lower);isInt(origin_lower);isBetween(origin_lower, 0, 2020)",copyInt(origin_lower),Copies (l1estyr) to ORIGIN_LOWER,TRUE
+31,ORIGIN_UPPER,integer,"notNull(origin_upper);isInt(origin_upper);isBetween(origin_upper, 1000, 2020)",copyInt(origin_lower),origin_lower,TRUE
+32,ORIGIN_LOWER,integer,"notNull(origin_lower);isInt(origin_lower);isBetween(origin_lower, 1000, 2020)",copyInt(origin_lower),Copies (l1estyr) to ORIGIN_LOWER,TRUE
 33,SITE_CLASS,text,false(),nothingText(),Attribute does not occur,TRUE
 34,SITE_INDEX,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
