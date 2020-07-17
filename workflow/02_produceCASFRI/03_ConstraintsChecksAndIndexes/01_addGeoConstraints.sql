@@ -11,31 +11,66 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
--- Create a schema for lookup tables
--------------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS casfri50_lookup ;
--------------------------------------------------------
 -- Add some constraints to the GEO_ALL table
 -------------------------------------------------------
--- Add primary key to GEO_ALL
-SELECT TT_AddConstraint('casfri50', 'geo_all', 'PK', 
-                        ARRAY['cas_id']);
-
--- Add foreign key from GEO_ALL to CAS_ALL
-SELECT TT_AddConstraint('casfri50', 'geo_all', 'FK', 
-                        ARRAY['cas_id', 'casfri50', 'cas_all', 'cas_id']);
-
--- Ensure attributes are NOT NULL
-SELECT TT_AddConstraint('casfri50', 'geo_all', 'NOTNULL', ARRAY['cas_id']);
-SELECT TT_AddConstraint('casfri50', 'geo_all', 'NOTNULL', ARRAY['geometry']);
-
--- Ensure GEO table CAS_ID is 50 characters long
-SELECT TT_AddConstraint('casfri50', 'geo_all', 'CHECK', 
-                        ARRAY['cas_id_length', 'length(cas_id) = 50']);
-
--- Ensure GEO table GEOMETRY is valid
-SELECT TT_AddConstraint('casfri50', 'geo_all', 'CHECK', 
-                        ARRAY['geometry_isvalid', 'ST_IsValid(geometry)']);
-
 -------------------------------------------------------
+-- Begin test section
+-------------------------------------------------------
+-- Uncomment to display only failing tests (at the end also)
+--SELECT * FROM (
+-------------------------------------------------------
+-- Add some constraints to the CAS_ALL table
+-------------------------------------------------------
+SELECT '6.1'::text number,
+       'geo_all' target_table,
+       'Add primary key to GEO_ALL' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'geo_all', 'PK', 
+                        ARRAY['cas_id']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '6.2'::text number,
+       'geo_all' target_table,
+       'Add foreign key from GEO_ALL to HDR_ALL' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'geo_all', 'FK', 
+                        ARRAY['cas_id', 'casfri50', 'cas_all', 'cas_id']) AS (passed boolean, cstr_query text)) foo
+---------------------------------------------------------
+UNION ALL
+SELECT '6.3'::text number,
+       'geo_all' target_table,
+       'Ensure CAS_ID is not NULL' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'geo_all', 'NOTNULL', ARRAY['cas_id']) AS (passed boolean, cstr_query text)) foo
+---------------------------------------------------------
+UNION ALL
+SELECT '6.4'::text number,
+       'geo_all' target_table,
+       'Ensure GEOMETRY is not NULL' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'geo_all', 'NOTNULL', ARRAY['geometry']) AS (passed boolean, cstr_query text)) foo
+---------------------------------------------------------
+UNION ALL
+SELECT '6.5'::text number,
+       'cas_all' target_table,
+       'Ensure GEO table CAS_ID is 50 characters long' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'geo_all', 'CHECK', 
+                        ARRAY['cas_id_length', 'length(cas_id) = 50']) AS (passed boolean, cstr_query text)) foo
+---------------------------------------------------------
+UNION ALL
+SELECT '6.6'::text number,
+       'cas_all' target_table,
+       'Ensure GEO table CAS_ID is 50 characters long' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'geo_all', 'CHECK', 
+                        ARRAY['geometry_isvalid', 'ST_IsValid(geometry)']) AS (passed boolean, cstr_query text)) foo
+---------------------------------------------------------
+--) foo WHERE NOT passed;
 
