@@ -26,8 +26,11 @@ SELECT TT_Prepare('translation', 'nb_nbi01_dst', '_nb_dst', 'ab_avi01_dst'); -- 
 SELECT TT_Prepare('translation', 'bc_vri01_dst', '_bc_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'nt_fvi01_dst', '_nt_dst', 'ab_avi01_dst'); -- used for both NT01 and NT02
 SELECT TT_Prepare('translation', 'on_fim02_dst', '_on_dst', 'ab_avi01_dst');
-SELECT TT_Prepare('translation', 'sk_utm01_dst', '_sk_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'sk_utm01_dst', '_sk_utm_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'sk_sfv01_dst', '_sk_sfv_dst_test', 'ab_avi01_dst'); 
 SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'ns_nsi01_dst', '_ns_dst_test', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'pe_pei01_dst', '_pe_dst_test', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 ------------------------
@@ -111,21 +114,77 @@ SELECT * FROM TT_Translate_on_dst('rawfri', 'on02_l1_to_on_l1_map_dst', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_dst', 'on02_l1_to_on_l1_map_dst');
 ------------------------
--- Translate SK01 using UTM translation table
+-- Translate SK01 using UTM generic translation table
 SELECT TT_CreateMappingView('rawfri', 'sk01', 1, 'sk_utm', 1, NULL, 'dst');
 
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_sk_dst('rawfri', 'sk01_l1_to_sk_utm_l1_map_dst', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_utm_dst('rawfri', 'sk01_l1_to_sk_utm_l1_map_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst', 'sk01_l1_to_sk_utm_l1_map_dst');
 ------------------------
--- Translate YT02 using YVI translation table
+-- Translate SK02 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk02', 1, 'sk_sfv', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_sk_sfv_dst('rawfri', 'sk02_l1_to_sk_sfv_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst', 'sk02_l1_to_sk_utm_l1_map_dst');
+------------------------
+-- Translate SK03 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk03', 1, 'sk_sfv', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_sk_sfv_dst_test('rawfri', 'sk03_l1_to_sk_sfv_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst', 'sk03_l1_to_sk_utm_l1_map_dst');
+------------------------
+-- Translate SK04 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk04', 1, 'sk_sfv', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_sk_sfv_dst_test('rawfri', 'sk04_l1_to_sk_sfv_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst', 'sk04_l1_to_sk_utm_l1_map_dst');
+------------------------
+-- Translate SK05 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk05', 1, 'sk_sfv', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_sk_sfv_dst_test('rawfri', 'sk05_l1_to_sk_sfv_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst', 'sk05_l1_to_sk_utm_l1_map_dst');
+------------------------
+-- Translate SK06 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk06', 1, 'sk_sfv', 1, NULL, 'dst'); 
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_sk_sfv_dst_test('rawfri', 'sk06_l1_to_sk_sfv_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_dst', 'sk06_l1_to_sk_utm_l1_map_dst');
+------------------------
+-- Translate YT02 using YVI generic translation table
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, NULL, 'dst');
 
 INSERT INTO casfri50.dst_all -- 
 SELECT * FROM TT_Translate_yt_dst('rawfri', 'yt02_l1_to_yt_l1_map_dst', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_dst', 'yt02_l1_to_yt_l1_map_dst');
+------------------------
+-- Translate NS03 using NS_NSI generic translation table
+SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_ns_dst_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_dst', 'ns03_l1_to_ns_nsi_l1_map_dst');
+------------------------
+-- Translate PE01 using PE_PEI generic translation table
+SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_pe_dst_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_dst', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_dst', 'pe01_l1_to_pe_pei_l1_map_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -147,10 +206,16 @@ GROUP BY left(cas_id, 4), layer;
 --NT01 -8886	77270
 --NT02 -8886	129867
 --ON02 -8886	3576398
+--PE01 -8886	29517
 --SK01 -8886	64052
+--SK02 -8886	9020
+--SK03 -8886	236
+--SK04 -8886	93980
+--SK05 -8886	58248
+--SK06 -8886	45081
 --YT02 -8886	19173
 
-SELECT count(*) FROM casfri50.dst_all; -- 7027013
+SELECT count(*) FROM casfri50.dst_all; -- 7263095
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX dst_all_casid_idx

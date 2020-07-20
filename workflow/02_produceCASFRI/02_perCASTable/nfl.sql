@@ -26,8 +26,11 @@ SELECT TT_Prepare('translation', 'nb_nbi01_nfl', '_nb_nfl', 'ab_avi01_nfl'); -- 
 SELECT TT_Prepare('translation', 'bc_vri01_nfl', '_bc_nfl', 'ab_avi01_nfl'); -- used for both BC08 and BC10
 SELECT TT_Prepare('translation', 'nt_fvi01_nfl', '_nt_nfl', 'ab_avi01_nfl'); -- used for both NT01 and NT02, layer 1 and 2
 SELECT TT_Prepare('translation', 'on_fim02_nfl', '_on_nfl', 'ab_avi01_nfl');
-SELECT TT_Prepare('translation', 'sk_utm01_nfl', '_sk_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'sk_utm01_nfl', '_sk_utm_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'sk_sfv01_nfl', '_sk_sfv_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'ns_nsi01_nfl', '_ns_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe_nfl', 'ab_avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 ------------------------
@@ -180,9 +183,141 @@ SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_nfl', 'on02_l3_to_on_l1_ma
 SELECT TT_CreateMappingView('rawfri', 'sk01', 3, 'sk_utm', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_sk_nfl('rawfri', 'sk01_l3_to_sk_utm_l1_map_nfl', 'ogc_fid'); 
+SELECT * FROM TT_Translate_sk_utm_nfl('rawfri', 'sk01_l3_to_sk_utm_l1_map_nfl', 'ogc_fid'); 
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl', 'sk01_l3_to_sk_utm_l1_map_nfl');
+------------------------
+
+-- Translate SK02 layer 4
+SELECT TT_CreateMappingView('rawfri', 'sk02', 4, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk02_l4_to_sk_sfv_l1_map_nfl');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l4_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK02 layer 5
+SELECT TT_CreateMappingView('rawfri', 'sk02', 5, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk02_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l5_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK02 layer 6
+SELECT TT_CreateMappingView('rawfri', 'sk02', 6, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk02_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l6_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK03 layer 4
+SELECT TT_CreateMappingView('rawfri', 'sk03', 4, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk03_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l4_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK03 layer 5
+SELECT TT_CreateMappingView('rawfri', 'sk03', 5, 'sk_sfv', 1, NULL, 'nfl');
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk03_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l5_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK03 layer 6
+SELECT TT_CreateMappingView('rawfri', 'sk03', 6, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk03_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l6_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK04 layer 4
+SELECT TT_CreateMappingView('rawfri', 'sk04', 4, 'sk_sfv', 1, NULL, 'nfl');
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk04_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l4_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK04 layer 5
+SELECT TT_CreateMappingView('rawfri', 'sk04', 5, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk04_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l5_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK04 layer 6
+SELECT TT_CreateMappingView('rawfri', 'sk04', 6, 'sk_sfv', 1, NULL, 'nfl');
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk04_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l6_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK05 layer 4
+SELECT TT_CreateMappingView('rawfri', 'sk05', 4, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk05_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l4_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK05 layer 5
+SELECT TT_CreateMappingView('rawfri', 'sk05', 5, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk05_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l5_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK05 layer 6
+SELECT TT_CreateMappingView('rawfri', 'sk05', 6, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk05_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l6_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK06 layer 4
+SELECT TT_CreateMappingView('rawfri', 'sk06', 4, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk06_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l4_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK06 layer 5
+SELECT TT_CreateMappingView('rawfri', 'sk06', 5, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk06_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l5_to_sk_sfv_l1_map_nfl');
+------------------------
+
+-- Translate SK06 layer 6
+SELECT TT_CreateMappingView('rawfri', 'sk06', 6, 'sk_sfv', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk06_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l6_to_sk_sfv_l1_map_nfl');
 ------------------------
 
 -- Translate YT02 layer 2
@@ -192,6 +327,24 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_yt_nfl('rawfri', 'yt02_l2_to_yt_l1_map_nfl', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl', 'yt02_l2_to_yt_l1_map_nfl');
+------------------------
+
+-- Translate NS03 layer 3
+SELECT TT_CreateMappingView('rawfri', 'ns03', 3, 'ns_nsi', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_ns_nfl_test('rawfri', 'ns03_l3_to_ns_nsi_l1_map_nfl');
+
+SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_nfl', 'ns03_l3_to_ns_nsi_l1_map_nfl');
+------------------------
+
+-- Translate PE01 layer 2
+SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pe_nfl_test('rawfri', 'pe01_l2_to_pe_pei_l1_map_nfl');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_nfl', 'pe01_l2_to_pe_pei_l1_map_nfl');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -199,53 +352,81 @@ SELECT left(cas_id, 4) inv, count(*) nb
 FROM casfri50.nfl_all
 GROUP BY left(cas_id, 4);
 --inv   nb
---AB06	4178
---AB16	20295
---BC08	4923735
---BC10	5622294
+--AB06	3515
+--AB16	26858
+--BC08	1998885
+--BC10	2276213
 --NB01	78227
---NB02	141747
+--NB02	139930
 --NT01	65299
 --NT02	129291
 --ON02	1562183
 --SK01	340357
+--SK03 	6845
+--SK04 	311133
+--SK05 	184184
+--SK06 	78506
 --YT02	76344
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.nfl_all
 GROUP BY left(cas_id, 4), layer;
 -- inv lyr nb
---AB06	1	3606
---AB06	2	572
---AB16	1	19141
---AB16	2	1154
---BC08	0	218055
---BC08	1	1996045
---BC08	2	2377295
---BC08	3	332101
+--AB06	1	2081
+--AB06	2	1434
+--AB16	1	15434
+--AB16	2	11424
+--BC08	1	554538
+--BC08	2	1265774
+--BC08	3	178334
 --BC08	4	239
---BC10	0	225311
---BC10	1	2120442
---BC10	2	2793970
---BC10	3	477208
---BC10	4	5361
+--BC10	0	225219
+--BC10	1	1082425
+--BC10	2	740803
+--BC10	3	224091
+--BC10	4	3673
 --BC10	5	2
 --NB01	1	78227
---NB02	1	141747
---NT01	0	62
---NT01	1	42451
---NT01	2	22768
+--NB02	1	139930
+--NT01	1	42512
+--NT01	2	22769
 --NT01	3	18
---NT02	0	371
---NT02	1	52219
---NT02	2	76117
+--NT02	1	52575
+--NT02	2	76132
 --NT02	3	584
 --ON02	1	1562183
+--PE01	1	1
+--PE01	2	26742
 --SK01	1	340356
 --SK01	2	1
+--SK02	1	3338
+--SK02	2	10143
+--SK02	3	3707
+--SK02	4	336
+--SK02	5	6
+--SK03	1	1524
+--SK03	2	3094
+--SK03	3	1977
+--SK03	4	245
+--SK03	5	5
+--SK04	1	80905
+--SK04	2	178021
+--SK04	3	50036
+--SK04	4	2129
+--SK04	5	42
+--SK05	1	41657
+--SK05	2	114488
+--SK05	3	27285
+--SK05	4	744
+--SK05	5	10
+--SK06	1	21714
+--SK06	2	38317
+--SK06	3	18194
+--SK06	4	275
+--SK06	5	6
 --YT02	1	76344
 
-SELECT count(*) FROM casfri50.nfl_all; -- 12963950
+SELECT count(*) FROM casfri50.nfl_all; -- 7322043
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX nfl_all_casid_idx

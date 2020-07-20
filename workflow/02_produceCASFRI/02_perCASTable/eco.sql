@@ -26,8 +26,11 @@ SELECT TT_Prepare('translation', 'nb_nbi01_eco', '_nb_eco', 'ab_avi01_eco'); -- 
 SELECT TT_Prepare('translation', 'bc_vri01_eco', '_bc_eco', 'ab_avi01_eco'); -- used for both BC08 and BC10
 SELECT TT_Prepare('translation', 'nt_fvi01_eco', '_nt_eco', 'ab_avi01_eco'); -- used for both NT01 and NT02
 SELECT TT_Prepare('translation', 'on_fim02_eco', '_on_eco', 'ab_avi01_eco');
-SELECT TT_Prepare('translation', 'sk_utm01_eco', '_sk_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'sk_utm01_eco', '_sk_utm_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'sk_sfv01_eco', '_sk_sfv_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'ns_nsi01_eco', '_ns_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'pe_pei01_eco', '_pe_eco', 'ab_avi01_eco');
 
 ------------------------
 DROP TABLE IF EXISTS casfri50.eco_all CASCADE;
@@ -105,13 +108,53 @@ SELECT * FROM TT_Translate_on_eco('rawfri', 'on02_l1_to_on_l1_map_eco', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_eco', 'on02_l1_to_on_l1_map_eco');
 ------------------------
--- Translate SK01 using SK translation table
+-- Translate SK01 using SK UTM translation table
 SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', NULL, 'eco');
 
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_sk_eco('rawfri', 'sk01_l1_to_sk_utm_l1_map_eco', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_utm_eco('rawfri', 'sk01_l1_to_sk_utm_l1_map_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_eco', 'sk01_l1_to_sk_utm_l1_map_eco');
+------------------------
+-- Translate SK02 using SK SFV translation table
+SELECT TT_CreateMappingView('rawfri', 'sk02', 'sk_sfv', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_sk_sfv_eco_test('rawfri', 'sk02_l1_to_sk_sfv_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco', 'sk02_l1_to_sk_sfv_l1_map_eco');
+------------------------
+-- Translate SK03 using SK SFV translation table
+SELECT TT_CreateMappingView('rawfri', 'sk03', 'sk_sfv', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_sk_sfv_eco_test('rawfri', 'sk03_l1_to_sk_sfv_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco', 'sk03_l1_to_sk_sfv_l1_map_eco');
+------------------------
+-- Translate SK04 using SK SFV translation table
+SELECT TT_CreateMappingView('rawfri', 'sk04', 'sk_sfv', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_sk_sfv_eco_test('rawfri', 'sk04_l1_to_sk_sfv_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco', 'sk04_l1_to_sk_sfv_l1_map_eco');
+------------------------
+-- Translate SK05 using SK SFV translation table
+SELECT TT_CreateMappingView('rawfri', 'sk05', 'sk_sfv', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_sk_sfv_eco_test('rawfri', 'sk05_l1_to_sk_sfv_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco', 'sk05_l1_to_sk_sfv_l1_map_eco');
+------------------------
+-- Translate SK06 using SK SFV translation table
+SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_sk_sfv_eco_test('rawfri', 'sk06_l1_to_sk_sfv_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco', 'sk06_l1_to_sk_sfv_l1_map_eco');
 ------------------------
 -- Translate YT02 using YT translation table
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', NULL, 'eco');
@@ -120,6 +163,22 @@ INSERT INTO casfri50.eco_all --
 SELECT * FROM TT_Translate_yt_eco('rawfri', 'yt02_l1_to_yt_l1_map_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco', 'yt02_l1_to_yt_l1_map_eco');
+------------------------
+-- Translate NS03 using NS_NSI translation table
+SELECT TT_CreateMappingView('rawfri', 'ns03', 'ns_nsi', 800);
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_ns_eco_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_eco');
+
+SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_eco', 'ns03_l1_to_ns_nsi_l1_map_eco');
+------------------------
+-- Translate PE01 using PE_PEI translation table
+SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei', 300);
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_pe_eco_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_eco');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_eco', 'pe01_l1_to_pe_pei_l1_map_eco');
 
 --------------------------------------------------------------------------
 -- Check processed inventories and count

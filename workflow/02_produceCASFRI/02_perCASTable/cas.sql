@@ -46,8 +46,11 @@ SELECT TT_Prepare('translation', 'nb_nbi01_cas', '_nb_cas', 'ab_avi01_cas'); -- 
 SELECT TT_Prepare('translation', 'bc_vri01_cas', '_bc_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'nt_fvi01_cas', '_nt_cas', 'ab_avi01_cas'); -- used for both NT01 and NT02
 SELECT TT_Prepare('translation', 'on_fim02_cas', '_on_cas', 'ab_avi01_cas'); 
-SELECT TT_Prepare('translation', 'sk_utm01_cas', '_sk_cas', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'sk_utm01_cas', '_sk_utm_cas', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'sk_sfv01_cas', '_sk_sfv_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt_cas', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'ns_nsi01_cas', '_ns_cas', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'pe_pei01_cas', '_pe_cas', 'ab_avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50.cas_all CASCADE;
 ------------------------
@@ -141,15 +144,65 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_cas', 'on02_l1_to_on_l1_map_cas');
 ------------------------
--- Translate SK01 using UTM translation table
+-- Translate SK01 using UTM generic translation table
 SELECT TT_CreateMappingView('rawfri', 'sk01', 'sk_utm', NULL, 'cas');
 
 BEGIN;
 INSERT INTO casfri50.cas_all -- 
-SELECT * FROM TT_Translate_sk_cas('rawfri', 'sk01_l1_to_sk_utm_l1_map_cas', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_utm_cas('rawfri', 'sk01_l1_to_sk_utm_l1_map_cas', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_cas', 'sk01_l1_to_sk_utm_l1_map_cas');
+------------------------
+-- Translate SK02 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk02', 'sk_sfv', NULL, 'cas');
+
+BEGIN;
+INSERT INTO casfri50.cas_all -- 
+SELECT * FROM TT_Translate_sk_sfv_cas_test('rawfri', 'sk02_l1_to_sk_sfv_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_cas', 'sk02_l1_to_sk_sfv_l1_map_cas');
+------------------------
+-- Translate SK03 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk03', 'sk_sfv', NULL, 'cas');
+
+BEGIN;
+INSERT INTO casfri50.cas_all -- 
+SELECT * FROM TT_Translate_sk_sfv_cas_test('rawfri', 'sk03_l1_to_sk_sfv_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_cas', 'sk03_l1_to_sk_sfv_l1_map_cas');
+------------------------
+-- Translate SK04 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk04', 'sk_sfv', NULL, 'cas');
+
+BEGIN;
+INSERT INTO casfri50.cas_all -- 
+SELECT * FROM TT_Translate_sk_sfv_cas_test('rawfri', 'sk04_l1_to_sk_sfv_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_cas', 'sk04_l1_to_sk_sfv_l1_map_cas');
+------------------------
+-- Translate SK05 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk05', 'sk_sfv', NULL, 'cas');
+
+BEGIN;
+INSERT INTO casfri50.cas_all -- 
+SELECT * FROM TT_Translate_sk_sfv_cas_test('rawfri', 'sk05_l1_to_sk_sfv_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_cas', 'sk05_l1_to_sk_sfv_l1_map_cas');
+------------------------
+-- Translate SK06 using SFV generic translation table
+SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', NULL, 'cas');
+
+BEGIN;
+INSERT INTO casfri50.cas_all -- 
+SELECT * FROM TT_Translate_sk_sfv_cas_test('rawfri', 'sk06_l1_to_sk_sfv_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_cas', 'sk06_l1_to_sk_sfv_l1_map_cas');
 ------------------------
 -- Translate YT02 using YVI01 translation table
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', NULL, 'cas');
@@ -160,6 +213,26 @@ SELECT * FROM TT_Translate_yt_cas('rawfri', 'yt02_l1_to_yt_l1_map_cas', 'ogc_fid
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_cas', 'yt02_l1_to_yt_l1_map_cas');
+------------------------
+-- Translate NS03 using NS_NSI translation table
+SELECT TT_CreateMappingView('rawfri', 'ns03', 'ns_nsi', NULL, 'cas');
+
+BEGIN;
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_ns_cas_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_cas', 'ns03_l1_to_ns_nsi_l1_map_cas');
+------------------------
+-- Translate PE01 using PE_PEI translation table
+SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei', NULL, 'cas');
+
+BEGIN;
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_pe_cas_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_cas', 'pe01_l1_to_pe_pei_l1_map_cas');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -176,10 +249,16 @@ GROUP BY left(cas_id, 4);
 --NT01	281388
 --NT02	320944
 --ON02	3629072
+--PE01  107220
 --SK01	1501667
+--SK02	27314
+--SK03	8964
+--SK04	633522
+--SK05	421977
+--SK06	211482
 --YT02	231137
 
-SELECT count(*) FROM casfri50.cas_all; -- 17976421
+SELECT count(*) FROM casfri50.cas_all; -- 19386900
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX cas_all_casid_idx
