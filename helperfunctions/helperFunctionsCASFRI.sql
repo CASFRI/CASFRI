@@ -1,4 +1,4 @@
-  ------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- CASFRI Helper functions installation file for CASFR v5 beta
 -- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
@@ -541,7 +541,7 @@ RETURNS SETOF text AS $$
   DECLARE
     res RECORD;
   BEGIN
-    FOR res IN SELECT 'DROP VIEW IF EXISTS ' || TT_FullTableName(schemaName, table_name) || ';' query
+    FOR res IN SELECT 'DROP VIEW IF EXISTS ' || TT_FullTableName(schemaName, table_name) || ' CASCADE;' query
                FROM information_schema.tables 
                WHERE lower(table_schema) = lower(schemaName) AND table_type = 'VIEW'
                ORDER BY table_name LOOP
