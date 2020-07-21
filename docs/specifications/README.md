@@ -135,22 +135,22 @@ The attribute **INVENTORY_ID** is a unique identifier that is assigned to each f
 
 The attribute **JURISDICTION** identifies the province, territory or national park from which the inventory data came.
 
-| Values | Description |
-| :-------------------------- | :-------------- |
-| BC | British Columbia |
-| AB | Alberta |
-| SK | Saskatchewan |
-| MB | Manitoba |
-| ON | Ontario |
-| QC | Quebec |
-| PE | Prince Edward Island |
-| NB | New Brunswick |
-| NS | Nova Scotia |
-| NL | Newfoundland and Labrador |
-| YK | Yukon Territory |
-| NT | Northwest Territories |
-| WB | Wood Buffalo National Park |
-| PA | Prince Albert National Park |
+| Values | 
+| :-------------------------- |
+| British Columbia |
+| Alberta |
+| Saskatchewan |
+| Manitoba |
+| Ontario |
+| Quebec |
+| Prince Edward Island |
+| New Brunswick |
+| Nova Scotia |
+| Newfoundland and Labrador |
+| Yukon Territory |
+| Northwest Territories |
+| Wood Buffalo National Park |
+| Prince Albert National Park |
 
 
 ### OWNER_TYPE
