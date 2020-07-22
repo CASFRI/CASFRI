@@ -77,14 +77,16 @@ Table 1. CASFRI schema.
 | <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>ECO_SITE</sub>         |                            |
 | <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      |                             |                            |
 | <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>HEIGHT_UPPER</sub>        |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_YEAR_2</sub>      |                             |                            |
-| <sub>INVENTORY_MANUAL</sub>  | <sub>SRC_INV_AREA</sub>      | <sub>HEIGHT_LOWER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
+| <sub>STANDARD_MANUAL_NAME</sub>  | <sub>SRC_INV_AREA</sub>      | <sub>HEIGHT_LOWER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
 | <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>PRODUCTIVE_FOR</sub>      | <sub>NAT_NON_VEG</sub>         | <sub>DIST_EXT_LOWER_2</sub> |                             |                            |
-| <sub>ACQUISITION_DATE</sub>  |                              | <sub>SPECIES_1 - 10</sub>      | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_TYPE_3</sub>      |                             |                            |
-| <sub>DATA_TRANSFER</sub>     |                              | <sub>SPECIES_PER_1 - 10</sub>  | <sub>NON_FOR_VEG</sub>         | <sub>DIST_YEAR_3</sub>      |                             |                            |
-| <sub>RECEIVED_FROM</sub>     |                              | <sub>ORIGIN_UPPER</sub>        |                                | <sub>DIST_EXT_UPPER_3</sub> |                             |                            |
-| <sub>CONTACT_INFO</sub>      |                              | <sub>ORIGIN_LOWER</sub>        |                                | <sub>DIST_EXT_LOWER_3</sub> |                             |                            |
-| <sub>DATA_AVAILABILITY</sub> |                              | <sub>SITE_CLASS</sub>          |                                |                             |                             |                            |
-| <sub>REDISTRIBUTION</sub>    |                              | <sub>SITE_INDEX</sub>          |                                |                             |                             |                            |
+| <sub>PRODUCTION_YEARS </sub> |                              | <sub>SPECIES_1 - 10</sub>      | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_TYPE_3</sub>      |                             |                            |
+| <sub>PUBLICATION_DATE</sub>  |                              | <sub>SPECIES_PER_1 - 10</sub>  | <sub>NON_FOR_VEG</sub>         | <sub>DIST_YEAR_3</sub>      |                             |                            |
+| <sub>ACQUISITION_DATE</sub>  |                              | <sub>ORIGIN_UPPER</sub>        |                                | <sub>DIST_EXT_UPPER_3</sub> |                             |                            |
+| <sub>ACQUISITION_TYPE</sub>  |                              | <sub>ORIGIN_LOWER</sub>        |                                | <sub>DIST_EXT_LOWER_3</sub> |                             |                            |
+| <sub>ACQUISITION_LINKS</sub> |                              | <sub>SITE_CLASS</sub>          |                                |                             |                             |                            |
+| <sub>CONTACT_INFO</sub>      |                              | <sub>SITE_INDEX</sub>          |                                |                             |                             |                            |
+| <sub>DATA_AVAILABILITY</sub> |                              |                                |                                |                             |                             |                            |
+| <sub>REDISTRIBUTION</sub>    |                              |                                |                                |                             |                             |                            |
 | <sub>PERMISSION</sub>        |                              |                                |                                |                             |                             |                            |
 | <sub>LICENSE_AGREEMENT</sub> |                              |                                |                                |                             |                             |                            |
 | <sub>PHOTO_YEAR_SRC</sub>    |                              |                                |                                |                             |                             |                            |
@@ -215,27 +217,43 @@ The attribute **STANDARD_REVISION** records whether any revisions have been made
 | Alpha numeric | The standard and version of the standard used to create the inventory |
 
 
-### INVENTORY_MANUAL
+### DOCUMENTATION_DOCUMENT_NAMES
 
-The attribute **INVENTORY_MANUAL** identifies the documentation associated with the inventory data e.g., metadata, data dictionary, manual, etc.
+The attribute **DOCUMENTATION_DOCUMENT_NAMES** identifies the names of the documentation documents associated with the standard and the inventory data e.g., metadata, data dictionary, manual, etc.
 
 | Values | Description |
 | :----- | :-------------- |
-| Text   | Documentation associated with the inventory data |
+| Text   | Names of documentation documents associated with the standard and the inventory data |
 
 
 ### SRC_DATA_FORMAT
 
-The attribute **SRC_DATA_FORMAT** identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file.
+The attribute **SRC_DATA_FORMAT** identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file. When many format are used, they are separated by a comma.
 
-| Values          | Description      |
-| :-------------- | :-------------- |
-| Geodatabase     | ESRI file geodatabase       |
-| Shapefile       | ESRI shapefile              |
-| E00             | ESRI e00 transfer files     |
-| ESRI Coverage   | ESRI Coverage files         |
-| mdb             | Microsoft Access database   |
+| Values           | Description      |
+| :--------------- | :-------------- |
+| ESRI_GEODATABASE | ESRI file geodatabase       |
+| SHAPEFILE        | ESRI shapefile              |
+| ESRI_E00         | ESRI E00 transfer files     |
+| ESRI_COVERAGE    | ESRI Coverage files         |
+| ACCESS_DATABASE  | Microsoft Access database   |
 
+
+### PRODUCTION_YEARS
+
+The attribute **PRODUCTION_YEARS** identifies the year or the year interval (e.g. 1998-2003) during which the inventory was produced.
+
+| Values | Description |
+| :----- | :-------------- |
+| Year   | Year or year interval during which the inventory was produced |
+
+### PUBLICATION_DATE
+
+The attribute **PUBLICATION_DATE** identifies the date at which the inventory data was published by the producer on the web or internally.
+
+| Values | Description |
+| :----- | :-------------- |
+| Date   | Date at which the inventory data was published  |
 
 ### ACQUISITION_DATE
 
@@ -246,22 +264,26 @@ The attribute **ACQUISITION_DATE** identifies the date at which the inventory da
 | Date   | Date at which the inventory data was acquired  |
 
 
-### DATA_TRANSFER
+### ACQUISITION_TYPE
 
-The attribute **DATA_TRANSFER** identifies the procedure with which the inventory data was acquired. Examples include direct download, ftp transfer, on DVD, etc.
-
-| Values | Description |
-| :----- | :-------------- |
-| Text   | Procedure with which the inventory data was acquired |
-
-
-### RECEIVED_FROM
-
-The attribute **RECEIVED_FROM** identifies the person, entity, or website from which the inventory data was obtained.
+The attribute **ACQUISITION_TYPE** identifies the mean by which the inventory data was acquired. This is mainly to identify inventories that were publicitly available (online or by other means) when they were acquired by the CASFRI project.
 
 | Values | Description |
 | :----- | :-------------- |
-| Text   | Person, entity, or website from which the data was obtained |
+| DVD   | The inventory data was acquired on DVD support |
+| FTP   | The inventory data was acquired through a FTP site. Link to the FTP site should be provided in the ACQUISITION_LINKS field |
+| HTTP   | The inventory data was acquired through a HTTP site. Link to the HTTP site should be provided in the ACQUISITION_LINKS field |
+| TEMPORARY_FTP | The inventory data was acquired through a temporary FTP link that is not available anymore |
+| TEMPORARY_HTTP | The inventory data was acquired through a temporary HTTP link that is not available anymore |
+| UNKNOWN_VALUE   | The inventory data was acquired by an unknown mean |
+
+### ACQUISITION_LINKS
+
+The attribute **ACQUISITION_LINKS** identifies the HTTP or FTP addresses (there can be many) from which the inventory was downloaded. Temporary address are not provided.
+
+| Values | Description |
+| :----- | :-------------- |
+| Text   | HTTP or FTP addresses (there can be many) from which the inventory was downloaded |
 
 
 ### CONTACT_INFO
