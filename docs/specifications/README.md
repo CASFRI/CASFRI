@@ -246,6 +246,8 @@ The attribute **PRODUCTION_YEARS** identifies the year or the year interval (e.g
 | Values | Description |
 | :----- | :-------------- |
 | Year   | Year or year interval during which the inventory was produced |
+| UNKNOWN_VALUE | The year of production is unknown |
+
 
 ### PUBLICATION_DATE
 
@@ -254,6 +256,7 @@ The attribute **PUBLICATION_DATE** identifies the date at which the inventory da
 | Values | Description |
 | :----- | :-------------- |
 | Date   | Date at which the inventory data was published  |
+| UNKNOWN_VALUE | The publication date is unknown |
 
 ### ACQUISITION_DATE
 
@@ -262,6 +265,7 @@ The attribute **ACQUISITION_DATE** identifies the date at which the inventory da
 | Values | Description |
 | :----- | :-------------- |
 | Date   | Date at which the inventory data was acquired  |
+| UNKNOWN_VALUE | The acquisition date is unknown |
 
 
 ### ACQUISITION_TYPE
@@ -275,7 +279,7 @@ The attribute **ACQUISITION_TYPE** identifies the mean by which the inventory da
 | HTTP   | The inventory data was acquired through a HTTP site. Link to the HTTP site should be provided in the ACQUISITION_LINKS field |
 | TEMPORARY_FTP | The inventory data was acquired through a temporary FTP link that is not available anymore |
 | TEMPORARY_HTTP | The inventory data was acquired through a temporary HTTP link that is not available anymore |
-| UNKNOWN_VALUE   | The inventory data was acquired by an unknown mean |
+| UNKNOWN_VALUE   | The acquisition type is unknown |
 
 ### ACQUISITION_LINKS
 
@@ -284,7 +288,8 @@ The attribute **ACQUISITION_LINKS** identifies the HTTP or FTP addresses (there 
 | Values | Description |
 | :----- | :-------------- |
 | Text   | HTTP or FTP addresses (there can be many) from which the inventory was downloaded |
-
+| UNKNOWN_VALUE | The acquisition links are unknown |
+| NOT_APPLICABLE | The acquisition is not FTP, not HTTP |
 
 ### CONTACT_INFO
 
@@ -293,6 +298,7 @@ The attribute **CONTACT_INFO** identifies the contact information (name, address
 | Values | Description |
 | :----- | :-------------- |
 | Text   | Contact information associated with the inventory data   |
+| NO_INFO | There is no contact info   |
 
 
 ### DATA_AVAILABILITY
@@ -301,7 +307,10 @@ The attribute **DATA_AVAILABILITY** identifies the type of access to the invento
 
 | Values | Description |
 | :----- | :-------------- |
-| Text   | Type of access to the inventory data |
+| DIRECT_CONTACT   | The inventory was acquired through direct contact with an individual part of the production process. The name of this person should be listed in the CONTACT_INFO field |
+| OPEN_ACCESS      | The inventory is openly available on the web. Links to the dataset should be provided in the ACQUISITION_LINKS field |
+| ADMINISTRATVE_PROCESS | The inventory was acquired through a standardized administrative process |
+| UNKNOWN_VALUE | The availability of the inventory is not known |
 
 
 ### REDISTRIBUTION
@@ -310,7 +319,11 @@ The attribute **REDISTRIBUTION** identifies the conditions under which the inven
 
 | Values | Description |
 | :----- | :-------------- |
-| Text   | Conditions under which the inventory data can be redistributed |
+| OPEN_WITH_ACKNOWLEDGMENT  | The dataset can be redistributed if the source is properly acknowledged |
+| OPEN_FOR_BEACON_AND_BAM_PROJECTS  | The dataset can be used only for BEACON and BAM projects |
+| REQUIRES_AGREEMENT  | The dataset can be redistributed only following a specific agreement with the provider |
+| NOT_SPECIFIED  | The redistribution conditions are not specified |
+| UNKNOWN_VALUE  | The redistribution conditions are unknown |
 
 
 ### PERMISSION
@@ -322,6 +335,8 @@ The attribute **PERMISSION** identifies the degree of permission to which the da
 | UNRESTRICTED | Use of the inventory data is unrestricted |
 | RESTRICTED   | Use of the inventory data has restrictions |
 | LIMITED      | Use of the data has limitations |
+| NOT_SPECIFIED | Use of the data is not specified |
+| UNKNOWN_VALUE | Use of the data is unknown |
 
 
 ### LICENSE_AGREEMENT
@@ -343,6 +358,7 @@ The attribute **PHOTO_YEAR_SRC** identifies the source data type that is used to
 | VALUE_PER_STAND  | Photo year is provided as an attribute in the source data |
 | RELATIONAL_JOIN  | Photo year is stored in a separate table that needs to be joined to the data |
 | GLOBAL_INVENTORY | Photo year is a single value that applies to the entire dataset |
+| UNKNOWN_VALUE    | Photo year is unknown |
 
 
 ### PHOTO_YEAR_START
@@ -352,6 +368,7 @@ The attribute **PHOTO_YEAR_START** identifies the year in which the inventory wa
 | Values      | Description |
 | :---------- | :-------------- |
 | 1900&#8209;2020 | Earliest year of aerial photo acquisition |
+| -8886 | Earliest year of aerial photo acquisition is unknown |
 
 
 ### PHOTO_YEAR_END
@@ -361,6 +378,7 @@ The attribute **PHOTO_YEAR_END** identifies the year in which the inventory was 
 | Values      | Description |
 | :---------- | :-------------- |
 | 1900&#8209;2020 | Latest year of aerial photo acquisition |
+| -8886 | Latest year of aerial photo acquisition is unknown |
 
 
 <a name=CAS_attributes></a>
