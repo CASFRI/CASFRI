@@ -166,7 +166,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.16'::text number,
        'cas_all' target_table,
-       'Issue #407. INVALID_VALUE is not an acceptable code for attributes containing codes. Ensure CAS table STAND_STRUCTURE values match the corresponding lookup table' description, 
+       'Ensure CAS table STAND_STRUCTURE values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'LOOKUP', 
@@ -1590,7 +1590,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.23'::text number,
        'nfl_all' target_table,
-       'Issue #407 & #211. NON_FOR_ANTH is sometimes set to INVALID_VALUE and some long code were missing. Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
+       'Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
