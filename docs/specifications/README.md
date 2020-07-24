@@ -119,9 +119,9 @@ Table 2. CASFRI error codes
 
 Four types of attribute have been identified in CASFRI and only a specific codes are used for each type. They are:
 
-| Attribute type | Description | Possible&nbsp;error&nbsp;code| 
+| Attribute&nbsp;type | Description | Possible&nbsp;error&nbsp;code| 
 |:-------------- |:--------- |:---------:|
-| text | Arbitrary text values. e.g. the CAS_ID attribute | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
+| text | Arbitrary text values. e.g. the MAP_SHEET_ID attribute | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
 | code | Codified values. e.g. most text CASFRI attributes: SPECIES_X, DIST_TYPE_X and NFL types | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, NOT_IN_SET |
 | number | Numeric values. e.g. SRC_INV_AREA, PHOTO_YEAR, LAYER, LAYER_RANK | NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
 | range | Bounded numeric values. e.g. all HEIGHT, CROWN_CLOSURE and ORIGIN CASFRI attributes as well as SPECIES_PER_X| NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE, OUT_OF_RANGE |
@@ -143,7 +143,7 @@ The attribute **INVENTORY_ID** is a unique identifier that is assigned to each f
 
 | Values | Desription |
 | :----- | :-------------- |
-| Alpha numeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
+| Alphanumeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
 
 ### JURISDICTION
@@ -180,6 +180,7 @@ The attribute **OWNER_TYPE** identifies who owns the inventory data. Ownership o
 | FN        | First Nation |
 | INDUSTRY  | Industry |
 | PRIVATE   | Private |
+| UNKNOWN_VALUE | Owner type is unknown |
 
 
 ### OWNER_NAME
@@ -192,6 +193,7 @@ The attribute **OWNER_NAME** identifies who owns the land that the inventory cov
 | PRIVATE  | Private |
 | MILITARY | Military |
 | FN       | First Nation |
+| UNKNOWN_VALUE | Owner name is unknown |
 
 
 ### STANDARD_TYPE
@@ -200,26 +202,26 @@ The attribute **STANDARD_TYPE** identifies the kind of inventory that was produc
 
 | Values         | Description        |
 | :------------- | :-------------- |
-|  Alpha numeric | Inventory name or type of inventory |
+|  Alphanumeric | Inventory name or type of inventory |
+| UNKNOWN_VALUE | Inventory name or type of inventory is unknown |
 
 
 ### STANDARD_VERSION
 
-The attribute **STANDARD_VERSION** identifies the standards used to produce a consistent inventory, usually across large land bases and for a relatively long period of time. The inventory type along with a version number usually identifies an inventory.
+The attribute **STANDARD_VERSION** identifies the version number of the standards used to produce the inventory, usually across large land bases and for a relatively long period of time. The inventory type along with a version number usually identifies an inventory.
 
 | Values         | Description        |
 | :------------- | :-------------- |
-|  Alpha numeric | The standard and version of the standard used to create the inventory |
+|  Alphanumeric | The standard and version of the standard used to produce the inventory |
 
 
 ### STANDARD_ID
 
-The attribute **STANDARD_ID** identifies the version of the standard within CASFRI. If a standard is updated such that a new translation table is required, the **STANDRAD_ID** will be incremented.
+The attribute **STANDARD_ID** is the CASFRI unique identifier for the standard used to produce the inventory. If a standard is updated such that a new translation table is required, the **STANDRAD_ID** is be incremented. The numeric part of the standard id does not necessarily correspond to the version of the standard nor to a chronological order. It is simply what is is: a unique identifier.
 
 | Values        | Description   |
 | :------------ | :------------ |
-| Alpha numeric | The standard and version of the standard used to create the inventory |
-
+| Alphanumeric | The CASFRI unique identifier of the inventory |
 
 ### STANDARD_REVISION
 
@@ -227,16 +229,18 @@ The attribute **STANDARD_REVISION** records whether any revisions have been made
 
 | Values        | Description        |
 | :------------ | :------------ |
-| Alpha numeric | The standard and version of the standard used to create the inventory |
+| Alphanumeric | List of revisions made to the standard used to produce the inventory |
+| UNKNOWN_VALUE | Standard revision is unknown |
 
 
-### DOCUMENTATION_DOCUMENT_NAMES
+### DOCUMENTATION_TITLES
 
-The attribute **DOCUMENTATION_DOCUMENT_NAMES** identifies the names of the documentation documents associated with the standard and the inventory data e.g., metadata, data dictionary, manual, etc.
+The attribute **DOCUMENTATION_TITLES** identifies the titles of the documents associated with the standard and the inventory data e.g., metadata, data dictionary, manual, etc.
 
 | Values | Description |
 | :----- | :-------------- |
-| Text   | Names of documentation documents associated with the standard and the inventory data |
+| Text   | Titles of documents associated with the standard and the inventory data |
+| UNKNOWN_VALUE | Titles of documents are unknown |
 
 
 ### SRC_DATA_FORMAT
@@ -244,12 +248,13 @@ The attribute **DOCUMENTATION_DOCUMENT_NAMES** identifies the names of the docum
 The attribute **SRC_DATA_FORMAT** identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file. When many format are used, they are separated by a comma.
 
 | Values           | Description      |
-| :--------------- | :-------------- |
+| :--------------- | :--------------- |
 | ESRI_GEODATABASE | ESRI file geodatabase       |
 | SHAPEFILE        | ESRI shapefile              |
 | ESRI_E00         | ESRI E00 transfer files     |
 | ESRI_COVERAGE    | ESRI Coverage files         |
 | ACCESS_DATABASE  | Microsoft Access database   |
+| UNKNOWN_VALUE    | The format of the inventory is unknown |
 
 
 ### PRODUCTION_YEARS
@@ -273,7 +278,7 @@ The attribute **PUBLICATION_DATE** identifies the date at which the inventory da
 
 ### ACQUISITION_DATE
 
-The attribute **ACQUISITION_DATE** identifies the date at which the inventory data was acquired.
+The attribute **ACQUISITION_DATE** identifies the date at which the inventory data was acquired by the CASFRI project.
 
 | Values | Description |
 | :----- | :-------------- |
@@ -412,14 +417,7 @@ The attribute **CAS_ID** is an alpha-numeric identifier that is unique for each 
 
 | Values               | Description |
 | :------------------- | :---------- |
-| Alpha numeric string |  CAS stand identification - unique string for each polygon within CAS |
-| NULL_VALUE           |  One of the source attributes is null |
-| EMPTY_STRING         |  One of the source attributes is an empty string |
-
-Notes:
-
-- Issue: https://github.com/edwardsmarc/CASFRI/issues/214 
-
+| Alphanumeric string |  CAS stand identification - unique string for each polygon within CAS |
 
 ### INVENTORY_ID (FK)
 
@@ -427,7 +425,7 @@ The attribute **INVENTORY_ID** is a unique identifier that is assigned to each f
 
 | Values | Desription |
 | :----- | :-------------- |
-| Alpha numeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
+| Alphanumeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
 
 ### ORIG_STAND_ID
@@ -437,9 +435,6 @@ Original stand identification - unique number for each polygon within the origin
 | Values       | Description |
 | :----------- | :-------------- |
 | Integer      | Unique number for each polygon within the original inventory |
-| NULL_VALUE   |  Source attribute is null |
-| WRONG_TYPE   |  Source attribute is wrong type (e.g. an integer was expected) |
-| OUT_OF_RANGE |  Source attribute is out of expected range (e.g. an integer greater than zero was expected) |
 
 
 ### STAND_STRUCTURE
@@ -496,7 +491,7 @@ Map sheet identification according to original naming convention for an inventor
 
 | Values         | Description        |
 | :------------  | :------------ |
-| Alpha numeric  | Map sheet identification according to original naming convention for an inventory |
+| Alphanumeric  | Map sheet identification according to original naming convention for an inventory |
 | NULL_VALUE     | Source value is null |
 | NOT_APPLICABLE | Attribute does not exist in source data |
 
