@@ -126,9 +126,9 @@ Four types of attribute have been identified in CASFRI and only a specific codes
 | number | Numeric values. e.g. SRC_INV_AREA, PHOTO_YEAR, LAYER, LAYER_RANK | NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
 | range | Bounded numeric values. e.g. all HEIGHT, CROWN_CLOSURE and ORIGIN CASFRI attributes as well as SPECIES_PER_X| NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE, OUT_OF_RANGE |
 
-* The main difference between text and number types is that numbers can not be empty strings (EMPTY_STRING).
-* The main difference between text and code is that wrong codes are not in the set of acceptable values (NOT_IN_SET) instead of being invalid (INVALID_VALUE).
-* The main difference between numbers and ranges is that values can be out of range (OUT_OF_RANGE) for range types.
+* The main difference between the text and the number type is that empty numbers are NULLs. They can not be empty strings (EMPTY_STRING).
+* The main difference between the text and the code type is that wrong codes are not in the set of acceptable values (NOT_IN_SET) instead of being invalid (INVALID_VALUE).
+* The main difference between the number and the range types is that range values can be out of range (OUT_OF_RANGE) and simple number can not as they are not delimited.
 
 
 <a name=HDR_attributes></a>
