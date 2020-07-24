@@ -1355,9 +1355,9 @@ RETURNS RECORD AS $$
                          WHERE table_schema = ''' || schemaName || '''
                          AND table_name = ''' || tableName || '''
                          AND constraint_type = ''PRIMARY KEY'';';
-RAISE NOTICE '11 queryStr = %', queryStr;
+--RAISE NOTICE '11 queryStr = %', queryStr;
              EXECUTE queryStr INTO queryStr;
-RAISE NOTICE '22 queryStr = %', queryStr;
+--RAISE NOTICE '22 queryStr = %', queryStr;
              IF queryStr IS NULL THEN
                queryStr = '';
              ELSE 
@@ -1366,7 +1366,7 @@ RAISE NOTICE '22 queryStr = %', queryStr;
              END IF;
              queryStr = queryStr || 'ALTER TABLE ' || schemaName || '.' || tableName || chr(10) ||
                                     'ADD PRIMARY KEY (' || args[1] || ');';
-RAISE NOTICE '33 queryStr = %', queryStr;
+--RAISE NOTICE '33 queryStr = %', queryStr;
 
            WHEN cType = 'FK' THEN
              queryStr = queryStr || 'ADD FOREIGN KEY (' || args[1] || ') ' ||
