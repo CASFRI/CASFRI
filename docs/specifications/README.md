@@ -117,6 +117,17 @@ Table 2. CASFRI error codes
 |                | NO_INTERSECT      | -7778 | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry). |
 | Translation    | TRANSLATION_ERROR | -3333 | Generic translation error (reported for a failed translation). |
 
+Four types of attribute have been identified in CASFRI and only a list of specific codes is used for each type. They are:
+
+| Attribute type | Description | Possible&nbsp;error&nbsp;code| 
+|:-------------- |:--------- |:---------:|
+| text | Arbitrary text values. e.g. the CAS_ID attribute | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
+| code | Codified values. e.g. most text CASFRI attributes: SPECIES_X, DIST_TYPE_X and NFL types | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, NOT_IN_SET |
+| number | Numeric values. e.g. SRC_INV_AREA, PHOTO_YEAR, LAYER, LAYER_RANK | NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
+| range | Bounded numeric values. e.g. all HEIGHT, CROWN_CLOSURE and ORIGIN CASFRI attributes as well as SPECIES_PER_X| NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE, OUT_OF_RANGE |
+
+The main difference between text and code is that wrong codes are not in the set of acceptable values (NOT_IN_SET) instead of being invalid (INVALID_VALUE). The main difference between numbers and ranges is that values can be out of range (OUT_OF_RANGE) for range types. The main difference between text and number types is that numbers can not be empty strings (EMPTY_STRING).
+
 
 <a name=HDR_attributes></a>
 ## HDR Attributes 
