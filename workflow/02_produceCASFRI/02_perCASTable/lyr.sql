@@ -261,7 +261,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk02', 1, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk02_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk02_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk02_l1_to_sk_sfv_l1_map_lyr');
@@ -271,7 +271,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk02', 2, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk02_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk02_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk02_l2_to_sk_sfv_l1_map_lyr');
@@ -281,7 +281,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk02', 3, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk02_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk02_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk02_l3_to_sk_sfv_l1_map_lyr');
@@ -291,7 +291,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk03', 1, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk03_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk03_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk03_l1_to_sk_sfv_l1_map_lyr');
@@ -301,7 +301,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk03', 2, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk03_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk03_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk03_l2_to_sk_sfv_l1_map_lyr');
@@ -311,7 +311,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk03', 3, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk03_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk03_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk03_l3_to_sk_sfv_l1_map_lyr');
@@ -321,7 +321,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk04', 1, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk04_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk04_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk04_l1_to_sk_sfv_l1_map_lyr');
@@ -331,7 +331,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk04', 2, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk04_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk04_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk04_l2_to_sk_sfv_l1_map_lyr');
@@ -341,7 +341,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk04', 3, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk04_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk04_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk04_l3_to_sk_sfv_l1_map_lyr');
@@ -351,7 +351,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk05', 1, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk05_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk05_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk05_l1_to_sk_sfv_l1_map_lyr');
@@ -361,7 +361,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk05', 2, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk05_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk05_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk05_l2_to_sk_sfv_l1_map_lyr');
@@ -371,7 +371,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk05', 3, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk05_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk05_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk05_l3_to_sk_sfv_l1_map_lyr');
@@ -381,7 +381,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk06', 1, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk06_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk06_l1_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l1_to_sk_sfv_l1_map_lyr');
@@ -391,7 +391,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk06', 2, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk06_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk06_l2_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l2_to_sk_sfv_l1_map_lyr');
@@ -401,7 +401,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'sk06', 3, 'sk_sfv', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk06_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk06_l3_to_sk_sfv_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l2_to_sk_sfv_l1_map_lyr');
@@ -419,8 +419,8 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr', 'yt02_l1_to_yt_l1_ma
 -- Translate NS03 layer 1 using NS generic translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, NULL, 'lyr');
-INSERT INTO casfri50_test.lyr_all_new
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_lyr', 'ogc_fid');
+INSERT INTO casfri50.lyr_all_new
+SELECT * FROM TT_Translate_ns_lyr('rawfri', 'ns03_l1_to_ns_nsi_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_lyr', 'ns03_l1_to_ns_nsi_l1_map_lyr');
@@ -430,7 +430,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ns03', 2, 'ns_nsi', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns03_l2_to_ns_nsi_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_ns_lyr('rawfri', 'ns03_l2_to_ns_nsi_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_lyr', 'ns03_l2_to_ns_nsi_l1_map_lyr');
@@ -440,7 +440,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_pe_lyr('rawfri', 'pe01_l1_to_pe_pei_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_lyr', 'pe01_l1_to_pe_pei_l1_map_lyr');
@@ -449,7 +449,8 @@ SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_lyr', 'pe01_l1_to_pe_pei_l
 --------------------------------------------------------------------------
 SELECT left(cas_id, 4) inv, count(*) nb 
 FROM casfri50.lyr_all
-GROUP BY left(cas_id, 4);
+GROUP BY left(cas_id, 4)
+ORDER BY inv;
 -- inv  nb
 -- AB06	14179
 -- AB16	149674
@@ -457,12 +458,13 @@ GROUP BY left(cas_id, 4);
 -- BC10	4744673
 -- NB01	932271
 -- NB02	1053554
+-- NS03	972710
 -- NT01	246179
 -- NT02	350967
 -- ON02	2240815
--- PE01	107219
+-- PE01	81073
 -- SK01	860394
--- SK02	28985
+-- SK02	28983
 -- SK03	10767
 -- SK04	708553
 -- SK05	483663
@@ -484,13 +486,15 @@ GROUP BY left(cas_id, 4), layer;
 -- NB01	2	164879
 -- NB02	1	870925
 -- NB02	2	182629
+-- NS03	1	742317
+-- NS03	2	230393
 -- NT01	1	236939
 -- NT01	2	9240
 -- NT02	1	266159
 -- NT02	2	84808
 -- ON02	1	2066888
 -- ON02	2	173927
--- PE01	1	107219
+-- PE01	1	81073
 -- SK01	1	846500
 -- SK01	2	13894
 -- SK02	1	23976
@@ -510,7 +514,7 @@ GROUP BY left(cas_id, 4), layer;
 -- SK06	3	10394
 -- YT02	1	105102
 
-SELECT count(*) FROM casfri50.lyr_all; -- 16446777
+SELECT count(*) FROM casfri50.lyr_all; -- 17393341
 --------------------------------------------------------------------------
 -- Add some indexes
 CREATE INDEX lyr_all_casid_idx
