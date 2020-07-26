@@ -217,7 +217,7 @@ The attribute **STANDARD_VERSION** identifies the version number of the standard
 
 ### STANDARD_ID
 
-The attribute **STANDARD_ID** is the CASFRI unique identifier for the standard used to produce the inventory. If a standard is updated such that a new translation table is required, the **STANDRAD_ID** is be incremented. The numeric part of the standard id does not necessarily correspond to the version of the standard nor to a chronological order. It is simply what is is: a unique identifier.
+The attribute **STANDARD_ID** is the CASFRI unique identifier for the standard used to produce the inventory. If a standard is updated such that a new translation table is required, the **STANDARD_ID** is be incremented. The numeric part of the standard id does not necessarily correspond to the version of the standard nor to a chronological order. It is simply what is is: a unique identifier.
 
 | Values        | Description   |
 | :------------ | :------------ |
