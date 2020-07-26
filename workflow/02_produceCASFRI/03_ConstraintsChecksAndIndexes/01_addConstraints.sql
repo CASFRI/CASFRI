@@ -471,7 +471,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.25'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_1' description, 
+       'ISsue #419. Missing target value produce translation error. Ensure DST table DIST_EXT_UPPER_1 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_1' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -1124,7 +1124,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.48'::text number,
        'lyr_all' target_table,
-       'Issue #346: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_3 values match the corresponding lookup table' description, 
+       'Ensure LYR table SPECIES_3 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -1244,7 +1244,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.60'::text number,
        'lyr_all' target_table,
-       'Issue #389: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_PER_5 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_5 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1256,7 +1256,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.61'::text number,
        'lyr_all' target_table,
-       'Issue #389: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_PER_6 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_6 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1316,7 +1316,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.66'::text number,
        'lyr_all' target_table,
-       'Issue #409: ORIGIN_UPPER is sometimes below 1000. Ensure LYR table ORIGIN_UPPER is greater than 1000, smaller than 2050 and greater than ORIGIN_LOWER' description, 
+       'Ensure LYR table ORIGIN_UPPER is greater than 1000, smaller than 2050 and greater than ORIGIN_LOWER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1331,7 +1331,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.67'::text number,
        'lyr_all' target_table,
-       'Issue #409: ORIGIN_LOWER is sometimes below 1000. Ensure LYR table ORIGIN_LOWER is greater than 1000, smaller than 2050 and smaller than ORIGIN_UPPER' description, 
+       'Ensure LYR table ORIGIN_LOWER is greater than 1000, smaller than 2050 and smaller than ORIGIN_UPPER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1372,7 +1372,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.1'::text number,
        'nfl_all' target_table,
-       'Add primary key to NFL_ALL' description, 
+       'Issue #420. Duplicate cas_id/layer couple in NT02. Add primary key to NFL_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'PK', 
@@ -1577,7 +1577,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.22'::text number,
        'nfl_all' target_table,
-       'Issue #400: Some BC08 and BC10 rows produce TRANSLATION_ERROR. Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
+       'Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
