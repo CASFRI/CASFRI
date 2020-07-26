@@ -74,7 +74,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- Order of counts in the provided ARRAY is CAS, DST, ECO, LYR and NFL.
 -- GEO is the same as CAS.
 -------------------------------------------------------
-SELECT * FROM TT_TestCount(1, ARRAY[19386900, 7263095, 184113, 16446777, 7322043])
+SELECT * FROM TT_TestCount(1, ARRAY[20382784, 5726428, 184113, 17393339, 7659266])
 -------------------------------------------------------
 -- Checks counts for main CASFRI tables per inventory
 -- Order of counts in the provided ARRAY is CAS, DST, ECO, LYR and NFL.
@@ -95,16 +95,30 @@ SELECT * FROM TT_TestCount(7, ARRAY[1123893, 333114, 111135, 1053554, 139930], '
 UNION ALL
 SELECT * FROM TT_TestCount(8, ARRAY[281388, 77270, 0, 246179, 65299], 'NT01')
 UNION ALL
-SELECT * FROM TT_TestCount(9, ARRAY[320944, 129867, 0, 350967, 129291], 'NT02')
+SELECT * FROM TT_TestCount(9, ARRAY[320944, 129867, 0, 350967, 258582], 'NT02')
 UNION ALL
-SELECT * FROM TT_TestCount(10, ARRAY[3629072, 3576398, 0, 2240815, 1562183], 'ON02')
+SELECT * FROM TT_TestCount(10, ARRAY[3629072, 1970285, 0, 2240815, 1562183], 'ON02')
 UNION ALL
 SELECT * FROM TT_TestCount(11, ARRAY[1501667, 64052, 0, 860394, 340357], 'SK01')
 UNION ALL
-SELECT * FROM TT_TestCount(12, ARRAY[231137, 19173, 0, 105102, 76344], 'YT02')
+SELECT * FROM TT_TestCount(12, ARRAY[27312, 9020, 0, 28983, 17529], 'SK02')
+UNION ALL
+SELECT * FROM TT_TestCount(13, ARRAY[8964, 236, 0, 10767, 6845], 'SK03')
+UNION ALL
+SELECT * FROM TT_TestCount(14, ARRAY[633522, 93980, 0, 708553, 311133], 'SK04')
+UNION ALL
+SELECT * FROM TT_TestCount(15, ARRAY[421977, 58248, 0, 483663, 184184], 'SK05')
+UNION ALL
+SELECT * FROM TT_TestCount(16, ARRAY[211482, 45081, 0, 296399, 78506], 'SK06')
+UNION ALL
+SELECT * FROM TT_TestCount(17, ARRAY[231137, 19173, 0, 105102, 76344], 'YT02')
+UNION ALL
+SELECT * FROM TT_TestCount(18, ARRAY[107220, 29517, 0, 81073, 22223], 'PE01')
+UNION ALL
+SELECT * FROM TT_TestCount(19, ARRAY[995886, 69446, 0, 972710, 212453], 'NS03')
 -------------------------------------------------------
 UNION ALL
-SELECT '13.1'::text number,
+SELECT '20.1'::text number,
        'Check that all cas_all rows have at least one matching row in LYR, NFL, DST or ECO' description, 
        passed, 
        'SELECT cas_id
@@ -129,7 +143,7 @@ FROM (SELECT count(*) = 0 passed
             eco.cas_id IS NULL) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '14.1'::text number,
+SELECT '21.1'::text number,
        'Check that that CAS number_of_layers matches the actual layers and that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
        passed, 
        'WITH cas_only AS ( 
