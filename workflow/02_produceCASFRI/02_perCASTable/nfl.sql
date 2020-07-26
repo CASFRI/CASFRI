@@ -481,14 +481,5 @@ ORDER BY inv, layer;
 
 SELECT count(*) FROM casfri50.nfl_all; -- 7659266
 --------------------------------------------------------------------------
--- Add some indexes
-CREATE INDEX nfl_all_casid_idx
-ON casfri50.nfl_all USING btree(cas_id);
 
-CREATE INDEX nfl_all_inventory_idx
-ON casfri50.nfl_all USING btree(left(cas_id, 4));
-    
-CREATE INDEX nfl_all_province_idx
-ON casfri50.nfl_all USING btree(left(cas_id, 2));
---------------------------------------------------------------------------
 

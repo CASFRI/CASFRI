@@ -262,14 +262,4 @@ ORDER BY inv;
 
 SELECT count(*) FROM casfri50.cas_all; -- 20382784
 --------------------------------------------------------------------------
--- Add some indexes
-CREATE INDEX cas_all_casid_idx
-ON casfri50.cas_all USING btree(cas_id);
-
-CREATE INDEX cas_all_inventory_idx
-ON casfri50.cas_all USING btree(left(cas_id, 4));
-    
-CREATE INDEX cas_all_province_idx
-ON casfri50.cas_all USING btree(left(cas_id, 2));
---------------------------------------------------------------------------
 

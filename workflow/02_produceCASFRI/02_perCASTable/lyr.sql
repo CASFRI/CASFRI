@@ -516,13 +516,3 @@ GROUP BY left(cas_id, 4), layer;
 
 SELECT count(*) FROM casfri50.lyr_all; -- 17393341
 --------------------------------------------------------------------------
--- Add some indexes
-CREATE INDEX lyr_all_casid_idx
-ON casfri50.lyr_all USING btree(cas_id);
-
-CREATE INDEX lyr_all_inventory_idx
-ON casfri50.lyr_all USING btree(left(cas_id, 4));
-    
-CREATE INDEX lyr_all_province_idx
-ON casfri50.lyr_all USING btree(left(cas_id, 2));
---------------------------------------------------------------------------
