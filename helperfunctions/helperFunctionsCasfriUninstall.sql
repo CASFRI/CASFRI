@@ -39,7 +39,7 @@ DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_translation(text, text, text, text)
 DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_dist_yr_translation(text, text);
-DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_translation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_avi01_non_for_veg_translation(text, text);
 DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text, text, text, text);

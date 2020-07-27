@@ -2367,34 +2367,39 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- THIS COULD BECOME A GENERIC FUNCTION IF IT'S USEFUL IN OTHER FRIs
+-- TT_avi01_non_for_veg_translation(text, text)
 --
--- TT_avi01_non_for_anth_translation(text, text, text, text, text)
+-- nfl_code text
+-- nfl_height text
 --
---  For two values, if one of them is null or empty and the other is not null or empty.
---  use the value that is not null or empty in mapText.
+-- Use mapText to translate nfl values. If value is open shrub or closed shrub,
+-- assign to tall shrub if height is >2m, and low shrub if <2m.
 --
--- e.g. TT_avi01_non_for_anth_translation(val1, val2, lst1, lst2, ignoreCase)
+-- e.g. TT_avi01_non_for_veg_translation(nfl_code, nfl_height)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_avi01_non_for_anth_translation(text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_avi01_non_for_anth_translation(
-  val1 text,
-  val2 text,
-  lst1 text,
-  lst2 text,
-  ignoreCase text)
+--DROP FUNCTION IF EXISTS TT_avi01_non_for_veg_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_avi01_non_for_veg_translation(
+  nfl_code text,
+  nfl_height text
+)
 RETURNS text AS $$
   BEGIN
-    PERFORM TT_ValidateParams('TT_avi01_non_for_anth_translation',
-                              ARRAY['lst1', lst1, 'stringlist',
-                                    'lst2', lst2, 'stringlist',  
-                                    'ignoreCase', ignoreCase, 'boolean']);
-
-    IF NOT TT_NotEmpty(val1) AND TT_NotEmpty(val2) THEN
-      RETURN TT_MapText(val2, lst1, lst2, ignoreCase);
-    ELSIF TT_NotEmpty(val1) AND NOT TT_NotEmpty(val2) THEN
-      RETURN TT_MapText(val1, lst1, lst2, ignoreCase);
+    PERFORM TT_ValidateParams('TT_avi01_non_for_veg_translation',
+                              ARRAY['nfl_code', nfl_code, 'text',
+                                    'nfl_height', nfl_height, 'numeric']);
+    
+    IF nfl_code IN('HF','HG','SC','SO','BR') THEN
+      IF nfl_code IN('SC','SO') THEN
+        IF nfl_height < 2 THEN
+          RETURN 'LOW_SHRUB';
+        ELSE
+          RETURN 'TALL_SHRUB';
+        END IF;
+      ELSE
+        RETURN tt_mapText(nfl_code, {'HF','HG','BR'}, {'FORBS','GRAMINOIDS','BRYOID'});
+      END IF;
     END IF;
+
     RETURN NULL;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
