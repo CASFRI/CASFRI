@@ -55,7 +55,7 @@ WITH test_nb AS (
     SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,          6 maj_num,  2 nb_test UNION ALL
     SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,          7 maj_num,  2 nb_test UNION ALL
     SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,         8 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_avi01_non_for_anth_translation'::text function_tested,         9 maj_num,  9 nb_test UNION ALL
+    SELECT 'TT_avi01_non_for_veg_translation'::text function_tested,          9 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,     10 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_nbi01_wetland_validation'::text function_tested,              12 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_nbi01_wetland_translation'::text function_tested,             13 maj_num,  4 nb_test UNION ALL
@@ -248,74 +248,33 @@ SELECT '8.2'::text number,
        'No matches test'::text description,
        TT_vri01_non_for_anth_translation('V'::text, ''::text, ''::text, ''::text) IS NULL passed
 ---------------------------------------------------------
--- TT_avi01_non_for_anth_translation
+-- TT_avi01_non_for_veg_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '9.1'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'Pass with one empty string'::text description,
-       TT_avi01_non_for_anth_translation('D'::text, ''::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                              '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) = 'dd' passed
+       'TT_avi01_non_for_veg_translation'::text function_tested,
+       'Pass tall shrub'::text description,
+       TT_avi01_non_for_veg_translation('SO', '2') = 'TALL_SHRUB' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '9.2'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'Pass with one null'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, 'H'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                                '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) = 'hh' passed
+       'TT_avi01_non_for_veg_translation'::text function_tested,
+       'Pass low shrub'::text description,
+       TT_avi01_non_for_veg_translation('SC', '1.1') = 'LOW_SHRUB' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '9.3'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'Pass with ignore case true'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, 'h'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                                '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) = 'hh' passed
+       'TT_avi01_non_for_veg_translation'::text function_tested,
+       'Pass other veg'::text description,
+       TT_avi01_non_for_veg_translation('HG', '1.1') = 'GRAMINOIDS' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '9.4'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'Fail with ignore case false'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, 'h'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                                '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, FALSE::text) IS NULL passed
+       'TT_avi01_non_for_veg_translation'::text function_tested,
+       'Wring code'::text description,
+       TT_avi01_non_for_veg_translation('', '1.1') IS NULL passed
 ---------------------------------------------------------
-UNION ALL
-SELECT '9.5'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'Not in set'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, 'x'::text, '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                                                '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '9.6'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'Two nulls'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, NULL::text, 
-                                         '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                         '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '9.7'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'Two empty'::text description,
-       TT_avi01_non_for_anth_translation(''::text, ''::text, 
-                                         '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                         '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '9.8'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'One Null one empty'::text description,
-       TT_avi01_non_for_anth_translation(NULL::text, ''::text, 
-                                         '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                         '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '9.9'::text number,
-       'TT_avi01_non_for_anth_translation'::text function_tested,
-       'Two values'::text description,
-       TT_avi01_non_for_anth_translation('a'::text, 'b'::text, 
-                                         '{''A'', ''B'', ''C'', ''D'', ''E'', ''F'', ''G'', ''H''}'::text, 
-                                         '{''aa'', ''bb'', ''cc'', ''dd'', ''ee'', ''ff'', ''gg'', ''hh''}'::text, TRUE::text) IS NULL passed
+  
 ---------------------------------------------------------
 -- TT_nbi01_stand_structure_translation
 ---------------------------------------------------------

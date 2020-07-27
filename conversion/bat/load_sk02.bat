@@ -133,8 +133,12 @@ SET query3=ALTER TABLE %TableName_wetland% ^
 DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id; ^
 DROP TABLE IF EXISTS %fullTargetTableName%; ^
 CREATE TABLE %fullTargetTableName% AS ^
+WITH I AS ( ^
+  SELECT wetland_veg, wetland_class, wetland_landform, poly_id_wetland ^
+  FROM %TableName_wetland% ^
+  GROUP BY wetland_veg, wetland_class, wetland_landform, poly_id_wetland) ^
 SELECT * FROM %tempTableName% A ^
-LEFT JOIN %TableName_wetland% I ON A.poly_id = I.poly_id_wetland; ^
+LEFT JOIN I ON A.poly_id = I.poly_id_wetland; ^
 DROP TABLE IF EXISTS %TableName_wetland%; ^
 DROP TABLE IF EXISTS %tempTableName%; ^
 ALTER TABLE %fullTargetTableName% DROP COLUMN poly_id_wetland;
