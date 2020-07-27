@@ -45,7 +45,7 @@ SELECT * FROM translation_devel.qc03_ipf05_cas_devel;
 DROP TABLE IF EXISTS translation_devel.qc03_ipf05_dst_devel;
 CREATE TABLE translation_devel.qc03_ipf05_dst_devel AS
 SELECT * FROM translation.qc_ipf05_dst
---WHERE rule_id::int = 1
+--WHERE rule_id::int = 2
 ;
 -- display
 SELECT * FROM translation_devel.qc03_ipf05_dst_devel;
