@@ -2383,20 +2383,23 @@ CREATE OR REPLACE FUNCTION TT_avi01_non_for_veg_translation(
   nfl_height text
 )
 RETURNS text AS $$
+  DECLARE
+    _nfl_height double precision;
   BEGIN
     PERFORM TT_ValidateParams('TT_avi01_non_for_veg_translation',
                               ARRAY['nfl_code', nfl_code, 'text',
                                     'nfl_height', nfl_height, 'numeric']);
+    _nfl_height = nfl_height::double precision;
     
     IF nfl_code IN('HF','HG','SC','SO','BR') THEN
       IF nfl_code IN('SC','SO') THEN
-        IF nfl_height < 2 THEN
+        IF _nfl_height < 2 THEN
           RETURN 'LOW_SHRUB';
         ELSE
           RETURN 'TALL_SHRUB';
         END IF;
       ELSE
-        RETURN tt_mapText(nfl_code, {'HF','HG','BR'}, {'FORBS','GRAMINOIDS','BRYOID'});
+        RETURN tt_mapText(nfl_code, '{''HF'',''HG'',''BR''}', '{''FORBS'',''GRAMINOIDS'',''BRYOID''}');
       END IF;
     END IF;
 
