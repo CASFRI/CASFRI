@@ -671,28 +671,29 @@ Note:
 * In BC10, separate heights are assigned for the dominant and co-dominant species in a layer. A weighted average is therefore computed based on the dominant and co-dominant heights, weighted by the percent cover of the dominant and co-dominant species in the layer.
 
 
-### PRODUCTIVE_FOR
+### PRODUCTIVITY_TYPE
 
-The **PRODUCTIVE_FOR** attribute identifies forest land not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. The detailed table, CAS codes, and conversion rule sets are presented in Appendix 12.  
+The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. Productive forests are those capable of producing trees for forest operations, or areas that are productive and protected. Unproductive forest lands are not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. This attribute is translated from source information where it exists, otherwise the value UNKNOWN_VALUE is assigned. Not all inventories classify these types. HARVESTABLE is assigned in BC and ON. ON also assigns PROTECTED. ALPINE_FOREST is assigned in BC. TREED_MUSKEG is assigned in the SK UTM, MB, ON. SCRUB_DECIDUOUS is assigned in NB, NL and YT. SCRUB_CONFIEROUS is assigned in NL. Since this attribute only translates information available in the source inventories, there will be unproductive alpine forests identified for BC, but in AB this same forest type will be labelled UNKNOWN_VALUE because the AB source data does not classify it.
 
 | Values | Description |
-| :----- | :-------------- |
+| :----- | :------------ |
+| HARVESTABLE            | Identified as harvestable by the source jurisdiction |
+| PROTECTED              | Identified as productive but under protection |
 | TREED_MUSKEG           | Treed wetland sites |
 | ALPINE_FOREST          | High elevation forest usually above 1800 m |
 | SCRUB_DECIDUOUS        | Scrub deciduous trees on poor sites |
 | SCRUB_CONIFEROUS       | Scrub coniferous trees on poor sites |
-| NON_PRODUCTIVE_FOREST  | Poor forest types on rocky or wet sites |
-| POTENTIALLY_PRODUCTIVE | Potentially productive forest previously affected by some disturbance |
-| PRODUCTIVE_FOREST      | Any other forest |
-| NULL_VALUE     | Source value is NULL |
-| EMPTY_STRING   | Source value is a non-NULL empty string |
-| UNKNOWN_VALUE  | Source value should exist but is unknown |
-| NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
-| NOT_APPLICABLE | Attribute does not apply to this record |
+| UNKNOWN_VALUE          | Source value should exist but is unknown |
 
-Notes:
 
-- This attribute needs an overhaul. #181, #295
+### PRODUCTIVITY
+The **PRODUCTIVITY** attribute is closely related to **PRODUCTIVITY_TYPE** and classifies forested lands into either productive or unproductive for the purpose of forestry operations. A **PRODUCTIVITY_TYPE** of HARVESTABLE or PROTECTED will always be labelled PRODUCTIVE_FOREST. A **PRODUCTIVITY_TYPE** of TREED_MUSKEG, ALPINE_FOREST, SCRUB_DECIDUOUS or SCRUB_CONIFEROUS will always be labelled as NON_PRODUCTIVE_FOREST. Note that stands can have a **PRODUCTIVITY** but an unknwown **PRODUCTIVITY_TYPE**, for example BC labels records that are not considered harvestable, but it doesn't always assign them a type.
+
+| Values | Description |
+| :----- | :------------ |
+| NON_PRODUCTIVE_FOREST  | Forested lands that are non productive for the purpose of forest operations |
+| PRODUCTIVE_FOREST      | Forested lands that are productive for the purpose of forest operations |
+| UNKNOWN_VALUE          | Source value should exist but is unknown |
 
 
 ### SPECIES_1 - SPECIES_10
@@ -1033,7 +1034,7 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
 | GRAMINOIDS      | Graminoids with shrub cover < 25%      |
 | NOT_APPLICABLE  | Attribute does not apply to this record |
 
-<sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  
+<sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No.Â 24.  
 
 <sup>3</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.  
 
