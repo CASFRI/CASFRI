@@ -516,12 +516,12 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.28'::text number,
        'dst_all' target_table,
-       'Issue #387. DIST_EXT_LOWER_3 sometimes = 1. Ensure DST table DIST_EXT_LOWER_1 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_1' description, 
+       'Issue #387. DIST_EXT_LOWER_1 sometimes = 1. Ensure DST table DIST_EXT_LOWER_1 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_1' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_ext_lower_1_betweeen_10_and_100_and_smaller_than_dist_ext_upper_1', 
-                              '(10 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 100 AND 
+                              '(1 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 95 AND 
                                 (dist_ext_lower_1 <= dist_ext_upper_1 OR 
                                  dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
                                 )
@@ -536,7 +536,7 @@ SELECT '2.29'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_ext_lower_2_betweeen_10_and_100_and_smaller_than_dist_ext_upper_2', 
-                              '(10 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 100 AND 
+                              '(1 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 95 AND 
                                 (dist_ext_lower_2 <= dist_ext_upper_2 OR 
                                  dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
                                 )
@@ -551,7 +551,7 @@ SELECT '2.30'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_ext_lower_3_betweeen_10_and_100_and_smaller_than_dist_ext_upper_3', 
-                              '(10 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 100 AND 
+                              '(1 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 95 AND 
                                 (dist_ext_lower_3 <= dist_ext_upper_3 OR 
                                  dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
                                 )
