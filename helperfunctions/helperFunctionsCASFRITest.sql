@@ -1131,43 +1131,43 @@ UNION ALL
 SELECT '24.1'::text number,
        'TT_fim_species_code'::text function_tested,
        'Get species code 1'::text description,
-       TT_fim_species_code('Sw  10Sb  90', '1') = 'Sw  10' passed
+       TT_fim_species_code('Sw  10Sb  90', 1) = 'Sw  10' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '24.2'::text number,
        'TT_fim_species_code'::text function_tested,
        'Get species code 2'::text description,
-       TT_fim_species_code('Sw  10Sb  90', '2') = 'Sb  90' passed
+       TT_fim_species_code('Sw  10Sb  90', 2) = 'Sb  90' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '24.3'::text number,
        'TT_fim_species_code'::text function_tested,
        'Get species code 100%'::text description,
-       TT_fim_species_code('Sw 100', '1') = 'Sw 100' passed
+       TT_fim_species_code('Sw 100', 1) = 'Sw 100' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '24.4'::text number,
        'TT_fim_species_code'::text function_tested,
        'Species code not available'::text description,
-       TT_fim_species_code('Sw 100', '2') = '' passed
+       TT_fim_species_code('Sw 100', 2) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '24.5'::text number,
        'TT_fim_species_code'::text function_tested,
        'Species code null'::text description,
-       TT_fim_species_code('', '1') IS NULL passed
+       TT_fim_species_code('', 1) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '24.6'::text number,
        'TT_fim_species_code'::text function_tested,
        'Species code with preceding space in the middle. Issue #346'::text description,
-       TT_fim_species_code('Sb  40Pj  20 Sw 20Bf  10Pt  10', '3') = 'Sw 20' passed
+       TT_fim_species_code('Sb  40Pj  20 Sw 20Bf  10Pt  10', 3) = 'Sw 20' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '24.7'::text number,
        'TT_fim_species_code'::text function_tested,
        'Species code with preceding space at the beginning. Issue #346'::text description,
-       TT_fim_species_code(' PO 100', '1') = 'PO 100' passed
+       TT_fim_species_code(' PO 100', 1) = 'PO 100' passed
 ---------------------------------------------------------
   -- TT_fim_species_translation
 ---------------------------------------------------------

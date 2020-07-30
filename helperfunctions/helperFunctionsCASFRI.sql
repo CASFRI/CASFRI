@@ -1641,7 +1641,7 @@ RETURNS boolean AS $$
   BEGIN
     PERFORM TT_ValidateParams('TT_nbi01_wetland_validation',
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
-	wetland_code = TT_nbi01_wetland_code(wc, vt, im);
+	  wetland_code = TT_nbi01_wetland_code(wc, vt, im);
 
     -- return true or false
     IF wetland_code IS NULL OR substring(wetland_code from ret_char_pos::int for 1) = '-' THEN
@@ -1680,8 +1680,8 @@ RETURNS boolean AS $$
     num_of_layers int;
   BEGIN
     PERFORM TT_ValidateParams('TT_tie01_2layer_age_codes_validation',
-                              ARRAY['lookup_schema', lookup_schema, 'text',
-                                   'lookup_table', lookup_table, 'text']);
+                              ARRAY['lookup_schema', lookup_schema, 'name',
+                                    'lookup_table', lookup_table, 'name']);
 	
     IF cl_age IS NOT NULL AND in_etage = 'O' THEN
       num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'num_of_layers');
@@ -2891,7 +2891,7 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
--- TT_fim_species_code(text, text)
+-- TT_fim_species_code(text, int)
 --
 -- sp_string text - source string of species and percentages
 -- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
@@ -2902,29 +2902,20 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- In cases where a species is 100%, there is only 1 space so the total length of all codes is 6.
 -- Multiple codes are concatenated together. Max number of species in ON is 10.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fim_species_code(text, text);
+--DROP FUNCTION IF EXISTS TT_fim_species_code(text, int);
 CREATE OR REPLACE FUNCTION TT_fim_species_code(
   sp_string text,
-  sp_number text
+  sp_number int
 )
 RETURNS text AS $$
   DECLARE
-    _sp_number int;
     start_char int;
+    code text;
   BEGIN
-    sp_string = trim(sp_string);
-   _sp_number = sp_number::int;
-  
-    IF TT_Length(sp_string) > 1 THEN -- a zero length string will return null
-      IF _sp_number = 1 THEN -- first species is characters 1 to 6
-        RETURN trim(substring(sp_string, 1, 6));
-      ELSE
-        start_char = 1 + ((_sp_number - 1)*6); -- calculate start character for substring
-        RETURN trim(substring(sp_string, start_char, 6)); -- following species are start character + 6
-      END IF;
-    ELSE
-      RETURN NULL;
-    END IF;
+    SELECT (array_agg(a))[sp_number] 
+    FROM (SELECT (regexp_matches(trim(sp_string), '[a-z]+\s+[0-9]+', 'gi'))[1] a ) foo
+    INTO code;
+    RETURN code;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE STRICT;
 
@@ -2952,13 +2943,21 @@ CREATE OR REPLACE FUNCTION TT_fim_species_translation(
 )
 RETURNS text AS $$
   DECLARE
-  code text;
-  species text;
+    code text;
+    species text;
+    _sp_number int;
   BEGIN
-    code = TT_fim_species_code(sp_string, sp_number); -- get the requested species code and percent
+    PERFORM TT_ValidateParams('TT_fim_species_translation',
+                              ARRAY['sp_number', sp_number, 'int',
+                                    'lookup_schema', lookup_schema, 'name',
+                                    'lookup_table', lookup_table, 'name',
+                                    'lookup_col', lookup_col, 'name',
+                                    'retrieveCol', retrieveCol, 'name']);
+    _sp_number = sp_number::int;
+    code = TT_fim_species_code(sp_string, _sp_number); -- get the requested species code and percent
     
     IF TT_Length(code) > 1 THEN -- 
-      species = substring(code, 1, 2); -- species code is first two characters of code
+      species = (regexp_split_to_array (code, '\s+'))[1];
     ELSE
       RETURN NULL;
     END IF;
@@ -2985,12 +2984,16 @@ CREATE OR REPLACE FUNCTION TT_fim_species_percent_translation(
 )
 RETURNS int AS $$
   DECLARE
-  code text;
+    code text;
+    _sp_number int;
   BEGIN
-    code = TT_fim_species_code(sp_string, sp_number);
+    PERFORM TT_ValidateParams('TT_fim_species_translation',
+                              ARRAY['sp_number', sp_number, 'int']);
+    _sp_number = sp_number::int;
+    code = TT_fim_species_code(sp_string, _sp_number);
     
     IF TT_Length(code) > 1 THEN
-      RETURN substring(code, 4, 3)::int; -- If 100, last 3 digits returned. If <100, substring grabs space and 2 digits but then converts to int so the space is dropped.
+      RETURN (regexp_split_to_array (code, '\s+'))[2];
     ELSE
       RETURN NULL;
     END IF;
