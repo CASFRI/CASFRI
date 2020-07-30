@@ -671,28 +671,28 @@ Note:
 * In BC10, separate heights are assigned for the dominant and co-dominant species in a layer. A weighted average is therefore computed based on the dominant and co-dominant heights, weighted by the percent cover of the dominant and co-dominant species in the layer.
 
 
-### PRODUCTIVITY_TYPE
-
-The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. Productive forests are those capable of producing trees for forest operations, or areas that are productive and protected. Unproductive forest lands are not capable of producing trees for forest operations. They are usually wetlands, very dry sites, exposed sites, rocky sites, higher elevation sites, or those sites with shallow or poor soils. This attribute is translated from source information where it exists, otherwise the value UNKNOWN_VALUE is assigned. Not all inventories classify these types. HARVESTABLE is assigned in BC and ON. ON also assigns PROTECTED. ALPINE_FOREST is assigned in BC. TREED_MUSKEG is assigned in the SK UTM, MB, ON. SCRUB_DECIDUOUS is assigned in NB, NL and YT. SCRUB_CONFIEROUS is assigned in NL. Since this attribute only translates information available in the source inventories, there will be unproductive alpine forests identified for BC, but in AB this same forest type will be labelled UNKNOWN_VALUE because the AB source data does not classify it.
+### PRODUCTIVITY
+The **PRODUCTIVITY** attribute classifies forested lands into either productive or unproductive for the purpose of forestry operations. This attribute is translated from source information where it exists, otherwise the value UNKNOWN_VALUE is assigned. Not all inventories classify productivity. Some inventories have a source value that indicates PRODUCTIVE_FOREST, other inventories classify non-productive types in which case NON_PRODUCTIVE_FOREST is assigned and the non-productive code is translated as **PRODUCTIVITY_TYPE**.
 
 | Values | Description |
 | :----- | :------------ |
-| HARVESTABLE            | Identified as harvestable by the source jurisdiction |
-| PROTECTED              | Identified as productive but under protection |
-| TREED_MUSKEG           | Treed wetland sites |
-| ALPINE_FOREST          | High elevation forest usually above 1800 m |
-| SCRUB_DECIDUOUS        | Scrub deciduous trees on poor sites |
-| SCRUB_CONIFEROUS       | Scrub coniferous trees on poor sites |
+| NON_PRODUCTIVE_FOREST  | Forested lands that are not capable of producing trees for forest operations |
+| PRODUCTIVE_FOREST      | Forested lands capable of producing trees for forest operations |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
 
 
-### PRODUCTIVITY
-The **PRODUCTIVITY** attribute is closely related to **PRODUCTIVITY_TYPE** and classifies forested lands into either productive or unproductive for the purpose of forestry operations. A **PRODUCTIVITY_TYPE** of HARVESTABLE or PROTECTED will always be labelled PRODUCTIVE_FOREST. A **PRODUCTIVITY_TYPE** of TREED_MUSKEG, ALPINE_FOREST, SCRUB_DECIDUOUS or SCRUB_CONIFEROUS will always be labelled as NON_PRODUCTIVE_FOREST. Note that stands can have a **PRODUCTIVITY** but an unknwown **PRODUCTIVITY_TYPE**, for example BC labels records that are not considered harvestable, but it doesn't always assign them a type.
+### PRODUCTIVITY_TYPE
+
+The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. **PRODUCTIVITY_TYPE** is a sub-class of **PRODUCTIVITY**, but both values may not always occur together. For example a forested polygon could be labelled as non-productive but a type might not always be assigned. Generally, if a non-productive type is assigned, we also assign **PRODUCTIVITY** as NON_PRODUCTIVE_FOREST. One exception is if there is another source attribute that directly assigns **PRODUCTIVITY** as is the case in BC which has seperate attributes for classifying the harvestable land base, and for labelling non-productive types (note that this can actually lead to confusing assignments where polygons are labelled as non-productive alpine forest in one attribute, but included in the harvestable land base in another attribute). Generally, HARVESTABLE is assigned along with PRODUCTIVE_FOREST, and TREED_MUSKEG, ALPINE_FOREST, SCRUB_DECIDUOUS and SCRUB_CONFIEROUS are assigned along with NON_PRODUCTIVE_FOREST. This attribute is translated from source information where it exists, otherwise the value UNKNOWN_VALUE is assigned. Since this attribute only translates information available in the source inventories, there will be unproductive alpine forests identified for BC, but in AB this same forest type will be labelled UNKNOWN_VALUE because the AB source data does not classify it.
 
 | Values | Description |
 | :----- | :------------ |
-| NON_PRODUCTIVE_FOREST  | Forested lands that are non productive for the purpose of forest operations |
-| PRODUCTIVE_FOREST      | Forested lands that are productive for the purpose of forest operations |
+| HARVESTABLE            | Identified as harvestable by the source jurisdiction (assigned in BC and ON) |
+| NON_HARVESTABLE        | Areas with adequate timber growth that pose a significant operational challenge or risk in terms of forest management and site protection (assigned in ON) |
+| TREED_MUSKEG           | Treed wetland sites (assigned in SK UTM, MB, ON) |
+| ALPINE_FOREST          | High elevation forest usually above 1800 m (assigned in BC) |
+| SCRUB_DECIDUOUS        | Scrub deciduous trees on poor sites (assigned in NB, NL, YT) |
+| SCRUB_CONIFEROUS       | Scrub coniferous trees on poor sites (NL) |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
 
 
