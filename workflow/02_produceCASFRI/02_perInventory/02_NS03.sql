@@ -68,7 +68,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_eco', 'ns03_l1_to_ns_nsi_l
 -- LYR
 ------------------------
 -- Check the uniqueness of NS species codes
-CREATE UNIQUE INDEX species_code_mapping_ns03_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ns03_species_codes_idx
 ON translation.species_code_mapping (ns_species_codes)
 WHERE TT_NotEmpty(ns_species_codes);
 

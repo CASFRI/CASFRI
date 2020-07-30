@@ -68,7 +68,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco', 'yt02_l1_to_yt_l1_ma
 -- LYR
 ------------------------
 -- Check the uniqueness of YT species codes
-CREATE UNIQUE INDEX species_code_mapping_yt02_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_yt02_species_codes_idx
 ON translation.species_code_mapping (yt_species_codes)
 WHERE TT_NotEmpty(yt_species_codes);
 

@@ -68,7 +68,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_eco', 'nt02_l1_to_nt_l1_ma
 -- LYR
 ------------------------
 -- Check the uniqueness of NT species codes
-CREATE UNIQUE INDEX species_code_mapping_nt02_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nt02_species_codes_idx
 ON translation.species_code_mapping (nt_species_codes)
 WHERE TT_NotEmpty(nt_species_codes);
 
