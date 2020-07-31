@@ -688,7 +688,7 @@ The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productiv
 | Values | Description |
 | :----- | :------------ |
 | HARVESTABLE            | Identified as harvestable by the source jurisdiction (assigned in BC and ON) |
-| NON_HARVESTABLE        | Areas with adequate timber growth that pose a significant operational challenge or risk in terms of forest management and site protection (assigned in ON) |
+| PROTECTION             | Areas with adequate timber growth that cannot be harvested due to site risk (steep slopes, small islands etc.), or formal protection (recreation sites, shelter belts, ecological protection) (assigned in ON, SK UTM) |
 | TREED_MUSKEG           | Treed wetland sites (assigned in SK UTM, MB, ON) |
 | ALPINE_FOREST          | High elevation forest usually above 1800 m (assigned in BC) |
 | SCRUB_DECIDUOUS        | Scrub deciduous trees on poor sites (assigned in NB, NL, YT) |
