@@ -676,7 +676,7 @@ The **PRODUCTIVITY** attribute classifies forested lands into either productive 
 
 | Values | Description |
 | :----- | :------------ |
-| NON_PRODUCTIVE_FOREST  | Forested lands that are not capable of producing trees for forest operations |
+| NON_PRODUCTIVE_FOREST  | Forested lands that are not capable of producing trees for forest operations.Includes areas that can produce timber, but cannot be harvested for various reasons |
 | PRODUCTIVE_FOREST      | Forested lands capable of producing trees for forest operations |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
 
