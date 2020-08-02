@@ -942,7 +942,7 @@ The **DIST_YEAR_1** to **DIST_YEAR_3** attributes identify the year a disturbanc
 
 | Values       | Description |
 | :----------- | :---------- |
-|  1900&#8209;2020 | Disturbance Year - year that a disturbance event occurred |
+|  1000&#8209;2020 | Disturbance Year - year that a disturbance event occurred |
 | -8888 | Source value is NULL |
 | -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
