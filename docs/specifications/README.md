@@ -692,10 +692,8 @@ The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productiv
 | TREED_MUSKEG           | Treed wetland sites (assigned in SK UTM, MB FRI, ON) |
 | TREED_ROCK             | Treed rock sites (assigned in SK UTM, MB FRI) |
 | ALPINE_FOREST          | High elevation forest usually above 1800 m (assigned in BC) |
-| SCRUB_DECIDUOUS        | Scrub deciduous trees on poor sites (assigned in NL) |
-| SCRUB_CONIFEROUS       | Scrub coniferous trees on poor sites (assigned in NL) |
+| SCRUB_SHRUB            | Various types of scrub and shrub sites (assigned in NL, MB FRI) |
 | ALDER                  | Sites dominated by alder, ususally associated with water or wetlands (assigned in MB FRI) |
-| WILLOW                 | Sites dominated by willow, ususally associated with water or wetlands (assigned in MB FRI) |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
 
 
