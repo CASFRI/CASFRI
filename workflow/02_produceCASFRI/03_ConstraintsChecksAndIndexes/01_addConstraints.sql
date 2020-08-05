@@ -1093,14 +1093,13 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.45'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table PRODUCTIVE_FOR values match the corresponding lookup table' description, 
+       'Ensure LYR table PRODUCTIVITY values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
-                              'productive_for'],
-                        ARRAY['TREED_MUSKEG', 'ALPINE_FOREST', 'SCRUB_DECIDUOUS', 'SCRUB_CONIFEROUS', 
-                              'NON_PRODUCTIVE_FOREST', 'POTENTIALLY_PRODUCTIVE', 'PRODUCTIVE_FOREST'] || 
+                              'productivity'],
+                        ARRAY['NON_PRODUCTIVE_FOREST', 'PRODUCTIVE_FOREST', 'UNKNOWN_VALUE'] || 
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -1366,6 +1365,19 @@ FROM (SELECT *
                               '(site_index >= 0 AND site_index < 100) OR 
                                site_index = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.70'::text number,
+       'lyr_all' target_table,
+       'Ensure LYR table PRODUCTIVITY_TYPE values match the corresponding lookup table' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
+                        ARRAY['casfri50_lookup', 
+                              'productivity_type'],
+                        ARRAY['HARVESTABLE', 'PROTECTION_FOREST', 'TREED_MUSKEG', 'TREED_ROCK', 'ALPINE_FOREST', 'SCRUB_SHRUB', 'ALDER', 'UNKNOWN_VALUE'] || 
+                        TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
+
 -------------------------------------------------------
 -- Add some constraints to the NFL_ALL table
 -------------------------------------------------------
