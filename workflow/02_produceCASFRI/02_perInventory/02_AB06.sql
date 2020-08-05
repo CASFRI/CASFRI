@@ -89,7 +89,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_eco', 'ab06_l1_to_ab_l1_ma
 -- LYR
 ------------------------
 -- Check the uniqueness of AB species codes
-CREATE UNIQUE INDEX IF NOT EXIST  species_code_mapping_ab06_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ab06_species_codes_idx
 ON translation.species_code_mapping (ab_species_codes)
 WHERE TT_NotEmpty(ab_species_codes);
 
