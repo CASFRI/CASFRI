@@ -683,16 +683,19 @@ The **PRODUCTIVITY** attribute classifies forested lands into either productive 
 
 ### PRODUCTIVITY_TYPE
 
-The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. **PRODUCTIVITY_TYPE** is a sub-class of **PRODUCTIVITY**, but both values may not always occur together. For example a forested polygon could be labelled as non-productive but a type might not always be assigned. Generally, if a non-productive type is assigned, **PRODUCTIVITY** is reported as NON_PRODUCTIVE_FOREST. One exception is if there is another source attribute that directly assigns **PRODUCTIVITY** as is the case in BC which has seperate attributes for classifying the harvestable land base, and for labelling non-productive types (note that this can actually lead to confusing assignments where polygons are labelled as non-productive in one attribute, but included in the harvestable land base in another attribute). Generally, HARVESTABLE is assigned along with PRODUCTIVE_FOREST; and TREED_MUSKEG, ALPINE_FOREST, SCRUB_DECIDUOUS and SCRUB_CONFIEROUS are assigned along with NON_PRODUCTIVE_FOREST. This attribute is translated from source information where it exists, otherwise the value UNKNOWN_VALUE is assigned. Since this attribute only translates information available in the source inventories, there will be unproductive alpine forests identified for BC, but in AB this same forest type will be labelled UNKNOWN_VALUE because the AB source data does not classify it.
+The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. **PRODUCTIVITY_TYPE** is a sub-class of **PRODUCTIVITY**, but both values may not always occur together. For example a forested polygon could be labelled as non-productive but a type might not always be assigned. Generally, if a non-productive type is assigned, **PRODUCTIVITY** is reported as NON_PRODUCTIVE_FOREST. One exception is if there is another source attribute that directly assigns **PRODUCTIVITY** as is the case in BC which has seperate attributes for classifying the harvestable land base, and for labelling non-productive types (note that this can actually lead to confusing assignments where polygons are labelled as non-productive in one attribute, but included in the harvestable land base in another attribute). Generally, HARVESTABLE is assigned along with PRODUCTIVE_FOREST; and PROTECTION_FOREST, TREED_MUSKEG, TREED_ROCK, ALPINE_FOREST, SCRUB_SHRUB and ALDER are assigned along with NON_PRODUCTIVE_FOREST.
+
+This attribute is translated from source information where it exists, otherwise the value UNKNOWN_VALUE is assigned. Since this attribute only translates information available in the source inventories, there will be unproductive alpine forests identified for BC, but in AB this same forest type will be labelled UNKNOWN_VALUE because the AB source data does not classify it.
 
 | Values | Description |
 | :----- | :------------ |
 | HARVESTABLE            | Identified as harvestable by the source jurisdiction (assigned in BC and ON) |
-| PROTECTION             | Areas with adequate timber growth that cannot be harvested due to site risk (steep slopes, small islands etc.), or formal protection (recreation sites, shelter belts, ecological protection) (assigned in ON, SK UTM) |
-| TREED_MUSKEG           | Treed wetland sites (assigned in SK UTM, MB, ON) |
+| PROTECTION_FOREST      | Areas with adequate timber growth that cannot be harvested due to site risk (steep slopes, small islands etc.), or formal protection (recreation sites, shelter belts, small islands, ecological protection) (assigned in ON, SK UTM, MB FRI) |
+| TREED_MUSKEG           | Treed wetland sites (assigned in SK UTM, MB FRI, ON) |
+| TREED_ROCK             | Treed rock sites (assigned in SK UTM, MB FRI) |
 | ALPINE_FOREST          | High elevation forest usually above 1800 m (assigned in BC) |
-| SCRUB_DECIDUOUS        | Scrub deciduous trees on poor sites (assigned in NB, NL, YT) |
-| SCRUB_CONIFEROUS       | Scrub coniferous trees on poor sites (NL) |
+| SCRUB_SHRUB            | Various types of scrub and shrub sites (assigned in NL, MB FRI) |
+| ALDER                  | Sites dominated by alder, ususally associated with water or wetlands (assigned in MB FRI) |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
 
 
@@ -942,7 +945,7 @@ The **DIST_YEAR_1** to **DIST_YEAR_3** attributes identify the year a disturbanc
 
 | Values       | Description |
 | :----------- | :---------- |
-|  1900&#8209;2020 | Disturbance Year - year that a disturbance event occurred |
+|  1000&#8209;2020 | Disturbance Year - year that a disturbance event occurred |
 | -8888 | Source value is NULL |
 | -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
