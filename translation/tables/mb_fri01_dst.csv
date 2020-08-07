@@ -1,0 +1,16 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+0,ROW_TRANSLATION_RULE,NA,notEmpty(dist_type_1),NA,Translate only rows where dist_type1 is not empty, TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,VRAI
+2,DIST_TYPE_1,text,"notNull(dist_type_1);notEmpty(dist_type_1);lengthMatchList(dist_type_1, {2,4}, 'TRUE'|INVALID_VALUE);matchListSubstring(dist_type_1, 1, 2, {'BR','CC','DI','EP','FL','HR','OF','PC','PN','RN','SD','ST','SY','TH','SW','UR','WF'})","mapSubstringText(dist_type_1, 1, 2,  {'BR','CC','DI','EP','FL','HR','OF','PC','PN','RN','SD','ST','SY','TH','SW','UR','WF'}, {'BURN','CUT','DISEASE','OTHER','FLOOD','OTHER','OTHER','PARTIAL_CUT','SILVICULTURE_TREATMENT','OTHER','OTHER','PARTIAL_CUT','OTHER','SILVICULTURE_TREATMENT','OTHER','OTHER','WINDFALL'})",Takes substring of characters 1 and 2. Validates substring and maps to CASFRI disturbance type. Valid strings must have two or four characters.,VRAI
+3,DIST_YEAR_1,integer,false(|-8886),nothingInt(),Year is unknown,VRAI
+4,DIST_EXT_UPPER_1,integer,false(),nothingInt(),Attribute does not occur,VRAI
+5,DIST_EXT_LOWER_1,integer,false(),nothingInt(),Attribute does not occur,VRAI
+6,DIST_TYPE_2,text,"notNull(dist_type_2);notEmpty(dist_type_2);lengthMatchList(dist_type_2, {3,4}, 'TRUE'|NOT_APPLICABLE);hasLength(dist_type_2, 4|INVAID_VALUE);matchListSubstring(dist_type_2, 3, 2, {'BR','CC','DI','EP','FL','HR','OF','PC','PN','RN','SD','ST','SY','TH','SW','UR','WF'})","mapSubstringText(dist_type_2, 3, 2,  {'BR','CC','DI','EP','FL','HR','OF','PC','PN','RN','SD','ST','SY','TH','SW','UR','WF'}, {'BURN','CUT','DISEASE','OTHER','FLOOD','OTHER','OTHER','PARTIAL_CUT','SILVICULTURE_TREATMENT','OTHER','OTHER','PARTIAL_CUT','OTHER','SILVICULTURE_TREATMENT','OTHER','OTHER','WINDFALL'})","Takes substring of characters 3 and 4. Validates substring and maps to CASFRI disturbance type. For a second disturbance to be present dist_type_1 must have 4 characters. If one or two characters, return NOT_APPLICABLE because there is no second disturbance. If three characters, return INVALID_VALUE because disturbance code must have length 2.",VRAI
+7,DIST_YEAR_2,integer,"hasLength(dist_type_2, 4|-8887);false(|-8886)",nothingInt(),"If there is a dist_type_2 to report, year is UNKNOWN_VALUE, if there is no dist_type_2, return NOT_APPLICABLE",VRAI
+8,DIST_EXT_UPPER_2,integer,false(),nothingInt(),Attribute does not occur,VRAI
+9,DIST_EXT_LOWER_2,integer,false(),nothingInt(),Attribute does not occur,VRAI
+10,DIST_TYPE_3,text,false(),nothingText(),Attribute does not occur,VRAI
+11,DIST_YEAR_3,integer,false(),nothingInt(),Attribute does not occur,VRAI
+12,DIST_EXT_UPPER_3,integer,false(),nothingInt(),Attribute does not occur,VRAI
+13,DIST_EXT_LOWER_3,integer,false(),nothingInt(),Attribute does not occur,VRAI
+14,LAYER,integer,true(),nothingInt(|-8886),Disturbance layer is unknown,VRAI
