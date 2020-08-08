@@ -1430,6 +1430,10 @@ RETURNS text AS $$
                   WHEN rulelc = 'tie01_not_etage_layer1_validation' THEN '-8887'
                   WHEN rulelc = 'tie01_not_etage_dens_layers_validation' THEN '-8887'
                   WHEN rulelc = 'sk_utm01_species_percent_validation' THEN '-9997'
+                  WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'vri01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'fvi01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -2044,6 +2048,168 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
+-- vals2 text - string list of layer 2 attribtues. This is carried through to couneOfNotNull  
+-- inventory_standard_cd text
+-- land_cover_class_cd_1 text
+-- bclcs_level_4 text
+-- non_productive_descriptor_cd text
+-- non_veg_cover_type_1 text
+-- zero_is_null
+-- 
+-- hasCountOfNotNull using custom vri countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_vri01_hasCountOfNotNull(
+  vals1 text,
+  vals2 text,
+  inventory_standard_cd text,
+  land_cover_class_cd_1 text,
+  bclcs_level_4 text,
+  non_productive_descriptor_cd text,
+  non_veg_cover_type_1 text,
+  inventory_id text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = tt_vri01_countOfNotNull(vals1, vals2, inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1, '5', 'FALSE', inventory_id);
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;
+                                    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_ns_nsi01_hasCountOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
+-- vals2 text - string list of layer 2 attribtues. This is carried through to couneOfNotNull  
+-- fornon text
+-- count text
+-- exact
+-- 
+-- hasCOuntOfNotNull using ns custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ns_nsi01_hasCountOfNotNull(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ns_nsi01_hasCountOfNotNull(
+  vals1 text,
+  vals2 text,
+  fornon text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = tt_ns_nsi01_countOfNotNull(vals1, vals2, fornon, '3', 'FALSE');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;    
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_fvi01_hasCountOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- vals1 text
+-- vals2 text
+-- typeclas text
+-- min_typeclas text
+-- count text
+-- exact text
+-- 
+-- hasCOuntOfNotNull using fvi custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fvi01_hasCountOfNotNull(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_fvi01_hasCountOfNotNull(
+  vals1 text,
+  vals2 text,
+  typeclas text,
+  min_typeclas text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = tt_fvi01_countOfNotNull(vals1, vals2, typeclas, min_typeclas, '4', 'FALSE');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;    
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_on_fim02_hasCountOfNotNull(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_on_fim02_hasCountOfNotNull(
+  vals1 text,
+  vals2 text,
+  polytype text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = tt_on_fim02_countOfNotNull(vals1, vals2, polytype, '3', 'FALSE');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;    
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...
@@ -2170,6 +2336,7 @@ RETURNS boolean AS $$
     
   END; 
 $$ LANGUAGE plpgsql;
+
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -3628,6 +3795,47 @@ RETURNS int AS $$
     
     -- call countOfNotNull
     RETURN tt_countOfNotNull(is_lyr, is_nfl, max_rank_to_consider, zero_is_null);
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_on_fim02_countOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
+-- vals2 text - string list of layer 2 attribtues. This is carried through to couneOfNotNull  
+-- polytype text
+-- max_rank_to_consider text
+-- zero_is_null
+-- 
+-- Determine if the row contains an NFL record. If it does assign a string
+-- so it can be counted as a non-null layer.
+-- 
+-- Pass vals1-vals2 and the string/NULLs to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_on_fim02_countOfNotNull(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_on_fim02_countOfNotNull(
+  vals1 text,
+  vals2 text,
+  polytype text,
+  max_rank_to_consider text,
+  zero_is_null text
+)
+RETURNS int AS $$
+  DECLARE
+    is_nfl text;
+  BEGIN
+
+    -- if any of the nfl functions return true, we know there is an NFL record.
+    -- set is_nfl to be a valid string.
+    IF tt_matchList(polytype,'{''ISL'',''WAT'',''RCK'',''DAL'',''UCL'',''GRS'',''OMS''}') THEN
+      is_nfl = 'a_value';
+    ELSE
+      is_nfl = NULL::text;
+    END IF;
+    
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, zero_is_null);
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
