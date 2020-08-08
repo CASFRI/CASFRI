@@ -1,0 +1,36 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+0,ROW_TRANSLATION_RULE,NA,"notEmpty({species_1, species_2, species_3, species_4, species_5}, TRUE)",NA,"Translate only rows where sp1, sp2, sp3, sp4 or sp5 is not empty",VRAI
+1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,VRAI
+2,SOIL_MOIST_REG,text,"notNull(soil_moist_reg);notEmpty(soil_moist_reg);matchList(soil_moist_reg,{'D','F','M','V','W'})","mapText(soil_moist_reg, {'D','F','M','V','W'}, {'DRY','MESIC','MOIST','MESIC','WET'})",Maps source value to SOIL_MOIST_REG using lists of values,VRAI
+3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,VRAI
+4,LAYER,integer,true(),"mb_fli01_countOfNotNull({species_1, species_2, species_3, species_4, species_5}, landtype, layer, 'FALSE')",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,VRAI
+5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,VRAI
+6,CROWN_CLOSURE_UPPER,integer,"notNull(crown_closure_upper);notEmpty(crown_closure_upper|-8888);matchList(crown_closure_upper,{'0','1','2','3','4','5','6','7','8','9'}|-9997)","mapInt(crown_closure_upper, {'0','1','2','3','4','5','6','7','8','9'}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values.,VRAI
+7,CROWN_CLOSURE_LOWER,integer,"notNull(crown_closure_upper);notEmpty(crown_closure_upper|-8888);matchList(crown_closure_upper,{'0','1','2','3','4','5','6','7','8','9'}|-9997)","mapInt(crown_closure_upper, {'0','1','2','3','4','5','6','7','8','9'}, {1,11,21,31,41,51,61,71,81,91})",Maps source value to CROWN_CLOSURE_UPPER using lists of values.,VRAI
+8,HEIGHT_UPPER,double precision,"notNull(height_upper);isNumeric(height_upper);isBetween(height_upper,'0.1',100)",copyDouble(height_upper),Copies source value to HEIGHT_UPPER,VRAI
+9,HEIGHT_LOWER,double precision,"notNull(height_lower);isNumeric(height_lower);isBetween(height_lower,'0.1',100)",copyDouble(height_lower),Copies source value to HEIGHT_LOWER,VRAI
+10,PRODUCTIVE_FOR,text,false(),nothingText(),Correct translation has not been determined.,VRAI
+11,SPECIES_1,text,"notNull(species_1);notEmpty(species_1);matchTable(species_1, 'translation', 'species_code_mapping', 'mb_species_codes', 'TRUE')","lookupText(species_1, 'translation', 'species_code_mapping', 'mb_species_codes', 'casfri_species_codes', 'TRUE')",Maps source value to SPECIES_1 using lookup table,VRAI
+12,SPECIES_PER_1,integer,"notNull(species_per_1);isInt(species_per_1|-9997);isBetween(species_per_1, 1, 10|-9997)","mapInt(species_per_1, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_1 by multiplying by 10,VRAI
+13,SPECIES_2,text,"notNull(species_2);notEmpty(species_2);matchTable(species_2, 'translation', 'species_code_mapping', 'mb_species_codes', 'TRUE')","lookupText(species_2, 'translation', 'species_code_mapping', 'mb_species_codes', 'casfri_species_codes', 'TRUE')",Maps source value to SPECIES_2 using lookup table. Uses a second column in the lookup table to allow the layer 2 source values to be translated to different target values for species 1 and species 2.,VRAI
+14,SPECIES_PER_2,integer,"notNull(species_per_2);isInt(species_per_2|-9997);isBetween(species_per_2, 1, 10|-9997)","mapInt(species_per_2, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_2 by multiplying by 10,VRAI
+15,SPECIES_3,text,"notNull(species_3);notEmpty(species_3);matchTable(species_3, 'translation', 'species_code_mapping', 'mb_species_codes', 'TRUE')","lookupText(species_3, 'translation', 'species_code_mapping', 'mb_species_codes', 'casfri_species_codes', 'TRUE')",Maps source value to SPECIES_3 using lookup table,VRAI
+16,SPECIES_PER_3,integer,"notNull(species_per_3);isInt(species_per_3|-9997);isBetween(species_per_3, 1, 10|-9997)","mapInt(species_per_3, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_3 by multiplying by 10. ,VRAI
+17,SPECIES_4,text,"notNull(species_4);notEmpty(species_4);matchTable(species_4, 'translation', 'species_code_mapping', 'mb_species_codes', 'TRUE')","lookupText(species_4, 'translation', 'species_code_mapping', 'mb_species_codes', 'casfri_species_codes', 'TRUE')",Maps source value to SPECIES_4 using lookup table,VRAI
+18,SPECIES_PER_4,integer,"notNull(species_per_4);isInt(species_per_4|-9997);isBetween(species_per_4, 1, 10|-9997)","mapInt(species_per_4, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_4 by multiplying by 10. ,VRAI
+19,SPECIES_5,text,"notNull(species_5);notEmpty(species_5);matchTable(species_5, 'translation', 'species_code_mapping', 'mb_species_codes', 'TRUE')","lookupText(species_5, 'translation', 'species_code_mapping', 'mb_species_codes', 'casfri_species_codes', 'TRUE')",Maps source value to SPECIES_5 using lookup table,VRAI
+20,SPECIES_PER_5,integer,"notNull(species_per_5);isInt(species_per_5|-9997);isBetween(species_per_5, 1, 10|-9997)","mapInt(species_per_5, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_5 by multiplying by 10. ,VRAI
+21,SPECIES_6,text,"notNull(species_6);notEmpty(species_6);matchTable(species_6, 'translation', 'species_code_mapping', 'mb_species_codes', 'TRUE')","lookupText(species_6, 'translation', 'species_code_mapping', 'mb_species_codes', 'casfri_species_codes', 'TRUE')",Maps source value to SPECIES_6 using lookup table,VRAI
+22,SPECIES_PER_6,integer,"notNull(species_per_6);isInt(species_per_6|-9997);isBetween(species_per_6, 1, 10|-9997)","mapInt(species_per_6, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_6 by multiplying by 10. ,VRAI
+23,SPECIES_7,text,false(),nothingText(),Attribute does not occur,VRAI
+24,SPECIES_PER_7,integer,false(),nothingInt(),Attribute does not occur,VRAI
+25,SPECIES_8,text,false(),nothingText(),Attribute does not occur,VRAI
+26,SPECIES_PER_8,integer,false(),nothingInt(),Attribute does not occur,VRAI
+27,SPECIES_9,text,false(),nothingText(),Attribute does not occur,VRAI
+28,SPECIES_PER_9,integer,false(),nothingInt(),Attribute does not occur,VRAI
+29,SPECIES_10,text,false(),nothingText(),Attribute does not occur,VRAI
+30,SPECIES_PER_10,integer,false(),nothingInt(),Attribute does not occur,VRAI
+31,ORIGIN_UPPER,integer,"notNull(origin_upper);isInt(origin_upper);isBetween(origin_upper,1000,2020)",copyInt(origin_upper),Copies (origin) to ORIGIN_UPPER,VRAI
+32,ORIGIN_LOWER,integer,"notNull(origin_lower);isInt(origin_lower);isBetween(origin_lower,1000,2020)",copyInt(origin_lower),Copies (origin) to ORIGIN_LOWER,VRAI
+33,SITE_CLASS,text,false(),nothingText(),Attribute does not occur,VRAI
+34,SITE_INDEX,double precision,false(),nothingDouble(),Attribute does not occur,VRAI

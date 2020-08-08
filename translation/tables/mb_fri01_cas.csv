@@ -1,0 +1,11 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')","The combination of ogc_fid, ogc_fidID, MAPSHEET and SRC_FILENAME is a unique identifier across all counties. All four are needed to create the unique id that traces back to the source polygon.",VRAI
+2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,VRAI
+3,ORIG_STAND_ID,text,"notNull(orig_stand_id);isInt(orig_stand_id);isGreaterThan(orig_stand_id, 0)",copyText(orig_stand_id),Copies source value to ORIG_STAND_ID,VRAI
+4,STAND_STRUCTURE,text,"notEmpty({species_1, species_2, species_3, species_4 ,species_5}, TRUE|NOT_APPLICABLE)",copyText('S'),"Only one LYR layer possible. If species info present, stand structure is S.",VRAI
+5,NUM_OF_LAYERS,integer,true(),"mb_fri01_countOfNotNull({species_1, species_2, species_3, species_4, species_5}, landtype, 2, 'FALSE')",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,VRAI
+6,MAP_SHEET_ID,text,notNull(map_sheet_id),copyText(map_sheet_id),Copies source value,VRAI
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,VRAI
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,VRAI
+9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0)",copyDouble(src_inv_area),Copies source value to SRC_INV_AREA,VRAI
+10,STAND_PHOTO_YEAR,integer,false(),nothingInt(),Attribute does not occur,VRAI
