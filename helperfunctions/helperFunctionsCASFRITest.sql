@@ -97,7 +97,8 @@ WITH test_nb AS (
     SELECT 'TT_pe_pei01_hasCountOfNotNull'::text function_tested,            49 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_sfv01_hasCountOfNotNull'::text function_tested,               50 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_sk_utm_countOfNotNull'::text function_tested,                 51 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test 
+    SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2168,6 +2169,104 @@ SELECT '52.5'::text number,
        'TT_sk_utm_hasCountOfNotNull'::text function_tested,
        'Test two layers exact true'::text description,
        TT_sk_utm_hasCountOfNotNull('bf', '', '3300', '1', 'TRUE') IS FALSE passed
+---------------------------------------------------------
+ -- TT_bc_height
+---------------------------------------------------------
+UNION ALL
+SELECT '53.1'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test with all values present'::text description,
+       TT_bc_height('10', '5', '50', '50') = 7.5 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.2'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test with all values present, different weights'::text description,
+       TT_bc_height('4', '1', '75', '25') = 3.25 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.3'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test with zero height'::text description,
+       TT_bc_height('4', '0', '75', '25') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.4'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test with other zero height'::text description,
+       TT_bc_height('0', '1', '75', '25') = 0.25 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.5'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test zero pct 1'::text description,
+       TT_bc_height('4', '1', '0', '25') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.6'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test zero pct 2'::text description,
+       TT_bc_height('4', '1', '75', '0') = 4 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.7'::text number,
+       'TT_bc_height'::text function_tested,
+       'Both height zero'::text description,
+       TT_bc_height('0', '0', '75', '25') = 0 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.8'::text number,
+       'TT_bc_height'::text function_tested,
+       'Both pct zero'::text description,
+       TT_bc_height('4', '1', '0', '0') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.9'::text number,
+       'TT_bc_height'::text function_tested,
+       'All zero'::text description,
+       TT_bc_height('0', '0', '0', '0') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.10'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test with null height'::text description,
+       TT_bc_height('4', NULL::text, '75', '25') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.11'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test with other zero height'::text description,
+       TT_bc_height(NULL::text, '1', '75', '25') = 0.25 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.12'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test NULL pct 1'::text description,
+       TT_bc_height('4', '1', NULL::text, '25') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.13'::text number,
+       'TT_bc_height'::text function_tested,
+       'Test NULL pct 2'::text description,
+       TT_bc_height('4', '1', '75', NULL::text) = 4 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.14'::text number,
+       'TT_bc_height'::text function_tested,
+       'Both height NULL'::text description,
+       TT_bc_height(NULL::text, NULL::text, '75', '25') = 0 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.15'::text number,
+       'TT_bc_height'::text function_tested,
+       'Both pct zero'::text description,
+       TT_bc_height('4', '1', NULL::text, NULL::text) IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '53.16'::text number,
+       'TT_bc_height'::text function_tested,
+       'All zero'::text description,
+       TT_bc_height(NULL::text, NULL::text, NULL::text, NULL::text) IS NULL passed
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

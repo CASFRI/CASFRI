@@ -71,6 +71,7 @@ DROP FUNCTION IF EXISTS TT_ns_nsi01_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_on_fim02_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_countOfNotNull(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
