@@ -146,15 +146,25 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_lyr', 'nb02_l2_to_nb_l1_map_lyr');
 ------------------------
--- Translate BC08
+-- Translate BC08 layer 1
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'bc08', 1, 'bc', 1, NULL, 'lyr');
 
-INSERT INTO casfri50.lyr_all -- 30h19m
+INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc_lyr('rawfri', 'bc08_l1_to_bc_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l1_to_bc_l1_map_lyr');
+------------------------
+-- Translate BC08 layer 2 reusing BC08 layer 1 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- *m**s
+SELECT * FROM TT_Translate_bc_lyr('rawfri', 'bc08_l2_to_bc_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l2_to_bc_l1_map_lyr');
 ------------------------
 -- Translate BC10 layer 1
 BEGIN;

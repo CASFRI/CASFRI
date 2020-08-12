@@ -3605,12 +3605,13 @@ RETURNS int AS $$
     END IF;
     
     -- call countOfNotNull
+    -- WE HAVE UPDATED BC08 TO INCLUDE ALL LAYER TABLES. IF WE TRANSLATE ANY OF THE OLD RANK1 LAYER1 DATASETS FROM BC WE WILL NEED TO UNCOMMENT THE FOLLOWING LINES
     -- if BC08 there is only 1 forest layer so remove the second forest layer from the count
-    IF inventory_id = 'BC08' THEN
-      RETURN tt_countOfNotNull(vals1, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, 'FALSE');
-    ELSE
+    --IF inventory_id = 'BC08' THEN
+      --RETURN tt_countOfNotNull(vals1, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, 'FALSE');
+    --ELSE
       RETURN tt_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, 'FALSE');
-    END IF;
+    --END IF;
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;

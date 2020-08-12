@@ -28,7 +28,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');
 DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'BC08';
 
 -- Add translated ones
-INSERT INTO casfri50.cas_all -- 12h16m
+INSERT INTO casfri50.cas_all -- **h**m
 SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_cas', 'bc08_l1_to_bc_l1_map');
@@ -64,7 +64,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'BC08';
 
 -- Add translated ones
-INSERT INTO casfri50.eco_all -- 4h05m
+INSERT INTO casfri50.eco_all -- *h**m
 SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_eco', 'bc08_l1_to_bc_l1_map');
@@ -81,16 +81,27 @@ WHERE TT_NotEmpty(bc_species_codes);
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_lyr', '_bc08_lyr', 'ab_avi01_lyr'); -- used for both BC08 and BC10, layer 1 and 2
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1, 'bc', 1);
-
 -- Delete existing entries
 DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'BC08';
 
 -- Add translated ones
-INSERT INTO casfri50.lyr_all -- 30h19m
+-- Layer 1
+
+SELECT TT_CreateMappingView('rawfri', 'bc08', 1, 'bc', 1);
+
+INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l1_to_bc_l1_map');
+
+-- Layer 2 reusing BC08 layer 1 translation table
+
+SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1);
+
+INSERT INTO casfri50.lyr_all -- *m**s
+SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08_l2_to_bc_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l2_to_bc_l1_map');
 COMMIT;
 
 ------------------------
@@ -103,31 +114,31 @@ SELECT TT_Prepare('translation', 'bc_vri01_nfl', '_bc08_nfl', 'ab_avi01_nfl'); -
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'BC08';
 
 -- layer 1
-SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1);
-
--- Add translated ones
-INSERT INTO casfri50.nfl_all -- 16h38m
-SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l2_to_bc_l1_map', 'ogc_fid');
-
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l2_to_bc_l1_map');
-
--- layer 2
 SELECT TT_CreateMappingView('rawfri', 'bc08', 3, 'bc', 1);
 
 -- Add translated ones
-INSERT INTO casfri50.nfl_all -- 16h38m
+INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l3_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l3_to_bc_l1_map');
 
--- layer 4
+-- layer 2
 SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1);
 
 -- Add translated ones
-INSERT INTO casfri50.nfl_all -- 16h38m
+INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l4_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l4_to_bc_l1_map');
+
+-- layer 3
+SELECT TT_CreateMappingView('rawfri', 'bc08', 5, 'bc', 1);
+
+-- Add translated ones
+INSERT INTO casfri50.nfl_all -- **h**m
+SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l5_to_bc_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l5_to_bc_l1_map');
 COMMIT;
 
 ------------------------
@@ -136,14 +147,14 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'bc_vri01_geo', '_bc08_geo', 'ab_avi01_geo'); -- used for both BC08 and BC10
 
-SELECT TT_CreateMappingView('rawfri', 'bc08', 1, 'bc', 1);
+SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');
 
 -- Delete existing entries
 DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'BC08';
 
 -- Add translated ones
-INSERT INTO casfri50.geo_all --4h59m
-SELECT * FROM TT_Translate_bc08_geo('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
+INSERT INTO casfri50.geo_all --*h**m
+SELECT * FROM TT_Translate_bc08_geo('rawfri', 'bc08_l1_to_bc_l1_map_geo', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_geo', 'bc08_l1_to_bc_l1_map');
 COMMIT;
