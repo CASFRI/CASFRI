@@ -4064,3 +4064,36 @@ RETURNS double precision AS $$
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_fvi01_structure_per(text, text)
+--
+-- stand_structure text
+-- structure_per - text
+--
+-- If stand structure is C, M, S return 100.
+-- If stand structure is H, return structure_val *10.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fvi01_structure_per(text, text);
+CREATE OR REPLACE FUNCTION TT_fvi01_structure_per(
+  stand_structure text,
+  structure_per text
+)
+RETURNS int AS $$
+  DECLARE
+    _structure_per int := structure_per::int;
+  BEGIN
+    
+    IF stand_structure IN('C', 'M', 'S', 'V') THEN
+      RETURN 100;
+    END IF;
+    
+    IF stand_structure = 'H' THEN
+      IF _structure_per = 0 THEN
+        RETURN 0;
+      ELSE
+        RETURN _structure_per * 10;
+      END IF;
+    END IF;
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;

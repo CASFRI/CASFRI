@@ -98,7 +98,8 @@ WITH test_nb AS (
     SELECT 'TT_sfv01_hasCountOfNotNull'::text function_tested,               50 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_sk_utm_countOfNotNull'::text function_tested,                 51 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test
+    SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test UNION ALL
+    SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  6 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2267,6 +2268,28 @@ SELECT '53.16'::text number,
        'TT_bc_height'::text function_tested,
        'All zero'::text description,
        TT_bc_height(NULL::text, NULL::text, NULL::text, NULL::text) IS NULL passed
+---------------------------------------------------------
+ -- TT_fvi01_structure_per
+---------------------------------------------------------
+UNION ALL
+SELECT '54.1'::text number,
+       'TT_fvi01_structure_per'::text function_tested,
+       'Test C'::text description,
+       TT_fvi01_structure_per('C', '5') = 100 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '54.2'::text number,
+       'TT_fvi01_structure_per'::text function_tested,
+       'Test H'::text description,
+       TT_fvi01_structure_per('H', '5') = 50 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '54.3'::text number,
+       'TT_fvi01_structure_per'::text function_tested,
+       'Test H and 0'::text description,
+       TT_fvi01_structure_per('H', '0') = 0 passed
+
+
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
