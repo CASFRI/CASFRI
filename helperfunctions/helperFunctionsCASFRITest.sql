@@ -99,7 +99,8 @@ WITH test_nb AS (
     SELECT 'TT_sk_utm_countOfNotNull'::text function_tested,                 51 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  6 nb_test
+    SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_fvi01_structure_per_validation'::text function_tested,        55 maj_num,  2 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2288,7 +2289,21 @@ SELECT '54.3'::text number,
        'TT_fvi01_structure_per'::text function_tested,
        'Test H and 0'::text description,
        TT_fvi01_structure_per('H', '0') = 0 passed
-
+---------------------------------------------------------
+ -- TT_fvi01_structure_per_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '55.1'::text number,
+       'TT_fvi01_structure_per_validation'::text function_tested,
+       'Test pass'::text description,
+       TT_fvi01_structure_per_validation('H', '1') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '55.2'::text number,
+       'TT_fvi01_structure_per_validation'::text function_tested,
+       'Test fail'::text description,
+       TT_fvi01_structure_per_validation('H', '2') IS FALSE passed
+---------------------------------------------------------
 
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

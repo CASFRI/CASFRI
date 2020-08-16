@@ -2358,6 +2358,34 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+-- TT_fvi01_structure_per_validation(text, text)
+--
+-- stand_structure text
+-- layer text
+--
+-- Catch the case where stand structure is horizontal and layer is 2.
+-- This can only happen in forested stands with horizontal structure 
+-- In this case we don`t know the structure percent of the second layer
+-- because there is only one structure_per attribute. Catch and return
+-- UNKNOWN.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
+CREATE OR REPLACE FUNCTION TT_fvi01_structure_per_validation(
+  stand_structure text,
+  layer text
+)
+RETURNS boolean AS $$
+  BEGIN
+        
+    IF stand_structure = 'H' AND layer = '2' THEN
+      RETURN FALSE;
+    ELSE
+      RETURN TRUE;
+    END IF;
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...
 -------------------------------------------------------------------------------
