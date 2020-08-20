@@ -33,6 +33,7 @@ DROP FUNCTION IF EXISTS TT_on_fim02_hasCountOfNotNull(text, text, text, text, te
 DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_hasCountOfNotNull(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -72,6 +73,7 @@ DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text,
 DROP FUNCTION IF EXISTS TT_on_fim02_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_fvi01_structure_per(text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
