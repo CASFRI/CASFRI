@@ -3042,16 +3042,23 @@ RETURNS int AS $$
       ELSE -- num_of_layers = 2
         
         IF et_domi IS NULL OR et_domi = 'EQU' THEN
+          
+          -- if both ages are the same and et_domi is null, there is only sup info available. We should use it for 
+          -- layer 1 and return null for layer 2.
+          IF cl_age IN('1010','3030','5050','7070','9090','12012','JINJI') THEN
+            IF _layer = 1 THEN
+              RETURN sup_densite;
+            ELSE
+              RETURN NULL; -- no layer 2 info to return
+            END IF;
+          END IF;
+          
           -- the layer 1 code is always the first code in cl_age, i.e. layer_1_age in the lookup table. But the return value could be in either the sup or inf table.
           -- same for layer 2. Always the second code, but cound be sup or inf.
-          -- get the layer 1/2 age code using lookup table...
+          -- get the layer 1/2 age code using lookup table...  
+          -- ...is it in the sup or the inf table? Find out then return the return value from the correct table.
           layer_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, lookup_col);
-
-          -- is it in the sup or the inf table? Find out then return the return value from the correct table.
-          IF sup_cl_age_et = inf_cl_age_et THEN
-            -- what do we do here? Don't know which to return
-            RETURN NULL;
-          ELSIF layer_age_code = sup_cl_age_et THEN
+          IF layer_age_code = sup_cl_age_et THEN
             RETURN sup_densite; -- if layer is from sup, return sup
           ELSIF layer_age_code = inf_cl_age_et THEN
             RETURN inf_densite; -- if layer is from inf, return inf

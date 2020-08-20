@@ -897,13 +897,13 @@ UNION ALL
 SELECT '18.1'::text number,
        'TT_tie01_crownclosure_translation'::text function_tested,
        'Test num_of_layers 1, layer 1 in_etage'::text description,
-       TT_tie01_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'NULL', 'VIR', 'NULL', '85', 'NULL', 'A', '1', 'lower') = 85::int passed
+       TT_tie01_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', NULL::text, '85', NULL::text, 'A', '1', 'lower') = 85::int passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.2'::text number,
        'TT_tie01_crownclosure_translation'::text function_tested,
        'Test num_of_layers 1, layer 2 in_etage'::text description,
-       TT_tie01_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', 'NULL', 'VIR', NULL, '85', NULL, 'A', '2', 'lower') IS NULL passed
+       TT_tie01_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', 'NULL', 'VIR', NULL::text, '85', NULL::text, 'A', '2', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.3'::text number,
@@ -921,25 +921,25 @@ UNION ALL
 SELECT '18.5'::text number,
        'TT_tie01_crownclosure_translation'::text function_tested,
        'Test not in_etage, 1 layer, layer 1'::text description,
-       TT_tie01_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', 'NULL', 'NULL', 'NULL', 'NULL', 'NULL', 'A', '1', 'lower') = 80 passed
+       TT_tie01_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '1', 'lower') = 80 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.6'::text number,
        'TT_tie01_crownclosure_translation'::text function_tested,
        'Test not in_etage, 2 layers'::text description,
-       TT_tie01_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', 'NULL', 'NULL', 'NULL', 'NULL', 'NULL', 'A', '1', 'lower') IS NULL passed
+       TT_tie01_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '1', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.7'::text number,
        'TT_tie01_crownclosure_translation'::text function_tested,
        'Test not in_etage, 1 layer, layer 2'::text description,
-       TT_tie01_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', 'NULL', 'NULL', 'NULL', 'NULL', 'NULL', 'A', '2', 'lower') IS NULL passed
+       TT_tie01_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '2', 'lower') IS NULL passed
   ---------------------------------------------------------
 UNION ALL
 SELECT '18.8'::text number,
        'TT_tie01_crownclosure_translation'::text function_tested,
        'cl_age doesn`t match'::text description,
-       TT_tie01_crownclosure_translation('VIN20', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'NULL', 'VIR', '10', '15', '20', '1', '1', 'lower') IS NULL passed
+       TT_tie01_crownclosure_translation('VIN20', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', '10', '15', '20', '1', '1', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.9'::text number,
@@ -952,6 +952,18 @@ SELECT '18.10'::text number,
        'TT_tie01_crownclosure_translation'::text function_tested,
        'test using et_domi INF'::text description,
        TT_tie01_crownclosure_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'INF', '', '', '85', '80', 'A', '1', 'lower') = 80::int passed
+---------------------------------------------------------
+UNION ALL
+SELECT '18.11'::text number,
+       'TT_tie01_crownclosure_translation'::text function_tested,
+       'Test in_etage, 2 layers, same ages, layer 1'::text description,
+       TT_tie01_crownclosure_translation('1010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, '10', '10', '85', '100', 'A', '1', 'lower') = 85 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '18.12'::text number,
+       'TT_tie01_crownclosure_translation'::text function_tested,
+       'Test in_etage, 2 layers, same ages, layer 2'::text description,
+       TT_tie01_crownclosure_translation('1010', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', NULL::text, '10', '10', '85', '100', 'A', '2', 'lower') IS NULL passed
 ---------------------------------------------------------
 ---------------------------------------------------------
   -- TT_tie01_height_translation
