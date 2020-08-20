@@ -4118,7 +4118,7 @@ RETURNS int AS $$
     
     IF stand_structure = 'H' THEN
       IF _structure_per = 0 THEN
-        RETURN 0;
+        RETURN 100;
       ELSE
         RETURN _structure_per * 10;
       END IF;

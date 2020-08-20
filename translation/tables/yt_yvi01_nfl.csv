@@ -1,5 +1,5 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-0,ROW_TRANSLATION_RULE,NA,"matchList(type_lnd, {'NW', 'NS', 'NE', 'NU', 'VN'})",NA,Translate only rows where type_lnd is not empty, TRUE
+0,ROW_TRANSLATION_RULE,NA,"matchList(type_lnd, {'NW', 'NS', 'NE', 'NU', 'VN'})",NA,Translate only rows where type_lnd is not empty. Note that none of these rows have species info., TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"yvi01_nfl_soil_moisture_validation(type_lnd, class, cl_mod, landpos);notNull(soil_moist_reg);notEmpty(soil_moist_reg);matchList(soil_moist_reg,{'a','A','d','D','m','M','w','W'})","mapText(soil_moist_reg, {'a','A','d','D','m','M','w','W'}, {'AQUATIC','AQUATIC','DRY','DRY','MESIC','MESIC','WET','WET'})",Validation: only want to translate soil moisture in NFL table if the row is either non_for_veg or nat_non_veg = EX (burned or exposed land).,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE

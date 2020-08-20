@@ -1,5 +1,5 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-0,ROW_TRANSLATION_RULE,NA,"matchTable(species_1, 'translation', 'species_code_mapping', 'pe_species_codes', 'TRUE')",NA,"Translate only rows where species_1 has a valid species value. Some values in spec_1 are not species values. Species_2,3,4,5 are never present without species_1, so we don't need to check them here.",TRUE
+0,ROW_TRANSLATION_RULE,NA,"matchTable(species_1, 'translation', 'species_code_mapping', 'pe_species_codes', 'TRUE')",NA,"Translate only rows where species_1 has a valid species value. Some values in spec_1 are not species values. Species_2,3,4,5 are never present without species_1, so we don't need to check them here. Note that none of these rows have nfl info so every polygon is either LYR or NFL.",TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
