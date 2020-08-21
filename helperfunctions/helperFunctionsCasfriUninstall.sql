@@ -17,10 +17,10 @@ DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_validation(text, text, text, text);
-DROP FUNCTION IF EXISTS TT_tie01_2layer_age_codes_validation(text,text,text,text,text,text,text);
-DROP FUNCTION IF EXISTS TT_tie01_not_etage_notnull_validation(text,text);
-DROP FUNCTION IF EXISTS TT_tie01_not_etage_layer1_validation(text,text);
-DROP FUNCTION IF EXISTS TT_tie01_not_etage_dens_layers_validation(text,text,text,text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_2layer_age_codes_validation(text,text,text,text,text,text,text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_notnull_validation(text,text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_layer1_validation(text,text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_dens_layers_validation(text,text,text,text);
 DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text,text,text);
 DROP FUNCTION IF EXISTS TT_yvi01_nfl_soil_moisture_validation(text,text,text,text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_validation(text,text,text,text,text);
@@ -34,6 +34,7 @@ DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, te
 DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_validation(text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -53,8 +54,8 @@ DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_nb01_productive_for_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_nb02_productive_for_translation(text);
-DROP FUNCTION IF EXISTS TT_tie01_crownclosure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_tie01_height_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_crownclosure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_height_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fim_species_code(text, int);
 DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fim_species_percent_translation(text, text);
@@ -74,10 +75,13 @@ DROP FUNCTION IF EXISTS TT_on_fim02_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per(text, text);
+DROP FUNCTION IF EXISTS TT_wetland_code_translation(text, text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_translation(text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_code(text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_code(text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Tools functions
 -------------------------------------------------------------------------------

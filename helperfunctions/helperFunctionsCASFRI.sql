@@ -1425,10 +1425,10 @@ RETURNS text AS $$
   BEGIN
     IF targetTypelc = 'integer' OR targetTypelc = 'int' OR targetTypelc = 'double precision' THEN 
       RETURN CASE WHEN rulelc = 'projectrule1' THEN '-9999'
-                  WHEN rulelc = 'tie01_2layer_age_codes_validation' THEN '-9997'
-                  WHEN rulelc = 'tie01_not_etage_notnull_validation' THEN '-8888'
-                  WHEN rulelc = 'tie01_not_etage_layer1_validation' THEN '-8887'
-                  WHEN rulelc = 'tie01_not_etage_dens_layers_validation' THEN '-8887'
+                  WHEN rulelc = 'qc_ipf_2layer_age_codes_validation' THEN '-9997'
+                  WHEN rulelc = 'qc_ipf_not_etage_notnull_validation' THEN '-8888'
+                  WHEN rulelc = 'qc_ipf_not_etage_layer1_validation' THEN '-8887'
+                  WHEN rulelc = 'qc_ipf_not_etage_dens_layers_validation' THEN '-8887'
                   WHEN rulelc = 'sk_utm01_species_percent_validation' THEN '-9997'
                   WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
                   WHEN rulelc = 'vri01_hasCountOfNotNull' THEN '-8886'
@@ -1658,7 +1658,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_tie01_2layer_age_codes_validation()
+-- TT_qc_ipf_2layer_age_codes_validation()
 --
 -- When num_of_layers is 2, do the 2 age codes from cl_age match the age codes in
 -- sup_cl_age_et and inf_cl_age_et?
@@ -1666,10 +1666,10 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- Also need to do this check when et_domi is EQU because in that case we don't know the dominant layer
 -- and have to id it using the age code order.
 --
--- e.g. TT_tie01_2layer_age_codes_validation()
+-- e.g. TT_qc_ipf_2layer_age_codes_validation()
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_tie01_2layer_age_codes_validation(text,text,text,text,text,text,text);
-CREATE OR REPLACE FUNCTION TT_tie01_2layer_age_codes_validation(
+--DROP FUNCTION IF EXISTS TT_qc_ipf_2layer_age_codes_validation(text,text,text,text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_2layer_age_codes_validation(
   cl_age text,
   lookup_schema text,
   lookup_table text,
@@ -1684,7 +1684,7 @@ RETURNS boolean AS $$
     layer_2_age_code text;
     num_of_layers int;
   BEGIN
-    PERFORM TT_ValidateParams('TT_tie01_2layer_age_codes_validation',
+    PERFORM TT_ValidateParams('TT_qc_ipf_2layer_age_codes_validation',
                               ARRAY['lookup_schema', lookup_schema, 'name',
                                     'lookup_table', lookup_table, 'name']);
 	
@@ -1728,17 +1728,17 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_tie01_not_etage_notnull_validation()
+-- TT_qc_ipf_not_etage_notnull_validation()
 --
 -- in_etage text
 -- check_att text (cl_dens or cl_haut)
 --
 -- When in_etage = 'N', check cl_dens and cl_height are not null
 --
--- e.g. TT_tie01_not_etage_notnull_validation(in_etage, check_att)
+-- e.g. TT_qc_ipf_not_etage_notnull_validation(in_etage, check_att)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_tie01_not_etage_notnull_validation(text,text);
-CREATE OR REPLACE FUNCTION TT_tie01_not_etage_notnull_validation(
+--DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_notnull_validation(text,text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_not_etage_notnull_validation(
   in_etage text,  
   check_att text
 )
@@ -1755,17 +1755,17 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_tie01_not_etage_layer1_validation()
+-- TT_qc_ipf_not_etage_layer1_validation()
 --
 -- in_etage text
 -- layer text
 --
 -- When in_etage = 'N', check layer requested = 1, otherwise return FALSE
 --
--- e.g. TT_tie01_not_etage_layer1_validation(in_etage, layer)
+-- e.g. TT_qc_ipf_not_etage_layer1_validation(in_etage, layer)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_tie01_not_etage_layer1_validation(text,text);
-CREATE OR REPLACE FUNCTION TT_tie01_not_etage_layer1_validation(
+--DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_layer1_validation(text,text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_not_etage_layer1_validation(
   in_etage text,  
   layer text
 )
@@ -1788,7 +1788,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_tie01_not_etage_dens_layers_validation()
+-- TT_qc_ipf_not_etage_dens_layers_validation()
 --
 -- in_etage text
 -- cl_age text
@@ -1797,10 +1797,10 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- When in_etage = 'N', for density, check if num_of_layer > 1, if so return FALSE
 --
--- e.g. TT_tie01_not_etage_dens_layers_validation(in_etage, layer)
+-- e.g. TT_qc_ipf_not_etage_dens_layers_validation(in_etage, layer)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_tie01_not_etage_dens_layers_validation(text,text,text,text);
-CREATE OR REPLACE FUNCTION TT_tie01_not_etage_dens_layers_validation(
+--DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_dens_layers_validation(text,text,text,text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_not_etage_dens_layers_validation(
   in_etage text,  
   cl_age text,
   lookup_schema text,
@@ -2386,6 +2386,40 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+-- TT_qc_ipf_wetland_validation(text, text, text, text, text, text)
+--
+-- CO_TER text,
+-- CL_DRAIN text,
+-- gr_ess text,
+-- cl_dens text,
+-- cl_haut text,
+-- TYPE_ECO text
+--
+-- Get the wetland code and check it matches one of the expected values
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_validation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_wetland_validation(
+  CO_TER text,
+  CL_DRAIN text,
+  gr_ess text,
+  cl_den text,
+  cl_haut text,
+  TYPE_ECO text
+)
+RETURNS boolean AS $$
+  BEGIN
+     
+    IF TT_qc_ipf_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO) IN('SONS', 'BTNN', 'FTNN', 'FONS', 'BONS', 'STNN') THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...
 -------------------------------------------------------------------------------
@@ -2792,6 +2826,7 @@ RETURNS text AS $$
 	RETURN NULL;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -2817,27 +2852,8 @@ RETURNS text AS $$
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
 	  wetland_code = TT_nbi01_wetland_code(wc, vt, im);
 
-    -- substring wetland_code
-    IF wetland_code IS NOT NULL THEN
-      result = substring(wetland_code from ret_char_pos::int for 1);
-      IF result = '-' THEN
-        RETURN NULL;
-      END IF;
-	  CASE WHEN ret_char_pos = '1' THEN -- WETLAND_TYPE
-	         result = TT_MapText(result, '{''B'', ''F'', ''S'', ''M'', ''O'', ''T'', ''E'', ''W'', ''Z''}', '{''BOG'', ''FEN'', ''SWAMP'', ''MARSH'', ''SHALLOW_WATER'', ''TIDAL_FLATS'', ''ESTUARY'', ''WETLAND'', ''NOT_WETLAND''}');
-	       WHEN ret_char_pos = '2' THEN -- WET_VEG_COVER
-	         result = TT_MapText(result, '{''F'', ''T'', ''O'', ''C'', ''M''}', '{''FORESTED'', ''WOODED'', ''OPEN_NON_TREED_FRESHWATER'', ''OPEN_NON_TREED_COASTAL'', ''MUD''}');
-	       WHEN ret_char_pos = '3' THEN -- WET_LANDFORM_MOD
-	         result = TT_MapText(result, '{''X'', ''P'', ''N'', ''A''}', '{''PERMAFROST_PRESENT'', ''PATTERNING_PRESENT'', ''NO_PERMAFROST_PATTERNING'', ''SALINE_ALKALINE''}');
-	       WHEN ret_char_pos = '4' THEN -- WET_LOCAL_MOD
-	         result = TT_MapText(result, '{''C'', ''R'', ''I'', ''N'', ''S'', ''G''}', '{''INT_LAWN_SCAR'', ''INT_LAWN_ISLAND'', ''INT_LAWN'', ''NO_LAWN'', ''SHRUB_COVER'', ''GRAMINOIDS''}');
-	  END CASE;
-	ELSE
-	  RETURN NULL;
-    END IF;
+    RETURN TT_wetland_code_translation(wetland_code, ret_char_pos);
     
-    -- return value or null
-     RETURN result;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -2954,9 +2970,9 @@ RETURNS int AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
--- TT_tie01_crownclosure_translation(text)
+-- TT_qc_ipf_crownclosure_translation(text)
 --
--- val text
+-- cl_age text
 -- lookup_schema text
 -- lookup_table text
 -- lookup_col text
@@ -2984,10 +3000,10 @@ $$ LANGUAGE plpgsql IMMUTABLE;
     -- If processing layer 1, return cl_dens
     -- If processing layer 2, no info for this polygon. 
 --
--- e.g. TT_tie01_crownclosure_translation(val, lookup_schema, lookup_table, in_etage, et_domi, sup_cl_age_et, inf_cl_age_et, sup_densite, inf_densite, cl_dens, layer, upper_lower)
+-- e.g. TT_qc_ipf_crownclosure_translation(val, lookup_schema, lookup_table, in_etage, et_domi, sup_cl_age_et, inf_cl_age_et, sup_densite, inf_densite, cl_dens, layer, upper_lower)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_tie01_crownclosure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_tie01_crownclosure_translation(
+--DROP FUNCTION IF EXISTS TT_qc_ipf_crownclosure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_crownclosure_translation(
   cl_age text,
   lookup_schema text,
   lookup_table text,
@@ -3008,7 +3024,7 @@ RETURNS int AS $$
     num_of_layers int;
     layer_age_code text;
   BEGIN
-    PERFORM TT_ValidateParams('TT_tie01_crownclosure_translation',
+    PERFORM TT_ValidateParams('TT_qc_ipf_crownclosure_translation',
                               ARRAY['lookup_schema', lookup_schema, 'text',
                                    'lookup_table', lookup_table, 'text',
                                    'lookup_col', lookup_col, 'text',
@@ -3107,9 +3123,9 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
--- TT_tie01_height_translation(text)
+-- TT_qc_ipf_height_translation(text)
 --
--- val text
+-- cl_age text
 -- lookup_schema text
 -- lookup_table text
 -- lookup_col text
@@ -3122,13 +3138,13 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- layer text (1 or 2)
 -- upper_lower - if returned values represent ranges we will need to return either the upper or lower value
 --
--- logic is the same as TT_tie01_crownclosure_translation except that when in_etage = 'O' and num_of_layers = 2,
+-- logic is the same as TT_qc_ipf_crownclosure_translation except that when in_etage = 'O' and num_of_layers = 2,
 -- the single possible height value is assigned to layer 1. Instead of all layers returning null.
 --
--- e.g. TT_tie01_height_translation(val, lookup_schema, lookup_table, in_etage, sup_cl_age_et, inf_cl_age_et, sup_hauteur, inf_hauteur, cl_haut, layer, upper_lower)
+-- e.g. TT_qc_ipf_height_translation(val, lookup_schema, lookup_table, in_etage, sup_cl_age_et, inf_cl_age_et, sup_hauteur, inf_hauteur, cl_haut, layer, upper_lower)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_tie01_height_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_tie01_height_translation(
+--DROP FUNCTION IF EXISTS TT_qc_ipf_height_translation(text, text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_height_translation(
   cl_age text,
   lookup_schema text,
   lookup_table text,
@@ -3149,7 +3165,7 @@ RETURNS int AS $$
     num_of_layers int;
     layer_age_code text;
   BEGIN
-    PERFORM TT_ValidateParams('TT_tie01_height_translation',
+    PERFORM TT_ValidateParams('TT_qc_ipf_height_translation',
                               ARRAY['lookup_schema', lookup_schema, 'text',
                                    'lookup_table', lookup_table, 'text',
                                    'lookup_col', lookup_col, 'text',
@@ -4130,5 +4146,175 @@ RETURNS int AS $$
         RETURN _structure_per * 10;
       END IF;
     END IF;
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_qc_ipf_wetland_code(text, text, text, text, text, text)
+--
+-- CO_TER
+-- CL_DRAIN
+-- gr_ess
+-- cl_dens
+-- cl_haut
+-- TYPE_ECO
+--
+-- Return 4 character wetland code based on the logic defined in the issue.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_code(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_wetland_code(
+  CO_TER text,
+  CL_DRAIN text,
+  gr_ess text,
+  cl_den text,
+  cl_haut text,
+  TYPE_ECO text
+)
+RETURNS text AS $$
+  DECLARE
+    _bad_drainage text[] := ARRAY['50', '51', '52', '53', '54', '60', '61', '62', '63', '64'];
+  BEGIN
+    
+    -- SONS: swamp, no trees, no permafrost, shrub 25%
+    -- denude humide
+    IF CO_TER = 'DH' THEN
+      RETURN 'SONS';
+    END IF;
+    
+    -- alder with bad drainage
+    IF CL_DRAIN = any(_bad_drainage) AND CO_TER = 'AL' THEN
+      RETURN 'SONS';
+    END IF;
+    
+    -- BTNN: bog, treed, no permafrost, lawns not present
+    -- bad drainage, species is EE with density 25-40% and height >12m
+    IF CL_DRAIN = any(_bad_drainage) AND gr_ess = 'EE' AND cl_den::double precision > 25 AND cl_den::double precision < 40 AND cl_haut::double precision <12 THEN
+      RETURN 'BTNN';
+    END IF;
+    
+    -- bog types
+    IF TYPE_ECO IN('RE39', 'TOB9D', 'TOB9L', 'TOB9N', 'TOB9U') THEN
+      RETURN 'BTNN';
+    END IF;
+    
+    -- FTNN: fen, treed, no permafrost, lawns not present
+    -- bad drainage, species are EME or MEE with density 25-40%
+    IF CL_DRAIN = any(_bad_drainage) AND gr_ess IN('EME', 'MEE') AND cl_den::double precision > 25 AND cl_den::double precision < 40 THEN
+      RETURN 'FTNN';
+    END IF;
+    
+    -- bad drainage, species is MEME with height less than 12
+    IF CL_DRAIN = any(_bad_drainage) AND gr_ess = 'MEME' AND cl_haut::double precision < 12 THEN
+      RETURN 'FTNN';
+    END IF;
+    
+    -- Fen type
+    IF TYPE_ECO IN('RE38', 'RS38', 'TOF8L', 'TOF8N', 'TOF8U') THEN
+      RETURN 'FTNN';
+    END IF;
+    
+    IF TYPE_ECO IN('TOF8A') THEN
+      RETURN 'FONS';
+    END IF;
+
+    IF TYPE_ECO IN('TO18') THEN
+      RETURN 'BONS';
+    END IF;
+    
+    -- STNN: swamp, treed, no permafrost, lawns not present
+    -- bad drainage and specific swamp species or types
+    IF CL_DRAIN = any(_bad_drainage) THEN
+      IF gr_ess IN('CC', 'CPU', 'CE', 'CME', 'RC', 'SC', 'CS', 'PUC', 'BBBB', 'EBB', 'BBBBE', 'BBE', 'BB1E') OR
+      (gr_ess IN('EE', 'MEME') AND cl_den::double precision > 40) OR
+      gr_ess IN('FNC', 'BJ', 'FH', 'FT', 'BB', 'BB1', 'PE', 'PE1', 'FI') OR
+      TYPE_ECO IN('FE10', 'FE20', 'FE30', 'FE50', 'FE60', 'FC10', 'MJ10', 'MS10', 'MS20', 'MS40', 'MS60', 'MS70', 'RB50', 'RP10', 'RS20', 'RS20S', 'RS40', 'RS50', 'RS70', 'RT10', 'RE20', 'RE40', 'RE70') OR
+      (gr_ess IN('EC', 'EPU', 'EME', 'RME', 'SE', 'ES', 'RE', 'MEE', 'MEC') AND cl_den::double precision > 40 AND cl_haut::double precision < 12) THEN
+        RETURN 'STNN';
+      END IF;
+    END IF;
+    
+    -- swamp types
+    IF TYPE_ECO IN('RS37', 'RS39', 'RS18', 'RE37', 'RC38', 'MJ18', 'MF18', 'FO18', 'MS18', 'MS18P', 'MS28', 'MS68') THEN
+      RETURN 'STNN';
+    END IF;
+    
+    RETURN NULL;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_wetland_code_translation(text, text)
+--
+-- Take the 4 letter wetland code and translate the requested character
+--
+-- e.g. TT_wetland_code_translation('BTNN', '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_wetland_code_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_wetland_code_translation(
+  wetland_code text,
+  ret_char_pos text
+)
+RETURNS text AS $$
+  DECLARE
+    _wetland_char text;
+  BEGIN
+
+    IF wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    _wetland_char = substring(wetland_code from ret_char_pos::int for 1);
+    
+    IF _wetland_char = '-' THEN
+      RETURN NULL;
+    END IF;
+	  
+    CASE WHEN ret_char_pos = '1' THEN -- WETLAND_TYPE
+	         RETURN TT_MapText(_wetland_char, '{''B'', ''F'', ''S'', ''M'', ''O'', ''T'', ''E'', ''W'', ''Z''}', '{''BOG'', ''FEN'', ''SWAMP'', ''MARSH'', ''SHALLOW_WATER'', ''TIDAL_FLATS'', ''ESTUARY'', ''WETLAND'', ''NOT_WETLAND''}');
+	       WHEN ret_char_pos = '2' THEN -- WET_VEG_COVER
+	         RETURN TT_MapText(_wetland_char, '{''F'', ''T'', ''O'', ''C'', ''M''}', '{''FORESTED'', ''WOODED'', ''OPEN_NON_TREED_FRESHWATER'', ''OPEN_NON_TREED_COASTAL'', ''MUD''}');
+	       WHEN ret_char_pos = '3' THEN -- WET_LANDFORM_MOD
+	         RETURN TT_MapText(_wetland_char, '{''X'', ''P'', ''N'', ''A''}', '{''PERMAFROST_PRESENT'', ''PATTERNING_PRESENT'', ''NO_PERMAFROST_PATTERNING'', ''SALINE_ALKALINE''}');
+	       WHEN ret_char_pos = '4' THEN -- WET_LOCAL_MOD
+	         RETURN TT_MapText(_wetland_char, '{''C'', ''R'', ''I'', ''N'', ''S'', ''G''}', '{''INT_LAWN_SCAR'', ''INT_LAWN_ISLAND'', ''INT_LAWN'', ''NO_LAWN'', ''SHRUB_COVER'', ''GRAMINOIDS''}');
+	  END CASE;    
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_qc_ipf_wetland_translation(text, text, text, text, text, text, text)
+--
+-- CO_TER text,
+-- CL_DRAIN text,
+-- gr_ess text,
+-- cl_dens text,
+-- cl_haut text,
+-- TYPE_ECO text
+--
+-- Get the wetland code and check it matches one of the expected values
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_translation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_wetland_translation(
+  CO_TER text,
+  CL_DRAIN text,
+  gr_ess text,
+  cl_dens text,
+  cl_haut text,
+  TYPE_ECO text,
+  ret_char text
+)
+RETURNS text AS $$
+  DECLARE
+    _wetland_code text;
+  BEGIN
+  
+    _wetland_code = TT_qc_ipf_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_dens, cl_haut, TYPE_ECO);
+    
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    RETURN TT_wetland_code_translation(_wetland_code, ret_char);
+    
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
