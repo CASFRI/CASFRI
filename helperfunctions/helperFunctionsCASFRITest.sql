@@ -2288,7 +2288,7 @@ UNION ALL
 SELECT '54.3'::text number,
        'TT_fvi01_structure_per'::text function_tested,
        'Test H and 0'::text description,
-       TT_fvi01_structure_per('H', '0') = 0 passed
+       TT_fvi01_structure_per('H', '0') = 100 passed
 ---------------------------------------------------------
  -- TT_fvi01_structure_per_validation
 ---------------------------------------------------------
