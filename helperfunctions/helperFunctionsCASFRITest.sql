@@ -63,12 +63,12 @@ WITH test_nb AS (
     SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 23 nb_test UNION ALL
     SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_tie01_crownclosure_translation'::text function_tested,        18 maj_num,  8 nb_test UNION ALL
-    SELECT 'TT_tie01_height_translation'::text function_tested,              19 maj_num,  9 nb_test UNION ALL
-    SELECT 'TT_tie01_2layer_age_codes_validation'::text function_tested,     20 maj_num,  8 nb_test UNION ALL
-    SELECT 'TT_tie01_not_etage_notnull_validation'::text function_tested,    21 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_tie01_not_etage_layer1_validation'::text function_tested,     22 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_tie01_not_etage_dens_layers_validation'::text function_tested,23 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_qc_ipf_crownclosure_translation'::text function_tested,        18 maj_num,  8 nb_test UNION ALL
+    SELECT 'TT_qc_ipf_height_translation'::text function_tested,              19 maj_num,  9 nb_test UNION ALL
+    SELECT 'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,     20 maj_num,  8 nb_test UNION ALL
+    SELECT 'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,    21 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,     22 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,23 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  7 nb_test UNION ALL
     SELECT 'TT_fim_species_translation'::text function_tested,               25 maj_num,  6 nb_test UNION ALL
     SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  5 nb_test UNION ALL
@@ -100,7 +100,8 @@ WITH test_nb AS (
     SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test UNION ALL
     SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_fvi01_structure_per_validation'::text function_tested,        55 maj_num,  2 nb_test
+    SELECT 'TT_fvi01_structure_per_validation'::text function_tested,        55 maj_num,  2 nb_test UNION ALL
+    SELECT 'TT_wetland_code_translation'::text function_tested,              56 maj_num,  6 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -891,250 +892,262 @@ SELECT '17.4'::text number,
        TT_vri01_dist_yr_translation('B17', '16') = 1917::int passed
 ---------------------------------------------------------
 ---------------------------------------------------------
-  -- TT_tie01_crownclosure_translation
+  -- TT_qc_ipf_crownclosure_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.1'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'Test num_of_layers 1, layer 1 in_etage'::text description,
-       TT_tie01_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'NULL', 'VIR', 'NULL', '85', 'NULL', 'A', '1', 'lower') = 85::int passed
+       TT_qc_ipf_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', NULL::text, '85', NULL::text, 'A', '1', 'lower') = 85::int passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.2'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'Test num_of_layers 1, layer 2 in_etage'::text description,
-       TT_tie01_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', 'NULL', 'VIR', NULL, '85', NULL, 'A', '2', 'lower') IS NULL passed
+       TT_qc_ipf_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', 'NULL', 'VIR', NULL::text, '85', NULL::text, 'A', '2', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.3'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'Test num_of_layers 2, layer 1 sup in_etage'::text description,
-       TT_tie01_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', 'VIN', '10', '85', '100', 'A', '1', 'lower') = 85 passed
+       TT_qc_ipf_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', 'VIN', '10', '85', '100', 'A', '1', 'lower') = 85 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.4'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'Test num_of_layers 2, layer 1 inf in_etage'::text description,
-       TT_tie01_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', '10', 'VIN', '85', '100', 'A', '1', 'lower') = 100 passed
+       TT_qc_ipf_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', '10', 'VIN', '85', '100', 'A', '1', 'lower') = 100 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.5'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'Test not in_etage, 1 layer, layer 1'::text description,
-       TT_tie01_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', 'NULL', 'NULL', 'NULL', 'NULL', 'NULL', 'A', '1', 'lower') = 80 passed
+       TT_qc_ipf_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '1', 'lower') = 80 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.6'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'Test not in_etage, 2 layers'::text description,
-       TT_tie01_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', 'NULL', 'NULL', 'NULL', 'NULL', 'NULL', 'A', '1', 'lower') IS NULL passed
+       TT_qc_ipf_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '1', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.7'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'Test not in_etage, 1 layer, layer 2'::text description,
-       TT_tie01_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', 'NULL', 'NULL', 'NULL', 'NULL', 'NULL', 'A', '2', 'lower') IS NULL passed
+       TT_qc_ipf_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '2', 'lower') IS NULL passed
   ---------------------------------------------------------
 UNION ALL
 SELECT '18.8'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'cl_age doesn`t match'::text description,
-       TT_tie01_crownclosure_translation('VIN20', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'NULL', 'VIR', '10', '15', '20', '1', '1', 'lower') IS NULL passed
+       TT_qc_ipf_crownclosure_translation('VIN20', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', '10', '15', '20', '1', '1', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.9'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'Test using et_domi'::text description,
-       TT_tie01_crownclosure_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'SUP', '', '', '85', '80', 'A', '1', 'lower') = 85::int passed
+       TT_qc_ipf_crownclosure_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'SUP', '', '', '85', '80', 'A', '1', 'lower') = 85::int passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '18.10'::text number,
-       'TT_tie01_crownclosure_translation'::text function_tested,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
        'test using et_domi INF'::text description,
-       TT_tie01_crownclosure_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'INF', '', '', '85', '80', 'A', '1', 'lower') = 80::int passed
+       TT_qc_ipf_crownclosure_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'INF', '', '', '85', '80', 'A', '1', 'lower') = 80::int passed
+---------------------------------------------------------
+UNION ALL
+SELECT '18.11'::text number,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
+       'Test in_etage, 2 layers, same ages, layer 1'::text description,
+       TT_qc_ipf_crownclosure_translation('1010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, '10', '10', '85', '100', 'A', '1', 'lower') = 85 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '18.12'::text number,
+       'TT_qc_ipf_crownclosure_translation'::text function_tested,
+       'Test in_etage, 2 layers, same ages, layer 2'::text description,
+       TT_qc_ipf_crownclosure_translation('1010', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', NULL::text, '10', '10', '85', '100', 'A', '2', 'lower') IS NULL passed
 ---------------------------------------------------------
 ---------------------------------------------------------
-  -- TT_tie01_height_translation
+  -- TT_qc_ipf_height_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.1'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test num_of_layers 1, layer 1 in_etage'::text description,
-       TT_tie01_height_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', 'NULL', '15', 'NULL', '1', '1', 'lower') = 15 passed
+       TT_qc_ipf_height_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', 'NULL', '15', 'NULL', '1', '1', 'lower') = 15 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.2'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test num_of_layers 1, layer 2 in_etage'::text description,
-       TT_tie01_height_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', NULL::text, 'VIR', NULL::text, '15', NULL::text, '1', '2', 'lower') IS NULL passed
+       TT_qc_ipf_height_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', NULL::text, 'VIR', NULL::text, '15', NULL::text, '1', '2', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.3'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test num_of_layers 2, layer 1 sup in_etage'::text description,
-       TT_tie01_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', 'VIN', '10', '15', '100', '1', '1', 'lower') = 15 passed
+       TT_qc_ipf_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', 'VIN', '10', '15', '100', '1', '1', 'lower') = 15 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.4'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test num_of_layers 2, layer 1 inf in_etage'::text description,
-       TT_tie01_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', '10', 'VIN', '15', '100', '1', '1', 'lower') = 100 passed
+       TT_qc_ipf_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', '10', 'VIN', '15', '100', '1', '1', 'lower') = 100 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.5'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test not in_etage, 1 layer, layer 1'::text description,
-       TT_tie01_height_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '1', '1', 'lower') = 22 passed
+       TT_qc_ipf_height_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '1', '1', 'lower') = 22 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.6'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test not in_etage, 2 layers, layer 1'::text description,
-       TT_tie01_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '7', '1', 'upper') = 2 passed
+       TT_qc_ipf_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '7', '1', 'upper') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.7'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test not in_etage, 2 layers, layer 2'::text description,
-       TT_tie01_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '7', '2', 'upper') IS NULL passed
+       TT_qc_ipf_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '7', '2', 'upper') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.8'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test not in_etage, 1 layer, layer 2'::text description,
-       TT_tie01_height_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '1', '2', 'lower') IS NULL passed
+       TT_qc_ipf_height_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '1', '2', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.9'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'cl_age doesn`t match'::text description,
-       TT_tie01_height_translation('VIN20', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', '10', '15', '20', '1', '1', 'lower') IS NULL passed
+       TT_qc_ipf_height_translation('VIN20', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', '10', '15', '20', '1', '1', 'lower') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.10'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'Test using et_domi'::text description,
-       TT_tie01_height_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'SUP', '', '', '15', '20', 'A', '1', 'lower') = 15::int passed
+       TT_qc_ipf_height_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'SUP', '', '', '15', '20', 'A', '1', 'lower') = 15::int passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '19.11'::text number,
-       'TT_tie01_height_translation'::text function_tested,
+       'TT_qc_ipf_height_translation'::text function_tested,
        'test using et_domi INF'::text description,
-       TT_tie01_height_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'INF', '', '', '15', '20', 'A', '1', 'lower') = 20::int passed
+       TT_qc_ipf_height_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'INF', '', '', '15', '20', 'A', '1', 'lower') = 20::int passed
 ---------------------------------------------------------
 ---------------------------------------------------------
-  -- TT_tie01_2layer_age_codes_validation
+  -- TT_qc_ipf_2layer_age_codes_validation
 ---------------------------------------------------------
 UNION ALL
 SELECT '20.1'::text number,
-       'TT_tie01_2layer_age_codes_validation'::text function_tested,
+       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
        'Only 1 layer, rule is skipped so should return true'::text description,
-       TT_tie01_2layer_age_codes_validation('VIR', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', 'NULL') passed
+       TT_qc_ipf_2layer_age_codes_validation('VIR', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', 'NULL') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '20.2'::text number,
-       'TT_tie01_2layer_age_codes_validation'::text function_tested,
+       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
        'Codes match'::text description,
-       TT_tie01_2layer_age_codes_validation('VIR10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', '10') passed
+       TT_qc_ipf_2layer_age_codes_validation('VIR10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', '10') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '20.3'::text number,
-       'TT_tie01_2layer_age_codes_validation'::text function_tested,
+       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
        'Codes match'::text description,
-       TT_tie01_2layer_age_codes_validation('VIR10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '10', 'VIN') passed
+       TT_qc_ipf_2layer_age_codes_validation('VIR10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '10', 'VIN') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '20.4'::text number,
-       'TT_tie01_2layer_age_codes_validation'::text function_tested,
+       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
        'Codes dont match'::text description,
-       TT_tie01_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', 'VIN') IS FALSE passed
+       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', 'VIN') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '20.5'::text number,
-       'TT_tie01_2layer_age_codes_validation'::text function_tested,
+       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
        'Codes dont match'::text description,
-       TT_tie01_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '10', '10') IS FALSE passed
+       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '10', '10') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '20.6'::text number,
-       'TT_tie01_2layer_age_codes_validation'::text function_tested,
+       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
        'Codes dont match'::text description,
-       TT_tie01_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '', '') IS FALSE passed
+       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '', '') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '20.7'::text number,
-       'TT_tie01_2layer_age_codes_validation'::text function_tested,
+       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
        'et_domi not null'::text description,
-       TT_tie01_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', 'VAL', '', '') passed
+       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', 'VAL', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '20.8'::text number,
-       'TT_tie01_2layer_age_codes_validation'::text function_tested,
+       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
        'Should still run test if et_domi is EQU'::text description,
-       TT_tie01_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', 'EQU', '', '') IS FALSE passed
+       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', 'EQU', '', '') IS FALSE passed
 ---------------------------------------------------------
 ---------------------------------------------------------
-  -- TT_tie01_not_etage_notnull_validation
+  -- TT_qc_ipf_not_etage_notnull_validation
 ---------------------------------------------------------
 UNION ALL
 SELECT '21.1'::text number,
-       'TT_tie01_not_etage_notnull_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,
        'Test not null'::text description,
-       TT_tie01_not_etage_notnull_validation('N', 'val') passed
+       TT_qc_ipf_not_etage_notnull_validation('N', 'val') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '21.2'::text number,
-       'TT_tie01_not_etage_notnull_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,
        'Test null'::text description,
-       TT_tie01_not_etage_notnull_validation('N', NULL::text) IS FALSE passed
+       TT_qc_ipf_not_etage_notnull_validation('N', NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '21.3'::text number,
-       'TT_tie01_not_etage_notnull_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,
        'Test in_etage = O'::text description,
-       TT_tie01_not_etage_notnull_validation('O', NULL::text) passed
+       TT_qc_ipf_not_etage_notnull_validation('O', NULL::text) passed
 --------------------------------------------------------
 ---------------------------------------------------------
-  -- TT_tie01_not_etage_layer1_validation
+  -- TT_qc_ipf_not_etage_layer1_validation
 ---------------------------------------------------------
 UNION ALL
 SELECT '22.1'::text number,
-       'TT_tie01_not_etage_layer1_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,
        'Test layer = 1'::text description,
-       TT_tie01_not_etage_layer1_validation('N', '1') passed
+       TT_qc_ipf_not_etage_layer1_validation('N', '1') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '22.2'::text number,
-       'TT_tie01_not_etage_layer1_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,
        'Test layer = 2'::text description,
-       TT_tie01_not_etage_layer1_validation('N', '2') IS FALSE passed
+       TT_qc_ipf_not_etage_layer1_validation('N', '2') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '22.3'::text number,
-       'TT_tie01_not_etage_layer1_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,
        'in etage = O'::text description,
-       TT_tie01_not_etage_layer1_validation('O', '2') passed
+       TT_qc_ipf_not_etage_layer1_validation('O', '2') passed
 ---------------------------------------------------------
 ---------------------------------------------------------
-  -- TT_tie01_not_etage_dens_layers_validation
+  -- TT_qc_ipf_not_etage_dens_layers_validation
 ---------------------------------------------------------
 UNION ALL
 SELECT '23.1'::text number,
-       'TT_tie01_not_etage_dens_layers_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,
        'In etage = O'::text description,
-       TT_tie01_not_etage_dens_layers_validation('O', '10', 'public', 'test_lookup_qc_stdstr') passed
+       TT_qc_ipf_not_etage_dens_layers_validation('O', '10', 'public', 'test_lookup_qc_stdstr') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '23.2'::text number,
-       'TT_tie01_not_etage_dens_layers_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,
        'In etage = N, num_of_layers = 1'::text description,
-       TT_tie01_not_etage_dens_layers_validation('N', '10', 'public', 'test_lookup_qc_stdstr') passed
+       TT_qc_ipf_not_etage_dens_layers_validation('N', '10', 'public', 'test_lookup_qc_stdstr') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '23.3'::text number,
-       'TT_tie01_not_etage_dens_layers_validation'::text function_tested,
+       'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,
        'In etage = N, num_of_layers = 2'::text description,
-       TT_tie01_not_etage_dens_layers_validation('N', '1010', 'public', 'test_lookup_qc_stdstr') IS FALSE passed
+       TT_qc_ipf_not_etage_dens_layers_validation('N', '1010', 'public', 'test_lookup_qc_stdstr') IS FALSE passed
 ---------------------------------------------------------
 ---------------------------------------------------------
   -- TT_fim_species_code
@@ -2304,7 +2317,241 @@ SELECT '55.2'::text number,
        'Test fail'::text description,
        TT_fvi01_structure_per_validation('H', '2') IS FALSE passed
 ---------------------------------------------------------
-
+ -- TT_wetland_code_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '56.1'::text number,
+       'TT_wetland_code_translation'::text function_tested,
+       'Test char 1'::text description,
+       TT_wetland_code_translation('BTNN', '1') = 'BOG' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '56.2'::text number,
+       'TT_wetland_code_translation'::text function_tested,
+       'Test char 2'::text description,
+       TT_wetland_code_translation('BTNN', '2') = 'WOODED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '56.3'::text number,
+       'TT_wetland_code_translation'::text function_tested,
+       'Test char 3'::text description,
+       TT_wetland_code_translation('BTNN', '3') = 'NO_PERMAFROST_PATTERNING' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '56.4'::text number,
+       'TT_wetland_code_translation'::text function_tested,
+       'Test char 4'::text description,
+       TT_wetland_code_translation('BTNN', '4') = 'NO_LAWN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '56.5'::text number,
+       'TT_wetland_code_translation'::text function_tested,
+       'Test dash'::text description,
+       TT_wetland_code_translation('BTN-', '4') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '56.6'::text number,
+       'TT_wetland_code_translation'::text function_tested,
+       'Test null'::text description,
+       TT_wetland_code_translation(NULL::text, '4') IS NULL passed
+---------------------------------------------------------
+ -- TT_qc_ipf_wetland_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '57.1'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test all empty'::text description,
+       TT_qc_ipf_wetland_validation('', '', '', '', '', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.2'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test all NULL'::text description,
+       TT_qc_ipf_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.3'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test SONS 1'::text description,
+       TT_qc_ipf_wetland_validation('DH', '', '', '', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.4'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test SONS 2'::text description,
+       TT_qc_ipf_wetland_validation('AL', '50', '', '', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.5'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test SONS 3'::text description,
+       TT_qc_ipf_wetland_validation('', '50', 'EE', '30', '10', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.6'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test FTNN 1'::text description,
+       TT_qc_ipf_wetland_validation('', '50', 'EME', '30', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.7'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test FTNN 2'::text description,
+       TT_qc_ipf_wetland_validation('', '50', 'MEME', '', '10', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.8'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test FTNN 3'::text description,
+       TT_qc_ipf_wetland_validation('', '', '', '', '', 'RE38') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.9'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test FONS 1'::text description,
+       TT_qc_ipf_wetland_validation('', '', '', '', '', 'TOF8A') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.9'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test BONS 1'::text description,
+       TT_qc_ipf_wetland_validation('', '', '', '', '', 'TO18') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.10'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test STNN 1'::text description,
+       TT_qc_ipf_wetland_validation('', '50', 'CC', '', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.10'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test STNN 2'::text description,
+       TT_qc_ipf_wetland_validation('', '50', 'EE', '50', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.11'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test STNN 3'::text description,
+       TT_qc_ipf_wetland_validation('', '50', 'BJ', '', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.12'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test STNN 4'::text description,
+       TT_qc_ipf_wetland_validation('', '50', '', '', '', 'FE10') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.13'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test STNN 5'::text description,
+       TT_qc_ipf_wetland_validation('', '50', 'EC', '50', '10', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.14'::text number,
+       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'Test STNN 6'::text description,
+       TT_qc_ipf_wetland_validation('', '', '', '', '', 'FO18') passed
+---------------------------------------------------------
+ -- TT_qc_ipf_wetland_code_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '57.1'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test all empty'::text description,
+       TT_qc_ipf_wetland_translation('', '', '', '', '', '', '') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.2'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test all NULL'::text description,
+       TT_qc_ipf_wetland_translation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.3'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test SONS 1'::text description,
+       TT_qc_ipf_wetland_translation('DH', '', '', '', '', '', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.4'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test SONS 2'::text description,
+       TT_qc_ipf_wetland_translation('AL', '50', '', '', '', '', '2') = 'OPEN_NON_TREED_FRESHWATER' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.5'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test SONS 3'::text description,
+       TT_qc_ipf_wetland_translation('', '50', 'EE', '30', '10', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.6'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test FTNN 1'::text description,
+       TT_qc_ipf_wetland_translation('', '50', 'EME', '30', '', '', '4') = 'NO_LAWN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.7'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test FTNN 2'::text description,
+       TT_qc_ipf_wetland_translation('', '50', 'MEME', '', '10', '', '1') = 'FEN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.8'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test FTNN 3'::text description,
+       TT_qc_ipf_wetland_translation('', '', '', '', '', 'RE38', '2') = 'WOODED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.9'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test FONS 1'::text description,
+       TT_qc_ipf_wetland_translation('', '', '', '', '', 'TOF8A', '3') = 'NO_PERMAFROST_PATTERNING' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.9'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test BONS 1'::text description,
+       TT_qc_ipf_wetland_translation('', '', '', '', '', 'TO18', '4') = 'SHRUB_COVER' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.10'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test STNN 1'::text description,
+       TT_qc_ipf_wetland_translation('', '50', 'CC', '', '', '', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.10'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test STNN 2'::text description,
+       TT_qc_ipf_wetland_translation('', '50', 'EE', '50', '', '', '2') = 'WOODED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.11'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test STNN 3'::text description,
+       TT_qc_ipf_wetland_translation('', '50', 'BJ', '', '', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.12'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test STNN 4'::text description,
+       TT_qc_ipf_wetland_translation('', '50', '', '', '', 'FE10', '4') = 'NO_LAWN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.13'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test STNN 5'::text description,
+       TT_qc_ipf_wetland_translation('', '50', 'EC', '50', '10', '', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '57.14'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test STNN 6'::text description,
+       TT_qc_ipf_wetland_translation('', '', '', '', '', 'FO18', '2') = 'WOODED' passed
+  
+  
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
