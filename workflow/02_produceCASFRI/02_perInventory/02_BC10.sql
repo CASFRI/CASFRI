@@ -154,7 +154,7 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'BC10';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all --*h**m
-SELECT * FROM TT_Translate_bc10_geo('rawfri', 'bc10_l1_to_bc_l1_map_geo', 'ogc_fid');
+SELECT * FROM TT_Translate_bc10_geo('rawfri', 'bc10_l1_to_bc_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_geo', 'bc10_l1_to_bc_l1_map');
 COMMIT;

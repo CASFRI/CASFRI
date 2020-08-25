@@ -58,24 +58,24 @@ fullTargetTableName=$targetFRISchema.nb02
 if [ ! -e "$friDir/$NB_subFolder/poly_id_added.txt" ]; then
 
 	# Waterbody
-	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater DROP COLUMN poly_id"
-	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE $srcNameWater ADD COLUMN poly_id integer"
-	"$gdalFolder/ogrinfo" $srcWaterFullPath -dialect SQLite -sql "UPDATE $srcNameWater set poly_id = rowid+1"
+	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE \"$srcNameWater\" DROP COLUMN poly_id"
+	"$gdalFolder/ogrinfo" $srcWaterFullPath -sql "ALTER TABLE \"$srcNameWater\" ADD COLUMN poly_id integer"
+	"$gdalFolder/ogrinfo" $srcWaterFullPath -dialect SQLite -sql "UPDATE \"$srcNameWater\" set poly_id = rowid+1"
 
 	# Non forest
-	"$gdalFolder/ogrinfo" $srcNonForestFullPath -sql "ALTER TABLE $srcNameNonForest DROP COLUMN poly_id"
-	"$gdalFolder/ogrinfo" $srcNonForestFullPath -sql "ALTER TABLE $srcNameNonForest ADD COLUMN poly_id integer"
-	"$gdalFolder/ogrinfo" $srcNonForestFullPath -dialect SQLite -sql "UPDATE $srcNameNonForest set poly_id = rowid+1"
+	"$gdalFolder/ogrinfo" $srcNonForestFullPath -sql "ALTER TABLE \"$srcNameNonForest\" DROP COLUMN poly_id"
+	"$gdalFolder/ogrinfo" $srcNonForestFullPath -sql "ALTER TABLE \"$srcNameNonForest\" ADD COLUMN poly_id integer"
+	"$gdalFolder/ogrinfo" $srcNonForestFullPath -dialect SQLite -sql "UPDATE \"$srcNameNonForest\" set poly_id = rowid+1"
 
 	# wetland
-	"$gdalFolder/ogrinfo" $srcWetlandFullPath -sql "ALTER TABLE $srcNameWetland DROP COLUMN poly_id"
-	"$gdalFolder/ogrinfo" $srcWetlandFullPath -sql "ALTER TABLE $srcNameWetland ADD COLUMN poly_id integer"
-	"$gdalFolder/ogrinfo" $srcWetlandFullPath -dialect SQLite -sql "UPDATE $srcNameWetland set poly_id = rowid+1"
+	"$gdalFolder/ogrinfo" $srcWetlandFullPath -sql "ALTER TABLE \"$srcNameWetland\" DROP COLUMN poly_id"
+	"$gdalFolder/ogrinfo" $srcWetlandFullPath -sql "ALTER TABLE \"$srcNameWetland\" ADD COLUMN poly_id integer"
+	"$gdalFolder/ogrinfo" $srcWetlandFullPath -dialect SQLite -sql "UPDATE \"$srcNameWetland\" set poly_id = rowid+1"
 
 	# Forest
-	"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE $srcNameForest DROP COLUMN poly_id"
-	"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE $srcNameForest ADD COLUMN poly_id integer"
-	"$gdalFolder/ogrinfo" $srcForestFullPath -dialect SQLite -sql "UPDATE $srcNameForest set poly_id = rowid+1"
+	"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE \"$srcNameForest\" DROP COLUMN poly_id"
+	"$gdalFolder/ogrinfo" $srcForestFullPath -sql "ALTER TABLE \"$srcNameForest\" ADD COLUMN poly_id integer"
+	"$gdalFolder/ogrinfo" $srcForestFullPath -dialect SQLite -sql "UPDATE \"$srcNameForest\" set poly_id = rowid+1"
 	
 	echo " " > "$friDir/$NB_subFolder/poly_id_added.txt"
 fi

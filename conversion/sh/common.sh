@@ -24,7 +24,7 @@ prjFile="$scriptDir/../canadaAlbersEqualAreaConic.prj"
 
 pg_connection_string="PG:host=$pghost port=$pgport dbname=${pgdbname} user=${pguser} password=${pgpassword}"
 
-layer_creation_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry"
+layer_creation_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry -lco FID=ogc_fid"
 
 other_options="-t_srs $prjFile"
 
