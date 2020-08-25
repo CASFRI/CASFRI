@@ -34,13 +34,9 @@ srcFullPath_L1="$friDir/BC/$inventoryID/data/inventory/$srcFileName_L1.gdb"
 srcFileName_L2=${srcFileName}_L2_POLY
 srcFullPath_L2="$friDir/BC/$inventoryID/data/inventory/$srcFileName_L2.gdb"
 
-srcFileName_D=${srcFileName}_D_POLY
-srcFullPath_D="$friDir/BC/$inventoryID/data/inventory/$srcFileName_D.gdb"
-
 fullTargetTableName=$targetFRISchema.bc10
 tableName_L1=${fullTargetTableName}_layer_1
 tableName_L2=${fullTargetTableName}_layer_2
-tableName_D=${fullTargetTableName}_layer_d
 
 ########################################## Process ######################################
 
