@@ -3687,26 +3687,27 @@ RETURNS int AS $$
     is_nfl3 text;
   BEGIN
 
-    -- if non_for_veg is present, add a string.
-    IF tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
+    -- if nat_non_veg is present, add a string.
+    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
       is_nfl1 = 'a_value';
     ELSE
       is_nfl1 = NULL::text;
     END IF;
 
-    -- if nat_non_veg is present, add a string.
-    IF tt_vri01_nat_non_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
+    -- if non_for_anth is present, add a string.
+    IF tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
       is_nfl2 = 'a_value';
     ELSE
       is_nfl2 = NULL::text;
     END IF;
 
-    -- if non_for_anth is present, add a string.
-    IF tt_vri01_non_for_anth_validation(inventory_standard_cd, land_cover_class_cd_1, non_productive_descriptor_cd, non_veg_cover_type_1) THEN
+    -- if non_for_veg is present, add a string.
+    IF tt_vri01_non_for_veg_validation(inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd) THEN
       is_nfl3 = 'a_value';
     ELSE
       is_nfl3 = NULL::text;
     END IF;
+
     
     -- call countOfNotNull
     -- WE HAVE UPDATED BC08 TO INCLUDE ALL LAYER TABLES. IF WE TRANSLATE ANY OF THE OLD RANK1 LAYER1 DATASETS FROM BC WE WILL NEED TO UNCOMMENT THE FOLLOWING LINES
