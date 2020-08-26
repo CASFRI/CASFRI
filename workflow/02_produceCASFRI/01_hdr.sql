@@ -38,7 +38,7 @@ DROP TABLE IF EXISTS casfri50.hdr_all CASCADE;
 CREATE TABLE casfri50.hdr_all AS -- 1 s
 SELECT inventory_id, jurisdiction, owner_name, standard_type, standard_version, 
        standard_id, standard_revision, documentation_titles, src_data_format, 
-       production_years, publication_date, acquisition_date, acquisition_type, acquisition_link, contact_info, 
+       production_years, publication_date, acquisition_date, acquisition_type, acquisition_links, contact_info, 
        data_availability, redistribution, permission, license_agreement, 
        photo_year_start, photo_year_end, photo_year_src
 FROM translation.inventory_list_cas05

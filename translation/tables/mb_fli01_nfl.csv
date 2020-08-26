@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(map_sheet_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,VRAI
 2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,VRAI
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,VRAI
-4,LAYER,integer,true(),"mb_fli01_countOfNotNull({species_1, species_2, species_3, species_4, species_5}, landtype, layer, 'FALSE')",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,VRAI
+4,LAYER,integer,false(),nothingInt(),Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,VRAI
 5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,VRAI
 6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),Attribute does not occur,VRAI
 7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur,VRAI
