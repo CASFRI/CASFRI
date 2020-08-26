@@ -39,6 +39,7 @@ DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_validation(text, text, text, text, tex
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_HasNFLInfo(text, text, text);
+DROP FUNCTION IF EXISTS TT_row_translation_rule_nt_lyr(text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Translation functions
 -------------------------------------------------------------------------------

@@ -2546,6 +2546,37 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql;
 
+-------------------------------------------------------------------------------
+-- tt_row_translation_rule_nt_lyr
+-------------------------------------------------------------------------------
+-- typeclas
+-- species_1
+-- species_2
+-- species_3
+-- species_4
+--
+-- If typeclas is in TC, TB, TM, and species 1, 2, 3 or 4 is not empty, then the 
+-- row is a LYR row.
+-- Same for layer 2 but using mintypeclas, min sp1, 2, 3, 4.
+CREATE OR REPLACE FUNCTION TT_row_translation_rule_nt_lyr(
+  typeclas text,
+  sp1 text,
+  sp2 text,
+  sp3 text,
+  sp4 text
+)
+RETURNS boolean AS $$
+  BEGIN
+  
+    IF typeclas IN('TB','TM','TC') AND (tt_notEmpty(sp1) OR tt_notEmpty(sp2) OR tt_notEmpty(sp3) OR tt_notEmpty(sp4)) THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+    
+  END; 
+$$ LANGUAGE plpgsql;
+
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -3557,6 +3588,8 @@ $$ LANGUAGE sql IMMUTABLE;
 -- Use match list to determine if typeclas and min_typeclas are NFL values.
 -- If they are assign them a string so they are counted as layers. If not assign
 -- NULL.
+-- Same for LYR, check typeclas and min_typeclass are forets types. If not, don`t
+-- count the layer.
 -- 
 -- Pass vals1, vals2 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
@@ -3570,30 +3603,50 @@ CREATE OR REPLACE FUNCTION TT_fvi01_countOfNotNull(
 )
 RETURNS int AS $$
   DECLARE
+    lyr_string_list text;
     nfl_string_list text;
-    _typeclas text;
-    _min_typeclas text;
+    _lyr1 text;
+    _lyr2 text;
+    _is_nfl1 text;
+    _is_nfl2 text;
   BEGIN
+
+    -- set up lyr_string_list
+    lyr_string_list = '{''TC'',''TB'',''TM''}';
 
     -- set up nfl_string_list
     nfl_string_list = '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'',''SW'',''AP'',''BP'',''EL'',''GP'',''TS'',''RD'',''SH'',''SU'',''PM'',''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}';
     
-    -- is typeclas NFL?
-    IF tt_matchList(typeclas, nfl_string_list) THEN
-      _typeclas = 'a_value';
+    -- is LYR 1 present
+    IF tt_matchList(typeclas, lyr_string_list) THEN
+      _lyr1 = vals1;
     ELSE
-      _typeclas = NULL::text;
+      _lyr1 = NULL::text;
+    END IF;
+
+    -- is LYR 2 present
+    IF tt_matchList(min_typeclas, lyr_string_list) THEN
+      _lyr2 = vals2;
+    ELSE
+      _lyr2 = NULL::text;
+    END IF;
+
+    -- is NFL 1 present?
+    IF tt_matchList(typeclas, nfl_string_list) THEN
+      _is_nfl1 = 'a_value';
+    ELSE
+      _is_nfl1 = NULL::text;
     END IF;
     
-    -- is min_typeclas NFL?
+    -- is NFL 2 present?
     IF tt_matchList(min_typeclas, nfl_string_list) THEN
-      _min_typeclas = 'a_value';
+      _is_nfl2 = 'a_value';
     ELSE
-      _min_typeclas = NULL::text;
+      _is_nfl2 = NULL::text;
     END IF;
     
     -- call countOfNotNull
-    RETURN tt_countOfNotNull(vals1, vals2, _typeclas, _min_typeclas, max_rank_to_consider, 'FALSE');
+    RETURN tt_countOfNotNull(_lyr1, _lyr2, _is_nfl1, _is_nfl2, max_rank_to_consider, 'FALSE');
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;

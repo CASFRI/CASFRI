@@ -101,7 +101,10 @@ WITH test_nb AS (
     SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test UNION ALL
     SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_fvi01_structure_per_validation'::text function_tested,        55 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_wetland_code_translation'::text function_tested,              56 maj_num,  6 nb_test
+    SELECT 'TT_wetland_code_translation'::text function_tested,              56 maj_num,  6 nb_test UNION ALL
+    SELECT 'TT_qc_ipf_wetland_validation'::text function_tested,             57 maj_num,  14 nb_test UNION ALL
+    SELECT 'TT_qc_ipf_wetland_translation'::text function_tested,            58 maj_num,  14 nb_test UNION ALL
+    SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1476,32 +1479,45 @@ SELECT '33.3'::text number,
 UNION ALL
 SELECT '34.1'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
-       'Count of 4'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', 'ST', '4') = 4 passed
+       'Count of 2 NFL'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', 'ST', '4') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.2'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
-       'Count of 3'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', 'WRONG', '4') = 3 passed
+       'Count of 1'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', 'WRONG', '4') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.3'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
-       'Count of 3 with NULL'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', NULL::text, '4') = 3 passed
+       'Count of 2 LYR'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'TC', 'TM', '4') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.4'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
-       'Count of 2 with NULL and empty string'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', '', NULL::text, '4') = 2 passed
+       'Count of 1 LYR'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', '', 'TC', '4') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.5'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 0'::text description,
        TT_fvi01_countOfNotNull('{'''',''''}', '{'''',''''}', '', NULL::text, '4') = 0 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '34.6'::text number,
+       'TT_fvi01_countOfNotNull'::text function_tested,
+       'Count of 1 LYR 1 NFL'::text description,
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{'''',''''}', 'TB', 'SL', '4') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '34.7'::text number,
+       'TT_fvi01_countOfNotNull'::text function_tested,
+       'Count of 1 LYR but no values'::text description,
+       TT_fvi01_countOfNotNull('{'''',''''}', '{'''',''''}', 'TB', '', '4') = 0 passed
+
 ---------------------------------------------------------
 ---------------------------------------------------------
  -- TT_vri01_countOfNotNull
@@ -2008,14 +2024,14 @@ SELECT '45.5'::text number,
 UNION ALL
 SELECT '46.1'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
-       'Test 4 layers'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'SL', 'ST', '4', 'TRUE') passed
+       'Test 2 NFL layers'::text description,
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'SL', 'ST', '2', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.2'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
-       'Test 3 layers'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', 'ST', '3', 'TRUE') passed
+       'Test 1 NFL layers'::text description,
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', 'ST', '1', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.3'::text number,
@@ -2026,14 +2042,20 @@ SELECT '46.3'::text number,
 UNION ALL
 SELECT '46.4'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
-       'Test two layers exact false'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', '', '1', 'FALSE') passed
+       'Test two LYR layers'::text description,
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'TM', 'TM', '2', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.5'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
+       'Test two layers exact false'::text description,
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'TM', 'TM', '1', 'FALSE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '46.6'::text number,
+       'TT_fvi01_hasCountOfNotNull'::text function_tested,
        'Test two layers exact true'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', '', '1', 'TRUE') IS FALSE passed
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'TM', 'TM', '1', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
   -- TT_on_fim02_countOfNotNull
 ---------------------------------------------------------
@@ -2456,101 +2478,128 @@ SELECT '57.14'::text number,
  -- TT_qc_ipf_wetland_code_translation
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.1'::text number,
+SELECT '58.1'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test all empty'::text description,
        TT_qc_ipf_wetland_translation('', '', '', '', '', '', '') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.2'::text number,
+SELECT '58.2'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test all NULL'::text description,
        TT_qc_ipf_wetland_translation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.3'::text number,
+SELECT '58.3'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test SONS 1'::text description,
        TT_qc_ipf_wetland_translation('DH', '', '', '', '', '', '1') = 'SWAMP' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.4'::text number,
+SELECT '58.4'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test SONS 2'::text description,
        TT_qc_ipf_wetland_translation('AL', '50', '', '', '', '', '2') = 'OPEN_NON_TREED_FRESHWATER' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.5'::text number,
+SELECT '58.5'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test SONS 3'::text description,
        TT_qc_ipf_wetland_translation('', '50', 'EE', '30', '10', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.6'::text number,
+SELECT '58.6'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test FTNN 1'::text description,
        TT_qc_ipf_wetland_translation('', '50', 'EME', '30', '', '', '4') = 'NO_LAWN' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.7'::text number,
+SELECT '58.7'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test FTNN 2'::text description,
        TT_qc_ipf_wetland_translation('', '50', 'MEME', '', '10', '', '1') = 'FEN' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.8'::text number,
+SELECT '58.8'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test FTNN 3'::text description,
        TT_qc_ipf_wetland_translation('', '', '', '', '', 'RE38', '2') = 'WOODED' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.9'::text number,
+SELECT '58.9'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test FONS 1'::text description,
        TT_qc_ipf_wetland_translation('', '', '', '', '', 'TOF8A', '3') = 'NO_PERMAFROST_PATTERNING' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.9'::text number,
+SELECT '58.9'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test BONS 1'::text description,
        TT_qc_ipf_wetland_translation('', '', '', '', '', 'TO18', '4') = 'SHRUB_COVER' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.10'::text number,
+SELECT '58.10'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test STNN 1'::text description,
        TT_qc_ipf_wetland_translation('', '50', 'CC', '', '', '', '1') = 'SWAMP' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.10'::text number,
+SELECT '58.10'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test STNN 2'::text description,
        TT_qc_ipf_wetland_translation('', '50', 'EE', '50', '', '', '2') = 'WOODED' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.11'::text number,
+SELECT '58.11'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test STNN 3'::text description,
        TT_qc_ipf_wetland_translation('', '50', 'BJ', '', '', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.12'::text number,
+SELECT '58.12'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test STNN 4'::text description,
        TT_qc_ipf_wetland_translation('', '50', '', '', '', 'FE10', '4') = 'NO_LAWN' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.13'::text number,
+SELECT '58.13'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test STNN 5'::text description,
        TT_qc_ipf_wetland_translation('', '50', 'EC', '50', '10', '', '1') = 'SWAMP' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '57.14'::text number,
+SELECT '58.14'::text number,
        'TT_qc_ipf_wetland_translation'::text function_tested,
        'Test STNN 6'::text description,
        TT_qc_ipf_wetland_translation('', '', '', '', '', 'FO18', '2') = 'WOODED' passed
-  
+---------------------------------------------------------
+ -- TT_row_translation_rule_nt_lyr
+---------------------------------------------------------
+UNION ALL
+SELECT '59.1'::text number,
+       'TT_row_translation_rule_nt_lyr'::text function_tested,
+       'Test sp1 true'::text description,
+       TT_row_translation_rule_nt_lyr('TC', 'bf', '', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '59.2'::text number,
+       'TT_row_translation_rule_nt_lyr'::text function_tested,
+       'Test sp2 true'::text description,
+       TT_row_translation_rule_nt_lyr('TC', '', 'bf', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '59.3'::text number,
+       'TT_row_translation_rule_nt_lyr'::text function_tested,
+       'Test sp1 but not typeclas'::text description,
+       TT_row_translation_rule_nt_lyr('SL', '', 'bf', '', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '59.4'::text number,
+       'TT_row_translation_rule_nt_lyr'::text function_tested,
+       'Test typeclas but no sp'::text description,
+       TT_row_translation_rule_nt_lyr('TM', '', '', '', '') IS FALSE passed
+
+
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
