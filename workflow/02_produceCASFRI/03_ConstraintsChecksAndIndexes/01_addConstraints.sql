@@ -185,13 +185,20 @@ FROM (SELECT *
                         ARRAY['num_of_layers_greater_than_zero', 
                               '((stand_structure = ''MULTI_LAYERED'' OR 
                                  stand_structure = ''HORIZONTAL'' OR 
-                                 stand_structure = ''COMPLEX'') AND 
+                                 stand_structure = ''COMPLEX'' OR
+                                 stand_structure = ''SIMPLE'') AND 
                                 num_of_layers > 1) OR 
                                ((stand_structure = ''SINGLE_LAYERED'' OR 
-                                 stand_structure = ''COMPLEX'') AND 
+                                 stand_structure = ''COMPLEX'' OR
+                                 stand_structure = ''HORIZONTAL'') AND 
                                 num_of_layers = 1) OR 
                                num_of_layers = -8886 OR -- UNKNOWN_VALUE
                                stand_structure = ANY(TT_IsMissingOrNotInSetCode())']) AS (passed boolean, cstr_query text)) foo
+-- Multi-layered must have >1 layer
+-- Simple could have >1 if nfl is present
+-- Horizontal should have >1, but NT often only reports one horizontal component and we should report it.
+-- So horizontal can have 1.
+-- Complex could have >1 if NFL present
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.18'::text number,
