@@ -1949,6 +1949,8 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text,text,text,text,text,text);
 CREATE OR REPLACE FUNCTION TT_fvi01_stand_structure_validation(
   stand_structure text,
+  typeclas text,
+  mintypeclas text,
   species_1_layer1 text, 
   species_2_layer1 text, 
   species_3_layer1 text,
@@ -1957,17 +1959,26 @@ CREATE OR REPLACE FUNCTION TT_fvi01_stand_structure_validation(
   species_3_layer2 text
 )
 RETURNS boolean AS $$		
+  DECLARE
+    _nfl_codes text;
   BEGIN
+    
+    _nfl_codes = '{BE,BR,BU,CB,ES,LA,LL,LS,MO,MU,PO,RE,RI,RO,RS,RT,SW,AP,BP,EL,GP,TS,RD,SH,SU,PM,BL,BM,BY,HE,HF,HG,SL,ST}';
+
     -- if stand structure is Horozontal, always return true
     IF stand_structure IN ('H', 'h') THEN
       RETURN TRUE;
     END IF;
     
-    -- if any species info, return TRUE 
-    IF tt_notEmpty(species_1_layer1) OR tt_notEmpty(species_2_layer1) OR tt_notEmpty(species_3_layer1)
-     OR tt_notEmpty(species_1_layer2) OR tt_notEmpty(species_2_layer2) OR tt_notEmpty(species_3_layer2) THEN
+    -- if any layer 1 species info, return TRUE 
+    IF tt_notMatchList(typeclas, _nfl_codes) AND (tt_notEmpty(species_1_layer1) OR tt_notEmpty(species_2_layer1) OR tt_notEmpty(species_3_layer1)) THEN
       RETURN TRUE;
-    END IF;    
+    END IF;
+    
+    -- if any layer 2 species info, return TRUE 
+    IF tt_notMatchList(mintypeclas, _nfl_codes) AND (tt_notEmpty(species_1_layer2) OR tt_notEmpty(species_2_layer2) OR tt_notEmpty(species_3_layer2)) THEN
+      RETURN TRUE;
+    END IF;
     
     -- other cases return false
     RETURN FALSE;
@@ -2555,9 +2566,12 @@ $$ LANGUAGE plpgsql;
 -- species_3
 -- species_4
 --
--- If typeclas is in TC, TB, TM, and species 1, 2, 3 or 4 is not empty, then the 
+-- If typeclas is in not an nfl type, and species 1, 2, 3 or 4 is not empty, then the 
 -- row is a LYR row.
 -- Same for layer 2 but using mintypeclas, min sp1, 2, 3, 4.
+-- Note typeclas can be empty string or NULL and still have species info.
+-- We just want to avoid adding rows where typeclas is an NFL value and species
+-- are present.
 CREATE OR REPLACE FUNCTION TT_row_translation_rule_nt_lyr(
   typeclas text,
   sp1 text,
@@ -2568,7 +2582,8 @@ CREATE OR REPLACE FUNCTION TT_row_translation_rule_nt_lyr(
 RETURNS boolean AS $$
   BEGIN
   
-    IF typeclas IN('TB','TM','TC') AND (tt_notEmpty(sp1) OR tt_notEmpty(sp2) OR tt_notEmpty(sp3) OR tt_notEmpty(sp4)) THEN
+    IF typeclas NOT IN('BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST')
+    AND (tt_notEmpty(sp1) OR tt_notEmpty(sp2) OR tt_notEmpty(sp3) OR tt_notEmpty(sp4)) THEN
       RETURN TRUE;
     ELSE
       RETURN FALSE;
@@ -3556,6 +3571,58 @@ RETURNS text AS $$
   SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, NULL::text, NULL::text, NULL::text);
 $$ LANGUAGE sql IMMUTABLE;
 
+-- fvi signature - 2 layers, 3 species
+-- species should only be counted if typeclas is not NFL type
+-- DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_translation(text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_fvi01_stand_structure_translation(
+  stand_structure text,
+  typeclas text,
+  mintypeclas text,
+  layer1_sp1 text,
+  layer1_sp2 text,
+  layer1_sp3 text,
+  layer2_sp1 text,
+  layer2_sp2 text,
+  layer2_sp3 text
+)
+RETURNS text AS $$
+  DECLARE
+    _nfl_codes text[];
+    _layer1_sp1 text;
+    _layer1_sp2 text;
+    _layer1_sp3 text;
+    _layer2_sp1 text;
+    _layer2_sp2 text;
+    _layer2_sp3 text;
+  BEGIN
+    _nfl_codes = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
+    
+    -- if layer 1 is NFL set species to ''
+    IF typeclas = ANY(_nfl_codes) THEN
+      _layer1_sp1 = '';
+      _layer1_sp2 = '';
+      _layer1_sp3 = '';
+    ELSE
+      _layer1_sp1 = layer1_sp1;
+      _layer1_sp2 = layer1_sp2;
+      _layer1_sp3 = layer1_sp3;
+    END IF;
+
+    -- if layer 2 is NFL set species to ''
+    IF mintypeclas = ANY(_nfl_codes) THEN
+      _layer2_sp1 = '';
+      _layer2_sp2 = '';
+      _layer2_sp3 = '';
+    ELSE
+      _layer2_sp1 = layer1_sp1;
+      _layer2_sp2 = layer1_sp2;
+      _layer2_sp3 = layer1_sp3;
+    END IF;
+
+    RETURN TT_generic_stand_structure_translation(stand_structure, _layer1_sp1, _layer1_sp2, _layer1_sp3, _layer2_sp1, _layer2_sp2, _layer2_sp3, NULL::text, NULL::text, NULL::text);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 -- ON02 signature - 2 layers, 1 species
 CREATE OR REPLACE FUNCTION TT_fim02_stand_structure_translation(
   stand_structure text,
@@ -3588,8 +3655,9 @@ $$ LANGUAGE sql IMMUTABLE;
 -- Use match list to determine if typeclas and min_typeclas are NFL values.
 -- If they are assign them a string so they are counted as layers. If not assign
 -- NULL.
--- Same for LYR, check typeclas and min_typeclass are forets types. If not, don`t
--- count the layer.
+-- Same for LYR, check typeclas and min_typeclass are not nfl types. If they are
+-- we don't want to count the species as LYR layers because we'll be double counting
+-- the NFL veg.
 -- 
 -- Pass vals1, vals2 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
@@ -3611,21 +3679,18 @@ RETURNS int AS $$
     _is_nfl2 text;
   BEGIN
 
-    -- set up lyr_string_list
-    lyr_string_list = '{''TC'',''TB'',''TM''}';
-
     -- set up nfl_string_list
     nfl_string_list = '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'',''SW'',''AP'',''BP'',''EL'',''GP'',''TS'',''RD'',''SH'',''SU'',''PM'',''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}';
     
     -- is LYR 1 present
-    IF tt_matchList(typeclas, lyr_string_list) THEN
+    IF tt_notMatchList(typeclas, nfl_string_list) THEN
       _lyr1 = vals1;
     ELSE
       _lyr1 = NULL::text;
     END IF;
 
     -- is LYR 2 present
-    IF tt_matchList(min_typeclas, lyr_string_list) THEN
+    IF tt_notMatchList(min_typeclas, nfl_string_list) THEN
       _lyr2 = vals2;
     ELSE
       _lyr2 = NULL::text;
