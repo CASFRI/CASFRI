@@ -78,8 +78,8 @@ WITH test_nb AS (
     SELECT 'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,    30 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_avi01_stand_structure_validation'::text function_tested,      31 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_avi01_stand_structure_translation'::text function_tested,     32 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,      33 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_fvi01_countOfNotNull'::text function_tested,                  34 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,      33 maj_num,  7 nb_test UNION ALL
+    SELECT 'TT_fvi01_countOfNotNull'::text function_tested,                  34 maj_num,  7 nb_test UNION ALL
     SELECT 'TT_vri01_countOfNotNull'::text function_tested,                  35 maj_num, 17 nb_test UNION ALL
     SELECT 'TT_sk_utm01_species_percent_validation'::text function_tested,   36 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,  37 maj_num, 11 nb_test UNION ALL
@@ -1460,19 +1460,44 @@ UNION ALL
 SELECT '33.1'::text number,
        'TT_fvi01_stand_structure_validation'::text function_tested,
        'Test Horizontal stand'::text description,
-       TT_fvi01_stand_structure_validation('H', '', '', '', '', '', '') passed
+       TT_fvi01_stand_structure_validation('H', '', '', '', '', '', '', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '33.2'::text number,
        'TT_fvi01_stand_structure_validation'::text function_tested,
        'Test nfl'::text description,
-       TT_fvi01_stand_structure_validation('S', 'ST','', '', '', '', '') passed
+       TT_fvi01_stand_structure_validation('S', 'SL', '', '','', '', '', '', '') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '33.3'::text number,
        'TT_fvi01_stand_structure_validation'::text function_tested,
-       'Test not nfl'::text description,
-       TT_fvi01_stand_structure_validation('', '', '', '', '', '', '') IS FALSE passed
+       'Test understory nfl'::text description,
+       TT_fvi01_stand_structure_validation('M', '', 'SL', '', '', '', '', '', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '33.4'::text number,
+       'TT_fvi01_stand_structure_validation'::text function_tested,
+       'Test layer 1 present'::text description,
+       TT_fvi01_stand_structure_validation('M', 'TC', 'SL', 'bf', '', '', '', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '33.5'::text number,
+       'TT_fvi01_stand_structure_validation'::text function_tested,
+       'Test layer 1 present but no typeclas'::text description,
+       TT_fvi01_stand_structure_validation('M', '', 'SL', 'bf', '', '', '', '', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '33.6'::text number,
+       'TT_fvi01_stand_structure_validation'::text function_tested,
+       'Test layer 2 present'::text description,
+       TT_fvi01_stand_structure_validation('M', 'SL', 'TC', '', '', '', '', 'bf', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '33.7'::text number,
+       'TT_fvi01_stand_structure_validation'::text function_tested,
+       'Test layer 2 present but no typeclas'::text description,
+       TT_fvi01_stand_structure_validation('M', 'SL', '', '', '', '', '', 'bf', '') passed
+
 ---------------------------------------------------------
  -- TT_fvi01_countOfNotNull
 ---------------------------------------------------------
@@ -1486,7 +1511,7 @@ UNION ALL
 SELECT '34.2'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 1'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', 'WRONG', '4') = 1 passed
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{'''',''''}', 'SL', 'TC', '4') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.3'::text number,
@@ -1498,7 +1523,7 @@ UNION ALL
 SELECT '34.4'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 1 LYR'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', '', 'TC', '4') = 1 passed
+       TT_fvi01_countOfNotNull('{'''',''''}', '{''val'',''val''}', '', 'TC', '4') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.5'::text number,
@@ -2031,7 +2056,7 @@ UNION ALL
 SELECT '46.2'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
        'Test 1 NFL layers'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', 'ST', '1', 'TRUE') passed
+       TT_fvi01_hasCountOfNotNull('', 'bf', '', 'ST', '1', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.3'::text number,
