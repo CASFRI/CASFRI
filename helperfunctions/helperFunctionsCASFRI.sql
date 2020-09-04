@@ -3734,32 +3734,22 @@ RETURNS int AS $$
     -- set up nfl_string_list
     nfl_string_list = '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'',''SW'',''AP'',''BP'',''EL'',''GP'',''TS'',''RD'',''SH'',''SU'',''PM'',''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}';
     
-    -- is LYR 1 present
-    IF tt_notMatchList(typeclas, nfl_string_list) THEN
-      _lyr1 = vals1;
-    ELSE
-      _lyr1 = NULL::text;
-    END IF;
-
-    -- is LYR 2 present
-    IF tt_notMatchList(min_typeclas, nfl_string_list) THEN
-      _lyr2 = vals2;
-    ELSE
-      _lyr2 = NULL::text;
-    END IF;
-
-    -- is NFL 1 present?
+    -- if NFL 1 present, give _is_nfl1 a string and set _ly1 to null.
     IF tt_matchList(typeclas, nfl_string_list) THEN
       _is_nfl1 = 'a_value';
+      _lyr1 = NULL::text;
     ELSE
       _is_nfl1 = NULL::text;
+      _lyr1 = vals1;
     END IF;
     
-    -- is NFL 2 present?
+    -- if NFL 2 present, give _is_nfl2 a string and set _ly2 to null.
     IF tt_matchList(min_typeclas, nfl_string_list) THEN
       _is_nfl2 = 'a_value';
+      _lyr2 = NULL::text;
     ELSE
       _is_nfl2 = NULL::text;
+      _lyr2 = vals2;
     END IF;
     
     -- call countOfNotNull
