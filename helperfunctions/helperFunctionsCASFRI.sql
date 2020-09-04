@@ -1448,6 +1448,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'yvi01_nfl_soil_moisture_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'avi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'qc_ipf_species_validation' THEN 'NOT_APPLICABLE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -2427,6 +2428,57 @@ RETURNS boolean AS $$
       RETURN FALSE;
     END IF;
     
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_qc_ipf_species_validation(text, text, text, text)
+--
+-- gr_ess text,
+-- in_etage text,
+-- no_prg text,
+-- sup_eta_ess_pc text,
+-- inf_eta_ess_pc text,
+-- layer text,
+-- species_number text
+--
+-- Catch cases that are invalid based on logic in issue #287
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_ipf_species_validation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_species_validation(
+  gr_ess text,
+  in_etage text,
+  sup_eta_ess_pc text,
+  inf_eta_ess_pc text,
+  no_prg text,
+  layer text
+)
+RETURNS boolean AS $$
+  BEGIN
+
+    IF NOT tt_notEmpty(gr_ess) THEN
+      RETURN FALSE;
+    END IF;
+    
+    IF in_etage = 'O' THEN
+      IF layer = '1' AND tt_notEmpty(sup_eta_ess_pc) THEN
+        RETURN TRUE;
+      ELSIF layer = '2' AND tt_notEmpty(inf_eta_ess_pc) THEN
+        RETURN TRUE;
+      ELSE
+        RETURN FALSE; 
+      END IF;
+    END IF;
+    
+    IF in_etage = 'N' THEN
+      IF layer = '1' AND (no_prg IN('3','4')) THEN
+        RETURN TRUE;
+      ELSE
+        RETURN FALSE;
+      END IF;
+    END IF;
+    RETURN FALSE;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -3614,9 +3666,9 @@ RETURNS text AS $$
       _layer2_sp2 = '';
       _layer2_sp3 = '';
     ELSE
-      _layer2_sp1 = layer1_sp1;
-      _layer2_sp2 = layer1_sp2;
-      _layer2_sp3 = layer1_sp3;
+      _layer2_sp1 = layer2_sp1;
+      _layer2_sp2 = layer2_sp2;
+      _layer2_sp3 = layer2_sp3;
     END IF;
 
     RETURN TT_generic_stand_structure_translation(stand_structure, _layer1_sp1, _layer1_sp2, _layer1_sp3, _layer2_sp1, _layer2_sp2, _layer2_sp3, NULL::text, NULL::text, NULL::text);
@@ -4435,5 +4487,93 @@ RETURNS text AS $$
     
     RETURN TT_wetland_code_translation(_wetland_code, ret_char);
     
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_qc_ipf_species_translation(text, text, text, text, text, text)
+--
+-- gr_ess text,
+-- in_etage text,
+-- no_prg text,
+-- sup_eta_ess_pc text,
+-- inf_eta_ess_pc text,
+-- layer text,
+-- species_number text
+--
+-- get species value based on logic in issue 287. Pass species to lookup table.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_ipf_species_translation(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ipf_species_translation(
+  gr_ess text,
+  in_etage text,
+  sup_eta_ess_pc text,
+  inf_eta_ess_pc text,
+  no_prg text,
+  layer text,
+  species_number text
+)
+RETURNS text AS $$
+  DECLARE
+    sp_val text;
+    return_col text;
+  BEGIN
+    
+    -- set return col
+    IF species_number = '1' THEN
+      return_col = 'species_1';
+    ELSIF species_number = '2' THEN
+      return_col = 'species_2';
+    ELSIF species_number = '3' THEN
+      return_col = 'species_3';
+    ELSE
+      RETURN NULL;
+    END IF;
+    
+    -- gr_ess needs a value in all cases
+    IF gr_ess IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    IF in_etage = 'O' THEN
+      IF layer = '1' THEN
+        -- translate sup_eta_ess_pc value according to position
+        -- validate sup_eta_ess_pc not null
+        sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
+               FROM (SELECT translate(sup_eta_ess_pc, '0123456789', ' ') AS species) r;
+      ELSIF layer = '2' THEN
+        -- translate inf_eta_ess_pc value according to position
+        -- validate inf_eta_ess_pc not null
+        sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
+               FROM (SELECT translate(inf_eta_ess_pc, '0123456789', ' ') AS species) r;
+      ELSE
+        RETURN NULL; -- if layer not 1 or 2, requires validation
+      END IF;
+    END IF;
+    
+    IF in_etage = 'N' THEN
+      IF layer = '1' THEN
+        IF no_prg = '3' THEN
+          -- translate the code using the lookup table qc03_ipf5_species_prg3
+          sp_val = gr_ess;
+        ELSIF no_prg = '4' THEN
+          -- translate the gr_ess code according to position
+          sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
+                  FROM (SELECT trim(regexp_replace(gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
+        ELSE
+          RETURN NULL; -- if no_prg not 3 or 4, requires validation
+        END IF;
+      ELSE
+        RETURN NULL; -- if not layer 1, requires validation
+      END IF;
+    END IF;
+    
+    -- pass the value to the lookup table
+    IF in_etage = 'N' AND no_prg = '3' THEN
+      RETURN tt_lookupText(sp_val, 'translation', 'qc_ipf05_species_prg3', 'gr_ess', return_col);
+    ELSE
+      RETURN tt_lookupText(sp_val, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
+    END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
