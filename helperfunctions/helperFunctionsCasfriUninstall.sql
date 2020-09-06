@@ -83,6 +83,8 @@ DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per(text, text);
 DROP FUNCTION IF EXISTS TT_wetland_code_translation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_translation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_species_validation(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_ipf_species_translation(text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
