@@ -42,8 +42,8 @@ SELECT * FROM translation.mb_fli01_lyr;
 --WHERE rule_id::int != 4;
 SELECT * FROM translation_devel.mb06_fli01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'mb06_fli01_lyr_devel', '_mb06_lyr_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb', 1, 200);
-SELECT * FROM TT_Translate_mb06_lyr_devel('rawfri', 'mb06_l1_to_mb_l1_map_200', 'ogc_fid');
+SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb_fli', 1, 200);
+SELECT * FROM TT_Translate_mb06_lyr_devel('rawfri', 'mb06_l1_to_mb_fli_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'mb06_fli01_lyr_devel');
 
 -- DST ATTRIBUTES
