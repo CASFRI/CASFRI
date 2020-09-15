@@ -186,7 +186,7 @@ FROM (SELECT *
                               '((stand_structure = ''MULTI_LAYERED'' OR 
                                  stand_structure = ''HORIZONTAL'' OR 
                                  stand_structure = ''COMPLEX'' OR
-                                 stand_structure = ''SIMPLE'') AND 
+                                 stand_structure = ''SINGLE_LAYERED'') AND 
                                 num_of_layers > 1) OR 
                                ((stand_structure = ''SINGLE_LAYERED'' OR 
                                  stand_structure = ''COMPLEX'' OR
@@ -528,7 +528,7 @@ SELECT '2.28'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_ext_lower_1_betweeen_10_and_100_and_smaller_than_dist_ext_upper_1', 
-                              '(1 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 95 AND 
+                              '(1 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 100 AND 
                                 (dist_ext_lower_1 <= dist_ext_upper_1 OR 
                                  dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
                                 )
@@ -543,7 +543,7 @@ SELECT '2.29'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_ext_lower_2_betweeen_10_and_100_and_smaller_than_dist_ext_upper_2', 
-                              '(1 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 95 AND 
+                              '(1 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 100 AND 
                                 (dist_ext_lower_2 <= dist_ext_upper_2 OR 
                                  dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
                                 )
@@ -558,7 +558,7 @@ SELECT '2.30'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_ext_lower_3_betweeen_10_and_100_and_smaller_than_dist_ext_upper_3', 
-                              '(1 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 95 AND 
+                              '(1 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 100 AND 
                                 (dist_ext_lower_3 <= dist_ext_upper_3 OR 
                                  dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
                                 )
