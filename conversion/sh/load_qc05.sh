@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-# This script loads the Quebec (QC03) into PostgreSQL
+# This script loads the Quebec (QC05) into PostgreSQL
 
 # The format of the source dataset is a geodatabase comtaining 4 tables:
 	# PEE_MAJ_PROV - this is the main table containing the geometries
@@ -20,13 +20,13 @@
 # in the configuration file.
 
 # QC03, QC04 and QC05 all use the same source inventory table. Here we filter the full table to only
-# include rows where no_prg = '3'. These rows use the INI03 standard.
+# include rows where in_etage = 'O'. These rows use the IPF05 standard.
 
 ######################################## Set variables #######################################
 
 source ./common.sh
 
-inventoryID=QC03
+inventoryID=QC05
 srcFileName=CARTE_ECO_MAJ_PROV_10
 srcFullPath="$friDir/QC/$inventoryID/data/inventory/$srcFileName.gdb"
 
@@ -34,7 +34,7 @@ gdbFileName_poly=PEE_MAJ_PROV
 gdbFileName_meta=META_MAJ_PROV
 gdbFileName_etage=ETAGE_MAJ_PROV
 
-fullTargetTableName=$targetFRISchema.qc03
+fullTargetTableName=$targetFRISchema.qc05
 tableName_poly=${fullTargetTableName}_poly
 tableName_meta=${fullTargetTableName}_meta
 tableName_etage=${fullTargetTableName}_etage
@@ -112,7 +112,7 @@ ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS wkb_geometry;
 -- rename geoc_maj in meta
 ALTER TABLE $tableName_meta RENAME COLUMN geoc_maj TO meta_geoc_maj;
 
--- join qc03_poly, qc03_meta, qc03_etage_sup, and qc03_etage_inf
+-- join qc05_poly, qc05_meta, qc05_etage_sup, and qc05_etage_inf
 DROP TABLE IF EXISTS $tableName_full;
 CREATE TABLE $tableName_full AS
 SELECT *
@@ -129,7 +129,7 @@ DROP TABLE IF EXISTS $fullTargetTableName;
 CREATE TABLE $fullTargetTableName AS
 SELECT *
 FROM $tableName_full
-WHERE no_prg = '3';
+WHERE in_etage = 'O';
   
 --update ogc_fid
 ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
