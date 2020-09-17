@@ -20,7 +20,8 @@
 # in the configuration file.
 
 # QC03, QC04 and QC05 all use the same source inventory table. Here we filter the full table to only
-# include rows where in_etage = 'O'. These rows use the IPF05 standard.
+# include rows where ver_prg LIKE 'AIPF%' OR ver_prg LIKE 'NAIPF%' OR (ver_prg ='MIXTE' AND in_etage = 'O'). 
+# These rows use the IPF05 standard (see issue #429 for details).
 
 ######################################## Set variables #######################################
 
@@ -129,7 +130,7 @@ DROP TABLE IF EXISTS $fullTargetTableName;
 CREATE TABLE $fullTargetTableName AS
 SELECT *
 FROM $tableName_full
-WHERE in_etage = 'O';
+WHERE ver_prg LIKE 'AIPF%' OR ver_prg LIKE 'NAIPF%' OR (ver_prg ='MIXTE' AND in_etage = 'O');
   
 --update ogc_fid
 ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;

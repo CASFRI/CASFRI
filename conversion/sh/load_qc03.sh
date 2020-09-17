@@ -20,7 +20,7 @@
 # in the configuration file.
 
 # QC03, QC04 and QC05 all use the same source inventory table. Here we filter the full table to only
-# include rows where no_prg = '3'. These rows use the INI03 standard.
+# include rows where no_prg = '3'. These rows use the INI03 standard (see issue #429 for details).
 
 ######################################## Set variables #######################################
 
