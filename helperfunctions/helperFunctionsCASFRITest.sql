@@ -105,8 +105,11 @@ WITH test_nb AS (
     SELECT 'TT_qc_ipf_wetland_validation'::text function_tested,             57 maj_num,  14 nb_test UNION ALL
     SELECT 'TT_qc_ipf_wetland_translation'::text function_tested,            58 maj_num,  14 nb_test UNION ALL
     SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_species_validation'::text function_tested,             60 maj_num,  9 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_species_translation'::text function_tested,            61 maj_num,  9 nb_test
+    SELECT 'TT_qc_prg4_species_translation'::text function_tested,           60 maj_num,  6 nb_test UNION ALL
+    SELECT 'TT_qc_prg5_species_translation'::text function_tested,           61 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2626,117 +2629,166 @@ SELECT '59.4'::text number,
        'Test typeclas but no sp'::text description,
        TT_row_translation_rule_nt_lyr('TM', '', '', '', '') IS FALSE passed
 ---------------------------------------------------------
- -- qc_ipf_species_validation
+ -- tt_qc_prg4_species_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.1'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       '5th inv sup'::text description,
-       TT_qc_ipf_species_validation('x', 'O', 'x', '', '', '1') passed
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'no_prg 4 species 1'::text description,
+       TT_qc_prg4_species_translation('FXPU', '1') = 'Hard unkn' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.2'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       '5th inv inf'::text description,
-       TT_qc_ipf_species_validation('x', 'O', '', 'x', '', '2') passed
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'no_prg 4 species 2'::text description,
+       TT_qc_prg4_species_translation('FXPU', '2') = 'Tsug cana' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.3'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       '5th inv sup null'::text description,
-       TT_qc_ipf_species_validation('x', 'O', '', '', '', '1') IS FALSE passed
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'null gr_ess'::text description,
+       TT_qc_prg4_species_translation(NULL::text, '2') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.4'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       '5th inv inf null'::text description,
-       TT_qc_ipf_species_validation('x', 'O', '', '', '', '2') IS FALSE passed
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'no_prg 4 no species 3'::text description,
+       TT_qc_prg4_species_translation('FXPU', '3') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.5'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       'no_prg 3'::text description,
-       TT_qc_ipf_species_validation('x', 'N', '', '', '3', '1') passed
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'Double species and species 1 requested'::text description,
+       TT_qc_prg4_species_translation('FXFX', '1') = 'Hard unkn' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.6'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       'no_prg 3 layer 2'::text description,
-       TT_qc_ipf_species_validation('x', 'N', '', '', '3', '2') IS FALSE passed
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'Double species and species 2 requested'::text description,
+       TT_qc_prg4_species_translation('FXFX', '2') IS NULL passed
 ---------------------------------------------------------
-UNION ALL
-SELECT '60.7'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       'no_prg 4'::text description,
-       TT_qc_ipf_species_validation('x', 'N', '', '', '4', '1') passed
----------------------------------------------------------
-UNION ALL
-SELECT '60.8'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       'no_prg 4 layer 2'::text description,
-       TT_qc_ipf_species_validation('x', 'N', '', '', '4', '2') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '60.9'::text number,
-       'TT_qc_ipf_species_validation'::text function_tested,
-       'gr_ess is null'::text description,
-       TT_qc_ipf_species_validation(NULL::text, '', '', '', '', '') IS FALSE passed
----------------------------------------------------------
- -- tt_qc_ipf_species_translation
+ -- tt_qc_prg5_species_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.1'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       '5th inv sup'::text description,
-       TT_qc_ipf_species_translation('x', 'O', 'BP40EO30PE10EN10SB10', '', '', '1', '1') = 'Betu papy' passed
+       'TT_qc_prg5_species_translation'::text function_tested,
+       '5th inv species 1'::text description,
+       TT_qc_prg5_species_translation('BP40EO30PE10EN10SB10', '1') = 'Betu papy' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.2'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       '5th inv inf'::text description,
-       TT_qc_ipf_species_translation('x', 'O', '', 'BP40EO30PE10EN10SB10', '', '2', '2') = 'Acer rubr' passed
+       'TT_qc_prg5_species_translation'::text function_tested,
+       '5th inv species 2'::text description,
+       TT_qc_prg5_species_translation('BP40EO30PE10EN10SB10', '2') = 'Acer rubr' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.3'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       '5th inv sup null'::text description,
-       TT_qc_ipf_species_translation('x', 'O', '', '', '', '1', '1') IS NULL passed
+       'TT_qc_prg5_species_translation'::text function_tested,
+       '5th inv species 2'::text description,
+       TT_qc_prg5_species_translation('BP40EO30PE10EN10SB10', '20') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.4'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       '5th inv inf null'::text description,
-       TT_qc_ipf_species_translation('x', 'O', '', '', '', '2', '2') IS NULL passed
+       'TT_qc_prg5_species_translation'::text function_tested,
+       '5th inv null'::text description,
+       TT_qc_prg5_species_translation('', '1') IS NULL passed
+---------------------------------------------------------
+ -- TT_qc_prg4_species_per_translation
 ---------------------------------------------------------
 UNION ALL
-SELECT '61.5'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       'no_prg 3'::text description,
-       TT_qc_ipf_species_translation('BB1S', 'N', '', '', '3', '1', '1') = 'Betu papy' passed
+SELECT '62.1'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'no_prg 4 species 1'::text description,
+       TT_qc_prg4_species_per_translation('FXPU', '1') = 65 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '61.6'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       'no_prg 3 layer 2'::text description,
-       TT_qc_ipf_species_translation('BB1S', 'N', '', '', '3', '2', '1') IS NULL passed
+SELECT '62.2'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'no_prg 4 species 2'::text description,
+       TT_qc_prg4_species_per_translation('FXPU', '2') = 35 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '61.7'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       'no_prg 4'::text description,
-       TT_qc_ipf_species_translation('FXFX', 'N', '', '', '4', '1', '1') = 'Hard unkn' passed
+SELECT '62.3'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'null gr_ess'::text description,
+       TT_qc_prg4_species_per_translation(NULL::text, '2') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '61.8'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       'no_prg 4 layer 2'::text description,
-       TT_qc_ipf_species_translation('FXFX', 'N', '', '', '4', '2', '1') IS NULL passed
+SELECT '62.4'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'no_prg 4 no species 3'::text description,
+       TT_qc_prg4_species_per_translation('FXPU', '3') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '61.9'::text number,
-       'TT_qc_ipf_species_translation'::text function_tested,
-       'gr_ess is null'::text description,
-       TT_qc_ipf_species_translation('', '', '', '', '', '', '') IS NULL passed
+SELECT '62.5'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'Double species and species 1 requested'::text description,
+       TT_qc_prg4_species_per_translation('FXFX', '1') = 100 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '62.6'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'Double species and species 2 requested'::text description,
+       TT_qc_prg4_species_per_translation('FXFX', '2') IS NULL passed
+---------------------------------------------------------
+ -- tt_qc_prg5_species_per_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '63.1'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       '5th inv species 1'::text description,
+       TT_qc_prg5_species_per_translation('BP40EO30PE10EN10SB10', '1') = 40 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.2'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       '5th inv species 2'::text description,
+       TT_qc_prg5_species_per_translation('BP40EO30PE10EN10SB10', '2') = 30 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.3'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       '5th inv species 2'::text description,
+       TT_qc_prg5_species_per_translation('BP40EO30PE10EN10SB10', '5') = 10 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.4'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       '5th inv species too high'::text description,
+       TT_qc_prg5_species_per_translation('BP40EO30PE10EN10SB10', '6') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.5'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       '5th inv null'::text description,
+       TT_qc_prg5_species_per_translation('', '1') IS NULL passed
+---------------------------------------------------------
+ -- TT_qc_prg4_not_double_species_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '64.1'::text number,
+       'TT_qc_prg4_not_double_species_validation'::text function_tested,
+       'Species is doubled'::text description,
+       TT_qc_prg4_not_double_species_validation('FXFX') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '64.2'::text number,
+       'TT_qc_prg4_not_double_species_validation'::text function_tested,
+       'Species is not doubled'::text description,
+       TT_qc_prg4_not_double_species_validation('FXFx') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '64.3'::text number,
+       'TT_qc_prg4_not_double_species_validation'::text function_tested,
+       'Species is null'::text description,
+       TT_qc_prg4_not_double_species_validation(NULL::text) passed
+---------------------------------------------------------
+UNION ALL
+SELECT '64.4'::text number,
+       'TT_qc_prg4_not_double_species_validation'::text function_tested,
+       'Species is empty'::text description,
+       TT_qc_prg4_not_double_species_validation('') passed
+  
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
