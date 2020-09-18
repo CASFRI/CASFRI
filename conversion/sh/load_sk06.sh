@@ -6,7 +6,8 @@
 # Source data is is a single table.
 # Standard is SFVI but the column names have been changed.
 
-# The year of photography is currently unknown. Issue #317
+# The year of photography is currently unknown at the polygon level but varies from 1994 - 2005.
+# See Issue #317. We will use 2000 as the photo year.
 
 # Load into a target table in the schema defined in the config file.
 
