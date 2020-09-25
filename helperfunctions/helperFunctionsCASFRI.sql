@@ -4514,6 +4514,9 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- These codes need to be split to get species 1, 2, 3 etc. Requested species code is then extracted based on species_number
 -- and passed to lookup table.
 -- Coding system for sup_eta_ess_pc and inf_eta_ess_pc is the same so this function works for both layer 1 and layer 2 values.
+--
+-- Species are not coded in the correct order. We need to reorder the codes so species 1 has the max percent cover. Species
+-- with matching percentages should maintain the same order as the source code.
 
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
