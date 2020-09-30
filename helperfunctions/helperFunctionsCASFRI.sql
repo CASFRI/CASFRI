@@ -2467,6 +2467,34 @@ RETURNS boolean AS $$
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_species_matchTable_validation(text, text)
+--
+-- eta_ess_pc text,
+-- species_number text
+--
+-- Runs TT_qc_prg5_species_code_to_reordered_array then passes the species code 
+-- to matchTable to check it's in the lookup table.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species_matchTable_validation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species_matchTable_validation(
+  eta_ess_pc text,
+  species_number text
+)
+RETURNS boolean AS $$
+  DECLARE
+    code_array text[];
+    sp_code text;
+  BEGIN
+    
+    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+    sp_code = translate(code_array[species_number::int], '0123456789', '');
+    RETURN TT_matchTable(sp_code, 'translation', 'qc_ipf05_species', 'source_val', 'FALSE');
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...

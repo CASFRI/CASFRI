@@ -109,7 +109,8 @@ WITH test_nb AS (
     SELECT 'TT_qc_prg5_species_translation'::text function_tested,           61 maj_num,  7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  7 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test
+    SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2818,6 +2819,33 @@ SELECT '64.4'::text number,
        'TT_qc_prg4_not_double_species_validation'::text function_tested,
        'Species is empty'::text description,
        TT_qc_prg4_not_double_species_validation('') passed
+---------------------------------------------------------
+ -- tt_qc_prg5_species_matchTable_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '65.1'::text number,
+       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
+       '5th inv species 1'::text description,
+       TT_qc_prg5_species_matchTable_validation('BP20EO30PE10EN10SB30', '1')  passed
+---------------------------------------------------------
+UNION ALL
+SELECT '65.2'::text number,
+       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
+       '5th inv species fail'::text description,
+       TT_qc_prg5_species_matchTable_validation('ZZ100', '1') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '65.3'::text number,
+       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
+       '5th inv species empty string'::text description,
+       TT_qc_prg5_species_matchTable_validation('', '1') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '65.4'::text number,
+       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
+       '5th inv species empty string'::text description,
+       TT_qc_prg5_species_matchTable_validation(NULL::text, '1') IS FALSE passed
+  
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

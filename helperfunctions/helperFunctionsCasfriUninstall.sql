@@ -36,6 +36,7 @@ DROP FUNCTION IF EXISTS TT_sk_utm_hasCountOfNotNull(text, text, text, text, text
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_validation(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_not_double_species_validation(text);
+DROP FUNCTION IF EXISTS TT_qc_prg5_species_matchTable_validation(text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
