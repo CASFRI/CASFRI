@@ -106,9 +106,9 @@ WITH test_nb AS (
     SELECT 'TT_qc_ipf_wetland_translation'::text function_tested,            58 maj_num,  14 nb_test UNION ALL
     SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_qc_prg4_species_translation'::text function_tested,           60 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_species_translation'::text function_tested,           61 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_qc_prg5_species_translation'::text function_tested,           61 maj_num,  7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test
 ),
 test_series AS (
@@ -2673,22 +2673,40 @@ UNION ALL
 SELECT '61.1'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 1'::text description,
-       TT_qc_prg5_species_translation('BP40EO30PE10EN10SB10', '1') = 'Betu papy' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '1') = 'Acer rubr' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.2'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 2'::text description,
-       TT_qc_prg5_species_translation('BP40EO30PE10EN10SB10', '2') = 'Acer rubr' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '2') = 'Abie bals' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.3'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
-       '5th inv species 2'::text description,
-       TT_qc_prg5_species_translation('BP40EO30PE10EN10SB10', '20') IS NULL passed
+       '5th inv species 3'::text description,
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '3') = 'Betu papy' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.4'::text number,
+       'TT_qc_prg5_species_translation'::text function_tested,
+       '5th inv species 4'::text description,
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '4') = 'Popu spp.' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '61.5'::text number,
+       'TT_qc_prg5_species_translation'::text function_tested,
+       '5th inv species 5'::text description,
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '5') = 'Pice mari' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '61.6'::text number,
+       'TT_qc_prg5_species_translation'::text function_tested,
+       '5th inv species too high'::text description,
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '20') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '61.7'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv null'::text description,
        TT_qc_prg5_species_translation('', '1') IS NULL passed
@@ -2737,28 +2755,40 @@ UNION ALL
 SELECT '63.1'::text number,
        'TT_qc_prg5_species_per_translation'::text function_tested,
        '5th inv species 1'::text description,
-       TT_qc_prg5_species_per_translation('BP40EO30PE10EN10SB10', '1') = 40 passed
+       TT_qc_prg5_species_per_translation('BP20EO30PE10EN10SB30', '1') = 30 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '63.2'::text number,
        'TT_qc_prg5_species_per_translation'::text function_tested,
-       '5th inv species 2'::text description,
-       TT_qc_prg5_species_per_translation('BP40EO30PE10EN10SB10', '2') = 30 passed
+       '5th inv species 1'::text description,
+       TT_qc_prg5_species_per_translation('BP20EO30PE10EN10SB30', '2') = 30 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '63.3'::text number,
        'TT_qc_prg5_species_per_translation'::text function_tested,
-       '5th inv species 2'::text description,
-       TT_qc_prg5_species_per_translation('BP40EO30PE10EN10SB10', '5') = 10 passed
+       '5th inv species 1'::text description,
+       TT_qc_prg5_species_per_translation('BP20EO30PE10EN10SB30', '3') = 20 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '63.4'::text number,
        'TT_qc_prg5_species_per_translation'::text function_tested,
-       '5th inv species too high'::text description,
-       TT_qc_prg5_species_per_translation('BP40EO30PE10EN10SB10', '6') IS NULL passed
+       '5th inv species 1'::text description,
+       TT_qc_prg5_species_per_translation('BP20EO30PE10EN10SB30', '4') = 10 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '63.5'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       '5th inv species 1'::text description,
+       TT_qc_prg5_species_per_translation('BP20EO30PE10EN10SB30', '5') = 10 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.6'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       '5th inv species too high'::text description,
+       TT_qc_prg5_species_per_translation('BP20EO30PE10EN10SB30', '6') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.7'::text number,
        'TT_qc_prg5_species_per_translation'::text function_tested,
        '5th inv null'::text description,
        TT_qc_prg5_species_per_translation('', '1') IS NULL passed

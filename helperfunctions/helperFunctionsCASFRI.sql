@@ -4505,10 +4505,9 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_qc_prg5_species_translation(text, text)
+-- TT_qc_prg5_species_code_to_reordered_array(text, text)
 --
--- eta_ess_pc text,
--- species_number text
+-- eta_ess_pc text
 --
 -- For QC fifth inventory, species are coded in both the sup_eta_ess_pc and inf_eta_ess_pc column. 
 -- These codes need to be split to get species 1, 2, 3 etc. Requested species code is then extracted based on species_number
@@ -4517,6 +4516,49 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Species are not coded in the correct order. We need to reorder the codes so species 1 has the max percent cover. Species
 -- with matching percentages should maintain the same order as the source code.
+-- Function TT_qc_prg5_species_code_to_reordered_array reorders the species and percent codes and returns them in an array.
+-- Species and percent functions will call TT_qc_prg5_species_code_to_reordered_array then return either the species or percent value
+-- from the correct position in the array using species_number.
+--
+-- TT_qc_prg5_species_code_to_reordered_array returns an array of species-percent codes (e.g. BS20) ordered by percetn cover.
+-- In the event of a tie the codes are returned in the same order they appeared in the original string. 
+-- e.g. `BS20WS60TA20` would return ARRAY['WS60', 'BS20', 'TA20']
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species_code_to_reordered_array(text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species_code_to_reordered_array(
+  eta_ess_pc text
+)
+RETURNS text[] AS $$
+  DECLARE
+    sp_array text[];
+    per_array text[];
+  BEGIN
+    
+    sp_array = string_to_array(trim(translate(eta_ess_pc, '0123456789', ' ')), ' ');
+    per_array = string_to_array(trim(regexp_replace(eta_ess_pc, '[[:alpha:]]', ' ', 'g')), '  ');
+    
+    RETURN ARRAY( -- converts table to array
+      SELECT code FROM(
+        SELECT a || b code, b species_per, ROW_NUMBER() OVER () org_order -- concatenates values in column a and b, add index
+        FROM unnest(
+          sp_array, 
+          per_array
+        ) AS t(a,b) -- converts arrays to a table
+        ORDER BY species_per desc, org_order asc -- order by the percent, ties are ordered by their original order in the string
+      ) x
+    );
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_species_translation(text, text)
+--
+-- eta_ess_pc text,
+-- species_number text
+--
+-- Runs TT_qc_prg5_species_code_to_reordered_array then returns the species code from the requested position.
+-- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
 
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
@@ -4526,18 +4568,42 @@ CREATE OR REPLACE FUNCTION TT_qc_prg5_species_translation(
 )
 RETURNS text AS $$
   DECLARE
-    sp_val text;
+    code_array text[];
+    sp_code text;
   BEGIN
     
-      sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
-             FROM (SELECT translate(eta_ess_pc, '0123456789', ' ') AS species) r;
+    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+    sp_code = translate(code_array[species_number::int], '0123456789', '');
+    RETURN TT_lookupText(sp_code, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
     
-    -- pass the value to the lookup table
-    RETURN tt_lookupText(sp_val, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
-
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_species_per_translation(text, text)
+--
+-- eta_ess_pc text,
+-- species_number text
+--
+-- Runs TT_qc_prg5_species_code_to_reordered_array then returns the percent value from the requested position.
+-- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species_per_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species_per_translation(
+  eta_ess_pc text,
+  species_number text
+)
+RETURNS int AS $$
+  DECLARE
+    code_array text[];
+  BEGIN
+    
+    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+    RETURN regexp_replace(code_array[species_number::int], '[[:alpha:]]', '', 'g')::int;
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_qc_prg4_species_per_translation(text, text)
 --
@@ -4597,37 +4663,5 @@ RETURNS int AS $$
     ELSE
       RETURN NULL;
     END IF;
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
-
--------------------------------------------------------------------------------
--- TT_qc_prg5_species_per_translation(text, text)
---
--- eta_ess_pc text,
--- species_number text
---
--- For QC fifth inventory, species and percentages are coded in both the sup_eta_ess_pc and inf_eta_ess_pc column. 
--- These codes need to be split to get species per 1, 2, 3 etc. Requested species per code is then returned.
--- Coding system for sup_eta_ess_pc and inf_eta_ess_pc is the same so this function works for both layer 1 and layer 2 values.
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_prg5_species_per_translation(text, text);
-CREATE OR REPLACE FUNCTION TT_qc_prg5_species_per_translation(
-  eta_ess_pc text,
-  species_number text
-)
-RETURNS int AS $$
-  DECLARE
-    sp_val text;
-  BEGIN
-    
-    sp_val = trim(SPLIT_PART(species_per, '  ', species_number::int))
-           FROM (SELECT trim(regexp_replace(eta_ess_pc, '[[:alpha:]]', ' ', 'g')) AS species_per) r;
-    
-    IF tt_isInt(sp_val) THEN
-      RETURN sp_val;
-    ELSE
-      RETURN NULL;
-    END IF;
-     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
