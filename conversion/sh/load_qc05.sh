@@ -8,10 +8,10 @@
 	# ETAGE_MAJ_PROV - this table contains species info with multiple species per row
 	# ESSENCE_MAJ_PROV - this table also contains species info, but with one row per species
 
-# The year of photography is included as the AN_PRO_SOU attribute in the META_MAJ_PROV table
+# The year of photography is included as the AN_PRO_ORI attribute in the META_MAJ_PROV table
 
 # The PEE_MAJ_PROV, META_MAJ_PROV, and ETAGE_MAJ_PROV tables need to be loaded and joined on the
-# GEOC_MAJ unique identifier. We prefer ETAGE_MAJ_PROV over ESSENCE_MAJ_PROV because we need source
+# GEOCODE unique identifier. We prefer ETAGE_MAJ_PROV over ESSENCE_MAJ_PROV because we need source
 # data with one row per polygon. The same info is contained in both tables so only one is needed.
 
 # Load into a target table in the schema defined in the config file.
@@ -64,7 +64,7 @@ tableName_full=${fullTargetTableName}_full
 -nln $tableName_etage $layer_creation_options $other_options \
 -progress $overwrite_tab
 
-# Join META and ETAGE tables to polygons using the GEOC_MAJ attribute.
+# Join META and ETAGE tables to polygons using the GEOCODE attribute.
 # The ogc_fid attributes are no longer unique identifiers after the 
 # join so a new ogc_fid is created.
 # Etage table has 2 rows per polygon in cases with 2 layers. This is
@@ -75,12 +75,12 @@ tableName_full=${fullTargetTableName}_full
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-CREATE INDEX ON $tableName_poly (geoc_maj);
+CREATE INDEX ON $tableName_poly (geocode);
 
 -- select all SUP rows
 DROP TABLE IF EXISTS $tableName_sup;
 CREATE TABLE $tableName_sup AS
-SELECT geoc_maj sup_geoc_maj, 
+SELECT geocode sup_geocode, 
 etage sup_etage, 
 ty_couv_et sup_ty_couv_et,
 densite sup_densite,
@@ -93,7 +93,7 @@ WHERE etage = 'SUP';
 -- select all INF rows
 DROP TABLE IF EXISTS $tableName_inf;
 CREATE TABLE $tableName_inf AS
-SELECT geoc_maj inf_geoc_maj, 
+SELECT geocode inf_geocode, 
 etage inf_etage, 
 ty_couv_et inf_ty_couv_et,
 densite inf_densite,
@@ -110,8 +110,10 @@ ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 -- drop geometry columns from meta
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS wkb_geometry;
 
--- rename geoc_maj in meta
-ALTER TABLE $tableName_meta RENAME COLUMN geoc_maj TO meta_geoc_maj;
+-- rename geocode in meta
+ALTER TABLE $tableName_meta RENAME COLUMN geocode TO meta_geocode;
+ALTER TABLE $tableName_meta RENAME COLUMN no_prg TO meta_no_prg;
+ALTER TABLE $tableName_meta RENAME COLUMN ver_prg TO meta_ver_prg;
 
 -- join qc05_poly, qc05_meta, qc05_etage_sup, and qc05_etage_inf
 DROP TABLE IF EXISTS $tableName_full;
@@ -119,13 +121,13 @@ CREATE TABLE $tableName_full AS
 SELECT *
 FROM $tableName_poly AS poly
 LEFT join $tableName_meta AS meta 
-  on poly.geoc_maj = meta.meta_geoc_maj
+  on poly.geocode = meta.meta_geocode
 LEFT join $tableName_sup AS sup 
-  on poly.geoc_maj = sup.sup_geoc_maj
+  on poly.geocode = sup.sup_geocode
 LEFT join $tableName_inf AS inf 
-  on poly.geoc_maj = inf.inf_geoc_maj;
+  on poly.geocode = inf.inf_geocode;
   
--- filter by third inventory rows
+-- filter by version inventory rows
 DROP TABLE IF EXISTS $fullTargetTableName;
 CREATE TABLE $fullTargetTableName AS
 SELECT *
@@ -138,10 +140,10 @@ ALTER TABLE $fullTargetTableName ADD COLUMN ogc_fid INT;
 UPDATE $fullTargetTableName SET ogc_fid=temp_key;
 ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
 
---drop extra geoc_maj attributes
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS sup_geoc_maj;
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS inf_geoc_maj;
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geoc_maj;
+--drop extra geocode attributes
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS sup_geocode;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS inf_geocode;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geocode;
 
 --drop tables
 DROP TABLE IF EXISTS $tableName_poly;
@@ -149,6 +151,7 @@ DROP TABLE IF EXISTS $tableName_meta;
 DROP TABLE IF EXISTS $tableName_etage;
 DROP TABLE IF EXISTS $tableName_sup;
 DROP TABLE IF EXISTS $tableName_inf;
+DROP TABLE IF EXISTS $tableName_full;
 "
 
 createSQLSpatialIndex=True
