@@ -2432,56 +2432,69 @@ RETURNS boolean AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_qc_ipf_species_validation(text, text, text, text)
+-- TT_qc_prg4_not_double_species_validation(text)
 --
 -- gr_ess text,
--- in_etage text,
--- no_prg text,
--- sup_eta_ess_pc text,
--- inf_eta_ess_pc text,
--- layer text,
--- species_number text
 --
--- Catch cases that are invalid based on logic in issue #287
-
+-- If species is doubled (e.g. FXFX) returns false. Otherwise true.
+-- Must have 2 species (code length = 4) with matching values.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_ipf_species_validation(text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_qc_ipf_species_validation(
-  gr_ess text,
-  in_etage text,
-  sup_eta_ess_pc text,
-  inf_eta_ess_pc text,
-  no_prg text,
-  layer text
+--DROP FUNCTION IF EXISTS TT_qc_prg4_not_double_species_validation(text);
+CREATE OR REPLACE FUNCTION TT_qc_prg4_not_double_species_validation(
+  gr_ess text
 )
 RETURNS boolean AS $$
+  DECLARE
+    sp_1 text;
+    sp_2 text;
   BEGIN
-
+    
+    -- return TRUE if null or empty. Only case of double species should fail validation.
     IF NOT tt_notEmpty(gr_ess) THEN
+      RETURN TRUE;
+    END IF;
+    
+    sp_1 = trim(SPLIT_PART(species, ' ', 1))
+    FROM (SELECT trim(regexp_replace(gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
+
+    sp_2 = trim(SPLIT_PART(species, ' ', 2))
+    FROM (SELECT trim(regexp_replace(gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
+      
+    IF sp_1 = sp_2 THEN
       RETURN FALSE;
+    ELSE
+      RETURN TRUE;
     END IF;
-    
-    IF in_etage = 'O' THEN
-      IF layer = '1' AND tt_notEmpty(sup_eta_ess_pc) THEN
-        RETURN TRUE;
-      ELSIF layer = '2' AND tt_notEmpty(inf_eta_ess_pc) THEN
-        RETURN TRUE;
-      ELSE
-        RETURN FALSE; 
-      END IF;
-    END IF;
-    
-    IF in_etage = 'N' THEN
-      IF layer = '1' AND (no_prg IN('3','4')) THEN
-        RETURN TRUE;
-      ELSE
-        RETURN FALSE;
-      END IF;
-    END IF;
-    RETURN FALSE;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_species_matchTable_validation(text, text)
+--
+-- eta_ess_pc text,
+-- species_number text
+--
+-- Runs TT_qc_prg5_species_code_to_reordered_array then passes the species code 
+-- to matchTable to check it's in the lookup table.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species_matchTable_validation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species_matchTable_validation(
+  eta_ess_pc text,
+  species_number text
+)
+RETURNS boolean AS $$
+  DECLARE
+    code_array text[];
+    sp_code text;
+  BEGIN
+    
+    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+    sp_code = translate(code_array[species_number::int], '0123456789', '');
+    RETURN TT_matchTable(sp_code, 'translation', 'qc_ipf05_species', 'source_val', 'FALSE');
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...
@@ -4481,89 +4494,202 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_qc_ipf_species_translation(text, text, text, text, text, text)
+-- TT_qc_prg4_species_translation(text, text)
 --
 -- gr_ess text,
--- in_etage text,
--- no_prg text,
--- sup_eta_ess_pc text,
--- inf_eta_ess_pc text,
--- layer text,
 -- species_number text
 --
--- get species value based on logic in issue 287. Pass species to lookup table.
+-- For QC fourth inventory, species are coded in gr_ess column, gr_ess code needs to be split
+-- to get species 1, 2, 3 etc. Requested species code is then extracted based on species_number
+-- and passed to lookup table.
+--
+-- If species is a doubled code (e.g. FXFX, PUPU etc.) then only species 1 should be returned.
+-- These codes should be interpreted as species 1 with 100%.
 
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_ipf_species_translation(text, text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_qc_ipf_species_translation(
+--DROP FUNCTION IF EXISTS TT_qc_prg4_species_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg4_species_translation(
   gr_ess text,
-  in_etage text,
-  sup_eta_ess_pc text,
-  inf_eta_ess_pc text,
-  no_prg text,
-  layer text,
   species_number text
 )
 RETURNS text AS $$
   DECLARE
     sp_val text;
-    return_col text;
+  BEGIN
+        
+    -- catch case where species code is doubled and return null (e.g. PePe, BBBB etc.)
+    IF species_number::int = 2 AND NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN -- if species is doubled return null
+      RETURN NULL;
+    END IF;
+    
+    -- translate the gr_ess code according to position
+    sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
+      FROM (SELECT trim(regexp_replace(gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
+      
+    -- pass the value to the lookup table
+    RETURN tt_lookupText(sp_val, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_species_code_to_reordered_array(text, text)
+--
+-- eta_ess_pc text
+--
+-- For QC fifth inventory, species are coded in both the sup_eta_ess_pc and inf_eta_ess_pc column. 
+-- These codes need to be split to get species 1, 2, 3 etc. Requested species code is then extracted based on species_number
+-- and passed to lookup table.
+-- Coding system for sup_eta_ess_pc and inf_eta_ess_pc is the same so this function works for both layer 1 and layer 2 values.
+--
+-- Species are not coded in the correct order. We need to reorder the codes so species 1 has the max percent cover. Species
+-- with matching percentages should maintain the same order as the source code.
+-- Function TT_qc_prg5_species_code_to_reordered_array reorders the species and percent codes and returns them in an array.
+-- Species and percent functions will call TT_qc_prg5_species_code_to_reordered_array then return either the species or percent value
+-- from the correct position in the array using species_number.
+--
+-- TT_qc_prg5_species_code_to_reordered_array returns an array of species-percent codes (e.g. BS20) ordered by percetn cover.
+-- In the event of a tie the codes are returned in the same order they appeared in the original string. 
+-- e.g. `BS20WS60TA20` would return ARRAY['WS60', 'BS20', 'TA20']
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species_code_to_reordered_array(text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species_code_to_reordered_array(
+  eta_ess_pc text
+)
+RETURNS text[] AS $$
+  DECLARE
+    sp_array text[];
+    per_array text[];
   BEGIN
     
-    -- set return col
-    IF species_number = '1' THEN
-      return_col = 'species_1';
-    ELSIF species_number = '2' THEN
-      return_col = 'species_2';
-    ELSIF species_number = '3' THEN
-      return_col = 'species_3';
-    ELSE
-      RETURN NULL;
-    END IF;
+    sp_array = string_to_array(trim(translate(eta_ess_pc, '0123456789', ' ')), ' ');
+    per_array = string_to_array(trim(regexp_replace(eta_ess_pc, '[[:alpha:]]', ' ', 'g')), '  ');
     
-    -- gr_ess needs a value in all cases
-    IF gr_ess IS NULL THEN
-      RETURN NULL;
-    END IF;
+    RETURN ARRAY( -- converts table to array
+      SELECT code FROM(
+        SELECT a || b code, b species_per, ROW_NUMBER() OVER () org_order -- concatenates values in column a and b, add index
+        FROM unnest(
+          sp_array, 
+          per_array
+        ) AS t(a,b) -- converts arrays to a table
+        ORDER BY species_per desc, org_order asc -- order by the percent, ties are ordered by their original order in the string
+      ) x
+    );
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_species_translation(text, text)
+--
+-- eta_ess_pc text,
+-- species_number text
+--
+-- Runs TT_qc_prg5_species_code_to_reordered_array then returns the species code from the requested position.
+-- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species_translation(
+  eta_ess_pc text,
+  species_number text
+)
+RETURNS text AS $$
+  DECLARE
+    code_array text[];
+    sp_code text;
+  BEGIN
     
-    IF in_etage = 'O' THEN
-      IF layer = '1' THEN
-        -- translate sup_eta_ess_pc value according to position
-        -- validate sup_eta_ess_pc not null
-        sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
-               FROM (SELECT translate(sup_eta_ess_pc, '0123456789', ' ') AS species) r;
-      ELSIF layer = '2' THEN
-        -- translate inf_eta_ess_pc value according to position
-        -- validate inf_eta_ess_pc not null
-        sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
-               FROM (SELECT translate(inf_eta_ess_pc, '0123456789', ' ') AS species) r;
+    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+    sp_code = translate(code_array[species_number::int], '0123456789', '');
+    RETURN TT_lookupText(sp_code, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_species_per_translation(text, text)
+--
+-- eta_ess_pc text,
+-- species_number text
+--
+-- Runs TT_qc_prg5_species_code_to_reordered_array then returns the percent value from the requested position.
+-- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species_per_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species_per_translation(
+  eta_ess_pc text,
+  species_number text
+)
+RETURNS int AS $$
+  DECLARE
+    code_array text[];
+  BEGIN
+    
+    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+    RETURN regexp_replace(code_array[species_number::int], '[[:alpha:]]', '', 'g')::int;
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_qc_prg4_species_per_translation(text, text)
+--
+-- gr_ess text,
+-- species_number text
+--
+-- For QC fourth inventory, species are coded in gr_ess column. If only one species (code length = 2)
+-- then percent is 100%. If species is doubled (e.g. FXFX) then species 1 is 100%, species 2 is null.
+-- If 2 species (code length =4) and not doubled then species 1 is 65% and 2 is 35%. If three species
+-- (code length is 6) then species 1 is 37%, 2 is 33% and 3 is 30%.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg4_species_per_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg4_species_per_translation(
+  gr_ess text,
+  species_number text
+)
+RETURNS int AS $$
+  DECLARE
+    _species_number int := species_number::int;
+  BEGIN
+    
+    -- translate the gr_ess code according to length of gr_ess and position
+    IF LENGTH(gr_ess) = 2 THEN
+      IF _species_number = 1 THEN
+        RETURN 100;
       ELSE
-        RETURN NULL; -- if layer not 1 or 2, requires validation
+        RETURN NULL;
       END IF;
-    END IF;
     
-    IF in_etage = 'N' THEN
-      IF layer = '1' THEN
-        IF no_prg = '3' THEN
-          -- translate the code using the lookup table qc03_ipf5_species_prg3
-          sp_val = gr_ess;
-        ELSIF no_prg = '4' THEN
-          -- translate the gr_ess code according to position
-          sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
-                  FROM (SELECT trim(regexp_replace(gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
+    ELSIF LENGTH(gr_ess) = 4 THEN      
+      IF _species_number = 1 THEN
+        IF NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN -- if species is doubled return 100
+          RETURN 100;
         ELSE
-          RETURN NULL; -- if no_prg not 3 or 4, requires validation
+          RETURN 65;
+        END IF;
+      ELSIF _species_number = 2 THEN
+        IF NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN -- if species is doubled return null
+          RETURN NULL;
+        ELSE
+          RETURN 35;
         END IF;
       ELSE
-        RETURN NULL; -- if not layer 1, requires validation
+        RETURN NULL;
       END IF;
-    END IF;
     
-    -- pass the value to the lookup table
-    IF in_etage = 'N' AND no_prg = '3' THEN
-      RETURN tt_lookupText(sp_val, 'translation', 'qc_ipf05_species_prg3', 'gr_ess', return_col);
+    ELSIF LENGTH(gr_ess) = 6 THEN
+      IF _species_number = 1 THEN
+        RETURN 37;
+      ELSIF _species_number = 2 THEN
+        RETURN 33;
+      ELSIF _species_number = 3 THEN
+        RETURN 30;
+      ELSE
+        RETURN NULL;
+      END IF;
     ELSE
-      RETURN tt_lookupText(sp_val, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
+      RETURN NULL;
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
