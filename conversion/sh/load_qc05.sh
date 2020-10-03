@@ -11,7 +11,7 @@
 # The year of photography is included as the AN_PRO_ORI attribute in the META_MAJ_PROV table
 
 # The PEE_MAJ_PROV, META_MAJ_PROV, and ETAGE_MAJ_PROV tables need to be loaded and joined on the
-# GEOCODE unique identifier. We prefer ETAGE_MAJ_PROV over ESSENCE_MAJ_PROV because we need source
+# GEOC_MAJ unique identifier. We prefer ETAGE_MAJ_PROV over ESSENCE_MAJ_PROV because we need source
 # data with one row per polygon. The same info is contained in both tables so only one is needed.
 
 # Load into a target table in the schema defined in the config file.
@@ -20,7 +20,7 @@
 # in the configuration file.
 
 # QC03, QC04 and QC05 all use the same source inventory table. Here we filter the full table to only
-# include rows where ver_prg LIKE 'AIPF%' OR ver_prg LIKE 'NAIPF%' OR (ver_prg ='MIXTE' AND in_etage = 'O'). 
+# include rows where ver_prg LIKE '%AIPF%'. 
 # These rows use the IPF05 standard (see issue #429 for details).
 
 ######################################## Set variables #######################################
@@ -49,13 +49,14 @@ tableName_full=${fullTargetTableName}_full
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_poly" \
 -nln $tableName_poly $layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_poly'" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_poly' WHERE ver_prg LIKE '%AIPF%'" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for meta table
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_meta" \
 -nln $tableName_meta $layer_creation_options $other_options \
+-sql "SELECT * FROM '$gdbFileName_meta' WHERE ver_prg LIKE '%AIPF%'" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for etage table
@@ -75,12 +76,12 @@ tableName_full=${fullTargetTableName}_full
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-CREATE INDEX ON $tableName_poly (geocode);
+CREATE INDEX ON $tableName_poly (geoc_maj);
 
 -- select all SUP rows
 DROP TABLE IF EXISTS $tableName_sup;
 CREATE TABLE $tableName_sup AS
-SELECT geocode sup_geocode, 
+SELECT geoc_maj sup_geoc_maj, 
 etage sup_etage, 
 ty_couv_et sup_ty_couv_et,
 densite sup_densite,
@@ -93,7 +94,7 @@ WHERE etage = 'SUP';
 -- select all INF rows
 DROP TABLE IF EXISTS $tableName_inf;
 CREATE TABLE $tableName_inf AS
-SELECT geocode inf_geocode, 
+SELECT geoc_maj inf_geoc_maj, 
 etage inf_etage, 
 ty_couv_et inf_ty_couv_et,
 densite inf_densite,
@@ -111,29 +112,22 @@ ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS wkb_geometry;
 
 -- rename geocode in meta
-ALTER TABLE $tableName_meta RENAME COLUMN geocode TO meta_geocode;
+ALTER TABLE $tableName_meta RENAME COLUMN geoc_maj TO meta_geoc_maj;
 ALTER TABLE $tableName_meta RENAME COLUMN no_prg TO meta_no_prg;
 ALTER TABLE $tableName_meta RENAME COLUMN ver_prg TO meta_ver_prg;
 
 -- join qc05_poly, qc05_meta, qc05_etage_sup, and qc05_etage_inf
-DROP TABLE IF EXISTS $tableName_full;
-CREATE TABLE $tableName_full AS
-SELECT *
-FROM $tableName_poly AS poly
-LEFT join $tableName_meta AS meta 
-  on poly.geocode = meta.meta_geocode
-LEFT join $tableName_sup AS sup 
-  on poly.geocode = sup.sup_geocode
-LEFT join $tableName_inf AS inf 
-  on poly.geocode = inf.inf_geocode;
-  
--- filter by version inventory rows
 DROP TABLE IF EXISTS $fullTargetTableName;
 CREATE TABLE $fullTargetTableName AS
 SELECT *
-FROM $tableName_full
-WHERE ver_prg LIKE 'AIPF%' OR ver_prg LIKE 'NAIPF%' OR (ver_prg ='MIXTE' AND in_etage = 'O');
-  
+FROM $tableName_poly AS poly
+LEFT join $tableName_meta AS meta 
+  on poly.geoc_maj = meta.meta_geoc_maj
+LEFT join $tableName_sup AS sup 
+  on poly.geoc_maj = sup.sup_geoc_maj
+LEFT join $tableName_inf AS inf 
+  on poly.geoc_maj = inf.inf_geoc_maj;
+    
 --update ogc_fid
 ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
 ALTER TABLE $fullTargetTableName ADD COLUMN ogc_fid INT;
@@ -141,9 +135,9 @@ UPDATE $fullTargetTableName SET ogc_fid=temp_key;
 ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
 
 --drop extra geocode attributes
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS sup_geocode;
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS inf_geocode;
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geocode;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS sup_geoc_maj;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS inf_geoc_maj;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geoc_maj;
 
 --drop tables
 DROP TABLE IF EXISTS $tableName_poly;
@@ -151,7 +145,6 @@ DROP TABLE IF EXISTS $tableName_meta;
 DROP TABLE IF EXISTS $tableName_etage;
 DROP TABLE IF EXISTS $tableName_sup;
 DROP TABLE IF EXISTS $tableName_inf;
-DROP TABLE IF EXISTS $tableName_full;
 "
 
 createSQLSpatialIndex=True

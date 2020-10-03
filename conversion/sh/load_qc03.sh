@@ -11,8 +11,8 @@
 # The year of photography is included as the AN_PRO_ORI attribute in the META_MAJ_PROV table
 
 # The PEE_MAJ_PROV, META_MAJ_PROV, and ETAGE_MAJ_PROV tables need to be loaded and joined on the
-# GEOCODE unique identifier. We prefer ETAGE_MAJ_PROV over ESSENCE_MAJ_PROV because we need source
-# data with one row per polygon. The same info is contained in both tables so only one is needed.
+# GEOC_MAJ unique identifier. ETAGE_MAJ_PROV and ESSENCE_MAJ_PROV don't need to be loaded since they do not 
+# apply to that version of the inventory.
 
 # Load into a target table in the schema defined in the config file.
 
@@ -20,7 +20,7 @@
 # in the configuration file.
 
 # QC03, QC04 and QC05 all use the same source inventory table. Here we filter the full table to only
-# include rows where no_prg = '3'. These rows use the INI03 standard (see issue #429 for details).
+# include rows where ver_prg IS NULL. These rows use the INI03 standard (see issue #429 for details).
 
 ######################################## Set variables #######################################
 
@@ -32,12 +32,10 @@ srcFullPath="$friDir/QC/$inventoryID/data/inventory/$srcFileName.gdb"
 
 gdbFileName_poly=PEE_MAJ_PROV
 gdbFileName_meta=META_MAJ_PROV
-gdbFileName_etage=ETAGE_MAJ_PROV
 
 fullTargetTableName=$targetFRISchema.qc03
 tableName_poly=${fullTargetTableName}_poly
 tableName_meta=${fullTargetTableName}_meta
-tableName_full=${fullTargetTableName}_full
 
 ########################################## Process ######################################
 
@@ -45,14 +43,14 @@ tableName_full=${fullTargetTableName}_full
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_poly" \
 -nln $tableName_poly $layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_poly' WHERE no_prg = '3'" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_poly' WHERE ver_prg IS NULL" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for meta table
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_meta" \
 -nln $tableName_meta $layer_creation_options $other_options \
--sql "SELECT * FROM '$gdbFileName_meta' WHERE no_prg = '3'" \
+-sql "SELECT * FROM '$gdbFileName_meta' WHERE ver_prg IS NULL" \
 -progress $overwrite_tab
 
 # Join META  tables to polygons using the GEOCODE attribute.
@@ -62,7 +60,7 @@ tableName_full=${fullTargetTableName}_full
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-CREATE INDEX ON $tableName_poly (geocode);
+CREATE INDEX ON $tableName_poly (geoc_maj);
 
 
 -- drop all ogr_fid columns
@@ -73,33 +71,30 @@ ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS wkb_geometry;
 
 -- rename geocode, no_prg, ver_prg in meta
-ALTER TABLE $tableName_meta RENAME COLUMN geocode TO meta_geocode;
+ALTER TABLE $tableName_meta RENAME COLUMN geoc_maj TO meta_geoc_maj;
 ALTER TABLE $tableName_meta RENAME COLUMN no_prg TO meta_no_prg;
 ALTER TABLE $tableName_meta RENAME COLUMN ver_prg TO meta_ver_prg;
 
 -- join qc03_poly, qc03_meta
-DROP TABLE IF EXISTS  $tableName_full;
-CREATE TABLE  $tableName_full AS
+DROP TABLE IF EXISTS  $fullTargetTableName;
+CREATE TABLE  $fullTargetTableName AS
 SELECT *
 FROM $tableName_poly AS poly
 LEFT join $tableName_meta AS meta 
-  on poly.geocode = meta.meta_geocode;
+  on poly.geoc_maj = meta.meta_geoc_maj;
     
 --update ogc_fid
-ALTER TABLE $tableName_full ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
-ALTER TABLE $tableName_full ADD COLUMN ogc_fid INT;
-UPDATE $tableName_full SET ogc_fid=temp_key;
-ALTER TABLE $tableName_full DROP COLUMN IF EXISTS temp_key;
+ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
+ALTER TABLE $fullTargetTableName ADD COLUMN ogc_fid INT;
+UPDATE $fullTargetTableName SET ogc_fid=temp_key;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
 
 --drop extra geocode attributes
-ALTER TABLE $tableName_full DROP COLUMN IF EXISTS meta_geocode;
+ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geoc_maj;
 
 --drop tables
 DROP TABLE IF EXISTS $tableName_poly;
 DROP TABLE IF EXISTS $tableName_meta;
-
---rename qc03_full for qc03
-ALTER TABLE $tableName_full RENAME TO $inventoryID;
 "
 
 createSQLSpatialIndex=True
