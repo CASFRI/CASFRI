@@ -695,7 +695,7 @@ This attribute is translated from source information where it exists, otherwise 
 | TREED_ROCK             | Treed rock sites (assigned in SK UTM, MB FRI) |
 | ALPINE_FOREST          | High elevation forest usually above 1800 m (assigned in BC) |
 | SCRUB_SHRUB            | Various types of scrub and shrub sites (assigned in NL, MB FRI) |
-| ALDER                  | Sites dominated by alder, ususally associated with water or wetlands (assigned in MB FRI) |
+| ALDER                  | Sites dominated by alder (or willow, or birch), ususally associated with water or wetlands (assigned in MB FRI) |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
 
 
