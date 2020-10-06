@@ -110,7 +110,9 @@ WITH test_nb AS (
     SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  4 nb_test
+    SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                 66 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2845,7 +2847,58 @@ SELECT '65.4'::text number,
        'TT_qc_prg5_species_matchTable_validation'::text function_tested,
        '5th inv species empty string'::text description,
        TT_qc_prg5_species_matchTable_validation(NULL::text, '1') IS FALSE passed
-  
+---------------------------------------------------------
+  -- TT_mb_fri_countOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '66.1'::text number,
+       'TT_mb_fri_countOfNotNull'::text function_tested,
+       'Test one layer'::text description,
+       TT_mb_fri_countOfNotNull('bf', '', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '66.2'::text number,
+       'TT_mb_fri_countOfNotNull'::text function_tested,
+       'Test 2 layers'::text description,
+       TT_mb_fri_countOfNotNull('bf', '801', '2') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '66.3'::text number,
+       'TT_mb_fri_countOfNotNull'::text function_tested,
+       'Test 0 layers'::text description,
+       TT_mb_fri_countOfNotNull('', '', '2') = 0 passed
+---------------------------------------------------------
+ -- TT_mb_fri_hasCountOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '67.1'::text number,
+       'TT_mb_fri_hasCountOfNotNull'::text function_tested,
+       'Test one layer'::text description,
+       TT_mb_fri_hasCountOfNotNull('bf', '', '1', 'TRUE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '67.2'::text number,
+       'TT_mb_fri_hasCountOfNotNull'::text function_tested,
+       'Test 2 layers'::text description,
+       TT_mb_fri_hasCountOfNotNull('bf', '801', '2', 'TRUE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '67.3'::text number,
+       'TT_mb_fri_hasCountOfNotNull'::text function_tested,
+       'Test 0 layers'::text description,
+       TT_mb_fri_hasCountOfNotNull('', '', '0', 'TRUE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '67.4'::text number,
+       'TT_mb_fri_hasCountOfNotNull'::text function_tested,
+       'Test two layers exact false'::text description,
+       TT_mb_fri_hasCountOfNotNull('bf', '801', '1', 'FALSE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '67.5'::text number,
+       'TT_mb_fri_hasCountOfNotNull'::text function_tested,
+       'Test two layers exact true'::text description,
+       TT_mb_fri_hasCountOfNotNull('bf', '801', '1', 'TRUE') IS FALSE passed  
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

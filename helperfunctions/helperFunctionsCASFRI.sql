@@ -2369,6 +2369,44 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------
+-- TT_mb_fri_hasCountOfNotNull(text, text, text, text)
+--
+-- species text - species
+-- nfl text - nfl attribute
+-- count text
+-- exact text
+-- 
+-- hasCountOfNotNull using mb fri custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_mb_fri_hasCountOfNotNull(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_mb_fri_hasCountOfNotNull(
+  species text,
+  nfl text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = TT_mb_fri_countOfNotNull(species, nfl, '2');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;    
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_fvi01_structure_per_validation(text, text)
 --
@@ -4236,6 +4274,42 @@ RETURNS int AS $$
     
     -- call countOfNotNull
     RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, 'FALSE');
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_mb_fri_countOfNotNull(text, text, text, text)
+--
+-- species text - string list of species attributes. This is carried through to couneOfNotNull
+-- nfl text - nfl code
+-- max_rank_to_consider text
+-- 
+-- Determine if the row contains an NFL record. If it does assign a string
+-- so it can be counted as a non-null layer.
+-- 
+-- Pass species and the string/NULLs to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_mb_fri_countOfNotNull(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_mb_fri_countOfNotNull(
+  species text,
+  nfl text,
+  max_rank_to_consider text
+)
+RETURNS int AS $$
+  DECLARE
+    is_nfl text;
+  BEGIN
+
+    -- if any of the nfl functions return true, we know there is an NFL record.
+    -- set is_nfl to be a valid string.
+    IF tt_matchList(nfl,'{''802'',''803'',''804'',''838'',''839'',''848'',''900'',''901'',''991'',''992'',''993'',''994'',''995'',''810'',''811'',''812'',''813'',''815'',''816'',''840'',''841'',''842'',''843'',''844'',''845'',''846'',''847'',''849'',''851'', ''801'',''821'',''822'',''823'',''824'',''830'',''831'',''832'',''835''}') THEN
+      is_nfl = 'a_value';
+    ELSE
+      is_nfl = NULL::text;
+    END IF;
+    
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(species, is_nfl, max_rank_to_consider, 'FALSE');
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
