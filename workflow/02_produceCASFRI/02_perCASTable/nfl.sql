@@ -32,6 +32,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'ns_nsi01_nfl', '_ns_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fri01_nfl', '_mb_fri_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb_fli_nfl', 'ab_avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 ------------------------
@@ -404,6 +405,16 @@ SELECT * FROM TT_Translate_mb_fri_nfl('rawfri', 'mb05_l2_to_mb_fri_l1_map_nfl', 
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_nfl', 'mb05_l2_to_mb_fri_l1_map_nfl');
+------------------------
+-- Translate MB06 layer 6
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb06', 6, 'mb_fli', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_mb_fli_nfl('rawfri', 'mb06_l6_to_mb_fli_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_nfl', 'mb06_l6_to_mb_fli_l1_map_nfl');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

@@ -32,6 +32,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_geo', '_yt_geo', 'ab_avi01_geo');
 SELECT TT_Prepare('translation', 'ns_nsi01_geo', '_ns_geo', 'ab_avi01_geo'); 
 SELECT TT_Prepare('translation', 'pe_pei01_geo', '_pe_geo', 'ab_avi01_geo'); 
 SELECT TT_Prepare('translation', 'mb_fri01_eco', '_mb_fri_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'mb_fli01_eco', '_mb_fli_eco', 'ab_avi01_eco');
 ------------------------
 DROP TABLE IF EXISTS casfri50.geo_all CASCADE;
 ------------------------
@@ -224,6 +225,16 @@ SELECT * FROM TT_Translate_mb_fri_geo('rawfri', 'mb05_l1_to_mb_fri_l1_map_geo', 
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_geo', 'mb05_l1_to_mb_fri_l1_map_geo');
+------------------------
+-- Translate MB06 using MB_FLI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb_fli', 1, NULL, 'geo');
+
+INSERT INTO casfri50.geo_all -- 
+SELECT * FROM TT_Translate_mb_fli_geo('rawfri', 'mb06_l1_to_mb_fli_l1_map_geo', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_geo', 'mb06_l1_to_mb_fli_l1_map_geo');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
