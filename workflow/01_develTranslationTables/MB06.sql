@@ -53,8 +53,8 @@ CREATE TABLE translation_devel.mb06_fli01_dst_devel AS
 SELECT * FROM translation.mb_fli01_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.mb06_fli01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'mb06_fli01_dst_devel', '_mb06_dst_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb', 1, 200);
-SELECT * FROM TT_Translate_mb06_dst_devel('rawfri', 'mb06_l1_to_mb_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb_fli', 1, 200);
+SELECT * FROM TT_Translate_mb06_dst_devel('rawfri', 'mb06_l1_to_mb_fli_l1_map_200', 'ogc_fid'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'mb06_fli01_dst_devel');
 
 SELECT a.cas_id, b.dist_type_1, a.dist_type_1, a.dist_type_2 

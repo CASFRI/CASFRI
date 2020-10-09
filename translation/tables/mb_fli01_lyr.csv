@@ -10,8 +10,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 8,CROWN_CLOSURE_LOWER,integer,"notNull(crown_closure_lower);notEmpty(crown_closure_lower|-8888);matchList(crown_closure_lower,{'0','1','2','3','4','5','6','7','8','9'}|-9997)","mapInt(crown_closure_upper, {'0','1','2','3','4','5','6','7','8','9'}, {1,11,21,31,41,51,61,71,81,91})",Maps source value to CROWN_CLOSURE_UPPER using lists of values.,TRUE
 9,HEIGHT_UPPER,double precision,"notNull(height_upper);isNumeric(height_upper);isBetween(height_upper,'0.1',100)",copyDouble(height_upper),Copies source value to HEIGHT_UPPER,TRUE
 10,HEIGHT_LOWER,double precision,"notNull(height_lower);isNumeric(height_lower);isBetween(height_lower,'0.1',100)",copyDouble(height_lower),Copies source value to HEIGHT_LOWER,TRUE
-11,PRODUCTIVITY,text,false(),nothingText(),Attribute does not occur,TRUE
-12,PRODUCTIVITY_TYPE,text,false(),nothingText(),Attribute does not occur,TRUE
+11,PRODUCTIVITY,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
+12,PRODUCTIVITY_TYPE,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
 13,SPECIES_1,text,"notNull(species_1);notEmpty(species_1);matchTable(species_1, 'translation', 'species_code_mapping', 'mb_species_codes', 'TRUE')","lookupText(species_1, 'translation', 'species_code_mapping', 'mb_species_codes', 'casfri_species_codes', 'TRUE')",Maps source value to SPECIES_1 using lookup table,TRUE
 14,SPECIES_PER_1,integer,"notNull(species_per_1);isInt(species_per_1|-9997);isBetween(species_per_1, 1, 10|-9997)","mapInt(species_per_1, {1,2,3,4,5,6,7,8,9,10}, {10,20,30,40,50,60,70,80,90,100})",Maps source value to SPECIES_PER_1 by multiplying by 10,TRUE
 15,SPECIES_2,text,"notNull(species_2);notEmpty(species_2);matchTable(species_2, 'translation', 'species_code_mapping', 'mb_species_codes', 'TRUE')","lookupText(species_2, 'translation', 'species_code_mapping', 'mb_species_codes', 'casfri_species_codes', 'TRUE')",Maps source value to SPECIES_2 using lookup table. Uses a second column in the lookup table to allow the layer 2 source values to be translated to different target values for species 1 and species 2.,TRUE
