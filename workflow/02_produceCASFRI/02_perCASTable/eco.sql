@@ -32,7 +32,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'ns_nsi01_eco', '_ns_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'pe_pei01_eco', '_pe_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'mb_fri01_eco', '_mb_fri_eco', 'ab_avi01_eco');
-
+SELECT TT_Prepare('translation', 'mb_fli01_eco', '_mb_fli_eco', 'ab_avi01_eco');
 ------------------------
 DROP TABLE IF EXISTS casfri50.eco_all CASCADE;
 ------------------------
@@ -188,6 +188,14 @@ INSERT INTO casfri50.eco_all --
 SELECT * FROM TT_Translate_mb_fri_eco('rawfri', 'mb05_l1_to_mb_fri_l1_map_eco');
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_eco', 'mb05_l1_to_mb_fri_l1_map_eco');
+------------------------
+-- Translate MB06 using MB_FLI translation table
+SELECT TT_CreateMappingView('rawfri', 'mb06', 'mb_fli', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_mb_fli_eco('rawfri', 'mb06_l1_to_mb_fli_l1_map_eco');
+
+SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_eco', 'mb06_l1_to_mb_fli_l1_map_eco');
 
 --------------------------------------------------------------------------
 -- Check processed inventories and count

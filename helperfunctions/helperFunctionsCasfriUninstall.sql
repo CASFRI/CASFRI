@@ -78,6 +78,7 @@ DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text, t
 DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_translation(text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fim02_stand_structure_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_sfv01_stand_structure_translation(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_mb_fli02_stand_structure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text, text);

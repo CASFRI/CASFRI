@@ -112,7 +112,9 @@ WITH test_nb AS (
     SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                 66 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test
+    SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_mb_fli01_stand_structure_translation'::text function_tested,  68 maj_num,  3 nb_test
+
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2899,6 +2901,27 @@ SELECT '67.5'::text number,
        'TT_mb_fri_hasCountOfNotNull'::text function_tested,
        'Test two layers exact true'::text description,
        TT_mb_fri_hasCountOfNotNull('bf', '801', '1', 'TRUE') IS FALSE passed  
+---------------------------------------------------------
+  -- TT_mb_fli01_stand_structure_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '68.1'::text number,
+       'TT_mb_fli01_stand_structure_translation'::text function_tested,
+       'Test Complex stand'::text description,
+       TT_mb_fli01_stand_structure_translation('C', '', '', '','', '', '','', '', '','', '', '','', '', '') = 'COMPLEX' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '68.2'::text number,
+       'TT_mb_fli01_stand_structure_translation'::text function_tested,
+       'Test S stand'::text description,
+       TT_mb_fli01_stand_structure_translation('', 'bf', '', '', '', '', '','', '', '','', '', '','', '', '') = 'SINGLE_LAYERED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '68.3'::text number,
+       'TT_mb_fli01_stand_structure_translation'::text function_tested,
+       'Test M stand'::text description,
+       TT_mb_fli01_stand_structure_translation('', 'bf', '', '', 'bf', '', '', 'bf', '', '', 'bf', '', '', 'bf', '', '') = 'MULTI_LAYERED' passed
+
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

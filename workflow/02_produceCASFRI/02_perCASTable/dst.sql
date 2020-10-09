@@ -32,6 +32,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'ns_nsi01_dst', '_ns_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'pe_pei01_dst', '_pe_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'mb_fri01_dst', '_mb05_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'mb_fli01_dst', '_mb06_dst', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 ------------------------
@@ -234,6 +235,16 @@ SELECT * FROM TT_Translate_mb05_dst('rawfri', 'mb05_l1_to_mb_fri_l1_map_dst', 'o
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_dst', 'mb05_l1_to_mb_fri_l1_map_dst');
+------------------------
+-- Translate MB06 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb_fli', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_mb06_dst('rawfri', 'mb06_l1_to_mb_fli_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_dst', 'mb06_l1_to_mb_fli_l1_map_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

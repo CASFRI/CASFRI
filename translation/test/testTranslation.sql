@@ -55,6 +55,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt_cas_test', 'ab_avi01_cas')
 SELECT TT_Prepare('translation', 'ns_nsi01_cas', '_ns_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'pe_pei01_cas', '_pe_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'mb_fri01_cas', '_mb_fri_cas_test', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'mb_fli01_cas', '_mb_fli_cas_test', 'ab_avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.cas_all_new CASCADE;
 ------------------------
@@ -134,6 +135,10 @@ SELECT TT_CreateMappingView('rawfri', 'mb05', 'mb_fri', 500);
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_mb_fri_cas_test('rawfri', 'mb05_l1_to_mb_fri_l1_map_500');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 'mb_fli', 300);
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_mb_fli_cas_test('rawfri', 'mb06_l1_to_mb_fli_l1_map_300');
+------------------------
 -- Create an ordered VIEW on the CAS table
 CREATE OR REPLACE VIEW casfri50_test.cas_all_new_ordered AS
 SELECT * FROM casfri50_test.cas_all_new
@@ -157,6 +162,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt_dst_test', 'ab_avi01_dst')
 SELECT TT_Prepare('translation', 'ns_nsi01_dst', '_ns_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'pe_pei01_dst', '_pe_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'mb_fri01_dst', '_mb_fri_dst_test', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'mb_fli01_dst', '_mb_fli_dst_test', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.dst_all_new CASCADE;
 ------------------------
@@ -240,6 +246,10 @@ SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 1000); -- Generate
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_mb_fri_dst_test('rawfri', 'mb05_l1_to_mb_fri_l1_map_1000');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb_fli', 1, 1200); -- Generates about 300 (301) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_mb_fli_dst_test('rawfri', 'mb06_l1_to_mb_fli_l1_map_1200');
+------------------------
 -- Create an ordered VIEW on the DST table
 CREATE OR REPLACE VIEW casfri50_test.dst_all_new_ordered AS
 SELECT * FROM casfri50_test.dst_all_new
@@ -264,6 +274,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt_eco_test', 'ab_avi01_eco')
 SELECT TT_Prepare('translation', 'ns_nsi01_eco', '_ns_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'pe_pei01_eco', '_pe_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'mb_fri01_eco', '_mb_fri_eco_test', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'mb_fli01_eco', '_mb_fli_eco_test', 'ab_avi01_eco');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.eco_all_new CASCADE;
 ------------------------
@@ -343,6 +354,10 @@ SELECT TT_CreateMappingView('rawfri', 'mb05', 'mb_fri', 300); -- Generates 0 ECO
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_mb_fri_eco_test('rawfri', 'mb05_l1_to_mb_fri_l1_map_300');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 'mb_fli', 300); -- Generates 0 ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_mb_fli_eco_test('rawfri', 'mb06_l1_to_mb_fli_l1_map_300');
+------------------------
 -- Create an ordered VIEW on the ECO table
 CREATE OR REPLACE VIEW casfri50_test.eco_all_new_ordered AS
 SELECT * FROM casfri50_test.eco_all_new
@@ -364,6 +379,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_lyr', '_yt_lyr_test', 'ab_avi01_lyr')
 SELECT TT_Prepare('translation', 'ns_nsi01_lyr', '_ns_lyr_test', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'pe_pei01_lyr', '_pe_lyr_test', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'mb_fri01_lyr', '_mb_fri_lyr_test', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'mb_fli01_lyr', '_mb_fli_lyr_test', 'ab_avi01_lyr'); 
 -------------------------
 DROP TABLE IF EXISTS casfri50_test.lyr_all_new CASCADE;
 ------------------------
@@ -527,6 +543,26 @@ SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 1100); -- Generate
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_mb_fri_lyr_test('rawfri', 'mb05_l1_to_mb_fri_l1_map_1100'); -- Generates about 500 (508) LYR rows
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb_fli', 1, 350); -- Generates about 300 (316) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb06_l1_to_mb_fli_l1_map_350');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 2, 'mb_fli', 1, 800); -- Generates about 300 (296) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb06_l2_to_mb_fli_l1_map_800');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 3, 'mb_fli', 1, 5000); -- Generates about 300 (255) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb06_l3_to_mb_fli_l1_map_5000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 4, 'mb_fli', 1); -- Generates 107 LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb06_l4_to_mb_fli_l1_map');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 5, 'mb_fli', 1); -- Generates 0 LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb06_l5_to_mb_fli_l1_map');
+------------------------
 -- Create an ordered VIEW on the LYR table
 CREATE OR REPLACE VIEW casfri50_test.lyr_all_new_ordered AS
 SELECT * FROM casfri50_test.lyr_all_new
@@ -551,6 +587,7 @@ SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt_nfl_test', 'ab_avi01_nfl')
 SELECT TT_Prepare('translation', 'ns_nsi01_nfl', '_ns_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fri01_nfl', '_mb_fri_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb_fli_nfl_test', 'ab_avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.nfl_all_new CASCADE;
 ------------------------
@@ -701,6 +738,10 @@ SELECT * FROM TT_Translate_pe_nfl_test('rawfri', 'pe01_l2_to_pe_pei_l1_map_1420'
 SELECT TT_CreateMappingView('rawfri', 'mb05', 2, 'mb_fri', 1, 1250); -- Generates about 500 (479) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_mb_fri_nfl_test('rawfri', 'mb05_l2_to_mb_fri_l1_map_1250');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb06', 6, 'mb_fli', 1, 5000); -- Generates about 300 (298) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_mb_fli_nfl_test('rawfri', 'mb06_l6_to_mb_fli_l1_map_5000');
 ------------------------
 -- Create an ordered VIEW on the NFL table
 CREATE OR REPLACE VIEW casfri50_test.nfl_all_new_ordered AS

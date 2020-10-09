@@ -3605,7 +3605,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- Inventory specific signatures are made from this generic version using the correct 
 -- number of species and layers.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_generic_stand_structure_translation(text, text, text, text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_generic_stand_structure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_generic_stand_structure_translation(
   stand_structure text,
   layer1_sp1 text,
@@ -3616,13 +3616,21 @@ CREATE OR REPLACE FUNCTION TT_generic_stand_structure_translation(
   layer2_sp3 text,
   layer3_sp1 text,
   layer3_sp2 text,
-  layer3_sp3 text
+  layer3_sp3 text,
+  layer4_sp1 text,
+  layer4_sp2 text,
+  layer4_sp3 text,
+  layer5_sp1 text,
+  layer5_sp2 text,
+  layer5_sp3 text
 )
 RETURNS text AS $$
   DECLARE
     _count1 int := 0;
     _count2 int := 0;
     _count3 int := 0;
+    _count4 int := 0;
+    _count5 int := 0;
     _count int;
   BEGIN
     
@@ -3640,8 +3648,18 @@ RETURNS text AS $$
     IF tt_notEmpty(layer3_sp1) OR tt_notEmpty(layer3_sp2) OR tt_notEmpty(layer3_sp3) THEN
       _count3 = 1;
     END IF;
+    
+    -- are there any layer 4 species?
+    IF tt_notEmpty(layer4_sp1) OR tt_notEmpty(layer4_sp2) OR tt_notEmpty(layer4_sp3) THEN
+      _count4 = 1;
+    END IF;
+    
+    -- are there any layer 5 species?
+    IF tt_notEmpty(layer5_sp1) OR tt_notEmpty(layer5_sp2) OR tt_notEmpty(layer5_sp3) THEN
+      _count5 = 1;
+    END IF;
 
-    _count = _count1 + _count2 + _count3;
+    _count = _count1 + _count2 + _count3 + _count4 + _count5;
   
     -- if stand structure is H or C, return H or C. Note CX was added so this function can be re-used in ON02.
     IF stand_structure IN ('H', 'h', 'C', 'c', 'C4', 'C5', 'CX') THEN
@@ -3651,7 +3669,7 @@ RETURNS text AS $$
     -- if only one species layer, return S (this should always be sp1)
     ELSIF _count = 1 THEN
       RETURN 'SINGLE_LAYERED';
-    ELSIF _count IN(2, 3) THEN
+    ELSIF _count IN(2, 3, 4, 5) THEN
       RETURN 'MULTI_LAYERED';
     ELSE
       RETURN NULL;
@@ -3671,7 +3689,7 @@ CREATE OR REPLACE FUNCTION TT_avi01_stand_structure_translation(
   layer2_sp3 text
 )
 RETURNS text AS $$
-  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, NULL::text, NULL::text, NULL::text);
+  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
 $$ LANGUAGE sql IMMUTABLE;
 
 -- fvi signature - 2 layers, 3 species
@@ -3722,7 +3740,7 @@ RETURNS text AS $$
       _layer2_sp3 = layer2_sp3;
     END IF;
 
-    RETURN TT_generic_stand_structure_translation(stand_structure, _layer1_sp1, _layer1_sp2, _layer1_sp3, _layer2_sp1, _layer2_sp2, _layer2_sp3, NULL::text, NULL::text, NULL::text);
+    RETURN TT_generic_stand_structure_translation(stand_structure, _layer1_sp1, _layer1_sp2, _layer1_sp3, _layer2_sp1, _layer2_sp2, _layer2_sp3, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -3733,7 +3751,7 @@ CREATE OR REPLACE FUNCTION TT_fim02_stand_structure_translation(
   layer2_sp1 text
 )
 RETURNS text AS $$
-  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, NULL::text, NULL::text, layer2_sp1, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
+  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, NULL::text, NULL::text, layer2_sp1, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
 $$ LANGUAGE sql IMMUTABLE;
 
 -- SK SFVI signature - 3 layers, 1 species
@@ -3744,7 +3762,30 @@ CREATE OR REPLACE FUNCTION TT_sfv01_stand_structure_translation(
   layer3_sp1 text
 )
 RETURNS text AS $$
-  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, NULL::text, NULL::text, layer2_sp1, NULL::text, NULL::text, layer3_sp1, NULL::text, NULL::text);
+  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, NULL::text, NULL::text, layer2_sp1, NULL::text, NULL::text, layer3_sp1, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
+$$ LANGUAGE sql IMMUTABLE;
+
+-- MB FLI signature - 5 layers, 3 species
+CREATE OR REPLACE FUNCTION TT_mb_fli01_stand_structure_translation(
+  stand_structure text,
+  layer1_sp1 text,
+  layer1_sp2 text,
+  layer1_sp3 text,
+  layer2_sp1 text,
+  layer2_sp2 text,
+  layer2_sp3 text,
+  layer3_sp1 text,
+  layer3_sp2 text,
+  layer3_sp3 text,
+  layer4_sp1 text,
+  layer4_sp2 text,
+  layer4_sp3 text,
+  layer5_sp1 text,
+  layer5_sp2 text,
+  layer5_sp3 text
+)
+RETURNS text AS $$
+  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, layer3_sp1, layer3_sp2, layer3_sp3, layer4_sp1, layer4_sp2, layer4_sp3, layer5_sp1, layer5_sp2, layer5_sp3);
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_fvi01_countOfNotNull(text, text, text, text, text)
