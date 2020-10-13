@@ -468,7 +468,7 @@ SELECT '2.24'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_year_3_greater_than_1900', 
-                              '(1900 <= dist_year_3 AND dist_year_3 <= 2020) AND 
+                              '((1900 <= dist_year_3 AND dist_year_3 <= 2020) AND 
                                 (dist_year_1 <= dist_year_3 OR 
                                  dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
                                 )
@@ -786,10 +786,10 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.11'::text number,
        'lyr_all' target_table,
-       'Ensure PRODUCTIVE_FOR is NOT NULL' description, 
+       'Ensure PRODUCTIVITY is NOT NULL' description, 
        passed, cstr_query
 FROM (SELECT * 
-      FROM TT_AddConstraint('casfri50', 'lyr_all', 'NOTNULL', ARRAY['productive_for']) AS (passed boolean, cstr_query text)) foo
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'NOTNULL', ARRAY['productivity']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '4.12'::text number,

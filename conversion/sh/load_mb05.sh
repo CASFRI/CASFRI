@@ -106,7 +106,7 @@ shape_area,
 poly_id, 
 '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id 
 FROM '$gdbTableName' 
-WHERE FRI_FLI='FRI'" \
+WHERE FRI_FLI='FRI' AND mu_id > 0" \
 -progress $overwrite_tab
 
 createSQLSpatialIndex=True
