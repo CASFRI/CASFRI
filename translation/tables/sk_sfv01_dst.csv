@@ -13,4 +13,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 11,DIST_YEAR_3,integer,"notNull(dist_year_3);isInt(dist_year_3);isBetween(dist_year_3, 1000, 2020)",copyInt(dist_year_3),Copies source attribute to DIST_YEAR_1,TRUE
 12,DIST_EXT_UPPER_3,integer,"notNull(dist_ext_upper_3);isInt(dist_ext_upper_3);isGreaterThan(dist_ext_upper_3,0,'FALSE');matchList(dist_ext_upper_3,{1,2,3,4,5})","mapInt(dist_ext_upper_3, {1,2,3,4,5}, {25,50,75,95,100})",Maps extent range to upper,TRUE
 13,DIST_EXT_LOWER_3,integer,"notNull(dist_ext_lower_3);isInt(dist_ext_lower_3);isGreaterThan(dist_ext_lower_3,0,'FALSE');matchList(dist_ext_lower_3,{1,2,3,4,5})","mapInt(dist_ext_lower_3, {1,2,3,4,5}, {1,26,51,76,96})",Maps extent range to lower,TRUE
-14,LAYER,integer,true(),nothingInt(|-8886),Disturbance layer is unknown,TRUE
+14,LAYER,integer,false(|-8886),nothingInt(|-8886),Disturbance layer is unknown,TRUE
