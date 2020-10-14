@@ -63,7 +63,7 @@ SELECT * FROM translation_devel.qc04_ini04_eco_devel;
 DROP TABLE IF EXISTS translation_devel.qc04_ini04_lyr_devel;
 CREATE TABLE translation_devel.qc04_ini04_lyr_devel AS
 SELECT * FROM translation.qc_ini04_lyr
-WHERE rule_id::int < 10
+WHERE rule_id::int =6 OR rule_id::int =7
 ;
 -- display
 SELECT * FROM translation_devel.qc04_ini04_lyr_devel;

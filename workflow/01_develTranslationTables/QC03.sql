@@ -26,7 +26,7 @@ CREATE SCHEMA IF NOT EXISTS translation_devel;
 SELECT * FROM translation.qc_ini03_cas; 
 SELECT * FROM translation.qc_ini03_dst; 
 SELECT * FROM translation.qc_ini03_eco; 
-SELECT * FROM translation.qc_ipf05_lyr; 
+SELECT * FROM translation.qc_ini03_lyr; 
 SELECT * FROM translation.qc_ini03_nfl;
 SELECT * FROM translation.qc_ini03_geo;
 ----------------------------
@@ -63,7 +63,7 @@ SELECT * FROM translation_devel.qc03_ini03_eco_devel;
 DROP TABLE IF EXISTS translation_devel.qc03_ini03_lyr_devel;
 CREATE TABLE translation_devel.qc03_ini03_lyr_devel AS
 SELECT * FROM translation.qc_ini03_lyr
-WHERE rule_id::int < 10
+WHERE rule_id::int = 7
 ;
 -- display
 SELECT * FROM translation_devel.qc03_ini03_lyr_devel;
