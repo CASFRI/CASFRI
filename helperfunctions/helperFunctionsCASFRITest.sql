@@ -113,7 +113,11 @@ WITH test_nb AS (
     SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                 66 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_mb_fli01_stand_structure_translation'::text function_tested,  68 maj_num,  3 nb_test
+    SELECT 'TT_mb_fli01_stand_structure_translation'::text function_tested,  68 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_isCommercial'::text function_tested,                 69 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_isNonCommercial'::text function_tested,              70 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,71 maj_num,3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,72 maj_num,3 nb_test
 
 ),
 test_series AS (
@@ -2921,7 +2925,129 @@ SELECT '68.3'::text number,
        'TT_mb_fli01_stand_structure_translation'::text function_tested,
        'Test M stand'::text description,
        TT_mb_fli01_stand_structure_translation('', 'bf', '', '', 'bf', '', '', 'bf', '', '', 'bf', '', '', 'bf', '', '') = 'MULTI_LAYERED' passed
-
+---------------------------------------------------------
+  -- TT_nl_nli01_isCommercial
+---------------------------------------------------------
+UNION ALL
+SELECT '69.1'::text number,
+       'TT_nl_nli01_isCommercial'::text function_tested,
+       'Test commercial 1'::text description,
+       TT_nl_nli01_isCommercial('1', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '69.2'::text number,
+       'TT_nl_nli01_isCommercial'::text function_tested,
+       'Test commercial 2'::text description,
+       TT_nl_nli01_isCommercial('7000', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '69.3'::text number,
+       'TT_nl_nli01_isCommercial'::text function_tested,
+       'Test commercial fail 1'::text description,
+       TT_nl_nli01_isCommercial('900', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '69.4'::text number,
+       'TT_nl_nli01_isCommercial'::text function_tested,
+       'Test commercial fail 2'::text description,
+       TT_nl_nli01_isCommercial('7000', 'CS') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '69.5'::text number,
+       'TT_nl_nli01_isCommercial'::text function_tested,
+       'Test commercial fail 2'::text description,
+       TT_nl_nli01_isCommercial(NULL::text, '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '69.6'::text number,
+       'TT_nl_nli01_isCommercial'::text function_tested,
+       'Test commercial fail 2'::text description,
+       TT_nl_nli01_isCommercial('', 'CS') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '69.7'::text number,
+       'TT_nl_nli01_isCommercial'::text function_tested,
+       'Test commercial fail 2'::text description,
+       TT_nl_nli01_isCommercial('', 'XX') IS FALSE passed
+---------------------------------------------------------
+  -- TT_nl_nli01_isNonCommercial
+---------------------------------------------------------
+UNION ALL
+SELECT '70.1'::text number,
+       'TT_nl_nli01_isNonCommercial'::text function_tested,
+       'Test non commercial 1'::text description,
+       TT_nl_nli01_isNonCommercial('900', '') passed
+  ---------------------------------------------------------
+UNION ALL
+SELECT '70.2'::text number,
+       'TT_nl_nli01_isNonCommercial'::text function_tested,
+       'Test non commercial fail'::text description,
+       TT_nl_nli01_isNonCommercial('901', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '70.3'::text number,
+       'TT_nl_nli01_isNonCommercial'::text function_tested,
+       'Test non commercial 2'::text description,
+       TT_nl_nli01_isNonCommercial('', 'CS') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '70.4'::text number,
+       'TT_nl_nli01_isNonCommercial'::text function_tested,
+       'Test non commercial fail 2'::text description,
+       TT_nl_nli01_isNonCommercial('', 'XX') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '70.5'::text number,
+       'TT_nl_nli01_isNonCommercial'::text function_tested,
+       'Test non commercial 1'::text description,
+       TT_nl_nli01_isNonCommercial('900', 'DS') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '70.6'::text number,
+       'TT_nl_nli01_isNonCommercial'::text function_tested,
+       'Test non commercial 1'::text description,
+       TT_nl_nli01_isNonCommercial('901', 'DS') passed
+---------------------------------------------------------
+  -- TT_nl_nli01_crown_closure_upper_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '71.1'::text number,
+       'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,
+       'Test commercial'::text description,
+       TT_nl_nli01_crown_closure_upper_translation('100', '', '1') = 50 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '71.2'::text number,
+       'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,
+       'Test non-commercial'::text description,
+       TT_nl_nli01_crown_closure_upper_translation('100', 'CS', '1') = 25 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '71.3'::text number,
+       'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,
+       'Test neither'::text description,
+       TT_nl_nli01_crown_closure_upper_translation('0', 'XX', '1') IS NULL passed
+---------------------------------------------------------
+  -- TT_nl_nli01_crown_closure_lower_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '72.1'::text number,
+       'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,
+       'Test commercial'::text description,
+       TT_nl_nli01_crown_closure_lower_translation('100', '', '1') = 26 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '72.2'::text number,
+       'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,
+       'Test non-commercial'::text description,
+       TT_nl_nli01_crown_closure_lower_translation('100', 'CS', '1') = 10 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '72.3'::text number,
+       'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,
+       'Test neither'::text description,
+       TT_nl_nli01_crown_closure_lower_translation('0', 'XX', '1') IS NULL passed
+  
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

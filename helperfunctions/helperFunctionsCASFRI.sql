@@ -2533,6 +2533,89 @@ RETURNS boolean AS $$
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_isCommercial(text, text)
+--
+-- stand_id text,
+-- working_group text
+--
+-- Is the row defined as commercial forest?
+-- Commercial polygons are those with stand_id 1-899 or 1000-7000, and working_group value not equal to CS or DS
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_isCommercial(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_isCommercial(
+  stand_id text,
+  working_group text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _stand_id int;
+  BEGIN
+    
+    -- CS and DS denote scrub, not commercial
+    IF working_group IN('CS', 'DS') THEN
+      RETURN FALSE;
+    END IF;
+    
+    -- if stand id has no value, return false
+    IF NOT tt_isInt(stand_id) THEN
+      RETURN FALSE;
+    ELSE
+      _stand_id = stand_id::int;
+    END IF;
+    
+    -- return true if working group not CS or DS, and stand_id 1-899 or 1000-7000
+    IF (_stand_id >= 1 AND _stand_id <= 899) OR (_stand_id >= 1000 AND _stand_id <= 7000) THEN
+      RETURN TRUE;
+    END IF;
+    
+    RETURN FALSE;
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_isNonCommercial(text, text)
+--
+-- stand_id text,
+-- working_group text
+--
+-- Is the row defined as non-commercial forest?
+-- Non-Commercial polygons are those with stand_id 900, 910 or working_group is CS or DS
+-- These are all forest scrub
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_isNonCommercial(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_isNonCommercial(
+  stand_id text,
+  working_group text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _stand_id int;
+  BEGIN
+        
+    -- CS and DS denote scrub, not commercial
+    IF working_group IN('CS', 'DS') THEN
+      RETURN TRUE;
+    END IF;
+    
+    -- if stand id has no value, return false
+    IF NOT tt_isInt(stand_id) THEN
+      RETURN FALSE;
+    ELSE
+      _stand_id = stand_id::int;
+    END IF;
+        
+    -- return true if stand_id 900 or 910 (scrub)
+    IF _stand_id = 900 OR _stand_id = 910 THEN
+      RETURN TRUE;
+    END IF;
+    
+    RETURN FALSE;
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...
@@ -4522,3 +4605,58 @@ RETURNS int AS $$
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_crown_closure_upper_translation(text, text, text)
+--
+-- stand_id text,
+-- working_group text,
+-- density_code
+--
+-- If commercial forest run mapInt(density_code, {1,2,3}, {50,75,100})
+-- If non-commercial forest run: mapInt(density_code, {1,2,3,4}, {25,50,75,100})
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_upper_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_crown_closure_upper_translation(
+  stand_id text,
+  working_group text,
+  density_code text
+)
+RETURNS int AS $$
+  BEGIN
+    IF TT_nl_nli01_isCommercial(stand_id, working_group) THEN
+      RETURN tt_mapInt(density_code, '{''1'',''2'',''3''}', '{''50'',''75'',''100''}');
+    ELSIF TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN tt_mapInt(density_code, '{''1'',''2'',''3'',''4''}', '{''25'',''50'',''75'',''100''}');
+    ELSE
+      RETURN NULL;
+    END IF;    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_crown_closure_lower_translation(text, text, text)
+--
+-- stand_id text,
+-- working_group text,
+-- density_code
+--
+-- If commercial forest run: mapInt(density_code, {1,2,3}, {26,51,76})
+-- If non-commercial forest run: mapInt(density_code, {1,2,3,4}, {10,26,51,76})
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_lower_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_crown_closure_lower_translation(
+  stand_id text,
+  working_group text,
+  density_code text
+)
+RETURNS int AS $$
+  BEGIN
+    IF TT_nl_nli01_isCommercial(stand_id, working_group) THEN
+      RETURN tt_mapInt(density_code, '{''1'',''2'',''3''}', '{''26'',''51'',''76''}');
+    ELSIF TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN tt_mapInt(density_code, '{''1'',''2'',''3'',''4''}', '{''10'',''26'',''51'',''76''}');
+    ELSE
+      RETURN NULL;
+    END IF;    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
