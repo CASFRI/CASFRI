@@ -2615,7 +2615,28 @@ RETURNS boolean AS $$
     RETURN FALSE;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
-
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_isForest(text, text)
+--
+-- stand_id text,
+-- working_group text
+--
+-- Is row either commercial or non-commercial forest?
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_isForest(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_isForest(
+  stand_id text,
+  working_group text
+)
+RETURNS boolean AS $$
+  BEGIN
+    IF TT_nl_nli01_isCommercial(stand_id, working_group) OR TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...
@@ -4660,3 +4681,109 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_height_upper_translation(text, text, text)
+--
+-- stand_id text,
+-- working_group text,
+-- height_class
+--
+-- If commercial forest run tt_mapInt(height_class, {1,2,3,4,5,6,7,8}, {3.5,6.5,9.5,12.5,15.5,18.5,21.5,100})
+-- If non-commercial forest run: tt_mapInt(height_class, {1,2,3,4,5}, {3.5,6.5,9.5,12.5,15.5})
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_height_upper_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_height_upper_translation(
+  stand_id text,
+  working_group text,
+  height_class text
+)
+RETURNS double precision AS $$
+  BEGIN
+    IF TT_nl_nli01_isCommercial(stand_id, working_group) THEN
+      RETURN tt_mapDouble(height_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7'',''8''}', '{''3.5'',''6.5'',''9.5'',''12.5'',''15.5'',''18.5'',''21.5'',''100''}');
+    ELSIF TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN tt_mapDouble(height_class, '{''1'',''2'',''3'',''4'',''5''}', '{''3.5'',''6.5'',''9.5'',''12.5'',''15.5''}');
+    ELSE
+      RETURN NULL;
+    END IF;    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_height_lower_translation(text, text, text)
+--
+-- stand_id text,
+-- working_group text,
+-- height_class
+--
+-- If commercial forest run: tt_mapInt(height_class, {1,2,3,4,5,6,7,8}, {0,3.6,6.6,9.6,12.6,15.6,18.6,21.6})
+-- If non-commercial forest run: tt_mapInt(height_class, {1,2,3,4,5}, {0,3.6,6.6,9.6,12.6})
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_height_lower_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_height_lower_translation(
+  stand_id text,
+  working_group text,
+  height_class text
+)
+RETURNS double precision AS $$
+  BEGIN
+    IF TT_nl_nli01_isCommercial(stand_id, working_group) THEN
+      RETURN tt_mapDouble(height_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7'',''8''}', '{''0'',''3.6'',''6.6'',''9.6'',''12.6'',''15.6'',''18.6'',''21.6''}');
+    ELSIF TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN tt_mapDouble(height_class, '{''1'',''2'',''3'',''4'',''5''}', '{''0'',''3.6'',''6.6'',''9.6'',''12.6''}');
+    ELSE
+      RETURN NULL;
+    END IF;    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_productivity_translation(text, text)
+--
+-- stand_id text,
+-- working_group text
+--
+-- If commercial return PRODUCTIVE_FOREST, if non-commercial return NON_PRODUCTIVE_FOREST
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_productivity_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_productivity_translation(
+  stand_id text,
+  working_group text
+)
+RETURNS text AS $$
+  BEGIN
+    IF TT_nl_nli01_isCommercial(stand_id, working_group) THEN
+      RETURN 'PRODUCTIVE_FOREST';
+    ELSIF TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN 'NON_PRODUCTIVE_FOREST';
+    ELSE
+      RETURN NULL;
+    END IF;      
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_productivity_type_translation(text, text)
+--
+-- stand_id text,
+-- working_group text
+--
+-- If commercial, return HARVESTABLE, if non-commercial return SCRUB_SHRUB, if treed bog return TREED_MUSKEG.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_productivity_type_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_productivity_type_translation(
+  stand_id text,
+  working_group text
+)
+RETURNS text AS $$
+  BEGIN
+    IF stand_id = '930' THEN
+      RETURN 'TREED_MUSKEG';
+    ELSIF TT_nl_nli01_isCommercial(stand_id, working_group) THEN
+      RETURN 'HARVESTABLE';
+    ELSIF TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN 'SCRUB_SHRUB';
+    ELSE
+      RETURN NULL;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;

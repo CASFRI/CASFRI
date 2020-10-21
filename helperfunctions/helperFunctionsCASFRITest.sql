@@ -117,8 +117,12 @@ WITH test_nb AS (
     SELECT 'TT_nl_nli01_isCommercial'::text function_tested,                 69 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_isNonCommercial'::text function_tested,              70 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,71 maj_num,3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,72 maj_num,3 nb_test
-
+    SELECT 'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,72 maj_num,3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_height_upper_translation'::text function_tested,     73 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_height_lower_translation'::text function_tested,     74 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_isForest'::text function_tested,                     75 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,     76 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -3047,7 +3051,112 @@ SELECT '72.3'::text number,
        'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,
        'Test neither'::text description,
        TT_nl_nli01_crown_closure_lower_translation('0', 'XX', '1') IS NULL passed
-  
+---------------------------------------------------------
+  -- TT_nl_nli01_height_upper_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '73.1'::text number,
+       'TT_nl_nli01_height_upper_translation'::text function_tested,
+       'Test commercial'::text description,
+       TT_nl_nli01_height_upper_translation('100', '', '5') = 15.5 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '73.2'::text number,
+       'TT_nl_nli01_height_upper_translation'::text function_tested,
+       'Test non commercial'::text description,
+       TT_nl_nli01_height_upper_translation('100', '', '6') = 18.5 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '73.3'::text number,
+       'TT_nl_nli01_height_upper_translation'::text function_tested,
+       'Test neither'::text description,
+       TT_nl_nli01_height_upper_translation('0', 'XX', '1') IS NULL passed
+---------------------------------------------------------
+  -- TT_nl_nli01_height_lower_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '74.1'::text number,
+       'TT_nl_nli01_height_lower_translation'::text function_tested,
+       'Test commercial'::text description,
+       TT_nl_nli01_height_lower_translation('100', '', '5') = 12.6 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '74.2'::text number,
+       'TT_nl_nli01_height_lower_translation'::text function_tested,
+       'Test non commercial'::text description,
+       TT_nl_nli01_height_lower_translation('100', '', '6') = 15.6 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '74.3'::text number,
+       'TT_nl_nli01_height_lower_translation'::text function_tested,
+       'Test neither'::text description,
+       TT_nl_nli01_height_lower_translation('0', 'XX', '1') IS NULL passed
+---------------------------------------------------------
+  -- TT_nl_nli01_isForest
+---------------------------------------------------------
+UNION ALL
+SELECT '75.1'::text number,
+       'TT_nl_nli01_isForest'::text function_tested,
+       'Test commercial'::text description,
+       TT_nl_nli01_isForest('100', '') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '75.2'::text number,
+       'TT_nl_nli01_isForest'::text function_tested,
+       'Test non commercial'::text description,
+       TT_nl_nli01_isForest('100', 'DS') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '75.3'::text number,
+       'TT_nl_nli01_isForest'::text function_tested,
+       'Test neither'::text description,
+       TT_nl_nli01_isForest('0', 'XX') IS FALSE passed
+---------------------------------------------------------
+  -- TT_nl_nli01_productivity_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '76.1'::text number,
+       'TT_nl_nli01_productivity_translation'::text function_tested,
+       'Test commercial'::text description,
+       TT_nl_nli01_productivity_translation('100', '') = 'PRODUCTIVE_FOREST' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '76.2'::text number,
+       'TT_nl_nli01_productivity_translation'::text function_tested,
+       'Test non-commercial'::text description,
+       TT_nl_nli01_productivity_translation('100', 'DS') = 'NON_PRODUCTIVE_FOREST' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '76.3'::text number,
+       'TT_nl_nli01_productivity_translation'::text function_tested,
+       'Test neither'::text description,
+       TT_nl_nli01_productivity_translation('0', 'XX') IS NULL passed
+---------------------------------------------------------
+  -- TT_nl_nli01_productivity_type_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '77.1'::text number,
+       'TT_nl_nli01_productivity_type_translation'::text function_tested,
+       'Test commercial'::text description,
+       TT_nl_nli01_productivity_type_translation('100', '') = 'HARVESTABLE' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '77.2'::text number,
+       'TT_nl_nli01_productivity_type_translation'::text function_tested,
+       'Test non-commercial'::text description,
+       TT_nl_nli01_productivity_type_translation('100', 'DS') = 'SCRUB_SHRUB' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '77.3'::text number,
+       'TT_nl_nli01_productivity_type_translation'::text function_tested,
+       'Test treed muskeg'::text description,
+       TT_nl_nli01_productivity_type_translation('930', 'DS') = 'TREED_MUSKEG' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '77.4'::text number,
+       'TT_nl_nli01_productivity_type_translation'::text function_tested,
+       'Test neither'::text description,
+       TT_nl_nli01_productivity_type_translation('0', 'XX') IS NULL passed
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

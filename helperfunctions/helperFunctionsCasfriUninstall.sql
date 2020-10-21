@@ -40,6 +40,7 @@ DROP FUNCTION IF EXISTS TT_qc_prg5_species_matchTable_validation(text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri_hascountOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_isCommercial(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_isNonCommercial(text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_isForest(text, text);
 
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
@@ -97,6 +98,10 @@ DROP FUNCTION IF EXISTS TT_qc_prg5_species_per_translation(text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri_countOfNotNull(text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_upper(text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_lower(text, text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_height_upper(text, text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_height_lower(text, text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_productivity_translation(text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_productivity_type_translation(text, text);
 
 -------------------------------------------------------------------------------
 -- Generic functions
