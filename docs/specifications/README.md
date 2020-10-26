@@ -833,6 +833,7 @@ The **NAT_NON_VEG** attribute identifies the type of natural land with no vegeta
 | LAKE           | Ponds, lakes or reservoirs |
 | RIVER          | Double-lined watercourse |
 | OCEAN          | Coastal waters |
+| WATERBODY      | Generic waterbody |
 | ROCK_RUBBLE    | Bed rock or talus or boulder field |
 | SAND           | Sand dunes, sand hills, non recent water sediments |
 | SNOW_ICE       | Ice fields, glaciers, permanent snow |
