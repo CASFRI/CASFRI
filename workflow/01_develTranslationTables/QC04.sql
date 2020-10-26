@@ -63,7 +63,7 @@ SELECT * FROM translation_devel.qc04_ini04_eco_devel;
 DROP TABLE IF EXISTS translation_devel.qc04_ini04_lyr_devel;
 CREATE TABLE translation_devel.qc04_ini04_lyr_devel AS
 SELECT * FROM translation.qc_ini04_lyr
-WHERE rule_id::int =6 OR rule_id::int =7
+WHERE rule_id::int >12 AND rule_id::int <19
 ;
 -- display
 SELECT * FROM translation_devel.qc04_ini04_lyr_devel;
@@ -128,7 +128,7 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'qc04_ini04_lyr_devel');
 --SELECT * FROM TT_Translate_qc04_lyr_devel('rawfri', 'qc04_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
 --SELECT * FROM TT_ShowLastLog('translation_devel', 'qc04_ini04_lyr_devel');
 
-SELECT * FROM TT_Translate_qc04_nfl_devel('rawfri', 'qc04_min_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_qc04_nfl_devel('rawfri', 'qc04_l1_to_qc_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'qc04_ini04_nfl_devel');
 
 --SELECT * FROM TT_Translate_qc04_nfl_devel('rawfri', 'qc04_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.

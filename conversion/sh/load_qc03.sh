@@ -2,7 +2,7 @@
 
 # This script loads the Quebec (QC03) into PostgreSQL
 
-# The format of the source dataset is a geodatabase comtaining 4 tables:
+# The format of the source dataset is a geodatabase containing 4 tables:
 	# PEE_MAJ_PROV - this is the main table containing the geometries
 	# META_MAJ_PROV - this table contains additional attributes required for translation
 	# ETAGE_MAJ_PROV - this table contains species info with multiple species per row
@@ -10,7 +10,7 @@
 
 # The year of photography is included as the AN_PRO_ORI attribute in the META_MAJ_PROV table
 
-# The PEE_MAJ_PROV, META_MAJ_PROV, and ETAGE_MAJ_PROV tables need to be loaded and joined on the
+# The PEE_MAJ_PROV, META_MAJ_PROV tables need to be loaded and joined on the
 # GEOC_MAJ unique identifier. ETAGE_MAJ_PROV and ESSENCE_MAJ_PROV don't need to be loaded since they do not 
 # apply to that version of the inventory.
 

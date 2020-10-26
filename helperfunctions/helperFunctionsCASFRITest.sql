@@ -105,9 +105,9 @@ WITH test_nb AS (
     SELECT 'TT_qc_ipf_wetland_validation'::text function_tested,             57 maj_num,  14 nb_test UNION ALL
     SELECT 'TT_qc_ipf_wetland_translation'::text function_tested,            58 maj_num,  14 nb_test UNION ALL
     SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_species_translation'::text function_tested,           60 maj_num,  6 nb_test UNION ALL
+    SELECT 'TT_qc_prg4_species_translation'::text function_tested,           60 maj_num,  14 nb_test UNION ALL
     SELECT 'TT_qc_prg5_species_translation'::text function_tested,           61 maj_num,  7 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  12 nb_test UNION ALL
     SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  4 nb_test UNION ALL
@@ -122,7 +122,8 @@ WITH test_nb AS (
     SELECT 'TT_nl_nli01_height_lower_translation'::text function_tested,     74 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_isForest'::text function_tested,                     75 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,     76 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test
+    SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test UNION ALL
+    SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num,  13 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2680,6 +2681,54 @@ SELECT '60.6'::text number,
        'Double species and species 2 requested'::text description,
        TT_qc_prg4_species_translation('FXFX', '2') IS NULL passed
 ---------------------------------------------------------
+UNION ALL
+SELECT '60.7'::text number,
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'Triple species, species 1'::text description,
+       TT_qc_prg4_species_translation('FXPUFX', '1') = 'Hard unkn' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '60.8'::text number,
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'Triple species, species 2'::text description,
+       TT_qc_prg4_species_translation('FXPUFX', '2') = 'Tsug cana' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '60.9'::text number,
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'Triple species, species 3'::text description,
+       TT_qc_prg4_species_translation('FXPUFX', '3') = 'Hard unkn' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '60.10'::text number,
+       'TT_qc_prg4_species_translation'::text function_tested,
+       '6 char double, species 1'::text description,
+       TT_qc_prg4_species_translation('FXFXPU', '1') = 'Hard unkn' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '60.11'::text number,
+       'TT_qc_prg4_species_translation'::text function_tested,
+       '6 char double, species 2'::text description,
+       TT_qc_prg4_species_translation('FXFXPU', '2') = 'Tsug cana' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '60.12'::text number,
+       'TT_qc_prg4_species_translation'::text function_tested,
+       '6 char double, species 3'::text description,
+       TT_qc_prg4_species_translation('FXFXPU', '3') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '60.13'::text number,
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'test single species'::text description,
+       TT_qc_prg4_species_translation('PU', '1') = 'Tsug cana' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '60.14'::text number,
+       'TT_qc_prg4_species_translation'::text function_tested,
+       'test single species'::text description,
+       TT_qc_prg4_species_translation('PU', '2') IS NULL passed
+---------------------------------------------------------
  -- tt_qc_prg5_species_translation
 ---------------------------------------------------------
 UNION ALL
@@ -2761,6 +2810,42 @@ SELECT '62.6'::text number,
        'TT_qc_prg4_species_per_translation'::text function_tested,
        'Double species and species 2 requested'::text description,
        TT_qc_prg4_species_per_translation('FXFX', '2') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '62.7'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'Three species and species 1 requested'::text description,
+       TT_qc_prg4_species_per_translation('FXPUFX', '1') = 37 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '62.8'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'Three species and species 2 requested'::text description,
+       TT_qc_prg4_species_per_translation('FXPUFX', '2') = 33 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '62.9'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'Three species and species 3 requested'::text description,
+       TT_qc_prg4_species_per_translation('FXPUFX', '3') = 30 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '62.10'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'Three species, with double and species 1 requested'::text description,
+       TT_qc_prg4_species_per_translation('FXFXPU', '1') = 65 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '62.11'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'Three species, with double and species 2 requested'::text description,
+       TT_qc_prg4_species_per_translation('FXFXPU', '2') = 35 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '62.12'::text number,
+       'TT_qc_prg4_species_per_translation'::text function_tested,
+       'Three species, with double and species 3 requested'::text description,
+       TT_qc_prg4_species_per_translation('FXFXPU', '3') IS NULL passed
 ---------------------------------------------------------
  -- tt_qc_prg5_species_per_translation
 ---------------------------------------------------------
@@ -3157,7 +3242,88 @@ SELECT '77.4'::text number,
        'TT_nl_nli01_productivity_type_translation'::text function_tested,
        'Test neither'::text description,
        TT_nl_nli01_productivity_type_translation('0', 'XX') IS NULL passed
+---------------------------------------------------------
+  -- TT_qc_prg4_lengthMatchList
+---------------------------------------------------------
+UNION ALL
+SELECT '78.1'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'test species 1, 2 characters'::text description,
+       TT_qc_prg4_lengthMatchList('FX', '{''2'',''4'',''6''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.2'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'test species 1, 4 characters'::text description,
+       TT_qc_prg4_lengthMatchList('FXPU', '{''2'',''4'',''6''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.3'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'Test species 1, 6 characters'::text description,
+       TT_qc_prg4_lengthMatchList('FXPUFX', '{''2'', ''4'', ''6''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.4'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'Test species 1, 6 characters double'::text description,
+       TT_qc_prg4_lengthMatchList('FXFXPU', '{''2'', ''4'', ''6''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.5'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'test species 1 null'::text description,
+       TT_qc_prg4_lengthMatchList(NULL::text, '{''2'',''4'',''6''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.6'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'test species 2, 2 characters'::text description,
+       TT_qc_prg4_lengthMatchList('FX', '{''4'',''6''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.7'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'test species 2, 4 characters'::text description,
+       TT_qc_prg4_lengthMatchList('FXPU', '{''4'',''6''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.8'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'Test species 2, 6 characters'::text description,
+       TT_qc_prg4_lengthMatchList('FXPUFX', '{''4'', ''6''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.9'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'Test species 2, 6 characters double'::text description,
+       TT_qc_prg4_lengthMatchList('FXFXPU', '{''4'', ''6''}') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.10'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'Test species 2, 4 characters double'::text description,
+       TT_qc_prg4_lengthMatchList('FXFX', '{''4'', ''6''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.11'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'Test species 3, 4 characters'::text description,
+       TT_qc_prg4_lengthMatchList('FXPU', '{''6''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.12'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'Test species 3, 6 characters double'::text description,
+       TT_qc_prg4_lengthMatchList('FXFXPU', '{''6''}') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '78.13'::text number,
+       'TT_qc_prg4_lengthMatchList'::text function_tested,
+       'Test species 3, 6 characters'::text description,
+       TT_qc_prg4_lengthMatchList('FXPUFX', '{''6''}') passed
   
+
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

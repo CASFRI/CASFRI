@@ -1433,8 +1433,16 @@ RETURNS text AS $$
                   WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
                   WHEN rulelc = 'vri01_hasCountOfNotNull' THEN '-8886'
                   WHEN rulelc = 'fvi01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'fvi01_structure_per_validation' THEN '-8887'
                   WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
                   WHEN rulelc = 'pe_pei01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'qc_prg4_lengthMatchList' THEN '-9998'
+                  WHEN rulelc = 'qc_prg5_species_matchTable_validation' THEN '-9998'
+                  WHEN rulelc = 'sk_utm_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'sfv01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'pe_pei01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1448,7 +1456,10 @@ RETURNS text AS $$
                   WHEN rulelc = 'yvi01_nfl_soil_moisture_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'avi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'qc_ipf_species_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'qc_prg4_lengthMatchList' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'nl_nli01_isForest' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'qc_prg5_species_matchTable_validation' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'qc_ipf_wetland_validation' THEN 'NOT_IN_SET'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -2505,7 +2516,47 @@ RETURNS boolean AS $$
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_qc_prg4_lengthMatchList(text)
+--
+-- gr_ess text,
+-- lst text,
+-- trim_ text,
+-- removeSpaces text,
+-- acceptNull text,
+-- matches text
+--
+-- If species is doubled (e.g. FXFX) remove the first two characters.
+-- Then calculate length and pass to matchList.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg4_lengthMatchList(text);
+CREATE OR REPLACE FUNCTION TT_qc_prg4_lengthMatchList(
+  gr_ess text,
+  lst text
+)
+RETURNS boolean AS $$
+  DECLARE
+    sp_1 text;
+    sp_2 text;
+    _gr_ess text;
+    _length text;
+  BEGIN
+    
+    sp_1 = trim(SPLIT_PART(species, ' ', 1))
+    FROM (SELECT trim(regexp_replace(gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
 
+    sp_2 = trim(SPLIT_PART(species, ' ', 2))
+    FROM (SELECT trim(regexp_replace(gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
+      
+    IF sp_1 = sp_2 THEN
+      _gr_ess = substring(gr_ess, 3, 4);
+    ELSE
+      _gr_ess = gr_ess;
+    END IF;
+    
+    RETURN tt_lengthMatchList(_gr_ess, lst);
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_qc_prg5_species_matchTable_validation(text, text)
 --
@@ -4448,20 +4499,22 @@ CREATE OR REPLACE FUNCTION TT_qc_prg4_species_translation(
 RETURNS text AS $$
   DECLARE
     sp_val text;
+    _gr_ess text;
   BEGIN
         
-    -- catch case where species code is doubled and return null (e.g. PePe, BBBB etc.)
-    IF species_number::int = 2 AND NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN -- if species is doubled return null
-      RETURN NULL;
+    -- if gr_ess starts with a double species code, it should only be one species. Remove the first two characters.
+    IF NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN
+      _gr_ess = substring(gr_ess, 3, 4);
+    ELSE
+      _gr_ess = gr_ess;
     END IF;
     
     -- translate the gr_ess code according to position
     sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
-      FROM (SELECT trim(regexp_replace(gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
+      FROM (SELECT trim(regexp_replace(_gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
       
     -- pass the value to the lookup table
     RETURN tt_lookupText(sp_val, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
-    
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -4584,34 +4637,34 @@ CREATE OR REPLACE FUNCTION TT_qc_prg4_species_per_translation(
 RETURNS int AS $$
   DECLARE
     _species_number int := species_number::int;
+    _gr_ess text;
   BEGIN
     
+    -- if gr_ess starts with a double species code, it should only be one species. Remove the first two characters.
+    IF NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN
+      _gr_ess = substring(gr_ess, 3, 4);
+    ELSE
+      _gr_ess = gr_ess;
+    END IF;
+    
     -- translate the gr_ess code according to length of gr_ess and position
-    IF LENGTH(gr_ess) = 2 THEN
+    IF LENGTH(_gr_ess) = 2 THEN
       IF _species_number = 1 THEN
         RETURN 100;
       ELSE
         RETURN NULL;
       END IF;
     
-    ELSIF LENGTH(gr_ess) = 4 THEN      
+    ELSIF LENGTH(_gr_ess) = 4 THEN      
       IF _species_number = 1 THEN
-        IF NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN -- if species is doubled return 100
-          RETURN 100;
-        ELSE
-          RETURN 65;
-        END IF;
+        RETURN 65;
       ELSIF _species_number = 2 THEN
-        IF NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN -- if species is doubled return null
-          RETURN NULL;
-        ELSE
-          RETURN 35;
-        END IF;
+        RETURN 35;
       ELSE
         RETURN NULL;
       END IF;
     
-    ELSIF LENGTH(gr_ess) = 6 THEN
+    ELSIF LENGTH(_gr_ess) = 6 THEN
       IF _species_number = 1 THEN
         RETURN 37;
       ELSIF _species_number = 2 THEN

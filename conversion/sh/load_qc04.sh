@@ -33,12 +33,10 @@ srcFullPath="$friDir/QC/$inventoryID/data/inventory/$srcFileName.gdb"
 
 gdbFileName_poly=PEE_MAJ_PROV
 gdbFileName_meta=META_MAJ_PROV
-gdbFileName_etage=ETAGE_MAJ_PROV
 
 fullTargetTableName=$targetFRISchema.qc04
 tableName_poly=${fullTargetTableName}_poly
 tableName_meta=${fullTargetTableName}_meta
-tableName_full=${fullTargetTableName}_full
 
 ########################################## Process ######################################
 
