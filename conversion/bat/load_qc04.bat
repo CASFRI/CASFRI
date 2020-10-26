@@ -1,4 +1,4 @@
-:: This script loads the Quebec (QC03) into PostgreSQL
+:: This script loads the Quebec (QC04) into PostgreSQL
 
 :: The format of the source dataset is a geodatabase containing 4 tables:
 	:: PEE_MAJ_PROV - this is the main table containing the geometries
@@ -18,7 +18,7 @@
 :: in the configuration file.
 
 :: QC03, QC04 and QC05 all use the same source inventory table. Here we filter the full table to only
-:: include rows where ver_prg IS NULL. These rows use the INI03 standard (see issue #429 for details).
+:: include rows where ver_prg NOT LIKE '%AIPF%'. These rows use the INI04 standard (see issue #429 for details).
 
 :: ####################################### Set variables #######################################
 
@@ -26,14 +26,14 @@ SETLOCAL
 
 CALL .\common.bat
 
-SET inventoryID=QC03
+SET inventoryID=QC04
 SET srcFileName=CARTE_ECO_MAJ_PROV_10
 SET srcFullPath="%friDir%/QC/%inventoryID%/data/inventory/%srcFileName%.gdb"
 
 SET gdbFileName_poly=PEE_MAJ_PROV
 SET gdbFileName_meta=META_MAJ_PROV
 
-SET fullTargetTableName=%targetFRISchema%.qc03
+SET fullTargetTableName=%targetFRISchema%.qc04
 SET tableName_poly=%fullTargetTableName%_poly
 SET tableName_meta=%fullTargetTableName%_meta
 
@@ -43,17 +43,17 @@ SET tableName_meta=%fullTargetTableName%_meta
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% "%srcFullPath%" "%gdbFileName_poly%" ^
 -nln %tableName_poly% %layer_creation_options% %other_options% ^
--sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbFileName_poly%' WHERE ver_prg IS NULL" ^
+-sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbFileName_poly%' WHERE ver_prg NOT LIKE '%%AIPF%%'" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for meta table
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% "%srcFullPath%" "%gdbFileName_meta%" ^
 -nln %tableName_meta% %layer_creation_options% %other_options% ^
--sql "SELECT * FROM '%gdbFileName_meta%' WHERE ver_prg IS NULL" ^
+-sql "SELECT * FROM '%gdbFileName_meta%' WHERE ver_prg NOT LIKE '%%AIPF%%'" ^
 -progress %overwrite_tab%
 
-:: Join META  tables to polygons using the GEOCODE attribute.
+:: Join META tables to polygons using the GEOCODE attribute.
 :: The ogc_fid attributes are no longer unique identifiers after the 
 :: join so a new ogc_fid is created.
 :: Original tables are deleted at the end.

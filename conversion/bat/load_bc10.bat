@@ -1,6 +1,6 @@
 :: This script loads the British Columbia VRI forest inventory (BC10) into PostgreSQL
 
-:: This dataset is split into 3 geodatabases, layer 1, layer 2, and a dead layer
+:: This dataset is split into 3 geodatabases: layer 1, layer 2 and a dead layer which is not loaded.
 
 :: The year of photography is included in the attributes table (REFERENCE_YEAR)
 
@@ -9,16 +9,16 @@
 :: If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
 :: in the configuration file.
 
-:: All three source tables have the same attributes, and the same polygons.
-:: There are therefore 3 records per polygon.
+:: Both source tables (layer 1 and layer 2) have the same attributes, and the same polygons.
+:: There are therefore 2 records per polygon.
 :: We need a flat source table with one attribute per row.
-:: Load the three tables into PostgreSQL, prefix attribute  names
-:: to have the prefix L1_, L2_ or D_. This way all tables will have unique attribute.
-:: The first 97 attributes have identical values in all three datasets, i.e. they are
+:: Load the two tables into PostgreSQL, prefix attribute names
+:: to have the prefix L1_ or L2_. This way all tables will have unique attribute.
+:: The first 97 attributes have identical values in both datasets, i.e. they are
 :: polygon level attributes. Only need to load these once with no prefix.
-:: Then merge the three tables into one final source table using ogrinfo and -sql.
+:: Then merge the two tables into one final source table using ogrinfo and -sql.
 
-:: ######################################## Set variables #######################################
+:: #################################### Set variables ######################################
 
 SETLOCAL
 
@@ -29,10 +29,10 @@ SET inventoryID=BC10
 SET srcFileName=VEG_COMP_LYR
 
 SET srcFileName_L1=%srcFileName%_L1_POLY
-SET srcFullPath_L1="%friDir%\BC\%inventoryID%\data\inventory\%srcFileName_L1%.gdb"
+SET srcFullPath_L1="%friDir%/BC/%inventoryID%/data/inventory/%srcFileName_L1%.gdb"
 
 SET srcFileName_L2=%srcFileName%_L2_POLY
-SET srcFullPath_L2="%friDir%\BC\%inventoryID%\data\inventory\%srcFileName_L2%.gdb"
+SET srcFullPath_L2="%friDir%/BC/%inventoryID%/data/inventory/%srcFileName_L2%.gdb"
 
 SET fullTargetTableName=%targetFRISchema%.bc10
 SET tableName_L1=%fullTargetTableName%_layer_1
@@ -231,13 +231,13 @@ DROP TABLE IF EXISTS %tableName_L2%;
 
 :: Run ogr2ogr to load the two tables
 
-"%gdalFolder%\ogr2ogr" ^
--f PostgreSQL %pg_connection_string% %srcFullPath_L1% ^
+"%gdalFolder%/ogr2ogr" ^
+-f "PostgreSQL" %pg_connection_string% %srcFullPath_L1% ^
 -nln %tableName_L1% %layer_creation_options% %other_options% ^
 -progress %overwrite_tab%
 
-"%gdalFolder%\ogr2ogr" ^
--f PostgreSQL %pg_connection_string% %srcFullPath_L2% ^
+"%gdalFolder%/ogr2ogr" ^
+-f "PostgreSQL" %pg_connection_string% %srcFullPath_L2% ^
 -nln %tableName_L2% %layer_creation_options% %other_options% ^
 -progress %overwrite_tab%
 

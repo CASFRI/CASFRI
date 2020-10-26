@@ -10,7 +10,7 @@
 :: in the configuration file.
 
 :: CURRENTLY SET TO LOAD ENTIRE DATABASE. CAN CHANGE THIS TO FILTER ON INVENTORY_STANDARD_ID 
-:: IF NEEDED USING -sql "SELECT *, '$fileName' AS src_filename FROM '$fileName' WHERE inventory_standard_cd='V'"
+:: IF NEEDED USING -sql "SELECT *, '%fileName%' AS src_filename FROM '%fileName%' WHERE inventory_standard_cd='V'"
 
 :: #################################### Set variables ######################################
 
