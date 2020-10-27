@@ -2,7 +2,7 @@
 
 # This script loads the British Columbia VRI forest inventory (BC08) into PostgreSQL
 
-# This dataset is split into 2 geodatabases, layer 1, layer 2
+# This dataset is split into 3 geodatabases: layer 1, layer 2 and a dead layer which is not loaded.
 
 # The year of photography is included in the attributes table (REFERENCE_YEAR)
 
@@ -11,10 +11,10 @@
 # If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
 # in the configuration file.
 
-# Both source tables have the same attributes, and the same polygons.
+# Both source tables (layer 1 and layer 2) have the same attributes, and the same polygons.
 # There are therefore 2 records per polygon.
 # We need a flat source table with one attribute per row.
-# Load the tables into PostgreSQL, prefix attribute  names
+# Load the two tables into PostgreSQL, prefix attribute names
 # to have the prefix L1_ or L2_. This way all tables will have unique attribute.
 # The first 97 attributes have identical values in both datasets, i.e. they are
 # polygon level attributes. Only need to load these once with no prefix.

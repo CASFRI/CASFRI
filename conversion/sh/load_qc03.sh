@@ -62,7 +62,6 @@ tableName_meta=${fullTargetTableName}_meta
 -sql "
 CREATE INDEX ON $tableName_poly (geoc_maj);
 
-
 -- drop all ogr_fid columns
 ALTER TABLE $tableName_poly DROP COLUMN IF EXISTS ogc_fid;
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
