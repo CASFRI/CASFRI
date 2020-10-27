@@ -57,8 +57,8 @@ do
   mapsheet=${F: -3} # last 3 characters of path is the mapsheet number
   
   if [ "$mapsheet" -ne "001" ] ; then
-    
-	lcov_column1='LCOV'$mapsheet'#'
+
+    lcov_column1='LCOV'$mapsheet'#'
     lcov_column2='LCOV'$mapsheet'-ID'
   
     "$gdalFolder/ogr2ogr" \

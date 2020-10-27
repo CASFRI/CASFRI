@@ -7,7 +7,7 @@
 # Standard is SFVI but the column names have been changed.
 
 # The year of photography is currently unknown at the polygon level but varies from 1994 - 2005.
-# See Issue #317. We will use 2000 as the photo year.
+# See Issue #317. 2000 will be used for the STAND_PHOTO_YEAR attribute set in attribute_dependencies.csv
 
 # Load into a target table in the schema defined in the config file.
 
