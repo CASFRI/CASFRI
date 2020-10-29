@@ -37,6 +37,14 @@ SELECT 'Sw'::text source_val, 'PICE_GLAU'::text spec1
 UNION ALL
 SELECT 'Sb'::text, 'PICE_MARI'::text;
 
+-- test photo year table with geometry
+DROP TABLE IF EXISTS photo_test2;
+CREATE TABLE photo_test2 AS
+SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 7, 7 7, 7 0, 0 0)))', 4268) AS the_geom, 1990::text AS YEAR
+UNION ALL
+SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 2, 2 2, 2 0, 0 0)))', 4268), 1999::text
+UNION ALL
+SELECT ST_GeometryFromText('MULTIPOLYGON(((6 6, 6 15, 15 15, 15 6, 6 6)))', 4268), 2000::text;
 -----------------------------------------------------------
 -- Comment out the following line and the last one of the file to display 
 -- only failing tests
@@ -63,8 +71,6 @@ WITH test_nb AS (
     SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 23 nb_test UNION ALL
     SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_crownclosure_translation'::text function_tested,        18 maj_num,  8 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_height_translation'::text function_tested,              19 maj_num,  9 nb_test UNION ALL
     SELECT 'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,     20 maj_num,  8 nb_test UNION ALL
     SELECT 'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,    21 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,     22 maj_num,  3 nb_test UNION ALL
@@ -123,7 +129,10 @@ WITH test_nb AS (
     SELECT 'TT_nl_nli01_isForest'::text function_tested,                     75 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,     76 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num,  13 nb_test
+    SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num,  13 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,   4 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,   5 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,   4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -912,150 +921,6 @@ SELECT '17.4'::text number,
        'TT_vri01_dist_yr_translation'::text function_tested,
        'Test value >10, greater than cutoff'::text description,
        TT_vri01_dist_yr_translation('B17', '16') = 1917::int passed
----------------------------------------------------------
----------------------------------------------------------
-  -- TT_qc_ipf_crownclosure_translation
----------------------------------------------------------
-UNION ALL
-SELECT '18.1'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test num_of_layers 1, layer 1 in_etage'::text description,
-       TT_qc_ipf_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', NULL::text, '85', NULL::text, 'A', '1', 'lower') = 85::int passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.2'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test num_of_layers 1, layer 2 in_etage'::text description,
-       TT_qc_ipf_crownclosure_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', 'NULL', 'VIR', NULL::text, '85', NULL::text, 'A', '2', 'lower') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.3'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test num_of_layers 2, layer 1 sup in_etage'::text description,
-       TT_qc_ipf_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', 'VIN', '10', '85', '100', 'A', '1', 'lower') = 85 passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.4'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test num_of_layers 2, layer 1 inf in_etage'::text description,
-       TT_qc_ipf_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', '10', 'VIN', '85', '100', 'A', '1', 'lower') = 100 passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.5'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test not in_etage, 1 layer, layer 1'::text description,
-       TT_qc_ipf_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '1', 'lower') = 80 passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.6'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test not in_etage, 2 layers'::text description,
-       TT_qc_ipf_crownclosure_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '1', 'lower') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.7'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test not in_etage, 1 layer, layer 2'::text description,
-       TT_qc_ipf_crownclosure_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'A', '2', 'lower') IS NULL passed
-  ---------------------------------------------------------
-UNION ALL
-SELECT '18.8'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'cl_age doesn`t match'::text description,
-       TT_qc_ipf_crownclosure_translation('VIN20', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', '10', '15', '20', '1', '1', 'lower') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.9'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test using et_domi'::text description,
-       TT_qc_ipf_crownclosure_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'SUP', '', '', '85', '80', 'A', '1', 'lower') = 85::int passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.10'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'test using et_domi INF'::text description,
-       TT_qc_ipf_crownclosure_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'INF', '', '', '85', '80', 'A', '1', 'lower') = 80::int passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.11'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test in_etage, 2 layers, same ages, layer 1'::text description,
-       TT_qc_ipf_crownclosure_translation('1010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, '10', '10', '85', '100', 'A', '1', 'lower') = 85 passed
----------------------------------------------------------
-UNION ALL
-SELECT '18.12'::text number,
-       'TT_qc_ipf_crownclosure_translation'::text function_tested,
-       'Test in_etage, 2 layers, same ages, layer 2'::text description,
-       TT_qc_ipf_crownclosure_translation('1010', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', NULL::text, '10', '10', '85', '100', 'A', '2', 'lower') IS NULL passed
----------------------------------------------------------
----------------------------------------------------------
-  -- TT_qc_ipf_height_translation
----------------------------------------------------------
-UNION ALL
-SELECT '19.1'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test num_of_layers 1, layer 1 in_etage'::text description,
-       TT_qc_ipf_height_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', 'NULL', '15', 'NULL', '1', '1', 'lower') = 15 passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.2'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test num_of_layers 1, layer 2 in_etage'::text description,
-       TT_qc_ipf_height_translation('VIR', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'O', NULL::text, 'VIR', NULL::text, '15', NULL::text, '1', '2', 'lower') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.3'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test num_of_layers 2, layer 1 sup in_etage'::text description,
-       TT_qc_ipf_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', 'VIN', '10', '15', '100', '1', '1', 'lower') = 15 passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.4'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test num_of_layers 2, layer 1 inf in_etage'::text description,
-       TT_qc_ipf_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'EQU', '10', 'VIN', '15', '100', '1', '1', 'lower') = 100 passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.5'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test not in_etage, 1 layer, layer 1'::text description,
-       TT_qc_ipf_height_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '1', '1', 'lower') = 22 passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.6'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test not in_etage, 2 layers, layer 1'::text description,
-       TT_qc_ipf_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '7', '1', 'upper') = 2 passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.7'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test not in_etage, 2 layers, layer 2'::text description,
-       TT_qc_ipf_height_translation('VIN10', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '7', '2', 'upper') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.8'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test not in_etage, 1 layer, layer 2'::text description,
-       TT_qc_ipf_height_translation('VIN', 'public', 'test_lookup_qc_stdstr', 'layer_2_age', 'N', NULL::text, 'NULL', 'NULL', 'NULL', 'NULL', '1', '2', 'lower') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.9'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'cl_age doesn`t match'::text description,
-       TT_qc_ipf_height_translation('VIN20', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', NULL::text, 'VIR', '10', '15', '20', '1', '1', 'lower') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.10'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'Test using et_domi'::text description,
-       TT_qc_ipf_height_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'SUP', '', '', '15', '20', 'A', '1', 'lower') = 15::int passed
----------------------------------------------------------
-UNION ALL
-SELECT '19.11'::text number,
-       'TT_qc_ipf_height_translation'::text function_tested,
-       'test using et_domi INF'::text description,
-       TT_qc_ipf_height_translation('2010', 'public', 'test_lookup_qc_stdstr', 'layer_1_age', 'O', 'INF', '', '', '15', '20', 'A', '1', 'lower') = 20::int passed
 ---------------------------------------------------------
 ---------------------------------------------------------
   -- TT_qc_ipf_2layer_age_codes_validation
@@ -3322,7 +3187,92 @@ SELECT '78.13'::text number,
        'TT_qc_prg4_lengthMatchList'::text function_tested,
        'Test species 3, 6 characters'::text description,
        TT_qc_prg4_lengthMatchList('FXPUFX', '{''6''}') passed
-  
+
+---------------------------------------------------------
+  -- TT_nl_nli01_origin_upper_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '79.1'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 1 Newfoundland'::text description,
+       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1995 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.2'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 2 Newfoundland'::text description,
+       TT_nl_nli01_origin_upper_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1974 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.3'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 9 Labrador'::text description,
+       TT_nl_nli01_origin_upper_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1834 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.4'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 9 Newfoundland, null'::text description,
+       TT_nl_nli01_origin_upper_translation('9', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+---------------------------------------------------------
+  -- TT_nl_nli01_origin_lower_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '80.1'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 1 Newfoundland'::text description,
+       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1975 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.2'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 2 Newfoundland'::text description,
+       TT_nl_nli01_origin_lower_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1955 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.3'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 9 Labrador'::text description,
+       TT_nl_nli01_origin_lower_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.4'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 8 Labrador, null'::text description,
+       TT_nl_nli01_origin_lower_translation('8', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1835 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.5'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 8 Newfoundland, null'::text description,
+       TT_nl_nli01_origin_lower_translation('8', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+---------------------------------------------------------
+  -- tt_nl_nli01_origin_lower_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '81.1'::text number,
+       'TT_nl_nli01_origin_lower_validation'::text function_tested,
+       'Test age class 6 Newfoundland, should pass'::text description,
+       TT_nl_nli01_origin_lower_validation('6', 'mu001') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '81.2'::text number,
+       'TT_nl_nli01_origin_lower_validation'::text function_tested,
+       'Test age class 7 Newfoundland, should fail'::text description,
+       TT_nl_nli01_origin_lower_validation('7', 'mu001') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '81.3'::text number,
+       'TT_nl_nli01_origin_lower_validation'::text function_tested,
+       'Test age class 8 Labrador, should pass'::text description,
+       TT_nl_nli01_origin_lower_validation('8', 'mu300') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '81.4'::text number,
+       'TT_nl_nli01_origin_lower_validation'::text function_tested,
+       'Test age class 9 Labrador, should pass'::text description,
+       TT_nl_nli01_origin_lower_validation('9', 'mu300') IS FALSE passed
+---------------------------------------------------------
 
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
