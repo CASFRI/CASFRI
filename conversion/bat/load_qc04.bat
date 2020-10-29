@@ -81,10 +81,8 @@ ALTER TABLE %fullTargetTableName% ADD COLUMN ogc_fid INT; ^
 UPDATE %fullTargetTableName% SET ogc_fid=temp_key; ^
 ALTER TABLE %fullTargetTableName% DROP COLUMN IF EXISTS temp_key; ^
  ^
---drop extra geocode attributes ^
 ALTER TABLE %fullTargetTableName% DROP COLUMN IF EXISTS meta_geoc_maj; ^
  ^
---drop tables ^
 DROP TABLE IF EXISTS %tableName_poly%; ^
 DROP TABLE IF EXISTS %tableName_meta%;
 
