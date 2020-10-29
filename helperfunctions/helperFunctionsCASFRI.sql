@@ -4981,3 +4981,26 @@ RETURNS int AS $$
     
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- tt_qc_ini03_origin_translation(text, text)
+--
+-- cl_age text
+-- an_pro_ori text
+--
+-- Get the age value from the lookup table based on the cl_age code.
+-- Subtract the age from the an_pro_ori year to get origin.
+-- Same value for origin upper and lower.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_ini03_origin_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ini03_origin_translation(
+  cl_age text,
+  an_pro_ori text
+)
+RETURNS int AS $$
+  DECLARE
+    _age int;
+  BEGIN
+    _age = tt_lookupInt(cl_age, 'translation', 'qc_ini03_standstructure', 'l1_age_origin');
+    RETURN an_pro_ori::int - _age;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
