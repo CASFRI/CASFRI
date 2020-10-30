@@ -100,7 +100,7 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_productivity_translation(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_productivity_type_translation(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_origin_upper_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_origin_lower_translation(text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_ini03_origin_translation(text, text);
+DROP FUNCTION IF EXISTS TT_qc_origin_translation(text, text);
 
 -------------------------------------------------------------------------------
 -- Generic functions
