@@ -1443,6 +1443,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'pe_pei01_hasCountOfNotNull' THEN '-8886'
                   WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
                   WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'nl_nli01_origin_lower_validation' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -2686,6 +2687,44 @@ RETURNS boolean AS $$
     ELSE
       RETURN FALSE;
     END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_origin_lower_validation(text, text)
+--
+-- age_class text,
+-- src_filename text
+--
+-- For age class 7 in Newfoundland upper age bound is 121+ which means lower origin
+-- is unknown.
+-- Same for age class 9 in Labrador where age class is 161+.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_origin_lower_validation(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_origin_lower_validation(
+  age_class text,
+  src_filename text
+)
+RETURNS boolean AS $$
+  DECLARE
+    map_unit_int int;
+  BEGIN
+    
+    map_unit_int = substring(src_filename, 3,3)::int;
+    
+    IF map_unit_int > 0 AND map_unit_int <=180 THEN -- Newfoundland
+       IF age_class::int = 7 THEN
+         RETURN FALSE;
+       END IF;
+    END IF;
+    
+    IF map_unit_int >= 238 AND map_unit_int <= 415 THEN -- Labrador
+      IF age_class::int = 9 THEN
+        RETURN FALSE;
+      END IF;
+    END IF;
+
+    RETURN TRUE;
+    
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -4814,7 +4853,6 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
--------------------------------------------------------------------------------
 -- TT_nl_nli01_productivity_type_translation(text, text)
 --
 -- stand_id text,
@@ -4838,5 +4876,131 @@ RETURNS text AS $$
     ELSE
       RETURN NULL;
     END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- tt_nl_nli01_origin_upper_translation(text, text)
+--
+-- age_class text,
+-- src_filename text
+-- the_geom text
+--
+-- NL map units have values 1 - 180, Labrador map units are 238 - 415
+-- Origin translation is different for Newfoundland and Labrador
+-- Figure out which area the row is from and use the correct translation
+-- to get the lower bound of age range. Then subtract this from the photo
+-- year to get origin upper.
+-- photo year is calculated by intersecting with the photo year map.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_origin_upper_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_origin_upper_translation(
+  age_class text,
+  src_filename text,
+  the_geom text
+)
+RETURNS int AS $$
+  DECLARE
+    map_unit_int int;
+    photo_year int;
+    age int;
+    _the_geom geometry;
+  BEGIN
+    
+    _the_geom = TT_GeoMakeValid(the_geom);
+    
+    -- If geometry cannot be made valid, return NULL
+    IF _the_geom IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    map_unit_int = substring(src_filename, 3,3)::int;
+    photo_year = tt_geoIntersectionInt(_the_geom, 'rawfri', 'nl_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
+    
+    IF map_unit_int > 0 AND map_unit_int <=180 THEN
+      age = tt_mapInt(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{''0'',''21'',''41'',''61'',''81'',''101'',''121''}'); -- Newfoundland
+    ELSIF map_unit_int >= 238 AND map_unit_int <= 415 THEN
+      age = tt_mapInt(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7'',''8'',''9''}', '{''0'',''21'',''41'',''61'',''81'',''101'',''121'',''141'',''161''}'); -- Labrador
+    ELSE
+      RETURN NULL;
+    END IF;
+    
+    RETURN photo_year - age;
+    
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- tt_nl_nli01_origin_lower_translation(text, text)
+--
+-- age_class text,
+-- src_filename text
+-- the_geom text
+--
+-- NL map units have values 1 - 180, Labrador map units are 238 - 415
+-- Origin translation is different for Newfoundland and Labrador
+-- Figure out which area the row is from and use the correct translation
+-- to get the upper bound of age range. Then subtract this from the photo
+-- year to get origin upper.
+-- photo year is calculated by intersecting with the photo year map.
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_origin_lower_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_origin_lower_translation(
+  age_class text,
+  src_filename text,
+  the_geom text
+)
+RETURNS int AS $$
+  DECLARE
+    map_unit_int int;
+    photo_year int;
+    age int;
+    _the_geom geometry;
+  BEGIN
+    
+    _the_geom = TT_GeoMakeValid(the_geom);
+    
+    -- If geometry cannot be made valid, return NULL
+    IF _the_geom IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    map_unit_int = substring(src_filename, 3,3)::int;
+    photo_year = tt_geoIntersectionInt(_the_geom, 'rawfri', 'nl_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
+    
+    -- don't return the last values of 7 and 9 because the upper age is not defined, therefore lower origin is unknown_value. Catch these with validation.
+    IF map_unit_int > 0 AND map_unit_int <=180 THEN
+      age = tt_mapInt(age_class, '{''1'',''2'',''3'',''4'',''5'',''6''}', '{''20'',''40'',''60'',''80'',''100'',''120''}'); -- Newfoundland
+    ELSIF map_unit_int >= 238 AND map_unit_int <= 415 THEN
+      age = tt_mapInt(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7'',''8''}', '{''20'',''40'',''60'',''80'',''100'',''120'',''140'',''160''}'); -- Labrador
+    ELSE
+      RETURN NULL;
+    END IF;
+    
+    RETURN photo_year - age;
+    
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- tt_qc_ini03_origin_translation(text, text)
+--
+-- cl_age text
+-- an_pro_ori text
+--
+-- Get the age value from the lookup table based on the cl_age code.
+-- Subtract the age from the an_pro_ori year to get origin.
+-- Same value for origin upper and lower.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_ini03_origin_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_ini03_origin_translation(
+  cl_age text,
+  an_pro_ori text
+)
+RETURNS int AS $$
+  DECLARE
+    _age int;
+  BEGIN
+    _age = tt_lookupInt(cl_age, 'translation', 'qc_ini03_standstructure', 'l1_age_origin');
+    RETURN an_pro_ori::int - _age;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;

@@ -37,6 +37,14 @@ SELECT 'Sw'::text source_val, 'PICE_GLAU'::text spec1
 UNION ALL
 SELECT 'Sb'::text, 'PICE_MARI'::text;
 
+-- test photo year table with geometry
+DROP TABLE IF EXISTS photo_test2;
+CREATE TABLE photo_test2 AS
+SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 7, 7 7, 7 0, 0 0)))', 4268) AS the_geom, 1990::text AS YEAR
+UNION ALL
+SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 2, 2 2, 2 0, 0 0)))', 4268), 1999::text
+UNION ALL
+SELECT ST_GeometryFromText('MULTIPOLYGON(((6 6, 6 15, 15 15, 15 6, 6 6)))', 4268), 2000::text;
 -----------------------------------------------------------
 -- Comment out the following line and the last one of the file to display 
 -- only failing tests
@@ -121,7 +129,11 @@ WITH test_nb AS (
     SELECT 'TT_nl_nli01_isForest'::text function_tested,                     75 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,     76 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num,  13 nb_test
+    SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num,  13 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,   4 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,   5 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,   4 nb_test UNION ALL
+    SELECT 'TT_qc_ini03_origin_translation'::text function_tested,           82 maj_num,   3 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -3176,8 +3188,114 @@ SELECT '78.13'::text number,
        'TT_qc_prg4_lengthMatchList'::text function_tested,
        'Test species 3, 6 characters'::text description,
        TT_qc_prg4_lengthMatchList('FXPUFX', '{''6''}') passed
-  
 
+---------------------------------------------------------
+  -- TT_nl_nli01_origin_upper_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '79.1'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 1 Newfoundland'::text description,
+       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1995 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.2'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 2 Newfoundland'::text description,
+       TT_nl_nli01_origin_upper_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1974 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.3'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 9 Labrador'::text description,
+       TT_nl_nli01_origin_upper_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1834 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.4'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 9 Newfoundland, null'::text description,
+       TT_nl_nli01_origin_upper_translation('9', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+---------------------------------------------------------
+  -- TT_nl_nli01_origin_lower_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '80.1'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 1 Newfoundland'::text description,
+       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1975 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.2'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 2 Newfoundland'::text description,
+       TT_nl_nli01_origin_lower_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1955 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.3'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 9 Labrador'::text description,
+       TT_nl_nli01_origin_lower_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.4'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 8 Labrador, null'::text description,
+       TT_nl_nli01_origin_lower_translation('8', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1835 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.5'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 8 Newfoundland, null'::text description,
+       TT_nl_nli01_origin_lower_translation('8', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+---------------------------------------------------------
+  -- tt_nl_nli01_origin_lower_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '81.1'::text number,
+       'TT_nl_nli01_origin_lower_validation'::text function_tested,
+       'Test age class 6 Newfoundland, should pass'::text description,
+       TT_nl_nli01_origin_lower_validation('6', 'mu001') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '81.2'::text number,
+       'TT_nl_nli01_origin_lower_validation'::text function_tested,
+       'Test age class 7 Newfoundland, should fail'::text description,
+       TT_nl_nli01_origin_lower_validation('7', 'mu001') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '81.3'::text number,
+       'TT_nl_nli01_origin_lower_validation'::text function_tested,
+       'Test age class 8 Labrador, should pass'::text description,
+       TT_nl_nli01_origin_lower_validation('8', 'mu300') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '81.4'::text number,
+       'TT_nl_nli01_origin_lower_validation'::text function_tested,
+       'Test age class 9 Labrador, should pass'::text description,
+       TT_nl_nli01_origin_lower_validation('9', 'mu300') IS FALSE passed
+---------------------------------------------------------
+-- TT_qc_ini03_origin_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '82.1'::text number,
+       'TT_qc_ini03_origin_translation'::text function_tested,
+       'Simple test'::text description,
+       TT_qc_ini03_origin_translation('JIR', '2000') = 1950 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '82.2'::text number,
+       'TT_qc_ini03_origin_translation'::text function_tested,
+       'Simple test 2'::text description,
+       TT_qc_ini03_origin_translation('120', '2000') = 1880 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '82.3'::text number,
+       'TT_qc_ini03_origin_translation'::text function_tested,
+       'Fail'::text description,
+       TT_qc_ini03_origin_translation('120xx', '2000') IS NULL passed
+  
+  
+  
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
