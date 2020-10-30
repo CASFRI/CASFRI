@@ -1106,7 +1106,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'productivity'],
-                        ARRAY['NON_PRODUCTIVE_FOREST', 'PRODUCTIVE_FOREST', 'UNKNOWN_VALUE'] || 
+                        ARRAY['NON_PRODUCTIVE_FOREST', 'PRODUCTIVE_FOREST'] || 
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
@@ -1382,7 +1382,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
                         ARRAY['casfri50_lookup', 
                               'productivity_type'],
-                        ARRAY['HARVESTABLE', 'PROTECTION_FOREST', 'TREED_MUSKEG', 'TREED_ROCK', 'ALPINE_FOREST', 'SCRUB_SHRUB', 'ALDER', 'UNKNOWN_VALUE'] || 
+                        ARRAY['HARVESTABLE', 'PROTECTION_FOREST', 'TREED_MUSKEG', 'TREED_ROCK', 'ALPINE_FOREST', 'SCRUB_SHRUB', 'ALDER'] || 
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 
 -------------------------------------------------------
