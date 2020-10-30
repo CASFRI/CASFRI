@@ -133,7 +133,7 @@ WITH test_nb AS (
     SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,   4 nb_test UNION ALL
     SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,   5 nb_test UNION ALL
     SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,   4 nb_test UNION ALL
-    SELECT 'TT_qc_ini03_origin_translation'::text function_tested,           82 maj_num,   3 nb_test
+    SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   3 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -3274,25 +3274,25 @@ SELECT '81.4'::text number,
        'Test age class 9 Labrador, should pass'::text description,
        TT_nl_nli01_origin_lower_validation('9', 'mu300') IS FALSE passed
 ---------------------------------------------------------
--- TT_qc_ini03_origin_translation
+-- TT_qc_origin_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '82.1'::text number,
-       'TT_qc_ini03_origin_translation'::text function_tested,
+       'TT_qc_origin_translation'::text function_tested,
        'Simple test'::text description,
-       TT_qc_ini03_origin_translation('JIR', '2000') = 1950 passed
+       TT_qc_origin_translation('JIR', '2000') = 1950 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '82.2'::text number,
-       'TT_qc_ini03_origin_translation'::text function_tested,
+       'TT_qc_origin_translation'::text function_tested,
        'Simple test 2'::text description,
-       TT_qc_ini03_origin_translation('120', '2000') = 1880 passed
+       TT_qc_origin_translation('120', '2000') = 1880 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '82.3'::text number,
-       'TT_qc_ini03_origin_translation'::text function_tested,
+       'TT_qc_origin_translation'::text function_tested,
        'Fail'::text description,
-       TT_qc_ini03_origin_translation('120xx', '2000') IS NULL passed
+       TT_qc_origin_translation('120xx', '2000') IS NULL passed
   
   
   
