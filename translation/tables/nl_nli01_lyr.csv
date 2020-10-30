@@ -1,6 +1,6 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 0,ROW_TRANSLATION_RULE,NA,"notEmpty({species_comp}, TRUE)",NA,Translate only rows with some species info,TRUE
-1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(lcov_id_1);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, orig_stand_id, lcov_id_1, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"tt_nl_nli01_isNonCommercial(stand_id, working_group);notNull(soil_moisture_regime);notEmpty(soil_moisture_regime);matchList(soil_moisture_regime,{'d','D','w','W'})",";mapText(soil_moisture_regime, {'d','D','w','W'}, {'DRY','DRY','WET','WET'})",Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,STRUCTURE_RANGE,double precision,false(),nothingDouble(),No complex structure,TRUE

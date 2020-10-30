@@ -1,6 +1,6 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-0,ROW_TRANSLATION_RULE,NA,"matchList(stand_id,{940,950,951,990,991,992,960,961,962,970,980,906,920,925})",NA,Translate only rows where fornon has an NFL value,TRUE
-1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+0,ROW_TRANSLATION_RULE,NA,"matchList(stand_id,{940,950,951,990,991,992,960,961,962,970,980,906,920,925})",NA,Translate only rows where stand_id has an NFL value,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(lcov_id_1);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, orig_stand_id, lcov_id_1, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"nl_nli01_countOfNotNull({species_1_layer1, species_2_layer1, species_3_layer1}, stand_id, layer)",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,TRUE
