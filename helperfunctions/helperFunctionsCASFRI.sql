@@ -1444,6 +1444,9 @@ RETURNS text AS $$
                   WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
                   WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
                   WHEN rulelc = 'nl_nli01_origin_lower_validation' THEN '-8886'
+                  WHEN rulelc = 'nl_nli01_isCommercial' THEN '-8887'
+                  WHEN rulelc = 'nl_nli01_isNonCommercial' THEN '-8887'
+                  WHEN rulelc = 'nl_nli01_isForest' THEN '-8887'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1461,6 +1464,9 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isForest' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_species_matchTable_validation' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'qc_ipf_wetland_validation' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'nl_nli01_isCommercial' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_isNonCommercial' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_isForest' THEN 'NOT_APPLICABLE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -2723,6 +2729,102 @@ RETURNS boolean AS $$
       END IF;
     END IF;
 
+    RETURN TRUE;
+    
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_origin_newfoundland_validation(text, text)
+--
+-- density_code text,
+-- src_filename text
+--
+-- Catch the error case where polygon is in Newfoundland and density code is 9 or 10
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_origin_newfoundland_validation(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_origin_newfoundland_validation(
+  age_code text,
+  src_filename text
+)
+RETURNS boolean AS $$
+  DECLARE
+    map_unit_int int;
+  BEGIN
+    
+    map_unit_int = substring(src_filename, 3,3)::int;
+    
+    IF map_unit_int > 0 AND map_unit_int <=180 THEN -- Newfoundland
+       IF age_code IN('8','9') THEN
+         RETURN FALSE;
+       END IF;
+    END IF;
+    
+    RETURN TRUE;
+    
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_crown_closure_validation(text, text, text)
+--
+-- density_code text,
+-- stand_id text
+-- working_group text
+--
+-- Catch the error case where forest is commercial and density code is 4.
+-- Should be 1-3 in commercial and 1-4 in non commercial
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_validation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_crown_closure_validation(
+  density_code text,
+  stand_id text,
+  working_group text
+)
+RETURNS boolean AS $$
+  DECLARE
+    commercial boolean;
+  BEGIN
+    
+    commercial = TT_nl_nli01_isCommercial(stand_id, working_group);
+    
+    IF commercial THEN
+       IF density_code = '4' THEN
+         RETURN FALSE;
+       END IF;
+    END IF;
+    
+    RETURN TRUE;
+    
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_height_validation(text, text, text)
+--
+-- height_code text,
+-- stand_id text
+-- working_group text
+--
+-- Catch the error case where forest is non commercial and density code is 6, 7, or 8.
+-- Should be 1-8 in commercial and 1-5 in non commercial
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_height_validation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_height_validation(
+  height_code text,
+  stand_id text,
+  working_group text
+)
+RETURNS boolean AS $$
+  DECLARE
+    noncommercial boolean;
+  BEGIN
+    
+    noncommercial = TT_nl_nli01_isNonCommercial(stand_id, working_group);
+    
+    IF noncommercial THEN
+       IF height_code IN('6', '7', '8') THEN
+         RETURN FALSE;
+       END IF;
+    END IF;
+    
     RETURN TRUE;
     
   END;

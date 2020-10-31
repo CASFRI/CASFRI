@@ -133,7 +133,10 @@ WITH test_nb AS (
     SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,   4 nb_test UNION ALL
     SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,   5 nb_test UNION ALL
     SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,   4 nb_test UNION ALL
-    SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   3 nb_test
+    SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,83 maj_num,  3 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,     84 maj_num,   2 nb_test UNION ALL
+    SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,   2 nb_test 
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -3293,8 +3296,54 @@ SELECT '82.3'::text number,
        'TT_qc_origin_translation'::text function_tested,
        'Fail'::text description,
        TT_qc_origin_translation('120xx', '2000') IS NULL passed
-  
-  
+---------------------------------------------------------
+-- TT_nl_nli01_origin_newfoundland_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '83.1'::text number,
+       'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,
+       'Pass'::text description,
+       TT_nl_nli01_origin_newfoundland_validation('7', 'mu001') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '83.2'::text number,
+       'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,
+       'Fail'::text description,
+       TT_nl_nli01_origin_newfoundland_validation('8', 'mu001') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '83.3'::text number,
+       'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,
+       'Pass Labrador'::text description,
+       TT_nl_nli01_origin_newfoundland_validation('8', 'mu300') passed
+---------------------------------------------------------
+-- TT_nl_nli01_crown_closure_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '84.1'::text number,
+       'TT_nl_nli01_crown_closure_validation'::text function_tested,
+       'Fail'::text description,
+       TT_nl_nli01_crown_closure_validation('4', '1', '') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '84.2'::text number,
+       'TT_nl_nli01_crown_closure_validation'::text function_tested,
+       'Pass'::text description,
+       TT_nl_nli01_crown_closure_validation('4', '1', 'CS') passed
+---------------------------------------------------------
+-- TT_nl_nli01_height_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '85.1'::text number,
+       'TT_nl_nli01_height_validation'::text function_tested,
+       'Fail'::text description,
+       TT_nl_nli01_height_validation('6', '1', 'CS') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '85.2'::text number,
+       'TT_nl_nli01_height_validation'::text function_tested,
+       'Pass'::text description,
+       TT_nl_nli01_height_validation('6', '1', '') passed
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
