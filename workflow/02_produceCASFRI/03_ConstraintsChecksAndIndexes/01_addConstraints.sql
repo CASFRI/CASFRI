@@ -154,7 +154,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.15'::text number,
        'cas_all' target_table,
-       'Issue #340 on replacing 0 with UNKNOWN_VALUE for NUM_OF_LAYERS. Ensure CAS table NUM_OF_LAYERS is greater than 0' description, 
+       'Ensure CAS table NUM_OF_LAYERS is greater than 0' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -178,7 +178,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.17'::text number,
        'cas_all' target_table,
-       'Issue #340 on replacing 0 with UNKNOWN_VALUE for NUM_OF_LAYERS. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
+       'Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -478,7 +478,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.25'::text number,
        'dst_all' target_table,
-       'ISsue #419. Missing target value produce translation error. Ensure DST table DIST_EXT_UPPER_1 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_1' description, 
+       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_1' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -523,7 +523,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.28'::text number,
        'dst_all' target_table,
-       'Issue #387. DIST_EXT_LOWER_1 sometimes = 1. Ensure DST table DIST_EXT_LOWER_1 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_1' description, 
+       'Ensure DST table DIST_EXT_LOWER_1 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_1' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -538,7 +538,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.29'::text number,
        'dst_all' target_table,
-       'Issue #387. DIST_EXT_LOWER_2 sometimes = 1. Ensure DST table DIST_EXT_LOWER_2 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_2' description, 
+       'Ensure DST table DIST_EXT_LOWER_2 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -553,7 +553,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.30'::text number,
        'dst_all' target_table,
-       'Issue #387. DIST_EXT_LOWER_3 sometimes = 1. Ensure DST table DIST_EXT_LOWER_3 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_3' description, 
+       'Ensure DST table DIST_EXT_LOWER_3 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_3' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -1157,7 +1157,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.51'::text number,
        'lyr_all' target_table,
-       'Issue #346: Some rows get TRANSLATION_ERROR. Ensure LYR table SPECIES_6 values match the corresponding lookup table' description, 
+       'Ensure LYR table SPECIES_6 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
