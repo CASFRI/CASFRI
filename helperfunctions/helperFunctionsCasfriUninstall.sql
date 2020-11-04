@@ -43,6 +43,9 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_isNonCommercial(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_isForest(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_lengthMatchList(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_origin_lower_validation(text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_origin_newfoundland_validation(text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_height_validation(text, text, text);
 
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
