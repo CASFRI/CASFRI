@@ -116,9 +116,13 @@ UNION ALL
 SELECT * FROM TT_TestCount(18, ARRAY[107220, 29517, 0, 81073, 22223], 'PE01')
 UNION ALL
 SELECT * FROM TT_TestCount(19, ARRAY[995886, 69446, 0, 972710, 212453], 'NS03')
+UNION ALL
+SELECT * FROM TT_TestCount(20, ARRAY[514157, 0, 0, 237280, 203479], 'MB05')
+UNION ALL
+SELECT * FROM TT_TestCount(21, ARRAY[160218, 42149, 0, 211288, 9506], 'MB06')
 -------------------------------------------------------
 UNION ALL
-SELECT '20.1'::text number,
+SELECT '30.1'::text number,
        'Check that all cas_all rows have at least one matching row in LYR, NFL, DST or ECO' description, 
        passed, 
        'SELECT cas_id
@@ -143,7 +147,7 @@ FROM (SELECT count(*) = 0 passed
             eco.cas_id IS NULL) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '21.1'::text number,
+SELECT '31.1'::text number,
        'Check that that CAS number_of_layers matches the actual layers and that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
        passed, 
        'WITH cas_only AS ( 

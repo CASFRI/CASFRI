@@ -36,7 +36,7 @@ DROP TABLE rawfri.ab_photoyear;
 ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
 
 --------------------------------------------------------------------------
--- Translate all AB06. XXhXXm
+-- Translate all AB06. 0h12m
 --------------------------------------------------------------------------
 -- CAS
 ------------------------
