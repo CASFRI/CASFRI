@@ -70,13 +70,15 @@ WITH cas_lyr1 AS (
   SELECT cas.*,
          coalesce(soil_moist_reg, 'NOT_APPLICABLE') lyr1_soil_moist_reg,
          coalesce(structure_per, -8887) lyr1_structure_per,
+         coalesce(structure_range, -8887) lyr1_structure_range,
          --coalesce(layer, -8887) layer,
          --coalesce(layer_rank, -8887) layer_rank,
          coalesce(crown_closure_upper, -8887) lyr1_crown_closure_upper,
          coalesce(crown_closure_lower, -8887) lyr1_crown_closure_lower,
          coalesce(height_upper, -8887) lyr1_height_upper,
          coalesce(height_lower, -8887) lyr1_height_lower,
-         coalesce(productive_for, 'NOT_APPLICABLE') lyr1_productive_for,
+         coalesce(productivity, 'NOT_APPLICABLE') lyr1_productivity,
+         coalesce(productivity_type, 'NOT_APPLICABLE') lyr1_productivity_type,
          coalesce(species_1, 'NOT_APPLICABLE') lyr1_species_1,
          coalesce(species_per_1, -8887) lyr1_species_per_1,
          coalesce(species_2, 'NOT_APPLICABLE') lyr1_species_2,
@@ -103,13 +105,15 @@ WITH cas_lyr1 AS (
   SELECT cas_lyr1.*,
          coalesce(soil_moist_reg, 'NOT_APPLICABLE') lyr2_soil_moist_reg,
          coalesce(structure_per, -8887) lyr2_structure_per,
+         coalesce(structure_range, -8887) lyr2_structure_range,
          --coalesce(layer, -8887) layer,
          --coalesce(layer_rank, -8887) layer_rank,
          coalesce(crown_closure_upper, -8887) lyr2_crown_closure_upper,
          coalesce(crown_closure_lower, -8887) lyr2_crown_closure_lower,
          coalesce(height_upper, -8887) lyr2_height_upper,
          coalesce(height_lower, -8887) lyr2_height_lower,
-         coalesce(productive_for, 'NOT_APPLICABLE') lyr2_productive_for,
+         coalesce(productivity, 'NOT_APPLICABLE') lyr2_productivity,
+         coalesce(productivity_type, 'NOT_APPLICABLE') lyr2_productivity_type,
          coalesce(species_1, 'NOT_APPLICABLE') lyr2_species_1,
          coalesce(species_per_1, -8887) lyr2_species_per_1,
          coalesce(species_2, 'NOT_APPLICABLE') lyr2_species_2,
@@ -236,8 +240,9 @@ CREATE INDEX cas_flat_all_layers_same_row_geom_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING gist(geometry);
 --------------------------------------------------------------------------
 -- Check the completeness of STAND_PHOTO_YEAR
-SELECT DISTINCT left(cas_id, 4) inv, stand_photo_year
+SELECT left(cas_id, 4) inv, stand_photo_year, count(*) nb
 FROM casfri50_flat.cas_flat_all_layers_same_row
+GROUP BY inv, stand_photo_year
 ORDER BY inv, stand_photo_year;
 
 -- All inventories except AB06 and BC08 have holes in STAND_PHOTO_YEAR assignation.
