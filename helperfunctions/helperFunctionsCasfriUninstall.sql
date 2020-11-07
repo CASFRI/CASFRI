@@ -34,7 +34,8 @@ DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, te
 DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
-DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_validation(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_validation(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg45_wetland_validation(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_not_double_species_validation(text);
 DROP FUNCTION IF EXISTS TT_qc_prg5_species_matchTable_validation(text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri_hascountOfNotNull(text, text, text, text);
@@ -89,7 +90,8 @@ DROP FUNCTION IF EXISTS TT_sk_utm_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per(text, text);
 DROP FUNCTION IF EXISTS TT_wetland_code_translation(text, text);
-DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_translation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_translation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg45_wetland_translation(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_species_translation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_species_per_translation(text, text);
@@ -109,7 +111,7 @@ DROP FUNCTION IF EXISTS TT_qc_origin_translation(text, text);
 -- Generic functions
 -------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_nbi01_wetland_code(text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_ipf_wetland_code(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_wetland_code(text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Tools functions
 -------------------------------------------------------------------------------

@@ -108,8 +108,8 @@ WITH test_nb AS (
     SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_fvi01_structure_per_validation'::text function_tested,        55 maj_num,  2 nb_test UNION ALL
     SELECT 'TT_wetland_code_translation'::text function_tested,              56 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_wetland_validation'::text function_tested,             57 maj_num,  14 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_wetland_translation'::text function_tested,            58 maj_num,  14 nb_test UNION ALL
+    SELECT 'TT_qc_prg3_wetland_validation'::text function_tested,            57 maj_num,  2 nb_test UNION ALL
+    SELECT 'TT_qc_prg45_wetland_validation'::text function_tested,           58 maj_num,  2 nb_test UNION ALL
     SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_qc_prg4_species_translation'::text function_tested,           60 maj_num,  14 nb_test UNION ALL
     SELECT 'TT_qc_prg5_species_translation'::text function_tested,           61 maj_num,  7 nb_test UNION ALL
@@ -136,7 +136,9 @@ WITH test_nb AS (
     SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,83 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,     84 maj_num,   2 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,   2 nb_test 
+    SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,   2 nb_test UNION ALL
+    SELECT 'TT_qc_prg3_wetland_translation'::text function_tested,           86 maj_num,   2 nb_test UNION ALL
+    SELECT 'TT_qc_prg45_wetland_translation'::text function_tested,          87 maj_num,   2 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -2290,201 +2292,35 @@ SELECT '56.6'::text number,
        'Test null'::text description,
        TT_wetland_code_translation(NULL::text, '4') IS NULL passed
 ---------------------------------------------------------
- -- TT_qc_ipf_wetland_validation
+ -- TT_qc_prg3_wetland_validation
+ -- full set of tests done for TT_qc_prg3_wetland_translation which uses saem internal function
 ---------------------------------------------------------
 UNION ALL
 SELECT '57.1'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test all empty'::text description,
-       TT_qc_ipf_wetland_validation('', '', '', '', '', '') IS FALSE passed
+       'TT_qc_prg3_wetland_validation'::text function_tested,
+       'Test all NULL'::text description,
+       TT_qc_prg3_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '57.2'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test all NULL'::text description,
-       TT_qc_ipf_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.3'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
+       'TT_qc_prg3_wetland_validation'::text function_tested,
        'Test SONS 1'::text description,
-       TT_qc_ipf_wetland_validation('DH', '', '', '', '', '') passed
+       TT_qc_prg3_wetland_validation('DH', '', '', '0', '0', '') passed
 ---------------------------------------------------------
-UNION ALL
-SELECT '57.4'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test SONS 2'::text description,
-       TT_qc_ipf_wetland_validation('AL', '50', '', '', '', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.5'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test SONS 3'::text description,
-       TT_qc_ipf_wetland_validation('', '50', 'EE', '30', '10', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.6'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test FTNN 1'::text description,
-       TT_qc_ipf_wetland_validation('', '50', 'EME', '30', '', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.7'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test FTNN 2'::text description,
-       TT_qc_ipf_wetland_validation('', '50', 'MEME', '', '10', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.8'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test FTNN 3'::text description,
-       TT_qc_ipf_wetland_validation('', '', '', '', '', 'RE38') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.9'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test FONS 1'::text description,
-       TT_qc_ipf_wetland_validation('', '', '', '', '', 'TOF8A') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.9'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test BONS 1'::text description,
-       TT_qc_ipf_wetland_validation('', '', '', '', '', 'TO18') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.10'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test STNN 1'::text description,
-       TT_qc_ipf_wetland_validation('', '50', 'CC', '', '', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.10'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test STNN 2'::text description,
-       TT_qc_ipf_wetland_validation('', '50', 'EE', '50', '', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.11'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test STNN 3'::text description,
-       TT_qc_ipf_wetland_validation('', '50', 'BJ', '', '', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.12'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test STNN 4'::text description,
-       TT_qc_ipf_wetland_validation('', '50', '', '', '', 'FE10') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.13'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test STNN 5'::text description,
-       TT_qc_ipf_wetland_validation('', '50', 'EC', '50', '10', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '57.14'::text number,
-       'TT_qc_ipf_wetland_validation'::text function_tested,
-       'Test STNN 6'::text description,
-       TT_qc_ipf_wetland_validation('', '', '', '', '', 'FO18') passed
----------------------------------------------------------
- -- TT_qc_ipf_wetland_code_translation
+ -- TT_qc_prg45_wetland_validation
+ -- full set of tests done for TT_qc_prg3_wetland_translation which uses saem internal function
 ---------------------------------------------------------
 UNION ALL
 SELECT '58.1'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test all empty'::text description,
-       TT_qc_ipf_wetland_translation('', '', '', '', '', '', '') IS NULL passed
+       'TT_qc_prg45_wetland_validation'::text function_tested,
+       'Test all NULL'::text description,
+       TT_qc_prg45_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '58.2'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test all NULL'::text description,
-       TT_qc_ipf_wetland_translation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.3'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'TT_qc_prg45_wetland_validation'::text function_tested,
        'Test SONS 1'::text description,
-       TT_qc_ipf_wetland_translation('DH', '', '', '', '', '', '1') = 'SWAMP' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.4'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test SONS 2'::text description,
-       TT_qc_ipf_wetland_translation('AL', '50', '', '', '', '', '2') = 'OPEN_NON_TREED_FRESHWATER' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.5'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test SONS 3'::text description,
-       TT_qc_ipf_wetland_translation('', '50', 'EE', '30', '10', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.6'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test FTNN 1'::text description,
-       TT_qc_ipf_wetland_translation('', '50', 'EME', '30', '', '', '4') = 'NO_LAWN' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.7'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test FTNN 2'::text description,
-       TT_qc_ipf_wetland_translation('', '50', 'MEME', '', '10', '', '1') = 'FEN' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.8'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test FTNN 3'::text description,
-       TT_qc_ipf_wetland_translation('', '', '', '', '', 'RE38', '2') = 'WOODED' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.9'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test FONS 1'::text description,
-       TT_qc_ipf_wetland_translation('', '', '', '', '', 'TOF8A', '3') = 'NO_PERMAFROST_PATTERNING' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.9'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test BONS 1'::text description,
-       TT_qc_ipf_wetland_translation('', '', '', '', '', 'TO18', '4') = 'SHRUB_COVER' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.10'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test STNN 1'::text description,
-       TT_qc_ipf_wetland_translation('', '50', 'CC', '', '', '', '1') = 'SWAMP' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.10'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test STNN 2'::text description,
-       TT_qc_ipf_wetland_translation('', '50', 'EE', '50', '', '', '2') = 'WOODED' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.11'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test STNN 3'::text description,
-       TT_qc_ipf_wetland_translation('', '50', 'BJ', '', '', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.12'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test STNN 4'::text description,
-       TT_qc_ipf_wetland_translation('', '50', '', '', '', 'FE10', '4') = 'NO_LAWN' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.13'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test STNN 5'::text description,
-       TT_qc_ipf_wetland_translation('', '50', 'EC', '50', '10', '', '1') = 'SWAMP' passed
----------------------------------------------------------
-UNION ALL
-SELECT '58.14'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
-       'Test STNN 6'::text description,
-       TT_qc_ipf_wetland_translation('', '', '', '', '', 'FO18', '2') = 'WOODED' passed
+       TT_qc_prg45_wetland_validation('DH', '', '', '0', '0', '') passed
 ---------------------------------------------------------
  -- TT_row_translation_rule_nt_lyr
 ---------------------------------------------------------
@@ -3344,6 +3180,150 @@ SELECT '85.2'::text number,
        'TT_nl_nli01_height_validation'::text function_tested,
        'Pass'::text description,
        TT_nl_nli01_height_validation('6', '1', '') passed
+---------------------------------------------------------
+ -- TT_qc_prg3_wetland_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '86.1'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test all empty'::text description,
+       TT_qc_prg3_wetland_translation('', '', '', NULL::text, NULL::text, '', '') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.2'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test all NULL'::text description,
+       TT_qc_prg3_wetland_translation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.3'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test SONS 1'::text description,
+       TT_qc_prg3_wetland_translation('DH', '', '', NULL::text, NULL::text, '', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.4'::text number,
+       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'Test SONS 2'::text description,
+       TT_qc_ipf_wetland_translation('AL', '50', '', NULL::text, NULL::text, '', '2') = 'OPEN_NON_TREED_FRESHWATER' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.5'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test BTNN 1'::text description,
+       TT_qc_prg3_wetland_translation('', '50', 'EE', '30', '10', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.6'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test FTNN 1'::text description,
+       TT_qc_prg3_wetland_translation('', '50', 'EME', '30', '0', '', '4') = 'NO_LAWN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.7'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test FTNN 2'::text description,
+       TT_qc_prg3_wetland_translation('', '50', 'MEME', '0', '10', '', '1') = 'FEN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.8'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test FTNN 3'::text description,
+       TT_qc_prg3_wetland_translation('', '', '', '0', '0', 'RE38', '2') = 'WOODED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.9'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test FONS 1'::text description,
+       TT_qc_prg3_wetland_translation('', '', '', '0', '0', 'TOF8A', '3') = 'NO_PERMAFROST_PATTERNING' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.9'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test BONS 1'::text description,
+       TT_qc_prg3_wetland_translation('', '', '', '0', '0', 'TO18', '4') = 'SHRUB_COVER' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.10'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test STNN 1'::text description,
+       TT_qc_prg3_wetland_translation('', '50', 'CC', '0', '0', '', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.11'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test STNN 2'::text description,
+       TT_qc_prg3_wetland_translation('', '50', 'EC', '50', '13', '', '2') = 'WOODED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.12'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test STNN 3'::text description,
+       TT_qc_prg3_wetland_translation('', '50', 'EE', '50', '0', '', '2') = 'WOODED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.13'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test STNN 4'::text description,
+       TT_qc_prg3_wetland_translation('', '50', 'BJ', NULL::text, NULL::text, '', '3') = 'NO_PERMAFROST_PATTERNING' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.14'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test STNN 4'::text description,
+       TT_qc_prg3_wetland_translation('', '50', '', NULL::text, NULL::text, 'FE10', '4') = 'NO_LAWN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '86.15'::text number,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
+       'Test STNN 6'::text description,
+       TT_qc_prg3_wetland_translation('', '', '', '0', '0', 'FO18', '2') = 'WOODED' passed
+---------------------------------------------------------
+ -- TT_qc_prg45_wetland_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '87.1'::text number,
+       'TT_qc_prg45_wetland_translation'::text function_tested,
+       'Test BTNN 1'::text description,
+       TT_qc_prg45_wetland_translation('', '50', 'EPEP', '30', '10', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '87.2'::text number,
+       'TT_qc_prg45_wetland_translation'::text function_tested,
+       'Test FTNN 1'::text description,
+       TT_qc_prg45_wetland_translation('', '50', 'EPML', '30', '0', '', '4') = 'NO_LAWN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '87.3'::text number,
+       'TT_qc_prg45_wetland_translation'::text function_tested,
+       'Test FTNN 2'::text description,
+       TT_qc_prg45_wetland_translation('', '50', 'ML', '0', '10', '', '1') = 'FEN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '87.4'::text number,
+       'TT_qc_prg45_wetland_translation'::text function_tested,
+       'Test STNN 1'::text description,
+       TT_qc_prg45_wetland_translation('', '50', 'PUTO', '0', '0', '', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '87.5'::text number,
+       'TT_qc_prg45_wetland_translation'::text function_tested,
+       'Test STNN 2'::text description,
+       TT_qc_prg45_wetland_translation('', '50', 'EPTO', '50', '13', '', '2') = 'WOODED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '87.6'::text number,
+       'TT_qc_prg45_wetland_translation'::text function_tested,
+       'Test STNN 3'::text description,
+       TT_qc_prg45_wetland_translation('', '50', 'ML', '50', '0', '', '2') = 'WOODED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '87.7'::text number,
+       'TT_qc_prg45_wetland_translation'::text function_tested,
+       'Test STNN 4'::text description,
+       TT_qc_prg45_wetland_translation('', '50', 'BJ', NULL::text, NULL::text, '', '3') = 'NO_PERMAFROST_PATTERNING' passed
+
+  
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
