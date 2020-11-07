@@ -3,12 +3,12 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(lcov_id_1);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, orig_stand_id, lcov_id_1, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
-4,LAYER,integer,true(),"nl_nli01_countOfNotNull({species_1_layer1, species_2_layer1, species_3_layer1}, stand_id, layer)",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,TRUE
-5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
-6,CROWN_CLOSURE_UPPER,false(),nothingInt(),No crown closure value for nfl,Crown closure upper and lower extracted from fornon descriptions in manual.,TRUE
-7,CROWN_CLOSURE_LOWER,false(),nothingInt(),No crown closure value for nfl,Crown closure upper and lower extracted from fornon descriptions in manual.,TRUE
-8,HEIGHT_UPPER,false(),nothingDouble(),No height value for nfl,Height upper and lower extracted from fornon descriptions in manual.,TRUE
-9,HEIGHT_LOWER,false(),nothingDouble(),No height value for nfl,Height upper and lower extracted from fornon descriptions in manual.,TRUE
+4,LAYER,integer,true(),copyInt(1),Only 1 layer possible in NL. Every polygon is either LYR or NFL.,TRUE
+5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
+6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),No crown closure value for nfl,TRUE
+7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),No crown closure value for nfl,TRUE
+8,HEIGHT_UPPER,double precision,false(),nothingDouble(),No height value for nfl,TRUE
+9,HEIGHT_LOWER,double precision,false(),nothingDouble(),No height value for nfl,TRUE
 10,NAT_NON_VEG,text,"notNull(stand_id);matchList(stand_id,{940,950,951,990,991,992}|NOT_APPLICABLE)","mapText(stand_id, {940,950,951,990,991,992}, {'ROCK_RUBBLE','EXPOSED_LAND','SAND,'LAKE','RIVER','OCEAN'})",Maps source value to NAT_NON_VEG using list of values.,TRUE
-11,NON_FOR_ANTH,text,"notNull(stand_id);matchList(stand_id,{960,961,962,970,980}|NOT_APPLICABLE)","mapText(fornon, {960,961,962,970,980}, {'OTHER','FACILITY_INFRASTRUCTURE','FACILITY_INFRASTRUCTURE','CULTIVATED','SETTLEMENT'})",Maps source value to NON_FOR_ANTH using list of values.,TRUE
-12,NON_FOR_VEG,text,"notNull(stand_id);matchList(stand_id,{906,920,925}|NOT_APPLICABLE)","mapText(fornon,{906,920,925}, {'FORBS','BRYOID','OPEN_MUSKEG'})",Maps source value to NON_FOR_VEG using list of values.,TRUE
+11,NON_FOR_ANTH,text,"notNull(stand_id);matchList(stand_id,{960,961,962,970,980}|NOT_APPLICABLE)","mapText(stand_id, {960,961,962,970,980}, {'OTHER','FACILITY_INFRASTRUCTURE','FACILITY_INFRASTRUCTURE','CULTIVATED','SETTLEMENT'})",Maps source value to NON_FOR_ANTH using list of values.,TRUE
+12,NON_FOR_VEG,text,"notNull(stand_id);matchList(stand_id,{906,920,925}|NOT_APPLICABLE)","mapText(stand_id,{906,920,925}, {'FORBS','BRYOID','OPEN_MUSKEG'})",Maps source value to NON_FOR_VEG using list of values.,TRUE
