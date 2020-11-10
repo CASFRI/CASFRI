@@ -39,7 +39,7 @@ SET fullTargetTableName=%targetFRISchema%.mb06
 :: Should be activated only at the first load otherwise it would brake the translation tables tests. 
 :: Only runs once, when flag file poly_id_added.txt does not exist.
 
-if not exist "%friDir%/%MB_subFolder%/%poly_id_added.txt" (
+if not exist "%friDir%/%MB_subFolder%/poly_id_added.txt" (
 	"%gdalFolder%/ogrinfo" %srcFullPath% %gdbTableName% -sql "ALTER TABLE %gdbTableName% DROP COLUMN poly_id"
 	"%gdalFolder%/ogrinfo" %srcFullPath% %gdbTableName% -sql "ALTER TABLE %gdbTableName% ADD COLUMN poly_id integer"
 	"%gdalFolder%/ogrinfo" %srcFullPath% %gdbTableName% -dialect SQLite -sql "UPDATE %gdbTableName% set poly_id = rowid"
