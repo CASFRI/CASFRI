@@ -5119,23 +5119,15 @@ RETURNS int AS $$
     map_unit_int int;
     photo_year int;
     age int;
-    _the_geom geometry;
   BEGIN
-    
-    _the_geom = TT_GeoMakeValid(the_geom);
-    
-    -- If geometry cannot be made valid, return NULL
-    IF _the_geom IS NULL THEN
-      RETURN NULL;
-    END IF;
-    
+        
     map_unit_int = substring(src_filename, 3,3)::int;
-    photo_year = tt_geoIntersectionInt(_the_geom, 'rawfri', 'nl_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
+    photo_year = tt_geoIntersectionInt(the_geom, 'rawfri', 'nl_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
     
     IF map_unit_int > 0 AND map_unit_int <=180 THEN
-      age = tt_mapInt(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{''0'',''21'',''41'',''61'',''81'',''101'',''121''}'); -- Newfoundland
+      age = tt_mapText(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{''0'',''21'',''41'',''61'',''81'',''101'',''121''}')::int; -- Newfoundland
     ELSIF map_unit_int >= 238 AND map_unit_int <= 415 THEN
-      age = tt_mapInt(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7'',''8'',''9''}', '{''0'',''21'',''41'',''61'',''81'',''101'',''121'',''141'',''161''}'); -- Labrador
+      age = tt_mapText(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7'',''8'',''9''}', '{''0'',''21'',''41'',''61'',''81'',''101'',''121'',''141'',''161''}')::int; -- Labrador
     ELSE
       RETURN NULL;
     END IF;
@@ -5170,24 +5162,16 @@ RETURNS int AS $$
     map_unit_int int;
     photo_year int;
     age int;
-    _the_geom geometry;
   BEGIN
     
-    _the_geom = TT_GeoMakeValid(the_geom);
-    
-    -- If geometry cannot be made valid, return NULL
-    IF _the_geom IS NULL THEN
-      RETURN NULL;
-    END IF;
-    
     map_unit_int = substring(src_filename, 3,3)::int;
-    photo_year = tt_geoIntersectionInt(_the_geom, 'rawfri', 'nl_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
+    photo_year = tt_geoIntersectionInt(the_geom, 'rawfri', 'nl_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
     
     -- don't return the last values of 7 and 9 because the upper age is not defined, therefore lower origin is unknown_value. Catch these with validation.
     IF map_unit_int > 0 AND map_unit_int <=180 THEN
-      age = tt_mapInt(age_class, '{''1'',''2'',''3'',''4'',''5'',''6''}', '{''20'',''40'',''60'',''80'',''100'',''120''}'); -- Newfoundland
+      age = tt_mapText(age_class, '{''1'',''2'',''3'',''4'',''5'',''6''}', '{''20'',''40'',''60'',''80'',''100'',''120''}')::int; -- Newfoundland
     ELSIF map_unit_int >= 238 AND map_unit_int <= 415 THEN
-      age = tt_mapInt(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7'',''8''}', '{''20'',''40'',''60'',''80'',''100'',''120'',''140'',''160''}'); -- Labrador
+      age = tt_mapText(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7'',''8''}', '{''20'',''40'',''60'',''80'',''100'',''120'',''140'',''160''}')::int; -- Labrador
     ELSE
       RETURN NULL;
     END IF;
