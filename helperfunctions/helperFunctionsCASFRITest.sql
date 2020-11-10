@@ -3203,9 +3203,9 @@ SELECT '86.3'::text number,
 ---------------------------------------------------------
 UNION ALL
 SELECT '86.4'::text number,
-       'TT_qc_ipf_wetland_translation'::text function_tested,
+       'TT_qc_prg3_wetland_translation'::text function_tested,
        'Test SONS 2'::text description,
-       TT_qc_ipf_wetland_translation('AL', '50', '', NULL::text, NULL::text, '', '2') = 'OPEN_NON_TREED_FRESHWATER' passed
+       TT_qc_prg3_wetland_translation('AL', '50', '', NULL::text, NULL::text, '', '2') = 'OPEN_NON_TREED_FRESHWATER' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '86.5'::text number,
