@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- CASFRI Helper functions test file for CASFR v5 beta
+-- CASFRI Helper functions test file for CASFRI v5 beta
 -- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
 -- https://github.com/edwardsmarc/postTranslationEngine
 -- https://github.com/edwardsmarc/casfri
