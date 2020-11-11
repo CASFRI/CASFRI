@@ -12,6 +12,7 @@
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
 -- TT_RowIsValid()
+-- Returns TRUE if any value in the provided text array is NOT NULL AND NOT = '' 
 ------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
 CREATE OR REPLACE FUNCTION TT_RowIsValid(
@@ -39,10 +40,14 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- TT_HasPrecedence()
 --
 -- Determine if the first polygon has precedence over the second one based on:
+--
   -- 1) their inventory rank: an established priority rank among inventories 
   --    determines which polygon has priority.
   -- 2) their unique ID: when inventory ranks are equivalent for both polygons, 
   --    the polygon with the highest ID has priority.
+  --
+  -- numInv and numUid can be used to specify if inv1 and inv2 and uid1 and uid2 
+  -- must be treated as numerical values. They both default to FALSE.
 ------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_HasPrecedence(text, text, text, text, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_HasPrecedence(
@@ -58,28 +63,29 @@ RETURNS boolean AS $$
     refInv text = 'AA00';
     refUID text = 'A';
   BEGIN
-      IF inv1 IS NULL THEN
-        RAISE NOTICE 'TT_HasPrecedence() WARNING : inv1 for polygon ''%'' is NULL. Assigning %...', uid1, refInv;
-        inv1 = refInv;
+    -- Assign default hardcoded values
+    IF inv1 IS NULL THEN
+      RAISE NOTICE 'TT_HasPrecedence() WARNING : inv1 for polygon ''%'' is NULL. Assigning %...', uid1, refInv;
+      inv1 = refInv;
+    END IF;
+    IF inv2 IS NULL THEN
+      RAISE NOTICE 'TT_HasPrecedence() WARNING : inv2 for polygon ''%'' is NULL. Assigning %...', uid2, refInv;
+      inv2 = refInv;
+    END IF;
+    IF inv1 = inv2 THEN
+      IF uid1 IS NULL THEN
+        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 is NULL. Assigning %...', refUID;
+        uid1 = refUID;
       END IF;
-      IF inv2 IS NULL THEN
-        RAISE NOTICE 'TT_HasPrecedence() WARNING : inv2 for polygon ''%'' is NULL. Assigning %...', uid2, refInv;
-        inv2 = refInv;
+      IF uid2 IS NULL THEN
+        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid2 is NULL. Assigning %...', refUID;
+        uid2 = refUID;
       END IF;
-      IF inv1 = inv2 THEN
-        IF uid1 IS NULL THEN
-          RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 is NULL. Assigning %...', refUID;
-          uid1 = refUID;
-        END IF;
-        IF uid2 IS NULL THEN
-          RAISE NOTICE 'TT_HasPrecedence() WARNING : uid2 is NULL. Assigning %...', refUID;
-          uid2 = refUID;
-        END IF;
-        IF uid1 = uid2 THEN
-          RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 and uid2 are equal (%). Can''t give precedence to a polygon. Returning FALSE...', uid1;
-          RETURN FALSE;
-        END IF;
+      IF uid1 = uid2 THEN
+        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 and uid2 are equal (%). Can''t give precedence to a polygon. Returning FALSE...', uid1;
+        RETURN FALSE;
       END IF;
+    END IF;
 IF inv1 != inv2 THEN
   RAISE NOTICE 'inv1 (%) % has precedence on inv2(%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
                                                                   THEN '' ELSE 'does not' END, inv2;
