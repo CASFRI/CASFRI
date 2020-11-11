@@ -2620,7 +2620,7 @@ RETURNS boolean AS $$
     
     code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
     sp_code = translate(code_array[species_number::int], '0123456789', '');
-    RETURN TT_matchTable(sp_code, 'translation', 'qc_ipf05_species', 'source_val', 'FALSE');
+    RETURN TT_matchTable(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'FALSE');
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -4768,7 +4768,11 @@ RETURNS text AS $$
       FROM (SELECT trim(regexp_replace(_gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
       
     -- pass the value to the lookup table
-    RETURN tt_lookupText(sp_val, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
+    IF sp_val IS NULL OR sp_val = '' THEN
+      RETURN NULL;
+    ELSE
+      RETURN tt_lookupText(sp_val, 'translation', 'species_code_mapping', 'qc_species_codes', 'casfri_species_codes');
+    END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -4842,7 +4846,12 @@ RETURNS text AS $$
     
     code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
     sp_code = translate(code_array[species_number::int], '0123456789', '');
-    RETURN TT_lookupText(sp_code, 'translation', 'qc_ipf05_species', 'source_val', 'specie');
+    
+    IF sp_code IS NULL OR sp_code = '' THEN
+      RETURN NULL;
+    ELSE
+      RETURN TT_lookupText(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'casfri_species_codes');
+    END IF;
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -5199,7 +5208,7 @@ RETURNS int AS $$
   DECLARE
     _age int;
   BEGIN
-    _age = tt_lookupInt(cl_age, 'translation', 'qc_standstructure', 'l1_age_origin');
+    _age = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'l1_age_origin');
     RETURN an_pro_ori::int - _age;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;

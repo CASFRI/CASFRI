@@ -2354,13 +2354,13 @@ UNION ALL
 SELECT '60.1'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'no_prg 4 species 1'::text description,
-       TT_qc_prg4_species_translation('FXPU', '1') = 'Hard unkn' passed
+       TT_qc_prg4_species_translation('FXPU', '1') = 'HARD_UNKN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.2'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'no_prg 4 species 2'::text description,
-       TT_qc_prg4_species_translation('FXPU', '2') = 'Tsug cana' passed
+       TT_qc_prg4_species_translation('FXPU', '2') = 'TSUG_CANA' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.3'::text number,
@@ -2378,7 +2378,7 @@ UNION ALL
 SELECT '60.5'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'Double species and species 1 requested'::text description,
-       TT_qc_prg4_species_translation('FXFX', '1') = 'Hard unkn' passed
+       TT_qc_prg4_species_translation('FXFX', '1') = 'HARD_UNKN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.6'::text number,
@@ -2390,31 +2390,31 @@ UNION ALL
 SELECT '60.7'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'Triple species, species 1'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '1') = 'Hard unkn' passed
+       TT_qc_prg4_species_translation('FXPUFX', '1') = 'HARD_UNKN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.8'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'Triple species, species 2'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '2') = 'Tsug cana' passed
+       TT_qc_prg4_species_translation('FXPUFX', '2') = 'TSUG_CANA' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.9'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'Triple species, species 3'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '3') = 'Hard unkn' passed
+       TT_qc_prg4_species_translation('FXPUFX', '3') = 'HARD_UNKN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.10'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        '6 char double, species 1'::text description,
-       TT_qc_prg4_species_translation('FXFXPU', '1') = 'Hard unkn' passed
+       TT_qc_prg4_species_translation('FXFXPU', '1') = 'HARD_UNKN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.11'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        '6 char double, species 2'::text description,
-       TT_qc_prg4_species_translation('FXFXPU', '2') = 'Tsug cana' passed
+       TT_qc_prg4_species_translation('FXFXPU', '2') = 'TSUG_CANA' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.12'::text number,
@@ -2426,7 +2426,7 @@ UNION ALL
 SELECT '60.13'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'test single species'::text description,
-       TT_qc_prg4_species_translation('PU', '1') = 'Tsug cana' passed
+       TT_qc_prg4_species_translation('PU', '1') = 'TSUG_CANA' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.14'::text number,
@@ -2440,31 +2440,31 @@ UNION ALL
 SELECT '61.1'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 1'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '1') = 'Acer rubr' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '1') = 'ACER_RUBR' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.2'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 2'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '2') = 'Abie bals' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '2') = 'ABIE_BALS' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.3'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 3'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '3') = 'Betu papy' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '3') = 'BETU_PAPY' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.4'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 4'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '4') = 'Popu spp.' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '4') = 'POPU_SUBS' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.5'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 5'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '5') = 'Pice mari' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '5') = 'PICE_MARI' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.6'::text number,
