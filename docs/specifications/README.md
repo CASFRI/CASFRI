@@ -1239,7 +1239,9 @@ Petawawa National Forestry Institute, Information Report PI-X-114.
 
 Leckie D.G and Gillis M.D. 1995 Forest Inventory in Canada with emphasis on map production.  
 
-The Forestry Chronicle 71 (1): 74 - 88.  
+The Forestry Chronicle 71 (1): 74 - 88.
+
+Power, K. and Gillis, M. 2006 Canada's Forest Inventory 2001
 
 National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.
 
