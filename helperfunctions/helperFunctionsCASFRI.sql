@@ -1467,6 +1467,9 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isCommercial' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_isNonCommercial' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_isForest' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'qc_prg3_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'qc_prg4_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'qc_prg5_wetland_validation' THEN 'NOT_APPLICABLE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -2464,7 +2467,6 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TYPE_ECO text
 --
 -- Get the wetland code and check it matches one of the expected values
-
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_validation(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_qc_prg3_wetland_validation(
@@ -2487,7 +2489,7 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
--- TT_qc_prg45_wetland_validation(text, text, text, text, text, text)
+-- TT_qc_prg4_wetland_validation(text, text, text, text, text, text)
 --
 -- CO_TER text,
 -- CL_DRAIN text,
@@ -2497,10 +2499,9 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TYPE_ECO text
 --
 -- Get the wetland code and check it matches one of the expected values
-
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_prg45_wetland_validation(text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_qc_prg45_wetland_validation(
+--DROP FUNCTION IF EXISTS TT_qc_prg4_wetland_validation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg4_wetland_validation(
   CO_TER text,
   CL_DRAIN text,
   gr_ess text,
@@ -2519,7 +2520,38 @@ RETURNS boolean AS $$
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
-
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_wetland_validation(text, text, text, text, text, text)
+--
+-- CO_TER text,
+-- CL_DRAIN text,
+-- gr_ess text,
+-- cl_dens text,
+-- cl_haut text,
+-- TYPE_ECO text
+--
+-- Get the wetland code and check it matches one of the expected values
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_wetland_validation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_wetland_validation(
+  CO_TER text,
+  CL_DRAIN text,
+  gr_ess text,
+  cl_den text,
+  cl_haut text,
+  TYPE_ECO text
+)
+RETURNS boolean AS $$
+  BEGIN
+     
+    IF TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO, 'QC05') IN('SONS', 'BTNN', 'FTNN', 'FONS', 'BONS', 'STNN') THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_qc_prg4_not_double_species_validation(text)
 --
@@ -4511,17 +4543,17 @@ RETURNS text AS $$
     _cl_haut double precision;
   BEGIN
     
-    -- set density and height to zero if they are null so that logic tests dont throw error
+    -- set density and height to zero if they are null so that logic tests dont throw error. In prg3 and 4 convert density and height codes to a valuewithin the range of lower to upper
     IF cl_den IS NULL THEN
       _cl_den = 0;
     ELSE
-      _cl_den = cl_den::double precision;
+      _cl_den = tt_mapInt(cl_den, '{''A'', ''B'', ''C'', ''D''}', '{90, 70, 50, 30}');
     END IF;
     
     IF cl_haut IS NULL THEN
       _cl_haut = 0;
     ELSE
-      _cl_haut = cl_haut::double precision;
+      _cl_haut = tt_mapDouble(cl_haut, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{30, 19, 14, 9, 5, 2.5, 0.5}');
     END IF;
     
     -- SONS: swamp, no trees, no permafrost, shrub 25%
@@ -4694,7 +4726,7 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_qc_prg45_wetland_translation(text, text, text, text, text, text, text)
+-- TT_qc_prg4_wetland_translation(text, text, text, text, text, text, text)
 --
 -- CO_TER text,
 -- CL_DRAIN text,
@@ -4706,8 +4738,8 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- Get the 4 character wetland code and translate 
 
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_prg45_wetland_translation(text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_qc_prg45_wetland_translation(
+--DROP FUNCTION IF EXISTS TT_qc_prg4_wetland_translation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg4_wetland_translation(
   CO_TER text,
   CL_DRAIN text,
   gr_ess text,
@@ -4722,6 +4754,44 @@ RETURNS text AS $$
   BEGIN
   
     _wetland_code = TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_dens, cl_haut, TYPE_ECO, 'QC04');
+    
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    RETURN TT_wetland_code_translation(_wetland_code, ret_char);
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_wetland_translation(text, text, text, text, text, text, text)
+--
+-- CO_TER text,
+-- CL_DRAIN text,
+-- gr_ess text,
+-- cl_dens text,
+-- cl_haut text,
+-- TYPE_ECO text
+--
+-- Get the 4 character wetland code and translate 
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_wetland_translation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_wetland_translation(
+  CO_TER text,
+  CL_DRAIN text,
+  gr_ess text,
+  cl_dens text,
+  cl_haut text,
+  TYPE_ECO text,
+  ret_char text
+)
+RETURNS text AS $$
+  DECLARE
+    _wetland_code text;
+  BEGIN
+  
+    _wetland_code = TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_dens, cl_haut, TYPE_ECO, 'QC05');
     
     IF _wetland_code IS NULL THEN
       RETURN NULL;
