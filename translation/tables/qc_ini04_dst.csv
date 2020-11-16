@@ -1,11 +1,11 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 0,ROW_TRANSLATION_RULE,NA,"notEmpty({mod_1, mod_1_year, mod_2, mod_2_year}, TRUE)",NA,Translate only rows where dist_type1 is not empty,'TRUE'
 1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, src_filename, ogc_fid, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
-2,DIST_TYPE_1,text,"notEmpty({mod_1, mod_1_year, mod_2, mod_2_year},TRUE);minIndexNotNull({mod_1_year, mod_2_year},{mod_1, mod_2}, 'NULL'|UNKNOWN_VALUE)","minIndexLookupText({mod_1_year, mod_2_year},{mod_1,mod_2},'translation','qc_dist_type','source_val','dist_type', 'NULL', 'NULL')",Maps source value to DIST_TYPE_1 using lists of values,TRUE
+2,DIST_TYPE_1,text,"notEmpty({mod_1, mod_1_year, mod_2, mod_2_year},TRUE);minIndexNotNull({mod_1_year, mod_2_year},{mod_1, mod_2}, 'NULL'|UNKNOWN_VALUE)","minIndexLookupText({mod_1_year, mod_2_year},{mod_1,mod_2},'translation','qc_disturbance_lookup','source_val','dist_type', 'NULL', 'NULL')",Maps source value to DIST_TYPE_1 using lists of values,TRUE
 3,DIST_YEAR_1,integer,"notEmpty({mod_1, mod_1_year, mod_2, mod_2_year},TRUE);notEmpty({mod_1_year, mod_2_year},TRUE|-8886)","minint({mod_1_year, mod_2_year})",Maps year,TRUE
 4,DIST_EXT_UPPER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
 5,DIST_EXT_LOWER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
-6,DIST_TYPE_2,text,"hasCountOfNotNull({mod_1, mod_1_year}, {mod_2, mod_2_year}, 2, 'TRUE'|NOT_APPLICABLE);notEmpty({mod_1, mod_2},'FALSE'|UNKNOWN_VALUE)","maxIndexLookupText({mod_1_year, mod_2_year},{mod_1, mod_2},'translation','qc_dist_type', 'source_val','dist_type', 'NULL', 'NULL')",Maps source value to DIST_TYPE_2 using lists of values,TRUE
+6,DIST_TYPE_2,text,"hasCountOfNotNull({mod_1, mod_1_year}, {mod_2, mod_2_year}, 2, 'TRUE'|NOT_APPLICABLE);notEmpty({mod_1, mod_2},'FALSE'|UNKNOWN_VALUE)","maxIndexLookupText({mod_1_year, mod_2_year},{mod_1, mod_2},'translation','qc_disturbance_lookup', 'source_val','dist_type', 'NULL', 'NULL')",Maps source value to DIST_TYPE_2 using lists of values,TRUE
 7,DIST_YEAR_2,integer,"hasCountOfNotNull({mod_1, mod_1_year}, {mod_2, mod_2_year}, 2, 'TRUE'|-8887);notEmpty({mod_1_year, mod_2_year},'FALSE'|-8886)","maxint({mod_1_year, mod_2_year})",Maps year  ,TRUE
 8,DIST_EXT_UPPER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
 9,DIST_EXT_LOWER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
