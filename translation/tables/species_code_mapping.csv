@@ -11,9 +11,9 @@ ABIE_PICE,ABIE_PIC_###,,,,FS,,,*BF,*BF,,,*BF,SE,,,"Mix spruce, balsam fir"
 ABIE_PICE,ABIE_PIC_###,,,,SF,,,,,,,,,,,"Mix spruce, balsam fir"
 ABIE_PROC,ABIE_PRO_###,Abies procera ,,BP,,,,,,,,,,,,
 ABIE_SUBS,ABIE_SPP_###,Abies spp. ,,B,DF,AB,,,,,,,,,,
-ACER_CIRC,ACER_CIR_###,Acer circinatum ,,MV,,,,,,,,,,,,
-ACER_FREE,ACER_FRE_###,Acer x freemanii (Acer rubrum × Acer saccharinum) ,,,,,MF,,,,,,,,,
-ACER_MACR,ACER_MAC_###,Acer macrophyllum ,,MB,,,,,,,,,,,,
+ACER_CIRC,ACER_CIR_###,Acer circinatum,,MV,,,,,,,,,,,,
+ACER_FREE,ACER_FRE_###,Acer x freemanii. Acer rubrum x Acer saccharinum,,,,,MF,,,,,,,,,
+ACER_MACR,ACER_MAC_###,Acer macrophyllum,,MB,,,,,,,,,,,,
 ACER_NEGU,ACER_NEG_###,Acer negundo ,,,,,MM,,,MM,,,,MM,,
 ACER_NIGR,ACER_NIG_###,Acer nigrum ,,,,,MB,,,,,,EI,,,
 ACER_PENS,ACER_PEN_###,Acer pensylvanicum ,,,,,MP,,,,,,,,,
