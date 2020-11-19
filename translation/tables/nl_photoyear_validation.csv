@@ -1,0 +1,3 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+1,GEOMETRY_VALID,text,"geoIsValid(wkb_geometry, 'FALSE')",copyText('PASS'),"Is geomtry valid? If not, fix geometry.",TRUE
+2,PHOTO_YR_VALID,text,isInt(photoyear),copyText('PASS'),Is year column an integer?,TRUE
