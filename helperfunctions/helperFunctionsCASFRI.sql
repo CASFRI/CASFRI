@@ -4456,17 +4456,22 @@ RETURNS double precision AS $$
     _species_pct_2 double precision := species_pct_2::double precision;
   BEGIN
     
-    -- If any inputs are null, set them to 0. This ensures the averaging still works and the null attribute will not be considered
-    IF proj_height_1 IS NULL THEN
-      _proj_height_1 = 0;
-    END IF;
-    IF proj_height_2 IS NULL THEN
-      _proj_height_2 = 0;
-    END IF;
+    -- If any percent inputs are null, set them to 0. This ensures the averaging still works and the null percent attribute will not be considered in the calculation.
     IF species_pct_1 IS NULL THEN
       _species_pct_1 = 0;
     END IF;
     IF species_pct_2 IS NULL THEN
+      _species_pct_2 = 0;
+    END IF;
+    
+    -- If any height values are null, set them to zero so the calculation still works, but also set percent to zero so the height is dropped from the equation.
+    -- i.e. any null height values are not considered.
+    IF proj_height_1 IS NULL THEN
+      _proj_height_1 = 0;
+      _species_pct_1 = 0;
+    END IF;
+    IF proj_height_2 IS NULL THEN
+      _proj_height_2 = 0;
       _species_pct_2 = 0;
     END IF;
     

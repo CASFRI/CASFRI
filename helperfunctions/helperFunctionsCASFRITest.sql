@@ -2184,13 +2184,13 @@ UNION ALL
 SELECT '53.10'::text number,
        'TT_bc_height'::text function_tested,
        'Test with null height'::text description,
-       TT_bc_height('4', NULL::text, '75', '25') = 3 passed
+       TT_bc_height('4', NULL::text, '75', '25') = 4 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.11'::text number,
        'TT_bc_height'::text function_tested,
        'Test with other zero height'::text description,
-       TT_bc_height(NULL::text, '1', '75', '25') = 0.25 passed
+       TT_bc_height(NULL::text, '1', '75', '25') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.12'::text number,
@@ -2208,7 +2208,7 @@ UNION ALL
 SELECT '53.14'::text number,
        'TT_bc_height'::text function_tested,
        'Both height NULL'::text description,
-       TT_bc_height(NULL::text, NULL::text, '75', '25') = 0 passed
+       TT_bc_height(NULL::text, NULL::text, '75', '25') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.15'::text number,
