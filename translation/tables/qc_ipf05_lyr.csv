@@ -9,8 +9,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 6,LAYER_RANK,integer,true(),copyInt(layer),Copies 1 to LAYER_ID,TRUE
 7,CROWN_CLOSURE_UPPER,integer,notNull(crown_closure_upper);isNumeric(crown_closure_upper),copyInt(crown_closure_upper),Copies source value to crown_closure_upper,TRUE
 8,CROWN_CLOSURE_LOWER,integer,notNull(crown_closure_lower);isNumeric(crown_closure_lower),copyInt(crown_closure_lower),Copies source value to crown_closure_lower,TRUE
-9,HEIGHT_UPPER,integer,notNull(height_upper);isNumeric(height_upper),copyInt(height_upper),Copies source value to height_upper,TRUE
-10,HEIGHT_LOWER,integer,notNull(height_lower);isNumeric(height_lower),copyInt(height_lower),Copies source value to height_lower,TRUE
+9,HEIGHT_UPPER,integer,"notNull(height_upper);isNumeric(height_upper);isBetween(height_upper,0,100,FALSE,TRUE)",copyInt(height_upper),Copies source value to height_upper,TRUE
+10,HEIGHT_LOWER,integer,"notNull(height_lower);isNumeric(height_lower);isBetween(height_lower,0,100,FALSE,TRUE)",copyInt(height_lower),Copies source value to height_lower,TRUE
 11,PRODUCTIVITY,text,false(|UNKNOWN_VALUE),nothingText(),No productivity info,TRUE
 12,PRODUCTIVITY_TYPE,text,false(|UNKNOWN_VALUE),nothingText(),No productivity info,TRUE
 13,SPECIES_1,text,"notNull(species_1);notEmpty(species_1);lengthMatchList(species_1, {5, 8, 12, 16, 20, 24, 28, 32, 36, 40}, |NOT_APPLICABLE);qc_prg5_species_matchTable_validation(species_1, '1'|NOT APPLICABLE)","qc_prg5_species_translation(species_1, '1')",Maps source value to SPECIES_1 using lookup table,TRUE
