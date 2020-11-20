@@ -4774,6 +4774,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TYPE_ECO text
 --
 -- Get the 4 character wetland code and translate 
+-- Note this is identical to TT_qc_prg4_wetland_translation
 
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_wetland_translation(text, text, text, text, text, text);

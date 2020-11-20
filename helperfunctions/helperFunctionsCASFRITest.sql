@@ -3287,37 +3287,37 @@ UNION ALL
 SELECT '87.1'::text number,
        'TT_qc_prg5_wetland_translation'::text function_tested,
        'Test BTNN 1'::text description,
-       TT_qc_prg5_wetland_translation('', '50', 'EPEP', '30', '10', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
+       TT_qc_prg5_wetland_translation('', '50', 'EPEP', 'D', '4', '', '3') = 'NO_PERMAFROST_PATTERNING' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '87.2'::text number,
        'TT_qc_prg5_wetland_translation'::text function_tested,
        'Test FTNN 1'::text description,
-       TT_qc_prg5_wetland_translation('', '50', 'EPML', '30', '0', '', '4') = 'NO_LAWN' passed
+       TT_qc_prg5_wetland_translation('', '50', 'EPML', 'D', NULL::text, '', '4') = 'NO_LAWN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '87.3'::text number,
        'TT_qc_prg5_wetland_translation'::text function_tested,
        'Test FTNN 2'::text description,
-       TT_qc_prg5_wetland_translation('', '50', 'ML', '0', '10', '', '1') = 'FEN' passed
+       TT_qc_prg5_wetland_translation('', '50', 'ML', NULL::text, '4', '', '1') = 'FEN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '87.4'::text number,
        'TT_qc_prg5_wetland_translation'::text function_tested,
        'Test STNN 1'::text description,
-       TT_qc_prg5_wetland_translation('', '50', 'PUTO', '0', '0', '', '1') = 'SWAMP' passed
+       TT_qc_prg5_wetland_translation('', '50', 'PUTO', '0', NULL::text, NULL::text, '1') = 'SWAMP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '87.5'::text number,
        'TT_qc_prg5_wetland_translation'::text function_tested,
        'Test STNN 2'::text description,
-       TT_qc_prg5_wetland_translation('', '50', 'EPTO', '50', '13', '', '2') = 'WOODED' passed
+       TT_qc_prg5_wetland_translation('', '50', 'EPTO', 'C', '3', '', '2') = 'WOODED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '87.6'::text number,
        'TT_qc_prg5_wetland_translation'::text function_tested,
        'Test STNN 3'::text description,
-       TT_qc_prg5_wetland_translation('', '50', 'ML', '50', '0', '', '2') = 'WOODED' passed
+       TT_qc_prg5_wetland_translation('', '50', 'ML', 'C', NULL::text, '', '2') = 'WOODED' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '87.7'::text number,
