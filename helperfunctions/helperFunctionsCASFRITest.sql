@@ -140,7 +140,8 @@ WITH test_nb AS (
     SELECT 'TT_qc_prg3_wetland_translation'::text function_tested,           86 maj_num,   15 nb_test UNION ALL
     SELECT 'TT_qc_prg5_wetland_translation'::text function_tested,           87 maj_num,   7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,           88 maj_num,   7 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,   2 nb_test 
+    SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,   2 nb_test UNION ALL
+    SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,   5 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -3161,13 +3162,13 @@ UNION ALL
 SELECT '84.1'::text number,
        'TT_nl_nli01_crown_closure_validation'::text function_tested,
        'Fail'::text description,
-       TT_nl_nli01_crown_closure_validation('4', '1', '') IS FALSE passed
+       TT_nl_nli01_crown_closure_validation('1', '', '4') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '84.2'::text number,
        'TT_nl_nli01_crown_closure_validation'::text function_tested,
        'Pass'::text description,
-       TT_nl_nli01_crown_closure_validation('4', '1', 'CS') passed
+       TT_nl_nli01_crown_closure_validation('1', 'CS', '4') passed
 ---------------------------------------------------------
 -- TT_nl_nli01_height_validation
 ---------------------------------------------------------
@@ -3383,7 +3384,38 @@ SELECT '89.2'::text number,
        'TT_qc_prg4_wetland_validation'::text function_tested,
        'Test SONS 1'::text description,
        TT_qc_prg4_wetland_validation('DH', '', '', NULL::text, NULL::text, '') passed
-  
+---------------------------------------------------------
+ -- TT_qc_countOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '90.1'::text number,
+       'TT_qc_countOfNotNull'::text function_tested,
+       'Count 1 lyr'::text description,
+       TT_qc_countOfNotNull('JIR', '', '1') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '90.2'::text number,
+       'TT_qc_countOfNotNull'::text function_tested,
+       'Count 2 lyr'::text description,
+       TT_qc_countOfNotNull('1010', '', '2') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '90.3'::text number,
+       'TT_qc_countOfNotNull'::text function_tested,
+       'Count 3 lyr'::text description,
+       TT_qc_countOfNotNull('1010', 'AL', '3') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '90.4'::text number,
+       'TT_qc_countOfNotNull'::text function_tested,
+       'Count 1 lyr, 1 nfl'::text description,
+       TT_qc_countOfNotNull('JIR', 'AL', '3') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '90.5'::text number,
+       'TT_qc_countOfNotNull'::text function_tested,
+       'Test null'::text description,
+       TT_qc_countOfNotNull(NULL::text, NULL::text, '3') = 0 passed
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
