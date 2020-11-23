@@ -2840,9 +2840,9 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_validation(text, text, text);
 CREATE OR REPLACE FUNCTION TT_nl_nli01_crown_closure_validation(
-  density_code text,
   stand_id text,
-  working_group text
+  working_group text,
+  density_code text
 )
 RETURNS boolean AS $$
   DECLARE
