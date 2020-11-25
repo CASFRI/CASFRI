@@ -1447,6 +1447,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isCommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isNonCommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isForest' THEN '-8887'
+                  WHEN rulelc = 'qc_hasCountOfNotNull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -2893,6 +2894,45 @@ RETURNS boolean AS $$
     RETURN TRUE;
     
   END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------
+-- TT_qc_hasCountOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- species_1 text
+-- species_2 text
+-- co_ter text
+-- count text
+-- exact text
+-- 
+-- hasCountOfNotNull using qc custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_hasCountOfNotNull(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_hasCountOfNotNull(
+  cl_age text,
+  co_ter text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = tt_qc_countOfNotNull(cl_age, co_ter, '3');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;    
+
+  END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------

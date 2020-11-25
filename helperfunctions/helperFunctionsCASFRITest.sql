@@ -141,7 +141,8 @@ WITH test_nb AS (
     SELECT 'TT_qc_prg5_wetland_translation'::text function_tested,           87 maj_num,   7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,           88 maj_num,   7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,   2 nb_test UNION ALL
-    SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,   5 nb_test
+    SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,   5 nb_test UNION ALL
+    SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                  91 maj_num,   4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -3416,6 +3417,34 @@ SELECT '90.5'::text number,
        'TT_qc_countOfNotNull'::text function_tested,
        'Test null'::text description,
        TT_qc_countOfNotNull(NULL::text, NULL::text, '3') = 0 passed
+---------------------------------------------------------
+ -- TT_qc_hasCountOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '91.1'::text number,
+       'TT_qc_hasCountOfNotNull'::text function_tested,
+       'Count 1 lyr'::text description,
+       TT_qc_hasCountOfNotNull('JIR', '', '1', 'TRUE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '91.2'::text number,
+       'TT_qc_hasCountOfNotNull'::text function_tested,
+       'Count 2 lyr'::text description,
+       TT_qc_hasCountOfNotNull('JIR', 'AL', '2', 'TRUE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '91.3'::text number,
+       'TT_qc_hasCountOfNotNull'::text function_tested,
+       'Count 2 not exact'::text description,
+       TT_qc_hasCountOfNotNull('JIR', 'AL', '1', 'FALSE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '91.4'::text number,
+       'TT_qc_hasCountOfNotNull'::text function_tested,
+       'Test fail'::text description,
+       TT_qc_hasCountOfNotNull('JIR', 'AL', '1', 'TRUE') IS FALSE passed
+
+  
   
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
