@@ -52,6 +52,10 @@ WHERE TT_NotEmpty(pe_species_codes);
 
 CREATE UNIQUE INDEX ON translation.species_code_mapping (mb_species_codes)
 WHERE TT_NotEmpty(mb_species_codes);
+
+CREATE UNIQUE INDEX ON translation.species_code_mapping (nl_species_codes)
+WHERE TT_NotEmpty(nl_species_codes);
+
 -------------------------------------------------------
 -- Translate all LYR tables into a common table. 32h
 -------------------------------------------------------
@@ -68,6 +72,7 @@ SELECT TT_Prepare('translation', 'ns_nsi01_lyr', '_ns_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'pe_pei01_lyr', '_pe_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'mb_fri01_lyr', '_mb_fri_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'mb_fli01_lyr', '_mb_fli_lyr', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_nli_lyr', 'ab_avi01_lyr');
 -------------------------
 DROP TABLE IF EXISTS casfri50.lyr_all CASCADE;
 ------------------------
@@ -519,6 +524,16 @@ SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb06_l5_to_mb_fli_l1_map_lyr', 
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_lyr', 'mb06_l5_to_mb_fli_l1_map_lyr');
+------------------------
+-- Translate NL01 layer 1 using NL_NLI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_nl_nli_lyr('rawfri', 'nl01_l1_to_nl_nli_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_lyr', 'nl01_l1_to_nl_nli_l1_map_lyr');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

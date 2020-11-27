@@ -1447,6 +1447,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isCommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isNonCommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isForest' THEN '-8887'
+                  WHEN rulelc = 'qc_hasCountOfNotNull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -2840,9 +2841,9 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_validation(text, text, text);
 CREATE OR REPLACE FUNCTION TT_nl_nli01_crown_closure_validation(
-  density_code text,
   stand_id text,
-  working_group text
+  working_group text,
+  density_code text
 )
 RETURNS boolean AS $$
   DECLARE
@@ -2893,6 +2894,45 @@ RETURNS boolean AS $$
     RETURN TRUE;
     
   END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------
+-- TT_qc_hasCountOfNotNull(text, text, text, text, text, text, text, text)
+--
+-- species_1 text
+-- species_2 text
+-- co_ter text
+-- count text
+-- exact text
+-- 
+-- hasCountOfNotNull using qc custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_hasCountOfNotNull(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_hasCountOfNotNull(
+  cl_age text,
+  co_ter text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = tt_qc_countOfNotNull(cl_age, co_ter, '3');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;    
+
+  END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -4456,17 +4496,22 @@ RETURNS double precision AS $$
     _species_pct_2 double precision := species_pct_2::double precision;
   BEGIN
     
-    -- If any inputs are null, set them to 0. This ensures the averaging still works and the null attribute will not be considered
-    IF proj_height_1 IS NULL THEN
-      _proj_height_1 = 0;
-    END IF;
-    IF proj_height_2 IS NULL THEN
-      _proj_height_2 = 0;
-    END IF;
+    -- If any percent inputs are null, set them to 0. This ensures the averaging still works and the null percent attribute will not be considered in the calculation.
     IF species_pct_1 IS NULL THEN
       _species_pct_1 = 0;
     END IF;
     IF species_pct_2 IS NULL THEN
+      _species_pct_2 = 0;
+    END IF;
+    
+    -- If any height values are null, set them to zero so the calculation still works, but also set percent to zero so the height is dropped from the equation.
+    -- i.e. any null height values are not considered.
+    IF proj_height_1 IS NULL THEN
+      _proj_height_1 = 0;
+      _species_pct_1 = 0;
+    END IF;
+    IF proj_height_2 IS NULL THEN
+      _proj_height_2 = 0;
       _species_pct_2 = 0;
     END IF;
     
@@ -4774,6 +4819,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TYPE_ECO text
 --
 -- Get the 4 character wetland code and translate 
+-- Note this is identical to TT_qc_prg4_wetland_translation
 
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_wetland_translation(text, text, text, text, text, text);
@@ -5281,4 +5327,60 @@ RETURNS int AS $$
     _age = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'l1_age_origin');
     RETURN an_pro_ori::int - _age;
   END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_qc_countOfNotNull(text, text, text)
+--
+-- age_cl text - lookup code for number of lyr layer in lookup table
+-- nfl text - nfl code
+-- max_rank_to_consider text
+-- 
+-- Lookup the number of LYR layers using the translation.qc_standstructure_lookup table
+-- Assign variables so these layers can be counter.
+--
+-- Determine if the row contains an NFL record. If it does assign a string
+-- so it can be counted as a non-null layer.
+-- 
+-- Pass LYR and NFL variables to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_countOfNotNull(text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_countOfNotNull(
+  cl_age text,
+  nfl text,
+  max_rank_to_consider text
+)
+RETURNS int AS $$
+  DECLARE
+    lyr_layers int;
+    is_lyr1 text;
+    is_lyr2 text;
+    is_nfl text;
+  BEGIN
+
+    -- assign lyr 1 and 2
+    lyr_layers = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'num_of_layers');
+    CASE 
+      WHEN lyr_layers = 1 THEN
+        is_lyr1 = 'a_value';
+        is_lyr2 = NULL::text;
+      WHEN lyr_layers = 2 THEN
+        is_lyr1 = 'a_value';
+        is_lyr2 = 'a_value';
+      ELSE
+        is_lyr1 = NULL::text;
+        is_lyr2 = NULL::text;
+    END CASE;
+
+    -- if any of the nfl functions return true, we know there is an NFL record.
+    -- set is_nfl to be a valid string.
+    IF tt_matchList(nfl,'{''BAT'',''DS'',''EAU'',''ILE'',''INO'', ''A'',''AEP'',''AER'',''AF'',''ANT'',''BAS'',''CFO'',''CU'',''DEF'',''DEP'',''GR'',''HAB'',''LTE'',''MI'',''NF'',''RO'',''US'',''VIL'', ''AL'',''DH'',''NX''}') THEN
+      is_nfl = 'a_value';
+    ELSE
+      is_nfl = NULL::text;
+    END IF;
+    
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(is_lyr1, is_lyr2, is_nfl, max_rank_to_consider, 'FALSE');
+
+  END; 
 $$ LANGUAGE plpgsql IMMUTABLE;

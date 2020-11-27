@@ -2,8 +2,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, src_filename, ogc_fid, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,"notNull(ogc_fid);isInt(ogc_fid);isGreaterThan(ogc_fid,0)",copyText(ogc_fid),Copies source value to ORIG_STAND_ID,TRUE
-4,STAND_STRUCTURE,text,"matchTable(cl_age, 'translation', 'qc_standstructure_lookup',TRUE,TRUE)","lookupText(cl_age, 'translation', 'qc_standstructure_lookup', 'stand_structure')",Maps source value to stand_structure using lookup table,TRUE
-5,NUM_OF_LAYERS,integer,"matchTable(cl_age, 'translation', 'qc_standstructure_lookup',TRUE,TRUE)","lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'num_of_layers')",Maps source value to num_of_layers using lookup table,TRUE
+4,STAND_STRUCTURE,text,"notNull(cl_age);notEmpty(cl_age);matchTable(cl_age, 'translation', 'qc_standstructure_lookup',TRUE,TRUE)","lookupText(cl_age, 'translation', 'qc_standstructure_lookup', 'stand_structure')",Stand structure is based on the cl_age code and is copied form the lookup table,TRUE
+5,NUM_OF_LAYERS,integer,"qc_hasCountOfNotNull(cl_age, co_ter, 1, FALSE|-8886)","qc_countOfNotNull(cl_age, co_ter, 3)","Uses the qc_standstructure_lookup table to find number of lyr layers, then tests to see if nfl is present and counts the total number of layers. Max number of layers is 3.",TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Attribute does not occur,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE

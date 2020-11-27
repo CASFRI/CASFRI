@@ -38,6 +38,26 @@ DROP TABLE rawfri.ab_photoyear;
 ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
 
 --------------------------------------------------------------------------
+-- Validate NL photo year table
+--------------------------------------------------------------------------
+SELECT TT_Prepare('translation', 'nl_photoyear_validation', '_nl_photo_val');
+SELECT * FROM TT_Translate_nl_photo_val('rawfri', 'nl_photoyear');
+
+-- make table valid and subset by rows with valid photo years
+DROP TABLE IF EXISTS rawfri.new_photo_year;
+CREATE TABLE rawfri.new_photo_year AS
+SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photoyear
+FROM rawfri.nl_photoyear
+WHERE TT_IsInt(photoyear::text);
+
+CREATE INDEX IF NOT EXISTS nl_photoyear_idx 
+ ON rawfri.new_photo_year
+ USING GIST(wkb_geometry);
+
+DROP TABLE rawfri.nl_photoyear;
+ALTER TABLE rawfri.new_photo_year RENAME TO nl_photoyear;
+
+--------------------------------------------------------------------------
 -- Translate all CAS tables into a common table. 43h09m
 --------------------------------------------------------------------------
 -- Prepare the translation functions
@@ -53,6 +73,7 @@ SELECT TT_Prepare('translation', 'ns_nsi01_cas', '_ns_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'pe_pei01_cas', '_pe_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'mb_fri01_cas', '_mb05_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'mb_fli01_cas', '_mb06_cas', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'nl_nli01_cas', '_nl01_cas', 'ab_avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50.cas_all CASCADE;
 ------------------------
@@ -255,6 +276,16 @@ SELECT * FROM TT_Translate_mb06_cas('rawfri', 'mb06_l1_to_mb_fli_l1_map', 'ogc_f
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_cas', 'mb06_l1_to_mb_fli_l1_map_cas');
+------------------------
+-- Translate NL01 using NL_FLI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_nl01_cas('rawfri', 'nl01_l1_to_nl_nli_l1_map', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_cas', 'nl01_l1_to_nl_nli_l1_map_cas');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

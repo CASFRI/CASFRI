@@ -35,7 +35,8 @@ DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text,
 DROP FUNCTION IF EXISTS TT_sk_utm_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_validation(text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_prg45_wetland_validation(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg4_wetland_validation(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg5_wetland_validation(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_not_double_species_validation(text);
 DROP FUNCTION IF EXISTS TT_qc_prg5_species_matchTable_validation(text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri_hascountOfNotNull(text, text, text, text);
@@ -47,6 +48,7 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_origin_lower_validation(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_origin_newfoundland_validation(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_height_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_hasCountOfNotNull(text, text, text, text);
 
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
@@ -91,7 +93,8 @@ DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per(text, text);
 DROP FUNCTION IF EXISTS TT_wetland_code_translation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_translation(text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_prg45_wetland_translation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg4_wetland_translation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg5_wetland_translation(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_species_translation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_species_per_translation(text, text);
@@ -106,6 +109,7 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_productivity_type_translation(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_origin_upper_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_origin_lower_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_origin_translation(text, text);
+DROP FUNCTION IF EXISTS TT_qc_countOfNotNull(text, text, text);
 
 -------------------------------------------------------------------------------
 -- Generic functions

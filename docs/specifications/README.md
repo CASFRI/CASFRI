@@ -659,7 +659,7 @@ The **HEIGHT_UPPER** and **HEIGHT_LOWER** attributes are based on an average hei
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 0&#8209;100   | Upper and lower bound of a height class |
+| &gt;0, &#8804;100   | Upper and lower bound of a height class |
 | -8888 | Source value is NULL |
 | -8887 | Attribute does not apply to this record (e.g. not a forested polygon) |
 | -8886 | Source value should exist but is unknown |
