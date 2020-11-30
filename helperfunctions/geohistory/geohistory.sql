@@ -238,8 +238,8 @@ RETURNS TABLE (id text,
     currentRow RECORD;
     ovlpRow RECORD;
 
-    refYearBegin int = 1990;
-    refYearEnd int = 3000;
+    refYearBegin int = 1930;
+    refYearEnd int = 2030;
     
     preValidYearPoly geometry;
     preValidYearPolyYearEnd int;
