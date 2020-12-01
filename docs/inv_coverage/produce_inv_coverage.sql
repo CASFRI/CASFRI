@@ -17,19 +17,108 @@
 -- complete geographical coverage. Most inventories have too many polygons
 -- which make PostGIS to fail on ST_Union() because of memory overflow. 
 ------------------------------------------------------------------------------
+--DROP FUNCTION ST_IsSurrounded(geometry, name, name,name);
+-- Used to filter out polygons strictly inside an aggregate 
+-- of polygons in order to union only the surrounding polygon together (way faster).
+CREATE OR REPLACE FUNCTION ST_IsSurrounded1(
+  geom geometry, 
+  schemaname name, 
+  tablename name,
+  geomcolumnname name DEFAULT 'geom',
+  filter text DEFAULT NULL
+) 
+RETURNS boolean AS $$ 
+  DECLARE
+	  surrounding geometry;
+	  inpoly geometry;
+	  query text;
+	  fqtn text;
+	  debug boolean;
+  BEGIN
+    debug = true;
+	  -- Determine the complete name of the table
+    fqtn := '';
+    IF length(schemaname) > 0 THEN
+      fqtn := quote_ident(schemaname) || '.';
+    END IF;
+    fqtn := fqtn || quote_ident(tablename);
+    inpoly = ST_CollectionExtract(geom, 3);
+
+    query = 'WITH polys AS (SELECT ST_CollectionExtract(' || geomcolumnname || ', 3) geom FROM ' || fqtn;
+    IF NOT filter IS NULL THEN
+      query = query || ' WHERE ' || filter;
+    END IF;
+    query = query || ' ) SELECT ST_Union(ST_Intersection(ST_Boundary($1), b.geom)) border FROM polys b WHERE NOT ST_Equals($1, b.geom) AND ST_Intersects($1, b.geom) GROUP BY $1;';
+RAISE NOTICE 'ST_IsSurrounded() - query = %', query;
+
+    EXECUTE query INTO surrounding USING inpoly;
+
+    RETURN CASE WHEN surrounding IS NULL THEN false
+                ELSE ST_Equals(ST_Boundary(inpoly), ST_CollectionExtract(surrounding, 2))
+           END;
+    END; 
+$$ LANGUAGE 'plpgsql' VOLATILE;
+
+CREATE OR REPLACE FUNCTION ST_IsSurrounded2(
+  geom geometry, 
+  schemaname name, 
+  tablename name,
+  geomcolumnname name DEFAULT 'geom',
+  filter text DEFAULT NULL
+) 
+RETURNS boolean AS $$ 
+  DECLARE
+	  surrounding geometry;
+	  inpoly geometry;
+	  query text;
+	  fqtn text;
+	  debug boolean;
+  BEGIN
+    debug = true;
+	  -- Determine the complete name of the table
+    fqtn := '';
+    IF length(schemaname) > 0 THEN
+      fqtn := quote_ident(schemaname) || '.';
+    END IF;
+    fqtn := fqtn || quote_ident(tablename);
+    inpoly = ST_CollectionExtract(geom, 3);
+
+    query = 'WITH polys AS (' ||
+            '  SELECT ST_CollectionExtract(' || geomcolumnname || ', 3) geom ' ||
+            '  FROM ' || fqtn ||
+            '  WHERE NOT ST_Equals($1, b.geom) AND ST_Intersects(' || geomcolumnname || ', $1)';
+    IF NOT filter IS NULL THEN
+      query = query || ' AND ' || filter;
+    END IF;
+    query = query || ' ) SELECT ST_Union(ST_Intersection(ST_Boundary($2), b.geom)) border FROM polys b';
+RAISE NOTICE 'ST_IsSurrounded() - query = %', query;
+
+    EXECUTE query INTO surrounding USING geom, inpoly;
+
+    RETURN CASE WHEN surrounding IS NULL THEN false
+                ELSE ST_Equals(ST_Boundary(inpoly), ST_CollectionExtract(surrounding, 2))
+           END;
+    END; 
+$$ LANGUAGE 'plpgsql' VOLATILE;
 CREATE SCHEMA IF NOT EXISTS casfri50_coverage;
 ------------------------------------------------------------------------------
--- SK03 - 645 - 1m05
+-- SK03
+-- ST_Union() - 3623 points in 2m BEST
+-- ST_BufferedUnion(, 10) - 4672 points in 4m50 
+-- ST_BufferedUnion(, 10, 10) - 645 points in 1m05
 DROP TABLE IF EXISTS casfri50_coverage.sk03_bu_10_10;
 CREATE TABLE casfri50_coverage.sk03_bu_10_10 AS
-SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))) geometry
+SELECT ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))) geometry
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'SK03';
 
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.sk03;
 ------------------------------------------------------------------------------
--- AB06 - 11484 - 2m13
+-- AB06
+-- ST_Union() - 1964 points in 2m13
+-- ST_BufferedUnion(, 10) - 2807 points in 12m05
+-- ST_BufferedUnion(, 10, 10) - 95 points 2m54 Best
 DROP TABLE IF EXISTS casfri50_coverage.ab06;
 CREATE TABLE casfri50_coverage.ab06 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))) geometry
@@ -40,32 +129,42 @@ SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.ab06;
 ------------------------------------------------------------------------------
 -- SK02
--- Best method is ST_Union(). Returns 19858 points in 4m08
+-- ST_Union() - 19858 points in 4m28
+-- ST_Simplify(ST_Union()) - 2463 points in 4m33 BEST
+-- ST_BufferedUnion(, 10) - 21796 points in 50m19
+-- ST_BufferedUnion(, 10, 10) - 2288 points 10 min 54
 DROP TABLE IF EXISTS casfri50_coverage.sk02;
 CREATE TABLE casfri50_coverage.sk02 AS
-SELECT ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))) geometry
+SELECT ST_Simplify(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'SK02';
 
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.sk02;
 ------------------------------------------------------------------------------
--- PE01 - 107220 - 12m06
-DROP TABLE IF EXISTS casfri50_coverage.pe01;
-CREATE TABLE casfri50_coverage.pe01 AS
-SELECT ST_BufferedSmooth(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
+-- PE01
+-- ST_Simplify(ST_Union(),10) -  19538 points in 11m27
+-- ST_BufferedUnion(, 10) - ERROR
+-- ST_BufferedUnion(, 10, 10) - ERROR
+DROP TABLE IF EXISTS casfri50_coverage.pe01_union;
+CREATE TABLE casfri50_coverage.pe01_union AS
+SELECT ST_Simplify(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'PE01';
 
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.pe01;
 ------------------------------------------------------------------------------
--- AB16 - 120476 - 30m
-DROP TABLE IF EXISTS casfri50_coverage.ab16;
-CREATE TABLE casfri50_coverage.ab16 AS
-SELECT ST_BufferedSmooth(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
+-- AB16
+-- ST_Union() - 58283 points in 29m36
+-- ST_Simplify(ST_Union(),10) -  2826 points in 29m36 BEST
+-- ST_BufferedUnion(, 10) - 41584 points in 12 hr 42
+-- ST_BufferedUnion(, 10, 10) - ERROR
+DROP TABLE IF EXISTS casfri50_coverage.ab16_union;
+CREATE TABLE casfri50_coverage.ab16_union AS
+SELECT ST_Simplify(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
 FROM casfri50.geo_all
-WHERE left(cas_id, 4) = 'AB16';
+WHERE left(cas_id, 4) = upper('ab16');
 
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.ab16;
@@ -81,7 +180,6 @@ SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.mb06;
 ------------------------------------------------------------------------------
 -- SK06 - 211482 - 8h35
-
 DROP TABLE IF EXISTS casfri50_coverage.sk06;
 CREATE TABLE casfri50_coverage.sk06 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
@@ -92,11 +190,15 @@ SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.sk06;
 ------------------------------------------------------------------------------
 -- YT02 - 231137 - 1h02
-DROP TABLE IF EXISTS casfri50_coverage.yt02;
-CREATE TABLE casfri50_coverage.yt02 AS
-SELECT ST_BufferedSmooth(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
+-- ST_Union() - 7489 points in 1h02
+-- ST_Simplify(ST_Union(),10) -  675 points in 1h02 - BEST
+-- ST_BufferedUnion(, 10) - 7755 points in 158h
+-- ST_BufferedUnion(, 10, 10) - ERROR
+DROP TABLE IF EXISTS casfri50_coverage.yt02_union_simplify;
+CREATE TABLE casfri50_coverage.yt02_union_simplify AS
+SELECT ST_Simplify(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
 FROM casfri50.geo_all
-WHERE left(cas_id, 4) = 'YT02';
+WHERE left(cas_id, 4) = upper('yt02');
 
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.yt02;

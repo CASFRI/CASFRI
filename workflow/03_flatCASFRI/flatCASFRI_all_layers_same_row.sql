@@ -239,6 +239,10 @@ ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 2));
 CREATE INDEX cas_flat_all_layers_same_row_geom_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING gist(geometry);
 --------------------------------------------------------------------------
+-- Refresh the materalized view
+REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
+--------------------------------------------------------------------------
+
 -- Check the completeness of STAND_PHOTO_YEAR
 SELECT left(cas_id, 4) inv, stand_photo_year, count(*) nb
 FROM casfri50_flat.cas_flat_all_layers_same_row
