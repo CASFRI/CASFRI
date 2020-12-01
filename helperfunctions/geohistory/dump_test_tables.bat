@@ -15,7 +15,7 @@ IF "%pgversion%"=="" SET pgversion=11
 
 ::Run ogr2ogr
 
-DEL testtables%pgversion%\*.csv
+DEL testtables%pgversion%\test_*.csv
 
 "%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\test_0_without_validity.csv" %pg_connection_string% "geohistory.test_0_without_validity_new"
 

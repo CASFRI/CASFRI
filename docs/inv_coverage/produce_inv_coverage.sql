@@ -190,11 +190,15 @@ SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.sk06;
 ------------------------------------------------------------------------------
 -- YT02 - 231137 - 1h02
-DROP TABLE IF EXISTS casfri50_coverage.yt02;
-CREATE TABLE casfri50_coverage.yt02 AS
-SELECT ST_BufferedSmooth(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
+-- ST_Union() - 7489 points in 1h02
+-- ST_Simplify(ST_Union(),10) -  675 points in 1h02 - BEST
+-- ST_BufferedUnion(, 10) - 7755 points in 158h
+-- ST_BufferedUnion(, 10, 10) - ERROR
+DROP TABLE IF EXISTS casfri50_coverage.yt02_union_simplify;
+CREATE TABLE casfri50_coverage.yt02_union_simplify AS
+SELECT ST_Simplify(ST_Union(geometry ORDER BY ST_X(ST_Centroid(geometry)), ST_Y(ST_Centroid(geometry))), 10) geometry
 FROM casfri50.geo_all
-WHERE left(cas_id, 4) = 'YT02';
+WHERE left(cas_id, 4) = upper('yt02');
 
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.yt02;

@@ -11,6 +11,8 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 ------------------------------------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS geohistory;
+------------------------------------------------------------------------------
 -- Create a table of inventory precedence rank. Polygons from inventories with 
 -- higher ranks have precedence over polygons from inventories having lower 
 -- ranks. 
@@ -114,14 +116,4 @@ $$ LANGUAGE plpgsql VOLATILE;
 --SELECT TT_HasPrecedence('AB16', '3', 'AB06', '3'); -- true
 --SELECT TT_HasPrecedence('AB16', '3', 'AB06', '2'); -- true
 
--- Create a spatial table of sampling areas having two 
--- or more inventories with different photo_years
-DROP TABLE IF EXISTS geohistory.sampling_areas;
-CREATE TABLE geohistory.sampling_areas AS
-SELECT 1 id, ST_MakeEnvelope(1, 2, 3, 4, 900914);
 
-SELECT ST_SRID(geometry)
-FROM casfri50.geo_all
-LIMIT 1
-
-SELECT count(*) FROM casfri50_flat.cas_flat_all_layers_same_row
