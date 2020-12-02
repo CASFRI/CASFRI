@@ -57,7 +57,7 @@ FROM (SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_ty
       ORDER BY id, poly_id) foo;
 
 -- Display
-SELECT *, ST_Area(wkb_geometry) area, ST_GeomFromText(wkt_geometry) geom
+SELECT *, ST_Area(wkt_geometry) area, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nb1_history_new;
 
 --------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ CREATE INDEX sampling_area_nt1_casid_idx ON geohistory.sampling_area_nt1 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_nt1;
 
--- Generate history table - 3m31
+-- Generate history table - 3m31 - 10m45 with error handling
 DROP TABLE IF EXISTS geohistory.sampling_area_nt1_history_new;
 CREATE TABLE geohistory.sampling_area_nt1_history_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
@@ -114,6 +114,11 @@ FROM (SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_ty
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nt1_history_new;
+
+-- Display polygon types
+SELECT ST_GeometryType(ST_GeomFromText(wkt_geometry)) gtype, count(*)
+FROM geohistory.sampling_area_nt1_history_new
+GROUP BY ST_GeometryType(ST_GeomFromText(wkt_geometry));
 --------------------------------------------------------------------------------------
 -- Sampling area 'NT2'
 --------------------------------------------------------------------------------------
@@ -204,10 +209,10 @@ SELECT '1.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nb1_history_new" and "sampling_area_nb1_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nb1_history_new'', ''geohistory'' , ''sampling_area_nb1'', ''row_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nb1_history_new'', ''geohistory'' , ''sampling_area_nb1_history'', ''row_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM geohistory.sampling_area_nb1_history_new a 
-      FULL OUTER JOIN geohistory.sampling_area_nb1 b USING (row_id)) foo
+      FULL OUTER JOIN geohistory.sampling_area_nb1_history b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
