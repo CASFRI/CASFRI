@@ -14,7 +14,6 @@
 -- Usage
 --
 -- 1) Load the test tables from a command window with load_test_tables.bat.
--- 2) Execute "test_translation.sql" in PostgreSQL (this file).
 -- 2) Execute "test_translation.sql" in PostgreSQL (this file)
 -- 3) If undesirable changes show up, fix your translation tables.
 --    If desirable changes occurs, dump them as new test tables with 
