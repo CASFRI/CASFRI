@@ -40,163 +40,71 @@ $$ LANGUAGE plpgsql VOLATILE;
 --SELECT TT_RowIsValid(ARRAY[id::text, att]) FROM test_geohistory;
 --SELECT TT_RowIsValid(ARRAY[att]) FROM test_geohistory;
 
-------------------------------------------------------------------
--- TT_HasPrecedence()
---
--- Determine if the first polygon has precedence over the second one based on:
---
-  -- 1) their inventory rank: an established priority rank among inventories 
-  --    determines which polygon has priority.
-  -- 2) their unique ID: when inventory ranks are equivalent for both polygons, 
-  --    the polygon with the highest ID has priority.
-  --
-  -- numInv and numUid can be used to specify if inv1 and inv2 and uid1 and uid2 
-  -- must be treated as numerical values. They both default to FALSE.
-------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_HasPrecedence(text, text, text, text, boolean, boolean);
-CREATE OR REPLACE FUNCTION TT_HasPrecedence(
-  inv1 text, 
-  uid1 text,
-  inv2 text,
-  uid2 text,
-  numInv boolean DEFAULT FALSE,
-  numUid boolean DEFAULT FALSE
-)
-RETURNS boolean AS $$
-  DECLARE
-    refInv text = 'AA00';
-    refUID text = 'A';
-  BEGIN
-    -- Assign default hardcoded values
-    IF inv1 IS NULL THEN
-      RAISE NOTICE 'TT_HasPrecedence() WARNING : inv1 for polygon ''%'' is NULL. Assigning %...', uid1, refInv;
-      inv1 = refInv;
-    END IF;
-    IF inv2 IS NULL THEN
-      RAISE NOTICE 'TT_HasPrecedence() WARNING : inv2 for polygon ''%'' is NULL. Assigning %...', uid2, refInv;
-      inv2 = refInv;
-    END IF;
-    IF inv1 = inv2 THEN
-      IF uid1 IS NULL THEN
-        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 is NULL. Assigning %...', refUID;
-        uid1 = refUID;
-      END IF;
-      IF uid2 IS NULL THEN
-        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid2 is NULL. Assigning %...', refUID;
-        uid2 = refUID;
-      END IF;
-      IF uid1 = uid2 THEN
-        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 and uid2 are equal (%). Can''t give precedence to a polygon. Returning FALSE...', uid1;
-        RETURN FALSE;
-      END IF;
-    END IF;
-IF inv1 != inv2 THEN
-  RAISE NOTICE 'inv1 (%) % has precedence on inv2(%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
-                                                                  THEN '' ELSE 'does not' END, inv2;
-ELSE
-  RAISE NOTICE 'uid1(%) % has precedence on uid2(%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2) 
-                                                     THEN '' ELSE 'does not' END, uid2;
-END IF;
-      RETURN ((numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)) OR 
-           (inv1 = inv2 AND ((numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)));
-  END
-$$ LANGUAGE plpgsql VOLATILE;
-
---SELECT TT_HasPrecedence(NULL, NULL, NULL, NULL); -- false
---SELECT TT_HasPrecedence('AB06', NULL, NULL, NULL); -- true
---SELECT TT_HasPrecedence('AB06', NULL, 'AB06', NULL); -- false
---SELECT TT_HasPrecedence('AB06', NULL, 'AB16', NULL); -- false
---SELECT TT_HasPrecedence('AB16', NULL, 'AB06', NULL); -- true
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', NULL); -- true
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
---SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
---SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
---SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
---SELECT TT_HasPrecedence('2', '2', '13', '13');  -- true
---SELECT TT_HasPrecedence('2', '2', '13', '13', true, true); -- false
---SELECT TT_HasPrecedence('13', '2', '2', '13', true, true); -- true
-
---SELECT TT_HasPrecedence('1', '2', '1', '13', true, false); -- true
---SELECT TT_HasPrecedence('1', '13', '1', '2', true, false); -- false
---SELECT TT_HasPrecedence('1', '2', '1', '13', true, true); -- false
---SELECT TT_HasPrecedence('1', '13', '1', '2', true, true); -- true
 -------------------------------------------------------------------------------
 -- ST_SafeDifference()
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS ST_SafeDifference(geometry, geometry, double precision, text, text);
+DROP FUNCTION IF EXISTS ST_SafeDifference(geometry, geometry, double precision, text, text, boolean);
 CREATE OR REPLACE FUNCTION ST_SafeDifference(
   geom1 geometry,
   geom2 geometry,
   tolerance double precision DEFAULT NULL,
   geom1id text DEFAULT NULL,
-  geom2id text DEFAULT NULL
-)
-RETURNS geometry AS $$
-  DECLARE
-  BEGIN
-    RAISE NOTICE 'ST_SafeDifference() Version 2...';
-    BEGIN
-      -- Attempt the normal operation
-      RETURN ST_Difference(geom1, geom2);
-    EXCEPTION WHEN OTHERS THEN
-      RAISE NOTICE 'ST_SafeDifference() ERROR 0: Normal ST_Difference() failed...'
-    END;
-    IF tolerance IS NOT NULL THEN
-      RAISE NOTICE 'ST_SafeDifference() ERROR 1: Try by snapping the first polygon (%) to grid using tolerance...', coalesce(geom1id, 'no ID provided');
-      BEGIN
-        RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), geom2);
-      EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'ST_SafeDifference() ERROR 2: Try by snapping the second polygon (%) to grid using tolerance...', coalesce(geom2id, 'no ID provided');
-      END;
-
-      BEGIN
-        RETURN ST_Difference(geom1, ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
-      EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'ST_SafeDifference() ERROR 3: Try by snapping the both polygons (% and %) to grid using tolerance...', coalesce(geom1id, 'no ID provided'), coalesce(geom2id, 'no ID provided');
-      END;            
-
-      BEGIN
-        RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));          
-      EXCEPTION WHEN OTHERS THEN
-      END;            
-    END IF;
-
-    RAISE NOTICE 'ST_SafeDifference() ERROR 4: Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
-    BEGIN
-      RETURN ST_Difference(ST_Buffer(geom1, 0), geom2);
-    EXCEPTION WHEN OTHERS THEN
-      RAISE NOTICE 'ST_SafeDifference() ERROR 5: Try by buffering the second polygon (%) by 0...', coalesce(geom2id, 'no ID provided');
-    END;
-
-    BEGIN
-      RETURN ST_Difference(geom1, ST_Buffer(geom2, 0));
-    EXCEPTION WHEN OTHERS THEN
-      RAISE NOTICE 'ST_SafeDifference() FATAL ERROR: Operation failed. Returning MULTIPOLYGON EMPTY...';
-    END;
-
-    RETURN ST_GeomFromText('MULTIPOLYGON EMPTY');
-  END
-$$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
--- TT_GeoHistoryDifference()
-------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistoryDifference(geometry, geometry, text, text, boolean);
-CREATE OR REPLACE FUNCTION TT_GeoHistoryDifference(
-  geom1 geometry, 
-  geom2 geometry,
-  geom1id text DEFAULT NULL,
   geom2id text DEFAULT NULL,
   safe boolean DEFAULT FALSE
 )
 RETURNS geometry AS $$
-  SELECT CASE WHEN safe THEN
-           ST_SafeDifference(geom1, geom2, 0.01, geom1id, geom2id)
-         ELSE
-           ST_Difference(geom1, geom2)
-         END
-  --SELECT ST_MakeValid(ST_SnapToGrid(ST_Difference(geom1, geom2), 0.01)); --unacceptable
-$$ LANGUAGE sql IMMUTABLE;
+  DECLARE
+  BEGIN
+    IF safe THEN
+      RAISE NOTICE 'ST_SafeDifference() Safe is TRUE...';
+      BEGIN
+        -- Attempt the normal operation
+        RETURN ST_Difference(geom1, geom2);
+      EXCEPTION WHEN OTHERS THEN
+        IF tolerance IS NULL THEN
+          RAISE NOTICE 'ST_SafeDifference() ERROR 1: Normal ST_Difference() failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
+        ELSE
+          RAISE NOTICE 'ST_SafeDifference() ERROR 1: Normal ST_Difference() failed. Try by snapping the first polygon (%) to grid using tolerance...', coalesce(geom1id, 'no ID provided');
+        END IF;
+      END;
+      IF NOT tolerance IS NULL THEN
+        BEGIN
+          RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), geom2);
+        EXCEPTION WHEN OTHERS THEN
+          RAISE NOTICE 'ST_SafeDifference() ERROR 2: Snapping the first polygon failed. Try by snapping the second polygon (%) to grid using tolerance...', coalesce(geom2id, 'no ID provided');
+        END;
+
+        BEGIN
+          RETURN ST_Difference(geom1, ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
+        EXCEPTION WHEN OTHERS THEN
+          RAISE NOTICE 'ST_SafeDifference() ERROR 3: Snapping the second polygon failed. Try by snapping the both polygons (% and %) to grid using tolerance...', coalesce(geom1id, 'no ID provided'), coalesce(geom2id, 'no ID provided');
+        END;            
+
+        BEGIN
+          RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));          
+        EXCEPTION WHEN OTHERS THEN
+          RAISE NOTICE 'ST_SafeDifference() ERROR 4: Snapping both polygons failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
+        END;            
+      END IF;
+
+      BEGIN
+        RETURN ST_Difference(ST_Buffer(geom1, 0), geom2);
+      EXCEPTION WHEN OTHERS THEN
+        RAISE NOTICE 'ST_SafeDifference() ERROR 5: Buffering the first polygon by 0 failed. Try by buffering the second polygon (%) by 0...', coalesce(geom2id, 'no ID provided');
+      END;
+
+      BEGIN
+        RETURN ST_Difference(geom1, ST_Buffer(geom2, 0));
+      EXCEPTION WHEN OTHERS THEN
+        RAISE NOTICE 'ST_SafeDifference() FATAL ERROR: Operation failed. Returning MULTIPOLYGON EMPTY...';
+      END;
+      RETURN ST_GeomFromText('MULTIPOLYGON EMPTY');
+    ELSE
+      RETURN ST_Difference(geom1, geom2);
+      --RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
+    END IF;
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_GeoHistoryOverlaps()
 ------------------------------------------------------------------
@@ -344,7 +252,7 @@ RETURNS TABLE (id text,
     
     gtime timestamptz = clock_timestamp();
     time timestamptz;
-    notDone boolean;
+    attempts int;
     safe boolean;
   BEGIN
       -- Check that idColName, geoColName and photoYearColName exists
@@ -365,7 +273,7 @@ RETURNS TABLE (id text,
                             quote_ident(precedenceColName) || '::text gh_inv, ' ||
                             CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, ',') || '])' END || ' gh_is_valid ' ||
                'FROM ' || TT_FullTableName(schemaName, tableName) ||
-               --' WHERE ' || quote_ident(idColName) || '::text = ''NT02-xxxxxxNT_FORCOV-xxxxxxxxx1-0001008624-0008569'' ' ||
+              -- ' WHERE ' || quote_ident(idColName) || '::text = ''BC08-xxxVEG_COMP_LYR-xxx093B091-0013707196-3986500'' ' ||
               ' ORDER BY gh_photo_year DESC;';
     IF debug_l2 THEN RAISE NOTICE '111 currentPolyQuery = %', currentPolyQuery;END IF;
 
@@ -387,117 +295,108 @@ RETURNS TABLE (id text,
     -- LOOP over each polygon of the table
     FOR currentRow IN EXECUTE currentPolyQuery LOOP
       time = clock_timestamp();
-notDone = TRUE;
-safe = FALSE;
-WHILE notDone LOOP
-BEGIN
-      IF debug_l1 OR debug_l2 THEN RAISE NOTICE '---------------------';END IF;
-      IF debug_l1 OR debug_l2 THEN RAISE NOTICE '000 processing polygon ID %. currentRow.gh_photo_year = %', currentRow.gh_row_id, currentRow.gh_photo_year;END IF;
---RAISE NOTICE '000 processing polygon ID %. currentRow.gh_photo_year = %', currentRow.gh_row_id, currentRow.gh_photo_year;
-      -- Initialize preValidYearPoly to the current polygon
-      preValidYearPoly = currentRow.gh_geom;
-      preValidYearPolyYearEnd = refYearEnd;
+      attempts = 0;
+      --RAISE NOTICE 'safe=FALSE';
+      safe = FALSE;
+      -- Here we loop until a satistactory set of historical polygon has been computed first 
+      -- using the unsafe version of ST_Difference() and then with a safe version of it
+      WHILE attempts < 2 LOOP
+        BEGIN
+          IF debug_l1 OR debug_l2 THEN RAISE NOTICE '---------------------';END IF;
+          IF debug_l1 OR debug_l2 THEN RAISE NOTICE '000 processing polygon ID %. currentRow.gh_photo_year = %', currentRow.gh_row_id, currentRow.gh_photo_year;END IF;
 
-      -- postValidYearPoly will be initialized only if the current polygon 
-      -- is cut by pre_valid_year polygons or same_valid_year polygons
-      postValidYearPoly = NULL;
-      postValidYearPolyYearBegin = currentRow.gh_photo_year;
+          -- Initialize preValidYearPoly to the current polygon
+          preValidYearPoly = currentRow.gh_geom;
+          preValidYearPolyYearEnd = refYearEnd;
 
-      oldOvlpPolyYear = NULL;
-      
-      -- Assign some RETURN values now that are useful for debug only
-      ref_year = currentRow.gh_photo_year;
-      id = currentRow.gh_row_id;
-      poly_id = 0;
-      isvalid = currentRow.gh_is_valid;
-
-      -- LOOP over all overlapping polygons sorted by photoYear ASC
-      FOR ovlpRow IN EXECUTE ovlpPolyQuery 
-      USING currentRow.gh_row_id, currentRow.gh_geom, currentRow.gh_photo_year, currentRow.gh_inv LOOP
-        IF debug_l2 THEN RAISE NOTICE '---------';END IF;
-        IF debug_l2 THEN RAISE NOTICE '333 id=%, py=%, inv=%, isvalid=%', currentRow.gh_row_id, currentRow.gh_photo_year, currentRow.gh_inv, currentRow.gh_is_valid;END IF;
-        IF debug_l2 THEN RAISE NOTICE '444 id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;END IF;
-        -- CASE B - (A - B) RefYB -> RefYE (see logic table above)
-        IF (ovlpRow.gh_photo_year = currentRow.gh_photo_year AND 
-           ((TT_HasPrecedence(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
-            NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
-           (NOT TT_HasPrecedence(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
-            (NOT currentRow.gh_is_valid OR (currentRow.gh_is_valid AND ovlpRow.gh_is_valid))))) OR
-           (ovlpRow.gh_photo_year < currentRow.gh_photo_year AND NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
-           (ovlpRow.gh_photo_year > currentRow.gh_photo_year AND NOT currentRow.gh_is_valid) THEN
-          IF debug_l2 THEN RAISE NOTICE '555 CASE SAME YEAR: Remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
-
-IF NOT ST_IsValid(preValidYearPoly) THEN RAISE NOTICE 'TT_GeoHistory(): 1111 invalid difference';END IF;
-IF NOT ST_IsValid(ovlpRow.gh_geom) THEN RAISE NOTICE 'TT_GeoHistory(): 2222 invalid difference';END IF;
---RAISE NOTICE 'BBBB';
-          preValidYearPoly = TT_GeoHistoryDifference(preValidYearPoly, ovlpRow.gh_geom, 'preValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
-IF NOT ST_IsValid(preValidYearPoly) THEN RAISE NOTICE 'TT_GeoHistory(): 3333 invalid difference';END IF;
-          IF postValidYearPoly IS NOT NULL THEN
---RAISE NOTICE 'CCCC';
-            postValidYearPoly = TT_GeoHistoryDifference(postValidYearPoly, ovlpRow.gh_geom, 'postValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
-          END IF;
-
-        -- CASE C - (A - B) RefYB -> AY - 1 and A AY -> RefYE (see logic table above)
-        ELSIF ovlpRow.gh_photo_year < currentRow.gh_photo_year AND currentRow.gh_is_valid AND ovlpRow.gh_is_valid THEN
-          IF debug_l2 THEN RAISE NOTICE '666 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
-          postValidYearPoly = coalesce(postValidYearPoly, preValidYearPoly);
+          -- postValidYearPoly will be initialized only if the current polygon 
+          -- is cut by pre_valid_year polygons or same_valid_year polygons
+          postValidYearPoly = NULL;
           postValidYearPolyYearBegin = currentRow.gh_photo_year;
-IF NOT ST_IsValid(preValidYearPoly) THEN RAISE NOTICE 'TT_GeoHistory(): 4444 invalid difference';END IF;
-IF NOT ST_IsValid(ovlpRow.gh_geom) THEN RAISE NOTICE 'TT_GeoHistory(): 5555 invalid difference';END IF;
---RAISE NOTICE 'DDDD';
-IF debug_l2 THEN RAISE NOTICE '666-2 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
-          preValidYearPoly = TT_GeoHistoryDifference(preValidYearPoly, ovlpRow.gh_geom, 'preValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
-IF debug_l2 THEN RAISE NOTICE '666-3 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
-IF NOT ST_IsValid(preValidYearPoly) THEN RAISE NOTICE 'TT_GeoHistory(): 6666 invalid difference';END IF;
-          preValidYearPolyYearEnd = currentRow.gh_photo_year - 1;
 
-        -- CASE D - A RefYB -> BY - 1 and (A - B) BY -> RefYE (see logic table above)
-        ELSIF ovlpRow.gh_photo_year > currentRow.gh_photo_year AND currentRow.gh_is_valid AND ovlpRow.gh_is_valid THEN
-          IF debug_l2 THEN RAISE NOTICE '777 CASE 3: Return postPoly and set the next one by removing ovlpPoly. year = %', ovlpRow.gh_photo_year;END IF;
-          -- Make sure the last computed polygon still intersect with ovlpPoly
-IF NOT ST_IsValid(ovlpRow.gh_geom) THEN RAISE NOTICE '1111 ovlpRow.gh_geom is INVALID';END IF;
-IF NOT ST_IsValid(coalesce(postValidYearPoly, preValidYearPoly)) THEN RAISE NOTICE '2222 ovlpRow.ValidYearPoly is INVALID';END IF;
-          IF ST_Intersects(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
-            IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year AND postValidYearPoly IS NOT NULL THEN
-              poly_id = poly_id + 1;
-              --wkb_geometry = ST_Multi(ST_CollectionExtract(postValidYearPoly, 3));
-              wkb_geometry = postValidYearPoly;
+          oldOvlpPolyYear = NULL;
 
-              poly_type = '2_post_1';
-              valid_year_begin = postValidYearPolyYearBegin;
-              valid_year_end = ovlpRow.gh_photo_year - 1;
-              valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-              IF debug_l2 THEN RAISE NOTICE '---------';END IF;
-              IF debug_l2 THEN RAISE NOTICE 'AAA1 postPoly valid_time=%', valid_time;END IF;
-              IF debug_l2 THEN RAISE NOTICE '---------';END IF;
-              RETURN NEXT;
+          -- Assign some RETURN values now that are useful for debug only
+          ref_year = currentRow.gh_photo_year;
+          id = currentRow.gh_row_id;
+          poly_id = 0;
+          isvalid = currentRow.gh_is_valid;
+
+          -- LOOP over all overlapping polygons sorted by photoYear ASC
+          FOR ovlpRow IN EXECUTE ovlpPolyQuery 
+          USING currentRow.gh_row_id, currentRow.gh_geom, currentRow.gh_photo_year, currentRow.gh_inv LOOP
+            IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+            IF debug_l2 THEN RAISE NOTICE '333 id=%, py=%, inv=%, isvalid=%', currentRow.gh_row_id, currentRow.gh_photo_year, currentRow.gh_inv, currentRow.gh_is_valid;END IF;
+            IF debug_l2 THEN RAISE NOTICE '444 id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;END IF;
+            -- CASE B - (A - B) RefYB -> RefYE (see logic table above)
+            IF (ovlpRow.gh_photo_year = currentRow.gh_photo_year AND 
+               ((TT_HasPrecedence(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
+                NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
+               (NOT TT_HasPrecedence(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true) AND 
+                (NOT currentRow.gh_is_valid OR (currentRow.gh_is_valid AND ovlpRow.gh_is_valid))))) OR
+               (ovlpRow.gh_photo_year < currentRow.gh_photo_year AND NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
+               (ovlpRow.gh_photo_year > currentRow.gh_photo_year AND NOT currentRow.gh_is_valid) THEN
+              IF debug_l2 THEN RAISE NOTICE '555 CASE SAME YEAR: Remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
+
+              preValidYearPoly = ST_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
+              IF postValidYearPoly IS NOT NULL THEN
+                postValidYearPoly = ST_SafeDifference(postValidYearPoly, ovlpRow.gh_geom, 0.01, 'postValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
+              END IF;
+
+            -- CASE C - (A - B) RefYB -> AY - 1 and A AY -> RefYE (see logic table above)
+            ELSIF ovlpRow.gh_photo_year < currentRow.gh_photo_year AND currentRow.gh_is_valid AND ovlpRow.gh_is_valid THEN
+              IF debug_l2 THEN RAISE NOTICE '666 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
+              postValidYearPoly = coalesce(postValidYearPoly, preValidYearPoly);
+              postValidYearPolyYearBegin = currentRow.gh_photo_year;
+
+              preValidYearPoly = ST_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
+
+              preValidYearPolyYearEnd = currentRow.gh_photo_year - 1;
+
+            -- CASE D - A RefYB -> BY - 1 and (A - B) BY -> RefYE (see logic table above)
+            ELSIF ovlpRow.gh_photo_year > currentRow.gh_photo_year AND currentRow.gh_is_valid AND ovlpRow.gh_is_valid THEN
+              IF debug_l2 THEN RAISE NOTICE '777 CASE 3: Return postPoly and set the next one by removing ovlpPoly. year = %', ovlpRow.gh_photo_year;END IF;
+              -- Make sure the last computed polygon still intersect with ovlpPoly
+
+              IF ST_Intersects(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
+                IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year AND postValidYearPoly IS NOT NULL THEN
+                  poly_id = poly_id + 1;
+                  wkb_geometry = ST_Multi(ST_CollectionExtract(postValidYearPoly, 3));
+                  --wkb_geometry = postValidYearPoly;
+
+                  poly_type = '2_post_1';
+                  valid_year_begin = postValidYearPolyYearBegin;
+                  valid_year_end = ovlpRow.gh_photo_year - 1;
+                  valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+                  IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+                  IF debug_l2 THEN RAISE NOTICE 'AAA1 postPoly valid_time=%', valid_time;END IF;
+                  IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+                  RETURN NEXT;
+                END IF;
+
+                postValidYearPoly = ST_SafeDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, 0.01, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
+                postValidYearPolyYearBegin = ovlpRow.gh_photo_year;
+                preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, ovlpRow.gh_photo_year - 1);
+              END IF;
             END IF;
-IF NOT ST_IsValid(postValidYearPoly) THEN RAISE NOTICE 'TT_GeoHistory(): 7777 invalid difference';END IF;
-IF NOT ST_IsValid(preValidYearPoly) THEN RAISE NOTICE 'TT_GeoHistory(): 8888 invalid difference';END IF;
-IF NOT ST_IsValid(ovlpRow.gh_geom) THEN RAISE NOTICE 'TT_GeoHistory(): 9999 invalid difference';END IF;
---RAISE NOTICE 'EEEE';
-            postValidYearPoly = TT_GeoHistoryDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
-IF NOT ST_IsValid(postValidYearPoly) THEN RAISE NOTICE 'TT_GeoHistory(): aaaa invalid difference';END IF;
-            postValidYearPolyYearBegin = ovlpRow.gh_photo_year;
-            preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, ovlpRow.gh_photo_year - 1);
-          END IF;
-        END IF;
-        oldOvlpPolyYear = ovlpRow.gh_photo_year;
-      END LOOP;
-notDone = FALSE;
-EXCEPTION WHEN OTHERS THEN
-IF debug_l1 THEN RAISE NOTICE 'Setting safe to TRUE...';END IF;
-safe = TRUE;
-END;
-END LOOP; -- WHILE
+            oldOvlpPolyYear = ovlpRow.gh_photo_year;
+          END LOOP;
+          attempts = 2;
+        EXCEPTION WHEN OTHERS THEN
+          IF debug_l1 THEN RAISE NOTICE 'Setting safe to TRUE...';END IF;
+          IF attempts = 1 THEN RAISE EXCEPTION 'TT_GeoHistory() ERROR: TT_SafeDifference() failed on %...', currentRow.gh_row_id;END IF;
+          safe = TRUE;
+          attempts = 1;
+        END;
+      END LOOP; -- WHILE
     
       IF debug_l2 THEN RAISE NOTICE '---------';END IF;
       ---------------------------------------------------------------------------
       -- Return the last new polygon (newestPoly, oldCurrentYear, ovlpPoly.photoYear)
       IF NOT ST_IsEmpty(postValidYearPoly) THEN
         poly_id = poly_id + 1;
-        --wkb_geometry = ST_Multi(ST_CollectionExtract(postValidYearPoly, 3));
-        wkb_geometry = postValidYearPoly;
+        wkb_geometry = ST_Multi(ST_CollectionExtract(postValidYearPoly, 3));
+        --wkb_geometry = postValidYearPoly;
 
         poly_type = '2_post_2';
         valid_year_begin = postValidYearPolyYearBegin;
@@ -511,8 +410,8 @@ END LOOP; -- WHILE
       -- Return the current polygon (olderPoly, refYearBegin, currentPoly.photoYear - 1))
       IF NOT ST_IsEmpty(preValidYearPoly) THEN
         poly_id = poly_id + 1;
-        --wkb_geometry = ST_Multi(ST_CollectionExtract(preValidYearPoly, 3));
-        wkb_geometry = preValidYearPoly;
+        wkb_geometry = ST_Multi(ST_CollectionExtract(preValidYearPoly, 3));
+        --wkb_geometry = preValidYearPoly;
   
         poly_type = '1_pre';
         valid_year_begin = refYearBegin;

@@ -31,6 +31,87 @@ SELECT 5 idx, 1998 valid_year, '6' att, ST_GeomFromText('POLYGON((26 15, 26 19, 
 UNION ALL
 SELECT 6 idx, 1998 valid_year, '7' att, ST_GeomFromText('POLYGON((25 14, 25 21, 32 21, 32 14, 25 14))') geom
 ;
+------------------------------------------------------------------
+-- TT_HasPrecedence()
+--
+-- Determine if the first polygon has precedence over the second one based on:
+--
+  -- 1) their inventory rank: an established priority rank among inventories 
+  --    determines which polygon has priority.
+  -- 2) their unique ID: when inventory ranks are equivalent for both polygons, 
+  --    the polygon with the highest ID has priority.
+  --
+  -- numInv and numUid can be used to specify if inv1 and inv2 and uid1 and uid2 
+  -- must be treated as numerical values. They both default to FALSE.
+------------------------------------------------------------------
+DROP FUNCTION IF EXISTS TT_HasPrecedence(text, text, text, text, boolean, boolean);
+CREATE OR REPLACE FUNCTION TT_HasPrecedence(
+  inv1 text, 
+  uid1 text,
+  inv2 text,
+  uid2 text,
+  numInv boolean DEFAULT FALSE,
+  numUid boolean DEFAULT FALSE
+)
+RETURNS boolean AS $$
+  DECLARE
+    refInv text = 'AA00';
+    refUID text = 'A';
+  BEGIN
+    -- Assign default hardcoded values
+    IF inv1 IS NULL THEN
+      RAISE NOTICE 'TT_HasPrecedence() WARNING : inv1 for polygon ''%'' is NULL. Assigning %...', uid1, refInv;
+      inv1 = refInv;
+    END IF;
+    IF inv2 IS NULL THEN
+      RAISE NOTICE 'TT_HasPrecedence() WARNING : inv2 for polygon ''%'' is NULL. Assigning %...', uid2, refInv;
+      inv2 = refInv;
+    END IF;
+    IF inv1 = inv2 THEN
+      IF uid1 IS NULL THEN
+        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 is NULL. Assigning %...', refUID;
+        uid1 = refUID;
+      END IF;
+      IF uid2 IS NULL THEN
+        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid2 is NULL. Assigning %...', refUID;
+        uid2 = refUID;
+      END IF;
+      IF uid1 = uid2 THEN
+        RAISE NOTICE 'TT_HasPrecedence() WARNING : uid1 and uid2 are equal (%). Can''t give precedence to a polygon. Returning FALSE...', uid1;
+        RETURN FALSE;
+      END IF;
+    END IF;
+IF inv1 != inv2 THEN
+  RAISE NOTICE 'inv1 (%) % has precedence on inv2(%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
+                                                                  THEN '' ELSE 'does not' END, inv2;
+ELSE
+  RAISE NOTICE 'uid1(%) % has precedence on uid2(%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2) 
+                                                     THEN '' ELSE 'does not' END, uid2;
+END IF;
+      RETURN ((numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)) OR 
+           (inv1 = inv2 AND ((numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)));
+  END
+$$ LANGUAGE plpgsql VOLATILE;
+
+--SELECT TT_HasPrecedence(NULL, NULL, NULL, NULL); -- false
+--SELECT TT_HasPrecedence('AB06', NULL, NULL, NULL); -- true
+--SELECT TT_HasPrecedence('AB06', NULL, 'AB06', NULL); -- false
+--SELECT TT_HasPrecedence('AB06', NULL, 'AB16', NULL); -- false
+--SELECT TT_HasPrecedence('AB16', NULL, 'AB06', NULL); -- true
+--SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', NULL); -- true
+--SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
+--SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
+--SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
+--SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
+--SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
+--SELECT TT_HasPrecedence('2', '2', '13', '13');  -- true
+--SELECT TT_HasPrecedence('2', '2', '13', '13', true, true); -- false
+--SELECT TT_HasPrecedence('13', '2', '2', '13', true, true); -- true
+
+--SELECT TT_HasPrecedence('1', '2', '1', '13', true, false); -- true
+--SELECT TT_HasPrecedence('1', '13', '1', '2', true, false); -- false
+--SELECT TT_HasPrecedence('1', '2', '1', '13', true, true); -- false
+--SELECT TT_HasPrecedence('1', '13', '1', '2', true, true); -- true
 
 -- Create a test table for TT_GeoHistory() without taking validity into account
 DROP TABLE IF EXISTS geohistory.test_0_without_validity_new;
