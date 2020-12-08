@@ -17,6 +17,8 @@
 -- complete geographical coverage. Most inventories have too many polygons
 -- which make PostGIS to fail on ST_Union() because of memory overflow. 
 ------------------------------------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS casfri50_coverage;
+------------------------------------------------------------------------------
 -- TT_RemoveHoles
 --
 -- Remove all hole from a polygon or a multipolygon
@@ -24,32 +26,32 @@
 ----------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry);
 CREATE OR REPLACE FUNCTION TT_RemoveHoles(
-  geom geometry
+  inGeom geometry
 )
 RETURNS geometry AS $$
   DECLARE
     returnGeom geometry;
   BEGIN
-    IF ST_IsEmpty(geom) THEN
-	  RETURN geom;
+    IF ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
+	  RETURN inGeom;
 	END IF;
 	
-    WITH all_geoms AS (
-	  SELECT ST_GeometryN(ST_Multi(geom), 
-                          generate_series(1, ST_NumGeometries(ST_Multi(geom)))) AS geom
-      ), polygons AS (
-	  SELECT ST_MakePolygon((SELECT ST_ExteriorRing(a.geom) AS outer_ring),  
-							        ARRAY(SELECT ST_ExteriorRing(b.geom) AS inner_ring
-                                          FROM (SELECT (ST_DumpRings(geom)).*) b WHERE b.path[1] > 0)) AS final_geom
-	  FROM all_geoms a
+    WITH polygons AS (
+	  SELECT ST_MakePolygon(
+		       ST_ExteriorRing(
+				 ST_GeometryN(ST_Multi(inGeom), 
+                              generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))
+							 )
+			   )
+	         ) geom
     )
-    SELECT ST_BuildArea(ST_Collect(final_geom)) geom
+    SELECT ST_Collect(geom) geom
     FROM polygons INTO returnGeom;
 	RETURN returnGeom;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE STRICT;
 ------------------------------------------------------------------------------
--- TT_IsSurrounded_StateFN2
+-- TT_IsSurrounded_StateFN
 --
 -- TT_IsSurrounded() aggregate state function.
 -- ST_Union() all polygons surrounding 
@@ -66,7 +68,7 @@ RETURNS geometry[] AS $$
                           THEN ST_SetSRID(ST_GeomFromText('MULTIPOLYGON EMPTY'), ST_SRID(surroundedGeom))
                         ELSE stateGeom[1]
                    END,
-                   CASE WHEN ST_Equals(surroundingGeom, surroundedGeom) 
+                   CASE WHEN ST_Equals(surroundingGeom, surroundedGeom) OR surroundingGeom IS NULL
                           THEN ST_SetSRID(ST_GeomFromText('MULTIPOLYGON EMPTY'), ST_SRID(surroundedGeom))
                         ELSE surroundingGeom
                    END
@@ -74,37 +76,45 @@ RETURNS geometry[] AS $$
 $$ LANGUAGE sql IMMUTABLE;
 
 --DROP FUNCTION IF EXISTS TT_IsSurrounded_FinalFN(geometry[]) CASCADE;
-CREATE OR REPLACE FUNCTION _ST_IsSurrounded_FinalFN(
+CREATE OR REPLACE FUNCTION TT_IsSurrounded_FinalFN(
   stateGeom geometry[]
 )
 RETURNS boolean AS $$
   SELECT CASE WHEN stateGeom IS NULL OR stateGeom[1] IS NULL THEN
-           FALSE
+           NULL
          ELSE
-           ST_Contains(ST_RemoveHoles(ST_CollectionExtract(stateGeom[1], 3)), stateGeom[2])
+           ST_Contains(TT_RemoveHoles(ST_CollectionExtract(stateGeom[1], 3)), stateGeom[2])
          END;
 $$ LANGUAGE sql IMMUTABLE;
 
---DROP FUNCTION IF EXISTS _ST_IsSurrounded_FinalFN(geometry[]) CASCADE;
-CREATE OR REPLACE FUNCTION _ST_IsSurrounded_FinalFN(
-  stateGeom geometry[]
-)
-RETURNS geometry AS $$
-  --SELECT ST_MakePolygon(ST_Boundary(ST_CollectionExtract(stateGeom[1], 3)));
-  --SELECT ST_CollectionExtract(stateGeom[1], 3);
-  SELECT ST_Boundary(ST_CollectionExtract(stateGeom[1], 3));
-$$ LANGUAGE sql IMMUTABLE;
-
-
---DROP AGGREGATE IF EXISTS ST_IsSurroundedAgg(geometry, geometry);
-CREATE AGGREGATE ST_IsSurroundedAgg(geometry, geometry)
+--DROP AGGREGATE IF EXISTS TT_IsSurroundedAgg(geometry, geometry);
+CREATE AGGREGATE TT_IsSurroundedAgg(geometry, geometry)
 (
-  SFUNC = _ST_IsSurrounded_StateFN,
+  SFUNC = TT_IsSurrounded_StateFN,
   STYPE = geometry[],
-  FINALFUNC = _ST_IsSurrounded_FinalFN
+  FINALFUNC = TT_IsSurrounded_FinalFN
 );
-------------------------------------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS casfri50_coverage;
+------------------------------------------------------------------
+-- Test TT_IsSurroundedAgg() on real data before using it
+DROP TABLE IF EXISTS casfri50_coverage.sk03;
+CREATE TABLE casfri50_coverage.sk03 AS
+SELECT cas_id, geometry
+FROM casfri50.geo_all
+WHERE left(cas_id, 4) = 'SK03';
+
+CREATE INDEX sk03_geom_idx ON casfri50_coverage.sk03 USING gist(geometry);
+
+DROP TABLE IF EXISTS casfri50_coverage.sk03_only_surrounded;
+CREATE TABLE casfri50_coverage.sk03_only_surrounded AS
+SELECT a.cas_id id, a.geometry geom
+FROM casfri50_coverage.sk03 a, casfri50_coverage.sk03 b
+WHERE ST_Intersects(a.geometry, b.geometry)
+GROUP BY a.cas_id, a.geometry
+HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
+
+-- Display
+SELECT * FROM casfri50_coverage.sk03_only_surrounded;
+
 ------------------------------------------------------------------------------
 -- SK03
 -- ST_Union() - 3623 points in 2m BEST
