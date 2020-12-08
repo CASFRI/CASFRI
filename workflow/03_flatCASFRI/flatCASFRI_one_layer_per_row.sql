@@ -153,11 +153,15 @@ WITH lyr_nfl AS (
          coalesce(dist_type_2, 'NOT_APPLICABLE') dist_type_2,
          coalesce(dist_year_2, -8887) dist_year_2,
          coalesce(dist_ext_upper_2, -8887) dist_ext_upper_2,
-         coalesce(dist_ext_lower_2, -8887) dist_ext_lower_2
+         coalesce(dist_ext_lower_2, -8887) dist_ext_lower_2,
+         coalesce(dist_type_3, 'NOT_APPLICABLE') dist_type_3,
+         coalesce(dist_year_3, -8887) dist_year_3,
+         coalesce(dist_ext_upper_3, -8887) dist_ext_upper_3,
+         coalesce(dist_ext_lower_3, -8887) dist_ext_lower_3
   FROM cas_lyr_nfl
   --LEFT JOIN casfri50_flat.dst_sample1 dst 
   LEFT JOIN casfri50.dst_all dst 
-  ON (cas_lyr_nfl.cas_id = dst.cas_id AND dst.layer = 1)
+  ON (cas_lyr_nfl.cas_id = dst.cas_id AND dst.layer < 2)
 ), cas_lyr_nfl_dst_eco AS (
   -- Add eco rows defaulting non-joining rows to NOT_APPLICABLE (-8887)
   SELECT cas_lyr_nfl_dst.*,
