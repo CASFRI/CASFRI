@@ -17,89 +17,93 @@
 -- complete geographical coverage. Most inventories have too many polygons
 -- which make PostGIS to fail on ST_Union() because of memory overflow. 
 ------------------------------------------------------------------------------
---DROP FUNCTION ST_IsSurrounded(geometry, name, name,name);
--- Used to filter out polygons strictly inside an aggregate 
--- of polygons in order to union only the surrounding polygon together (way faster).
-CREATE OR REPLACE FUNCTION ST_IsSurrounded1(
-  geom geometry, 
-  schemaname name, 
-  tablename name,
-  geomcolumnname name DEFAULT 'geom',
-  filter text DEFAULT NULL
-) 
-RETURNS boolean AS $$ 
+-- TT_RemoveHoles
+--
+-- Remove all hole from a polygon or a multipolygon
+-- Used by TT_IsSurrounded_FinalFN2()
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry);
+CREATE OR REPLACE FUNCTION TT_RemoveHoles(
+  geom geometry
+)
+RETURNS geometry AS $$
   DECLARE
-	  surrounding geometry;
-	  inpoly geometry;
-	  query text;
-	  fqtn text;
-	  debug boolean;
+    returnGeom geometry;
   BEGIN
-    debug = true;
-	  -- Determine the complete name of the table
-    fqtn := '';
-    IF length(schemaname) > 0 THEN
-      fqtn := quote_ident(schemaname) || '.';
-    END IF;
-    fqtn := fqtn || quote_ident(tablename);
-    inpoly = ST_CollectionExtract(geom, 3);
+    IF ST_IsEmpty(geom) THEN
+	  RETURN geom;
+	END IF;
+	
+    WITH all_geoms AS (
+	  SELECT ST_GeometryN(ST_Multi(geom), 
+                          generate_series(1, ST_NumGeometries(ST_Multi(geom)))) AS geom
+      ), polygons AS (
+	  SELECT ST_MakePolygon((SELECT ST_ExteriorRing(a.geom) AS outer_ring),  
+							        ARRAY(SELECT ST_ExteriorRing(b.geom) AS inner_ring
+                                          FROM (SELECT (ST_DumpRings(geom)).*) b WHERE b.path[1] > 0)) AS final_geom
+	  FROM all_geoms a
+    )
+    SELECT ST_BuildArea(ST_Collect(final_geom)) geom
+    FROM polygons INTO returnGeom;
+	RETURN returnGeom;
+  END;
+$$ LANGUAGE 'plpgsql' IMMUTABLE STRICT;
+------------------------------------------------------------------------------
+-- TT_IsSurrounded_StateFN2
+--
+-- TT_IsSurrounded() aggregate state function.
+-- ST_Union() all polygons surrounding 
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsSurrounded_StateFN(geometry[], geometry, geometry) CASCADE;
+CREATE OR REPLACE FUNCTION TT_IsSurrounded_StateFN(
+  stateGeom geometry[],
+  surroundedGeom geometry,
+  surroundingGeom geometry
+)
+RETURNS geometry[] AS $$
+    SELECT ARRAY[ST_Union(
+                   CASE WHEN stateGeom IS NULL
+                          THEN ST_SetSRID(ST_GeomFromText('MULTIPOLYGON EMPTY'), ST_SRID(surroundedGeom))
+                        ELSE stateGeom[1]
+                   END,
+                   CASE WHEN ST_Equals(surroundingGeom, surroundedGeom) 
+                          THEN ST_SetSRID(ST_GeomFromText('MULTIPOLYGON EMPTY'), ST_SRID(surroundedGeom))
+                        ELSE surroundingGeom
+                   END
+                 ), surroundedGeom];
+$$ LANGUAGE sql IMMUTABLE;
 
-    query = 'WITH polys AS (SELECT ST_CollectionExtract(' || geomcolumnname || ', 3) geom FROM ' || fqtn;
-    IF NOT filter IS NULL THEN
-      query = query || ' WHERE ' || filter;
-    END IF;
-    query = query || ' ) SELECT ST_Union(ST_Intersection(ST_Boundary($1), b.geom)) border FROM polys b WHERE NOT ST_Equals($1, b.geom) AND ST_Intersects($1, b.geom) GROUP BY $1;';
-RAISE NOTICE 'ST_IsSurrounded() - query = %', query;
+--DROP FUNCTION IF EXISTS TT_IsSurrounded_FinalFN(geometry[]) CASCADE;
+CREATE OR REPLACE FUNCTION _ST_IsSurrounded_FinalFN(
+  stateGeom geometry[]
+)
+RETURNS boolean AS $$
+  SELECT CASE WHEN stateGeom IS NULL OR stateGeom[1] IS NULL THEN
+           FALSE
+         ELSE
+           ST_Contains(ST_RemoveHoles(ST_CollectionExtract(stateGeom[1], 3)), stateGeom[2])
+         END;
+$$ LANGUAGE sql IMMUTABLE;
 
-    EXECUTE query INTO surrounding USING inpoly;
+--DROP FUNCTION IF EXISTS _ST_IsSurrounded_FinalFN(geometry[]) CASCADE;
+CREATE OR REPLACE FUNCTION _ST_IsSurrounded_FinalFN(
+  stateGeom geometry[]
+)
+RETURNS geometry AS $$
+  --SELECT ST_MakePolygon(ST_Boundary(ST_CollectionExtract(stateGeom[1], 3)));
+  --SELECT ST_CollectionExtract(stateGeom[1], 3);
+  SELECT ST_Boundary(ST_CollectionExtract(stateGeom[1], 3));
+$$ LANGUAGE sql IMMUTABLE;
 
-    RETURN CASE WHEN surrounding IS NULL THEN false
-                ELSE ST_Equals(ST_Boundary(inpoly), ST_CollectionExtract(surrounding, 2))
-           END;
-    END; 
-$$ LANGUAGE 'plpgsql' VOLATILE;
 
-CREATE OR REPLACE FUNCTION ST_IsSurrounded2(
-  geom geometry, 
-  schemaname name, 
-  tablename name,
-  geomcolumnname name DEFAULT 'geom',
-  filter text DEFAULT NULL
-) 
-RETURNS boolean AS $$ 
-  DECLARE
-	  surrounding geometry;
-	  inpoly geometry;
-	  query text;
-	  fqtn text;
-	  debug boolean;
-  BEGIN
-    debug = true;
-	  -- Determine the complete name of the table
-    fqtn := '';
-    IF length(schemaname) > 0 THEN
-      fqtn := quote_ident(schemaname) || '.';
-    END IF;
-    fqtn := fqtn || quote_ident(tablename);
-    inpoly = ST_CollectionExtract(geom, 3);
-
-    query = 'WITH polys AS (' ||
-            '  SELECT ST_CollectionExtract(' || geomcolumnname || ', 3) geom ' ||
-            '  FROM ' || fqtn ||
-            '  WHERE NOT ST_Equals($1, b.geom) AND ST_Intersects(' || geomcolumnname || ', $1)';
-    IF NOT filter IS NULL THEN
-      query = query || ' AND ' || filter;
-    END IF;
-    query = query || ' ) SELECT ST_Union(ST_Intersection(ST_Boundary($2), b.geom)) border FROM polys b';
-RAISE NOTICE 'ST_IsSurrounded() - query = %', query;
-
-    EXECUTE query INTO surrounding USING geom, inpoly;
-
-    RETURN CASE WHEN surrounding IS NULL THEN false
-                ELSE ST_Equals(ST_Boundary(inpoly), ST_CollectionExtract(surrounding, 2))
-           END;
-    END; 
-$$ LANGUAGE 'plpgsql' VOLATILE;
+--DROP AGGREGATE IF EXISTS ST_IsSurroundedAgg(geometry, geometry);
+CREATE AGGREGATE ST_IsSurroundedAgg(geometry, geometry)
+(
+  SFUNC = _ST_IsSurrounded_StateFN,
+  STYPE = geometry[],
+  FINALFUNC = _ST_IsSurrounded_FinalFN
+);
+------------------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS casfri50_coverage;
 ------------------------------------------------------------------------------
 -- SK03
@@ -179,7 +183,11 @@ WHERE left(cas_id, 4) = 'MB06';
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.mb06;
 ------------------------------------------------------------------------------
--- SK06 - 211482 - 8h35
+-- SK06
+-- ST_Union() - ERROR
+-- ST_Simplify(ST_Union(),10) - ERROR
+-- ST_BufferedUnion(, 10) - 86005 points in 62 hr 43
+-- ST_BufferedUnion(, 10, 10) - ERROR
 DROP TABLE IF EXISTS casfri50_coverage.sk06;
 CREATE TABLE casfri50_coverage.sk06 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
@@ -203,7 +211,11 @@ WHERE left(cas_id, 4) = upper('yt02');
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.yt02;
 ------------------------------------------------------------------------------
--- NT01 - 281388 - 37h32
+-- NT01
+-- ST_Union() - 145495 points in 7 hr 23
+-- ST_Simplify(ST_Union(),10) - 27689 points in 7 hr 22
+-- ST_BufferedUnion(, 10) - 133324 points in 115 hr 25
+-- ST_BufferedUnion(, 10, 10) - ERROR lwgeom_union: GEOS Error: TopologyException: Input geom 0 is invalid: Hole lies outside shell at or near point -1201782.5273627562 2581810.9876105641 at -1201782.5273627562 2581810.9876105641
 DROP TABLE IF EXISTS casfri50_coverage.nt01;
 CREATE TABLE casfri50_coverage.nt01 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
@@ -213,7 +225,11 @@ WHERE left(cas_id, 4) = 'NT01';
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.nt01;
 ------------------------------------------------------------------------------
--- NT02 - 320944 - testing
+-- NT02
+-- ST_Union() - ERROR
+-- ST_Simplify(ST_Union(),10) - ERROR
+-- ST_BufferedUnion(, 10) - 80310 points in 107h45
+-- ST_BufferedUnion(, 10, 10) - ERROR
 DROP TABLE IF EXISTS casfri50_coverage.nt02;
 CREATE TABLE casfri50_coverage.nt02 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
