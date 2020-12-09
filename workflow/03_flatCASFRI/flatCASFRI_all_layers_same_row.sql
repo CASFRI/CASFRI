@@ -185,11 +185,15 @@ WITH cas_lyr1 AS (
          coalesce(dist_type_2, 'NOT_APPLICABLE') dist_type_2,
          coalesce(dist_year_2, -8887) dist_year_2,
          coalesce(dist_ext_upper_2, -8887) dist_ext_upper_2,
-         coalesce(dist_ext_lower_2, -8887) dist_ext_lower_2
+         coalesce(dist_ext_lower_2, -8887) dist_ext_lower_2,
+         coalesce(dist_type_3, 'NOT_APPLICABLE') dist_type_3,
+         coalesce(dist_year_3, -8887) dist_year_3,
+         coalesce(dist_ext_upper_3, -8887) dist_ext_upper_3,
+         coalesce(dist_ext_lower_3, -8887) dist_ext_lower_3
   FROM cas_lyr1_lyr2_nfl1_nfl2 cas
   --LEFT JOIN casfri50_flat.dst_sample dst 
   LEFT JOIN casfri50.dst_all dst 
-  ON (cas.cas_id = dst.cas_id AND dst.layer = 1)
+  ON (cas.cas_id = dst.cas_id AND dst.layer < 2)
 ), cas_lyr1_lyr2_nfl1_nfl2_dst_eco AS (
   -- Add eco rows defaulting non-joining rows to NOT_APPLICABLE (-8887)
   SELECT cas.*,
@@ -218,7 +222,7 @@ TABLESAMPLE SYSTEM ((100 * 100) / (SELECT count(*) FROM casfri50_flat.cas_flat_a
 REPEATABLE (1.2)
 ORDER BY cas_id;
 
--- Make sure cas_flat_one_layer_per_row has the right count (XXXX, 17976421)
+-- Make sure cas_flat_all_layers_same_row has the right count (XXXX, 21057159)
 SELECT count(*) 
 FROM casfri50.cas_all;
 
@@ -240,7 +244,7 @@ CREATE INDEX cas_flat_all_layers_same_row_geom_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING gist(geometry);
 --------------------------------------------------------------------------
 -- Refresh the materalized view
-REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
+--REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
 --------------------------------------------------------------------------
 
 -- Check the completeness of STAND_PHOTO_YEAR
