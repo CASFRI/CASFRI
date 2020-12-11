@@ -726,7 +726,7 @@ UNION ALL
 SELECT '2.1'::text number,
        'TT_GeoHistory'::text function_tested,
        'Two single polygons'::text description,
-       string_agg(ST_AsText(wkb_geometry), ', ') = 'POLYGON((1 1,1 -1,-1 -1,-1 1,1 1)), POLYGON((7 1,7 -1,5 -1,5 1,7 1))' AND
+       string_agg(ST_AsText(wkb_geometry), ', ') = 'MULTIPOLYGON(((1 1,1 -1,-1 -1,-1 1,1 1))), MULTIPOLYGON(((7 1,7 -1,5 -1,5 1,7 1)))' AND
        string_agg(ref_year::text, ', ') = '2000, 2000' AND
        string_agg(valid_year_begin::text, ', ') = '1930, 1930' AND 
        string_agg(valid_year_end::text, ', ') = '2030, 2030' passed,
