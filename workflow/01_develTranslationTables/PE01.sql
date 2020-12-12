@@ -65,8 +65,7 @@ WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 SELECT * FROM translation.pe_pei01_nfl;
 DROP TABLE IF EXISTS translation_devel.pe01_pei01_nfl_devel;
 CREATE TABLE translation_devel.pe01_pei01_nfl_devel AS
-SELECT * FROM translation.pe_pei01_nfl;
---WHERE rule_id::int != 4; --IN (0,1,2,3);
+SELECT * FROM translation.pe_pei01_nfl; --WHERE rule_id::int != 4; --IN (0,1,2,3);
 SELECT * FROM translation_devel.pe01_pei01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'pe01_pei01_nfl_devel', '_pe01_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1, 200);
