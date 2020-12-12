@@ -5,7 +5,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 ","mapText(soil_moist_reg, {'00','10','11','12','13','14','20','21','22','23','24','30','31','32','33','34','40','41','42','43','44','50','51','52','53','54','60','61','62','63','64','16'}, {'D','D','D','D','D','D','F','F','F','F','F','F','F','F','F','F','M','M','M','M','M','W','W','W','W','W','A','A','A','A','A','UNUSED_VALUE'})",Maps source codes to CASFRI codes,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure_per should always be 100,TRUE
 4,STRUCTURE_RANGE,double precision,false(),nothingDouble(),Complex stands record height for the top layer only,TRUE
-5,LAYER,integer,true(),"qc_countOfNotNull(cl_age, co_ter, layer)","Uses the qc_standstructure_lookup table to find number of lyr layers, then tests to see if nfl is present and counts the total number of layers. Returns layers number based on the layer being translated.",TRUE
+5,LAYER,integer,true(),"lyr_layer_translation({height_layer1, height_layer2}, {species_layer1}, {species_layer2}, layer)",Reorder the layers that exist in the polygon by height and return the index of the layer being processed,TRUE
 6,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
 7,CROWN_CLOSURE_UPPER,integer,notNull(crown_closure_upper);isInt(crown_closure_upper),copyInt(crown_closure_upper),Copies source value to crown_closure_upper,TRUE
 8,CROWN_CLOSURE_LOWER,integer,notNull(crown_closure_lower);isInt(crown_closure_lower),copyInt(crown_closure_lower),Copies source value to crown_closure_lower,TRUE
