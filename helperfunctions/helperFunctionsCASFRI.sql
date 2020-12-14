@@ -5228,7 +5228,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- NL map units have values 1 - 180, Labrador map units are 238 - 415
 -- Origin translation is different for Newfoundland and Labrador
 -- Figure out which area the row is from and use the correct translation
--- to get the lower bound of age range. Then subtract this from the photo
+-- to get the upper bound of age range. Then subtract this from the photo
 -- year to get origin upper.
 -- photo year is calculated by intersecting with the photo year map.
 
@@ -5382,5 +5382,193 @@ RETURNS int AS $$
     -- call countOfNotNull
     RETURN tt_countOfNotNull(is_lyr1, is_lyr2, is_nfl, max_rank_to_consider, 'FALSE');
 
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_lyr_layer_translation(text, text, text, text, text, text, text, text)
+--
+-- heights stringlist - list of heights to order layers by
+-- layer1/2/3/4/5spp stringlist - list of layer 1/2/3/4/5 species to test for notNull
+-- getIndex - the index of the initial height stringlist to be returned from the reordered list
+-- 
+-- If getIndex is 1, return the position of the first height value (corresponding to layer1spp)
+-- after reordering the heights and removing and heights corresponding to FALSE layer*spp tests.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_lyr_layer_translation(text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_lyr_layer_translation(
+  heights text,
+  layer1spp text,
+  layer2spp text,
+  layer3spp text,
+  layer4spp text,
+  layer5spp text,
+  getIndex text,
+  layerCount text
+)
+RETURNS int AS $$
+  DECLARE
+    _heights double precision[];
+	_getIndex int;
+	testArray int[];
+	heightArray double precision[];
+	testArrayOrdered int[];
+    _layerCount int := layerCount::int;
+  BEGIN
+    
+	-- Validate source values (return NULL)
+    IF TT_NotNull(heights) AND NOT TT_IsStringList(heights) OR
+       TT_NotNull(layer1spp) AND NOT TT_IsStringList(layer1spp) OR
+       TT_NotNull(layer2spp) AND NOT TT_IsStringList(layer2spp) OR
+       TT_NotNull(layer3spp) AND NOT TT_IsStringList(layer3spp) OR
+       TT_NotNull(layer4spp) AND NOT TT_IsStringList(layer4spp) OR
+       TT_NotNull(layer5spp) AND NOT TT_IsStringList(layer5spp) THEN
+      RETURN NULL;
+    END IF;
+	
+    -- cast all variables
+	_heights = TT_ParseStringList(heights, TRUE);
+	_getIndex = getIndex::int;
+	
+	-- set any null heights to zero, if species are present the layer will reported as the lowest
+	_heights = array_replace(_heights, null::double precision, 0::double precision);
+	
+	-- check length of heights matches length of testArray
+	IF NOT array_length(_heights, 1) = _layerCount THEN
+	  RETURN NULL;
+	END IF;
+	
+	-- test for layer presence using species stringlists
+	-- if layer is present, add its index to testArray, and add the corresponding height to heightArray
+	IF TT_notEmpty(layer1spp, 'TRUE') THEN
+	  testArray = array_append(testArray, 1);
+	  heightArray = array_append(heightArray, _heights[1]);
+	END IF;
+	
+	IF TT_notEmpty(layer2spp, 'TRUE') THEN
+	  testArray = array_append(testArray, 2);
+	  heightArray = array_append(heightArray, _heights[2]);
+	END IF;
+
+	IF TT_notEmpty(layer3spp, 'TRUE') THEN
+	  testArray = array_append(testArray, 3);
+	  heightArray = array_append(heightArray, _heights[3]);
+	END IF;
+
+	IF TT_notEmpty(layer4spp, 'TRUE') THEN
+	  testArray = array_append(testArray, 4);
+	  heightArray = array_append(heightArray, _heights[4]);
+	END IF;
+
+	IF TT_notEmpty(layer5spp, 'TRUE') THEN
+	  testArray = array_append(testArray, 5);
+	  heightArray = array_append(heightArray, _heights[5]);
+	END IF;
+	
+	-- reorder the testArray by the height array. In the case of ties, maintain the original layer order.
+	testArrayOrdered = ARRAY( -- converts table to array
+      SELECT layer FROM(
+        SELECT a height, b layer
+        FROM unnest(
+          heightArray, 
+          testArray
+        ) AS t(a,b) -- converts arrays to a table
+        ORDER BY height desc, layer asc -- order by height, ties are ordered by their original order in the string
+      ) x
+    );
+	
+	-- return the position in the reordered array of the getIndex value (aka the layer being translated)
+	RETURN array_position(testArrayOrdered, _getIndex);
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION TT_lyr_layer_translation(
+  heights text,
+  layer1spp text,
+  layer2spp text,
+  layer3spp text,
+  layer4spp text,
+  layer5spp text,
+  getIndex text
+)
+RETURNS int AS $$
+  SELECT TT_lyr_layer_translation(heights, layer1spp, layer2spp, layer3spp, layer4spp, layer5spp, getIndex, '5');
+$$ LANGUAGE sql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION TT_lyr_layer_translation(
+  heights text,
+  layer1spp text,
+  layer2spp text,
+  layer3spp text,
+  layer4spp text,
+  getIndex text
+)
+RETURNS int AS $$
+  SELECT TT_lyr_layer_translation(heights, layer1spp, layer2spp, layer3spp, layer4spp, NULL::text, getIndex, '4');
+$$ LANGUAGE sql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION TT_lyr_layer_translation(
+  heights text,
+  layer1spp text,
+  layer2spp text,
+  layer3spp text,
+  getIndex text
+)
+RETURNS int AS $$
+  SELECT TT_lyr_layer_translation(heights, layer1spp, layer2spp, layer3spp, NULL::text, NULL::text, getIndex, '3');
+$$ LANGUAGE sql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION TT_lyr_layer_translation(
+  heights text,
+  layer1spp text,
+  layer2spp text,
+  getIndex text
+)
+RETURNS int AS $$
+  SELECT TT_lyr_layer_translation(heights, layer1spp, layer2spp, NULL::text, NULL::text, NULL::text, getIndex, '2');
+$$ LANGUAGE sql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_bc_lyr_layer_translation(text, text, text, text, text, text, text, text)
+--
+-- l1_proj_height_1 
+-- l1_proj_height_2
+-- l1_species_pct_1
+-- l1_species_pct_2
+-- l2_proj_height_1
+-- l2_proj_height_2
+-- l2_species_pct_1
+-- l2_species_pct_2
+-- layer1/2/3/4/5spp stringlist - list of layer 1/2/3/4/5 species to test for notNull
+-- getIndex - the index of the initial height stringlist to be returned from the reordered list
+-- 
+-- Calculates weighted average height using bc_height function, passes heights as string list to lyr_layer_translation()
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_bc_lyr_layer_translation(text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_bc_lyr_layer_translation(
+  l1_proj_height_1 text, 
+  l1_proj_height_2 text,
+  l1_species_pct_1 text,
+  l1_species_pct_2 text,
+  l2_proj_height_1 text,
+  l2_proj_height_2 text,
+  l2_species_pct_1 text,
+  l2_species_pct_2 text,
+  layer1spp text,
+  layer2spp text,
+  getIndex text
+)
+RETURNS int AS $$
+  DECLARE
+    height1 double precision;
+	height2 double precision;
+    heights text;
+  BEGIN
+    height1 = tt_bc_height(l1_proj_height_1, l1_proj_height_2, l1_species_pct_1, l1_species_pct_2);
+    height2 = tt_bc_height(l2_proj_height_1, l2_proj_height_2, l2_species_pct_1, l2_species_pct_2);
+	heights = tt_repackStringList(ARRAY[height1::text, height2::text]);
+	
+	RETURN TT_lyr_layer_translation(heights, layer1spp, layer2spp, getIndex);
+	
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;

@@ -142,7 +142,9 @@ WITH test_nb AS (
     SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,           88 maj_num,   7 nb_test UNION ALL
     SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,   2 nb_test UNION ALL
     SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,   5 nb_test UNION ALL
-    SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                  91 maj_num,   4 nb_test
+    SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                  91 maj_num,   4 nb_test UNION ALL
+	SELECT 'TT_lyr_layer_translation'::text function_tested,                 92 maj_num,   15 nb_test UNION ALL
+	SELECT 'TT_bc_lyr_layer_translation'::text function_tested,              93 maj_num,   6 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -3443,9 +3445,139 @@ SELECT '91.4'::text number,
        'TT_qc_hasCountOfNotNull'::text function_tested,
        'Test fail'::text description,
        TT_qc_hasCountOfNotNull('JIR', 'AL', '1', 'TRUE') IS FALSE passed
-
-  
-  
+---------------------------------------------------------
+ -- TT_lyr_layer_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '92.1'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 5 layers'::text description,
+       TT_lyr_layer_translation('{8,9,10,11,12}', 'a', 'b', 'c', 'd', 'e', '1') = 5 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.2'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 4 layers'::text description,
+       TT_lyr_layer_translation('{8,9,10,11}', 'a', 'b', 'c', 'd', '1') = 4 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.3'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 3 layers'::text description,
+       TT_lyr_layer_translation('{8,9,10}', 'a', 'b', 'c', '1') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.4'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 2 layers'::text description,
+       TT_lyr_layer_translation('{8,9}', 'a', 'b', '1') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.5'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test wrong height length'::text description,
+       TT_lyr_layer_translation('{8,9}', 'a', 'b', 'c', '1') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.6'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test wrong height length 2'::text description,
+       TT_lyr_layer_translation('{8,9,10}', 'a', 'b', '1') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.7'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 5 layers index 3'::text description,
+       TT_lyr_layer_translation('{8,9,10,11,12}', 'a', 'b', 'c', 'd', 'e', '3') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.8'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 5 layers index 4'::text description,
+       TT_lyr_layer_translation('{8,9,10,11,12}', 'a', 'b', 'c', 'd', 'e', '4') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.9'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 5 layers with one null'::text description,
+       TT_lyr_layer_translation('{8,9,10,11,12}', 'a', 'b', 'c', 'd', '', '1') = 4 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.10'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 5 layers with two null'::text description,
+       TT_lyr_layer_translation('{8,9,10,11,12}', 'a', 'b', '', 'd', '', '1') = 3 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.11'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test 5 layers with one null'::text description,
+       TT_lyr_layer_translation('{8,9,10,11,NULL}', 'a', 'b', 'c', 'd', '', '1') = 4 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.12'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test null getting set to zero'::text description,
+       TT_lyr_layer_translation('{8,9,10,NULL,12}', 'a', 'b', 'c', 'd', 'e', '4') = 5 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.13'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test null getting set to zero with ties'::text description,
+       TT_lyr_layer_translation('{8,9,10,NULL,NULL}', 'a', 'b', 'c', 'd', 'e', '4') = 4 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.14'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test ties'::text description,
+       TT_lyr_layer_translation('{8,8,10,11,12}', 'a', 'b', 'c', 'd', 'e', '1') = 4 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '92.15'::text number,
+       'TT_lyr_layer_translation'::text function_tested,
+       'test ties'::text description,
+       TT_lyr_layer_translation('{8,8,10,11,12}', 'a', 'b', 'c', 'd', 'e', '2') = 5 passed
+---------------------------------------------------------
+ -- TT_bc_lyr_layer_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '93.1'::text number,
+       'TT_bc_lyr_layer_translation'::text function_tested,
+       'layer 1 shortest'::text description,
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', '50', '50', 'a', 'b', '1') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '93.2'::text number,
+       'TT_bc_lyr_layer_translation'::text function_tested,
+       'layer 1 tallest'::text description,
+       TT_bc_lyr_layer_translation('11', '6', '50', '50', '10', '5', '50', '50', 'a', 'b', '1') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '93.3'::text number,
+       'TT_bc_lyr_layer_translation'::text function_tested,
+       'test null pcnt'::text description,
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', '50', NULL::text, 'a', 'b', '1') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '93.4'::text number,
+       'TT_bc_lyr_layer_translation'::text function_tested,
+       'test null height'::text description,
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', NULL::text, '50', NULL::text, 'a', 'b', '1') = 2 passed	
+---------------------------------------------------------
+UNION ALL
+SELECT '93.5'::text number,
+       'TT_bc_lyr_layer_translation'::text function_tested,
+       'test two null pcnt'::text description,
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '1') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '93.6'::text number,
+       'TT_bc_lyr_layer_translation'::text function_tested,
+       'test layer 2 with two null pcnt'::text description,
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '2') = 2 passed
+	
+	
+	
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
