@@ -33,19 +33,19 @@ RETURNS geometry AS $$
     returnGeom geometry;
   BEGIN
     IF ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
-	  RETURN inGeom;
-	END IF;
-	
+      RETURN inGeom;
+	  END IF;
+--RAISE NOTICE 'inGeom is %', CASE WHEN ST_IsValid(inGeom) THEN 'VALID' ELSE 'INVALID' END;
     WITH polygons AS (
 	  SELECT ST_MakePolygon(
-		       ST_ExteriorRing(
-				 ST_GeometryN(ST_Multi(inGeom), 
-                              generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))
+             ST_ExteriorRing(
+               ST_GeometryN(ST_Multi(inGeom), 
+                            generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))
 							 )
-			   )
+             )
 	         ) geom
     )
-    SELECT ST_Collect(geom) geom
+    SELECT ST_Union(geom) geom
     FROM polygons INTO returnGeom;
 	RETURN returnGeom;
   END;
@@ -83,7 +83,9 @@ RETURNS boolean AS $$
   SELECT CASE WHEN stateGeom IS NULL OR stateGeom[1] IS NULL THEN
            NULL
          ELSE
-           ST_Contains(TT_RemoveHoles(ST_CollectionExtract(stateGeom[1], 3)), stateGeom[2])
+           ST_Contains(TT_RemoveHoles(ST_CollectionExtract(ST_MakeValid(ST_Buffer(ST_CollectionExtract(stateGeom[1], 3), -0.00001)), 3)), stateGeom[2])
+           --ST_Contains(TT_RemoveHoles(ST_Buffer(ST_CollectionExtract(stateGeom[1], 3), -0.00001)), stateGeom[2])
+           --ST_Contains(TT_RemoveHoles(ST_CollectionExtract(stateGeom[1], 3)), stateGeom[2])
          END;
 $$ LANGUAGE sql IMMUTABLE;
 
@@ -104,6 +106,8 @@ WHERE left(cas_id, 4) = 'SK03';
 
 CREATE INDEX sk03_geom_idx ON casfri50_coverage.sk03 USING gist(geometry);
 
+-- 3min for 8964 rows, 1000000 should be 333min = 5 hours
+
 DROP TABLE IF EXISTS casfri50_coverage.sk03_only_surrounded;
 CREATE TABLE casfri50_coverage.sk03_only_surrounded AS
 SELECT a.cas_id id, a.geometry geom
@@ -115,6 +119,15 @@ HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
 -- Display
 SELECT * FROM casfri50_coverage.sk03_only_surrounded;
 
+-- Union them
+DROP TABLE IF EXISTS casfri50_coverage.sk03_notsurroundedunion;
+CREATE TABLE casfri50_coverage.sk03_notsurroundedunion AS
+SELECT TT_RemoveHoles(ST_Union(geom)) geom
+FROM casfri50_coverage.sk03_only_surrounded;
+
+SELECT ST_Area(geom) FROM casfri50_coverage.sk03_notsurroundedunion
+UNION ALL
+SELECT ST_Area(geometry) FROM casfri50_coverage.sk03_union;
 ------------------------------------------------------------------------------
 -- SK03
 -- ST_Union() - 3623 points in 2m BEST
@@ -192,12 +205,48 @@ WHERE left(cas_id, 4) = 'MB06';
 
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.mb06;
+
+-- Try with TT_IsSurrounded -- 160000 rows
+DROP TABLE IF EXISTS casfri50_coverage.mb06;
+CREATE TABLE casfri50_coverage.mb06 AS
+SELECT cas_id, geometry
+FROM casfri50.geo_all
+WHERE left(cas_id, 4) = 'MB06';
+
+CREATE INDEX cov_mb06_geom_idx ON casfri50_coverage.mb06 USING gist(geometry);
+
+-- 28 hr 48
+DROP TABLE IF EXISTS casfri50_coverage.mb06_only_surrounded;
+CREATE TABLE casfri50_coverage.mb06_only_surrounded AS
+SELECT a.cas_id id, a.geometry geom
+FROM casfri50_coverage.mb06 a, casfri50_coverage.mb06 b
+WHERE ST_Intersects(a.geometry, b.geometry)
+GROUP BY a.cas_id, a.geometry
+HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
+
+-- 44540
+SELECT count(*) FROM casfri50_coverage.mb06_only_surrounded;
+
+CREATE INDEX cov_mb06_only_surrounded_geom_idx ON casfri50_coverage.mb06_only_surrounded USING gist(geom);
+
+-- Display
+SELECT * FROM casfri50_coverage.mb06_only_surrounded;
+
+-- Union them
+DROP TABLE IF EXISTS casfri50_coverage.mb06_notsurroundedunion;
+CREATE TABLE casfri50_coverage.mb06_notsurroundedunion AS
+SELECT TT_RemoveHoles(ST_Union(geom)) geom
+FROM casfri50_coverage.mb06_only_surrounded;
+
+-- Display
+SELECT * FROM casfri50_coverage.mb06_notsurroundedunion;
 ------------------------------------------------------------------------------
 -- SK06
 -- ST_Union() - ERROR
 -- ST_Simplify(ST_Union(),10) - ERROR
 -- ST_BufferedUnion(, 10) - 86005 points in 62 hr 43
 -- ST_BufferedUnion(, 10, 10) - ERROR
+-- IsSurroundedAgg() - 1h50
 DROP TABLE IF EXISTS casfri50_coverage.sk06;
 CREATE TABLE casfri50_coverage.sk06 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
@@ -206,6 +255,37 @@ WHERE left(cas_id, 4) = 'SK06';
 
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.sk06;
+
+-- Try with TT_IsSurrounded -- 211482 rows
+DROP TABLE IF EXISTS casfri50_coverage.sk06;
+CREATE TABLE casfri50_coverage.sk06 AS
+SELECT cas_id, geometry
+FROM casfri50.geo_all
+WHERE left(cas_id, 4) = upper('sk06');
+
+CREATE INDEX cov_sk06_geom_idx ON casfri50_coverage.sk06 USING gist(geometry);
+
+-- 1h49
+DROP TABLE IF EXISTS casfri50_coverage.sk06_only_surrounded;
+CREATE TABLE casfri50_coverage.sk06_only_surrounded AS
+SELECT a.cas_id id, a.geometry geom
+FROM casfri50_coverage.sk06 a, casfri50_coverage.sk06 b
+WHERE ST_Intersects(a.geometry, b.geometry)
+GROUP BY a.cas_id, a.geometry
+HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
+
+-- Display
+SELECT * FROM casfri50_coverage.sk06_only_surrounded;
+
+-- Union them. Works!
+DROP TABLE IF EXISTS casfri50_coverage.sk06_notsurroundedunion;
+CREATE TABLE casfri50_coverage.sk06_notsurroundedunion AS
+SELECT TT_RemoveHoles(ST_Union(geom)) geom
+FROM casfri50_coverage.sk06_only_surrounded;
+
+-- Display
+SELECT * FROM casfri50_coverage.sk06_notsurroundedunion;
+
 ------------------------------------------------------------------------------
 -- YT02 - 231137 - 1h02
 -- ST_Union() - 7489 points in 1h02
@@ -245,6 +325,30 @@ CREATE TABLE casfri50_coverage.nt02 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'NT02';
+
+-- Try with TT_IsSurrounded -- 320944 rows
+DROP TABLE IF EXISTS casfri50_coverage.nt02;
+CREATE TABLE casfri50_coverage.nt02 AS
+SELECT cas_id, geometry
+FROM casfri50.geo_all
+WHERE left(cas_id, 4) = upper('nt02');
+
+CREATE INDEX cov_nt02_geom_idx ON casfri50_coverage.nt02 USING gist(geometry);
+
+SELECT count(*)
+FROM casfri50_coverage.nt02;
+
+-- 1h49
+DROP TABLE IF EXISTS casfri50_coverage.nt02_only_surrounded;
+CREATE TABLE casfri50_coverage.nt02_only_surrounded AS
+SELECT a.cas_id id, a.geometry geom
+FROM casfri50_coverage.nt02 a, casfri50_coverage.nt02 b
+WHERE ST_Intersects(a.geometry, b.geometry)
+GROUP BY a.cas_id, a.geometry
+HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
+
+-- Display
+SELECT * FROM casfri50_coverage.nt02_only_surrounded;
 ------------------------------------------------------------------------------
 -- SK05 - 421977 - testing
 DROP TABLE IF EXISTS casfri50_coverage.sk05;
@@ -252,6 +356,45 @@ CREATE TABLE casfri50_coverage.sk05 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'SK05';
+
+-- Try with TT_IsSurrounded -- 421977 rows
+DROP TABLE IF EXISTS casfri50_coverage.sk05;
+CREATE TABLE casfri50_coverage.sk05 AS
+SELECT cas_id, geometry
+FROM casfri50.geo_all
+WHERE left(cas_id, 4) = upper('sk05');
+
+CREATE INDEX cov_sk05_geom_idx ON casfri50_coverage.sk05 USING gist(geometry);
+
+-- 3h23
+DROP TABLE IF EXISTS casfri50_coverage.sk05_only_surrounded;
+CREATE TABLE casfri50_coverage.sk05_only_surrounded AS
+SELECT a.cas_id id, a.geometry geom
+FROM casfri50_coverage.sk05 a, casfri50_coverage.sk05 b
+WHERE ST_Intersects(a.geometry, b.geometry)
+GROUP BY a.cas_id, a.geometry
+HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
+
+-- Display
+SELECT * FROM casfri50_coverage.sk05_only_surrounded;
+
+-- Union them 24m
+DROP TABLE IF EXISTS casfri50_coverage.sk05_notsurroundedunion;
+CREATE TABLE casfri50_coverage.sk05_notsurroundedunion AS
+SELECT TT_RemoveHoles(ST_Union(geom)) geom
+FROM casfri50_coverage.sk05_only_surrounded;
+
+-- Display
+SELECT * FROM casfri50_coverage.sk05_notsurroundedunion;
+
+-- 329248 points
+SELECT ST_NPoints(geom) nb
+FROM casfri50_coverage.sk05_notsurroundedunion;
+
+DROP TABLE IF EXISTS casfri50_coverage.sk05_notsurroundedunion_simplified;
+CREATE TABLE casfri50_coverage.sk05_notsurroundedunion_simplified AS
+SELECT ST_NPoints(ST_Simplify(geom, 10)) geom
+FROM casfri50_coverage.sk05_notsurroundedunion;
 ------------------------------------------------------------------------------
 -- MB05 - 514157 - testing
 DROP TABLE IF EXISTS casfri50_coverage.mb05;
@@ -259,6 +402,27 @@ CREATE TABLE casfri50_coverage.mb05 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'MB05';
+
+-- Try with TT_IsSurrounded -- 514157 rows
+DROP TABLE IF EXISTS casfri50_coverage.mb05;
+CREATE TABLE casfri50_coverage.mb05 AS
+SELECT cas_id, geometry
+FROM casfri50.geo_all
+WHERE left(cas_id, 4) = upper('mb05');
+
+CREATE INDEX cov_mb05_geom_idx ON casfri50_coverage.mb05 USING gist(geometry);
+
+-- 1h49
+DROP TABLE IF EXISTS casfri50_coverage.mb05_only_surrounded;
+CREATE TABLE casfri50_coverage.mb05_only_surrounded AS
+SELECT a.cas_id id, a.geometry geom
+FROM casfri50_coverage.mb05 a, casfri50_coverage.mb05 b
+WHERE ST_Intersects(a.geometry, b.geometry)
+GROUP BY a.cas_id, a.geometry
+HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
+
+-- Display
+SELECT * FROM casfri50_coverage.mb05_only_surrounded;
 ------------------------------------------------------------------------------
 -- SK04 - 633522 - testing
 DROP TABLE IF EXISTS casfri50_coverage.sk04;
