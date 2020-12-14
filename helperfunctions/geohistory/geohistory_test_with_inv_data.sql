@@ -158,10 +158,9 @@ SELECT * FROM geohistory.sampling_area_nb1;
 -- Generate history table - 1 min 51
 DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_new;
 CREATE TABLE geohistory.sampling_area_nb1_history_new AS
-SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
-      ORDER BY id, poly_id) foo;
+SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM TT_GeoHistory('geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+ORDER BY id, poly_id;
 
 -- Display
 SELECT *, ST_Area(wkt_geometry) area, ST_GeomFromText(wkt_geometry) geom
@@ -186,10 +185,9 @@ SELECT * FROM geohistory.sampling_area_nb2;
 -- Generate history table - 15m45
 DROP TABLE IF EXISTS geohistory.sampling_area_nb2_history_new;
 CREATE TABLE geohistory.sampling_area_nb2_history_new AS
-SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'sampling_area_nb2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
-      ORDER BY id, poly_id) foo;
+SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM TT_GeoHistory('geohistory', 'sampling_area_nb2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+ORDER BY id, poly_id;
 
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
@@ -213,10 +211,9 @@ SELECT * FROM geohistory.sampling_area_nt1;
 -- Generate history table - 5m31
 DROP TABLE IF EXISTS geohistory.sampling_area_nt1_history_new;
 CREATE TABLE geohistory.sampling_area_nt1_history_new AS
-SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'sampling_area_nt1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
-      ORDER BY id, poly_id) foo;
+SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM TT_GeoHistory('geohistory', 'sampling_area_nt1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+ORDER BY id, poly_id;
 
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
@@ -245,10 +242,9 @@ SELECT * FROM geohistory.sampling_area_nt2;
 -- Generate history table - 6m07
 DROP TABLE IF EXISTS geohistory.sampling_area_nt2_history_new;
 CREATE TABLE geohistory.sampling_area_nt2_history_new AS
-SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'sampling_area_nt2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
-      ORDER BY id, poly_id) foo;
+SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM TT_GeoHistory('geohistory', 'sampling_area_nt2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+ORDER BY id, poly_id;
 
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
@@ -272,10 +268,9 @@ SELECT * FROM geohistory.sampling_area_bc1;
 -- Generate history table - 2m02
 DROP TABLE IF EXISTS geohistory.sampling_area_bc1_history_new;
 CREATE TABLE geohistory.sampling_area_bc1_history_new AS
-SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'sampling_area_bc1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
-      ORDER BY id, poly_id) foo;
+SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM TT_GeoHistory('geohistory', 'sampling_area_bc1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+ORDER BY id, poly_id;
 
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
@@ -299,10 +294,9 @@ SELECT * FROM geohistory.sampling_area_bc2;
 -- Generate history table - 1m36
 DROP TABLE IF EXISTS geohistory.sampling_area_bc2_history_new;
 CREATE TABLE geohistory.sampling_area_bc2_history_new AS
-SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'sampling_area_bc2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
-      ORDER BY id, poly_id) foo;
+SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM TT_GeoHistory('geohistory', 'sampling_area_bc2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+ORDER BY id, poly_id;
 
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
@@ -319,7 +313,7 @@ SELECT '1.1'::text number,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nb1_history_new'', ''geohistory'' , ''sampling_area_nb1_history'', ''row_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM geohistory.sampling_area_nb1_history_new a 
-      FULL OUTER JOIN geohistory.sampling_area_nb1_history b USING (row_id)) foo
+      FULL OUTER JOIN geohistory.sampling_area_nb1_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
@@ -329,7 +323,7 @@ SELECT '1.2'::text number,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nb2_history_new'', ''geohistory'' , ''sampling_area_nb2_history'', ''row_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM geohistory.sampling_area_nb2_history_new a 
-      FULL OUTER JOIN geohistory.sampling_area_nb2_history b USING (row_id)) foo
+      FULL OUTER JOIN geohistory.sampling_area_nb2_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '2.1'::text number,
@@ -339,7 +333,7 @@ SELECT '2.1'::text number,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nt1_history_new'', ''geohistory'' , ''sampling_area_nt1_history'', ''row_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM geohistory.sampling_area_nt1_history_new a 
-      FULL OUTER JOIN geohistory.sampling_area_nt1_history b USING (row_id)) foo
+      FULL OUTER JOIN geohistory.sampling_area_nt1_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '2.2'::text number,
@@ -349,7 +343,7 @@ SELECT '2.2'::text number,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nt2_history_new'', ''geohistory'' , ''sampling_area_nt2_history'', ''row_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM geohistory.sampling_area_nt2_history_new a 
-      FULL OUTER JOIN geohistory.sampling_area_nt2_history b USING (row_id)) foo
+      FULL OUTER JOIN geohistory.sampling_area_nt2_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.1'::text number,
@@ -359,7 +353,7 @@ SELECT '3.1'::text number,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_bc1_history_new'', ''geohistory'' , ''sampling_area_bc1_history'', ''row_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM geohistory.sampling_area_bc1_history_new a 
-      FULL OUTER JOIN geohistory.sampling_area_bc1_history b USING (row_id)) foo
+      FULL OUTER JOIN geohistory.sampling_area_bc1_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.2'::text number,
@@ -369,6 +363,6 @@ SELECT '3.2'::text number,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_bc2_history_new'', ''geohistory'' , ''sampling_area_bc2_history'', ''row_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM geohistory.sampling_area_bc2_history_new a 
-      FULL OUTER JOIN geohistory.sampling_area_bc2_history b USING (row_id)) foo
+      FULL OUTER JOIN geohistory.sampling_area_bc2_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 ) foo WHERE NOT passed;

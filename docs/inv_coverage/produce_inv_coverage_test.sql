@@ -35,7 +35,7 @@ SELECT * FROM (
 -- by returning nothing.
 WITH test_nb AS (
     SELECT 'TT_RemoveHoles'::text function_tested,  1 maj_num,  9 nb_test UNION ALL
-    SELECT 'TT_IsSurrounded'::text function_tested, 2 maj_num,  5 nb_test
+    SELECT 'TT_IsSurrounded'::text function_tested, 2 maj_num,  6 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -69,7 +69,7 @@ UNION ALL
 SELECT '1.3'::text number,
        'TT_RemoveHoles'::text function_tested,
        'Simple polygon with no holes'::text description,
-       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))')) = ST_GeomFromText('MULTIPOLYGON(((0 0, 4 0, 4 4, 0 4, 0 0)))') passed
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))')) = ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.4'::text number,
@@ -81,19 +81,19 @@ UNION ALL
 SELECT '1.5'::text number,
        'TT_RemoveHoles'::text function_tested,
        'Simple polygon with two holes'::text description,
-       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1), (2 2, 2 3, 3 3, 3 2, 2 2))')) = ST_GeomFromText('MULTIPOLYGON(((0 0, 4 0, 4 4, 0 4, 0 0)))') passed
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1), (2 2, 2 3, 3 3, 3 2, 2 2))')) = ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.6'::text number,
        'TT_RemoveHoles'::text function_tested,
        'Simple polygon with a hole and an island'::text description,
-       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 5 0, 5 5, 0 5, 0 0), (1 1, 1 4, 4 4, 4 1, 1 1), (2 2, 2 3, 3 3, 3 2, 2 2))')) = ST_GeomFromText('MULTIPOLYGON(((0 0, 5 0, 5 5 ,0 5, 0 0)))') passed
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 5 0, 5 5, 0 5, 0 0), (1 1, 1 4, 4 4, 4 1, 1 1), (2 2, 2 3, 3 3, 3 2, 2 2))')) = ST_GeomFromText('POLYGON((0 0, 5 0, 5 5 ,0 5, 0 0))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.7'::text number,
        'TT_RemoveHoles'::text function_tested,
        'Multipolygon made of two simple polygons'::text description,
-       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 1 0, 1 1, 0 1, 0 0)), ((1 1, 2 1, 2 2, 1 2, 1 1)))')) = ST_GeomFromText('MULTIPOLYGON(((0 0, 1 0, 1 1, 0 1, 0 0)), ((1 1, 2 1, 2 2, 1 2, 1 1)))') passed
+       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 1 0, 1 1, 0 1, 0 0)), ((1 1, 2 1, 2 2, 1 2, 1 1)))')) = ST_GeomFromText('MULTIPOLYGON(((1 1,1 0,0 0,0 1,1 1)),((1 1,1 2,2 2,2 1,1 1)))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.8'::text number,
@@ -103,6 +103,12 @@ SELECT '1.8'::text number,
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.9'::text number,
+       'TT_RemoveHoles'::text function_tested,
+       'Multipolygon made of one holed polygons with a polyong inside the hole'::text description,
+       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 5 0, 5 5, 0 5, 0 0), (1 1, 4 1, 4 4, 1 4, 1 1)), ((2 2, 3 2, 3 3, 2 3, 2 2)))')) = ST_GeomFromText('POLYGON((0 0,0 5,5 5,5 0,0 0))') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.100'::text number,
        'TT_RemoveHoles'::text function_tested,
        'Test not a polygon'::text description,
        TT_RemoveHoles(ST_GeomFromText('LINESTRING(0 0,1 1,1 2)')) = ST_GeomFromText('LINESTRING(0 0,1 1,1 2)') passed
@@ -142,6 +148,13 @@ SELECT '2.5'::text number,
 						  ST_GeomFromText('POLYGON((1 1, 2 1, 2 2, 1 2, 1 1))')) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
+SELECT '2.6'::text number,
+       'TT_IsSurrounded'::text function_tested,
+       'Test open corner'::text description,
+       TT_IsSurroundedAgg(ST_GeomFromText('POLYGON((1 1, 2 1, 1.5 2, 1 2, 1 1))'), 
+						  ST_GeomFromText('POLYGON((0 0, 3 0, 3 1, 2 2, 2 1, 1 1, 1 2, 2 2, 1 3, 0 3, 0 0))')) IS FALSE passed
+---------------------------------------------------------
+UNION ALL
 (
 WITH surrounded AS (
   SELECT TT_IsSurroundedAgg(a.geom, b.geom) surrounded
@@ -149,7 +162,7 @@ WITH surrounded AS (
   WHERE ST_Intersects(a.geom, b.geom)
   GROUP BY a.id, a.geom
 )
-SELECT '2.6'::text number,
+SELECT '2.7'::text number,
        'TT_IsSurrounded'::text function_tested,
        'Simple on the 3x3 table of polygon'::text description,
        array_agg(surrounded) = ARRAY[FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE] passed

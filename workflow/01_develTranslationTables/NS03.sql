@@ -81,7 +81,7 @@ SELECT * FROM translation_devel.ns_nsi01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'ns_nsi01_eco_devel', '_ns03_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, 200);
 SELECT * FROM TT_Translate_ns03_eco_devel('rawfri', 'ns03_l1_to_ns_nsi_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'ns_nsi01_nfl_devel');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'ns_nsi01_eco_devel');
 
 -- GEO ATTRIBUTES
 SELECT * FROM translation.ns_nsi01_geo;

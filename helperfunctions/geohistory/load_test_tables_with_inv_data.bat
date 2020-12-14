@@ -11,7 +11,7 @@ CALL ..\..\conversion\bat\common.bat
 
 IF "%pgversion%"=="" SET pgversion=11
 
-SET coltypes="row_id=int,id=text,poly_id=int,isvalid=boolean,wkt_geometry=text,poly_type=text,ref_year=int,valid_year_begin=int,valid_year_end=int,valid_time=text"
+SET coltypes="id=text,poly_id=int,isvalid=boolean,wkt_geometry=text,poly_type=text,ref_year=int,valid_year_begin=int,valid_year_end=int,valid_time=text"
 
 :: ########################################## Process ######################################
 
