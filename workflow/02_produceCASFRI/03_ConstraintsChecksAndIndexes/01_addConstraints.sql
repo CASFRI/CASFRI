@@ -433,12 +433,12 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.22'::text number,
        'dst_all' target_table,
-       'Issue #337 & #408. DIST_YEAR_1 is sometimes invalid and not well ordered in time. Ensure DST table DIST_YEAR_1 is greater than 1900, below 2020 and smaller than or equal to DIST_YEAR_2' description, 
+       'Issue #337 & #408. DIST_YEAR_1 is sometimes invalid and not well ordered in time. Ensure DST table DIST_YEAR_1 is greater than 1000, below 2020 and smaller than or equal to DIST_YEAR_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_year_1_greater_than_1900_and_smaller_than_dist_year_2', 
-                              '(1900 <= dist_year_1 AND dist_year_1 <= 2020 AND 
+                        ARRAY['dist_year_1_greater_than_1000_and_smaller_than_dist_year_2', 
+                              '(1000 <= dist_year_1 AND dist_year_1 <= 2020 AND 
                                 (dist_year_1 <= dist_year_2 OR
                                  dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
                                 )
@@ -1603,7 +1603,7 @@ FROM (SELECT *
                         ARRAY['casfri50_lookup', 
                               'nat_non_veg'],
                         ARRAY['ALPINE', 'LAKE', 'RIVER', 'OCEAN', 'ROCK_RUBBLE', 'SAND', 'SNOW_ICE', 'SLIDE', 
-                              'EXPOSED_LAND', 'BEACH', 'WATER_SEDIMENT', 'FLOOD', 'ISLAND', 'TIDAL_FLATS', 'OTHER'] ||
+                              'EXPOSED_LAND', 'BEACH', 'WATER_SEDIMENT', 'FLOOD', 'ISLAND', 'TIDAL_FLATS', 'OTHER', 'WATERBODY'] ||
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
