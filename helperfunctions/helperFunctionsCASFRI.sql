@@ -5228,7 +5228,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- NL map units have values 1 - 180, Labrador map units are 238 - 415
 -- Origin translation is different for Newfoundland and Labrador
 -- Figure out which area the row is from and use the correct translation
--- to get the lower bound of age range. Then subtract this from the photo
+-- to get the upper bound of age range. Then subtract this from the photo
 -- year to get origin upper.
 -- photo year is calculated by intersecting with the photo year map.
 
