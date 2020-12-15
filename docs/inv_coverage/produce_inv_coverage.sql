@@ -319,7 +319,7 @@ WHERE left(cas_id, 4) = 'NT01';
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.nt01;
 ------------------------------------------------------------------------------
--- NT02 - In progress
+-- NT02 - In progress - ERROR
 -- ST_Union() - ERROR
 -- ST_Simplify(ST_Union(),10) - ERROR
 -- ST_BufferedUnion(, 10) - 80310 points in 107h45
@@ -342,7 +342,7 @@ CREATE INDEX cov_nt02_geom_idx ON casfri50_coverage.nt02 USING gist(geometry);
 SELECT count(*)
 FROM casfri50_coverage.nt02;
 
--- 1h49
+-- ERROR
 DROP TABLE IF EXISTS casfri50_coverage.nt02_only_surrounded;
 CREATE TABLE casfri50_coverage.nt02_only_surrounded AS
 SELECT a.cas_id id, a.geometry geom
@@ -452,7 +452,7 @@ FROM casfri50_coverage.mb05_only_surrounded;
 -- Display
 SELECT * FROM casfri50_coverage.mb05_notsurroundedunion;
 ------------------------------------------------------------------------------
--- SK04 - 633522 - In progress
+-- SK04 - 633522 - DONE
 DROP TABLE IF EXISTS casfri50_coverage.sk04;
 CREATE TABLE casfri50_coverage.sk04 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
@@ -468,7 +468,7 @@ WHERE left(cas_id, 4) = upper('sk04');
 
 CREATE INDEX cov_sk04_geom_idx ON casfri50_coverage.sk04 USING gist(geometry);
 
---
+-- 8h
 DROP TABLE IF EXISTS casfri50_coverage.sk04_only_surrounded;
 CREATE TABLE casfri50_coverage.sk04_only_surrounded AS
 SELECT a.cas_id id, a.geometry geom
@@ -477,22 +477,22 @@ WHERE ST_Intersects(a.geometry, b.geometry)
 GROUP BY a.cas_id, a.geometry
 HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
 
-SELECT count(*)
+SELECT count(*) -- 34454
 FROM casfri50_coverage.sk04_only_surrounded;
 
 -- Display
 SELECT * FROM casfri50_coverage.sk04_only_surrounded;
 
--- Union them 24m
+-- Union them 1h32
 DROP TABLE IF EXISTS casfri50_coverage.sk04_notsurroundedunion;
 CREATE TABLE casfri50_coverage.sk04_notsurroundedunion AS
 SELECT TT_RemoveHoles(ST_Union(geom)) geom
-FROM casfri50_coverage.mb05_only_surrounded;
+FROM casfri50_coverage.sk04_only_surrounded;
 
 -- Display
 SELECT * FROM casfri50_coverage.sk04_notsurroundedunion;
 ------------------------------------------------------------------------------
--- NB01 - 927177 - In progress
+-- NB01 - 927177 - In progress - ERROR
 DROP TABLE IF EXISTS casfri50_coverage.nb01;
 CREATE TABLE casfri50_coverage.nb01 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
