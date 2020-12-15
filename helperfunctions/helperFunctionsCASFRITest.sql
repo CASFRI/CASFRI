@@ -792,12 +792,19 @@ SELECT '16.16'::text number,
        TT_CreateFilterView('rawfri', 'ab06', 'eco', 'nfl3, eco', NULL, 'eco_for_nfl3_or_eco') = 
        'DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl3_or_eco CASCADE;
 CREATE OR REPLACE VIEW rawfri.ab06_eco_for_nfl3_or_eco AS
-SELECT *
+SELECT moist_reg, nfl, nat_non, sp1, sp2, density, sp1_per
 FROM rawfri.ab06
 WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
       (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
       (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
-      (TT_NotEmpty(nfl::text) AND nfl::text != ''0'');' passed
+      (TT_NotEmpty(nfl::text) AND nfl::text != ''0'') OR 
+      (TT_NotEmpty(moist_reg::text) AND moist_reg::text != ''0'') OR 
+      (TT_NotEmpty(nfl::text) AND nfl::text != ''0'') OR 
+      (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
+      (TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR 
+      (TT_NotEmpty(sp2::text) AND sp2::text != ''0'') OR 
+      (TT_NotEmpty(density::text) AND density::text != ''0'') OR 
+      (TT_NotEmpty(sp1_per::text) AND sp1_per::text != ''0'');' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.17'::text number,
@@ -806,12 +813,21 @@ SELECT '16.17'::text number,
        TT_CreateFilterView('rawfri', 'ab06', 'eco', '[nfl3, eco]', 'dst2', 'eco_for_nfl3_and_eco_not_dst2') = 
        'DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl3_and_eco_not_dst2 CASCADE;
 CREATE OR REPLACE VIEW rawfri.ab06_eco_for_nfl3_and_eco_not_dst2 AS
-SELECT *
+SELECT moist_reg, nfl, nat_non, sp1, sp2, density, sp1_per
 FROM rawfri.ab06
-WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
-      (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
-      (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
-      (TT_NotEmpty(nfl::text) AND nfl::text != ''0'');' passed
+WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
+        (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
+        (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
+        (TT_NotEmpty(nfl::text) AND nfl::text != ''0''))
+       AND
+        ((TT_NotEmpty(moist_reg::text) AND moist_reg::text != ''0'') OR 
+        (TT_NotEmpty(nfl::text) AND nfl::text != ''0'') OR 
+        (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
+        (TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR 
+        (TT_NotEmpty(sp2::text) AND sp2::text != ''0'') OR 
+        (TT_NotEmpty(density::text) AND density::text != ''0'') OR 
+        (TT_NotEmpty(sp1_per::text) AND sp1_per::text != ''0''))
+      ;' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.18'::text number,
