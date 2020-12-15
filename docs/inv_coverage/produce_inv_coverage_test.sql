@@ -35,7 +35,7 @@ SELECT * FROM (
 -- by returning nothing.
 WITH test_nb AS (
     SELECT 'TT_RemoveHoles'::text function_tested,  1 maj_num,  9 nb_test UNION ALL
-    SELECT 'TT_IsSurrounded'::text function_tested, 2 maj_num,  6 nb_test
+    SELECT 'TT_IsSurrounded'::text function_tested, 2 maj_num, 12 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -156,13 +156,77 @@ SELECT '2.6'::text number,
 ---------------------------------------------------------
 UNION ALL
 (
+WITH surrounding AS (
+  SELECT ST_GeomFromText('POLYGON((0 0, 0 3, 4 3, 4 2, 1 2, 1 1, 4 1, 4 0, 0 0))') geom
+  UNION ALL
+  SELECT ST_GeomFromText('POLYGON((3 1, 3 2, 4 2, 4 1, 3 1))')
+)
+SELECT '2.7'::text number,
+       'TT_IsSurrounded'::text function_tested,
+       'Test with hole between surrounding polygons - Would expect TRUE but FALSE because no way to intersect with furthest polygon'::text description,
+       TT_IsSurroundedAgg(ST_GeomFromText('POLYGON((1 1, 2 1, 2 2, 1 2, 1 1))'), 
+						  geom) IS FALSE passed
+FROM surrounding
+WHERE ST_Intersects(ST_GeomFromText('POLYGON((1 1, 2 1, 2 2, 1 2, 1 1))'), geom)
+)
+---------------------------------------------------------
+UNION ALL
+SELECT '2.8'::text number,
+       'TT_IsSurrounded'::text function_tested,
+       'Test open corner'::text description,
+       TT_IsSurroundedAgg(ST_GeomFromText('POLYGON((2 2, 3 2, 3 3, 2 3, 2 2))'), 
+						  ST_GeomFromText('POLYGON((0 0, 5 0, 5 5, 0 5, 0 0), (1 1, 4 1, 4 4, 1 4, 1 1))')) passed
+---------------------------------------------------------
+UNION ALL
+(
+WITH surrounding AS (
+  SELECT ST_GeomFromText('POLYGON((0 0, 5 0, 5 5, 0 5, 0 0), (1 1, 4 1, 4 4, 1 4, 1 1))') geom
+)
+SELECT '2.9'::text number,
+       'TT_IsSurrounded'::text function_tested,
+       'Test surrounding but not intersecting polygon'::text description,
+       coalesce(TT_IsSurroundedAgg(ST_GeomFromText('POLYGON((2 2, 3 2, 3 3, 2 3, 2 2))'), 
+						  geom), FALSE) IS FALSE passed
+FROM surrounding
+WHERE ST_Intersects(ST_GeomFromText('POLYGON((2 2, 3 2, 3 3, 2 3, 2 2))'), geom)
+)
+---------------------------------------------------------
+UNION ALL
+(
+WITH surrounding AS (
+  SELECT ST_GeomFromText('POLYGON((0 0, 5 0, 5 5, 0 5, 0 0), (1 1, 4 1, 4 4, 1 4, 1 1))') geom
+)
+SELECT '2.10'::text number,
+       'TT_IsSurrounded'::text function_tested,
+       'Previous test becomes TRUE if we remove holes from surrounding polygons'::text description,
+       coalesce(TT_IsSurroundedAgg(ST_GeomFromText('POLYGON((2 2, 3 2, 3 3, 2 3, 2 2))'), 
+						  geom), FALSE) IS TRUE passed
+FROM surrounding
+WHERE ST_Intersects(ST_GeomFromText('POLYGON((2 2, 3 2, 3 3, 2 3, 2 2))'), TT_RemoveHoles(geom))
+)---------------------------------------------------------
+UNION ALL
+(
+WITH surrounding AS (
+  SELECT ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), (1 1, 3 1, 3 3, 1 3, 1 1))') geom
+)
+SELECT '2.11'::text number,
+       'TT_IsSurrounded'::text function_tested,
+       'Test with hole between surrounding polygons'::text description,
+       TT_IsSurroundedAgg(ST_GeomFromText('POLYGON((1 1, 2 1, 2 2, 1 2, 1 1))'), 
+						  geom) IS TRUE passed
+FROM surrounding
+WHERE ST_Intersects(ST_GeomFromText('POLYGON((1 1, 2 1, 2 2, 1 2, 1 1))'), geom)
+)
+---------------------------------------------------------
+UNION ALL
+(
 WITH surrounded AS (
   SELECT TT_IsSurroundedAgg(a.geom, b.geom) surrounded
   FROM casfri50_coverage.test3x3 a, casfri50_coverage.test3x3 b
   WHERE ST_Intersects(a.geom, b.geom)
   GROUP BY a.id, a.geom
 )
-SELECT '2.7'::text number,
+SELECT '2.12'::text number,
        'TT_IsSurrounded'::text function_tested,
        'Simple on the 3x3 table of polygon'::text description,
        array_agg(surrounded) = ARRAY[FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE] passed
