@@ -9,24 +9,22 @@ SETLOCAL
 
 CALL ..\..\conversion\bat\common.bat
 
-IF "%pgversion%"=="" SET pgversion=11
-
 :: ########################################## Process ######################################
 
 ::Run ogr2ogr
 
-DEL testtables%pgversion%\sampling*.csv
+DEL testtables\sampling*.csv
 
-"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\sampling_area_nb1_history.csv" %pg_connection_string% "geohistory.sampling_area_nb1_history_new"
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_nb1_history.csv" %pg_connection_string% "geohistory.sampling_area_nb1_history_new"
 
-"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\sampling_area_nb2_history.csv" %pg_connection_string% "geohistory.sampling_area_nb2_history_new"
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_nb2_history.csv" %pg_connection_string% "geohistory.sampling_area_nb2_history_new"
 
-"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\sampling_area_nt1_history.csv" %pg_connection_string% "geohistory.sampling_area_nt1_history_new"
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_nt1_history.csv" %pg_connection_string% "geohistory.sampling_area_nt1_history_new"
 
-"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\sampling_area_nt2_history.csv" %pg_connection_string% "geohistory.sampling_area_nt2_history_new"
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_nt2_history.csv" %pg_connection_string% "geohistory.sampling_area_nt2_history_new"
 
-"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\sampling_area_bc1_history.csv" %pg_connection_string% "geohistory.sampling_area_bc1_history_new"
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_bc1_history.csv" %pg_connection_string% "geohistory.sampling_area_bc1_history_new"
 
-"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables%pgversion%\sampling_area_bc2_history.csv" %pg_connection_string% "geohistory.sampling_area_bc2_history_new"
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_bc2_history.csv" %pg_connection_string% "geohistory.sampling_area_bc2_history_new"
 
 ENDLOCAL
