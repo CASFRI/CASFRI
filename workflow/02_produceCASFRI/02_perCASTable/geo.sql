@@ -31,9 +31,9 @@ SELECT TT_Prepare('translation', 'sk_sfv01_geo', '_sk_sfv_geo', 'ab_avi01_geo');
 SELECT TT_Prepare('translation', 'yt_yvi01_geo', '_yt_geo', 'ab_avi01_geo'); 
 SELECT TT_Prepare('translation', 'ns_nsi01_geo', '_ns_geo', 'ab_avi01_geo'); 
 SELECT TT_Prepare('translation', 'pe_pei01_geo', '_pe_geo', 'ab_avi01_geo'); 
-SELECT TT_Prepare('translation', 'mb_fri01_eco', '_mb_fri_eco', 'ab_avi01_eco');
-SELECT TT_Prepare('translation', 'mb_fli01_eco', '_mb_fli_eco', 'ab_avi01_eco');
-SELECT TT_Prepare('translation', 'nl_nli01_eco', '_nl_nli_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'mb_fri01_geo', '_mb_fri_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'mb_fli01_geo', '_mb_fli_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'nl_nli01_geo', '_nl_nli_geo', 'ab_avi01_geo');
 ------------------------
 DROP TABLE IF EXISTS casfri50.geo_all CASCADE;
 ------------------------
