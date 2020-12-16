@@ -33,7 +33,10 @@ SELECT TT_Prepare('translation', 'ns_nsi01_dst', '_ns_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'pe_pei01_dst', '_pe_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'mb_fri01_dst', '_mb05_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'mb_fli01_dst', '_mb06_dst', 'ab_avi01_dst');
-SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl01_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc03_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc04_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc05_dst', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 ------------------------
@@ -252,10 +255,40 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, NULL, 'dst');
 
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_nl01_dst('rawfri', 'nl01_l1_to_nl_nli_l1_map_dst', 'ogc_fid');
+SELECT * FROM TT_Translate_nl_dst('rawfri', 'nl01_l1_to_nl_nli_l1_map_dst', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_dst', 'nl01_l1_to_nl_nli_l1_map_dst');
+------------------------
+-- Translate QC03 using QC_INI03 generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc03', 1, 'qc_ini03', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_qc03_dst('rawfri', 'qc03_l1_to_qc_ini03_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_dst', 'qc03_l1_to_qc_ini03_l1_map_dst');
+------------------------
+-- Translate QC04 using QC_INI04 generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc04', 1, 'qc_ini04', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_qc04_dst('rawfri', 'qc04_l1_to_qc_ini04_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_dst', 'qc04_l1_to_qc_ini04_l1_map_dst');
+------------------------
+-- Translate QC05 using QC_IPF05 generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf05', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_qc05_dst('rawfri', 'qc05_l1_to_qc_ipf05_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_dst', 'qc05_l1_to_qc_ipf05_l1_map_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

@@ -33,7 +33,10 @@ SELECT TT_Prepare('translation', 'ns_nsi01_nfl', '_ns_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fri01_nfl', '_mb_fri_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb_fli_nfl', 'ab_avi01_nfl');
-SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl_nli_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'qc_ini03_nfl', '_qc03_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'qc_ini04_nfl', '_qc04_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'qc_ipf05_nfl', '_qc05_nfl', 'ab_avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 ------------------------
@@ -422,10 +425,40 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'nl01', 2, 'nl_nli', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nl_nli_nfl('rawfri', 'nl01_l2_to_nl_nli_l1_map_nfl', 'ogc_fid');
+SELECT * FROM TT_Translate_nl_nfl('rawfri', 'nl01_l2_to_nl_nli_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_nfl', 'nl01_l2_to_nl_nli_l1_map_nfl');
+------------------------
+-- Translate QC03 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc03', 3, 'qc_ini03', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_qc03_nfl('rawfri', 'qc03_l2_to_qc_ini03_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_nfl', 'qc03_l2_to_qc_ini03_l1_map_nfl');
+------------------------
+-- Translate QC04 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc04', 3, 'qc_ini04', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_qc04_nfl('rawfri', 'qc04_l2_to_qc_ini04_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_nfl', 'qc04_l2_to_qc_ini04_l1_map_nfl');
+------------------------
+-- Translate QC05 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc05', 3, 'qc_ipf05', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_qc05_nfl('rawfri', 'qc05_l2_to_qc_ipf05_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_nfl', 'qc05_l2_to_qc_ipf05_l1_map_nfl');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
