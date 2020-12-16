@@ -97,17 +97,7 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl', 'nb02_l3_to_nb_l1_map_nfl');
 ------------------------
--- Translate BC08 layer 2
-BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, NULL, 'nfl');
-
-INSERT INTO casfri50.nfl_all -- 16h38m
-SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l2_to_bc_l1_map_nfl', 'ogc_fid');
-COMMIT;
-
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l2_to_bc_l1_map_nfl');
-------------------------
--- Translate BC08 layer 3
+-- Translate BC08 NFL layer 1
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'bc08', 3, 'bc', 1, NULL, 'nfl');
 
@@ -117,7 +107,7 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l3_to_bc_l1_map_nfl');
 ------------------------
--- Translate BC08 layer 4
+-- Translate BC08 layer NFL 2
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1, NULL, 'nfl');
 
@@ -126,6 +116,16 @@ SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l4_to_bc_l1_map_nfl', 'ogc_fid
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l4_to_bc_l1_map_nfl');
+------------------------
+-- Translate BC08 layer NFL 3
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'bc08', 5, 'bc', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 16h38m
+SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l5_to_bc_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l5_to_bc_l1_map_nfl');
 ------------------------
 -- Translate BC10 layer 3
 BEGIN;
