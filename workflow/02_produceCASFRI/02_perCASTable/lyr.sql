@@ -64,6 +64,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nl_species_codes_idx
 ON translation.species_code_mapping (nl_species_codes)
 WHERE TT_NotEmpty(nl_species_codes);
 
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_qc_species_codes_idx
+ON translation.species_code_mapping (qc_species_codes)
+WHERE TT_NotEmpty(qc_species_codes);
+
 -------------------------------------------------------
 -- Translate all LYR tables into a common table. 32h
 -------------------------------------------------------
@@ -80,7 +84,10 @@ SELECT TT_Prepare('translation', 'ns_nsi01_lyr', '_ns_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'pe_pei01_lyr', '_pe_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'mb_fri01_lyr', '_mb_fri_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'mb_fli01_lyr', '_mb_fli_lyr', 'ab_avi01_lyr');
-SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_nli_lyr', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_lyr', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'qc_ini03_lyr', '_qc03_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'qc_ini04_lyr', '_qc04_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'qc_ipf05_lyr', '_qc05_lyr', 'ab_avi01_lyr'); 
 -------------------------
 DROP TABLE IF EXISTS casfri50.lyr_all CASCADE;
 ------------------------
@@ -538,10 +545,70 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_nl_nli_lyr('rawfri', 'nl01_l1_to_nl_nli_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_nl_lyr('rawfri', 'nl01_l1_to_nl_nli_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_lyr', 'nl01_l1_to_nl_nli_l1_map_lyr');
+------------------------
+-- Translate QC03 layer 1 using QC_INI03 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc03', 1, 'qc_ini03', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc03_lyr('rawfri', 'qc03_l1_to_qc_ini03_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_lyr', 'qc03_l1_to_qc_ini03_l1_map_lyr');
+------------------------
+-- Translate QC03 layer 2 using QC_INI03 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'qc_ini03', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc03_lyr('rawfri', 'qc03_l2_to_qc_ini03_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_lyr', 'qc03_l2_to_qc_ini03_l1_map_lyr');
+------------------------
+-- Translate QC04 layer 1 using QC_INI04 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc04', 1, 'qc_ini04', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc04_lyr('rawfri', 'qc04_l1_to_qc_ini04_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_lyr', 'qc04_l1_to_qc_ini04_l1_map_lyr');
+------------------------
+-- Translate QC04 layer 2 using QC_INI04 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc04', 2, 'qc_ini04', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc04_lyr('rawfri', 'qc04_l2_to_qc_ini04_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_lyr', 'qc04_l2_to_qc_ini04_l1_map_lyr');
+------------------------
+-- Translate QC05 layer 1 using QC_IPF05 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf05', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l1_to_qc_ipf05_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc05_l1_to_qc_ipf05_l1_map_lyr');
+------------------------
+-- Translate QC05 layer 2 using QC_IPF05 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc05', 2, 'qc_ipf05', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l2_to_qc_ipf05_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc05_l2_to_qc_ipf05_l1_map_lyr');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

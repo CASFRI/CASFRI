@@ -33,7 +33,10 @@ SELECT TT_Prepare('translation', 'ns_nsi01_geo', '_ns_geo', 'ab_avi01_geo');
 SELECT TT_Prepare('translation', 'pe_pei01_geo', '_pe_geo', 'ab_avi01_geo'); 
 SELECT TT_Prepare('translation', 'mb_fri01_geo', '_mb_fri_geo', 'ab_avi01_geo');
 SELECT TT_Prepare('translation', 'mb_fli01_geo', '_mb_fli_geo', 'ab_avi01_geo');
-SELECT TT_Prepare('translation', 'nl_nli01_geo', '_nl_nli_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'nl_nli01_geo', '_nl_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'qc_ini03_geo', '_qc03_geo', 'ab_avi01_geo'); 
+SELECT TT_Prepare('translation', 'qc_ini04_geo', '_qc04_geo', 'ab_avi01_geo'); 
+SELECT TT_Prepare('translation', 'qc_ipf05_geo', '_qc05_geo', 'ab_avi01_geo'); 
 ------------------------
 DROP TABLE IF EXISTS casfri50.geo_all CASCADE;
 ------------------------
@@ -242,10 +245,40 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, NULL, 'geo');
 
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_nl_nli_geo('rawfri', 'nl01_l1_to_nl_nli_l1_map_geo', 'ogc_fid');
+SELECT * FROM TT_Translate_nl_geo('rawfri', 'nl01_l1_to_nl_nli_l1_map_geo', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_geo', 'nl01_l1_to_nl_nli_l1_map_geo');
+------------------------
+-- Translate QC03 using QC_INI03 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc03', 1, 'qc_ini03', 1, NULL, 'geo');
+
+INSERT INTO casfri50.geo_all -- 
+SELECT * FROM TT_Translate_qc03_geo('rawfri', 'qc03_l1_to_qc_ini03_l1_map_geo', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_geo', 'qc03_l1_to_qc_ini03_l1_map_geo');
+------------------------
+-- Translate QC04 using QC_INI04 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc04', 1, 'qc_ini04', 1, NULL, 'geo');
+
+INSERT INTO casfri50.geo_all -- 
+SELECT * FROM TT_Translate_qc04_geo('rawfri', 'qc04_l1_to_qc_ini04_l1_map_geo', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_geo', 'qc04_l1_to_qc_ini04_l1_map_geo');
+------------------------
+-- Translate QC05 using QC_IPF05 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf05', 1, NULL, 'geo');
+
+INSERT INTO casfri50.geo_all -- 
+SELECT * FROM TT_Translate_qc05_geo('rawfri', 'qc05_l1_to_qc_ipf05_l1_map_geo', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_geo', 'qc05_l1_to_qc_ipf05_l1_map_geo');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
