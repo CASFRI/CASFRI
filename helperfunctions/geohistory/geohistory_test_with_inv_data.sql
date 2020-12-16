@@ -159,7 +159,7 @@ SELECT * FROM geohistory.sampling_area_nb1;
 DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_new;
 CREATE TABLE geohistory.sampling_area_nb1_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM TT_GeoHistory('geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+FROM TT_TableGeoHistory('geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
 ORDER BY id, poly_id;
 
 -- Display
@@ -186,7 +186,7 @@ SELECT * FROM geohistory.sampling_area_nb2;
 DROP TABLE IF EXISTS geohistory.sampling_area_nb2_history_new;
 CREATE TABLE geohistory.sampling_area_nb2_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM TT_GeoHistory('geohistory', 'sampling_area_nb2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+FROM TT_TableGeoHistory('geohistory', 'sampling_area_nb2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
 ORDER BY id, poly_id;
 
 -- Display
@@ -212,7 +212,7 @@ SELECT * FROM geohistory.sampling_area_nt1;
 DROP TABLE IF EXISTS geohistory.sampling_area_nt1_history_new;
 CREATE TABLE geohistory.sampling_area_nt1_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM TT_GeoHistory('geohistory', 'sampling_area_nt1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+FROM TT_TableGeoHistory('geohistory', 'sampling_area_nt1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
 ORDER BY id, poly_id;
 
 -- Display
@@ -243,7 +243,7 @@ SELECT * FROM geohistory.sampling_area_nt2;
 DROP TABLE IF EXISTS geohistory.sampling_area_nt2_history_new;
 CREATE TABLE geohistory.sampling_area_nt2_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM TT_GeoHistory('geohistory', 'sampling_area_nt2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+FROM TT_TableGeoHistory('geohistory', 'sampling_area_nt2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
 ORDER BY id, poly_id;
 
 -- Display
@@ -269,7 +269,7 @@ SELECT * FROM geohistory.sampling_area_bc1;
 DROP TABLE IF EXISTS geohistory.sampling_area_bc1_history_new;
 CREATE TABLE geohistory.sampling_area_bc1_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM TT_GeoHistory('geohistory', 'sampling_area_bc1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+FROM TT_TableGeoHistory('geohistory', 'sampling_area_bc1', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
 ORDER BY id, poly_id;
 
 -- Display
@@ -295,7 +295,7 @@ SELECT * FROM geohistory.sampling_area_bc2;
 DROP TABLE IF EXISTS geohistory.sampling_area_bc2_history_new;
 CREATE TABLE geohistory.sampling_area_bc2_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM TT_GeoHistory('geohistory', 'sampling_area_bc2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
+FROM TT_TableGeoHistory('geohistory', 'sampling_area_bc2', 'cas_id', 'geometry', 'photo_year', 'inventory_id') --, ARRAY['att']);
 ORDER BY id, poly_id;
 
 -- Display

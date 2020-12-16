@@ -82,11 +82,11 @@ RETURNS boolean AS $$
       END IF;
     END IF;
 IF inv1 != inv2 THEN
-  RAISE NOTICE 'inv1 (%) % has precedence on inv2(%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
-                                                                  THEN '' ELSE 'does not' END, inv2;
+  RAISE NOTICE 'inv1 (%) % precedence over inv2 (%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
+                                                                  THEN 'has' ELSE 'does not have' END, inv2;
 ELSE
-  RAISE NOTICE 'uid1(%) % has precedence on uid2(%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2) 
-                                                     THEN '' ELSE 'does not' END, uid2;
+  RAISE NOTICE 'uid1 (%) % precedence over uid2 (%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2) 
+                                                     THEN 'has' ELSE 'does not have' END, uid2;
 END IF;
       RETURN ((numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)) OR 
            (inv1 = inv2 AND ((numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)));
@@ -113,12 +113,12 @@ $$ LANGUAGE plpgsql VOLATILE;
 --SELECT TT_HasPrecedence('1', '2', '1', '13', true, true); -- false
 --SELECT TT_HasPrecedence('1', '13', '1', '2', true, true); -- true
 
--- Create a test table for TT_GeoHistory() without taking validity into account
+-- Create a test table for TT_TableGeoHistory() without taking validity into account
 DROP TABLE IF EXISTS geohistory.test_0_without_validity_new;
 CREATE TABLE geohistory.test_0_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_TableGeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_0_without_validity_new 
@@ -126,12 +126,12 @@ ADD PRIMARY KEY (row_id, id, poly_id);
       
 -- SELECT * FROM geohistory.test_0_without_validity_new;
 
--- Create a test table for TT_GeoHistory() taking validity into account
+-- Create a test table for TT_TableGeoHistory() taking validity into account
 DROP TABLE IF EXISTS geohistory.test_0_with_validity_new;
 CREATE TABLE geohistory.test_0_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_TableGeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_0_with_validity_new 
@@ -208,7 +208,7 @@ SELECT TT_GeoOblique(geom, valid_year),
 FROM geohistory.test_1;
 
 -- Display flat history
-SELECT * FROM TT_GeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
+SELECT * FROM TT_TableGeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
 
 -- Display oblique history
 SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
@@ -265,12 +265,12 @@ ORDER BY test, idx;
 
 -- SELECT * FROM geohistory.test_2;
 
--- Create a test table for TT_GeoHistory() without taking validity into account
+-- Create a test table for TT_TableGeoHistory() without taking validity into account
 DROP TABLE IF EXISTS geohistory.test_2_without_validity_new;
 CREATE TABLE geohistory.test_2_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_TableGeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_2_without_validity_new 
@@ -278,12 +278,12 @@ ADD PRIMARY KEY (row_id, id, poly_id);
       
 -- SELECT * FROM geohistory.test_2_without_validity_new;
 
--- Create a test table for TT_GeoHistory() taking validity into account
+-- Create a test table for TT_TableGeoHistory() taking validity into account
 DROP TABLE IF EXISTS geohistory.test_2_with_validity_new;
 CREATE TABLE geohistory.test_2_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_TableGeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_2_with_validity_new 
@@ -406,12 +406,12 @@ ORDER BY test, idx;
 
 -- SELECT * FROM geohistory.test_3;
 
--- Create a test table for TT_GeoHistory() without taking validity into account
+-- Create a test table for TT_TableGeoHistory() without taking validity into account
 DROP TABLE IF EXISTS geohistory.test_3_without_validity_new;
 CREATE TABLE geohistory.test_3_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_TableGeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_3_without_validity_new 
@@ -419,12 +419,12 @@ ADD PRIMARY KEY (row_id, id, poly_id);
       
 -- SELECT * FROM geohistory.test_3_without_validity_new;
 
--- Create a test table for TT_GeoHistory() taking validity into account
+-- Create a test table for TT_TableGeoHistory() taking validity into account
 DROP TABLE IF EXISTS geohistory.test_3_with_validity_new;
 CREATE TABLE geohistory.test_3_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_TableGeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_3_with_validity_new 
@@ -619,12 +619,12 @@ CREATE INDEX test_4_geom_idx
 
 -- SELECT * FROM geohistory.test_4;
 
--- Create a test table for TT_GeoHistory() without taking validity into account
+-- Create a test table for TT_TableGeoHistory() without taking validity into account
 DROP TABLE IF EXISTS geohistory.test_4_without_validity_new;
 CREATE TABLE geohistory.test_4_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_TableGeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_4_without_validity_new 
@@ -632,12 +632,12 @@ ADD PRIMARY KEY (row_id, id, poly_id);
       
 -- SELECT * FROM geohistory.test_4_without_validity_new;
 
--- Create a test table for TT_GeoHistory() taking validity into account
+-- Create a test table for TT_TableGeoHistory() taking validity into account
 DROP TABLE IF EXISTS geohistory.test_4_with_validity_new;
 CREATE TABLE geohistory.test_4_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-      FROM TT_GeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_TableGeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE geohistory.test_4_with_validity_new 
@@ -691,20 +691,20 @@ FROM geohistory.test_4_with_validity_new;
 
 -- SELECT * FROM geohistory.test_bug;
 
--- -- 2) Modify the WHERE clause of TT_GeoHistory() currentPolyQuery to 
+-- -- 2) Modify the WHERE clause of TT_TableGeoHistory() currentPolyQuery to 
 -- --    ' WHERE ' || quote_ident(idColName) || '::text = ''144'' '
 -- --    and activate the RAISE NOTICEs
 
 -- -- 3) Run this query
 -- SELECT *
--- FROM TT_GeoHistory('geohistory', 'test_bug', 'idx', 'geom', 'valid_year', 'idx');
+-- FROM TT_TableGeoHistory('geohistory', 'test_bug', 'idx', 'geom', 'valid_year', 'idx');
 
 ---------------------------------------------
 -- Begin tests
 ---------------------------------------------
 SELECT * FROM (
 SELECT '1.1'::text number,
-       'TT_GeoHistory'::text function_tested, 
+       'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_0_without_validity_new" and "test_0_without_validity"' description, 
        count(*) = 0 passed,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_without_validity_new'', ''geohistory'' , ''test_0_without_validity'', ''row_id'', TRUE);' check_query
@@ -714,7 +714,7 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
-       'TT_GeoHistory'::text function_tested, 
+       'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_0_with_validity_new" and "test_0_with_validity"' description, 
        count(*) = 0 passed,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_with_validity_new'', ''geohistory'' , ''test_0_with_validity'', ''row_id'', TRUE);' check_query
@@ -724,20 +724,20 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
 ---------------------------------------------------------
 UNION ALL
 SELECT '2.1'::text number,
-       'TT_GeoHistory'::text function_tested,
+       'TT_TableGeoHistory'::text function_tested,
        'Two single polygons'::text description,
        string_agg(ST_AsText(wkb_geometry), ', ') = 'MULTIPOLYGON(((1 1,1 -1,-1 -1,-1 1,1 1))), MULTIPOLYGON(((7 1,7 -1,5 -1,5 1,7 1)))' AND
        string_agg(ref_year::text, ', ') = '2000, 2000' AND
        string_agg(valid_year_begin::text, ', ') = '1930, 1930' AND 
        string_agg(valid_year_end::text, ', ') = '2030, 2030' passed,
         '' check_query
-FROM TT_GeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx')
+FROM TT_TableGeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx')
 ---------------------------------------------------------
 -- Compare new with old tables
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.1'::text number,
-       'TT_GeoHistory'::text function_tested, 
+       'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_2_without_validity_new" and "test_2_without_validity"' description, 
        count(*) = 0 passed,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_without_validity_new'', ''geohistory'' , ''test_2_without_validity'', ''row_id'', TRUE);' check_query
@@ -747,7 +747,7 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.2'::text number,
-       'TT_GeoHistory'::text function_tested, 
+       'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_2_with_validity_new" and "test_2_with_validity"' description, 
        count(*) = 0 passed,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_with_validity_new'', ''geohistory'' , ''test_2_with_validity'', ''row_id'', TRUE);' check_query
@@ -757,7 +757,7 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.1'::text number,
-       'TT_GeoHistory'::text function_tested, 
+       'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_3_without_validity_new" and "test_3_without_validity"' description, 
        count(*) = 0 passed,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_without_validity_new'', ''geohistory'' , ''test_3_without_validity'', ''row_id'', TRUE);' check_query
@@ -767,7 +767,7 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.2'::text number,
-       'TT_GeoHistory'::text function_tested, 
+       'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_3_with_validity_new" and "test_3_with_validity"' description, 
        count(*) = 0 passed,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_with_validity_new'', ''geohistory'' , ''test_3_with_validity'', ''row_id'', TRUE);' check_query
@@ -777,7 +777,7 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
 ---------------------------------------------------------
 UNION ALL
 SELECT '5.1'::text number,
-       'TT_GeoHistory'::text function_tested, 
+       'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_4_without_validity_new" and "test_4_without_validity"' description, 
        count(*) = 0 passed,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_without_validity_new'', ''geohistory'' , ''test_4_without_validity'', ''row_id'', TRUE);' check_query
@@ -787,7 +787,7 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
 ---------------------------------------------------------
 UNION ALL
 SELECT '5.2'::text number,
-       'TT_GeoHistory'::text function_tested, 
+       'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_4_with_validity_new" and "test_4_with_validity"' description, 
        count(*) = 0 passed,
        'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_with_validity_new'', ''geohistory'' , ''test_4_with_validity'', ''row_id'', TRUE);' check_query

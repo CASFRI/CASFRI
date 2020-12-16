@@ -13,7 +13,9 @@
 -------------------------------------------------------------------------------
 -- DROP GeoHistory functions
 --------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistory(name, name, name, name, name, text, text[]);
+DROP FUNCTION IF EXISTS TT_TableGeoHistory(name, name, name, name, name, text, text[]);
+DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, geometry, name, name, name, name, name, text, text[]);
+DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, int, boolean, geometry, name, name, name, name, name, text, text[]);
 DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
 DROP FUNCTION IF EXISTS TT_HasPrecedence(text, text, text, text, boolean, boolean);
 DROP FUNCTION IF EXISTS TT_GeoHistoryOblique(name, name, name, name, name, text, text[], double precision, double precision);

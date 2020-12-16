@@ -55,6 +55,8 @@ CREATE OR REPLACE FUNCTION ST_SafeDifference(
 RETURNS geometry AS $$
   DECLARE
   BEGIN
+    --RAISE NOTICE 'geom1=%', ST_AsText(geom1);
+    --RAISE NOTICE 'geom2=%', ST_AsText(geom2);
     IF safe THEN
       RAISE NOTICE 'ST_SafeDifference() Safe is TRUE...';
       BEGIN
@@ -119,7 +121,7 @@ RETURNS boolean AS $$
 $$ LANGUAGE sql IMMUTABLE;
 
 ------------------------------------------------------------------
--- TT_GeoHistory()
+-- TT_PolygonGeoHistory()
 ------------------------------------------------------------------
 -- Logic table
 -- Overlapping polygons are treated starting with 1) the same year 
@@ -210,8 +212,234 @@ $$ LANGUAGE sql IMMUTABLE;
 -- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
 -- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistory(name, name, name, name, name, name, name[]);
-CREATE OR REPLACE FUNCTION TT_GeoHistory(
+DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, int, boolean, geometry, name, name, name, name, name, name, name[]);
+CREATE OR REPLACE FUNCTION TT_PolygonGeoHistory(
+  poly_inv text,
+  poly_row_id text,
+  poly_photo_year int,
+  poly_is_valid boolean,
+  poly_geom geometry,
+  schemaName name,
+  tableName name,
+  idColName name,
+  geoColName name,
+  photoYearColName name,
+  precedenceColName name,
+  validityColNames name[] DEFAULT NULL
+)
+RETURNS TABLE (id text,
+               poly_id int,
+               isvalid boolean,
+               wkb_geometry geometry, 
+               poly_type text,
+               ref_year int,
+               valid_year_begin int, 
+               valid_year_end int, 
+               valid_time text) AS $$
+  DECLARE
+    debug_l1 boolean = TT_Debug(1);
+    debug_l2 boolean = TT_Debug(2);
+    
+    ovlpPolyQuery text;
+
+    currentRow RECORD;
+    ovlpRow RECORD;
+
+    refYearBegin int = 1930;
+    refYearEnd int = 2030;
+        
+    preValidYearPoly geometry;
+    preValidYearPolyYearEnd int;
+    postValidYearPoly geometry;
+    postValidYearPolyYearBegin int;
+
+    oldOvlpPolyYear int;
+    
+    hasPrecedence boolean;
+    
+    time timestamptz;
+    diffAttempts int;
+    safeDiff boolean;
+  BEGIN
+    -- Prepare the nested LOOP query looping through polygons overlapping the current main loop polygons
+    ovlpPolyQuery = 'SELECT ' || quote_ident(idColName) || '::text gh_row_id, ' ||
+                                 quote_ident(geoColName) || ' gh_geom, ' ||
+                                 'coalesce(' || quote_ident(photoYearColName) || ', ' || refYearBegin || ') gh_photo_year, ' ||
+                                 quote_ident(precedenceColName) || '::text gh_inv, ' ||
+                                 CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, ',') || '])' END || ' gh_is_valid ' ||
+                    'FROM ' || TT_FullTableName(schemaName, tableName) || 
+                   ' WHERE ' || quote_ident(idColName) || '::text != $1 AND ' ||
+                          '(' ||
+                           'ST_Overlaps(' || quote_ident(geoColName) || ', $2) OR ' ||
+                           'ST_Contains($2, ' || quote_ident(geoColName) || ') OR ' ||
+                           'ST_Contains(' || quote_ident(geoColName) || ', $2)) AND ' ||
+                           'ST_Area(ST_Intersection(' || quote_ident(geoColName) || ', $2)) > 0.01 ' ||
+                           'ORDER BY gh_photo_year;';
+    IF debug_l2 THEN RAISE NOTICE '222 ovlpPolyQuery = %', ovlpPolyQuery;END IF;
+    
+    time = clock_timestamp();
+    IF debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 0...';END IF;
+    diffAttempts = 0;
+
+    IF debug_l2 THEN RAISE NOTICE 'Setting safeDiff to FALSE...';END IF;
+    safeDiff = FALSE;
+    -- Here we loop until a satistactory set of historical polygon has been computed first 
+    -- using the unsafe version of ST_Difference() and then with a safe version of it
+    WHILE diffAttempts < 2 LOOP
+      BEGIN
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE '---------------------';END IF;
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE '000 processing polygon ID %. poly_photo_year = %', poly_row_id, poly_photo_year;END IF;
+
+        -- Initialize preValidYearPoly to the current polygon
+        preValidYearPoly = poly_geom;
+        preValidYearPolyYearEnd = refYearEnd;
+
+        -- postValidYearPoly will be initialized only if the current polygon 
+        -- is cut by pre_valid_year polygons or same_valid_year polygons
+        postValidYearPoly = NULL;
+        postValidYearPolyYearBegin = poly_photo_year;
+
+        oldOvlpPolyYear = NULL;
+
+        -- Assign some RETURN values now that are useful for debug only
+        ref_year = poly_photo_year;
+        id = poly_row_id;
+        poly_id = 0;
+        isvalid = poly_is_valid;
+
+        -- LOOP over all overlapping polygons sorted by photoYear ASC
+        FOR ovlpRow IN EXECUTE ovlpPolyQuery 
+        USING poly_row_id, poly_geom LOOP
+          IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+          IF debug_l2 THEN RAISE NOTICE '333 current id=%, py=%, inv=%, isvalid=%', poly_row_id, poly_photo_year, poly_inv, poly_is_valid;END IF;
+          IF debug_l2 THEN RAISE NOTICE '444 ovlp    id=%, py=%, inv=%, isvalid=%, ovlp_area=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid, ST_Area(ST_Intersection(poly_geom, ovlpRow.gh_geom));END IF;
+          -- CASE B - (A - B) RefYB -> RefYE (see logic table above)
+          hasPrecedence = TT_HasPrecedence(poly_inv, poly_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true);
+          IF debug_l2 THEN RAISE NOTICE '555 hasPrecedence = %', hasPrecedence;END IF;
+         
+          IF (ovlpRow.gh_photo_year = poly_photo_year AND 
+             ((hasPrecedence AND NOT poly_is_valid AND ovlpRow.gh_is_valid) OR
+             (NOT hasPrecedence AND (NOT poly_is_valid OR (poly_is_valid AND ovlpRow.gh_is_valid))))) OR
+             (ovlpRow.gh_photo_year < poly_photo_year AND NOT poly_is_valid AND ovlpRow.gh_is_valid) OR
+             (ovlpRow.gh_photo_year > poly_photo_year AND NOT poly_is_valid) THEN
+            IF debug_l2 THEN RAISE NOTICE '666 CASE SAME YEAR: Remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
+
+            preValidYearPoly = ST_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
+            IF postValidYearPoly IS NOT NULL THEN
+              postValidYearPoly = ST_SafeDifference(postValidYearPoly, ovlpRow.gh_geom, 0.01, 'postValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
+            END IF;
+
+          -- CASE C - (A - B) RefYB -> AY - 1 and A AY -> RefYE (see logic table above)
+          ELSIF ovlpRow.gh_photo_year < poly_photo_year AND poly_is_valid AND ovlpRow.gh_is_valid THEN
+            IF debug_l2 THEN RAISE NOTICE '777 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
+            postValidYearPoly = coalesce(postValidYearPoly, preValidYearPoly);
+            postValidYearPolyYearBegin = poly_photo_year;
+
+            preValidYearPoly = ST_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
+
+            preValidYearPolyYearEnd = poly_photo_year - 1;
+
+          -- CASE D - A RefYB -> BY - 1 and (A - B) BY -> RefYE (see logic table above)
+          ELSIF ovlpRow.gh_photo_year > poly_photo_year AND poly_is_valid AND ovlpRow.gh_is_valid THEN
+            IF debug_l2 THEN RAISE NOTICE '888 CASE 3: Return postPoly and set the next one by removing ovlpPoly. year = %', ovlpRow.gh_photo_year;END IF;
+            -- Make sure the last computed polygon still intersect with ovlpPoly
+
+            IF ST_Intersects(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
+              IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year AND postValidYearPoly IS NOT NULL THEN
+                poly_id = poly_id + 1;
+                wkb_geometry = ST_Multi(ST_CollectionExtract(postValidYearPoly, 3));
+                --wkb_geometry = postValidYearPoly;
+
+                poly_type = '2_post_1';
+                valid_year_begin = postValidYearPolyYearBegin;
+                valid_year_end = ovlpRow.gh_photo_year - 1;
+                valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+                IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+                IF debug_l2 THEN RAISE NOTICE 'AAA1 postPoly valid_time=%', valid_time;END IF;
+                IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+                RETURN NEXT;
+              END IF;
+
+              postValidYearPoly = ST_SafeDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, 0.01, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
+              postValidYearPolyYearBegin = ovlpRow.gh_photo_year;
+              preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, ovlpRow.gh_photo_year - 1);
+            END IF;
+          END IF;
+          oldOvlpPolyYear = ovlpRow.gh_photo_year;
+        END LOOP;
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 2...';END IF;
+        diffAttempts = 2;
+      EXCEPTION WHEN OTHERS THEN
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting safeDiff to TRUE...';END IF;
+        safeDiff = TRUE;
+        IF diffAttempts = 1 THEN RAISE EXCEPTION 'TT_PolygonGeoHistory() ERROR: TT_SafeDifference() failed on %...', poly_row_id;END IF;
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 1...';END IF;
+        diffAttempts = 1;
+      END;
+    END LOOP; -- WHILE
+    
+    IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+    ---------------------------------------------------------------------------
+    -- Return the last new polygon (newestPoly, oldCurrentYear, ovlpPoly.photoYear)
+    IF NOT ST_IsEmpty(postValidYearPoly) THEN
+      poly_id = poly_id + 1;
+      wkb_geometry = ST_Multi(ST_CollectionExtract(postValidYearPoly, 3));
+      --wkb_geometry = postValidYearPoly;
+
+      poly_type = '2_post_2';
+      valid_year_begin = postValidYearPolyYearBegin;
+      valid_year_end = refYearEnd;
+      valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+      IF debug_l2 THEN RAISE NOTICE 'AAA2 postPoly valid_time=%', valid_time;END IF;
+      RETURN NEXT;
+    END IF;
+
+    ---------------------------------------------------------------------------
+    -- Return the current polygon (olderPoly, refYearBegin, currentPoly.photoYear - 1))
+    IF NOT ST_IsEmpty(preValidYearPoly) THEN
+      poly_id = poly_id + 1;
+      wkb_geometry = ST_Multi(ST_CollectionExtract(preValidYearPoly, 3));
+      --wkb_geometry = preValidYearPoly;
+  
+      poly_type = '1_pre';
+      valid_year_begin = refYearBegin;
+      valid_year_end = preValidYearPolyYearEnd;
+      valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+      IF debug_l2 THEN RAISE NOTICE 'CCC prePoly valid_time=%', valid_time;END IF;
+      RETURN NEXT;
+    END IF;
+    IF debug_l1 OR debug_l2 THEN RAISE NOTICE  'TOOK % SECONDS', EXTRACT(EPOCH FROM clock_timestamp() - time);END IF;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
+
+DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, geometry, name, name, name, name, name, name, name[]);
+CREATE OR REPLACE FUNCTION TT_PolygonGeoHistory(
+  poly_inv text,
+  poly_row_id text,
+  poly_geom geometry,
+  schemaName name,
+  tableName name,
+  idColName name,
+  geoColName name,
+  photoYearColName name,
+  precedenceColName name,
+  validityColNames name[] DEFAULT NULL
+)
+RETURNS TABLE (id text,
+               poly_id int,
+               isvalid boolean,
+               wkb_geometry geometry, 
+               poly_type text,
+               ref_year int,
+               valid_year_begin int, 
+               valid_year_end int, 
+               valid_time text) AS $$
+ SELECT TT_PolygonGeoHistory(poly_inv, poly_row_id, 1930, TRUE, poly_geom, schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
+$$ LANGUAGE sql VOLATILE;
+
+---------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS TT_TableGeoHistory(name, name, name, name, name, name, name[]);
+CREATE OR REPLACE FUNCTION TT_TableGeoHistory(
   schemaName name,
   tableName name,
   idColName name,
@@ -234,202 +462,52 @@ RETURNS TABLE (id text,
     debug_l2 boolean = TT_Debug(2);
     
     currentPolyQuery text;
-    ovlpPolyQuery text;
 
     colNames text[];
     
     currentRow RECORD;
-    ovlpRow RECORD;
-
-    refYearBegin int = 1930;
-    refYearEnd int = 2030;
-        
-    preValidYearPoly geometry;
-    preValidYearPolyYearEnd int;
-    postValidYearPoly geometry;
-    postValidYearPolyYearBegin int;
-
-    oldOvlpPolyYear int;
-    
-    hasPrecedence boolean;
-    
+   
     gtime timestamptz = clock_timestamp();
-    time timestamptz;
-    attempts int;
-    safe boolean;
   BEGIN
       -- Check that idColName, geoColName and photoYearColName exists
     colNames = TT_TableColumnNames(schemaName, tableName);
     IF NOT idColName = ANY (colNames) THEN
-      RAISE EXCEPTION 'TT_GeoHistory(): Column ''%'' not found in table %.%...', idColName, schemaName, tableName;
+      RAISE EXCEPTION 'TT_TableGeoHistory(): Column ''%'' not found in table %.%...', idColName, schemaName, tableName;
     END IF;
     IF NOT geoColName = ANY (colNames) THEN
-      RAISE EXCEPTION 'TT_GeoHistory(): Column ''%'' not found in table %.%...', geoColName, schemaName, tableName;
+      RAISE EXCEPTION 'TT_TableGeoHistory(): Column ''%'' not found in table %.%...', geoColName, schemaName, tableName;
     END IF;
     IF NOT photoYearColName = ANY (colNames) THEN
-      RAISE EXCEPTION 'TT_GeoHistory(): Column ''%'' not found in table %.%...', photoYearColName, schemaName, tableName;
+      RAISE EXCEPTION 'TT_TableGeoHistory(): Column ''%'' not found in table %.%...', photoYearColName, schemaName, tableName;
     END IF;
     -- Prepare the main LOOP query looping through all polygons of the processed table
-    currentPolyQuery = 'SELECT ' || quote_ident(idColName) || '::text gh_row_id, ' ||
-                            quote_ident(geoColName) || ' gh_geom, ' ||
-                           'coalesce(' || quote_ident(photoYearColName) || ', ' || refYearBegin || ') gh_photo_year, ' ||
-                            quote_ident(precedenceColName) || '::text gh_inv, ' ||
-                            CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, ',') || '])' END || ' gh_is_valid ' ||
+    currentPolyQuery = 'SELECT ' || quote_ident(precedenceColName) || '::text gh_inv, ' ||
+                                    quote_ident(idColName)         || '::text gh_row_id, ' ||
+                                   'coalesce(' || quote_ident(photoYearColName) || ', 1930) gh_photo_year, ' ||
+                                    CASE WHEN validityColNames IS NULL THEN 'TRUE' 
+                                                                       ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, ',') || '])' 
+                                    END || ' gh_is_valid, ' ||
+                                    quote_ident(geoColName) || ' gh_geom ' ||
                'FROM ' || TT_FullTableName(schemaName, tableName) ||
            --    ' WHERE ' || quote_ident(idColName) || '::text = ''NB01-xxxxxxxxxFOREST-xxxxxxxxxx-0000083722-0242567'' ' ||
               ' ORDER BY gh_photo_year DESC;';
     IF debug_l2 THEN RAISE NOTICE '111 currentPolyQuery = %', currentPolyQuery;END IF;
 
-    -- Prepare the nested LOOP query looping through polygons overlapping the current main loop polygons
-    ovlpPolyQuery = 'SELECT ' || quote_ident(idColName) || '::text gh_row_id, ' ||
-                                 quote_ident(geoColName) || ' gh_geom, ' ||
-                                 'coalesce(' || quote_ident(photoYearColName) || ', ' || refYearBegin || ') gh_photo_year, ' ||
-                                 quote_ident(precedenceColName) || '::text gh_inv, ' ||
-                                 CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, ',') || '])' END || ' gh_is_valid ' ||
-                    'FROM ' || TT_FullTableName(schemaName, tableName) || 
-                   ' WHERE ' || quote_ident(idColName) || '::text != $1 AND ' ||
-                          '(' ||
-                           'ST_Overlaps(' || quote_ident(geoColName) || ', $2) OR ' ||
-                           'ST_Contains($2, ' || quote_ident(geoColName) || ') OR ' ||
-                           'ST_Contains(' || quote_ident(geoColName) || ', $2)) AND ' ||
-                           'ST_Area(ST_Intersection(' || quote_ident(geoColName) || ', $2)) > 0.01 ' ||
-                           'ORDER BY gh_photo_year;';
-    IF debug_l2 THEN RAISE NOTICE '222 ovlpPolyQuery = %', ovlpPolyQuery;END IF;
 
     -- LOOP over each polygon of the table
     FOR currentRow IN EXECUTE currentPolyQuery LOOP
-      time = clock_timestamp();
-      IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting attemps to 0...';END IF;
-      attempts = 0;
-      --RAISE NOTICE 'safe=FALSE';
-      safe = FALSE;
-      -- Here we loop until a satistactory set of historical polygon has been computed first 
-      -- using the unsafe version of ST_Difference() and then with a safe version of it
-      WHILE attempts < 2 LOOP
-        BEGIN
-          IF debug_l1 OR debug_l2 THEN RAISE NOTICE '---------------------';END IF;
-          IF debug_l1 OR debug_l2 THEN RAISE NOTICE '000 processing polygon ID %. currentRow.gh_photo_year = %', currentRow.gh_row_id, currentRow.gh_photo_year;END IF;
-
-          -- Initialize preValidYearPoly to the current polygon
-          preValidYearPoly = currentRow.gh_geom;
-          preValidYearPolyYearEnd = refYearEnd;
-
-          -- postValidYearPoly will be initialized only if the current polygon 
-          -- is cut by pre_valid_year polygons or same_valid_year polygons
-          postValidYearPoly = NULL;
-          postValidYearPolyYearBegin = currentRow.gh_photo_year;
-
-          oldOvlpPolyYear = NULL;
-
-          -- Assign some RETURN values now that are useful for debug only
-          ref_year = currentRow.gh_photo_year;
-          id = currentRow.gh_row_id;
-          poly_id = 0;
-          isvalid = currentRow.gh_is_valid;
-
-          -- LOOP over all overlapping polygons sorted by photoYear ASC
-          FOR ovlpRow IN EXECUTE ovlpPolyQuery 
-          USING currentRow.gh_row_id, currentRow.gh_geom, currentRow.gh_photo_year, currentRow.gh_inv LOOP
-            IF debug_l2 THEN RAISE NOTICE '---------';END IF;
-            IF debug_l2 THEN RAISE NOTICE '333 current id=%, py=%, inv=%, isvalid=%', currentRow.gh_row_id, currentRow.gh_photo_year, currentRow.gh_inv, currentRow.gh_is_valid;END IF;
-            IF debug_l2 THEN RAISE NOTICE '444 ovlp    id=%, py=%, inv=%, isvalid=%, ovlp_area=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid, ST_Area(ST_Intersection(currentRow.gh_geom, ovlpRow.gh_geom));END IF;
-            -- CASE B - (A - B) RefYB -> RefYE (see logic table above)
-            hasPrecedence = TT_HasPrecedence(currentRow.gh_inv, currentRow.gh_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true);
-            IF debug_l2 THEN RAISE NOTICE '555 hasPrecedence = %', hasPrecedence;END IF;
-           
-            IF (ovlpRow.gh_photo_year = currentRow.gh_photo_year AND 
-               ((hasPrecedence AND NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
-               (NOT hasPrecedence AND (NOT currentRow.gh_is_valid OR (currentRow.gh_is_valid AND ovlpRow.gh_is_valid))))) OR
-               (ovlpRow.gh_photo_year < currentRow.gh_photo_year AND NOT currentRow.gh_is_valid AND ovlpRow.gh_is_valid) OR
-               (ovlpRow.gh_photo_year > currentRow.gh_photo_year AND NOT currentRow.gh_is_valid) THEN
-              IF debug_l2 THEN RAISE NOTICE '666 CASE SAME YEAR: Remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
-
-              preValidYearPoly = ST_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
-              IF postValidYearPoly IS NOT NULL THEN
-                postValidYearPoly = ST_SafeDifference(postValidYearPoly, ovlpRow.gh_geom, 0.01, 'postValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
-              END IF;
-
-            -- CASE C - (A - B) RefYB -> AY - 1 and A AY -> RefYE (see logic table above)
-            ELSIF ovlpRow.gh_photo_year < currentRow.gh_photo_year AND currentRow.gh_is_valid AND ovlpRow.gh_is_valid THEN
-              IF debug_l2 THEN RAISE NOTICE '777 CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
-              postValidYearPoly = coalesce(postValidYearPoly, preValidYearPoly);
-              postValidYearPolyYearBegin = currentRow.gh_photo_year;
-
-              preValidYearPoly = ST_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
-
-              preValidYearPolyYearEnd = currentRow.gh_photo_year - 1;
-
-            -- CASE D - A RefYB -> BY - 1 and (A - B) BY -> RefYE (see logic table above)
-            ELSIF ovlpRow.gh_photo_year > currentRow.gh_photo_year AND currentRow.gh_is_valid AND ovlpRow.gh_is_valid THEN
-              IF debug_l2 THEN RAISE NOTICE '888 CASE 3: Return postPoly and set the next one by removing ovlpPoly. year = %', ovlpRow.gh_photo_year;END IF;
-              -- Make sure the last computed polygon still intersect with ovlpPoly
-
-              IF ST_Intersects(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
-                IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year AND postValidYearPoly IS NOT NULL THEN
-                  poly_id = poly_id + 1;
-                  wkb_geometry = ST_Multi(ST_CollectionExtract(postValidYearPoly, 3));
-                  --wkb_geometry = postValidYearPoly;
-
-                  poly_type = '2_post_1';
-                  valid_year_begin = postValidYearPolyYearBegin;
-                  valid_year_end = ovlpRow.gh_photo_year - 1;
-                  valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-                  IF debug_l2 THEN RAISE NOTICE '---------';END IF;
-                  IF debug_l2 THEN RAISE NOTICE 'AAA1 postPoly valid_time=%', valid_time;END IF;
-                  IF debug_l2 THEN RAISE NOTICE '---------';END IF;
-                  RETURN NEXT;
-                END IF;
-
-                postValidYearPoly = ST_SafeDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, 0.01, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || currentRow.gh_row_id, ovlpRow.gh_row_id, safe);
-                postValidYearPolyYearBegin = ovlpRow.gh_photo_year;
-                preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, ovlpRow.gh_photo_year - 1);
-              END IF;
-            END IF;
-            oldOvlpPolyYear = ovlpRow.gh_photo_year;
-          END LOOP;
-          IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting attemps to 2...';END IF;
-          attempts = 2;
-        EXCEPTION WHEN OTHERS THEN
-          IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting safe to TRUE...';END IF;
-          safe = TRUE;
-          IF attempts = 1 THEN RAISE EXCEPTION 'TT_GeoHistory() ERROR: TT_SafeDifference() failed on %...', currentRow.gh_row_id;END IF;
-          IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting attemps to 1...';END IF;
-          attempts = 1;
-        END;
-      END LOOP; -- WHILE
-    
-      IF debug_l2 THEN RAISE NOTICE '---------';END IF;
-      ---------------------------------------------------------------------------
-      -- Return the last new polygon (newestPoly, oldCurrentYear, ovlpPoly.photoYear)
-      IF NOT ST_IsEmpty(postValidYearPoly) THEN
-        poly_id = poly_id + 1;
-        wkb_geometry = ST_Multi(ST_CollectionExtract(postValidYearPoly, 3));
-        --wkb_geometry = postValidYearPoly;
-
-        poly_type = '2_post_2';
-        valid_year_begin = postValidYearPolyYearBegin;
-        valid_year_end = refYearEnd;
-        valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-        IF debug_l2 THEN RAISE NOTICE 'AAA2 postPoly valid_time=%', valid_time;END IF;
-        RETURN NEXT;
-      END IF;
-
-      ---------------------------------------------------------------------------
-      -- Return the current polygon (olderPoly, refYearBegin, currentPoly.photoYear - 1))
-      IF NOT ST_IsEmpty(preValidYearPoly) THEN
-        poly_id = poly_id + 1;
-        wkb_geometry = ST_Multi(ST_CollectionExtract(preValidYearPoly, 3));
-        --wkb_geometry = preValidYearPoly;
-  
-        poly_type = '1_pre';
-        valid_year_begin = refYearBegin;
-        valid_year_end = preValidYearPolyYearEnd;
-        valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-        IF debug_l2 THEN RAISE NOTICE 'CCC prePoly valid_time=%', valid_time;END IF;
-        RETURN NEXT;
-      END IF;
-      IF debug_l1 OR debug_l2 THEN RAISE NOTICE  'TOOK % SECONDS', EXTRACT(EPOCH FROM clock_timestamp() - time);END IF;
-
+        RETURN QUERY SELECT * FROM TT_PolygonGeoHistory(currentRow.gh_inv, 
+                                                        currentRow.gh_row_id, 
+                                                        currentRow.gh_photo_year, 
+                                                        currentRow.gh_is_valid, 
+                                                        currentRow.gh_geom, 
+                                                        schemaName, 
+                                                        tableName, 
+                                                        idColName, 
+                                                        geoColName, 
+                                                        photoYearColName, 
+                                                        precedenceColName, 
+                                                        validityColNames);
     END LOOP;
     IF debug_l1 OR debug_l2 THEN RAISE NOTICE  'TOTAL TOOK % SECONDS', EXTRACT(EPOCH FROM clock_timestamp() - gtime);END IF;
     RETURN;
@@ -488,5 +566,5 @@ RETURNS TABLE (id text,
            valid_year_begin, 
            valid_year_end,
            valid_time
-    FROM TT_GeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
+    FROM TT_TableGeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
 $$ LANGUAGE sql VOLATILE;
