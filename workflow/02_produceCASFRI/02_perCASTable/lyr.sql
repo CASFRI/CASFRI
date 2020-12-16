@@ -20,40 +20,48 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -------------------------------------------------------
 -- Check the uniqueness of all species codes
 -------------------------------------------------------
-CREATE UNIQUE INDEX ON translation.species_code_mapping (ab_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ab_species_codes_idx
+ON translation.species_code_mapping (ab_species_codes)
 WHERE TT_NotEmpty(ab_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (bc_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_bc_species_codes_idx
+ON translation.species_code_mapping (bc_species_codes)
 WHERE TT_NotEmpty(bc_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (nb_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nb_species_codes_idx
+ON translation.species_code_mapping (nb_species_codes)
 WHERE TT_NotEmpty(nb_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (nt_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nt_species_codes_idx
+ON translation.species_code_mapping (nt_species_codes)
 WHERE TT_NotEmpty(nt_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (on_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_on_species_codes_idx
+ON translation.species_code_mapping (on_species_codes)
 WHERE TT_NotEmpty(on_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (sk_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_sk_species_codes_idx
+ON translation.species_code_mapping (sk_species_codes)
 WHERE TT_NotEmpty(sk_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (yt_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_yt_species_codes_idx
+ON translation.species_code_mapping (yt_species_codes)
 WHERE TT_NotEmpty(yt_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (ns_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ns_species_codes_idx
+ON translation.species_code_mapping (ns_species_codes)
 WHERE TT_NotEmpty(ns_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (ns2_species_codes)
-WHERE TT_NotEmpty(ns2_species_codes);
-
-CREATE UNIQUE INDEX ON translation.species_code_mapping (pe_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_pe_species_codes_idx
+ON translation.species_code_mapping (pe_species_codes)
 WHERE TT_NotEmpty(pe_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (mb_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_mb_species_codes_idx
+ON translation.species_code_mapping (mb_species_codes)
 WHERE TT_NotEmpty(mb_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (nl_species_codes)
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nl_species_codes_idx
+ON translation.species_code_mapping (nl_species_codes)
 WHERE TT_NotEmpty(nl_species_codes);
 
 -------------------------------------------------------
