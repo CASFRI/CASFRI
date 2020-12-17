@@ -282,13 +282,13 @@ SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_dst', 'qc04_l1_to_qc_ini04
 ------------------------
 -- Translate QC05 using QC_IPF05 generic translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf05', 1, NULL, 'dst');
+SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf', 1, NULL, 'dst');
 
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_qc05_dst('rawfri', 'qc05_l1_to_qc_ipf05_l1_map_dst', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_dst('rawfri', 'qc05_l1_to_qc_ipf_l1_map_dst', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_dst', 'qc05_l1_to_qc_ipf05_l1_map_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_dst', 'qc05_l1_to_qc_ipf_l1_map_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
