@@ -155,7 +155,7 @@ CREATE INDEX sampling_area_nb1_casid_idx ON geohistory.sampling_area_nb1 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_nb1;
 
--- Generate history table - 1 min 51
+-- Generate history table not taking attribute values validity into account - 1 min 51
 DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_new;
 CREATE TABLE geohistory.sampling_area_nb1_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -165,7 +165,102 @@ ORDER BY id, poly_id;
 -- Display
 SELECT *, ST_Area(wkt_geometry) area, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nb1_history_new;
+-----------------------------------------
+-- Generate history table taking attribute values validity into account
+SELECT * FROM geohistory.sampling_area_nb1 LIMIT 100;
 
+SELECT unnest(TT_TableColumnNames('geohistory', 'sampling_area_nb1'));
+
+-- Check if any rows can be considered not valid (all requested attributes values are NULL or empty)
+SELECT * FROM geohistory.sampling_area_nb1
+WHERE NOT TT_RowIsValid(ARRAY[lyr1_soil_moist_reg::text, 
+                              lyr1_species_1::text, 
+                              lyr1_species_2::text, 
+                              lyr1_species_3::text, 
+                              lyr1_species_4::text, 
+                              lyr1_species_5::text, 
+                              lyr1_species_6::text, 
+                              lyr1_site_class::text, 
+                              lyr1_site_index::text, 
+                              lyr2_soil_moist_reg::text, 
+                              lyr2_species_1::text, 
+                              lyr2_species_2::text, 
+                              lyr2_species_3::text, 
+                              lyr2_species_4::text, 
+                              lyr2_species_5::text, 
+                              lyr2_species_6::text, 
+                              lyr2_site_class::text, 
+                              lyr2_site_index::text, 
+                              nfl1_soil_moist_reg::text, 
+                              nfl1_nat_non_veg::text, 
+                              nfl1_non_for_anth::text, 
+                              nfl1_non_for_veg::text, 
+                              nfl2_soil_moist_reg::text, 
+                              nfl2_nat_non_veg::text, 
+                              nfl2_non_for_anth::text, 
+                              nfl2_non_for_veg::text, 
+                              dist_type_1::text, 
+                              dist_year_1::text, 
+                              dist_type_2::text, 
+                              dist_year_2::text, 
+                              dist_type_3::text, 
+                              dist_year_3::text]);
+
+DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_with_validity_new;
+CREATE TABLE geohistory.sampling_area_nb1_history_with_validity_new AS
+SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM TT_TableGeoHistory('geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id', ARRAY['lyr1_soil_moist_reg', 
+                                                                                                                     'lyr1_species_1', 
+                                                                                                                     'lyr1_species_2', 
+                                                                                                                     'lyr1_species_3', 
+                                                                                                                     'lyr1_species_4', 
+                                                                                                                     'lyr1_species_5', 
+                                                                                                                     'lyr1_species_6', 
+                                                                                                                     'lyr1_site_class', 
+                                                                                                                     'lyr1_site_index',
+                                                                                                                     'lyr2_soil_moist_reg', 
+                                                                                                                     'lyr2_species_1', 
+                                                                                                                     'lyr2_species_2', 
+                                                                                                                     'lyr2_species_3', 
+                                                                                                                     'lyr2_species_4', 
+                                                                                                                     'lyr2_species_5', 
+                                                                                                                     'lyr2_species_6', 
+                                                                                                                     'lyr2_site_class', 
+                                                                                                                     'lyr2_site_index', 
+                                                                                                                     'nfl1_soil_moist_reg',
+                                                                                                                     'nfl1_nat_non_veg',
+                                                                                                                     'nfl1_non_for_anth', 
+                                                                                                                     'nfl1_non_for_veg', 
+                                                                                                                     'nfl2_soil_moist_reg',
+                                                                                                                     'nfl2_nat_non_veg',
+                                                                                                                     'nfl2_non_for_anth', 
+                                                                                                                     'nfl2_non_for_veg', 
+                                                                                                                     'dist_type_1',
+                                                                                                                     'dist_year_1', 
+                                                                                                                     'dist_type_2',
+                                                                                                                     'dist_year_2', 
+                                                                                                                     'dist_type_3',
+                                                                                                                     'dist_year_3'])
+ORDER BY id, poly_id;
+
+-- Display
+SELECT *, ST_Area(wkt_geometry) area, ST_GeomFromText(wkt_geometry) geom
+FROM geohistory.sampling_area_nb1_history_with_validity_new;
+
+-----------------------------------------
+SELECT * FROM geohistory.sampling_area_nb1 LIMIT 1;
+
+-- Now try with TT_PolygonGeoHistory
+DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_polyperpoly_new;
+CREATE TABLE geohistory.sampling_area_nb1_history_polyperpoly_new AS
+SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, coalesce(photo_year, 1930), TRUE, geometry,
+                             'geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+FROM geohistory.sampling_area_nb1
+ORDER BY id, poly_id;
+
+-- Display
+SELECT *
+FROM geohistory.sampling_area_nb1_history_polyperpoly_new;
 --------------------------------------------------------------------------------------
 -- Sampling area NB2
 --------------------------------------------------------------------------------------
@@ -192,6 +287,7 @@ ORDER BY id, poly_id;
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nb2_history_new;
+
 --------------------------------------------------------------------------------------
 -- Sampling area 'NT1'
 --------------------------------------------------------------------------------------
@@ -223,6 +319,7 @@ FROM geohistory.sampling_area_nt1_history_new;
 SELECT ST_GeometryType(ST_GeomFromText(wkt_geometry)) gtype, count(*)
 FROM geohistory.sampling_area_nt1_history_new
 GROUP BY ST_GeometryType(ST_GeomFromText(wkt_geometry));
+
 --------------------------------------------------------------------------------------
 -- Sampling area 'NT2'
 --------------------------------------------------------------------------------------
@@ -249,6 +346,7 @@ ORDER BY id, poly_id;
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nt2_history_new;
+
 --------------------------------------------------------------------------------------
 -- Sampling area BC1
 --------------------------------------------------------------------------------------
@@ -275,6 +373,7 @@ ORDER BY id, poly_id;
 -- Display
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_bc1_history_new;
+
 --------------------------------------------------------------------------------------
 -- Sampling area BC2
 --------------------------------------------------------------------------------------
