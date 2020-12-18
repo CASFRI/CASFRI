@@ -261,12 +261,15 @@ RETURNS TABLE (id text,
     diffAttempts int;
     safeDiff boolean;
   BEGIN
+    IF poly_photo_year IS NULL OR poly_photo_year < 0 THEN
+      poly_photo_year = refYearBegin;
+    END IF;
     -- Prepare the nested LOOP query looping through polygons overlapping the current main loop polygons
     ovlpPolyQuery = 'SELECT ' || quote_ident(idColName) || '::text gh_row_id, ' ||
                                  quote_ident(geoColName) || ' gh_geom, ' ||
-                                 'coalesce(' || quote_ident(photoYearColName) || ', ' || refYearBegin || ') gh_photo_year, ' ||
+                                 'CASE WHEN ' || quote_ident(photoYearColName) || ' < 0 OR ' || quote_ident(photoYearColName) || ' IS NULL THEN ' || refYearBegin || ' ELSE ' || quote_ident(photoYearColName) || ' END gh_photo_year, ' ||
                                  quote_ident(precedenceColName) || '::text gh_inv, ' ||
-                                 CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, ',') || '])' END || ' gh_is_valid ' ||
+                                 CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, '::text,') || '::text])' END || ' gh_is_valid ' ||
                     'FROM ' || TT_FullTableName(schemaName, tableName) || 
                    ' WHERE ' || quote_ident(idColName) || '::text != $1 AND ' ||
                           '(' ||
@@ -302,7 +305,7 @@ RETURNS TABLE (id text,
         oldOvlpPolyYear = NULL;
 
         -- Assign some RETURN values now that are useful for debug only
-        ref_year = poly_photo_year;
+        ref_year = postValidYearPolyYearBegin;
         id = poly_row_id;
         poly_id = 0;
         isvalid = poly_is_valid;
@@ -460,11 +463,9 @@ RETURNS TABLE (id text,
   DECLARE
     debug_l1 boolean = TT_Debug(1);
     debug_l2 boolean = TT_Debug(2);
-    
-    currentPolyQuery text;
 
+    currentPolyQuery text;
     colNames text[];
-    
     currentRow RECORD;
    
     gtime timestamptz = clock_timestamp();
@@ -483,16 +484,15 @@ RETURNS TABLE (id text,
     -- Prepare the main LOOP query looping through all polygons of the processed table
     currentPolyQuery = 'SELECT ' || quote_ident(precedenceColName) || '::text gh_inv, ' ||
                                     quote_ident(idColName)         || '::text gh_row_id, ' ||
-                                   'coalesce(' || quote_ident(photoYearColName) || ', 1930) gh_photo_year, ' ||
+                                    quote_ident(photoYearColName)  || ' gh_photo_year, ' ||
                                     CASE WHEN validityColNames IS NULL THEN 'TRUE' 
-                                                                       ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, ',') || '])' 
+                                                                       ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, '::text,') || '::text])' 
                                     END || ' gh_is_valid, ' ||
                                     quote_ident(geoColName) || ' gh_geom ' ||
                'FROM ' || TT_FullTableName(schemaName, tableName) ||
            --    ' WHERE ' || quote_ident(idColName) || '::text = ''NB01-xxxxxxxxxFOREST-xxxxxxxxxx-0000083722-0242567'' ' ||
               ' ORDER BY gh_photo_year DESC;';
     IF debug_l2 THEN RAISE NOTICE '111 currentPolyQuery = %', currentPolyQuery;END IF;
-
 
     -- LOOP over each polygon of the table
     FOR currentRow IN EXECUTE currentPolyQuery LOOP

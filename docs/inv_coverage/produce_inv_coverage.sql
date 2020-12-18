@@ -19,6 +19,22 @@
 ------------------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS casfri50_coverage;
 ------------------------------------------------------------------------------
+-- TT_PrintMessage
+--
+-- Print debug information when executing SQL
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_PrintMessage(text);
+CREATE OR REPLACE FUNCTION TT_PrintMessage(
+  msg text
+)
+RETURNS boolean AS $$
+  DECLARE
+  BEGIN
+    RAISE NOTICE '%', msg;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE 'plpgsql' IMMUTABLE STRICT;
+------------------------------------------------------------------------------
 -- TT_RemoveHoles
 --
 -- Remove all hole from a polygon or a multipolygon
@@ -319,7 +335,7 @@ WHERE left(cas_id, 4) = 'NT01';
 SELECT ST_NPoints(geometry) nb
 FROM casfri50_coverage.nt01;
 ------------------------------------------------------------------------------
--- NT02 - In progress - ERROR
+-- NT02 - 320944 - In progress - ERROR
 -- ST_Union() - ERROR
 -- ST_Simplify(ST_Union(),10) - ERROR
 -- ST_BufferedUnion(, 10) - 80310 points in 107h45
@@ -342,6 +358,9 @@ CREATE INDEX cov_nt02_geom_idx ON casfri50_coverage.nt02 USING gist(geometry);
 SELECT count(*)
 FROM casfri50_coverage.nt02;
 
+-- Display
+SELECT * FROM casfri50_coverage.nt02;
+
 -- ERROR
 DROP TABLE IF EXISTS casfri50_coverage.nt02_only_surrounded;
 CREATE TABLE casfri50_coverage.nt02_only_surrounded AS
@@ -362,6 +381,49 @@ FROM casfri50_coverage.nt02_only_surrounded;
 
 -- Display
 SELECT * FROM casfri50_coverage.nt02_notsurroundedunion;
+--------------
+-- Try again on a gridded version 2
+DROP TABLE IF EXISTS casfri50_coverage.nt02_gridded2;
+CREATE TABLE casfri50_coverage.nt02_gridded2 AS
+WITH gridded AS (
+  SELECT cas_id, ST_SplitByGrid(geometry, 10000) grid
+  FROM casfri50_coverage.nt02
+)
+SELECT cas_id, (grid).tid, (grid).geom
+FROM gridded;
+
+SELECT count(*) FROM casfri50_coverage.nt02
+UNION ALL
+SELECT count(*) FROM casfri50_coverage.nt02_gridded2;
+
+CREATE INDEX cov_nt02_gridded2_geom_idx ON casfri50_coverage.nt02_gridded2 USING gist(geom);
+    
+DROP TABLE IF EXISTS casfri50_coverage.nt02_gridded2_union;
+CREATE TABLE casfri50_coverage.nt02_gridded2_union AS
+SELECT tid, ST_Union(geom) geom
+FROM casfri50_coverage.nt02_gridded2
+GROUP BY tid;
+
+-- Display
+SELECT *, ST_NPoints(geom) np 
+FROM casfri50_coverage.nt02_gridded2_union
+ORDER BY np DESC;
+
+CREATE INDEX cov_nt02_gridded2_union_geom_idx ON casfri50_coverage.mb05_gridded2_union USING gist(geom);
+
+DROP TABLE IF EXISTS casfri50_coverage.nt02_gridded2_union_union;
+CREATE TABLE casfri50_coverage.nt02_gridded2_union_union AS
+SELECT ST_Union(geom) geom
+FROM casfri50_coverage.nt02_gridded2_union;
+
+-- Display without holes BUG!
+SELECT TT_RemoveHoles(geom), ST_NPoints(geom) np 
+FROM casfri50_coverage.nt02_gridded2_union_union;
+
+SELECT ST_NBiggestExteriorRings(geom, 7)
+FROM casfri50_coverage.nt02_gridded2_union_union;
+
+
 ------------------------------------------------------------------------------
 -- SK05 - 421977 - DONE
 DROP TABLE IF EXISTS casfri50_coverage.sk05;
@@ -413,8 +475,14 @@ SELECT ST_NPoints(ST_Simplify(geom, 10)) geom
 FROM casfri50_coverage.sk05_notsurroundedunion;
 ------------------------------------------------------------------------------
 -- MB05 - 514157 - In progress
-DROP TABLE IF EXISTS casfri50_coverage.mb05;
-CREATE TABLE casfri50_coverage.mb05 AS
+DROP TABLE IF EXISTS casfri50_coverage.mb05_union;
+CREATE TABLE casfri50_coverage.mb05_union AS
+SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
+FROM casfri50.geo_all
+WHERE left(cas_id, 4) = 'MB05';
+
+DROP TABLE IF EXISTS casfri50_coverage.mb05_bufunion;
+CREATE TABLE casfri50_coverage.mb05_bufunion AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'MB05';
@@ -451,6 +519,74 @@ FROM casfri50_coverage.mb05_only_surrounded;
 
 -- Display
 SELECT * FROM casfri50_coverage.mb05_notsurroundedunion;
+
+--------------
+-- Try again on a gridded version
+CREATE INDEX cov_mb05_area_idx ON casfri50_coverage.mb05 (ST_Area(geometry))
+    
+SELECT geometry
+FROM casfri50_coverage.mb05
+WHERE ST_Area(geometry) > 1000000;
+
+DROP TABLE IF EXISTS casfri50_coverage.mb05_gridded;
+CREATE TABLE casfri50_coverage.mb05_gridded AS
+SELECT cas_id, geometry FROM casfri50_coverage.mb05
+WHERE ST_Area(geometry) < 100000000
+UNION ALL
+SELECT cas_id, (ST_SplitByGrid(geometry, 10000)).geom
+FROM casfri50_coverage.mb05
+WHERE ST_Area(geometry) >= 100000000;
+
+SELECT geometry
+FROM casfri50_coverage.mb05
+WHERE ST_Area(geometry) > 900000 
+
+CREATE INDEX cov_mb05_gridded_geom_idx
+    ON casfri50_coverage.mb05_gridded USING gist
+    (geometry);
+    
+DROP TABLE IF EXISTS casfri50_coverage.mb05_gridded_only_surrounded;
+CREATE TABLE casfri50_coverage.mb05_gridded_only_surrounded AS
+SELECT a.cas_id id, a.geometry geom
+FROM casfri50_coverage.mb05_gridded a, casfri50_coverage.mb05_gridded b
+WHERE ST_Intersects(a.geometry, b.geometry)
+GROUP BY a.cas_id, a.geometry
+HAVING NOT TT_IsSurroundedAgg(a.geometry, b.geometry);
+
+--------------
+-- Try again on a gridded version 2
+DROP TABLE IF EXISTS casfri50_coverage.mb05_gridded2;
+CREATE TABLE casfri50_coverage.mb05_gridded2 AS
+WITH gridded AS (
+  SELECT cas_id, ST_SplitByGrid(geometry, 10000) grid
+  FROM casfri50_coverage.mb05
+)
+SELECT cas_id, (grid).tid, (grid).geom
+FROM gridded;
+
+SELECT count(*) FROM casfri50_coverage.mb05
+UNION ALL
+SELECT count(*) FROM casfri50_coverage.mb05_gridded2;
+
+CREATE INDEX cov_mb05_gridded2_geom_idx ON casfri50_coverage.mb05_gridded2 USING gist(geom);
+    
+DROP TABLE IF EXISTS casfri50_coverage.mb05_gridded2_union;
+CREATE TABLE casfri50_coverage.mb05_gridded2_union AS
+SELECT tid, ST_Union(geom) geom
+FROM casfri50_coverage.mb05_gridded2
+GROUP BY tid;
+
+-- Display
+SELECT * FROM casfri50_coverage.mb05_gridded2_union;
+
+SELECT ST_NPoints(geom) np
+FROM casfri50_coverage.mb05_gridded2_union
+ORDER BY np DESC;
+
+DROP TABLE IF EXISTS casfri50_coverage.mb05_gridded2_union_union;
+CREATE TABLE casfri50_coverage.mb05_gridded2_union_union AS
+SELECT ST_Union(geom) geom
+FROM casfri50_coverage.mb05_gridded2_union;
 ------------------------------------------------------------------------------
 -- SK04 - 633522 - DONE
 DROP TABLE IF EXISTS casfri50_coverage.sk04;
@@ -532,7 +668,7 @@ FROM casfri50_coverage.nb01_only_surrounded;
 -- Display
 SELECT * FROM casfri50_coverage.nb01_notsurroundedunion;
 ------------------------------------------------------------------------------
--- NS03 - 995886 - In progress
+-- NS03 - 995886 - DONE
 DROP TABLE IF EXISTS casfri50_coverage.ns03;
 CREATE TABLE casfri50_coverage.ns03 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
@@ -548,7 +684,7 @@ WHERE left(cas_id, 4) = upper('ns03');
 
 CREATE INDEX cov_ns03_geom_idx ON casfri50_coverage.ns03 USING gist(geometry);
 
---
+-- 14h
 DROP TABLE IF EXISTS casfri50_coverage.ns03_only_surrounded;
 CREATE TABLE casfri50_coverage.ns03_only_surrounded AS
 SELECT a.cas_id id, a.geometry geom
@@ -563,7 +699,7 @@ FROM casfri50_coverage.ns03_only_surrounded;
 -- Display
 SELECT * FROM casfri50_coverage.ns03_only_surrounded;
 
--- Union them 24m
+-- Union them 8m
 DROP TABLE IF EXISTS casfri50_coverage.ns03_notsurroundedunion;
 CREATE TABLE casfri50_coverage.ns03_notsurroundedunion AS
 SELECT TT_RemoveHoles(ST_Union(geom)) geom
@@ -606,3 +742,22 @@ CREATE TABLE casfri50_coverage.bc10 AS
 SELECT ST_BufferedUnion(geometry, 10, 10 ORDER BY ST_GeoHash(ST_Centroid(ST_Transform(geometry, 4269)))) geometry
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'BC10';
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- Try a once for all method
+CREATE TABLE casfri50_coverage.precise_coverage AS
+WITH gridded AS (
+  SELECT left(cas_id, 4) inv, ST_SplitByGrid(geometry, 10000) split
+  FROM casfri50.geo_all
+  WHERE left(cas_id, 2) = 'SK' OR left(cas_id, 2) = 'AB'
+), first_level_union AS (
+  SELECT inv, ST_Union((split).geom) geom
+  FROM gridded
+  GROUP BY inv, (split).tid
+)
+SELECT inv, ST_Union(geom) geom
+FROM first_level_union
+GROUP BY inv;
+
+SELECT *, ST_NPoints(geom) np 
+FROM casfri50_coverage.preceise_coverage;
