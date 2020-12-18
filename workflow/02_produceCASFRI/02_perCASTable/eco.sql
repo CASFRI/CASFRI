@@ -226,12 +226,12 @@ SELECT * FROM TT_Translate_qc04_eco('rawfri', 'qc04_l1_to_qc_ini04_l1_map_eco');
 SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_eco', 'qc04_l1_to_qc_ini04_l1_map_eco');
 ------------------------
 -- Translate QC05 using QC_IPF05 translation table
-SELECT TT_CreateMappingView('rawfri', 'qc05', 'qc_ipf05', NULL, 'eco');
+SELECT TT_CreateMappingView('rawfri', 'qc05', 'qc_ipf', NULL, 'eco');
 
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_qc05_eco('rawfri', 'qc05_l1_to_qc_ipf05_l1_map_eco');
+SELECT * FROM TT_Translate_qc05_eco('rawfri', 'qc05_l1_to_qc_ipf_l1_map_eco');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_eco', 'qc05_l1_to_qc_ipf05_l1_map_eco');
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_eco', 'qc05_l1_to_qc_ipf_l1_map_eco');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
