@@ -638,7 +638,8 @@ ORDER BY inv;
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.lyr_all
-GROUP BY left(cas_id, 4), layer;
+GROUP BY left(cas_id, 4), layer
+ORDER BY left(cas_id, 4), layer;
 -- inv lyr nb
 -- AB06	1	9403
 -- AB06	2	4776
