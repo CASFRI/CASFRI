@@ -13,7 +13,7 @@
 -------------------------------------------------------------------------------
 -- Validation functions
 -------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nb_nbi01_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_validation(text, text, text, text);
@@ -49,7 +49,11 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_origin_newfoundland_validation(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_height_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_hasCountOfNotNull(text, text, text, text);
-
+DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_validation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_validation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -67,7 +71,7 @@ DROP FUNCTION IF EXISTS TT_vri01_dist_yr_translation(text, text);
 DROP FUNCTION IF EXISTS TT_avi01_non_for_veg_translation(text, text);
 DROP FUNCTION IF EXISTS TT_avi01_stand_structure_translation(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_stand_structure_translation(text, text, text);
-DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nb_nbi01_wetland_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_nb01_productive_for_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nbi01_nb02_productive_for_translation(text);
 DROP FUNCTION IF EXISTS TT_fim_species_code(text, int);
@@ -116,12 +120,22 @@ DROP FUNCTION IF EXISTS TT_lyr_layer_translation(text, text, text, text, text, t
 DROP FUNCTION IF EXISTS TT_lyr_layer_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_lyr_layer_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_lyr_layer_translation(text, text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_translation(text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_translation(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_translation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_translation(text, text, text);
 
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_nbi01_wetland_code(text, text, text);
+DROP FUNCTION IF EXISTS TT_nb_nbi01_wetland_code(text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_wetland_code(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_code(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_code(text, text, text);
+DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_code(text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_code(text, text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text);
 -------------------------------------------------------------------------------
 -- Tools functions
 -------------------------------------------------------------------------------

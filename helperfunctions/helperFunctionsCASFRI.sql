@@ -1453,7 +1453,7 @@ RETURNS text AS $$
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSE
-      RETURN CASE WHEN rulelc = 'nbi01_wetland_validation' THEN 'NOT_APPLICABLE'
+      RETURN CASE WHEN rulelc = 'nb_nbi01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'vri01_nat_non_veg_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'vri01_non_for_anth_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'vri01_non_for_veg_validation' THEN 'INVALID_VALUE'
@@ -1471,14 +1471,479 @@ RETURNS text AS $$
                   WHEN rulelc = 'qc_prg3_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_wetland_validation' THEN 'NOT_APPLICABLE'
-                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
+				  WHEN rulelc = 'ab_avi01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'nl_nli01_wetland_validation' THEN 'NOT_APPLICABLE'
+ 				  WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
+ 				  WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Internal functions used by validation and translation functions...
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_vri01_wetland_code(text, text, text)
+--
+-- Logic to return the correct 4 letter wetland code
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_code(text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_bc_vri01_wetland_code(
+  inventory_standard_cd text,
+  l1_species_cd_1 text,
+  l1_species_pct_1 text,
+  l1_species_cd_2 text,
+  non_productive_descriptor_cd text,
+  l1_non_forest_descriptor text,
+  land_cover_class_cd_1 text,
+  soil_moisture_regime_1 text,
+  l1_crown_closure text,
+  l1_proj_height_1 text
+)
+RETURNS text AS $$
+  DECLARE
+    _l1_species_pct_1 double precision := l1_species_pct_1::double precision;
+	_l1_crown_closure double precision := l1_crown_closure::double precision;
+	_l1_proj_height_1 double precision := l1_proj_height_1::double precision;
+  BEGIN
+    RETURN CASE
+		WHEN inventory_standard_cd='F' AND l1_species_cd_1 IN('SF','CW','YC') AND non_productive_descriptor_cd='S' THEN 'STNN'
+		WHEN inventory_standard_cd='F' AND l1_species_cd_1 IN('SF','CW','YC') AND non_productive_descriptor_cd='NP' THEN 'STNN'
+		WHEN inventory_standard_cd='F' AND l1_non_forest_descriptor='NPBR' THEN 'STNN'
+		WHEN inventory_standard_cd='F' AND l1_non_forest_descriptor='S' THEN 'SONS'
+		WHEN inventory_standard_cd='F' AND l1_non_forest_descriptor='MUSKEG' THEN 'STNN'
+		WHEN inventory_standard_cd IN('V','I') AND land_cover_class_cd_1='W' THEN 'W---'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND l1_species_cd_1='SB' AND _l1_species_pct_1=100 AND _l1_crown_closure=50 AND _l1_proj_height_1=12 THEN 'BTNN'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND l1_species_cd_1 IN('SB','LT') AND _l1_species_pct_1=100 AND _l1_crown_closure>=50 AND _l1_proj_height_1>=12 THEN 'STNN'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND l1_species_cd_1 IN('SB','LT') AND l1_species_cd_2 IN('SB','LT') AND _l1_crown_closure>=50 AND _l1_proj_height_1>=12 THEN 'STNN'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND l1_species_cd_1 IN('EP','EA','CW','YR','PI') THEN 'STNN'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND l1_species_cd_1 IN('SB','LT') AND l1_species_cd_2 IN('SB','LT') AND _l1_crown_closure<50 THEN 'FTNN'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND l1_species_cd_1='LT' AND _l1_species_pct_1=100 AND _l1_proj_height_1<12 THEN 'FTNN'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND land_cover_class_cd_1 IN('ST','SL') THEN 'SONS'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND land_cover_class_cd_1 IN('HE','HF','HG') THEN 'MONG'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND land_cover_class_cd_1 IN('BY','BM') THEN 'FONN'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND land_cover_class_cd_1='BL' THEN 'BONN'
+		WHEN inventory_standard_cd IN('V','I') AND soil_moisture_regime_1 IN('7','8') AND land_cover_class_cd_1='MU' THEN 'TMNN'
+        ELSE NULL
+    END;
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_wetland_code(text, text, text)
+--
+-- Run logic to generate 4 letter code
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_code(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_wetland_code(
+  stand_id text,
+  site text,
+  species_comp text
+)
+RETURNS text AS $$
+	SELECT CASE
+	    WHEN stand_id='920' THEN 'BONS'
+	    WHEN stand_id='925' THEN 'BTNN'
+	    WHEN stand_id='930' THEN 'MONG'
+	    WHEN stand_id='900' AND site='W' THEN 'STNN'
+	    WHEN stand_id='910' AND site='W' THEN 'STNN'
+	    WHEN species_comp IN('BSTL', 'BSTLBF', 'BSTLWB' ) THEN 'STNN'
+	    WHEN species_comp IN('TL', 'TLBF','TLWB', 'TLBS', 'TLBSBF', 'TLBSWB') THEN 'STNN'
+	    WHEN species_comp IN('WBTL', 'WBTLBS', 'WBBSTL') THEN 'STNN'
+		ELSE NULL
+    END;
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_ab_avi01_wetland_code(text, text, text)
+--
+-- Define the 4 letter wetland code logic for AB AVI
+-- Note sp per value of 10 represents 100
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_code(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ab_avi01_wetland_code(
+  moisture text,
+  nonfor_veg text,
+  nat_nonveg text,
+  sp1 text,
+  sp2 text,
+  crownclose text,
+  sp1_percnt text
+)
+RETURNS text AS $$
+    SELECT CASE
+		WHEN moisture='w' AND nonfor_veg IN('SO','SC') THEN 'SONS'
+		WHEN moisture='w' AND nonfor_veg IN('HG','HF') THEN 'MONG'
+		WHEN moisture='w' AND nonfor_veg='BR' THEN 'FONG'
+		WHEN moisture='w' AND nat_nonveg='NWB' THEN 'SONS'
+		WHEN moisture IN('a','d','m') AND (sp1='LT' OR sp2='LT') AND crownclose IN('A','B') THEN 'FTNN'
+		WHEN moisture IN('a','d','m') AND (sp1='LT' OR sp2='LT') AND crownclose='C' THEN 'STNN'
+		WHEN moisture IN('a','d','m') AND (sp1='LT' OR sp2='LT') AND crownclose='D' THEN 'SFNN'
+		WHEN moisture IN('a','d','m') AND (sp1='SB' AND sp1_percnt='10') AND crownclose IN('A','B') THEN 'BTNN'
+		WHEN moisture IN('a','d','m') AND (sp1='SB' AND sp1_percnt='10') AND crownclose='C' THEN 'STNN'
+		WHEN moisture IN('a','d','m') AND (sp1='SB' AND sp1_percnt='10') AND crownclose='D' THEN 'SFNN'
+		WHEN moisture IN('a','d','m') AND ((sp1='SB' OR sp1='FB') AND (sp2 IS NULL OR sp2!='LT')) AND crownclose IN('A','B','C') THEN 'STNN'
+		WHEN moisture IN('a','d','m') AND ((sp1='SB' OR sp1='FB') AND (sp2 IS NULL OR sp2!='LT')) AND crownclose='D' THEN 'SFNN'
+		WHEN moisture IN('a','d','m') AND sp1 IN('BW','PB') AND crownclose IN('A','B','C') THEN 'STNN'
+		WHEN moisture IN('a','d','m') AND sp1 IN('BW','PB') AND crownclose='D' THEN 'SFNN'
+        ELSE NULL
+    END;
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_nb_nbi01_wetland_code(text, text, text)
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nb_nbi01_wetland_code(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nb_nbi01_wetland_code(
+  wc text,
+  vt text,
+  im text
+)
+RETURNS text AS $$
+  SELECT CASE
+           WHEN wc='BO' AND vt='EV' AND im='BP' THEN 'BO-B'
+           WHEN wc='FE' AND vt='EV' AND im='BP' THEN 'FO-B'
+           WHEN wc='BO' AND vt='EV' AND im='DI' THEN 'BO--'
+           WHEN wc='BO' AND vt='AW' AND im='BP' THEN 'BT-B'
+           WHEN wc='BO' AND vt='OV' AND im='BP' THEN 'OO-B'
+           WHEN wc='FE' AND vt='EV' AND im IN ('MI', 'DI') THEN 'FO--'
+           WHEN wc='FE' AND vt='OV' AND im='MI' THEN 'OO--'
+           WHEN wc='BO' AND vt='FS' THEN 'BTNN'
+           WHEN wc='BO' AND vt='SV' THEN 'BONS'
+           WHEN wc='FE' AND vt IN ('FH', 'FS') THEN 'FTNN'
+           WHEN wc='FE' AND vt IN ('AW', 'SV') THEN 'FONS'
+           WHEN wc='FW' AND im='BP' THEN 'OF-B'
+           WHEN wc='FE' AND vt='EV' THEN 'FO--'
+           WHEN wc IN ('FE', 'BO') AND vt='OV' THEN 'OO--'
+           WHEN wc IN ('FE', 'BO') AND vt='OW' THEN 'O---'
+           WHEN wc='BO' AND vt='EV' THEN 'BO--'
+           WHEN wc='BO' AND vt='AW' THEN 'BT--'
+           WHEN wc='AB' THEN 'OONN'
+           WHEN wc='FM' THEN 'MONG'
+           WHEN wc='FW' THEN 'STNN'
+           WHEN wc='SB' THEN 'SONS'
+           WHEN wc='CM' THEN 'MCNG'
+           WHEN wc='TF' THEN 'TMNN'
+           WHEN wc IN ('NP', 'WL') THEN 'W---'
+           ELSE NULL
+         END;
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_fim_species_code(text, int)
+--
+-- sp_string text - source string of species and percentages
+-- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
+--
+-- This function is used by TT_fim_species_translation and TT_fim_species_percent_translation
+-- to extract the requested species name an percent code.
+-- The following functions take that code and extract either species name or percent info.
+-- String structure is a 2-letter species code, followed by 2 spaces, then a 2 digit percentage.
+-- In cases where a species is 100%, there is only 1 space so the total length of all codes is 6.
+-- Multiple codes are concatenated together. Max number of species in ON is 10.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fim_species_code(text, int);
+CREATE OR REPLACE FUNCTION TT_fim_species_code(
+  sp_string text,
+  sp_number int
+)
+RETURNS text AS $$
+  DECLARE
+    start_char int;
+    code text;
+  BEGIN
+    SELECT (array_agg(a))[sp_number] 
+    FROM (SELECT (regexp_matches(trim(sp_string), '[a-z]+\s+[0-9]+', 'gi'))[1] a ) foo
+    INTO code;
+    RETURN code;
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE STRICT;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_qc_wetland_code(text, text, text, text, text, text)
+--
+-- CO_TER
+-- CL_DRAIN
+-- gr_ess
+-- cl_dens
+-- cl_haut
+-- TYPE_ECO
+--
+-- Return 4 character wetland code based on the logic defined in the issue.
+-- Species values change depending on inventory. QC03 species are different
+-- than QC04éQC05 species.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_wetland_code(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_qc_wetland_code(
+  CO_TER text,
+  CL_DRAIN text,
+  gr_ess text,
+  cl_den text,
+  cl_haut text,
+  TYPE_ECO text,
+  inventory_id text
+)
+RETURNS text AS $$
+  DECLARE
+    _bad_drainage text[] := ARRAY['50', '51', '52', '53', '54', '60', '61', '62', '63', '64'];
+    _cl_den double precision;
+    _cl_haut double precision;
+  BEGIN
+    
+    -- set density and height to zero if they are null so that logic tests dont throw error. In prg3 and 4 convert density and height codes to a valuewithin the range of lower to upper
+    IF cl_den IS NULL THEN
+      _cl_den = 0;
+    ELSE
+      _cl_den = tt_mapInt(cl_den, '{''A'', ''B'', ''C'', ''D''}', '{90, 70, 50, 30}');
+    END IF;
+    
+    IF cl_haut IS NULL THEN
+      _cl_haut = 0;
+    ELSE
+      _cl_haut = tt_mapDouble(cl_haut, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{30, 19, 14, 9, 5, 2.5, 0.5}');
+    END IF;
+    
+    -- SONS: swamp, no trees, no permafrost, shrub 25%
+    -- denude humide
+    IF CO_TER = 'DH' THEN
+      RETURN 'SONS';
+    END IF;
+    
+    -- alder with bad drainage
+    IF CL_DRAIN = any(_bad_drainage) AND CO_TER = 'AL' THEN
+      RETURN 'SONS';
+    END IF;
+    
+    -- BTNN: bog, treed, no permafrost, lawns not present
+    -- bad drainage, species is EE (prg 3) or EPEP (prg 4/5) with density 25-40% and height >12m
+    IF CL_DRAIN = any(_bad_drainage) AND _cl_den > 25 AND _cl_den < 40 AND _cl_haut <12 THEN
+      IF (inventory_id = 'QC03' AND gr_ess = 'EE') OR 
+      (inventory_id IN('QC04', 'QC05') AND gr_ess = 'EPEP') THEN 
+        RETURN 'BTNN';
+      END IF;
+    END IF;
+    
+    -- bog types
+    IF TYPE_ECO IN('RE39', 'TOB9D', 'TOB9L', 'TOB9N', 'TOB9U') THEN
+      RETURN 'BTNN';
+    END IF;
+    
+    -- FTNN: fen, treed, no permafrost, lawns not present
+    -- bad drainage, species are EME or MEE (prg 3) or EPML or MLEP (prg 4/5) with density 25-40%
+    IF CL_DRAIN = any(_bad_drainage) AND _cl_den > 25 AND _cl_den < 40 THEN
+      IF (inventory_id = 'QC03' AND gr_ess IN('EME', 'MEE')) OR
+      (inventory_id IN('QC04', 'QC05') AND gr_ess IN('EPML', 'MLEP')) THEN
+        RETURN 'FTNN';
+      END IF;
+    END IF;
+    
+    -- bad drainage, species is MEME (prg 3) or MLML, ML (prg 4/5) with height less than 12
+    IF CL_DRAIN = any(_bad_drainage) AND _cl_haut < 12 THEN
+      IF (inventory_id = 'QC03' AND gr_ess = 'MEME') OR
+      (inventory_id IN('QC04', 'QC05') AND gr_ess IN('MLML', 'ML')) THEN
+        RETURN 'FTNN';
+      END IF;
+    END IF;
+    
+    -- Fen type
+    IF TYPE_ECO IN('RE38', 'RS38', 'TOF8L', 'TOF8N', 'TOF8U') THEN
+      RETURN 'FTNN';
+    END IF;
+    
+    IF TYPE_ECO IN('TOF8A') THEN
+      RETURN 'FONS';
+    END IF;
+
+    IF TYPE_ECO IN('TO18') THEN
+      RETURN 'BONS';
+    END IF;
+    
+    -- STNN: swamp, treed, no permafrost, lawns not present
+    -- bad drainage and specific swamp species or types
+    IF CL_DRAIN = any(_bad_drainage) THEN
+      IF TYPE_ECO IN('FE10', 'FE20', 'FE30', 'FE50', 'FE60', 'FC10', 'MJ10', 'MS10', 'MS20', 'MS40', 'MS60', 'MS70', 'RB50', 'RP10', 'RS20', 'RS20S', 'RS40', 'RS50', 'RS70', 'RT10', 'RE20', 'RE40', 'RE70') THEN
+        RETURN 'STNN';
+      END IF;
+      
+      IF _cl_den > 40 THEN
+        IF _cl_haut > 12 THEN
+          IF (inventory_id = 'QC03' AND gr_ess IN('EC', 'EPU', 'EME', 'RME', 'SE', 'ES', 'RE', 'MEE', 'MEC')) OR
+          (inventory_id IN('QC04', 'QC05') AND gr_ess IN('EPTO', 'EPPU', 'EPML', 'RXML', 'SBEP', 'EPSE', 'RXEP', 'MLEP', 'MLTO')) THEN
+            RETURN 'STNN';
+          END IF;
+        END IF;
+        
+        IF (inventory_id = 'QC03' AND gr_ess IN('EE', 'MEME')) OR
+        (inventory_id IN('QC04', 'QC05') AND gr_ess IN('EPEP','MLML','ML')) THEN
+          RETURN 'STNN';
+        END IF;
+      END IF;
+      
+      IF (inventory_id = 'QC03' AND gr_ess IN('FNC', 'BJ', 'FH', 'FT', 'BB', 'BB1', 'PE', 'PE1', 'FI', 'CC', 'CPU', 'CE', 'CME', 'RC', 'SC', 'CS', 'PUC', 'BBBB', 'EBB', 'BBBBE', 'BBE', 'BB1E')) OR
+      (inventory_id IN('QC04', 'QC05') AND gr_ess IN('FNFN', 'BJ', 'BJBJ', 'FHFH', 'FTFT', 'BPFX', 'PEPE', 'PEFX', 'FIFI', 'TOTO', 'TOPU', 'TOEP', 'TOML', 'RXTO', 'SBTO', 'TOSE', 'PUTO', 'BPBP', 'BPEP', 'BPBPEP')) THEN
+        RETURN 'STNN';
+      END IF;
+    END IF;
+      
+    -- swamp types
+    IF TYPE_ECO IN('RS37', 'RS39', 'RS18', 'RE37', 'RC38', 'MJ18', 'MF18', 'FO18', 'MS18', 'MS18P', 'MS28', 'MS68') THEN
+      RETURN 'STNN';
+    END IF;
+    
+    RETURN NULL;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_wetland_code_translation(text, text)
+--
+-- Take the 4 letter wetland code and translate the requested character
+--
+-- e.g. TT_wetland_code_translation('BTNN', '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_wetland_code_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_wetland_code_translation(
+  wetland_code text,
+  ret_char_pos text
+)
+RETURNS text AS $$
+  DECLARE
+    _wetland_char text;
+  BEGIN
+
+    IF wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    
+    _wetland_char = substring(wetland_code from ret_char_pos::int for 1);
+    
+    IF _wetland_char = '-' THEN
+      RETURN NULL;
+    END IF;
+	  
+    CASE WHEN ret_char_pos = '1' THEN -- WETLAND_TYPE
+	         RETURN TT_MapText(_wetland_char, '{''B'', ''F'', ''S'', ''M'', ''O'', ''T'', ''E'', ''W'', ''Z''}', '{''BOG'', ''FEN'', ''SWAMP'', ''MARSH'', ''SHALLOW_WATER'', ''TIDAL_FLATS'', ''ESTUARY'', ''WETLAND'', ''NOT_WETLAND''}');
+	       WHEN ret_char_pos = '2' THEN -- WET_VEG_COVER
+	         RETURN TT_MapText(_wetland_char, '{''F'', ''T'', ''O'', ''C'', ''M''}', '{''FORESTED'', ''WOODED'', ''OPEN_NON_TREED_FRESHWATER'', ''OPEN_NON_TREED_COASTAL'', ''MUD''}');
+	       WHEN ret_char_pos = '3' THEN -- WET_LANDFORM_MOD
+	         RETURN TT_MapText(_wetland_char, '{''X'', ''P'', ''N'', ''A''}', '{''PERMAFROST_PRESENT'', ''PATTERNING_PRESENT'', ''NO_PERMAFROST_PATTERNING'', ''SALINE_ALKALINE''}');
+	       WHEN ret_char_pos = '4' THEN -- WET_LOCAL_MOD
+	         RETURN TT_MapText(_wetland_char, '{''C'', ''R'', ''I'', ''N'', ''S'', ''G''}', '{''INT_LAWN_SCAR'', ''INT_LAWN_ISLAND'', ''INT_LAWN'', ''NO_LAWN'', ''SHRUB_COVER'', ''GRAMINOIDS''}');
+	  END CASE;    
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_qc_prg5_species_code_to_reordered_array(text, text)
+--
+-- eta_ess_pc text
+--
+-- For QC fifth inventory, species are coded in both the sup_eta_ess_pc and inf_eta_ess_pc column. 
+-- These codes need to be split to get species 1, 2, 3 etc. Requested species code is then extracted based on species_number
+-- and passed to lookup table.
+-- Coding system for sup_eta_ess_pc and inf_eta_ess_pc is the same so this function works for both layer 1 and layer 2 values.
+--
+-- Species are not coded in the correct order. We need to reorder the codes so species 1 has the max percent cover. Species
+-- with matching percentages should maintain the same order as the source code.
+-- Function TT_qc_prg5_species_code_to_reordered_array reorders the species and percent codes and returns them in an array.
+-- Species and percent functions will call TT_qc_prg5_species_code_to_reordered_array then return either the species or percent value
+-- from the correct position in the array using species_number.
+--
+-- TT_qc_prg5_species_code_to_reordered_array returns an array of species-percent codes (e.g. BS20) ordered by percetn cover.
+-- In the event of a tie the codes are returned in the same order they appeared in the original string. 
+-- e.g. `BS20WS60TA20` would return ARRAY['WS60', 'BS20', 'TA20']
+
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species_code_to_reordered_array(text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species_code_to_reordered_array(
+  eta_ess_pc text
+)
+RETURNS text[] AS $$
+  DECLARE
+    sp_array text[];
+    per_array text[];
+  BEGIN
+    
+    sp_array = string_to_array(trim(translate(eta_ess_pc, '0123456789', ' ')), ' ');
+    per_array = string_to_array(trim(regexp_replace(eta_ess_pc, '[[:alpha:]]', ' ', 'g')), '  ');
+    
+    RETURN ARRAY( -- converts table to array
+      SELECT code FROM(
+        SELECT a || b code, b species_per, ROW_NUMBER() OVER () org_order -- concatenates values in column a and b, add index
+        FROM unnest(
+          sp_array, 
+          per_array
+        ) AS t(a,b) -- converts arrays to a table
+        ORDER BY species_per desc, org_order asc -- order by the percent, ties are ordered by their original order in the string
+      ) x
+    );
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_ns_nsi01_wetland_code(text, text, text, text)
+--
+-- return 4 letter wetland code
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_code(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ns_nsi01_wetland_code(
+  fornon text,
+  species text,
+  crncl text,
+  height text
+)
+RETURNS text AS $$
+  DECLARE
+    _crncl double precision := crncl::double precision;
+	_height double precision := height::double precision;
+  BEGIN
+    RETURN CASE
+        WHEN fornon='70' THEN 'W---'
+        WHEN fornon='71' THEN 'MONG'
+        WHEN fornon='72' THEN 'BONN'
+        WHEN fornon='73' THEN 'BTNN'
+        WHEN fornon='74' THEN 'ECNN'
+        WHEN fornon='75' THEN 'MONG'
+        WHEN fornon IN('33','38','39') AND species IN('BS10','TL10','EC10','WB10','YB10','AS10') THEN 'SONS'
+		WHEN (fornon='0' AND (species='TL10' OR (species LIKE '%TL%' AND species LIKE '%WB%') AND _crncl <=50 AND _height <=12)) THEN 'FTNN'
+		WHEN (fornon='0' AND (species='TL10' OR (species LIKE '%TL%' AND species LIKE '%WB%') AND _crncl >50)) THEN 'STNN'
+		WHEN (fornon='0' AND (species='EC10' OR (species LIKE '%EC%' AND species LIKE '%TL%')  OR (species LIKE '%EC%' AND species LIKE '%BS%')  OR (species LIKE '%EC%' AND species LIKE '%WB%'))) THEN 'STNN'
+		WHEN (fornon='0' AND (species='AS10' OR (species LIKE '%AS%' AND species LIKE '%BS%')  OR (species LIKE '%AS%' AND species LIKE '%TL%'))) THEN 'STNN'
+		WHEN (fornon='0' AND (species LIKE '%BS%' AND species LIKE '%LT%' )) THEN 'STNN'
+		ELSE NULL
+    END;
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_pe_pei01_wetland_code(text, text)
+--
+-- Return 4 character wetland code
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text);
+CREATE OR REPLACE FUNCTION TT_pe_pei01_wetland_code(
+  landtype text,
+  per1 text
+)
+RETURNS text AS $$
+  SELECT CASE
+           WHEN landtype='BO' AND NOT per1='0' THEN 'BFX-'
+		   WHEN landtype='BO' AND per1='0' THEN 'BOX-'
+           WHEN landtype='SO' THEN 'SOX-'
+           WHEN landtype='SW' AND NOT per1='0' THEN 'STX-'
+           WHEN landtype='SW' AND per1='0' THEN 'SOX-'
+           ELSE NULL
+         END;
+$$ LANGUAGE sql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 -- Begin Validation Function Definitions...
 -------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
 -- TT_vri01_non_for_veg_validation(text, text, text, text)
 --
 -- Check the correct combination of values exists based on the translation rules.
@@ -1572,7 +2037,6 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
-
 -------------------------------------------------------------------------------
 -- TT_vri01_non_for_anth_validation(text, text, text, text)
 ------------------------------------------------------------
@@ -1607,74 +2071,35 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
-
 -------------------------------------------------------------------------------
--- TT_nbi01_wetland_code(text, text, text)
--------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_wetland_code(text, text, text);
-CREATE OR REPLACE FUNCTION TT_nbi01_wetland_code(
-  wc text,
-  vt text,
-  im text
-)
-RETURNS text AS $$
-  SELECT CASE
-           WHEN wc='BO' AND vt='EV' AND im='BP' THEN 'BO-B'
-           WHEN wc='FE' AND vt='EV' AND im='BP' THEN 'FO-B'
-           WHEN wc='BO' AND vt='EV' AND im='DI' THEN 'BO--'
-           WHEN wc='BO' AND vt='AW' AND im='BP' THEN 'BT-B'
-           WHEN wc='BO' AND vt='OV' AND im='BP' THEN 'OO-B'
-           WHEN wc='FE' AND vt='EV' AND im IN ('MI', 'DI') THEN 'FO--'
-           WHEN wc='FE' AND vt='OV' AND im='MI' THEN 'OO--'
-           WHEN wc='BO' AND vt='FS' THEN 'BTNN'
-           WHEN wc='BO' AND vt='SV' THEN 'BONS'
-           WHEN wc='FE' AND vt IN ('FH', 'FS') THEN 'FTNN'
-           WHEN wc='FE' AND vt IN ('AW', 'SV') THEN 'FONS'
-           WHEN wc='FW' AND im='BP' THEN 'OF-B'
-           WHEN wc='FE' AND vt='EV' THEN 'FO--'
-           WHEN wc IN ('FE', 'BO') AND vt='OV' THEN 'OO--'
-           WHEN wc IN ('FE', 'BO') AND vt='OW' THEN 'O---'
-           WHEN wc='BO' AND vt='EV' THEN 'BO--'
-           WHEN wc='BO' AND vt='AW' THEN 'BT--'
-           WHEN wc='AB' THEN 'OONN'
-           WHEN wc='FM' THEN 'MONG'
-           WHEN wc='FW' THEN 'STNN'
-           WHEN wc='SB' THEN 'SONS'
-           WHEN wc='CM' THEN 'MCNG'
-           WHEN wc='TF' THEN 'TMNN'
-           WHEN wc IN ('NP', 'WL') THEN 'W---'
-           ELSE NULL
-         END;
-$$ LANGUAGE sql IMMUTABLE;
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
--- TT_nbi01_wetland_validation(text, text, text, text)
+-- TT_nb_nbi01_wetland_validation(text, text, text, text)
 --
 -- Assign 4 letter wetland character code, then return true if the requested character (1-4)
 -- is not null and not -.
 --
--- e.g. TT_nbi01_wetland_validation(wt, vt, im, '1')
+-- e.g. TT_nb_nbi01_wetland_validation(wt, vt, im, '1')
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_wetland_validation(text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_nbi01_wetland_validation(
+--DROP FUNCTION IF EXISTS TT_nb_nbi01_wetland_validation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nb_nbi01_wetland_validation(
   wc text,
   vt text,
   im text,
-	ret_char_pos text
+  ret_char_pos text
 )
 RETURNS boolean AS $$
   DECLARE
 		wetland_code text;
+		wetland_char text;
   BEGIN
-    PERFORM TT_ValidateParams('TT_nbi01_wetland_validation',
+    PERFORM TT_ValidateParams('TT_nb_nbi01_wetland_validation',
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
-	  wetland_code = TT_nbi01_wetland_code(wc, vt, im);
+	wetland_code = TT_nb_nbi01_wetland_code(wc, vt, im);
+    wetland_char = substring(wetland_code from ret_char_pos::int for 1);  	
 
     -- return true or false
-    IF wetland_code IS NULL OR substring(wetland_code from ret_char_pos::int for 1) = '-' THEN
+    IF wetland_char IS NULL OR wetland_char = '-' THEN
       RETURN FALSE;
-		END IF;
+	END IF;
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -2935,6 +3360,144 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+-- TT_ab_avi01_wetland_validation(text, text, text, text, text, text, text)
+--
+-- Check translation creates a valid 4 letter wetland code.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_validation(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ab_avi01_wetland_validation(
+  moisture text,
+  nonfor_veg text,
+  nat_nonveg text,
+  sp1 text,
+  sp2 text,
+  crownclose text,
+  sp1_percnt text
+)
+RETURNS boolean AS $$
+  BEGIN
+    IF TT_ab_avi01_wetland_code(moisture, nonfor_veg, nat_nonveg, sp1, sp2, crownclose, sp1_percnt) IN('SONS', 'MONG', 'FONG', 'FTNN', 'STNN', 'SFNN', 'BTNN') THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_wetland_validation(text, text, text, text)
+--
+-- Check for valid 4 letter code.
+--
+-- e.g. TT_nl_nli01_wetland_validation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_validation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_wetland_validation(
+  stand_id text,
+  site text,
+  species_comp text
+)
+RETURNS boolean AS $$
+  BEGIN
+    IF TT_nl_nli01_wetland_code(stand_id, site, species_comp) IN('BONS', 'BTNN', 'MONG', 'STNN') THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_bc_vri01_wetland_validation(text, text, text, text)
+--
+-- Check the requested return character is a valid wetland character
+--
+-- e.g. TT_bc_vri01_wetland_validation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_bc_vri01_wetland_validation(
+  inventory_standard_cd text,
+  l1_species_cd_1 text,
+  l1_species_pct_1 text,
+  l1_species_cd_2 text,
+  non_productive_descriptor_cd text,
+  l1_non_forest_descriptor text,
+  land_cover_class_cd_1 text,
+  soil_moisture_regime_1 text,
+  l1_crown_closure text,
+  l1_proj_height_1 text,
+  ret_char_pos text
+)
+RETURNS boolean AS $$
+  DECLARE
+	wetland_code text;
+	wetland_char text;
+  BEGIN
+    wetland_code = TT_bc_vri01_wetland_code(inventory_standard_cd, l1_species_cd_1, l1_species_pct_1, l1_species_cd_2, non_productive_descriptor_cd, l1_non_forest_descriptor, land_cover_class_cd_1, soil_moisture_regime_1, l1_crown_closure, l1_proj_height_1);
+	wetland_char = substring(wetland_code from ret_char_pos::int for 1);
+	IF wetland_char IS NULL OR wetland_char = '-' THEN
+      RETURN FALSE;
+	END IF;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_ns_nsi01_wetland_validation(text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return true if the requested character (1-4)
+-- is not null and not -.
+--
+-- e.g. TT_ns_nsi01_wetland_validation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_validation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ns_nsi01_wetland_validation(
+  fornon text,
+  species text,
+  crncl text,
+  height text,
+  ret_char_pos text
+)
+RETURNS boolean AS $$
+  DECLARE
+	wetland_code text;
+	wetland_char text;
+  BEGIN
+    wetland_code = TT_ns_nsi01_wetland_code(fornon, species, crncl, height);
+	wetland_char = substring(wetland_code from ret_char_pos::int for 1);
+	IF wetland_char IS NULL OR wetland_char = '-' THEN
+      RETURN FALSE;
+	END IF;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_pe_pei01_wetland_validation(text, text, text)
+-- Assign 4 letter wetland character code, then return true if the requested character (1-4)
+-- is not null and not -.
+-- e.g. TT_pe_pei01_wetland_validation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_pe_pei01_wetland_validation(
+  landtype text,
+  per1 text,
+  ret_char_pos text
+)
+RETURNS boolean AS $$
+  DECLARE
+	wetland_code text;
+	wetland_char text;
+  BEGIN
+    wetland_code = TT_pe_pei01_wetland_code(landtype, per1);
+	wetland_char = substring(wetland_code from ret_char_pos::int for 1);
+	IF wetland_char IS NULL OR wetland_char = '-' THEN
+      RETURN FALSE;
+	END IF;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...
 -------------------------------------------------------------------------------
@@ -3380,14 +3943,14 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_nbi01_wetland_translation(text, text, text, text)
+-- TT_nb_nbi01_wetland_translation(text, text, text, text)
 --
 -- Assign 4 letter wetland character code, then return the requested character (1-4)
 --
--- e.g. TT_nbi01_wetland_translation(wt, vt, im, '1')
+-- e.g. TT_nb_nbi01_wetland_translation(wt, vt, im, '1')
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nbi01_wetland_translation(text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_nbi01_wetland_translation(
+--DROP FUNCTION IF EXISTS TT_nb_nbi01_wetland_translation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nb_nbi01_wetland_translation(
   wc text,
   vt text,
   im text,
@@ -3398,9 +3961,9 @@ RETURNS text AS $$
 	wetland_code text;
     result text;
   BEGIN
-    PERFORM TT_ValidateParams('TT_nbi01_wetland_translation',
+    PERFORM TT_ValidateParams('TT_nb_nbi01_wetland_translation',
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
-	  wetland_code = TT_nbi01_wetland_code(wc, vt, im);
+	  wetland_code = TT_nb_nbi01_wetland_code(wc, vt, im);
 
     RETURN TT_wetland_code_translation(wetland_code, ret_char_pos);
     
@@ -3519,34 +4082,6 @@ RETURNS int AS $$
   END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
--- TT_fim_species_code(text, int)
---
--- sp_string text - source string of species and percentages
--- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
---
--- This function is used by the following two functions to extract the requested species name an percent code.
--- The following functions take that code and extract either species name or percent info.
--- String structure is a 2-letter species code, followed by 2 spaces, then a 2 digit percentage.
--- In cases where a species is 100%, there is only 1 space so the total length of all codes is 6.
--- Multiple codes are concatenated together. Max number of species in ON is 10.
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fim_species_code(text, int);
-CREATE OR REPLACE FUNCTION TT_fim_species_code(
-  sp_string text,
-  sp_number int
-)
-RETURNS text AS $$
-  DECLARE
-    start_char int;
-    code text;
-  BEGIN
-    SELECT (array_agg(a))[sp_number] 
-    FROM (SELECT (regexp_matches(trim(sp_string), '[a-z]+\s+[0-9]+', 'gi'))[1] a ) foo
-    INTO code;
-    RETURN code;
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE STRICT;
 
 -------------------------------------------------------------------------------
 -- TT_fim_species_translation(text, text, text, text, text)
@@ -4557,180 +5092,7 @@ RETURNS int AS $$
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
--- TT_qc_wetland_code(text, text, text, text, text, text)
---
--- CO_TER
--- CL_DRAIN
--- gr_ess
--- cl_dens
--- cl_haut
--- TYPE_ECO
---
--- Return 4 character wetland code based on the logic defined in the issue.
--- Species values change depending on inventory. QC03 species are different
--- than QC04éQC05 species.
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_wetland_code(text, text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_qc_wetland_code(
-  CO_TER text,
-  CL_DRAIN text,
-  gr_ess text,
-  cl_den text,
-  cl_haut text,
-  TYPE_ECO text,
-  inventory_id text
-)
-RETURNS text AS $$
-  DECLARE
-    _bad_drainage text[] := ARRAY['50', '51', '52', '53', '54', '60', '61', '62', '63', '64'];
-    _cl_den double precision;
-    _cl_haut double precision;
-  BEGIN
-    
-    -- set density and height to zero if they are null so that logic tests dont throw error. In prg3 and 4 convert density and height codes to a valuewithin the range of lower to upper
-    IF cl_den IS NULL THEN
-      _cl_den = 0;
-    ELSE
-      _cl_den = tt_mapInt(cl_den, '{''A'', ''B'', ''C'', ''D''}', '{90, 70, 50, 30}');
-    END IF;
-    
-    IF cl_haut IS NULL THEN
-      _cl_haut = 0;
-    ELSE
-      _cl_haut = tt_mapDouble(cl_haut, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{30, 19, 14, 9, 5, 2.5, 0.5}');
-    END IF;
-    
-    -- SONS: swamp, no trees, no permafrost, shrub 25%
-    -- denude humide
-    IF CO_TER = 'DH' THEN
-      RETURN 'SONS';
-    END IF;
-    
-    -- alder with bad drainage
-    IF CL_DRAIN = any(_bad_drainage) AND CO_TER = 'AL' THEN
-      RETURN 'SONS';
-    END IF;
-    
-    -- BTNN: bog, treed, no permafrost, lawns not present
-    -- bad drainage, species is EE (prg 3) or EPEP (prg 4/5) with density 25-40% and height >12m
-    IF CL_DRAIN = any(_bad_drainage) AND _cl_den > 25 AND _cl_den < 40 AND _cl_haut <12 THEN
-      IF (inventory_id = 'QC03' AND gr_ess = 'EE') OR 
-      (inventory_id IN('QC04', 'QC05') AND gr_ess = 'EPEP') THEN 
-        RETURN 'BTNN';
-      END IF;
-    END IF;
-    
-    -- bog types
-    IF TYPE_ECO IN('RE39', 'TOB9D', 'TOB9L', 'TOB9N', 'TOB9U') THEN
-      RETURN 'BTNN';
-    END IF;
-    
-    -- FTNN: fen, treed, no permafrost, lawns not present
-    -- bad drainage, species are EME or MEE (prg 3) or EPML or MLEP (prg 4/5) with density 25-40%
-    IF CL_DRAIN = any(_bad_drainage) AND _cl_den > 25 AND _cl_den < 40 THEN
-      IF (inventory_id = 'QC03' AND gr_ess IN('EME', 'MEE')) OR
-      (inventory_id IN('QC04', 'QC05') AND gr_ess IN('EPML', 'MLEP')) THEN
-        RETURN 'FTNN';
-      END IF;
-    END IF;
-    
-    -- bad drainage, species is MEME (prg 3) or MLML, ML (prg 4/5) with height less than 12
-    IF CL_DRAIN = any(_bad_drainage) AND _cl_haut < 12 THEN
-      IF (inventory_id = 'QC03' AND gr_ess = 'MEME') OR
-      (inventory_id IN('QC04', 'QC05') AND gr_ess IN('MLML', 'ML')) THEN
-        RETURN 'FTNN';
-      END IF;
-    END IF;
-    
-    -- Fen type
-    IF TYPE_ECO IN('RE38', 'RS38', 'TOF8L', 'TOF8N', 'TOF8U') THEN
-      RETURN 'FTNN';
-    END IF;
-    
-    IF TYPE_ECO IN('TOF8A') THEN
-      RETURN 'FONS';
-    END IF;
 
-    IF TYPE_ECO IN('TO18') THEN
-      RETURN 'BONS';
-    END IF;
-    
-    -- STNN: swamp, treed, no permafrost, lawns not present
-    -- bad drainage and specific swamp species or types
-    IF CL_DRAIN = any(_bad_drainage) THEN
-      IF TYPE_ECO IN('FE10', 'FE20', 'FE30', 'FE50', 'FE60', 'FC10', 'MJ10', 'MS10', 'MS20', 'MS40', 'MS60', 'MS70', 'RB50', 'RP10', 'RS20', 'RS20S', 'RS40', 'RS50', 'RS70', 'RT10', 'RE20', 'RE40', 'RE70') THEN
-        RETURN 'STNN';
-      END IF;
-      
-      IF _cl_den > 40 THEN
-        IF _cl_haut > 12 THEN
-          IF (inventory_id = 'QC03' AND gr_ess IN('EC', 'EPU', 'EME', 'RME', 'SE', 'ES', 'RE', 'MEE', 'MEC')) OR
-          (inventory_id IN('QC04', 'QC05') AND gr_ess IN('EPTO', 'EPPU', 'EPML', 'RXML', 'SBEP', 'EPSE', 'RXEP', 'MLEP', 'MLTO')) THEN
-            RETURN 'STNN';
-          END IF;
-        END IF;
-        
-        IF (inventory_id = 'QC03' AND gr_ess IN('EE', 'MEME')) OR
-        (inventory_id IN('QC04', 'QC05') AND gr_ess IN('EPEP','MLML','ML')) THEN
-          RETURN 'STNN';
-        END IF;
-      END IF;
-      
-      IF (inventory_id = 'QC03' AND gr_ess IN('FNC', 'BJ', 'FH', 'FT', 'BB', 'BB1', 'PE', 'PE1', 'FI', 'CC', 'CPU', 'CE', 'CME', 'RC', 'SC', 'CS', 'PUC', 'BBBB', 'EBB', 'BBBBE', 'BBE', 'BB1E')) OR
-      (inventory_id IN('QC04', 'QC05') AND gr_ess IN('FNFN', 'BJ', 'BJBJ', 'FHFH', 'FTFT', 'BPFX', 'PEPE', 'PEFX', 'FIFI', 'TOTO', 'TOPU', 'TOEP', 'TOML', 'RXTO', 'SBTO', 'TOSE', 'PUTO', 'BPBP', 'BPEP', 'BPBPEP')) THEN
-        RETURN 'STNN';
-      END IF;
-    END IF;
-      
-    -- swamp types
-    IF TYPE_ECO IN('RS37', 'RS39', 'RS18', 'RE37', 'RC38', 'MJ18', 'MF18', 'FO18', 'MS18', 'MS18P', 'MS28', 'MS68') THEN
-      RETURN 'STNN';
-    END IF;
-    
-    RETURN NULL;
-  END;
-$$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
--- TT_wetland_code_translation(text, text)
---
--- Take the 4 letter wetland code and translate the requested character
---
--- e.g. TT_wetland_code_translation('BTNN', '1')
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_wetland_code_translation(text, text);
-CREATE OR REPLACE FUNCTION TT_wetland_code_translation(
-  wetland_code text,
-  ret_char_pos text
-)
-RETURNS text AS $$
-  DECLARE
-    _wetland_char text;
-  BEGIN
-
-    IF wetland_code IS NULL THEN
-      RETURN NULL;
-    END IF;
-    
-    _wetland_char = substring(wetland_code from ret_char_pos::int for 1);
-    
-    IF _wetland_char = '-' THEN
-      RETURN NULL;
-    END IF;
-	  
-    CASE WHEN ret_char_pos = '1' THEN -- WETLAND_TYPE
-	         RETURN TT_MapText(_wetland_char, '{''B'', ''F'', ''S'', ''M'', ''O'', ''T'', ''E'', ''W'', ''Z''}', '{''BOG'', ''FEN'', ''SWAMP'', ''MARSH'', ''SHALLOW_WATER'', ''TIDAL_FLATS'', ''ESTUARY'', ''WETLAND'', ''NOT_WETLAND''}');
-	       WHEN ret_char_pos = '2' THEN -- WET_VEG_COVER
-	         RETURN TT_MapText(_wetland_char, '{''F'', ''T'', ''O'', ''C'', ''M''}', '{''FORESTED'', ''WOODED'', ''OPEN_NON_TREED_FRESHWATER'', ''OPEN_NON_TREED_COASTAL'', ''MUD''}');
-	       WHEN ret_char_pos = '3' THEN -- WET_LANDFORM_MOD
-	         RETURN TT_MapText(_wetland_char, '{''X'', ''P'', ''N'', ''A''}', '{''PERMAFROST_PRESENT'', ''PATTERNING_PRESENT'', ''NO_PERMAFROST_PATTERNING'', ''SALINE_ALKALINE''}');
-	       WHEN ret_char_pos = '4' THEN -- WET_LOCAL_MOD
-	         RETURN TT_MapText(_wetland_char, '{''C'', ''R'', ''I'', ''N'', ''S'', ''G''}', '{''INT_LAWN_SCAR'', ''INT_LAWN_ISLAND'', ''INT_LAWN'', ''NO_LAWN'', ''SHRUB_COVER'', ''GRAMINOIDS''}');
-	  END CASE;    
-  END;
-$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_qc_prg3_wetland_translation(text, text, text, text, text, text, text)
 --
@@ -4742,7 +5104,6 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TYPE_ECO text
 --
 -- Get the 4 character wetland code and translate 
-
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_translation(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_qc_prg3_wetland_translation(
@@ -4889,53 +5250,6 @@ RETURNS text AS $$
     ELSE
       RETURN tt_lookupText(sp_val, 'translation', 'species_code_mapping', 'qc_species_codes', 'casfri_species_codes');
     END IF;
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
-
--------------------------------------------------------------------------------
--- TT_qc_prg5_species_code_to_reordered_array(text, text)
---
--- eta_ess_pc text
---
--- For QC fifth inventory, species are coded in both the sup_eta_ess_pc and inf_eta_ess_pc column. 
--- These codes need to be split to get species 1, 2, 3 etc. Requested species code is then extracted based on species_number
--- and passed to lookup table.
--- Coding system for sup_eta_ess_pc and inf_eta_ess_pc is the same so this function works for both layer 1 and layer 2 values.
---
--- Species are not coded in the correct order. We need to reorder the codes so species 1 has the max percent cover. Species
--- with matching percentages should maintain the same order as the source code.
--- Function TT_qc_prg5_species_code_to_reordered_array reorders the species and percent codes and returns them in an array.
--- Species and percent functions will call TT_qc_prg5_species_code_to_reordered_array then return either the species or percent value
--- from the correct position in the array using species_number.
---
--- TT_qc_prg5_species_code_to_reordered_array returns an array of species-percent codes (e.g. BS20) ordered by percetn cover.
--- In the event of a tie the codes are returned in the same order they appeared in the original string. 
--- e.g. `BS20WS60TA20` would return ARRAY['WS60', 'BS20', 'TA20']
-
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_prg5_species_code_to_reordered_array(text);
-CREATE OR REPLACE FUNCTION TT_qc_prg5_species_code_to_reordered_array(
-  eta_ess_pc text
-)
-RETURNS text[] AS $$
-  DECLARE
-    sp_array text[];
-    per_array text[];
-  BEGIN
-    
-    sp_array = string_to_array(trim(translate(eta_ess_pc, '0123456789', ' ')), ' ');
-    per_array = string_to_array(trim(regexp_replace(eta_ess_pc, '[[:alpha:]]', ' ', 'g')), '  ');
-    
-    RETURN ARRAY( -- converts table to array
-      SELECT code FROM(
-        SELECT a || b code, b species_per, ROW_NUMBER() OVER () org_order -- concatenates values in column a and b, add index
-        FROM unnest(
-          sp_array, 
-          per_array
-        ) AS t(a,b) -- converts arrays to a table
-        ORDER BY species_per desc, org_order asc -- order by the percent, ties are ordered by their original order in the string
-      ) x
-    );
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -5571,4 +5885,142 @@ RETURNS int AS $$
 	RETURN TT_lyr_layer_translation(heights, layer1spp, layer2spp, getIndex);
 	
   END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_ab_avi01_wetland_translation(text, text, text, text, text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_ab_avi01_wetland_translation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_translation(text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ab_avi01_wetland_translation(
+  moisture text,
+  nonfor_veg text,
+  nat_nonveg text,
+  sp1 text,
+  sp2 text,
+  crownclose text,
+  sp1_percnt text,
+  ret_char text
+)
+RETURNS text AS $$
+  DECLARE
+	_wetland_code text;
+  BEGIN
+    _wetland_code = TT_ab_avi01_wetland_code(moisture, nonfor_veg, nat_nonveg, sp1, sp2, crownclose, sp1_percnt);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, ret_char);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_nl_nli01_wetland_translation(text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_nl_nli01_wetland_translation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_translation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli01_wetland_translation(
+  stand_id text,
+  site text,
+  species_comp text,
+  ret_char text
+)
+RETURNS text AS $$
+  DECLARE
+	_wetland_code text;
+  BEGIN
+    _wetland_code = TT_nl_nli01_wetland_code(stand_id, site, species_comp);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, ret_char);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_bc_vri01_wetland_translation(text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_bc_vri01_wetland_translation(
+  inventory_standard_cd text,
+  l1_species_cd_1 text,
+  l1_species_pct_1 text,
+  l1_species_cd_2 text,
+  non_productive_descriptor_cd text,
+  l1_non_forest_descriptor text,
+  land_cover_class_cd_1 text,
+  soil_moisture_regime_1 text,
+  l1_crown_closure text,
+  l1_proj_height_1 text,
+  ret_char_pos text
+)
+RETURNS text AS $$
+  DECLARE
+	wetland_code text;
+  BEGIN
+    wetland_code = TT_bc_vri01_wetland_code(inventory_standard_cd, l1_species_cd_1, l1_species_pct_1, l1_species_cd_2, non_productive_descriptor_cd, l1_non_forest_descriptor, land_cover_class_cd_1, soil_moisture_regime_1, l1_crown_closure, l1_proj_height_1);
+    IF wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(wetland_code, ret_char_pos);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_ns_nsi01_wetland_translation(text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_nsi01_wetland_translation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_translation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ns_nsi01_wetland_translation(
+  fornon text,
+  species text,
+  crncl text,
+  height text,
+  ret_char text
+)
+RETURNS text AS $$
+  DECLARE
+	_wetland_code text;
+  BEGIN
+    _wetland_code = TT_ns_nsi01_wetland_code(fornon, species, crncl, height);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, ret_char);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_pe_pei01_wetland_translation(text, int, text)
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+-- e.g. TT_pe_pei01_wetland_translation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_pe_pei01_wetland_translation(
+  landtype text,
+  per1 text,
+  ret_char_pos text
+)
+RETURNS text AS $$
+  DECLARE
+	_wetland_code text;
+  BEGIN
+    _wetland_code = TT_pe_pei01_wetland_code(landtype, per1);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, ret_char_pos);
+  END;
 $$ LANGUAGE plpgsql IMMUTABLE;
