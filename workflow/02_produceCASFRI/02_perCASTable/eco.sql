@@ -237,10 +237,21 @@ SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_eco', 'qc05_l1_to_qc_ipf_l
 --------------------------------------------------------------------------
 SELECT left(cas_id, 4) inv, count(*) nb 
 FROM casfri50.eco_all
-GROUP BY left(cas_id, 4);
+GROUP BY left(cas_id, 4)
+ORDER BY inv;
 --inv   count
---NB01	72978
---NB02	111135
+--AB06 	1174
+--AB16 	5528
+--BC08 	66837
+--BC10 	70989
+--NB01 	72978
+--NB02	107264
+--NL01	238785
+--NS03	122782
+--PE01	1488
+--QC03	50600
+--QC04	243352
+--QC05	879228
 
 SELECT count(*) FROM casfri50.eco_all; -- 184113
 --------------------------------------------------------------------------
