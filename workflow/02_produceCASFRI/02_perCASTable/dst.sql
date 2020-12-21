@@ -322,5 +322,5 @@ ORDER BY inv, layer;
 --SK06 -8886	45081
 --YT02 -8886	19173
 
-SELECT count(*) FROM casfri50.dst_all; -- 5726428
+SELECT count(*) FROM casfri50.dst_all; -- 10907114
 --------------------------------------------------------------------------

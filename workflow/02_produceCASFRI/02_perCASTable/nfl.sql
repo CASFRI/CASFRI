@@ -435,50 +435,57 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'qc03', 3, 'qc_ini03', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_qc03_nfl('rawfri', 'qc03_l2_to_qc_ini03_l1_map_nfl', 'ogc_fid');
+SELECT * FROM TT_Translate_qc03_nfl('rawfri', 'qc03_l3_to_qc_ini03_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_nfl', 'qc03_l2_to_qc_ini03_l1_map_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_nfl', 'qc03_l3_to_qc_ini03_l1_map_nfl');
 ------------------------
 -- Translate QC04 layer 1
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'qc04', 3, 'qc_ini04', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_qc04_nfl('rawfri', 'qc04_l2_to_qc_ini04_l1_map_nfl', 'ogc_fid');
+SELECT * FROM TT_Translate_qc04_nfl('rawfri', 'qc04_l3_to_qc_ini04_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_nfl', 'qc04_l2_to_qc_ini04_l1_map_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_nfl', 'qc04_l3_to_qc_ini04_l1_map_nfl');
 ------------------------
 -- Translate QC05 layer 1
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'qc05', 3, 'qc_ipf05', 1, NULL, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'qc05', 3, 'qc_ipf', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_qc05_nfl('rawfri', 'qc05_l2_to_qc_ipf05_l1_map_nfl', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_nfl('rawfri', 'qc05_l3_to_qc_ipf_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_nfl', 'qc05_l2_to_qc_ipf05_l1_map_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_nfl', 'qc05_l3_to_qc_ipf_l1_map_nfl');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
 SELECT left(cas_id, 4) inv, count(*) nb 
 FROM casfri50.nfl_all
-GROUP BY left(cas_id, 4);
+GROUP BY left(cas_id, 4)
+ORDER BY inv;
 --inv   nb
 --AB06	3515
 --AB16	26858
 --BC08	1998885
 --BC10	2276213
+--MB05	340124
+--MB06	9826
 --NB01	78227
 --NB02	139930
+--NL01	664096
 --NS03	212453
 --NT01	65299
---NT02	258582
---ON02	1562183
+--NT02	129291
+--ON02	1318495
 --PE01	22223
+--QC03  197876
+--QC04  328940
+--QC05  1016269
 --SK01	340357
---SK02	17530
+--SK02	17529
 --SK03 	6845
 --SK04 	311133
 --SK05 	184184
@@ -494,28 +501,33 @@ ORDER BY inv, layer;
 --AB06	2	1434
 --AB16	1	15434
 --AB16	2	11424
---BC08	1	554538
---BC08	2	1265774
---BC08	3	178334
---BC08	4	239
---BC10	0	225219
---BC10	1	1082425
---BC10	2	740803
---BC10	3	224091
---BC10	4	3673
+--BC08	1	549593
+--BC08	2	1234648
+--BC08	3	212966
+--BC08	4	1676
+--BC08	5	2
+--BC10	1	569834
+--BC10	2	1440564
+--BC10	3	262135
+--BC10	4	3678
 --BC10	5	2
+--MB05  1 340124
+--MB06  1 9802
+--MB06  2 24
 --NB01	1	78227
 --NB02	1	139930
+--NL01	1	664096
 --NS03	1	201114
 --NS03	2	11339
---NT01	1	42512
---NT01	2	22769
---NT01	3	18
---NT02	1	105150
---NT02	2	152264
---NT02	3	1168
---ON02	1	1562183
+--NT01	1	42836
+--NT01	2	22463
+--NT02	1	53132
+--NT02	2	76159
+--ON02	1	1318495
 --PE01	1	22223
+--QC03  1 197876
+--QC04  1 328940
+--QC05  1 1016269
 --SK01	1	340356
 --SK01	2	1
 --SK02	1	3337
@@ -545,7 +557,7 @@ ORDER BY inv, layer;
 --SK06	5	6
 --YT02	1	76344
 
-SELECT count(*) FROM casfri50.nfl_all; -- 7659266
+SELECT count(*) FROM casfri50.nfl_all; -- 9843418
 --------------------------------------------------------------------------
 
 
