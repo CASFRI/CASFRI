@@ -261,7 +261,7 @@ SELECT * FROM geohistory.sampling_area_nb1 LIMIT 1;
 -- Now try with TT_PolygonGeoHistory
 DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_polyperpoly_new;
 CREATE TABLE geohistory.sampling_area_nb1_history_polyperpoly_new AS
-SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, coalesce(photo_year, 1930), TRUE, geometry,
+SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
 FROM geohistory.sampling_area_nb1
 ORDER BY id, poly_id;
@@ -269,6 +269,26 @@ ORDER BY id, poly_id;
 -- Display
 SELECT *
 FROM geohistory.sampling_area_nb1_history_polyperpoly_new;
+-----------------------------------------
+SELECT * FROM geohistory.sampling_area_nb1
+WHERE right(cas_id, 2)::int < 75;
+
+-- Now compare performance when searching in the whole flat table
+-- When searching only in the sample: 1m40
+SET tt.debug_l1 TO TRUE;
+-- 60 57s
+DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_polyperpoly_new;
+CREATE TABLE geohistory.sampling_area_nb1_history_polyperpoly_new AS
+SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
+                             'casfri50_flat', 'cas_flat_all_layers_same_row', 'cas_id', 'geometry', 'stand_photo_year', 'inventory_id')).*
+FROM geohistory.sampling_area_nb1
+WHERE right(cas_id, 2)::int < 75
+ORDER BY id, poly_id;
+
+-- Display
+SELECT *
+FROM geohistory.sampling_area_nb1_history_polyperpoly_new;
+
 --------------------------------------------------------------------------------------
 -- Sampling area NB2
 --------------------------------------------------------------------------------------
