@@ -35,7 +35,8 @@ RETURNS text[] AS $$
                'EMPTY_STRING', 
                'NOT_APPLICABLE', 
                'UNKNOWN_VALUE', 
-               'NOT_IN_SET'];
+               'NOT_IN_SET',
+			   'UNUSED_VALUE'];
 $$ LANGUAGE sql IMMUTABLE; 
 ------------------------------------------------------------ 
 --DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidNumber();
@@ -54,7 +55,8 @@ RETURNS int[] AS $$
                -8887, -- NOT_APPLICABLE
                -8886, -- UNKNOWN_VALUE
                -9997, -- INVALID_VALUE
-               -9999] -- OUT_OF_RANGE
+               -9999, -- OUT_OF_RANGE
+			   -9995] -- WRONG_TYPE
 $$ LANGUAGE sql IMMUTABLE; 
 ------------------------------------------------------------
 -- TT_TableColumnType 
