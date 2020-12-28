@@ -69,46 +69,112 @@ UNION ALL
 SELECT '1.3'::text number,
        'TT_RemoveHoles'::text function_tested,
        'Simple polygon with no holes'::text description,
-       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))')) = ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))') passed
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0))')) = 
+                      ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.4'::text number,
        'TT_RemoveHoles'::text function_tested,
-       'Simple polygon with a SRID'::text description,
-       ST_SRID(TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))', 4269))) = 4269 passed
+       'Simple polygon with no holes'::text description,
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0))'), 2) = 
+                      ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.5'::text number,
        'TT_RemoveHoles'::text function_tested,
-       'Simple polygon with two holes'::text description,
-       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1), (2 2, 2 3, 3 3, 3 2, 2 2))')) = ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))') passed
+       'Simple polygon with a SRID'::text description,
+       ST_SRID(TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0))', 4269))) = 4269 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.6'::text number,
        'TT_RemoveHoles'::text function_tested,
-       'Simple polygon with a hole and an island'::text description,
-       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 5 0, 5 5, 0 5, 0 0), (1 1, 1 4, 4 4, 4 1, 1 1), (2 2, 2 3, 3 3, 3 2, 2 2))')) = ST_GeomFromText('POLYGON((0 0, 5 0, 5 5 ,0 5, 0 0))') passed
+       'Simple polygon with two holes'::text description,
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), 
+                                               (1 1, 1 2, 2 2, 2 1, 1 1), 
+                                               (2 2, 2 3, 3 3, 3 2, 2 2))')) = 
+                      ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.7'::text number,
        'TT_RemoveHoles'::text function_tested,
-       'Multipolygon made of two simple polygons'::text description,
-       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 1 0, 1 1, 0 1, 0 0)), ((1 1, 2 1, 2 2, 1 2, 1 1)))')) = ST_GeomFromText('MULTIPOLYGON(((1 1,1 0,0 0,0 1,1 1)),((1 1,1 2,2 2,2 1,1 1)))') passed
+       'Simple polygon with two holes smaller than provided area'::text description,
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), 
+                                               (1 1, 1 2, 2 2, 2 1, 1 1), 
+                                               (2 2, 2 3, 3 3, 3 2, 2 2))'), 2) = 
+                      ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.8'::text number,
        'TT_RemoveHoles'::text function_tested,
-       'Multipolygon made of two holed polygons'::text description,
-       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 3 0, 3 3, 0 3, 0 0), (1 1, 2 1, 2 2, 1 2, 1 1)), ((4 4, 7 4, 7 7, 4 7, 4 4), (5 5, 6 5, 6 6, 5 6, 5 5)))')) = ST_GeomFromText('MULTIPOLYGON(((0 0, 3 0, 3 3, 0 3, 0 0)), ((4 4, 7 4, 7 7, 4 7, 4 4)))') passed
+       'Simple polygon with two holes bigger than provided area'::text description,
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), 
+                                               (1 1, 1 2, 2 2, 2 1, 1 1), 
+                                               (2 2, 2 3, 3 3, 3 2, 2 2))'), 0.5) = 
+                      ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0), 
+                                               (1 1, 2 1, 2 2, 1 2, 1 1), 
+                                               (2 2, 3 2, 3 3, 2 3, 2 2))') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.9'::text number,
        'TT_RemoveHoles'::text function_tested,
-       'Multipolygon made of one holed polygons with a polyong inside the hole'::text description,
-       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 5 0, 5 5, 0 5, 0 0), (1 1, 4 1, 4 4, 1 4, 1 1)), ((2 2, 3 2, 3 3, 2 3, 2 2)))')) = ST_GeomFromText('POLYGON((0 0,0 5,5 5,5 0,0 0))') passed
+       'Simple polygon with two holes, one bigger than provided area'::text description,
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 4 0, 4 4, 0 4, 0 0), 
+                                               (1 1, 1 2, 2 2, 2 1, 1 1), 
+                                               (2 2, 2 3.5, 3.5 3.5, 3.5 2, 2 2))'), 1.1) = 
+                      ST_GeomFromText('POLYGON((0 0, 0 4, 4 4, 4 0, 0 0), 
+                                               (2 2, 3.5 2, 3.5 3.5, 2 3.5, 2 2))') passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '1.100'::text number,
+SELECT '1.10'::text number,
+       'TT_RemoveHoles'::text function_tested,
+       'Simple polygon with a hole and an island'::text description,
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 5 0, 5 5, 0 5, 0 0), 
+                                               (1 1, 1 4, 4 4, 4 1, 1 1), 
+                                               (2 2, 2 3, 3 3, 3 2, 2 2))')) = 
+                      ST_GeomFromText('POLYGON((0 0, 0 5, 5 5, 5 0, 0 0))') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.11'::text number,
+       'TT_RemoveHoles'::text function_tested,
+       'Simple polygon with a hole and an island'::text description,
+       TT_RemoveHoles(ST_GeomFromText('POLYGON((0 0, 5 0, 5 5, 0 5, 0 0), 
+                                               (1 1, 1 4, 4 4, 4 1, 1 1), 
+                                               (2 2, 2 3, 3 3, 3 2, 2 2))'), 0.5) = 
+                      ST_GeomFromText('MULTIPOLYGON(((0 0, 0 5, 5 5, 5 0, 0 0),
+                                                     (1 1, 4 1, 4 4, 1 4, 1 1)),
+                                                    ((2 2, 2 3, 3 3, 3 2, 2 2)))') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.12'::text number,
+       'TT_RemoveHoles'::text function_tested,
+       'Multipolygon made of two simple polygons'::text description,
+       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 1 0, 1 1, 0 1, 0 0)), 
+                                                   ((1 1, 2 1, 2 2, 1 2, 1 1)))')) = 
+                      ST_GeomFromText('MULTIPOLYGON(((1 1, 1 0, 0 0, 0 1, 1 1)),
+                                                    ((1 1, 1 2, 2 2, 2 1, 1 1)))') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.13'::text number,
+       'TT_RemoveHoles'::text function_tested,
+       'Multipolygon made of two holed polygons'::text description,
+       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 3 0, 3 3, 0 3, 0 0), 
+                                                     (1 1, 2 1, 2 2, 1 2, 1 1)), 
+                                                    ((4 4, 7 4, 7 7, 4 7, 4 4), 
+                                                     (5 5, 6 5, 6 6, 5 6, 5 5)))')) = 
+                      ST_GeomFromText('MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)), 
+                                                    ((4 4, 4 7, 7 7, 7 4, 4 4)))') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.14'::text number,
+       'TT_RemoveHoles'::text function_tested,
+       'Multipolygon made of one holed polygons with a polygon inside the hole'::text description,
+       TT_RemoveHoles(ST_GeomFromText('MULTIPOLYGON(((0 0, 5 0, 5 5, 0 5, 0 0), 
+                                                     (1 1, 4 1, 4 4, 1 4, 1 1)), 
+                                                     ((2 2, 3 2, 3 3, 2 3, 2 2)))')) = 
+                      ST_GeomFromText('POLYGON((0 0, 0 5, 5 5, 5 0, 0 0))') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.15'::text number,
        'TT_RemoveHoles'::text function_tested,
        'Test not a polygon'::text description,
        TT_RemoveHoles(ST_GeomFromText('LINESTRING(0 0,1 1,1 2)')) = ST_GeomFromText('LINESTRING(0 0,1 1,1 2)') passed

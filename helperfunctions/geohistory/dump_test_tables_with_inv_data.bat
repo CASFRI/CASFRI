@@ -27,4 +27,12 @@ DEL testtables\sampling*.csv
 
 "%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_bc2_history.csv" %pg_connection_string% "geohistory.sampling_area_bc2_history_new"
 
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk1_history.csv" %pg_connection_string% "geohistory.sampling_area_sk1_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk2_history.csv" %pg_connection_string% "geohistory.sampling_area_sk2_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk3_history.csv" %pg_connection_string% "geohistory.sampling_area_sk3_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk4_history.csv" %pg_connection_string% "geohistory.sampling_area_sk4_history_new"
+
 ENDLOCAL

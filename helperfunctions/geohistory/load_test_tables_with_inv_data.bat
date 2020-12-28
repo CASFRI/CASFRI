@@ -43,4 +43,19 @@ SET coltypes="id=text,poly_id=int,isvalid=boolean,wkt_geometry=text,poly_type=te
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_bc2_history DROP COLUMN ogc_fid"
 
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk1_history.csv" -nln "geohistory.sampling_area_sk1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk1_history DROP COLUMN ogc_fid"
+
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk2_history.csv" -nln "geohistory.sampling_area_sk2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk2_history DROP COLUMN ogc_fid"
+
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk3_history.csv" -nln "geohistory.sampling_area_sk3_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk3_history DROP COLUMN ogc_fid"
+
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk4_history.csv" -nln "geohistory.sampling_area_sk4_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk4_history DROP COLUMN ogc_fid"
 ENDLOCAL
