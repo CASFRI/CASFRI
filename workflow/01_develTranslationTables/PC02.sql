@@ -35,32 +35,32 @@ SELECT TT_CreateMappingView('rawfri', 'pc02', 'pc_wbnp', 200);
 SELECT * FROM TT_Translate_pc02_cas_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pc_wbnp01_cas_devel');
 
--- LYR1 ATTRIBUTES
-SELECT * FROM translation.pe_pei01_lyr;
-DROP TABLE IF EXISTS translation_devel.pe01_pei01_lyr_devel;
-CREATE TABLE translation_devel.pe01_pei01_lyr_devel AS
-SELECT * FROM translation.pe_pei01_lyr; 
---WHERE rule_id::int != 4;
-SELECT * FROM translation_devel.pe01_pei01_lyr_devel;
-SELECT TT_Prepare('translation_devel', 'pe01_pei01_lyr_devel', '_pe01_lyr_devel');
-SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_lyr_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_lyr_devel');
-
 -- DST ATTRIBUTES
-SELECT * FROM translation.pe_pei01_dst;
-DROP TABLE IF EXISTS translation_devel.pe01_pei01_dst_devel;
-CREATE TABLE translation_devel.pe01_pei01_dst_devel AS
-SELECT * FROM translation.pe_pei01_dst; --WHERE rule_id::int = 1
-SELECT * FROM translation_devel.pe01_pei01_dst_devel;
-SELECT TT_Prepare('translation_devel', 'pe01_pei01_dst_devel', '_pe01_dst_devel');
-SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_dst_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_dst_devel');
+SELECT * FROM translation.pc_wbnp01_dst;
+DROP TABLE IF EXISTS translation_devel.pc02_wbnp01_dst_devel;
+CREATE TABLE translation_devel.pc02_wbnp01_dst_devel AS
+SELECT * FROM translation.pc_wbnp01_dst; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.pc02_wbnp01_dst_devel;
+SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_dst_devel', '_pc02_dst_devel');
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_dst_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'pc_wbnp01_dst_devel');
 
 SELECT a.cas_id, b.dist_type_1, a.dist_type_1, a.dist_type_2 
-FROM TT_Translate_pe01_dst_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200') a, rawfri.pe01_l1_to_pe_pei_l1_map_200 b
+FROM TT_Translate_pc02_dst_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200') a, rawfri.pc02_l1_to_pc_wbnp_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
+
+-- LYR1 ATTRIBUTES
+SELECT * FROM translation.pc_wbnp01_lyr;
+DROP TABLE IF EXISTS translation_devel.pc02_wbnp01_lyr_devel;
+CREATE TABLE translation_devel.pc02_wbnp01_lyr_devel AS
+SELECT * FROM translation.pc_wbnp01_lyr 
+WHERE rule_id::int < 11;
+SELECT * FROM translation_devel.pc02_wbnp01_lyr_devel;
+SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_lyr_devel', '_pc02_lyr_devel');
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_lyr_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'pc02_wbnp01_lyr_devel');
 
 -- NFL ATTRIBUTES
 SELECT * FROM translation.pe_pei01_nfl;
