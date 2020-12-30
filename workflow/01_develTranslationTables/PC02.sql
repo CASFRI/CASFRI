@@ -55,11 +55,11 @@ SELECT * FROM translation.pc_wbnp01_lyr;
 DROP TABLE IF EXISTS translation_devel.pc02_wbnp01_lyr_devel;
 CREATE TABLE translation_devel.pc02_wbnp01_lyr_devel AS
 SELECT * FROM translation.pc_wbnp01_lyr 
-WHERE rule_id::int < 7;
+WHERE rule_id::int < 11;
 SELECT * FROM translation_devel.pc02_wbnp01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_lyr_devel', '_pc02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 200);
-SELECT * FROM TT_Translate_pe01_lyr_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_pc02_lyr_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pc02_wbnp01_lyr_devel');
 
 -- NFL ATTRIBUTES
