@@ -4,7 +4,9 @@
 
 # The format of the source dataset is 5 shapefiles named f2h_5830.shp, f5h_5830.shp, f7h_5830.shp,
 # s19_twp.shp, weyersl.shp
-# poly_num is a unique id.
+# poly_num is not a unique id so we create source_id on loading using each files own id column.
+# Combination of src_filename and source_id is a unique id.
+# Drop polygons where poly_num = 0, these have no data.
 
 # These files are combined into a single PostgreSQL table
 # This is done using the -append argument. Note that -update is also 
@@ -49,7 +51,7 @@ fullTargetTableName=$targetFRISchema.ab10
 -f PostgreSQL "$pg_connection_string" "$srcFullPath1" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName1' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName1'" \
+-sql "SELECT *, '$srcName1' AS src_filename, '$inventoryID' AS inventory_id, f2h_5830_ AS source_id FROM '$srcName1' WHERE poly_num > 0" \
 -progress $overwrite_tab
 
 ### FILE 2 ###
@@ -58,7 +60,7 @@ fullTargetTableName=$targetFRISchema.ab10
 -f PostgreSQL "$pg_connection_string" "$srcFullPath2" \
 -nln $fullTargetTableName $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName2' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName2'" \
+-sql "SELECT *, '$srcName2' AS src_filename, '$inventoryID' AS inventory_id, f5h_5830_ AS source_id FROM '$srcName2' WHERE poly_num > 0" \
 -progress
 
 ### FILE 3 ###
@@ -67,7 +69,7 @@ fullTargetTableName=$targetFRISchema.ab10
 -f PostgreSQL "$pg_connection_string" "$srcFullPath3" \
 -nln $fullTargetTableName $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName3' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName3'" \
+-sql "SELECT *, '$srcName3' AS src_filename, '$inventoryID' AS inventory_id, f7h_5830_ AS source_id FROM '$srcName3' WHERE poly_num > 0" \
 -progress
 
 ### FILE 4 ###
@@ -76,7 +78,7 @@ fullTargetTableName=$targetFRISchema.ab10
 -f PostgreSQL "$pg_connection_string" "$srcFullPath4" \
 -nln $fullTargetTableName $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName4' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName4'" \
+-sql "SELECT *, '$srcName4' AS src_filename, '$inventoryID' AS inventory_id, s19_twp_ AS source_id FROM '$srcName4' WHERE poly_num > 0" \
 -progress
 
 ### FILE 5 ###
@@ -85,7 +87,7 @@ fullTargetTableName=$targetFRISchema.ab10
 -f PostgreSQL "$pg_connection_string" "$srcFullPath5" \
 -nln $fullTargetTableName $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName5' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName5'" \
+-sql "SELECT *, '$srcName5' AS src_filename, '$inventoryID' AS inventory_id, weyersl_ AS source_id FROM '$srcName5' WHERE poly_num > 0" \
 -progress
-
+	
 source ./common_postprocessing.sh

@@ -1,8 +1,8 @@
 #!/bin/bash -x
 
-# This script loads the AB GOV BLUERIDGE dataset
+# This script loads the AB GOV WELWOOD dataset
 
-# The format of the source dataset is two shapefiles named blueridge.shp and w2_utm11_n80.shp
+# The format of the source dataset is two shapefiles named ath.shp and ber.shp
 # poly_num is a unique id.
 # Drop polygons where poly_num = 0, these have no data.
 
@@ -23,33 +23,33 @@
 
 source ./common.sh
 
-inventoryID=AB03
+inventoryID=AB11
 
-srcNameBlueridge=blueridge
-srcBlueridgeFullPath="$friDir/AB/$inventoryID/data/inventory/$srcNameBlueridge.shp"
+srcName1=ath
+srcFullPath1="$friDir/AB/$inventoryID/data/inventory/$srcName1.shp"
 
-srcNameW2=w2_utm11_n80
-srcW2FullPath="$friDir/AB/$inventoryID/data/inventory/$srcNameW2.shp"
+srcName2=ber
+srcFullPath2="$friDir/AB/$inventoryID/data/inventory/$srcName2.shp"
 
-fullTargetTableName=$targetFRISchema.ab03
+fullTargetTableName=$targetFRISchema.ab11
 
 ########################################## Process ######################################
 
 ### FILE 1 ###
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcBlueridgeFullPath" \
+-f PostgreSQL "$pg_connection_string" "$srcFullPath1" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameBlueridge' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcNameBlueridge' WHERE poly_num > 0" \
+-sql "SELECT *, '$srcName1' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName1' WHERE poly_num > 0" \
 -progress $overwrite_tab
 
 ### FILE 2 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcW2FullPath" \
+-f PostgreSQL "$pg_connection_string" "$srcFullPath2" \
 -nln $fullTargetTableName $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameW2' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcNameW2' WHERE poly_num > 0" \
+-sql "SELECT *, '$srcName2' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName2' WHERE poly_num > 0" \
 -progress
 
 source ./common_postprocessing.sh
