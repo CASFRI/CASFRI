@@ -55,7 +55,7 @@ SELECT * FROM translation.pc_wbnp01_lyr;
 DROP TABLE IF EXISTS translation_devel.pc02_wbnp01_lyr_devel;
 CREATE TABLE translation_devel.pc02_wbnp01_lyr_devel AS
 SELECT * FROM translation.pc_wbnp01_lyr 
-WHERE rule_id::int < 11;
+WHERE rule_id::int < 21;
 SELECT * FROM translation_devel.pc02_wbnp01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_lyr_devel', '_pc02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 200);
