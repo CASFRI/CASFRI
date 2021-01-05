@@ -58,7 +58,7 @@ DROP TABLE rawfri.nl_photoyear;
 ALTER TABLE rawfri.new_photo_year RENAME TO nl_photoyear;
 
 --------------------------------------------------------------------------
--- Translate all CAS tables into a common table. 43h09m
+-- Translate all CAS tables into a common table. 92h
 --------------------------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab_cas'); -- used for both AB06 and AB16
@@ -351,6 +351,6 @@ ORDER BY inv;
 --SK06	211482
 --YT02	231137
 
-SELECT count(*) FROM casfri50.cas_all; -- 20382784
+SELECT count(*) FROM casfri50.cas_all; -- 26943027
 --------------------------------------------------------------------------
 
