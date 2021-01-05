@@ -63,37 +63,37 @@ SELECT * FROM TT_Translate_pc02_lyr_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_2
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pc02_wbnp01_lyr_devel');
 
 -- NFL ATTRIBUTES
-SELECT * FROM translation.pe_pei01_nfl;
-DROP TABLE IF EXISTS translation_devel.pe01_pei01_nfl_devel;
-CREATE TABLE translation_devel.pe01_pei01_nfl_devel AS
-SELECT * FROM translation.pe_pei01_nfl; --WHERE rule_id::int != 4; --IN (0,1,2,3);
-SELECT * FROM translation_devel.pe01_pei01_nfl_devel;
-SELECT TT_Prepare('translation_devel', 'pe01_pei01_nfl_devel', '_pe01_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_nfl_devel('rawfri', 'pe01_l2_to_pe_pei_l1_map_200', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_nfl_devel');
+SELECT * FROM translation.pc_wbnp01_nfl;
+DROP TABLE IF EXISTS translation_devel.pc02_wbnp01_nfl_devel;
+CREATE TABLE translation_devel.pc02_wbnp01_nfl_devel AS
+SELECT * FROM translation.pc_wbnp01_nfl; --WHERE rule_id::int != 4; --IN (0,1,2,3);
+SELECT * FROM translation_devel.pc02_wbnp01_nfl_devel;
+SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_nfl_devel', '_pc02_nfl_devel');
+SELECT TT_CreateMappingView('rawfri', 'pc02', 2, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l2_to_pc_wbnp_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'pc02_wbnp01_nfl_devel');
 
 -- ECO ATTRIBUTES
-SELECT * FROM translation.pe_pei01_eco;
-DROP TABLE IF EXISTS translation_devel.pe01_pei01_eco_devel;
-CREATE TABLE translation_devel.pe01_pei01_eco_devel AS
-SELECT * FROM translation.pe_pei01_eco; --WHERE rule_id::int = 1
-SELECT * FROM translation_devel.pe01_pei01_eco_devel;
-SELECT TT_Prepare('translation_devel', 'pe01_pei01_eco_devel', '_pe01_eco_devel');
-SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_eco_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_eco_devel');
+SELECT * FROM translation.pc_wbnp01_eco;
+DROP TABLE IF EXISTS translation_devel.pc02_wbnp01_eco_devel;
+CREATE TABLE translation_devel.pc02_wbnp01_eco_devel AS
+SELECT * FROM translation.pc_wbnp01_eco; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.pc02_wbnp01_eco_devel;
+SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_eco_devel', '_pc02_eco_devel');
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_eco_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'pc02_wbnp01_eco_devel');
 
 -- GEO ATTRIBUTES
-SELECT * FROM translation.pe_pei01_geo;
-DROP TABLE IF EXISTS translation_devel.pe01_pei01_geo_devel;
-CREATE TABLE translation_devel.pe01_pei01_geo_devel AS
-SELECT * FROM translation.pe_pei01_geo; --WHERE rule_id::int = 1
-SELECT * FROM translation_devel.pe01_pei01_geo_devel;
-SELECT TT_Prepare('translation_devel', 'pe01_pei01_geo_devel', '_pe01_geo_devel');
-SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
-SELECT * FROM TT_Translate_pe01_geo_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_geo_devel');
+SELECT * FROM translation.pc_wbnp01_geo;
+DROP TABLE IF EXISTS translation_devel.pc02_wbnp01_geo_devel;
+CREATE TABLE translation_devel.pc02_wbnp01_geo_devel AS
+SELECT * FROM translation.pc_wbnp01_geo; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.pc02_wbnp01_geo_devel;
+SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_geo_devel', '_pc02_geo_devel');
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_geo_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'pc02_wbnp01_geo_devel');
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
@@ -102,7 +102,7 @@ SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id,
        b.l1ht, a.height_upper, a.height_lower, 
        b.l1s1, a.species_1,
        b.l1pr1, a.species_per_1
-FROM TT_Translate_pe01_lyr_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200') a, rawfri.pe01_l1_to_pe_pei_l1_map_200 b
+FROM TT_Translate_pe01_lyr_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200') a, rawfri.pc02_l1_to_pc_wbnp_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------
