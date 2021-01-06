@@ -13,6 +13,25 @@
 -------------------------------------------------------------------------------
 SET lc_messages TO 'en_US.UTF-8';
 ------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_Count(
+  schemaName name,
+  tableName name
+) RETURNS int AS $$
+  DECLARE
+    queryStr text;
+    returnCnt bigint;
+  BEGIN
+    IF NOT TT_TableExists(schemaName, tableName) THEN
+      RETURN 0;
+    END IF;
+    queryStr = 'SELECT count(*) FROM ' || schemaName || '.' || tableName;
+    EXECUTE queryStr INTO returnCnt;
+    RETURN returnCnt;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
+-- Test
+--SELECT TT_Count('rawfri', 'ab06')
+------------------------------------------------------------------------------
 -- Comment out the following line and the last one of the file to display 
 -- only failing tests
 SELECT * FROM (
@@ -43,204 +62,175 @@ FROM test_series AS a FULL OUTER JOIN (
 SELECT '1.1'::text number,
        'Check count'::text function_tested,
        'ab_photoyear'::text description,
-       count(*) = 901 passed
-FROM rawfri.ab_photoyear
+       TT_Count('rawfri', 'ab_photoyear') = 901 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
        'Check count'::text function_tested,
        'AB06'::text description,
-       count(*) = 11484 passed
-FROM rawfri.ab06
+       TT_Count('rawfri', 'ab06') = 11484 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.3'::text number,
        'Check count'::text function_tested,
        'AB16'::text description,
-       count(*) = 120476 passed
-FROM rawfri.ab16
+       TT_Count('rawfri', 'ab16') = 120476 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.4'::text number,
        'Check count'::text function_tested,
        'BC08'::text description,
-       count(*) = 4677411 passed
-FROM rawfri.bc08
+       TT_Count('rawfri', 'bc08') = 4677411 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.5'::text number,
        'Check count'::text function_tested,
        'BC10'::text description,
-       count(*) = 5151772 passed
-FROM rawfri.bc10
+       TT_Count('rawfri', 'bc10') = 5151772 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.6'::text number,
        'Check count'::text function_tested,
        'MB05'::text description,
-       count(*) = 1644808 passed
-FROM rawfri.mb05
+       TT_Count('rawfri', 'mb05') = 1644808 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.7'::text number,
        'Check count'::text function_tested,
        'MB06'::text description,
-       count(*) = 163064 passed
-FROM rawfri.mb06
+       TT_Count('rawfri', 'mb06') = 163064 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.8'::text number,
        'Check count'::text function_tested,
        'NB01'::text description,
-       count(*) = 927177 passed
-FROM rawfri.nb01
+       TT_Count('rawfri', 'nb01') = 927177 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.9'::text number,
        'Check count'::text function_tested,
        'NB02'::text description,
-       count(*) = 1123893 passed
-FROM rawfri.nb02
+       TT_Count('rawfri', 'nb02') = 1123893 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.10'::text number,
        'Check count'::text function_tested,
        'nl_photoyear'::text description,
-       count(*) = 8083 passed
-FROM rawfri.nl_photoyear
+       TT_Count('rawfri', 'nl_photoyear') = 8083 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.11'::text number,
        'Check count'::text function_tested,
        'NL01'::text description,
-       count(*) = 1863664 passed
-FROM rawfri.nl01
+       TT_Count('rawfri', 'nl01') = 1863664 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.12'::text number,
        'Check count'::text function_tested,
        'NS03'::text description,
-       count(*) = 995886 passed
-FROM rawfri.ns03
+       TT_Count('rawfri', 'ns03') = 995886 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.13'::text number,
        'Check count'::text function_tested,
        'NT01'::text description,
-       count(*) = 281388 passed
-FROM rawfri.nt01
+       TT_Count('rawfri', 'nt01') = 281388 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.14'::text number,
        'Check count'::text function_tested,
        'NT02'::text description,
-       count(*) = 320944 passed
-FROM rawfri.nt02
+       TT_Count('rawfri', 'nt02') = 320944 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.15'::text number,
        'Check count'::text function_tested,
        'ON02'::text description,
-       count(*) = 3629072 passed
-FROM rawfri.on02
+       TT_Count('rawfri', 'on02') = 3629072 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.16'::text number,
        'Check count'::text function_tested,
        'PC02'::text description,
-       count(*) = 1053 passed
-FROM rawfri.pc02
+       TT_Count('rawfri', 'pc02') = 1053 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.17'::text number,
        'Check count'::text function_tested,
        'PE01'::text description,
-       count(*) = 107220 passed
-FROM rawfri.pe01
+       TT_Count('rawfri', 'pe01') = 107220 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.18'::text number,
        'Check count'::text function_tested,
        'QC01'::text description,
-       count(*) = 5886005 passed
-FROM rawfri.qc01
+       TT_Count('rawfri', 'qc01') = 5886005 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.19'::text number,
        'Check count'::text function_tested,
        'QC02'::text description,
-       count(*) = 6581710 passed
-FROM rawfri.qc02
+       TT_Count('rawfri', 'qc02') = 6581710 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.20'::text number,
        'Check count'::text function_tested,
        'QC03'::text description,
-       count(*) = 401188 passed
-FROM rawfri.qc03
+       TT_Count('rawfri', 'qc03') = 401188 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.21'::text number,
        'Check count'::text function_tested,
        'QC04'::text description,
-       count(*) = 2487519 passed
-FROM rawfri.qc04
+       TT_Count('rawfri', 'qc04') = 2487519 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.22'::text number,
        'Check count'::text function_tested,
        'QC05'::text description,
-       count(*) = 6768074 passed
-FROM rawfri.qc05
+       TT_Count('rawfri', 'qc05') = 6768074 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.23'::text number,
        'Check count'::text function_tested,
        'SK01'::text description,
-       count(*) = 1501667 passed
-FROM rawfri.sk01
+       TT_Count('rawfri', 'sk01') = 1501667 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.24'::text number,
        'Check count'::text function_tested,
        'SK02'::text description,
-       count(*) = 27312 passed
-FROM rawfri.sk02
+       TT_Count('rawfri', 'sk02') = 27312 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.25'::text number,
        'Check count'::text function_tested,
        'SK03'::text description,
-       count(*) = 8964 passed
-FROM rawfri.sk03
+       TT_Count('rawfri', 'sk03') = 8964 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.26'::text number,
        'Check count'::text function_tested,
        'SK04'::text description,
-       count(*) = 633522 passed
-FROM rawfri.sk04
+       TT_Count('rawfri', 'sk04') = 633522 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.27'::text number,
        'Check count'::text function_tested,
        'SK05'::text description,
-       count(*) = 421977 passed
-FROM rawfri.sk05
+       TT_Count('rawfri', 'sk05') = 421977 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.28'::text number,
        'Check count'::text function_tested,
        'SK06'::text description,
-       count(*) = 211482 passed
-FROM rawfri.sk06
+       TT_Count('rawfri', 'sk06') = 211482 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.29'::text number,
        'Check count'::text function_tested,
        'YT02'::text description,
-       count(*) = 231137 passed
-FROM rawfri.yt02
+       TT_Count('rawfri', 'yt02') = 231137 passed
 ---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
