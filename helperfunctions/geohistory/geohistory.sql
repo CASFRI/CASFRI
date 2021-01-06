@@ -314,6 +314,7 @@ RETURNS TABLE (id text,
         FOR ovlpRow IN EXECUTE ovlpPolyQuery 
         USING poly_row_id, poly_geom LOOP
           IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+          IF debug_l1 THEN RAISE NOTICE 'Processing overlapping polygon %', ovlpRow.gh_row_id;END IF;
           IF debug_l2 THEN RAISE NOTICE '333 current id=%, py=%, inv=%, isvalid=%', poly_row_id, poly_photo_year, poly_inv, poly_is_valid;END IF;
           IF debug_l2 THEN RAISE NOTICE '444 ovlp    id=%, py=%, inv=%, isvalid=%, ovlp_area=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid, ST_Area(ST_Intersection(poly_geom, ovlpRow.gh_geom));END IF;
           -- CASE B - (A - B) RefYB -> RefYE (see logic table above)

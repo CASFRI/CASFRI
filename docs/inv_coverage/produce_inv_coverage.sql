@@ -51,25 +51,25 @@ RETURNS geometry AS $$
   BEGIN
     IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
       RETURN inGeom;
-	  END IF;
+    END IF;
 --RAISE NOTICE 'inGeom is %', CASE WHEN ST_IsValid(inGeom) THEN 'VALID' ELSE 'INVALID' END;
     WITH all_geoms AS (
-	    SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
+      SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
     ), polygons AS (
-	    SELECT ST_MakePolygon(ST_ExteriorRing(a.geom),  
-							         ARRAY(SELECT ST_ExteriorRing(b.geom) inner_ring
+      SELECT ST_MakePolygon(ST_ExteriorRing(a.geom),  
+                       ARRAY(SELECT ST_ExteriorRing(b.geom) inner_ring
                              FROM (SELECT (ST_DumpRings(geom)).*) b 
                              WHERE b.path[1] > 0 AND
                                    CASE WHEN minArea IS NULL OR minArea = 0 THEN FALSE ELSE TRUE END AND
                                    ST_Area(b.geom) >= minArea
                             )
                            ) final_geom
-	    FROM all_geoms a
+      FROM all_geoms a
     )
     SELECT ST_BuildArea(ST_Union(final_geom)) geom
     FROM polygons INTO returnGeom;
 
-	  RETURN returnGeom;
+    RETURN returnGeom;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
 ------------------------------------------------------------------------------
@@ -88,15 +88,15 @@ RETURNS geometry AS $$
   BEGIN
     IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
       RETURN inGeom;
-	  END IF;
+    END IF;
     WITH all_geoms AS (
-	    SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
+      SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
     )
     SELECT ST_Union(geom) geom
     FROM all_geoms
     WHERE ST_Area(geom) >= minArea INTO returnGeom;
 
-	  RETURN returnGeom;
+    RETURN returnGeom;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -201,12 +201,13 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 -- TT_SuperUnion
 --
--- ST_Union() all polygons surrounding 
+-- ST_Union() all polygons in a two stage process 
 ----------------------------------------------------
---DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, text) CASCADE;
+--DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text) CASCADE;
 CREATE OR REPLACE FUNCTION TT_SuperUnion(
   schemaName name,
   tableName name,
+  geomColumnName name,
   filterStr text DEFAULT NULL
 )
 RETURNS geometry AS $$
@@ -215,7 +216,7 @@ RETURNS geometry AS $$
     returnGeom geometry;
   BEGIN
     queryStr = 'WITH gridded AS (' ||
-                  'SELECT TT_SplitByGrid(geometry, 10000) split ' ||
+                  'SELECT TT_SplitByGrid(' || geomColumnName ||', 10000) split ' ||
                   'FROM ' || TT_FullTableName(schemaName, tableName) ||
                   CASE WHEN NOT filterStr IS NULL THEN ' WHERE ' || filterStr ELSE '' END ||
                '), first_level_union AS (' ||
@@ -284,26 +285,26 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 -- SK03 - DONE
 -- Union by grid with a single query - 49s
-SELECT TT_ProduceDerivedCoverages('SK03', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''')); -- 8964
-SELECT TT_ProduceDerivedCoverages('AB06', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''AB06''')); -- 11484
-SELECT TT_ProduceDerivedCoverages('SK02', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK02''')); -- 27312
-SELECT TT_ProduceDerivedCoverages('PE01', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''PE01''')); -- 107220
-SELECT TT_ProduceDerivedCoverages('AB16', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''AB16''')); -- 120476
-SELECT TT_ProduceDerivedCoverages('MB06', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''MB06''')); -- 160218
-SELECT TT_ProduceDerivedCoverages('SK06', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK06''')); -- 211482
-SELECT TT_ProduceDerivedCoverages('YT02', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''YT02''')); -- 231137
-SELECT TT_ProduceDerivedCoverages('NT01', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''NT01''')); -- 281388
-SELECT TT_ProduceDerivedCoverages('NT02', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''NT02''')); -- 320944
-SELECT TT_ProduceDerivedCoverages('SK05', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK05''')); -- 421977
-SELECT TT_ProduceDerivedCoverages('MB05', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''MB05''')); -- 514157
-SELECT TT_ProduceDerivedCoverages('SK04', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK04''')); -- 633522
-SELECT TT_ProduceDerivedCoverages('NB01', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''NB01''')); -- 927177
-SELECT TT_ProduceDerivedCoverages('NS03', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''NS03''')); -- 995886
-SELECT TT_ProduceDerivedCoverages('NB02', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''NB02''')); -- 1123893
-SELECT TT_ProduceDerivedCoverages('SK01', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK01''')); -- 1501667
-SELECT TT_ProduceDerivedCoverages('ON02', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''ON02''')); -- 3629072
-SELECT TT_ProduceDerivedCoverages('BC08', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''BC08''')); -- 4677411
-SELECT TT_ProduceDerivedCoverages('BC10', TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''BC10''')); -- 5151772
+SELECT TT_ProduceDerivedCoverages('SK03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK03''')); -- 8964, 49s
+SELECT TT_ProduceDerivedCoverages('AB06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB06''')); -- 11484, 1m45
+SELECT TT_ProduceDerivedCoverages('SK02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK02''')); -- 27312, 2m03
+SELECT TT_ProduceDerivedCoverages('PE01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''PE01''')); -- 107220, 4m23
+SELECT TT_ProduceDerivedCoverages('AB16', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB16''')); -- 120476, 9m50
+SELECT TT_ProduceDerivedCoverages('MB06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''MB06''')); -- 160218, 43m28
+SELECT TT_ProduceDerivedCoverages('SK06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK06''')); -- 211482, 40m04
+SELECT TT_ProduceDerivedCoverages('YT02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''YT02''')); -- 231137, 25m11
+SELECT TT_ProduceDerivedCoverages('NT01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NT01''')); -- 281388, 27m38
+SELECT TT_ProduceDerivedCoverages('NT02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NT02''')); -- 320944, 39m24
+SELECT TT_ProduceDerivedCoverages('SK05', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK05''')); -- 421977, 1h13
+SELECT TT_ProduceDerivedCoverages('MB05', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''MB05''')); -- 514157, 3h06
+SELECT TT_ProduceDerivedCoverages('SK04', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK04''')); -- 633522, 2h11
+SELECT TT_ProduceDerivedCoverages('NB01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NB01''')); -- 927177, BUG, found non-noded intersection between LINESTRING (2.29408e+006 1.08525e+006, 2.29411e+006 1.08529e+006) and LINESTRING (2.29411e+006 1.08529e+006, 2.29408e+006 1.08525e+006) at 2294077.737813761 1085247.9753900601
+SELECT TT_ProduceDerivedCoverages('NS03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NS03''')); -- 995886, 1h11
+SELECT TT_ProduceDerivedCoverages('NB02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NB02''')); -- 1123893, BUG, infinite time
+SELECT TT_ProduceDerivedCoverages('SK01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK01''')); -- 1501667, 3h13
+SELECT TT_ProduceDerivedCoverages('ON02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''ON02''')); -- 3629072, BUG ERROR:  GEOSUnaryUnion: TopologyException: found non-noded intersection between LINESTRING (415779 1.11971e+006, 415779 1.11971e+006) and LINESTRING (415779 1.11971e+006, 415779 1.11971e+006) at 415779.06890209671 1119712.9592096396
+SELECT TT_ProduceDerivedCoverages('BC08', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''BC08''')); -- 4677411, 5h21
+SELECT TT_ProduceDerivedCoverages('BC10', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''BC10''')); -- 5151772, 6h13
 
 -- Recompute derived
 SELECT TT_ProduceDerivedCoverages('SK03', (SELECT geom FROM casfri50_coverage.detailed WHERE inv = 'SK03'));
