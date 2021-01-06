@@ -54,6 +54,7 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -125,6 +126,7 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_translation(text, text, text);
+DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text, text);
 
 -------------------------------------------------------------------------------
 -- Generic functions
@@ -136,6 +138,7 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_code(text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_code(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_code(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text);
+DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_code(text, text, text, text, text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Tools functions
 -------------------------------------------------------------------------------
