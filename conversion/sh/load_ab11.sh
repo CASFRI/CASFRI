@@ -40,7 +40,7 @@ fullTargetTableName=$targetFRISchema.ab11
 -f PostgreSQL "$pg_connection_string" "$srcFullPath1" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName1' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName1' WHERE poly_num > 0" \
+-sql "SELECT *, '$srcName1' AS src_filename, '$inventoryID' AS inventory_id FROM $srcName1 WHERE poly_num > 0" \
 -progress $overwrite_tab
 
 ### FILE 2 ###
@@ -49,7 +49,7 @@ fullTargetTableName=$targetFRISchema.ab11
 -f PostgreSQL "$pg_connection_string" "$srcFullPath2" \
 -nln $fullTargetTableName $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName2' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcName2' WHERE poly_num > 0" \
+-sql "SELECT *, '$srcName2' AS src_filename, '$inventoryID' AS inventory_id FROM $srcName2 WHERE poly_num > 0" \
 -progress
 
 source ./common_postprocessing.sh

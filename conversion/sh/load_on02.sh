@@ -38,7 +38,7 @@ do
     -nln $temp_table\
     -nlt PROMOTE_TO_MULTI \
     -progress \
-    -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM '$F'" \
+    -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM $F" \
     $layer_creation_options $other_options \
     $overwrite_option
 
@@ -54,7 +54,7 @@ do
     -nln $temp_table \
     -nlt PROMOTE_TO_MULTI \
     -progress \
-    -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id, shape_leng AS perimeter FROM '$F'" \
+    -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id, shape_leng AS perimeter FROM $F" \
     $layer_creation_options $other_options \
     $overwrite_option
 done

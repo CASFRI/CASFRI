@@ -30,7 +30,7 @@ fullTargetTableName=$targetFRISchema.ab08
 -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcFileName'" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $srcFileName" \
 -progress $overwrite_tab
 
 source ./common_postprocessing.sh

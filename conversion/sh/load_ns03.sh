@@ -36,7 +36,7 @@ do
     -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
     -nln $fullTargetTableName \
     -nlt PROMOTE_TO_MULTI \
-    -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM '$F'" \
+    -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM $F" \
     -progress \
     $layer_creation_options $other_options \
     $overwrite_option 
