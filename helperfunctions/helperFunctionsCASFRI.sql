@@ -6187,3 +6187,44 @@ RETURNS text AS $$
     RETURN TT_wetland_code_translation(_wetland_code, ret_char);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_pc01_species_per_translation(text, text)
+--
+-- Return the requested percent value based on the following rules:
+-- If 1 species, species_per = 100%
+-- If 2 species and species are pine (PB) and black spruce (PM), species_per 1st=60% and 2nd=40%
+-- If 2 species with any other combinations, species_per 1st=70% and 2nd=30%
+-- If 3 species, any combination, species_per 1st=50%, 2nd=30% and 3rd=20%
+--
+-- e.g. TT_pc01_species_per_translation(val, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_pc01_species_per_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_pc01_species_per_translation(
+	val text,
+	speciesNumber text
+)
+RETURNS int AS $$
+  DECLARE
+	_length int;
+  BEGIN
+    
+	IF val IS NULL THEN
+	  RETURN NULL;
+	END IF;
+	
+	_length = LENGTH(val);
+	
+	RETURN CASE
+	  WHEN _length = 2 AND speciesNumber = '1' THEN 100
+	  WHEN _length = 4 AND val IN('PBPM', 'PMPB') AND speciesNumber = '1' THEN 60
+	  WHEN _length = 4 AND val IN('PBPM', 'PMPB') AND speciesNumber = '2' THEN 40
+	  WHEN _length = 4 AND speciesNumber = '1' THEN 70
+	  WHEN _length = 4 AND speciesNumber = '2' THEN 30
+	  WHEN _length = 6 AND speciesNumber = '1' THEN 50
+	  WHEN _length = 6 AND speciesNumber = '2' THEN 30
+	  WHEN _length = 6 AND speciesNumber = '3' THEN 20
+	  ELSE NULL
+	END;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
