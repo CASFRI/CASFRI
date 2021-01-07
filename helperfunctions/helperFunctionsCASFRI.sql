@@ -1962,11 +1962,28 @@ CREATE OR REPLACE FUNCTION TT_nt_fvi01_wetland_code(
 )
 RETURNS text AS $$
   DECLARE
+    _landpos text;
+	_structur text;
+	_moisture text;
+	_typeclas text;
+	_mintypeclas text;
+	_sp1 text;
+	_sp2 text;
+	_wetland text;
     _height double precision;
 	_crownclos double precision;
 	_sp1_per double precision;
   BEGIN
-    
+    -- convert all text inputs to upper
+	_landpos = UPPER(landpos);
+	_structur = UPPER(structur);
+	_moisture = UPPER(moisture);
+	_typeclas = UPPER(typeclas);
+	_mintypeclas = UPPER(mintypeclas);
+	_sp1 = UPPER(sp1);
+	_sp2 = UPPER(sp2);
+	_wetland = UPPER(wetland);
+	
 	-- height, crownclos and sp1_per are never null when sp1 has a value. 
 	-- Cast them if sp1 is notEmpty, otherwise set them to zero, they will not be used but the logic will still run.
 	IF tt_notEmpty(sp1) THEN
@@ -1984,35 +2001,35 @@ RETURNS text AS $$
 	END IF;
 	  
 	RETURN CASE
-		WHEN landpos='W' THEN 'W---'
+		WHEN _landpos='W' THEN 'W---'
 		-- NON-FORESTED POLYGONS
-		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND (typeclas='ST' OR typeclas='SL') THEN 'SONS'
-		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND typeclas IN ('HG', 'HF', 'HE') THEN 'MONG'
-		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND typeclas='BM' THEN 'FONG'
-		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND (typeclas='BL' OR typeclas='BY') THEN 'BOXC'
-		WHEN structur='H' AND moisture='SD' AND (typeclas IN ('SL', 'HG') OR mintypeclas IN ('SL', 'HG')) THEN 'BOXC'
-		WHEN structur='H' AND moisture='HD' AND (typeclas='HG' OR mintypeclas='HG') THEN 'MONG'
-		WHEN structur='M' AND (moisture='SD' OR moisture='HD') AND (typeclas='ST' OR typeclas='SL') THEN 'FONS'
+		WHEN _structur='S' AND (_moisture='SD' OR _moisture='HD') AND (_typeclas='ST' OR _typeclas='SL') THEN 'SONS'
+		WHEN _structur='S' AND (_moisture='SD' OR _moisture='HD') AND _typeclas IN ('HG', 'HF', 'HE') THEN 'MONG'
+		WHEN _structur='S' AND (_moisture='SD' OR _moisture='HD') AND _typeclas='BM' THEN 'FONG'
+		WHEN _structur='S' AND (_moisture='SD' OR _moisture='HD') AND (_typeclas='BL' OR _typeclas='BY') THEN 'BOXC'
+		WHEN _structur='H' AND _moisture='SD' AND (_typeclas IN ('SL', 'HG') OR _mintypeclas IN ('SL', 'HG')) THEN 'BOXC'
+		WHEN _structur='H' AND _moisture='HD' AND (_typeclas='HG' OR _mintypeclas='HG') THEN 'MONG'
+		WHEN _structur='M' AND (_moisture='SD' OR _moisture='HD') AND (_typeclas='ST' OR _typeclas='SL') THEN 'FONS'
 		-- FOREST LAND
-		WHEN structur IN ('M', 'C', 'H') AND mintypeclas='SL' AND moisture='SD' AND (((sp1='SB' OR sp1='PJ') AND _sp1_per=100) OR ((sp1='SB' OR sp1='PJ') AND (sp2='SB' OR sp2='PJ'))) AND _crownclos<50 AND _height<8 THEN 'BTXC'
-		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND ((sp1='SB' OR sp1='LT') AND  _sp1_per=100) AND (_crownclos>50 AND _crownclos<70) THEN 'STNN'
-		WHEN (moisture='SD' OR moisture='HD') AND (sp1='SB' OR sp1='LT') AND _crownclos>70 THEN 'SFNN'
-		WHEN (moisture='SD' OR moisture='HD') AND ((sp1='SB' OR sp1='LT') AND (sp2='SB' OR sp2='LT')) AND _height<12 THEN 'FTNN'
-		WHEN (moisture='SD' OR moisture='HD') AND ((sp1='SB' OR sp1='LT') AND (sp2='SB' OR sp2='LT')) AND _height>=12 THEN 'STNN'
-		WHEN moisture='HD' AND ((sp1='SB' OR sp1='LT') AND _sp1_per=100) AND _crownclos<50 THEN 'FTNN'
-		WHEN (moisture='SD' OR moisture='HD') AND (sp1 IN ('SB', 'LT', 'BW', 'SW') AND sp2 IN ('SB', 'LT', 'BW', 'SW')) AND _crownclos>50 THEN 'FTNN'
-		WHEN (moisture='SD' OR moisture='HD') AND (sp1='BW' OR sp1='PO') THEN 'STNN'
+		WHEN _structur IN ('M', 'C', 'H') AND _mintypeclas='SL' AND _moisture='SD' AND (((_sp1='SB' OR _sp1='PJ') AND _sp1_per=100) OR ((_sp1='SB' OR _sp1='PJ') AND (_sp2='SB' OR _sp2='PJ'))) AND _crownclos<50 AND _height<8 THEN 'BTXC'
+		WHEN _structur='S' AND (_moisture='SD' OR _moisture='HD') AND ((_sp1='SB' OR _sp1='LT') AND  _sp1_per=100) AND (_crownclos>50 AND _crownclos<70) THEN 'STNN'
+		WHEN (_moisture='SD' OR _moisture='HD') AND (_sp1='SB' OR _sp1='LT') AND _crownclos>70 THEN 'SFNN'
+		WHEN (_moisture='SD' OR _moisture='HD') AND ((_sp1='SB' OR _sp1='LT') AND (_sp2='SB' OR _sp2='LT')) AND _height<12 THEN 'FTNN'
+		WHEN (_moisture='SD' OR _moisture='HD') AND ((_sp1='SB' OR _sp1='LT') AND (_sp2='SB' OR _sp2='LT')) AND _height>=12 THEN 'STNN'
+		WHEN _moisture='HD' AND ((_sp1='SB' OR _sp1='LT') AND _sp1_per=100) AND _crownclos<50 THEN 'FTNN'
+		WHEN (_moisture='SD' OR _moisture='HD') AND (_sp1 IN ('SB', 'LT', 'BW', 'SW') AND _sp2 IN ('SB', 'LT', 'BW', 'SW')) AND _crownclos>50 THEN 'FTNN'
+		WHEN (_moisture='SD' OR _moisture='HD') AND (_sp1='BW' OR _sp1='PO') THEN 'STNN'
 		-- WETLAND CLASS
-		WHEN wetland='WE' THEN 'W---'
-		WHEN wetland='SO' THEN 'OONN'
-		WHEN wetland='MA' THEN 'MONG'
-		WHEN wetland='SW' AND tt_notEmpty(sp1) THEN 'STNN'
-		WHEN wetland='SW' AND (typeclas='SL' OR typeclas='ST') THEN 'SONS'
-		WHEN wetland='FE' AND tt_notEmpty(sp1) THEN 'FTNN'
-		WHEN wetland='FE' AND typeclas='HG' THEN 'FONG'
-		WHEN wetland='FE' AND (typeclas='SL' OR typeclas='ST') THEN 'FONS'
-		WHEN wetland='BO' AND tt_notEmpty(sp1) THEN 'BTXC'
-		WHEN wetland='BO' AND typeclas IN ('BY', 'BL', 'BM') THEN 'BOXC'
+		WHEN _wetland='WE' THEN 'W---'
+		WHEN _wetland='SO' THEN 'OONN'
+		WHEN _wetland='MA' THEN 'MONG'
+		WHEN _wetland='SW' AND tt_notEmpty(_sp1) THEN 'STNN'
+		WHEN _wetland='SW' AND (_typeclas='SL' OR _typeclas='ST') THEN 'SONS'
+		WHEN _wetland='FE' AND tt_notEmpty(_sp1) THEN 'FTNN'
+		WHEN _wetland='FE' AND _typeclas='HG' THEN 'FONG'
+		WHEN _wetland='FE' AND (_typeclas='SL' OR _typeclas='ST') THEN 'FONS'
+		WHEN _wetland='BO' AND tt_notEmpty(_sp1) THEN 'BTXC'
+		WHEN _wetland='BO' AND _typeclas IN ('BY', 'BL', 'BM') THEN 'BOXC'
 		ELSE NULL
     END;
   END
