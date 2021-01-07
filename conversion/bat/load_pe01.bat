@@ -29,7 +29,7 @@ SET fullTargetTableName=%targetFRISchema%.pe01
 -nln %fullTargetTableName% %layer_creation_options% %other_options% ^
 -nlt PROMOTE_TO_MULTI ^
 -progress %overwrite_tab% ^
--sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%srcFileName%'"
+-sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM ""%srcFileName%"""
 
 SET createSQLSpatialIndex=True
 

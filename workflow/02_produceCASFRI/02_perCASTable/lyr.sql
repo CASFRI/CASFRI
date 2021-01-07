@@ -454,7 +454,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr', 'yt02_l1_to_yt_l1_ma
 -- Translate NS03 layer 1 using NS generic translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, NULL, 'lyr');
-INSERT INTO casfri50.lyr_all_new
+INSERT INTO casfri50.lyr_all
 SELECT * FROM TT_Translate_ns_lyr('rawfri', 'ns03_l1_to_ns_nsi_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
@@ -592,23 +592,23 @@ SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_lyr', 'qc04_l2_to_qc_ini04
 ------------------------
 -- Translate QC05 layer 1 using QC_IPF05 translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf05', 1, NULL, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l1_to_qc_ipf05_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l1_to_qc_ipf_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc05_l1_to_qc_ipf05_l1_map_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc05_l1_to_qc_ipf_l1_map_lyr');
 ------------------------
 -- Translate QC05 layer 2 using QC_IPF05 translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'qc05', 2, 'qc_ipf05', 1, NULL, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'qc05', 2, 'qc_ipf', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l2_to_qc_ipf05_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l2_to_qc_ipf_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc05_l2_to_qc_ipf05_l1_map_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc05_l2_to_qc_ipf_l1_map_lyr');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -619,13 +619,13 @@ ORDER BY inv;
 -- inv  nb
 -- AB06	14179
 -- AB16	149674
--- BC08	4113383
+-- BC08	4272025
 -- BC10	4744673
 -- NB01	932271
 -- NB02	1053554
 -- NS03	972710
--- NT01	246179
--- NT02	350967
+-- NT01	245832
+-- NT02	349923
 -- ON02	2240815
 -- PE01	81073
 -- SK01	860394

@@ -1478,6 +1478,7 @@ RETURNS text AS $$
  				  WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
  				  WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -1940,6 +1941,82 @@ RETURNS text AS $$
          END;
 $$ LANGUAGE sql IMMUTABLE;
 
+-------------------------------------------------------------------------------
+-- TT_nt_fvi01_wetland_code(text, text, text, text, text, text, text, text, text, text, text)
+--
+-- Return 4 character wetland code
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_code(text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nt_fvi01_wetland_code(
+	landpos text,
+	structur text,
+	moisture text,
+	typeclas text,
+	mintypeclas text,
+	sp1 text,
+	sp2 text,
+	sp1_per text,
+	crownclos text,
+	height text,
+	wetland text
+)
+RETURNS text AS $$
+  DECLARE
+    _height double precision;
+	_crownclos double precision;
+	_sp1_per double precision;
+  BEGIN
+    
+	-- height, crownclos and sp1_per are never null when sp1 has a value. 
+	-- Cast them if sp1 is notEmpty, otherwise set them to zero, they will not be used but the logic will still run.
+	IF tt_notEmpty(sp1) THEN
+	  _height = height::double precision;
+	  _crownclos = crownclos::double precision;
+	  IF sp1_per::int > 0 THEN
+  	    _sp1_per = sp1_per::int * 10;
+      ELSE
+	    _sp1_per = 0;
+	  END IF;
+	ELSE
+	  _height = 0;
+	  _crownclos = 0;
+	  _sp1_per = 0;
+	END IF;
+	  
+	RETURN CASE
+		WHEN landpos='W' THEN 'W---'
+		-- NON-FORESTED POLYGONS
+		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND (typeclas='ST' OR typeclas='SL') THEN 'SONS'
+		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND typeclas IN ('HG', 'HF', 'HE') THEN 'MONG'
+		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND typeclas='BM' THEN 'FONG'
+		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND (typeclas='BL' OR typeclas='BY') THEN 'BOXC'
+		WHEN structur='H' AND moisture='SD' AND (typeclas IN ('SL', 'HG') OR mintypeclas IN ('SL', 'HG')) THEN 'BOXC'
+		WHEN structur='H' AND moisture='HD' AND (typeclas='HG' OR mintypeclas='HG') THEN 'MONG'
+		WHEN structur='M' AND (moisture='SD' OR moisture='HD') AND (typeclas='ST' OR typeclas='SL') THEN 'FONS'
+		-- FOREST LAND
+		WHEN structur IN ('M', 'C', 'H') AND mintypeclas='SL' AND moisture='SD' AND (((sp1='SB' OR sp1='PJ') AND _sp1_per=100) OR ((sp1='SB' OR sp1='PJ') AND (sp2='SB' OR sp2='PJ'))) AND _crownclos<50 AND _height<8 THEN 'BTXC'
+		WHEN structur='S' AND (moisture='SD' OR moisture='HD') AND ((sp1='SB' OR sp1='LT') AND  _sp1_per=100) AND (_crownclos>50 AND _crownclos<70) THEN 'STNN'
+		WHEN (moisture='SD' OR moisture='HD') AND (sp1='SB' OR sp1='LT') AND _crownclos>70 THEN 'SFNN'
+		WHEN (moisture='SD' OR moisture='HD') AND ((sp1='SB' OR sp1='LT') AND (sp2='SB' OR sp2='LT')) AND _height<12 THEN 'FTNN'
+		WHEN (moisture='SD' OR moisture='HD') AND ((sp1='SB' OR sp1='LT') AND (sp2='SB' OR sp2='LT')) AND _height>=12 THEN 'STNN'
+		WHEN moisture='HD' AND ((sp1='SB' OR sp1='LT') AND _sp1_per=100) AND _crownclos<50 THEN 'FTNN'
+		WHEN (moisture='SD' OR moisture='HD') AND (sp1 IN ('SB', 'LT', 'BW', 'SW') AND sp2 IN ('SB', 'LT', 'BW', 'SW')) AND _crownclos>50 THEN 'FTNN'
+		WHEN (moisture='SD' OR moisture='HD') AND (sp1='BW' OR sp1='PO') THEN 'STNN'
+		-- WETLAND CLASS
+		WHEN wetland='WE' THEN 'W---'
+		WHEN wetland='SO' THEN 'OONN'
+		WHEN wetland='MA' THEN 'MONG'
+		WHEN wetland='SW' AND tt_notEmpty(sp1) THEN 'STNN'
+		WHEN wetland='SW' AND (typeclas='SL' OR typeclas='ST') THEN 'SONS'
+		WHEN wetland='FE' AND tt_notEmpty(sp1) THEN 'FTNN'
+		WHEN wetland='FE' AND typeclas='HG' THEN 'FONG'
+		WHEN wetland='FE' AND (typeclas='SL' OR typeclas='ST') THEN 'FONS'
+		WHEN wetland='BO' AND tt_notEmpty(sp1) THEN 'BTXC'
+		WHEN wetland='BO' AND typeclas IN ('BY', 'BL', 'BM') THEN 'BOXC'
+		ELSE NULL
+    END;
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Validation Function Definitions...
@@ -3430,12 +3507,12 @@ CREATE OR REPLACE FUNCTION TT_bc_vri01_wetland_validation(
 )
 RETURNS boolean AS $$
   DECLARE
-	wetland_code text;
-	wetland_char text;
+	_wetland_code text;
+	_wetland_char text;
   BEGIN
-    wetland_code = TT_bc_vri01_wetland_code(inventory_standard_cd, l1_species_cd_1, l1_species_pct_1, l1_species_cd_2, non_productive_descriptor_cd, l1_non_forest_descriptor, land_cover_class_cd_1, soil_moisture_regime_1, l1_crown_closure, l1_proj_height_1);
-	wetland_char = substring(wetland_code from ret_char_pos::int for 1);
-	IF wetland_char IS NULL OR wetland_char = '-' THEN
+    _wetland_code = TT_bc_vri01_wetland_code(inventory_standard_cd, l1_species_cd_1, l1_species_pct_1, l1_species_cd_2, non_productive_descriptor_cd, l1_non_forest_descriptor, land_cover_class_cd_1, soil_moisture_regime_1, l1_crown_closure, l1_proj_height_1);
+	_wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
 	END IF;
     RETURN TRUE;
@@ -3459,12 +3536,12 @@ CREATE OR REPLACE FUNCTION TT_ns_nsi01_wetland_validation(
 )
 RETURNS boolean AS $$
   DECLARE
-	wetland_code text;
-	wetland_char text;
+	_wetland_code text;
+	_wetland_char text;
   BEGIN
-    wetland_code = TT_ns_nsi01_wetland_code(fornon, species, crncl, height);
-	wetland_char = substring(wetland_code from ret_char_pos::int for 1);
-	IF wetland_char IS NULL OR wetland_char = '-' THEN
+    _wetland_code = TT_ns_nsi01_wetland_code(fornon, species, crncl, height);
+	_wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
 	END IF;
     RETURN TRUE;
@@ -3485,12 +3562,46 @@ CREATE OR REPLACE FUNCTION TT_pe_pei01_wetland_validation(
 )
 RETURNS boolean AS $$
   DECLARE
-	wetland_code text;
-	wetland_char text;
+	_wetland_code text;
+	_wetland_char text;
   BEGIN
-    wetland_code = TT_pe_pei01_wetland_code(landtype, per1);
-	wetland_char = substring(wetland_code from ret_char_pos::int for 1);
-	IF wetland_char IS NULL OR wetland_char = '-' THEN
+    _wetland_code = TT_pe_pei01_wetland_code(landtype, per1);
+	_wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
+      RETURN FALSE;
+	END IF;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nt_fvi01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text)
+-- Assign 4 letter wetland character code and check value matches expected values.
+--
+-- e.g. TT_nt_fvi01_wetland_validation(landpos, structur, moisture, typeclas, mintypeclas, sp1, sp2, sp1_per, crownclos, height, wetland)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nt_fvi01_wetland_validation(
+	landpos text,
+	structur text,
+	moisture text,
+	typeclas text,
+	mintypeclas text,
+	sp1 text,
+	sp2 text,
+	sp1_per text,
+	crownclos text,
+	height text,
+	wetland text,
+    ret_char_pos text
+)
+RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
+  BEGIN
+    _wetland_code = TT_nt_fvi01_wetland_code(landpos, structur, moisture, typeclas, mintypeclas, sp1, sp2, sp1_per, crownclos, height, wetland);
+	_wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
 	END IF;
     RETURN TRUE;
@@ -6024,5 +6135,38 @@ RETURNS text AS $$
       RETURN NULL;
     END IF;
     RETURN TT_wetland_code_translation(_wetland_code, ret_char_pos);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_nt_fvi01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_nt_fvi01_wetland_translation(landpos, structur, moisture, typeclas, mintypeclas, sp1, sp2, sp1_per, crownclos, height, wetland, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nt_fvi01_wetland_translation(
+	landpos text,
+	structur text,
+	moisture text,
+	typeclas text,
+	mintypeclas text,
+	sp1 text,
+	sp2 text,
+	sp1_per text,
+	crownclos text,
+	height text,
+	wetland text,
+    ret_char text
+)
+RETURNS text AS $$
+  DECLARE
+	_wetland_code text;
+  BEGIN
+    _wetland_code = TT_nt_fvi01_wetland_code(landpos, structur, moisture, typeclas, mintypeclas, sp1, sp2, sp1_per, crownclos, height, wetland);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, ret_char);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;

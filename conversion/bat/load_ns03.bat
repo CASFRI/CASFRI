@@ -39,7 +39,7 @@ for %%F in (Annapolis Antigonish Cape_Breton Colchester Cumberland Digby Guyboro
     -f PostgreSQL %pg_connection_string% !srcFullPath! ^
     -nln %fullTargetTableName% ^
     -nlt PROMOTE_TO_MULTI ^
-    -sql "SELECT *, '%%~nF' AS src_filename, '%inventoryID%' AS inventory_id FROM '%%F'" ^
+    -sql "SELECT *, '%%~nF' AS src_filename, '%inventoryID%' AS inventory_id FROM %%F" ^
     -progress ^
     !layer_creation_options! %other_options% ^
     !overwrite_option!

@@ -87,7 +87,7 @@ fi
 -f PostgreSQL "$pg_connection_string" "$srcWaterFullPath" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWater' AS src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM '$srcNameWater'" \
+-sql "SELECT *, '$srcNameWater' AS src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM $srcNameWater" \
 -progress $overwrite_tab
 
 ### FILE 2 ###
@@ -97,7 +97,7 @@ fi
 -nln $fullTargetTableName \
 $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameNonForest' AS src_filename, '$inventoryID' AS inventory_id, 0 AS stdlab FROM '$srcNameNonForest'" \
+-sql "SELECT *, '$srcNameNonForest' AS src_filename, '$inventoryID' AS inventory_id, 0 AS stdlab FROM $srcNameNonForest" \
 -progress
 
 ### FILE 3 ###
@@ -107,7 +107,7 @@ $other_options \
 -nln $fullTargetTableName \
 $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameWetland' AS src_filename, '$inventoryID' AS inventory_id, 0 AS stdlab FROM '$srcNameWetland'" \
+-sql "SELECT *, '$srcNameWetland' AS src_filename, '$inventoryID' AS inventory_id, 0 AS stdlab FROM $srcNameWetland" \
 -progress
 
 ## File 4 ###
@@ -117,7 +117,7 @@ $other_options \
 -nln $fullTargetTableName \
 $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcNameForest' AS src_filename, '$inventoryID' AS inventory_id FROM '$srcNameForest'" \
+-sql "SELECT *, '$srcNameForest' AS src_filename, '$inventoryID' AS inventory_id FROM $srcNameForest" \
 -progress
 
 source ./common_postprocessing.sh
