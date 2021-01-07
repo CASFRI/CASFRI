@@ -55,11 +55,20 @@ SELECT * FROM translation.pc_panp01_lyr;
 DROP TABLE IF EXISTS translation_devel.pc01_panp01_lyr_devel;
 CREATE TABLE translation_devel.pc01_panp01_lyr_devel AS
 SELECT * FROM translation.pc_panp01_lyr 
-WHERE rule_id::int < 21;
+WHERE rule_id::int < 6;
 SELECT * FROM translation_devel.pc01_panp01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'pc01_panp01_lyr_devel', '_pc01_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1, 200);
 SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_lyr_devel');
+
+-- LYR2 ATTRIBUTES
+SELECT TT_CreateMappingView('rawfri', 'pc01', 2, 'pc_panp', 1, 200);
+SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l2_to_pc_panp_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_lyr_devel');
+-- LYR2 ATTRIBUTES
+SELECT TT_CreateMappingView('rawfri', 'pc01', 3, 'pc_panp', 1, 200);
+SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l3_to_pc_panp_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_lyr_devel');
 
 -- NFL ATTRIBUTES
