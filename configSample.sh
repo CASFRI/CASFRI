@@ -13,6 +13,7 @@ targetTranslationFileSchema=translation
 
 friDir=E:/FRIs
 gdalFolder="C:/Program Files/GDAL"
+gdal_1_11_4=False
 
 overwriteFRI=True
 overwriteTTables=True

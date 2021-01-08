@@ -28,6 +28,13 @@ SET temp_table=%targetFRISchema%.on02_all_attributes
 
 SET overwrite_option=%overwrite_tab%
 
+IF %gdal_1_11_4% == True (
+  SET gdal_3_options=
+) ELSE (
+  SET gdal_3_options=-nlt CONVERT_TO_LINEAR --config OGR_SKIP FileGDB
+)
+
+
 :: ########################################## Process ######################################
 
 SETLOCAL ENABLEDELAYEDEXPANSION
@@ -37,7 +44,7 @@ for %%F in (AL_615_2D AP_451_2D ARF_110_2D BA_220_2D BSF_030_2D CF_175_2D CL_noF
     "%gdalFolder%/ogr2ogr" ^
     -f PostgreSQL %pg_connection_string% %srcFullPath% ^
     -nln %temp_table% ^
-    -nlt PROMOTE_TO_MULTI ^
+    -nlt PROMOTE_TO_MULTI %gdal_3_options% ^
     -progress ^
     -sql "SELECT *, '%%F' AS src_filename, '%inventoryID%' AS inventory_id FROM %%F" ^
     !layer_creation_options! %other_options% ^
@@ -53,7 +60,7 @@ for %%F in (TMF_280_2D) do (
     "%gdalFolder%/ogr2ogr" ^
     -f PostgreSQL %pg_connection_string% %srcFullPath% ^
     -nln %temp_table% ^
-    -nlt PROMOTE_TO_MULTI ^
+    -nlt CONVERT_TO_LINEAR %gdal_3_options% ^
     -progress ^
     -sql "SELECT *, '%%F' AS src_filename, '%inventoryID%' AS inventory_id, shape_leng AS perimeter FROM %%F" ^
     !layer_creation_options! %other_options% ^
