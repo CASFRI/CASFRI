@@ -78,9 +78,16 @@ CREATE TABLE translation_devel.pc01_panp01_nfl_devel AS
 SELECT * FROM translation.pc_panp01_nfl; --WHERE rule_id::int != 4; --IN (0,1,2,3);
 SELECT * FROM translation_devel.pc01_panp01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'pc01_panp01_nfl_devel', '_pc01_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200', 'ogc_fid');
+
+SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 200);
+SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l4_to_pc_panp_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_nfl_devel');
+
+SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1, 200);
+SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l5_to_pc_panp_l1_map_200', 'ogc_fid');
+
+SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1, 200);
+SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l6_to_pc_panp_l1_map_200', 'ogc_fid');
 
 -- ECO ATTRIBUTES
 SELECT * FROM translation.pc_panp01_eco;
