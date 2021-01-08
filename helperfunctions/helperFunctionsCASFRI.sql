@@ -182,15 +182,28 @@ $$ LANGUAGE plpgsql VOLATILE STRICT;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_IsJsonGeometry 
+-- 
+-- Return TRUE if jsonbstr is a jsonb geometry.
+CREATE OR REPLACE FUNCTION TT_IsJsonGeometry(
+  jsonbstr text
+)
+RETURNS boolean AS $$
+  SELECT jsonb_typeof(jsonbstr::jsonb) = 'object' AND left(jsonbstr::text, 8) = '{"type":';
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_CompareRows 
 -- 
 -- Return all different attribute values with values from row1 and row2.
 -- Does not return anything when rows are identical.
 ------------------------------------------------------------ 
---DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb);
+--DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb, boolean);
 CREATE OR REPLACE FUNCTION TT_CompareRows(
   row1 jsonb,
-  row2 jsonb
+  row2 jsonb,
+  softGeomCmp boolean DEFAULT FALSE
 )
 RETURNS TABLE (attribute text, 
                row_1 text, 
@@ -221,7 +234,7 @@ RETURNS TABLE (attribute text,
     FOR i IN 1..cardinality(keys) LOOP
       row1val = row1 -> keys[i];
       row2val = row2 -> keys[i];
-      IF row1val != row2val THEN
+      IF (softGeomCmp AND TT_IsJsonGeometry(row1val) AND TT_IsJsonGeometry(row2val) AND NOT ST_Equals(ST_GeomFromGeoJSON(row1val), ST_GeomFromGeoJSON(row2val))) OR (NOT softGeomCmp AND row1val != row2val) THEN
         attribute = keys[i];
         row_1 = row1val::text;
         row_2 = row2val::text;
@@ -239,14 +252,15 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- Return all different attribute values with values from table 1 and table 2.
 -- Does not return anything when tables are identical.
 ------------------------------------------------------------ 
---DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean);
+--DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_CompareTables(
   schemaName1 name,
   tableName1 name,
   schemaName2 name,
   tableName2 name,
   uniqueIDCol name DEFAULT NULL,
-  ignoreColumnOrder boolean DEFAULT TRUE
+  ignoreColumnOrder boolean DEFAULT TRUE,
+  softGeomCmp boolean DEFAULT FALSE
 )
 RETURNS TABLE (row_id text, 
                attribute text, 
@@ -307,7 +321,7 @@ RETURNS TABLE (row_id text,
     IF NOT TT_ColumnExists(schemaName1, tableName1, uniqueIDCol) THEN
       RAISE EXCEPTION 'Table have same structure. In order to report different rows, uniqueIDCol (%) should exist in both tables...', uniqueIDCol;
     END IF;
-    query = 'SELECT ' || uniqueIDCol || '::text row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b))).* ' ||
+    query = 'SELECT ' || uniqueIDCol || '::text row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b), ' || softGeomCmp::text || ')).* ' ||
             'FROM ' || schemaName1 || '.' || tableName1 || ' a ' ||
             'FULL OUTER JOIN ' || schemaName2 || '.' || tableName2 || ' b USING (' || uniqueIDCol || ')' ||
             'WHERE NOT coalesce(ROW(a.*) = ROW(b.*), FALSE);';

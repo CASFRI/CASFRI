@@ -707,8 +707,8 @@ SELECT '1.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_0_without_validity_new" and "test_0_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_without_validity_new'', ''geohistory'' , ''test_0_without_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_without_validity_new'', ''geohistory'' , ''test_0_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM geohistory.test_0_without_validity_new a 
       FULL OUTER JOIN geohistory.test_0_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
@@ -717,8 +717,8 @@ SELECT '1.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_0_with_validity_new" and "test_0_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_with_validity_new'', ''geohistory'' , ''test_0_with_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_with_validity_new'', ''geohistory'' , ''test_0_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM geohistory.test_0_without_validity_new a 
       FULL OUTER JOIN geohistory.test_0_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
@@ -740,8 +740,8 @@ SELECT '3.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_2_without_validity_new" and "test_2_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_without_validity_new'', ''geohistory'' , ''test_2_without_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_without_validity_new'', ''geohistory'' , ''test_2_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM geohistory.test_2_without_validity_new a 
       FULL OUTER JOIN geohistory.test_2_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
@@ -750,8 +750,8 @@ SELECT '3.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_2_with_validity_new" and "test_2_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_with_validity_new'', ''geohistory'' , ''test_2_with_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_with_validity_new'', ''geohistory'' , ''test_2_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM geohistory.test_2_without_validity_new a 
       FULL OUTER JOIN geohistory.test_2_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
@@ -760,8 +760,8 @@ SELECT '4.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_3_without_validity_new" and "test_3_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_without_validity_new'', ''geohistory'' , ''test_3_without_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_without_validity_new'', ''geohistory'' , ''test_3_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM geohistory.test_3_without_validity_new a 
       FULL OUTER JOIN geohistory.test_3_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
@@ -770,8 +770,8 @@ SELECT '4.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_3_with_validity_new" and "test_3_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_with_validity_new'', ''geohistory'' , ''test_3_with_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_with_validity_new'', ''geohistory'' , ''test_3_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM geohistory.test_3_without_validity_new a 
       FULL OUTER JOIN geohistory.test_3_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
@@ -780,8 +780,8 @@ SELECT '5.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_4_without_validity_new" and "test_4_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_without_validity_new'', ''geohistory'' , ''test_4_without_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_without_validity_new'', ''geohistory'' , ''test_4_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM geohistory.test_4_without_validity_new a 
       FULL OUTER JOIN geohistory.test_4_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
@@ -790,8 +790,8 @@ SELECT '5.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_4_with_validity_new" and "test_4_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_with_validity_new'', ''geohistory'' , ''test_4_with_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_with_validity_new'', ''geohistory'' , ''test_4_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM geohistory.test_4_without_validity_new a 
       FULL OUTER JOIN geohistory.test_4_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
