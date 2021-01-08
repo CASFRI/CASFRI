@@ -31,7 +31,7 @@ fullTargetTableName=$targetFRISchema.sk01
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbTableName' WHERE CZONE NOT LIKE '0'" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableName WHERE CZONE NOT LIKE '0'" \
 -progress $overwrite_tab
 
 source ./common_postprocessing.sh

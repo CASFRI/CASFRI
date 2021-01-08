@@ -38,7 +38,7 @@ SET fullTargetTableName=%targetFRISchema%.nl01
 SET overwrite_option=%overwrite_tab%
 
 :: PostgreSQL variables
-SET ogrTab='PAL'
+SET ogrTab=PAL
 
 :: ######################################### Process ######################################
 
@@ -69,7 +69,7 @@ FOR /d %%F IN ("%srcFullPath%/append_prod/ms*") DO (
     "%gdalFolder%/ogr2ogr" ^
     -f PostgreSQL %pg_connection_string% "%srcFullPath%/append_prod/!fname!/lcov!mapsheet!" ^
     -nln %fullTargetTableName% ^
-    -sql "SELECT *, 'ms!mapsheet!' AS src_filename, '%inventoryID%' AS inventory_id, '!lcov_column1!' AS 'lcov_id_1', '!lcov_column2!' AS 'lcov_id_2' FROM %ogrTab%" ^
+    -sql "SELECT *, 'ms!mapsheet!' AS src_filename, '%inventoryID%' AS inventory_id, '!lcov_column1!' AS lcov_id_1, '!lcov_column2!' AS lcov_id_2 FROM %ogrTab%" ^
     !layer_creation_options! %other_options% ^
     !overwrite_option!
 
@@ -93,7 +93,7 @@ FOR /d %%F IN ("%srcFullPath%/append_prod_lab/ms*") DO (
     "%gdalFolder%/ogr2ogr" ^
     -f PostgreSQL %pg_connection_string% "%srcFullPath%/append_prod_lab/!fname!/lcov!mapsheet!" ^
     -nln %fullTargetTableName% ^
-    -sql "SELECT *, 'ms!mapsheet!' AS src_filename, '%inventoryID%' AS inventory_id, '!lcov_column1!' AS 'lcov_id_1', '!lcov_column2!' AS 'lcov_id_2' FROM %ogrTab%" ^
+    -sql "SELECT *, 'ms!mapsheet!' AS src_filename, '%inventoryID%' AS inventory_id, '!lcov_column1!' AS lcov_id_1, '!lcov_column2!' AS lcov_id_2 FROM %ogrTab%" ^
     !layer_creation_options! %other_options% ^
     !overwrite_option!
   )

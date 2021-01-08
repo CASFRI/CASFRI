@@ -219,7 +219,7 @@ shape_length, ^
 shape_area, ^
 poly_id,  ^
 '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id ^
-FROM '%gdbTableName%' ^
+FROM %gdbTableName% ^
 WHERE FRI_FLI='FLI'
 
 

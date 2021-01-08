@@ -54,7 +54,7 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_poly" \
 -nln $TableName_poly $layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_poly' \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly \
         WHERE NOT(TYPE = 'OTH' AND SMR = ' ' AND LUC = ' ' AND TRANSP_CLASS = ' ')" \
 -progress $overwrite_tab
 
@@ -62,49 +62,49 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_meta" \
 -nln $TableName_meta $layer_creation_options $other_options \
--sql "SELECT *, poly_id AS poly_id_meta FROM '$gdbFileName_meta'" \
+-sql "SELECT *, poly_id AS poly_id_meta FROM $gdbFileName_meta" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for dist data
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_dist" \
 -nln $TableName_dist $layer_creation_options $other_options \
--sql "SELECT *, poly_id AS poly_id_dist FROM '$gdbFileName_dist'" \
+-sql "SELECT *, poly_id AS poly_id_dist FROM $gdbFileName_dist" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for herbs data
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_herbs" \
 -nln $TableName_herbs $layer_creation_options $other_options \
--sql "SELECT *, poly_id AS poly_id_herbs FROM '$gdbFileName_herbs'" \
+-sql "SELECT *, poly_id AS poly_id_herbs FROM $gdbFileName_herbs" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for layer 1 data
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_l1" \
 -nln $TableName_l1 $layer_creation_options $other_options \
--sql "SELECT *, poly_id AS poly_id_l1 FROM '$gdbFileName_l1'" \
+-sql "SELECT *, poly_id AS poly_id_l1 FROM $gdbFileName_l1" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for layer 2 data
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_l2" \
 -nln $TableName_l2 $layer_creation_options $other_options \
--sql "SELECT *, poly_id AS poly_id_l2 FROM '$gdbFileName_l2'" \
+-sql "SELECT *, poly_id AS poly_id_l2 FROM $gdbFileName_l2" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for layer 3 data
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_l3" \
 -nln $TableName_l3 $layer_creation_options $other_options \
--sql "SELECT *, poly_id AS poly_id_l3 FROM '$gdbFileName_l3'" \
+-sql "SELECT *, poly_id AS poly_id_l3 FROM $gdbFileName_l3" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for shrubs data
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_shrubs" \
 -nln $TableName_shrubs $layer_creation_options $other_options \
--sql "SELECT *, poly_id AS poly_id_shrubs FROM '$gdbFileName_shrubs'" \
+-sql "SELECT *, poly_id AS poly_id_shrubs FROM $gdbFileName_shrubs" \
 -progress $overwrite_tab
 
 # join tables by sourcing the join code

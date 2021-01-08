@@ -54,7 +54,7 @@ photoyearTableName=${fullTargetTableName}_photoyear
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_geometry" \
 -nln $geometryTableName $layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_geometry'" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_geometry" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for attributes

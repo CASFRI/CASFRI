@@ -12,6 +12,9 @@ SET fullTargetTableName=casfri50_coverage.canada_provinces
 
 :: ########################################## Process ######################################
 
+::Create schema if it doesn't exist
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "CREATE SCHEMA IF NOT EXISTS casfri50_coverage";
+
 :: Run ogr2ogr
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% %srcFileName% ^

@@ -127,7 +127,7 @@ DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_translation(text, text, text, text, 
 DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text, text);
-
+DROP FUNCTION IF EXISTS TT_pc01_species_per_translation(text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

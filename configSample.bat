@@ -13,6 +13,7 @@ SET targetTranslationFileSchema=translation
 
 SET friDir=I://Fris
 SET gdalFolder=C:\Program Files\GDAL
+SET gdal_1_11_4=False
 
 SET overwriteFRI=True
 SET overwriteTTables=True

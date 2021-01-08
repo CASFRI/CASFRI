@@ -447,7 +447,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 SELECT *, ST_Area(ST_GeomFromText(wkt_geometry)) area, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_bc2_history_new;
 
--- Now compare performance when searching in the whole flat table, 2m40
+-- Compare performance when searching in the whole flat table, 2m40
 DROP TABLE IF EXISTS geohistory.sampling_area_bc2_history_polyperpoly_new2;
 CREATE TABLE geohistory.sampling_area_bc2_history_polyperpoly_new2 AS
 SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
