@@ -157,7 +157,7 @@ WITH test_nb AS (
 	SELECT 'TT_pe_pei01_wetland_validation'::text function_tested,           103 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_nt_fvi01_wetland_translation'::text function_tested,          104 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_nt_fvi01_wetland_validation'::text function_tested,           105 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc01_species_per_translation'::text function_tested,          106 maj_num,  7 nb_test
+	SELECT 'TT_pc01_species_per_translation'::text function_tested,          106 maj_num,  7 nb_test 
 ),
 
 	
@@ -3925,8 +3925,9 @@ UNION ALL
 SELECT '106.7'::text number,
        'TT_pc01_species_per_translation'::text function_tested,
        'Species doesnt exist'::text description,
-       TT_pc01_species_per_translation('PM', '2') IS NULL passed	
-	
+       TT_pc01_species_per_translation('PM', '2') IS NULL passed		
+---------------------------------------------------------
+
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

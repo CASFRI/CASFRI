@@ -3417,15 +3417,15 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------
--- TT_qc_hasCountOfNotNull(text, text, text, text, text, text, text, text)
+-- TT_qc_hasCountOfNotNull(text, text, text, text)
 --
--- species_1 text
--- species_2 text
+-- cl_age text
 -- co_ter text
 -- count text
 -- exact text
 -- 
 -- hasCountOfNotNull using qc custom countOfNotNull
+-- For prg 3 and 4 we get number of LYRs from cl_age in lookup table
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_hasCountOfNotNull(text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_qc_hasCountOfNotNull(
@@ -3441,6 +3441,11 @@ RETURNS boolean AS $$
     _counted_nulls int;
   BEGIN
 
+    -- validate parameters (trigger EXCEPTION)
+    PERFORM TT_ValidateParams('TT_qc_hasCountOfNotNull',
+                              ARRAY['count', count, 'int',
+                                    'exact', exact, 'boolean']);
+    
     _count = count::int;
     _exact = exact::boolean;
 
@@ -5786,6 +5791,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- so it can be counted as a non-null layer.
 -- 
 -- Pass LYR and NFL variables to countOfNotNull().
+-- Used for prg3 and 4.
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_countOfNotNull(text, text, text);
 CREATE OR REPLACE FUNCTION TT_qc_countOfNotNull(
