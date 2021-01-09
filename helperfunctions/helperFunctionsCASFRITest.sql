@@ -157,7 +157,9 @@ WITH test_nb AS (
 	SELECT 'TT_pe_pei01_wetland_validation'::text function_tested,           103 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_nt_fvi01_wetland_translation'::text function_tested,          104 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_nt_fvi01_wetland_validation'::text function_tested,           105 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc01_species_per_translation'::text function_tested,          106 maj_num,  7 nb_test 
+	SELECT 'TT_pc01_species_per_translation'::text function_tested,          106 maj_num,  7 nb_test UNION ALL
+	SELECT 'TT_sk_utm01_wetland_translation'::text function_tested,          107 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_sk_utm01_wetland_validation'::text function_tested,           108 maj_num,  2 nb_test
 ),
 
 	
@@ -3927,7 +3929,52 @@ SELECT '106.7'::text number,
        'Species doesnt exist'::text description,
        TT_pc01_species_per_translation('PM', '2') IS NULL passed		
 ---------------------------------------------------------
-
+ -- TT_sk_utm01_wetland_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '107.1'::text number,
+       'TT_sk_utm01_wetland_translation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_sk_utm01_wetland_translation('PVP', 'BS', '', '', '', '', 'C', '0', 'O', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '107.2'::text number,
+       'TT_sk_utm01_wetland_translation'::text function_tested,
+       'Basic pass 2'::text description,
+       TT_sk_utm01_wetland_translation('PVP', 'BS', '', '', '', '', 'B', '0', 'O', '1') = 'BOG' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '107.3'::text number,
+       'TT_sk_utm01_wetland_translation'::text function_tested,
+       'Basic pass 3'::text description,
+       TT_sk_utm01_wetland_translation('PVP', 'BS', 'TL', '', '', '', 'B', '0', 'O', '1') = 'SWAMP' passed
+---------------------------------------------------------	
+UNION ALL
+SELECT '107.4'::text number,
+       'TT_sk_utm01_wetland_translation'::text function_tested,
+       'Basic pass 4'::text description,
+       TT_sk_utm01_wetland_translation('PVP', '', '', '', '', '', 'B', '3100', 'O', '1') = 'WETLAND' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '107.5'::text number,
+       'TT_sk_utm01_wetland_translation'::text function_tested,
+       'NULL'::text description,
+       TT_sk_utm01_wetland_translation('', '', '', '', '', '', '', '0', '', '1') IS NULL passed
+---------------------------------------------------------
+ -- TT_sk_utm01_wetland_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '108.1'::text number,
+       'TT_sk_utm01_wetland_validation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_sk_utm01_wetland_validation('PVP', 'BS', '', '', '', '', 'C', '0', 'O', '1') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '108.2'::text number,
+       'TT_sk_utm01_wetland_validation'::text function_tested,
+       'NULL'::text description,
+       TT_sk_utm01_wetland_validation('', '', '', '', '', '', '', '0', '', '1') IS FALSE passed
+	
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

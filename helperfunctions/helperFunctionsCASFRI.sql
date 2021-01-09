@@ -2035,6 +2035,50 @@ RETURNS text AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+-- TT_sk_utm01_wetland_code(text, text, text)
+--
+-- Return 4-character wetland code
+-- Calculate species_1_per only if needed 
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_code(text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_utm01_wetland_code(
+  drain text,
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text,
+  d text,
+  np text,
+  soil_text text
+)
+RETURNS text AS $$
+  BEGIN
+	-- calculate species percent only if needed and run logic
+	IF drain IN('PVP', 'PD') AND soil_text = 'O' AND sp10 = 'BS' THEN
+      IF tt_sk_utm01_species_percent_translation('1', sp10, sp11, sp12, sp20, sp21) = 100 THEN
+		RETURN CASE
+		  WHEN d IN('C', 'D') THEN 'STNN'
+		  WHEN d IN('A', 'B') THEN 'BTNN'
+		END;
+	  END IF;
+	END IF;
+
+	-- run logic for remaining translations
+	RETURN CASE
+	  -- Productive Forest Land
+	  WHEN ((drain='PVP' AND soil_text='O') OR (drain='PD' AND soil_text='O')) AND sp10 IN ('BS', 'TL', 'WB', 'MM') AND sp11 IN ('BS', 'TL', 'WB', 'MM')  THEN 'STNN'
+	  -- Non Productive Lands
+	  WHEN np='3100' THEN 'WT--'
+	  WHEN np='3300' THEN 'WO--'
+	  WHEN np='3500' THEN 'SONS'
+	  WHEN np='3600' OR np='5100' THEN 'MONG'
+	  ELSE NULL
+	END;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Validation Function Definitions...
 -------------------------------------------------------------------------------
@@ -3623,6 +3667,37 @@ RETURNS boolean AS $$
   BEGIN
     _wetland_code = TT_nt_fvi01_wetland_code(landpos, structur, moisture, typeclas, mintypeclas, sp1, sp2, sp1_per, crownclos, height, wetland);
 	_wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
+      RETURN FALSE;
+	END IF;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_sk_utm01_wetland_validation(text, text, text, text, text, text, text, text, text, text)
+--
+-- Assign 4 letter wetland character code and check value matches expected values.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_validation(text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_utm01_wetland_validation(
+  drain text,
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text,
+  d text,
+  np text,
+  soil_text text,
+  retCharPos text
+)
+RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
+  BEGIN
+    _wetland_code = TT_sk_utm01_wetland_code(drain, sp10, sp11, sp12, sp20, sp21, d, np, soil_text);
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
 	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
 	END IF;
@@ -6232,5 +6307,36 @@ RETURNS int AS $$
 	  WHEN _length = 6 AND speciesNumber = '3' THEN 20
 	  ELSE NULL
 	END;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_sk_utm01_wetland_translation(text, text, text, text, text, text, text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_sk_utm01_wetland_translation(drain, sp10, sp11, sp12, sp20, sp21, d, np, soil_text, retCharPos)
+------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_sk_utm01_wetland_translation(
+  drain text,
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text,
+  d text,
+  np text,
+  soil_text text,
+  retCharPos text
+)
+RETURNS text AS $$
+  DECLARE
+	_wetland_code text;
+  BEGIN
+    _wetland_code = TT_sk_utm01_wetland_code(drain, sp10, sp11, sp12, sp20, sp21, d, np, soil_text);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, retCharPos);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
