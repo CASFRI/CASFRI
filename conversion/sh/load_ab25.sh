@@ -50,7 +50,7 @@ fullTargetTableName=$targetFRISchema.ab25
 -f PostgreSQL "$pg_connection_string" "$srcFullPath2" \
 -nln $fullTargetTableName $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName2' AS src_filename, '$inventoryID' AS inventory_id FROM $srcName2" \
+-sql "SELECT *, '$srcName2' AS src_filename, '$inventoryID' AS inventory_id, area AS shape_area FROM $srcName2" \
 -progress
 
 ### FILE 3 ###
@@ -59,7 +59,7 @@ fullTargetTableName=$targetFRISchema.ab25
 -f PostgreSQL "$pg_connection_string" "$srcFullPath3" \
 -nln $fullTargetTableName $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcName3' AS src_filename, '$inventoryID' AS inventory_id FROM $srcName3" \
+-sql "SELECT *, '$srcName3' AS src_filename, '$inventoryID' AS inventory_id, area AS shape_area FROM $srcName3" \
 -progress
 
 source ./common_postprocessing.sh
