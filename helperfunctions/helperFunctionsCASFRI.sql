@@ -182,15 +182,28 @@ $$ LANGUAGE plpgsql VOLATILE STRICT;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_IsJsonGeometry 
+-- 
+-- Return TRUE if jsonbstr is a jsonb geometry.
+CREATE OR REPLACE FUNCTION TT_IsJsonGeometry(
+  jsonbstr text
+)
+RETURNS boolean AS $$
+  SELECT jsonb_typeof(jsonbstr::jsonb) = 'object' AND left(jsonbstr::text, 8) = '{"type":';
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_CompareRows 
 -- 
 -- Return all different attribute values with values from row1 and row2.
 -- Does not return anything when rows are identical.
 ------------------------------------------------------------ 
---DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb);
+--DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb, boolean);
 CREATE OR REPLACE FUNCTION TT_CompareRows(
   row1 jsonb,
-  row2 jsonb
+  row2 jsonb,
+  softGeomCmp boolean DEFAULT FALSE
 )
 RETURNS TABLE (attribute text, 
                row_1 text, 
@@ -221,7 +234,7 @@ RETURNS TABLE (attribute text,
     FOR i IN 1..cardinality(keys) LOOP
       row1val = row1 -> keys[i];
       row2val = row2 -> keys[i];
-      IF row1val != row2val THEN
+      IF (softGeomCmp AND TT_IsJsonGeometry(row1val) AND TT_IsJsonGeometry(row2val) AND NOT ST_Equals(ST_GeomFromGeoJSON(row1val), ST_GeomFromGeoJSON(row2val))) OR (NOT softGeomCmp AND row1val != row2val) THEN
         attribute = keys[i];
         row_1 = row1val::text;
         row_2 = row2val::text;
@@ -239,14 +252,15 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- Return all different attribute values with values from table 1 and table 2.
 -- Does not return anything when tables are identical.
 ------------------------------------------------------------ 
---DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean);
+--DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_CompareTables(
   schemaName1 name,
   tableName1 name,
   schemaName2 name,
   tableName2 name,
   uniqueIDCol name DEFAULT NULL,
-  ignoreColumnOrder boolean DEFAULT TRUE
+  ignoreColumnOrder boolean DEFAULT TRUE,
+  softGeomCmp boolean DEFAULT FALSE
 )
 RETURNS TABLE (row_id text, 
                attribute text, 
@@ -307,7 +321,7 @@ RETURNS TABLE (row_id text,
     IF NOT TT_ColumnExists(schemaName1, tableName1, uniqueIDCol) THEN
       RAISE EXCEPTION 'Table have same structure. In order to report different rows, uniqueIDCol (%) should exist in both tables...', uniqueIDCol;
     END IF;
-    query = 'SELECT ' || uniqueIDCol || '::text row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b))).* ' ||
+    query = 'SELECT ' || uniqueIDCol || '::text row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b), ' || softGeomCmp::text || ')).* ' ||
             'FROM ' || schemaName1 || '.' || tableName1 || ' a ' ||
             'FULL OUTER JOIN ' || schemaName2 || '.' || tableName2 || ' b USING (' || uniqueIDCol || ')' ||
             'WHERE NOT coalesce(ROW(a.*) = ROW(b.*), FALSE);';
@@ -2035,6 +2049,50 @@ RETURNS text AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+-- TT_sk_utm01_wetland_code(text, text, text)
+--
+-- Return 4-character wetland code
+-- Calculate species_1_per only if needed 
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_code(text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_utm01_wetland_code(
+  drain text,
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text,
+  d text,
+  np text,
+  soil_text text
+)
+RETURNS text AS $$
+  BEGIN
+	-- calculate species percent only if needed and run logic
+	IF drain IN('PVP', 'PD') AND soil_text = 'O' AND sp10 = 'BS' THEN
+      IF tt_sk_utm01_species_percent_translation('1', sp10, sp11, sp12, sp20, sp21) = 100 THEN
+		RETURN CASE
+		  WHEN d IN('C', 'D') THEN 'STNN'
+		  WHEN d IN('A', 'B') THEN 'BTNN'
+		END;
+	  END IF;
+	END IF;
+
+	-- run logic for remaining translations
+	RETURN CASE
+	  -- Productive Forest Land
+	  WHEN ((drain='PVP' AND soil_text='O') OR (drain='PD' AND soil_text='O')) AND sp10 IN ('BS', 'TL', 'WB', 'MM') AND sp11 IN ('BS', 'TL', 'WB', 'MM')  THEN 'STNN'
+	  -- Non Productive Lands
+	  WHEN np='3100' THEN 'WT--'
+	  WHEN np='3300' THEN 'WO--'
+	  WHEN np='3500' THEN 'SONS'
+	  WHEN np='3600' OR np='5100' THEN 'MONG'
+	  ELSE NULL
+	END;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Validation Function Definitions...
 -------------------------------------------------------------------------------
@@ -3623,6 +3681,37 @@ RETURNS boolean AS $$
   BEGIN
     _wetland_code = TT_nt_fvi01_wetland_code(landpos, structur, moisture, typeclas, mintypeclas, sp1, sp2, sp1_per, crownclos, height, wetland);
 	_wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
+      RETURN FALSE;
+	END IF;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_sk_utm01_wetland_validation(text, text, text, text, text, text, text, text, text, text)
+--
+-- Assign 4 letter wetland character code and check value matches expected values.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_validation(text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_utm01_wetland_validation(
+  drain text,
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text,
+  d text,
+  np text,
+  soil_text text,
+  retCharPos text
+)
+RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
+  BEGIN
+    _wetland_code = TT_sk_utm01_wetland_code(drain, sp10, sp11, sp12, sp20, sp21, d, np, soil_text);
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
 	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
 	END IF;
@@ -6232,5 +6321,36 @@ RETURNS int AS $$
 	  WHEN _length = 6 AND speciesNumber = '3' THEN 20
 	  ELSE NULL
 	END;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_sk_utm01_wetland_translation(text, text, text, text, text, text, text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_sk_utm01_wetland_translation(drain, sp10, sp11, sp12, sp20, sp21, d, np, soil_text, retCharPos)
+------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_sk_utm01_wetland_translation(
+  drain text,
+  sp10 text,
+  sp11 text,
+  sp12 text,
+  sp20 text,
+  sp21 text,
+  d text,
+  np text,
+  soil_text text,
+  retCharPos text
+)
+RETURNS text AS $$
+  DECLARE
+	_wetland_code text;
+  BEGIN
+    _wetland_code = TT_sk_utm01_wetland_code(drain, sp10, sp11, sp12, sp20, sp21, d, np, soil_text);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, retCharPos);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
