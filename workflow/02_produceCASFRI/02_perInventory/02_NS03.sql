@@ -72,9 +72,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ns03_species_codes_idx
 ON translation.species_code_mapping (ns_species_codes)
 WHERE TT_NotEmpty(ns_species_codes);
 
-CREATE UNIQUE INDEX ON translation.species_code_mapping (ns2_species_codes)
-WHERE TT_NotEmpty(ns2_species_codes);
-
 -- Prepare the translation function
 SELECT TT_Prepare('translation', 'ns_nsi01_lyr', '_ns03_lyr', 'ab_avi01_lyr'); 
 
