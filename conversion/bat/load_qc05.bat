@@ -49,14 +49,14 @@ SET tableName_full=%fullTargetTableName%_full
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% "%srcFullPath%" "%gdbFileName_poly%" ^
 -nln %tableName_poly% %layer_creation_options% %other_options% ^
--sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM '%gdbFileName_poly%' WHERE ver_prg LIKE '%%AIPF%%'" ^
+-sql "SELECT *, '%srcFileName%' AS src_filename, '%inventoryID%' AS inventory_id FROM %gdbFileName_poly% WHERE ver_prg LIKE '%%AIPF%%'" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for meta table
 "%gdalFolder%/ogr2ogr" ^
 -f "PostgreSQL" %pg_connection_string% "%srcFullPath%" "%gdbFileName_meta%" ^
 -nln %tableName_meta% %layer_creation_options% %other_options% ^
--sql "SELECT * FROM '%gdbFileName_meta%' WHERE ver_prg LIKE '%%AIPF%%'" ^
+-sql "SELECT * FROM %gdbFileName_meta% WHERE ver_prg LIKE '%%AIPF%%'" ^
 -progress %overwrite_tab%
 
 :: Run ogr2ogr for etage table

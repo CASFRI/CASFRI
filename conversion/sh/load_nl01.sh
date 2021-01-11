@@ -38,7 +38,7 @@ fullTargetTableName=$targetFRISchema.nl01
 overwrite_option="$overwrite_tab"
 
 # PostgreSQL variables
-ogrTab='PAL'
+ogrTab=PAL
 
 ########################################## Process ######################################
 
@@ -64,7 +64,7 @@ do
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/lcov$mapsheet" \
     -nln $fullTargetTableName \
-    -sql "SELECT *, 'ms$mapsheet' AS src_filename, '$inventoryID' AS inventory_id, '$lcov_column1' as 'lcov_id_1', '$lcov_column2' AS 'lcov_id_2' FROM $ogrTab" \
+    -sql "SELECT *, 'ms$mapsheet' AS src_filename, '$inventoryID' AS inventory_id, '$lcov_column1' AS lcov_id_1, '$lcov_column2' AS lcov_id_2 FROM $ogrTab" \
     $layer_creation_options $other_options \
     $overwrite_option
 

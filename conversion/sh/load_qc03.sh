@@ -43,14 +43,14 @@ tableName_meta=${fullTargetTableName}_meta
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_poly" \
 -nln $tableName_poly $layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM '$gdbFileName_poly' WHERE ver_prg IS NULL" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly WHERE ver_prg IS NULL" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for meta table
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_meta" \
 -nln $tableName_meta $layer_creation_options $other_options \
--sql "SELECT * FROM '$gdbFileName_meta' WHERE ver_prg IS NULL" \
+-sql "SELECT * FROM $gdbFileName_meta WHERE ver_prg IS NULL" \
 -progress $overwrite_tab
 
 # Join META  tables to polygons using the GEOCODE attribute.

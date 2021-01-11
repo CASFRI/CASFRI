@@ -28,7 +28,7 @@ ogrTab='PAL'
 
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options $overwrite_option \
+-nln $fullTargetTableName $layer_creation_options $other_options $overwrite_tab \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
 
 source ./common_postprocessing.sh

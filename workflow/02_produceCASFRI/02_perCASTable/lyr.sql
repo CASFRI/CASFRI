@@ -454,7 +454,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr', 'yt02_l1_to_yt_l1_ma
 -- Translate NS03 layer 1 using NS generic translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, NULL, 'lyr');
-INSERT INTO casfri50.lyr_all_new
+INSERT INTO casfri50.lyr_all
 SELECT * FROM TT_Translate_ns_lyr('rawfri', 'ns03_l1_to_ns_nsi_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
