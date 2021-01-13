@@ -67,8 +67,8 @@ SELECT * FROM translation.pc_panp01_nfl; --WHERE rule_id::int != 4; --IN (0,1,2,
 SELECT * FROM translation_devel.pc01_panp01_nfl_devel;
 
 SELECT TT_Prepare('translation_devel', 'pc01_panp01_nfl_devel', '_pc01_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 8094);
-SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l4_to_pc_panp_l1_map_8094', 'ogc_fid');
+SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 200);
+SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l4_to_pc_panp_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_nfl_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1, 200);
@@ -101,13 +101,20 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_geo_devel');
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id, 
-       b.l1cc, a.crown_closure_lower, a.crown_closure_upper, 
-       b.l1ht, a.height_upper, a.height_lower, 
-       b.l1s1, a.species_1,
-       b.l1pr1, a.species_per_1
-FROM TT_Translate_pe01_lyr_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200') a, rawfri.pc01_l1_to_pc_panp_l1_map_200 b
+SELECT b.src_filename, b.inventory_id, b.fpoly_, b.ogc_fid, a.cas_id, 
+       b.crown_closure_upper crown_source, a.crown_closure_lower, a.crown_closure_upper, 
+       b.height_upper height_source, a.height_upper, a.height_lower, 
+       b.species_1 source_species1, a.species_1,a.species_2,a.species_3,
+       b.species_per_1 source_species_per, a.species_per_1, a.species_per_2, a.species_per_3
+FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200') a, rawfri.pc01_l1_to_pc_panp_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
+SELECT b.src_filename, b.inventory_id, b.fpoly_, b.ogc_fid, a.cas_id, 
+       b.non_for_veg non_for_veg_source, a.non_for_veg,
+       b.non_for_anth source_non_for_anth, a.non_for_anth,
+       b.nat_non_veg source_nat_non_veg, a.nat_non_veg,
+	   b.species_layer1, b.species_layer2, b.species_layer3, a.layer 
+FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l4_to_pc_panp_l1_map_200') a, rawfri.pc01_l4_to_pc_panp_l1_map_200 b
+WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 --------------------------------------------------------------------------
 SELECT TT_DeleteAllLogs('translation_devel');
