@@ -159,7 +159,9 @@ WITH test_nb AS (
 	SELECT 'TT_nt_fvi01_wetland_validation'::text function_tested,           105 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_pc01_species_per_translation'::text function_tested,          106 maj_num,  7 nb_test UNION ALL
 	SELECT 'TT_sk_utm01_wetland_translation'::text function_tested,          107 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_utm01_wetland_validation'::text function_tested,           108 maj_num,  2 nb_test
+	SELECT 'TT_sk_utm01_wetland_validation'::text function_tested,           108 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_ab_photo_year_validation'::text function_tested,              109 maj_num,  6 nb_test UNION ALL
+	SELECT 'TT_ab_photo_year_translation'::text function_tested,             110 maj_num,  5 nb_test
 ),
 
 	
@@ -3974,7 +3976,77 @@ SELECT '108.2'::text number,
        'TT_sk_utm01_wetland_validation'::text function_tested,
        'NULL'::text description,
        TT_sk_utm01_wetland_validation('', '', '', '', '', '', '', '0', '', '1') IS FALSE passed
-	
+---------------------------------------------------------
+ -- TT_ab_photo_year_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '109.1'::text number,
+       'TT_ab_photo_year_validation'::text function_tested,
+       'Test pre AB25 inventories - no overlap'::text description,
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text) IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '109.2'::text number,
+       'TT_ab_photo_year_validation'::text function_tested,
+       'Test pre AB25 inventories - one overlap'::text description,
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text) passed
+---------------------------------------------------------
+UNION ALL
+SELECT '109.3'::text number,
+       'TT_ab_photo_year_validation'::text function_tested,
+       'Test pre AB25 inventories - three overlap'::text description,
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text) passed
+---------------------------------------------------------
+UNION ALL
+SELECT '109.4'::text number,
+       'TT_ab_photo_year_validation'::text function_tested,
+       'Test post AB25 inventories - null'::text description,
+       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, '1900', '2020') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '109.5'::text number,
+       'TT_ab_photo_year_validation'::text function_tested,
+       'Test post AB25 inventories - passes'::text description,
+       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', '2000', '1900', '2020') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '109.6'::text number,
+       'TT_ab_photo_year_validation'::text function_tested,
+       'Test post AB25 inventories - not between'::text description,
+       TT_ab_photo_year_validation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, '2021', '1900', '2020') IS FALSE passed
+---------------------------------------------------------
+ -- TT_ab_photo_year_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '110.1'::text number,
+       'TT_ab_photo_year_translation'::text function_tested,
+       'Test pre AB25 inventories - no overlap'::text description,
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text) IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '110.2'::text number,
+       'TT_ab_photo_year_translation'::text function_tested,
+       'Test pre AB25 inventories - overlap'::text description,
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text) = 1990 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '110.3'::text number,
+       'TT_ab_photo_year_translation'::text function_tested,
+       'Test pre AB25 inventories - multiple overlap'::text description,
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text) = 2000 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '110.4'::text number,
+       'TT_ab_photo_year_translation'::text function_tested,
+       'Test post AB25 inventories'::text description,
+       TT_ab_photo_year_translation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', '2001') = 2001 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '110.5'::text number,
+       'TT_ab_photo_year_translation'::text function_tested,
+       'Test post AB25 inventories check nulls'::text description,
+       TT_ab_photo_year_translation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '2001') = 2001 passed
+---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
