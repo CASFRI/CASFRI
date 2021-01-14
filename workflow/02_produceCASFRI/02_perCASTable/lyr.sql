@@ -68,6 +68,14 @@ CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_qc_species_codes_idx
 ON translation.species_code_mapping (qc_species_codes)
 WHERE TT_NotEmpty(qc_species_codes);
 
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_pc01_species_codes_idx
+ON translation.species_code_mapping (pc01_species_codes)
+WHERE TT_NotEmpty(pc01_species_codes);
+
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_pc02_species_codes_idx
+ON translation.species_code_mapping (pc02_species_codes)
+WHERE TT_NotEmpty(pc02_species_codes);
+
 -------------------------------------------------------
 -- Translate all LYR tables into a common table. 32h
 -------------------------------------------------------
@@ -88,6 +96,8 @@ SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'qc_ini03_lyr', '_qc03_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'qc_ini04_lyr', '_qc04_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'qc_ipf05_lyr', '_qc05_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'pc_panp01_lyr', '_pc01_lyr', 'ab_avi01_lyr'); 
+--SELECT TT_Prepare('translation', 'pc_wbnp01_lyr', '_pc02_lyr', 'ab_avi01_lyr'); 
 -------------------------
 DROP TABLE IF EXISTS casfri50.lyr_all CASCADE;
 ------------------------
@@ -609,6 +619,36 @@ SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l2_to_qc_ipf_l1_map_lyr', 'o
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc05_l2_to_qc_ipf_l1_map_lyr');
+------------------------
+-- Translate PC01 layer 1 using PC_PANP translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc02_l1_to_pc_panp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l1_to_pc_panp_l1_map_lyr');
+------------------------
+-- Translate PC01 layer 2 using PC_PANP translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc01', 2, 'pc_panp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l2_to_pc_panp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l2_to_pc_panp_l1_map_lyr');
+------------------------
+-- Translate PC01 layer 3 using PC_PANP translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc01', 3, 'pc_panp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l3_to_pc_panp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l3_to_pc_panp_l1_map_lyr');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -621,13 +661,18 @@ ORDER BY inv;
 -- AB16	149674
 -- BC08	4272025
 -- BC10	4744673
+-- MB05 854163
+-- MB06 213982
 -- NB01	932271
 -- NB02	1053554
+-- NL01 867045
 -- NS03	972710
 -- NT01	245832
 -- NT02	349923
 -- ON02	2240815
 -- PE01	81073
+-- QC03 160597
+-- QC04 1720580
 -- SK01	860394
 -- SK02	28983
 -- SK03	10767
@@ -645,26 +690,37 @@ ORDER BY left(cas_id, 4), layer;
 -- AB06	2	4776
 -- AB16	1	104945
 -- AB16	2	44729
--- BC08	1	4113383
+-- BC08 1	4118380
+-- BC08 2	153645
 -- BC10	1	4570063
 -- BC10	2	174610
+-- MB05 1	854163
+-- MB06 1	147458
+-- MB06 2	58331
+-- MB06 3	8085
+-- MB06 4	108
 -- NB01	1	767392
 -- NB01	2	164879
 -- NB02	1	870925
 -- NB02	2	182629
+-- NL01 1	867045
 -- NS03	1	742317
 -- NS03	2	230393
--- NT01	1	236939
--- NT01	2	9240
--- NT02	1	266159
--- NT02	2	84808
+-- NT01 1	236612
+-- NT01 2	9220
+-- NT02 1	265599
+-- NT02 2	84324
 -- ON02	1	2066888
 -- ON02	2	173927
 -- PE01	1	81073
+-- QC03 1	160356
+-- QC03 2	241
+-- QC04 1	1694157
+-- QC04 2	26423
 -- SK01	1	846500
 -- SK01	2	13894
--- SK02	1	23976
--- SK02	2	4844
+-- SK02	1	23975
+-- SK02	2	4843
 -- SK02	3	165
 -- SK03	1	7435
 -- SK03	2	3318

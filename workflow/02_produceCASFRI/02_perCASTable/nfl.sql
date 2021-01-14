@@ -37,6 +37,8 @@ SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ini03_nfl', '_qc03_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ini04_nfl', '_qc04_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ipf05_nfl', '_qc05_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'pc_panp01_nfl', '_pc01_nfl', 'ab_avi01_nfl');
+--SELECT TT_Prepare('translation', 'pc_wbnp01_nfl', '_pc02_nfl', 'ab_avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 ------------------------
@@ -459,6 +461,36 @@ SELECT * FROM TT_Translate_qc05_nfl('rawfri', 'qc05_l3_to_qc_ipf_l1_map_nfl', 'o
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_nfl', 'qc05_l3_to_qc_ipf_l1_map_nfl');
+------------------------
+-- Translate PC01 layer 4 using PC_PANP translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc02_l4_to_pc_panp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l1_to_pc_panp_l1_map_nfl');
+------------------------
+-- Translate PC01 layer 5 using PC_PANP translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l5_to_pc_panp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l5_to_pc_panp_l1_map_nfl');
+------------------------
+-- Translate PC01 layer 6 using PC_PANP translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l6_to_pc_panp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l6_to_pc_panp_l1_map_nfl');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
