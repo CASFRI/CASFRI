@@ -61,7 +61,7 @@ ALTER TABLE rawfri.new_photo_year RENAME TO nl_photoyear;
 -- Translate all CAS tables into a common table. 43h09m
 --------------------------------------------------------------------------
 -- Prepare the translation functions
-SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab_cas'); -- used for both AB06 and AB16
+SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab_cas');
 SELECT TT_Prepare('translation', 'nb_nbi01_cas', '_nb_cas', 'ab_avi01_cas'); -- used for both NB01 and NB02
 SELECT TT_Prepare('translation', 'bc_vri01_cas', '_bc_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'nt_fvi01_cas', '_nt_cas', 'ab_avi01_cas'); -- used for both NT01 and NT02
@@ -82,6 +82,16 @@ SELECT TT_Prepare('translation', 'pc_panp01_cas', '_pc01_cas', 'ab_avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50.cas_all CASCADE;
 ------------------------
+-- Translate AB03
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab03', 'ab', NULL, 'cas');
+
+CREATE TABLE casfri50.cas_all AS
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab03_l1_to_ab_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab03_l1_to_ab_l1_map_cas');
+------------------------
 -- Translate AB06
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab', NULL, 'cas');
@@ -92,6 +102,36 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab06_l1_to_ab_l1_map_cas');
 ------------------------
+-- Translate AB07
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab07', 'ab', NULL, 'cas');
+
+CREATE TABLE casfri50.cas_all AS 
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab07_l1_to_ab_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab07_l1_to_ab_l1_map_cas');
+------------------------
+-- Translate AB08
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab08', 'ab', NULL, 'cas');
+
+CREATE TABLE casfri50.cas_all AS 
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab08_l1_to_ab_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab08_l1_to_ab_l1_map_cas');
+------------------------
+-- Translate AB10
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab10', 'ab', NULL, 'cas');
+
+CREATE TABLE casfri50.cas_all AS 
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab10_l1_to_ab_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab10_l1_to_ab_l1_map_cas');
+------------------------
 -- Translate AB16
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ab16', 'ab', NULL, 'cas');
@@ -101,6 +141,36 @@ SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab16_l1_to_ab_l1_map_cas', 'ogc_fid
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab16_l1_to_ab_l1_map_cas');
+------------------------
+-- Translate AB25
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab25', 'ab', NULL, 'cas');
+
+CREATE TABLE casfri50.cas_all AS 
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab25_l1_to_ab_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab25_l1_to_ab_l1_map_cas');
+------------------------
+-- Translate AB29
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab29', 'ab', NULL, 'cas');
+
+CREATE TABLE casfri50.cas_all AS 
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab29_l1_to_ab_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab29_l1_to_ab_l1_map_cas');
+------------------------
+-- Translate AB30
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab30', 'ab', NULL, 'cas');
+
+CREATE TABLE casfri50.cas_all AS 
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab30_l1_to_ab_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab30_l1_to_ab_l1_map_cas');
 ------------------------
 -- Translate NB01 using the NB generic translation table
 BEGIN;

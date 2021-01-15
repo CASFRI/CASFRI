@@ -101,6 +101,26 @@ SELECT TT_Prepare('translation', 'pc_panp01_lyr', '_pc01_lyr', 'ab_avi01_lyr');
 -------------------------
 DROP TABLE IF EXISTS casfri50.lyr_all CASCADE;
 ------------------------
+-- Translate AB03 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab03', 1, 'ab', 1, NULL, 'lyr');
+
+CREATE TABLE casfri50.lyr_all AS 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab03_l1_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab03_l1_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB03 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab03_l2_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab03_l2_to_ab_l1_map_lyr');
+------------------------
 -- Translate AB06 layer 1
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, NULL, 'lyr');
@@ -121,17 +141,97 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab06_l2_to_ab_l1_map_lyr');
 ------------------------
+-- Translate AB07 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab07', 1, 'ab', 1, NULL, 'lyr');
+
+CREATE TABLE casfri50.lyr_all AS 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab07_l1_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab07_l1_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB07 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab07', 2, 'ab', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab07_l2_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab07_l2_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB08 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab08', 1, 'ab', 1, NULL, 'lyr');
+
+CREATE TABLE casfri50.lyr_all AS 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab08_l1_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab08_l1_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB08 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab08', 2, 'ab', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab08_l2_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab08_l2_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB10 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab10', 1, 'ab', 1, NULL, 'lyr');
+
+CREATE TABLE casfri50.lyr_all AS 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab10_l1_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab10_l1_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB10 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab10', 2, 'ab', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab10_l2_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab10_l2_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB11 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab11', 1, 'ab', 1, NULL, 'lyr');
+
+CREATE TABLE casfri50.lyr_all AS 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab11_l1_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab11_l1_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB11 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab11', 2, 'ab', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab11_l2_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab11_l2_to_ab_l1_map_lyr');
+------------------------
 -- Translate AB16 layer 1
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ab16', 1, 'ab', 1, NULL, 'lyr');
 
-INSERT INTO casfri50.lyr_all -- 46m20s
+INSERT INTO casfri50.lyr_all
 SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab16_l1_to_ab_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab16_l1_to_ab_l1_map_lyr');
 ------------------------
--- Translate AB16 layer 2 reusing AB16 layer 1 translation table and only rows having LYR attributes
+-- Translate AB16 layer 2
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab', 1, NULL, 'lyr');
 
@@ -140,6 +240,46 @@ SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab16_l2_to_ab_l1_map_lyr', 'ogc_fid
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab16_l2_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB25 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab25', 1, 'ab', 1, NULL, 'lyr');
+
+CREATE TABLE casfri50.lyr_all AS 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab25_l1_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab25_l1_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB25 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab25', 2, 'ab', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab25_l2_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab25_l2_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB29 layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab29', 1, 'ab', 1, NULL, 'lyr');
+
+CREATE TABLE casfri50.lyr_all AS 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab29_l1_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab29_l1_to_ab_l1_map_lyr');
+------------------------
+-- Translate AB29 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab29', 2, 'ab', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all 
+SELECT * FROM TT_Translate_ab_lyr('rawfri', 'ab29_l2_to_ab_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab29_l2_to_ab_l1_map_lyr');
 ------------------------
 -- Translate NB01 using NB generic translation table and only rows with LYR attributes
 BEGIN;
