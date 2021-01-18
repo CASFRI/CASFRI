@@ -36,7 +36,7 @@ DROP TABLE rawfri.ab_photoyear;
 ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
 
 --------------------------------------------------------------------------
--- Translate all AB07. xhxm
+-- Translate all AB07. 1h33m
 --------------------------------------------------------------------------
 -- CAS
 ------------------------
@@ -65,7 +65,7 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB07';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- xs
-SELECT * FROM TT_Translate_ab07_dst('rawfri', 'ab03_l1_to_ab_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_ab07_dst('rawfri', 'ab07_l1_to_ab_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab07_l1_to_ab_l1_map');
 
@@ -89,7 +89,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_eco', 'ab07_l1_to_ab_l1_ma
 -- LYR
 ------------------------
 -- Check the uniqueness of AB species codes
-CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ab03_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ab07_species_codes_idx
 ON translation.species_code_mapping (ab_species_codes)
 WHERE TT_NotEmpty(ab_species_codes);
 
