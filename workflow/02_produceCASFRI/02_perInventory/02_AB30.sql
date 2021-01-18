@@ -16,7 +16,7 @@ SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 
 --------------------------------------------------------------------------
--- Translate all AB30. xhxm
+-- Translate all AB30. 3m
 -- This is post inventory cutblock file. It only contains disturbances data
 -- We use the aquisition year as photo_year for use in the temporalisation
 -- process. See issue #473
