@@ -35,4 +35,24 @@ DEL testtables\sampling*.csv
 
 "%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk4_history.csv" %pg_connection_string% "geohistory.sampling_area_sk4_history_new"
 
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_nb1_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_nb1_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_nb2_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_nb2_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_nt1_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_nt1_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_nt2_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_nt2_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_bc1_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_bc1_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_bc2_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_bc2_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk1_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_sk1_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk2_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_sk2_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk3_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_sk3_gridded_history_new"
+
+"%gdalFolder%/ogr2ogr" -f "CSV" ".\testtables\sampling_area_sk4_gridded_history.csv" %pg_connection_string% "geohistory.sampling_area_sk4_gridded_history_new"
+
 ENDLOCAL
