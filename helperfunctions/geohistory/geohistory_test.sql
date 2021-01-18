@@ -817,26 +817,48 @@ SELECT '6.3'::text number,
        '' check_query
 ---------------------------------------------------------
 UNION ALL
-SELECT '6.4'::text number,
-       'TT_ValidYearUnion'::text function_tested, 
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2005 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.4'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
        'Mutually exclusive year ranges. Case 333' description, 
-       --(TT_UnnestValidYearUnion(TT_ValidYearUnion(geom, lowerval, upperval))).*,
-       TT_ValidYearUnion(geom, lowerval, upperval) = ARRAY[(ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))'), 2000, 2005), (ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))'), 2010, 2020)]::geomlowuppval[] passed,
-       '' check_query
-FROM (SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2005 upperval
-      UNION ALL
-      SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval) foo
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval,
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2005 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2020 passed,
+        '' check_query
+ FROM validyearunion
+)
 ---------------------------------------------------------
 UNION ALL
-SELECT '6.5'::text number,
-       'TT_ValidYearUnion'::text function_tested, 
-       'Same as previous (6.4) but in reverse order. Case 444.1' description, 
-       --(TT_UnnestValidYearUnion(TT_ValidYearUnion(geom, lowerval, upperval))).*,
-       TT_ValidYearUnion(geom, lowerval, upperval) = ARRAY[(ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))'), 2000, 2005), (ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))'), 2010, 2020)]::geomlowuppval[] passed,
-       '' check_query
-FROM (SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
-      UNION ALL
-      SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2005 upperval) foo
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2005 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.5'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Same as previous (6.4) but in reverse order. Case 444.1' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval,
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2005 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2020 passed,
+        '' check_query
+ FROM validyearunion
+)
 ---------------------------------------------------------
 UNION ALL
 (WITH polys AS (
