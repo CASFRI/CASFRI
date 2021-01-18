@@ -2093,6 +2093,65 @@ RETURNS text AS $$
 	END;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_sk_sfv01_wetland_code(text, text, text)
+--
+-- Return 4-character wetland code
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_code(text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_sfv01_wetland_code(
+  soil_moist_reg text,
+  species_1 text, 
+  species_2 text, 
+  species_per_1 text, 
+  crown_closure text, 
+  height text, 
+  shrub1 text,
+  herb1 text,
+  shrubs_crown_closure text
+)
+RETURNS text AS $$
+  DECLARE
+    _species_per_1 int;
+	_crown_closure int;
+	_height int;
+	_shrubs_crown_closure int;
+  BEGIN
+    
+	-- cast values
+	_species_per_1 = species_per_1::int*10;
+    _crown_closure = crown_closure::int;
+	_height = height::int;
+	_shrubs_crown_closure = shrubs_crown_closure::int;
+    
+    RETURN CASE
+		-- Forested Land
+		WHEN soil_moist_reg='MW' AND species_1='bS' AND _species_per_1=100 AND _crown_closure<=50 AND _height<12 THEN 'BTNN'
+		WHEN soil_moist_reg='MW' AND tt_notEmpty(species_1) AND _crown_closure>50 THEN 'STNN'
+		WHEN soil_moist_reg='MW' AND species_1='bS' AND _species_per_1=100 AND _crown_closure<=50 AND _height>=12 THEN 'STNN'
+		WHEN soil_moist_reg='MW' AND tt_notEmpty(species_1) AND _crown_closure>=70 THEN 'SFNN'
+		WHEN soil_moist_reg='W' AND species_1='bS' AND _species_per_1=100 AND _crown_closure<=50 AND _height<12 THEN 'BTNN'
+		WHEN soil_moist_reg='W' AND species_1='bS' AND _species_per_1=100 AND _crown_closure<=50 AND _height>=12 THEN 'STNN'
+		WHEN soil_moist_reg='W' AND species_1='bS' AND _species_per_1=100 AND (_crown_closure>50 AND _crown_closure<70) AND _height>=12 THEN 'STNN'
+		WHEN soil_moist_reg='W' AND species_1='bS' AND _species_per_1=100 AND _crown_closure>=70 AND _height>=12 THEN 'SFNN'
+		WHEN soil_moist_reg IN ('W', 'VW') AND species_1 IN('bS', 'wB', 'bP', 'mM') AND species_2 IN ('tL', 'bS', 'wB', 'bP', 'mM') AND (_crown_closure>=50 AND _crown_closure<70) AND _height>=12 THEN 'STNN'
+		WHEN soil_moist_reg IN ('W', 'VW') AND species_1 IN('bS', 'wB', 'bP', 'mM') AND species_2 IN ('tL', 'bS', 'wB', 'bP', 'mM') AND _crown_closure>=70 THEN 'SFNN'
+		WHEN soil_moist_reg IN ('W', 'VW') AND species_1 IN('bS', 'tL') AND species_2 IN ('bS', 'tL') AND _crown_closure<50 AND _height<12 THEN 'FTNN'
+		WHEN soil_moist_reg IN ('W', 'VW') AND species_1='tL' AND _species_per_1=100 AND (_crown_closure>50 AND _crown_closure<70) AND _height>=12 THEN 'STNN'
+		WHEN soil_moist_reg IN ('W', 'VW') AND species_1='tL' AND _species_per_1=100 AND _crown_closure>=70 THEN 'STNN'
+		WHEN soil_moist_reg IN ('W', 'VW') AND species_1='tL' AND _species_per_1=100 AND _crown_closure<=50 AND _height>0 THEN 'FTNN'
+		WHEN soil_moist_reg IN ('W', 'VW') AND species_1 IN('wB', 'mM', 'gA', 'wE') AND _species_per_1=100 AND _crown_closure<70 THEN 'STNN'
+		WHEN soil_moist_reg IN ('W', 'VW') AND species_1 IN('wB', 'mM', 'gA', 'wE') AND _species_per_1=100 AND _crown_closure>=70 THEN 'SFNN'
+		-- Non Forest Land
+		WHEN soil_moist_reg IN ('MW', 'W', 'VW') AND herb1 IN ('HE','GR') THEN 'MONG'
+		WHEN soil_moist_reg IN ('MW', 'W', 'VW') AND herb1='MO' THEN 'FONN'
+		WHEN soil_moist_reg IN ('MW', 'W', 'VW') AND herb1='AV' THEN 'OONN'
+		WHEN soil_moist_reg IN ('MW', 'W', 'VW') AND shrub1 IN ('TS', 'LS') AND _shrubs_crown_closure>25 THEN 'SONS'
+        ELSE NULL
+    END;
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -3721,6 +3780,37 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+-- TT_sk_sfv01_wetland_validation(text, text, text, text, text, text, text, text, text, text)
+--
+-- Assign 4 letter wetland character code and check value matches expected values.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_validation(text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_sfv01_wetland_validation(
+  soil_moist_reg text,
+  species_1 text, 
+  species_2 text, 
+  species_per_1 text, 
+  crown_closure text, 
+  height text, 
+  shrub1 text,
+  herb1 text,
+  shrubs_crown_closure text,
+  retCharPos text
+)
+RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
+  BEGIN
+    _wetland_code = TT_sk_sfv01_wetland_code(soil_moist_reg, species_1, species_2, species_per_1, crown_closure, height, shrub1, herb1, shrubs_crown_closure);
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
+      RETURN FALSE;
+	END IF;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 -- TT_ab_photo_year_validation(text, text, text, text, text, text, text, text, text, text)
 --
 -- AB inventories pre AB25 need to intersect with the photo year table to get photo year.
@@ -4583,8 +4673,8 @@ RETURNS text AS $$
     _count = _count1 + _count2 + _count3 + _count4 + _count5;
   
     -- if stand structure is H or C, return H or C. Note CX was added so this function can be re-used in ON02.
-    IF stand_structure IN ('H', 'h', 'C', 'c', 'C4', 'C5', 'CX') THEN
-      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C4'', ''C5'', ''CX''}', '{''HORIZONTAL'', ''HORIZONTAL'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX''}');
+    IF stand_structure IN ('H', 'h', 'C', 'c', 'C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'CX') THEN
+      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C0'', ''C1'', ''C2'', ''C3'', ''C4'', ''C5'', ''C6'', ''C7'', ''C8'', ''C9'', ''CX''}', '{''HORIZONTAL'', ''HORIZONTAL'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX''}');
     
     -- if stand structure is not HORIZONTAL or COMPLEX, it must be SINGLE_LAYERED or MULTI_LAYERED.
     -- if only one species layer, return S (this should always be sp1)
@@ -6429,3 +6519,33 @@ RETURNS int AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql STABLE;
+-------------------------------------------------------------------------------
+-- TT_sk_sfv01_wetland_translation(text, text, text, text, text, text, text, text, text, text)
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_sk_sfv01_wetland_translation(text, text, text, text, text, text, text, text, text, text)
+------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_sk_sfv01_wetland_translation(
+  soil_moist_reg text,
+  species_1 text, 
+  species_2 text, 
+  species_per_1 text, 
+  crown_closure text, 
+  height text, 
+  shrub1 text,
+  herb1 text,
+  shrubs_crown_closure text,
+  retCharPos text
+)
+RETURNS text AS $$
+  DECLARE
+	_wetland_code text;
+  BEGIN
+    _wetland_code = TT_sk_sfv01_wetland_code(soil_moist_reg, species_1, species_2, species_per_1, crown_closure, height, shrub1, herb1, shrubs_crown_closure);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, retCharPos);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
