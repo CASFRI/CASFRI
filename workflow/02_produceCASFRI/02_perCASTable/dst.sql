@@ -18,10 +18,10 @@ SET tt.debug TO FALSE;
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
 -------------------------------------------------------
--- Translate all DST tables into a common table. 23h
+-- Translate all DST tables into a common table (no DST in PC01). 23h
 -------------------------------------------------------
 -- Prepare the translation functions
-SELECT TT_Prepare('translation', 'ab_avi01_dst', '_ab_dst'); -- used for both AB06 and AB16
+SELECT TT_Prepare('translation', 'ab_avi01_dst', '_ab_dst');
 SELECT TT_Prepare('translation', 'nb_nbi01_dst', '_nb_dst', 'ab_avi01_dst'); -- used for both NB01 and NB02
 SELECT TT_Prepare('translation', 'bc_vri01_dst', '_bc_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'nt_fvi01_dst', '_nt_dst', 'ab_avi01_dst'); -- used for both NT01 and NT02
@@ -37,18 +37,69 @@ SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc03_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc04_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc05_dst', 'ab_avi01_dst');
+--SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc02_dst', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
+------------------------
+-- Translate AB03
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab03', 1, 'ab', 1, NULL, 'dst');
+
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab03_l1_to_ab_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab03_l1_to_ab_l1_map_dst');
 ------------------------
 -- Translate AB06
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, NULL, 'dst');
 
-CREATE TABLE casfri50.dst_all AS -- 26s
+CREATE TABLE casfri50.dst_all AS
 SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab06_l1_to_ab_l1_map_dst', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab06_l1_to_ab_l1_map_dst');
+------------------------
+-- Translate AB07
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab07', 1, 'ab', 1, NULL, 'dst');
+
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab07_l1_to_ab_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab07_l1_to_ab_l1_map_dst');
+------------------------
+-- Translate AB08
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab08', 1, 'ab', 1, NULL, 'dst');
+
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab08_l1_to_ab_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab08_l1_to_ab_l1_map_dst');
+------------------------
+-- Translate AB10
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab10', 1, 'ab', 1, NULL, 'dst');
+
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab10_l1_to_ab_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab10_l1_to_ab_l1_map_dst');
+------------------------
+-- Translate AB11
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab11', 1, 'ab', 1, NULL, 'dst');
+
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab11_l1_to_ab_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab11_l1_to_ab_l1_map_dst');
 ------------------------
 -- Translate AB16
 BEGIN;
@@ -59,6 +110,36 @@ SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab16_l1_to_ab_l1_map_dst', 'ogc_fid
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab16_l1_to_ab_l1_map_dst');
+------------------------
+-- Translate AB25
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab25', 1, 'ab', 1, NULL, 'dst');
+
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab25_l1_to_ab_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab25_l1_to_ab_l1_map_dst');
+------------------------
+-- Translate AB29
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab29', 1, 'ab', 1, NULL, 'dst');
+
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab29_l1_to_ab_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab29_l1_to_ab_l1_map_dst');
+------------------------
+-- Translate AB30
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab30', 1, 'ab', 1, NULL, 'dst');
+
+CREATE TABLE casfri50.dst_all AS
+SELECT * FROM TT_Translate_ab_dst('rawfri', 'ab30_l1_to_ab_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab30_l1_to_ab_l1_map_dst');
 ------------------------
 -- Translate NB01 using NB generic translation table
 BEGIN;
@@ -289,6 +370,16 @@ SELECT * FROM TT_Translate_qc05_dst('rawfri', 'qc05_l1_to_qc_ipf_l1_map_dst', 'o
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_dst', 'qc05_l1_to_qc_ipf_l1_map_dst');
+------------------------
+-- Translate PC02 using PC_WBNP generic translation table
+--BEGIN;
+--SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, NULL, 'dst');
+
+--INSERT INTO casfri50.dst_all -- 
+--SELECT * FROM TT_Translate_pc02_dst('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_dst', 'ogc_fid');
+--COMMIT;
+
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_dst', 'pc02_l1_to_pc_wbnp_l1_map_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
