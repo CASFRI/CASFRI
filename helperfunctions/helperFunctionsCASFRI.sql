@@ -1499,6 +1499,7 @@ RETURNS text AS $$
 				  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
