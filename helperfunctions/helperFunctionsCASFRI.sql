@@ -318,10 +318,14 @@ RETURNS TABLE (row_id text,
     IF uniqueIDCol IS NULL OR uniqueIDCol = '' THEN
       RAISE EXCEPTION 'Table have same structure. In order to report different rows, uniqueIDCol should not be NULL...';
     END IF;
-    IF NOT TT_ColumnExists(schemaName1, tableName1, uniqueIDCol) THEN
-      RAISE EXCEPTION 'Table have same structure. In order to report different rows, uniqueIDCol (%) should exist in both tables...', uniqueIDCol;
-    END IF;
-    query = 'SELECT ' || uniqueIDCol || '::text row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b), ' || softGeomCmp::text || ')).* ' ||
+    FOREACH columnName IN ARRAY regexp_split_to_array(uniqueIDCol, '\s*,\s*') LOOP
+      IF NOT TT_ColumnExists(schemaName1, tableName1, columnName) THEN
+        RAISE EXCEPTION 'Table have same structure. In order to report different rows, all columns from uniqueIDCol (%) should exist in both tables. % does  not exists...', uniqueIDCol, columnName;
+      END IF;
+    END LOOP;
+    
+    --SELECT regexp_replace(regexp_replace('aa, bb', '\s*,\s*', '::text || ''_'' || ', 'g'), '$', '::text ', 'g')
+    query = 'SELECT ' || regexp_replace(regexp_replace(uniqueIDCol, '\s*,\s*', '::text || ''_'' || ', 'g'), '$', '::text ', 'g') || ' row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b), ' || softGeomCmp::text || ')).* ' ||
             'FROM ' || schemaName1 || '.' || tableName1 || ' a ' ||
             'FULL OUTER JOIN ' || schemaName2 || '.' || tableName2 || ' b USING (' || uniqueIDCol || ')' ||
             'WHERE NOT coalesce(ROW(a.*) = ROW(b.*), FALSE);';
