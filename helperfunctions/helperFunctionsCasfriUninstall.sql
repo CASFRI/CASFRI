@@ -60,6 +60,7 @@ DROP FUNCTION IF EXISTS TT_ab_photo_year_validation(text, text, text, text, text
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_validation(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_validation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_pc02_wetland_validation(text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -138,6 +139,7 @@ DROP FUNCTION IF EXISTS TT_ab_photo_year_translation(text, text, text, text, tex
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_translation(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_translation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_translation(text, text, text);
+DROP FUNCTION IF EXISTS TT_pc02_wetland_translation(text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
@@ -151,17 +153,17 @@ DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text);
 DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_code(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_code(text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_code(text, text, text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_prg5_species_code_to_reordered_array(text);
 DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_code(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_code(text, text);
+DROP FUNCTION IF EXISTS TT_pc02_wetland_code(text, text);
 -------------------------------------------------------------------------------
 -- Tools functions
 -------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_TableColumnType(name, name, name);
 DROP FUNCTION IF EXISTS TT_TableColumnNames(name, name);
 DROP FUNCTION IF EXISTS TT_ColumnExists(name, name, name);
-DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb, boolean);
-DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean, boolean);
+DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb);
+DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean);
 DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int, double precision) CASCADE;
 DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
 DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name, name);
@@ -183,4 +185,3 @@ DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidText() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrNotInSetCode() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidNumber() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidRange() CASCADE;
-DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);
