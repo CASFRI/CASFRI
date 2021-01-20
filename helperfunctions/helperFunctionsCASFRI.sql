@@ -1500,6 +1500,9 @@ RETURNS text AS $$
 				  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
 				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
