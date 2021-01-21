@@ -911,9 +911,6 @@ The **LAYER** attribute identifies the specific layer to which the disturbance i
 | 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon |
 | -8886 | Source value should exist but is unknown |
 
-Note:
-Update possible values after #272
-
 
 ### DIST_TYPE_1 - DIST_TYPE_3
 
@@ -1053,6 +1050,16 @@ The **ECOSITE** attribute is a site-level descriptions that provide a linkage be
 | :---------- | :---------- |
 | A-Z / 0-199 | Ecosite - an area defined by a specific combination of site, soil, and vegetation characteristics as influenced by                     environmental factors |
 | NOT_APPLICABLE | Attribute does not apply to this record |
+
+### LAYER (PK)
+
+The **LAYER** attribute identifies the specific layer to which the wetland is linked in the source data. When wetlands are not explicitly linked to a specific layer -8886 (UNKNOWN_VALUE) is assigned. Layer is usually only populated for cases with horizontal structure where multiple wetland sub-components can be included within a single polygon (e.g. PC02). In this case each layer represents a different sub-component of the horizontal structure.
+
+| Values   | Description |
+| :------- | :------- |
+| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon |
+| -8886 | Source value should exist but is unknown |
+
 
 <a name=GEO_attributes></a>
 ## GEO Attributes 
