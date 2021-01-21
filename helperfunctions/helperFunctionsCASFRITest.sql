@@ -162,8 +162,14 @@ WITH test_nb AS (
 	SELECT 'TT_sk_utm01_wetland_validation'::text function_tested,           108 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_ab_photo_year_validation'::text function_tested,              109 maj_num,  6 nb_test UNION ALL
 	SELECT 'TT_ab_photo_year_translation'::text function_tested,             110 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_sfv01_wetland_translation'::text function_tested,      111 maj_num,  7 nb_test UNION ALL
-	SELECT 'TT_sk_sfv01_wetland_validation'::text function_tested,       112 maj_num,  2 nb_test
+	SELECT 'TT_sk_sfv01_wetland_translation'::text function_tested,          111 maj_num,  7 nb_test UNION ALL
+	SELECT 'TT_sk_sfv01_wetland_validation'::text function_tested,           112 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_mb_fli01_wetland_translation'::text function_tested,          113 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_mb_fli01_wetland_validation'::text function_tested,           114 maj_num,  2 nb_test UNION ALL
+    SELECT 'TT_mb_fri01_wetland_translation'::text function_tested,          115 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,           116 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_pc02_wetland_translation'::text function_tested,              117 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_pc02_wetland_validation'::text function_tested,               118 maj_num,  2 nb_test
 ),
 
 	
@@ -4106,6 +4112,120 @@ SELECT '112.2'::text number,
        'TT_sk_sfv01_wetland_validation'::text function_tested,
        'Test null'::text description,
        TT_sk_sfv01_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
+---------------------------------------------------------
+ -- TT_mb_fli01_wetland_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '113.1'::text number,
+       'TT_mb_fli01_wetland_translation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_mb_fli01_wetland_translation('O', '', '', '', NULL::text, NULL::text, NULL::text, '1') = 'WETLAND' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '113.2'::text number,
+       'TT_mb_fli01_wetland_translation'::text function_tested,
+       'Basic pass 2'::text description,
+       TT_mb_fli01_wetland_translation('', '1', '', '', NULL::text, NULL::text, NULL::text, '1') = 'BOG' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '113.3'::text number,
+       'TT_mb_fli01_wetland_translation'::text function_tested,
+       'Basic pass 3'::text description,
+       TT_mb_fli01_wetland_translation('', '', 'BS', '', '100', '10', '10', '1') = 'BOG' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '113.4'::text number,
+       'TT_mb_fli01_wetland_translation'::text function_tested,
+       'Basic pass 4'::text description,
+       TT_mb_fli01_wetland_translation('', '', 'BS', 'TL', '10', '50', '12', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '113.5'::text number,
+       'TT_mb_fli01_wetland_translation'::text function_tested,
+       'All null'::text description,
+       TT_mb_fli01_wetland_translation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS NULL passed
+---------------------------------------------------------
+ -- TT_mb_fli01_wetland_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '114.1'::text number,
+       'TT_mb_fli01_wetland_validation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_mb_fli01_wetland_validation('O', '', '', '', NULL::text, NULL::text, NULL::text, '1') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '114.2'::text number,
+       'TT_mb_fli01_wetland_validation'::text function_tested,
+       'All null'::text description,
+       TT_mb_fli01_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
+---------------------------------------------------------
+ -- TT_mb_fri01_wetland_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '115.1'::text number,
+       'TT_mb_fri01_wetland_translation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_mb_fri01_wetland_translation('701', '', '1') = 'BOG' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '115.2'::text number,
+       'TT_mb_fri01_wetland_translation'::text function_tested,
+       'Basic pass 2'::text description,
+       TT_mb_fri01_wetland_translation('', '9E', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '115.3'::text number,
+       'TT_mb_fri01_wetland_translation'::text function_tested,
+       'All null'::text description,
+       TT_mb_fri01_wetland_translation(NULL::text, NULL::text, NULL::text) IS NULL passed
+---------------------------------------------------------
+ -- TT_mb_fri01_wetland_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '116.1'::text number,
+       'TT_mb_fri01_wetland_validation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_mb_fri01_wetland_validation('701', '', '1') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '116.2'::text number,
+       'TT_mb_fri01_wetland_validation'::text function_tested,
+       'All null'::text description,
+       TT_mb_fri01_wetland_validation(NULL::text, NULL::text, NULL::text) IS FALSE passed
+---------------------------------------------------------
+ -- TT_pc02_wetland_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '117.1'::text number,
+       'TT_pc02_wetland_translation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_pc02_wetland_translation('98', '', '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '117.2'::text number,
+       'TT_pc02_wetland_translation'::text function_tested,
+       'Basic pass 2'::text description,
+       TT_pc02_wetland_translation('19', 'N', '1') = 'FEN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '117.3'::text number,
+       'TT_pc02_wetland_translation'::text function_tested,
+       'All null'::text description,
+       TT_pc02_wetland_translation(NULL::text, NULL::text, NULL::text) IS NULL passed
+---------------------------------------------------------
+ -- TT_pc02_wetland_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '118.1'::text number,
+       'TT_pc02_wetland_validation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_pc02_wetland_validation('98', '', '1') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '118.2'::text number,
+       'TT_pc02_wetland_validation'::text function_tested,
+       'All null'::text description,
+       TT_pc02_wetland_validation(NULL::text, NULL::text, NULL::text) IS FALSE passed
 
 
 ) AS b 
