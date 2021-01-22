@@ -1630,5 +1630,19 @@ FROM (SELECT *
                         ARRAY['OPEN_SHRUB', 'CLOSED_SHRUB', 'ALPINE_FOREST', 'TALL_SHRUB', 'LOW_SHRUB', 
 						                  'FORBS', 'HERBS', 'GRAMINOIDS', 'BRYOID', 'OPEN_MUSKEG', 'TUNDRA', 'OTHER'] ||
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '5.25'::text number,
+       'nfl_all' target_table,
+       'Issue #526 #365: Exactly one NFL record per row, except in AB03, AB10, AB25 and AB29 where multiple attributes per row are needed when structure is horizontal.' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
+                        ARRAY['one_nfl_per_row',
+                              'LEFT(cas_id, 4) IN(''AB03'', ''AB25'', ''AB29'', ''AB10'') OR
+							  (
+							  ((non_for_veg=ANY(TT_IsMissingOrNotInSetCode()))::int + (nat_non_veg=ANY(TT_IsMissingOrNotInSetCode()))::int + (non_for_anth=ANY(TT_IsMissingOrNotInSetCode()))::int)=2
+							  )
+                              ']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 --) foo WHERE NOT passed;
