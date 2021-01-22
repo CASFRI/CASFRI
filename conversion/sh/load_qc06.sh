@@ -1,8 +1,6 @@
 #!/bin/bash -x
 
-# This script loads the Quebec (QC02) into PostgreSQL
-
-# 
+# This script loads the Quebec (QC06) into PostgreSQL
 
 # The format of the source dataset is a geodatabase
 # Name of the db: PEE_MAJ_PROV.gdb
@@ -18,12 +16,14 @@
 # in the configuration file.
 
 # QC02, QC06 and QC07 all use the same source inventory table. Here we filter the full table to only
-# include rows where ver_prg IS NULL. These rows use the INI03 standard (see issue #429 for details).
+# include rows where ver_prg NOT LIKE '%AIPF%'. 
+# These rows use the INI04 standard (see issue #429 for details).
+
 ######################################## Set variables #######################################
 
 source ./common.sh
 
-inventoryID=QC02
+inventoryID=QC06
 srcFileName_poly=PEE_MAJ_PROV
 srcFileName_meta=META_PROV
 
@@ -33,7 +33,7 @@ srcFullPath_meta="$friDir/QC/$inventoryID/data/inventory/$srcFileName_meta.gdb"
 gdbFileName_poly=DDE_20K_PEU_ECOFOR_MAJ_VUE_SE
 gdbFileName_meta=DDE_META_MAJ_VUE
 
-fullTargetTableName=$targetFRISchema.qc02
+fullTargetTableName=$targetFRISchema.qc06
 tableName_poly=${fullTargetTableName}_poly
 tableName_meta=${fullTargetTableName}_meta
 
@@ -43,14 +43,14 @@ tableName_meta=${fullTargetTableName}_meta
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath_poly" "$gdbFileName_poly" \
 -nln $tableName_poly $layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName_poly' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly WHERE ver_prg IS NULL" \
+-sql "SELECT *, '$srcFileName_poly' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly WHERE ver_prg NOT LIKE '%AIPF%'" \
 -progress $overwrite_tab
 
 # Run ogr2ogr for meta table
 "$gdalFolder/ogr2ogr" \
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath_meta" "$gdbFileName_meta" \
 -nln $tableName_meta $layer_creation_options $other_options \
--sql "SELECT geocode AS meta_geocode, no_prg AS meta_no_prg, ver_prg AS meta_ver_prg, an_pro_sou, an_saisie, an_pro_ori FROM $gdbFileName_meta WHERE ver_prg IS NULL" \
+-sql "SELECT geocode AS meta_geocode, no_prg AS meta_no_prg, ver_prg AS meta_ver_prg, an_pro_sou, an_saisie, an_pro_ori FROM $gdbFileName_meta WHERE ver_prg NOT LIKE '%AIPF%'" \
 -progress $overwrite_tab
 
 # Join META  tables to polygons using the GEOCODE attribute.
