@@ -354,15 +354,15 @@ SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_geo', 'qc04_l1_to_qc_ini04
 ------------------------
 -- Translate QC05 using QC_IPF05 translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf05', 1, NULL, 'geo');
+SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf', 1, NULL, 'geo');
 
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_qc05_geo('rawfri', 'qc05_l1_to_qc_ipf05_l1_map_geo', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_geo('rawfri', 'qc05_l1_to_qc_ipf_l1_map_geo', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_geo', 'qc05_l1_to_qc_ipf05_l1_map_geo');
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_geo', 'qc05_l1_to_qc_ipf_l1_map_geo');
 ------------------------
--- Translate QC05 using PC_PANP translation table
+-- Translate PC01 using PC_PANP translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1, NULL, 'geo');
 
@@ -371,6 +371,7 @@ SELECT * FROM TT_Translate_pc01_geo('rawfri', 'pc01_l1_to_pc_panp_l1_map_geo', '
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_geo', 'pc01_l1_to_pc_panp_l1_map_geo');
+
 ------------------------
 -- Translate PC02 using PC_WBNP translation table
 --BEGIN;
@@ -393,8 +394,11 @@ ORDER BY inv;
 --AB16	120476
 --BC08	4677411
 --BC10	5151772
+--MB05  1644808
+--MB06  163064
 --NB01	927177
 --NB02	1123893
+--NL01 1863664
 --NS03 	995886
 --NT01	281388
 --NT02	320944
@@ -407,6 +411,7 @@ ORDER BY inv;
 --SK05	421977
 --SK06	211482
 --YT02	231137
+--PC01  8094
 
 SELECT count(*) FROM casfri50.geo_all; -- 20382784
 SELECT count(*) FROM casfri50.geo_all WHERE ST_AsTexT(geometry) = 'POLYGON EMPTY'; -- 0

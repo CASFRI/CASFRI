@@ -6,3 +6,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 4,WET_LANDFORM_MOD,text,true(),"ns_nsi01_wetland_translation(fornon, species, crncl, height, 3)",Validate character exists from the 4 character wetland code. Translation converts source attributes into 4-character wetland code and returns the code corresponding to the third character.,TRUE
 5,WET_LOCAL_MOD,text,true(),"ns_nsi01_wetland_translation(fornon, species, crncl, height, 4)",Validate character exists from the 4 character wetland code. Translation converts source attributes into 4-character wetland code and returns the code corresponding to the fourth character.,TRUE
 6,ECO_SITE,text,false(),nothingText(),Attribute does not occur,TRUE
+7,LAYER,integer,false(|-8886),nothingInt(),Layer is unknown.,TRUE

@@ -6,3 +6,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 4,WET_LANDFORM_MOD,text,true(),"nl_nli01_wetland_translation(stand_id, site, species_comp, 3)",No validation required because the row_translation_rule has already validated that a wetland code exists. Translation converts source attributes into 4-character wetland code and returns the code corresponding to the third character.,TRUE
 5,WET_LOCAL_MOD,text,true(),"nl_nli01_wetland_translation(stand_id, site, species_comp, 4)",No validation required because the row_translation_rule has already validated that a wetland code exists. Translation converts source attributes into 4-character wetland code and returns the code corresponding to the fourth character.,TRUE
 6,ECO_SITE,text,false(),nothingText(),Attribute does not occur,TRUE
+7,LAYER,integer,false(|-8886),nothingInt(),Layer is unknown.,TRUE

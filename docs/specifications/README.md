@@ -74,19 +74,19 @@ Table 1. CASFRI schema.
 | <sub>OWNER_TYPE</sub>        | <sub>ORIG_STAND_ID</sub>     | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_TYPE_1</sub>      | <sub>WET_VEG_COVER</sub>    |                            |
 | <sub>OWNER_NAME</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_YEAR_1</sub>      | <sub>WET_LANDFORM_MOD</sub> |                            |
 | <sub>STANDARD_TYPE</sub>     | <sub>NUM_OF_LAYERS</sub>     | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                            |
-| <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>ECO_SITE</sub>         |                            |
-| <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      |                             |                            |
-| <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>HEIGHT_UPPER</sub>        |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_YEAR_2</sub>      |                             |                            |
-| <sub>STANDARD_MANUAL_NAME</sub>  | <sub>SRC_INV_AREA</sub>      | <sub>HEIGHT_LOWER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
-| <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>PRODUCTIVE_FOR</sub>      | <sub>NAT_NON_VEG</sub>         | <sub>DIST_EXT_LOWER_2</sub> |                             |                            |
-| <sub>PRODUCTION_YEARS </sub> |                              | <sub>SPECIES_1 - 10</sub>      | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_TYPE_3</sub>      |                             |                            |
-| <sub>PUBLICATION_DATE</sub>  |                              | <sub>SPECIES_PER_1 - 10</sub>  | <sub>NON_FOR_VEG</sub>         | <sub>DIST_YEAR_3</sub>      |                             |                            |
-| <sub>ACQUISITION_DATE</sub>  |                              | <sub>ORIGIN_UPPER</sub>        |                                | <sub>DIST_EXT_UPPER_3</sub> |                             |                            |
-| <sub>ACQUISITION_TYPE</sub>  |                              | <sub>ORIGIN_LOWER</sub>        |                                | <sub>DIST_EXT_LOWER_3</sub> |                             |                            |
-| <sub>ACQUISITION_LINKS</sub> |                              | <sub>SITE_CLASS</sub>          |                                |                             |                             |                            |
-| <sub>CONTACT_INFO</sub>      |                              | <sub>SITE_INDEX</sub>          |                                |                             |                             |                            |
-| <sub>DATA_AVAILABILITY</sub> |                              |                                |                                |                             |                             |                            |
-| <sub>REDISTRIBUTION</sub>    |                              |                                |                                |                             |                             |                            |
+| <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>STRUCTURE_RANGE</sub>       | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>ECO_SITE</sub>         |                            |
+| <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      |                 <sub>LAYER</sub>            |                            |
+| <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>CROWN_CLOSURE_LOWER</sub> |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_YEAR_2</sub>      |                             |                            |
+| <sub>STANDARD_MANUAL_NAME</sub> | <sub>SRC_INV_AREA</sub>   | <sub>HEIGHT_UPPER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
+| <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>HEIGHT_LOWER</sub>        | <sub>NAT_NON_VEG</sub>         | <sub>DIST_EXT_LOWER_2</sub> |                             |                            |
+| <sub>PRODUCTION_YEARS </sub> |                              | <sub>PRODUCTIVITY</sub>        | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_TYPE_3</sub>      |                             |                            |
+| <sub>PUBLICATION_DATE</sub>  |                              | <sub>PRODUCTIVITY_TYPE</sub>   | <sub>NON_FOR_VEG</sub>         | <sub>DIST_YEAR_3</sub>      |                             |                            |
+| <sub>ACQUISITION_DATE</sub>  |                              | <sub>SPECIES_1 - 10</sub>      |                                | <sub>DIST_EXT_UPPER_3</sub> |                             |                            |
+| <sub>ACQUISITION_TYPE</sub>  |                              | <sub>SPECIES_PER_1 - 10</sub>  |                                | <sub>DIST_EXT_LOWER_3</sub> |                             |                            |
+| <sub>ACQUISITION_LINKS</sub> |                              | <sub>ORIGIN_UPPER</sub>        |                                |                             |                             |                            |
+| <sub>CONTACT_INFO</sub>      |                              | <sub>ORIGIN_LOWER</sub>        |                                |                             |                             |                            |
+| <sub>DATA_AVAILABILITY</sub> |                              | <sub>SITE_CLASS</sub>          |                                |                             |                             |                            |
+| <sub>REDISTRIBUTION</sub>    |                              | <sub>SITE_INDEX</sub>          |                                |                             |                             |                            |
 | <sub>PERMISSION</sub>        |                              |                                |                                |                             |                             |                            |
 | <sub>LICENSE_AGREEMENT</sub> |                              |                                |                                |                             |                             |                            |
 | <sub>PHOTO_YEAR_SRC</sub>    |                              |                                |                                |                             |                             |                            |
@@ -451,7 +451,9 @@ A MULTI_LAYERED stand can have several distinct layers and each layer is signifi
 
 COMPLEX layered stands exhibit a high variation in tree heights. There is no single definitive forested layer as nearly all height classes (and frequently ages) are represented in the stand. The height is chosen from a stand midpoint usually followed by a height range.
 
-HORIZONTAL structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi-label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. The detailed table for stand structure is presented in Appendix 3.
+HORIZONTAL structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi-label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. In Prince Albert National Park, there are 64 polygons with both horizontal and vertical structure. Since the schema cannot support both horizontal and vertical structure in a single polygon, the understory information for these were dropped.  
+
+The detailed table for stand structure is presented in Appendix 3.
 
 If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is assigned the same value in CASFRI. **SINGLE_LAYERED and MULTI_LAYERED stand structure are assigned based on the number of canopy layers identified in the LYR table. If there is one layer, SINGLE_LAYERED is assigned, otherwise MULTI_LAYERED.**
 
@@ -911,9 +913,6 @@ The **LAYER** attribute identifies the specific layer to which the disturbance i
 | 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon |
 | -8886 | Source value should exist but is unknown |
 
-Note:
-Update possible values after #272
-
 
 ### DIST_TYPE_1 - DIST_TYPE_3
 
@@ -1053,6 +1052,16 @@ The **ECOSITE** attribute is a site-level descriptions that provide a linkage be
 | :---------- | :---------- |
 | A-Z / 0-199 | Ecosite - an area defined by a specific combination of site, soil, and vegetation characteristics as influenced by                     environmental factors |
 | NOT_APPLICABLE | Attribute does not apply to this record |
+
+### LAYER (PK)
+
+The **LAYER** attribute identifies the specific layer to which the wetland is linked in the source data. When wetlands are not explicitly linked to a specific layer -8886 (UNKNOWN_VALUE) is assigned. Layer is usually only populated for cases with horizontal structure where multiple wetland sub-components can be included within a single polygon (e.g. PC02). In this case each layer represents a different sub-component of the horizontal structure.
+
+| Values   | Description |
+| :------- | :------- |
+| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon |
+| -8886 | Source value should exist but is unknown |
+
 
 <a name=GEO_attributes></a>
 ## GEO Attributes 

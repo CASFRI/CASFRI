@@ -15,7 +15,7 @@
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 --------------------------------------------------------------------------
--- Translate all QC05. XXhXXm
+-- Translate all PC01. 00h05m
 --------------------------------------------------------------------------
 -- CAS
 ------------------------
@@ -35,22 +35,22 @@ SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_cas', 'pc01_l1_to_pc_panp_l
 COMMIT;
 
 ------------------------
--- DST
+-- DST (No DST in PC01)
 ------------------------
-BEGIN;
-SELECT TT_Prepare('translation', 'pc_panp01_dst', '_pc01_dst', 'ab_avi01_dst');
+--BEGIN;
+--SELECT TT_Prepare('translation', 'pc_panp01_dst', '_pc01_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1);
+--SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PC01';
+--DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PC01';
 
 -- Add translated ones
-INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_pc01_dst('rawfri', 'pc01_l1_to_pc_panp_l1_map', 'ogc_fid');
+--INSERT INTO casfri50.dst_all -- 
+--SELECT * FROM TT_Translate_pc01_dst('rawfri', 'pc01_l1_to_pc_panp_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_dst', 'qc05_l1_to_qc_ipf_l1_map');
-COMMIT;
+--SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_dst', 'qc05_l1_to_qc_ipf_l1_map');
+--COMMIT;
 
 ------------------------
 -- ECO
@@ -58,16 +58,28 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'pc_panp01_eco', '_pc01_eco', 'ab_avi01_eco');
 
-SELECT TT_CreateMappingView('rawfri', 'pc01', 'pc_panp');
-
 -- Delete existing entries
 DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PC01';
 
--- Add translated ones
-INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_qc05_eco('rawfri', 'pc01_l1_to_pc_panp_l1_map', 'ogc_fid');
+-- Add translated ones layer 4
+SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1);
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_eco', 'pc01_l1_to_pc_panp_l1_map');
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l4_to_pc_panp_l1_map', 'ogc_fid');
+
+-- Add translated ones layer 5
+SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1);
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l5_to_pc_panp_l1_map', 'ogc_fid');
+
+-- Add translated ones layer 6
+SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1);
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l6_to_pc_panp_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_eco', 'pc01_l4_to_pc_panp_l1_map');
 COMMIT;
 
 ------------------------
@@ -111,6 +123,7 @@ SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l3_to_pc_panp_l1_map', 'ogc_
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l3_to_pc_panp_l1_map');
 COMMIT;
+
 ------------------------
 -- NFL
 ------------------------

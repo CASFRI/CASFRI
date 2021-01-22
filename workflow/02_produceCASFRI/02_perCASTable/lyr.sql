@@ -764,13 +764,14 @@ SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc05_l2_to_qc_ipf_l
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1, NULL, 'lyr');
 
+--Translate Layer 1
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc02_l1_to_pc_panp_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l1_to_pc_panp_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l1_to_pc_panp_l1_map_lyr');
-------------------------
--- Translate PC01 layer 2 using PC_PANP translation table
+
+-- Translate PC01 layer 2
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'pc01', 2, 'pc_panp', 1, NULL, 'lyr');
 
@@ -779,8 +780,8 @@ SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l2_to_pc_panp_l1_map_lyr', '
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l2_to_pc_panp_l1_map_lyr');
-------------------------
--- Translate PC01 layer 3 using PC_PANP translation table
+
+-- Translate PC01 layer
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'pc01', 3, 'pc_panp', 1, NULL, 'lyr');
 
@@ -820,6 +821,7 @@ ORDER BY inv;
 -- SK05	483663
 -- SK06	296399
 -- YT02	105102
+-- PC01 7319
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.lyr_all
@@ -874,7 +876,10 @@ ORDER BY left(cas_id, 4), layer;
 -- SK06	1	184309
 -- SK06	2	101696
 -- SK06	3	10394
--- YT02	1	105102
+-- YT02	1	5593
+-- PC01 1	11186
+-- PC01 2	1589
+-- PC01 3	137
 
 SELECT count(*) FROM casfri50.lyr_all; -- 17393341
 --------------------------------------------------------------------------
