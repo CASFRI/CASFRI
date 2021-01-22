@@ -190,9 +190,6 @@ ULMU_PUMI,ULMU_PUM_###,Ulmus pupumila,,OE,,,,,,,,,,,,,
 ULMU_RUBR,ULMU_RUB_###,Ulmus rubra ,,,,,ER,,,,,OO,,,,,"Used prior to 2018. Post 2018, OO are included in FH"
 ULMU_SUBS,ULMU_SPP_###,Ulmus spp. ,,,,,EX,,,,,OR,,,,,
 ULMU_THOM,ULMU_THO_###,Ulmus thomasii ,,,,,EU,,,,,OT,,,,,"Used prior to 2018. Post 2018, OT are included in FH"
-WBNP_ERIC,,,,,,,,,,,,,,,,,Ericaceous species
-WBNP_GRAM,,,,,,,,,,,,,,,,,Graminoids species
-WBNP_HEGR,,,,,,,,,,,,,,,,,Herbs/Graminoids species
 ,ABIE_CON_###,Abies concolor ,,BC,,,,,,,,,,,,,
 ,ACER_GLA_DOU,Acer glabrum var. douglasii ,,,,,,,,,,,,,,,
 ,ACER_PSE_###,Acer pseudoplatanus ,,MS,,,,,,,,,,,,,
