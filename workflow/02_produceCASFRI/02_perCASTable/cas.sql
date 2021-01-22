@@ -443,6 +443,7 @@ ORDER BY inv;
 --SK05	421977
 --SK06	211482
 --YT02	231137
+--PC01  8094
 
 <<<<<<< HEAD
 SELECT count(*) FROM casfri50.cas_all; -- 32715216
