@@ -3216,17 +3216,20 @@ CREATE OR REPLACE FUNCTION TT_qc_prg3_wetland_validation(
   gr_ess text,
   cl_den text,
   cl_haut text,
-  TYPE_ECO text
+  TYPE_ECO text,
+  retCharPos text
 )
 RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
   BEGIN
-     
-    IF TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO, 'QC03') IN('SONS', 'BTNN', 'FTNN', 'FONS', 'BONS', 'STNN') THEN
-      RETURN TRUE;
-    ELSE
+    _wetland_code = TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO, 'QC03');
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
-    END IF;
-    
+	END IF;
+    RETURN TRUE;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -3248,18 +3251,21 @@ CREATE OR REPLACE FUNCTION TT_qc_prg4_wetland_validation(
   gr_ess text,
   cl_den text,
   cl_haut text,
-  TYPE_ECO text
+  TYPE_ECO text,
+  retCharPos text
 )
 RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
   BEGIN
-     
-    IF TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO, 'QC04') IN('SONS', 'BTNN', 'FTNN', 'FONS', 'BONS', 'STNN') THEN
-      RETURN TRUE;
-    ELSE
+    _wetland_code = TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO, 'QC04');
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
-    END IF;
-    
-  END; 
+	END IF;
+    RETURN TRUE;
+  END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_qc_prg5_wetland_validation(text, text, text, text, text, text)
@@ -3280,17 +3286,20 @@ CREATE OR REPLACE FUNCTION TT_qc_prg5_wetland_validation(
   gr_ess text,
   cl_den text,
   cl_haut text,
-  TYPE_ECO text
+  TYPE_ECO text,
+  retCharPos text
 )
 RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
   BEGIN
-     
-    IF TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO, 'QC05') IN('SONS', 'BTNN', 'FTNN', 'FONS', 'BONS', 'STNN') THEN
-      RETURN TRUE;
-    ELSE
+    _wetland_code = TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO, 'QC05');
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
-    END IF;
-    
+	END IF;
+    RETURN TRUE;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -3684,7 +3693,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Check translation creates a valid 4 letter wetland code.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_validation(text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_validation(text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_ab_avi01_wetland_validation(
   moisture text,
   nonfor_veg text,
@@ -3692,15 +3701,20 @@ CREATE OR REPLACE FUNCTION TT_ab_avi01_wetland_validation(
   sp1 text,
   sp2 text,
   crownclose text,
-  sp1_percnt text
+  sp1_percnt text,
+  retCharPos text
 )
 RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
   BEGIN
-    IF TT_ab_avi01_wetland_code(moisture, nonfor_veg, nat_nonveg, sp1, sp2, crownclose, sp1_percnt) IN('SONS', 'MONG', 'FONG', 'FTNN', 'STNN', 'SFNN', 'BTNN') THEN
-      RETURN TRUE;
-    ELSE
+    _wetland_code = TT_ab_avi01_wetland_code(moisture, nonfor_veg, nat_nonveg, sp1, sp2, crownclose, sp1_percnt);
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
-    END IF;
+	END IF;
+    RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -3710,19 +3724,24 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- e.g. TT_nl_nli01_wetland_validation(landtype, per1, '1')
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_validation(text, text, text);
+--DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_validation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_nl_nli01_wetland_validation(
   stand_id text,
   site text,
-  species_comp text
+  species_comp text,
+  retCharPos text
 )
 RETURNS boolean AS $$
+  DECLARE
+	_wetland_code text;
+	_wetland_char text;
   BEGIN
-    IF TT_nl_nli01_wetland_code(stand_id, site, species_comp) IN('BONS', 'BTNN', 'MONG', 'STNN') THEN
-      RETURN TRUE;
-    ELSE
+    _wetland_code = TT_nl_nli01_wetland_code(stand_id, site, species_comp);
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
+	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
-    END IF;
+	END IF;
+    RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -3773,7 +3792,7 @@ CREATE OR REPLACE FUNCTION TT_ns_nsi01_wetland_validation(
   species text,
   crncl text,
   height text,
-  ret_char_pos text
+  retCharPos text
 )
 RETURNS boolean AS $$
   DECLARE
@@ -3781,7 +3800,7 @@ RETURNS boolean AS $$
 	_wetland_char text;
   BEGIN
     _wetland_code = TT_ns_nsi01_wetland_code(fornon, species, crncl, height);
-	_wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
+	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
 	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
 	END IF;

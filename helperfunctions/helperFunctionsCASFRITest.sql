@@ -2348,13 +2348,13 @@ UNION ALL
 SELECT '57.1'::text number,
        'TT_qc_prg3_wetland_validation'::text function_tested,
        'Test all NULL'::text description,
-       TT_qc_prg3_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
+       TT_qc_prg3_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '57.2'::text number,
        'TT_qc_prg3_wetland_validation'::text function_tested,
        'Test SONS 1'::text description,
-       TT_qc_prg3_wetland_validation('DH', '', '', '0', '0', '') passed
+       TT_qc_prg3_wetland_validation('DH', '', '', '0', '0', '', '1') passed
 ---------------------------------------------------------
  -- TT_qc_prg5_wetland_validation
  -- full set of tests done for TT_qc_prg3_wetland_translation which uses saem internal function
@@ -2363,13 +2363,13 @@ UNION ALL
 SELECT '58.1'::text number,
        'TT_qc_prg5_wetland_validation'::text function_tested,
        'Test all NULL'::text description,
-       TT_qc_prg5_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
+       TT_qc_prg5_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '58.2'::text number,
        'TT_qc_prg5_wetland_validation'::text function_tested,
        'Test SONS 1'::text description,
-       TT_qc_prg5_wetland_validation('DH', '', '', NULL::text, NULL::text, '') passed
+       TT_qc_prg5_wetland_validation('DH', '', '', NULL::text, NULL::text, '', '1') passed
 ---------------------------------------------------------
  -- TT_row_translation_rule_nt_lyr
 ---------------------------------------------------------
@@ -3423,13 +3423,13 @@ UNION ALL
 SELECT '89.1'::text number,
        'TT_qc_prg4_wetland_validation'::text function_tested,
        'Test all NULL'::text description,
-       TT_qc_prg4_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
+       TT_qc_prg4_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '89.2'::text number,
        'TT_qc_prg4_wetland_validation'::text function_tested,
        'Test SONS 1'::text description,
-       TT_qc_prg4_wetland_validation('DH', '', '', NULL::text, NULL::text, '') passed
+       TT_qc_prg4_wetland_validation('DH', '', '', NULL::text, NULL::text, '', '1') passed
 ---------------------------------------------------------
  -- TT_qc_countOfNotNull
 ---------------------------------------------------------
@@ -3657,13 +3657,13 @@ UNION ALL
 SELECT '95.1'::text number,
        'TT_ab_avi01_wetland_validation'::text function_tested,
        'Basic pass'::text description,
-       TT_ab_avi01_wetland_validation('w', 'SO', '','','','','') passed
+       TT_ab_avi01_wetland_validation('w', 'SO', '','','','','', '1') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '95.2'::text number,
        'TT_ab_avi01_wetland_validation'::text function_tested,
        'Basic pass'::text description,
-       TT_ab_avi01_wetland_validation(NULL::text, NULL::text, NULL::text,NULL::text,NULL::text,NULL::text,NULL::text) IS FALSE passed
+       TT_ab_avi01_wetland_validation(NULL::text, NULL::text, NULL::text,NULL::text,NULL::text,NULL::text,NULL::text,NULL::text) IS FALSE passed
 ---------------------------------------------------------
  -- TT_nl_nli01_wetland_translation
 ---------------------------------------------------------
@@ -3691,19 +3691,19 @@ SELECT '96.4'::text number,
        'Basic pass 3'::text description,
        TT_nl_nli01_wetland_translation('900', NULL::text, 'WBTL','1') = 'SWAMP' passed
 ---------------------------------------------------------	
- -- TT_nl_nli01_wetland_validation - just test the function works, it simply call TT_ab_avi01_wetland_translation which has already tested the logic
+ -- TT_nl_nli01_wetland_validation
 ---------------------------------------------------------
 UNION ALL
 SELECT '97.1'::text number,
        'TT_nl_nli01_wetland_validation'::text function_tested,
        'Basic pass'::text description,
-       TT_nl_nli01_wetland_validation('920', NULL::text, NULL::text) passed
+       TT_nl_nli01_wetland_validation('920', NULL::text, NULL::text, '1') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '97.2'::text number,
        'TT_nl_nli01_wetland_validation'::text function_tested,
        'Basic pass'::text description,
-       TT_nl_nli01_wetland_validation(NULL::text, NULL::text, NULL::text) IS FALSE passed
+       TT_nl_nli01_wetland_validation(NULL::text, NULL::text, NULL::text, '1') IS FALSE passed
 ---------------------------------------------------------
  -- TT_bc_vri01_wetland_translation
 ---------------------------------------------------------
