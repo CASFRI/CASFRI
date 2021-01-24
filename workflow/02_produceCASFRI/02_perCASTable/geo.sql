@@ -397,12 +397,15 @@ ORDER BY inv;
 --MB06  163064
 --NB01	927177
 --NB02	1123893
---NL01 1863664
+--NL01  1863664
 --NS03 	995886
 --NT01	281388
 --NT02	320944
---ON02	3629072
+--ON02	3629073
 --PE01	107220
+--QC03  401188
+--QC04  2487519
+--QC05  6768074
 --SK01	1501667
 --SK02	27312
 --SK03	8964
@@ -411,7 +414,7 @@ ORDER BY inv;
 --SK06	211482
 --YT02	231137
 
-SELECT count(*) FROM casfri50.geo_all; -- 20382784
+SELECT count(*) FROM casfri50.geo_all; -- 33711102
 SELECT count(*) FROM casfri50.geo_all WHERE ST_AsTexT(geometry) = 'POLYGON EMPTY'; -- 0
 
 -- Set the geometry type to be able to display in some GIS

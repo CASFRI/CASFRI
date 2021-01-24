@@ -444,10 +444,7 @@ ORDER BY inv;
 --SK06	211482
 --YT02	231137
 
-<<<<<<< HEAD
-SELECT count(*) FROM casfri50.cas_all; -- 32715216
-=======
-SELECT count(*) FROM casfri50.cas_all; -- 26943027
->>>>>>> master
+
+SELECT count(*) FROM casfri50.cas_all; -- 33711102
 --------------------------------------------------------------------------
 

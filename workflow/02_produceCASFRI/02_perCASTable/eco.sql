@@ -317,5 +317,5 @@ ORDER BY inv;
 --QC04	243352
 --QC05	879228
 
-SELECT count(*) FROM casfri50.eco_all; -- 184113
+SELECT count(*) FROM casfri50.eco_all; -- 1861005
 --------------------------------------------------------------------------
