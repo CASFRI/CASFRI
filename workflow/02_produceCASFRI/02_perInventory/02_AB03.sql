@@ -64,7 +64,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab03', 1, 'ab', 1);
 DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB03';
 
 -- Add translated ones
-INSERT INTO casfri50.dst_all -- xs
+INSERT INTO casfri50.dst_all
 SELECT * FROM TT_Translate_ab03_dst('rawfri', 'ab03_l1_to_ab_l1_map', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab03_l1_to_ab_l1_map');

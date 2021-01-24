@@ -1,8 +1,9 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-0,ROW_TRANSLATION_RULE,NA,false(),NA,No row to translate, TRUE
+0,ROW_TRANSLATION_RULE,NA,"mb_fli01_wetland_validation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 1)",NA,No row to translate, TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Create cas_id using the unique identifier poly_id added during loading., TRUE
-2,WETLAND_TYPE,text,false(),nothingText(),Attribute does not occur, TRUE
-3,WET_VEG_COVER,text,false(),nothingText(),Attribute does not occur, TRUE
-4,WET_LANDFORM_MOD,text,false(),nothingText(),Attribute does not occur, TRUE
-5,WET_LOCAL_MOD,text,false(),nothingText(),Attribute does not occur, TRUE
+2,WETLAND_TYPE,text,"mb_fli01_wetland_validation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 1)","mb_fli01_wetland_translation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 1)",Attribute does not occur, TRUE
+3,WET_VEG_COVER,text,"mb_fli01_wetland_validation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 2)","mb_fli01_wetland_translation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 2)",Attribute does not occur, TRUE
+4,WET_LANDFORM_MOD,text,"mb_fli01_wetland_validation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 3)","mb_fli01_wetland_translation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 3)",Attribute does not occur, TRUE
+5,WET_LOCAL_MOD,text,"mb_fli01_wetland_validation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 4)","mb_fli01_wetland_translation(landmod, weteco1, sp1, sp2, sp1per, cc, ht, 4)",Attribute does not occur, TRUE
 6,ECO_SITE,text,false(),nothingText(),Attribute does not occur, TRUE
+7,LAYER,integer,false(|-8886),nothingInt(),Layer is unknown.,TRUE

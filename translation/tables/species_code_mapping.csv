@@ -63,7 +63,7 @@ GLED_TRIA,GLED_TRI_###,Gleditsia triacanthos ,,,HL,,GT,,,,,,,,,,
 GYMN_DIOI,GYMN_DIO_###,Gymnocladus dioicus ,,,,,KK,,,,,,,,,,
 HAMA_VIRG,HAMA_VIR_###,Hamamelis virginiana ,,,,,HAZ,,,,,,,,,,
 HARD_INTO,HARD_INT_###,,,,IH,,,IH,,,,FI,,,,,Intolerant Hardwood
-HARD_MOIS,HARD_MOIS_###,,,,,,,,,,,FH,,,,,Moist hardwoods
+HARD_MOIS,HARD_MOI_###,,,,,,,,,,,FH,,,,,Moist hardwoods
 HARD_NONC,HARD_NON_###,,,,NC,,,,,,,FN,,,,,Non commercial hardwoods
 HARD_TOLE,HARD_TOL_###,,,,TH,,,TH,,,,FT,,,,,Tolerant hardwood
 HARD_UNKN,GENH_SPP_###, ,,XH,HW,,OH,OH,,,,FX,,,,,Hardwood unknown
@@ -107,7 +107,7 @@ PINU_ALBI,PINU_ALB_###,Pinus albicaulis ,PA,PA,,,,,,,,,,,,,
 PINU_BANK,PINU_BAN_###,Pinus banksiana ,PJ,PJ,JP,PJ,PJ,JP,JP,,JP,PG,JP,JP,,PB,
 PINU_CONC,PINU_CON_CON,Pinus contorta var. contorta ,,PLC,,,,,,,,,,,,,
 PINU_CONL,PINU_CON_LAT,Pinus contorta var. latifolia ,,PLI,,,,,,,,,,,,,
-PINU_CONT,PINU_CON_###,Pinus contorta ,PL,PL,LP,PL,,,LP,P,LP,,,LP,,,
+PINU_CONT,PINU_CON_###,Pinus contorta ,PL,PL,LP,PL,,,LP,P,LP,,LP,LP,,,
 PINU_FLEX,PINU_FLE_###,Pinus flexilis ,PF,PF,,,,,,,,,,,,,
 PINU_MONT,PINU_MON_###,Pinus monticola ,,PW,,,,,,,,,,,,,
 PINU_MURX,PINU_MUR_###,Pinus xmurraybanksiana ,,PXJ,,,,,,,,,,,,,
@@ -190,9 +190,6 @@ ULMU_PUMI,ULMU_PUM_###,Ulmus pupumila,,OE,,,,,,,,,,,,,
 ULMU_RUBR,ULMU_RUB_###,Ulmus rubra ,,,,,ER,,,,,OO,,,,,"Used prior to 2018. Post 2018, OO are included in FH"
 ULMU_SUBS,ULMU_SPP_###,Ulmus spp. ,,,,,EX,,,,,OR,,,,,
 ULMU_THOM,ULMU_THO_###,Ulmus thomasii ,,,,,EU,,,,,OT,,,,,"Used prior to 2018. Post 2018, OT are included in FH"
-WBNP_ERIC,,,,,,,,,,,,,,,,,Ericaceous species
-WBNP_GRAM,,,,,,,,,,,,,,,,,Graminoids species
-WBNP_HEGR,,,,,,,,,,,,,,,,,Herbs/Graminoids species
 ,ABIE_CON_###,Abies concolor ,,BC,,,,,,,,,,,,,
 ,ACER_GLA_DOU,Acer glabrum var. douglasii ,,,,,,,,,,,,,,,
 ,ACER_PSE_###,Acer pseudoplatanus ,,MS,,,,,,,,,,,,,
@@ -340,6 +337,6 @@ WBNP_HEGR,,,,,,,,,,,,,,,,,Herbs/Graminoids species
 ,ABIE_SPP_DEA,Abies spp. (dead),,,DF,,,,,,,,,,,,Merchantable dead fir
 ,PICE_SPP_DEA,Picea spp. (dead),,,DS,,,,,,,,,,,,Merchantable dead spruce
 ,PINU_SPP_###,Pinus spp. (dead),,,DP,,,,,,,,,,,,Merchantable dead pine
-,BETU_GRA_###,Betula grandulosa,,EB,,BG,,,,,,,,,,,
+,BETU_GRA_###,Betula grandulosa,,EB,,,,,,,,,,,,,
 ,PICE_GLA_MAR,Picea white x black,,SXB,,,,,,,,,,,,,
 ,PICE_ENG_SIT,Picea engelmann x sitka,,SXE,,,,,,,,,,,,,

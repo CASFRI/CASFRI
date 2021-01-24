@@ -34,9 +34,9 @@ DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, te
 DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
-DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_validation(text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_prg4_wetland_validation(text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_prg5_wetland_validation(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_validation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg4_wetland_validation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg5_wetland_validation(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_not_double_species_validation(text);
 DROP FUNCTION IF EXISTS TT_qc_prg5_species_matchTable_validation(text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri_hascountOfNotNull(text, text, text, text);
@@ -49,8 +49,8 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_origin_newfoundland_validation(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_crown_closure_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_height_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_hasCountOfNotNull(text, text, text, text);
-DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_validation(text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_ab_avi01_wetland_validation(text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text);
@@ -58,6 +58,9 @@ DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_validation(text, text, text, text, t
 DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_validation(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ab_photo_year_validation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_validation(text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_validation(text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_pc02_wetland_validation(text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -134,6 +137,9 @@ DROP FUNCTION IF EXISTS TT_pc01_species_per_translation(text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_translation(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ab_photo_year_translation(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_translation(text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_translation(text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_translation(text, text, text);
+DROP FUNCTION IF EXISTS TT_pc02_wetland_translation(text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
@@ -147,15 +153,17 @@ DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text);
 DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_code(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_code(text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_code(text, text, text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_prg5_species_code_to_reordered_array(text);
+DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_code(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_code(text, text);
+DROP FUNCTION IF EXISTS TT_pc02_wetland_code(text, text);
 -------------------------------------------------------------------------------
 -- Tools functions
 -------------------------------------------------------------------------------
 DROP FUNCTION IF EXISTS TT_TableColumnType(name, name, name);
 DROP FUNCTION IF EXISTS TT_TableColumnNames(name, name);
 DROP FUNCTION IF EXISTS TT_ColumnExists(name, name, name);
-DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb, boolean);
-DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean, boolean);
+DROP FUNCTION IF EXISTS TT_CompareRows(jsonb, jsonb);
+DROP FUNCTION IF EXISTS TT_CompareTables(name, name, name, name, name, boolean);
 DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int, double precision) CASCADE;
 DROP FUNCTION IF EXISTS TT_RandomInt(int, int, int);
 DROP FUNCTION IF EXISTS TT_TableColumnIsUnique(name, name, name);
@@ -177,4 +185,3 @@ DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidText() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrNotInSetCode() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidNumber() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidRange() CASCADE;
-DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);

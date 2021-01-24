@@ -282,12 +282,26 @@ SELECT * FROM TT_Translate_qc04_eco('rawfri', 'qc04_l1_to_qc_ini04_l1_map_eco');
 SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_eco', 'qc04_l1_to_qc_ini04_l1_map_eco');
 ------------------------
 -- Translate PC01 using PC_PANP translation table
-SELECT TT_CreateMappingView('rawfri', 'pc01', 'pc_panp', NULL, 'eco');
+-- Add layer 4
+SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1);
 
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l1_to_pc_panp_l1_map_eco');
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l4_to_pc_panp_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_eco', 'pc01_l1_to_pc_panp_l1_map_eco');
+-- Add layer 5
+SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1);
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l5_to_pc_panp_l1_map', 'ogc_fid');
+
+-- Add layer 6
+SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1);
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l6_to_pc_panp_l1_map', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_eco', 'pc01_l4_to_pc_panp_l1_map');
+
 ------------------------
 -- Translate PC02 using PC_WBNP translation table
 --SELECT TT_CreateMappingView('rawfri', 'pc02', 'pc_wbnp', NULL, 'eco');
@@ -316,6 +330,7 @@ ORDER BY inv;
 --QC03	50600
 --QC04	243352
 --QC05	879228
+--PC01  1767
 
 SELECT count(*) FROM casfri50.eco_all; -- 1861005
 --------------------------------------------------------------------------
