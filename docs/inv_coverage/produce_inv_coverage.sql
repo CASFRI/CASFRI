@@ -165,7 +165,7 @@ RETURNS TABLE (geom geometry, tid int8, x int, y int, tgeom geometry) AS $$
         yfloor int;
     BEGIN
         IF ingeom IS NULL OR ST_IsEmpty(ingeom) THEN
-            RETURN QUERY SELECT ingeom, NULL::int8;
+            RETURN QUERY SELECT ingeom, NULL::int8, NULL::int, NULL::int, NULL::geometry ;
             RETURN;
         END IF;
         IF xgridsize IS NULL OR xgridsize <= 0 THEN
@@ -285,33 +285,37 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 -- SK03 - DONE
 -- Union by grid with a single query - 49s
-SELECT TT_ProduceDerivedCoverages('SK03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK03''')); -- 8964, 49s
-SELECT TT_ProduceDerivedCoverages('AB06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB06''')); -- 11484, 1m45
-SELECT TT_ProduceDerivedCoverages('SK02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK02''')); -- 27312, 2m03
-SELECT TT_ProduceDerivedCoverages('PE01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''PE01''')); -- 107220, 4m23
-SELECT TT_ProduceDerivedCoverages('AB16', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB16''')); -- 120476, 9m50
-SELECT TT_ProduceDerivedCoverages('MB06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''MB06''')); -- 160218, 43m28
-SELECT TT_ProduceDerivedCoverages('SK06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK06''')); -- 211482, 40m04
-SELECT TT_ProduceDerivedCoverages('YT02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''YT02''')); -- 231137, 25m11
-SELECT TT_ProduceDerivedCoverages('NT01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NT01''')); -- 281388, 27m38
-SELECT TT_ProduceDerivedCoverages('NT02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NT02''')); -- 320944, 39m24
-SELECT TT_ProduceDerivedCoverages('SK05', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK05''')); -- 421977, 1h13
-SELECT TT_ProduceDerivedCoverages('MB05', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''MB05''')); -- 514157, 3h06
-SELECT TT_ProduceDerivedCoverages('SK04', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK04''')); -- 633522, 2h11
-SELECT TT_ProduceDerivedCoverages('NB01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NB01''')); -- 927177, BUG, found non-noded intersection between LINESTRING (2.29408e+006 1.08525e+006, 2.29411e+006 1.08529e+006) and LINESTRING (2.29411e+006 1.08529e+006, 2.29408e+006 1.08525e+006) at 2294077.737813761 1085247.9753900601
-SELECT TT_ProduceDerivedCoverages('NS03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NS03''')); -- 995886, 1h11
-SELECT TT_ProduceDerivedCoverages('NB02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NB02''')); -- 1123893, BUG, infinite time
-SELECT TT_ProduceDerivedCoverages('SK01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK01''')); -- 1501667, 3h13
-SELECT TT_ProduceDerivedCoverages('ON02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''ON02''')); -- 3629072, BUG ERROR:  GEOSUnaryUnion: TopologyException: found non-noded intersection between LINESTRING (415779 1.11971e+006, 415779 1.11971e+006) and LINESTRING (415779 1.11971e+006, 415779 1.11971e+006) at 415779.06890209671 1119712.9592096396
-SELECT TT_ProduceDerivedCoverages('BC08', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''BC08''')); -- 4677411, 5h21
-SELECT TT_ProduceDerivedCoverages('BC10', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''BC10''')); -- 5151772, 6h13
+SELECT TT_ProduceDerivedCoverages('SK03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK03''')); --    8964, pg11:   49s, pg13:   13s
+SELECT TT_ProduceDerivedCoverages('AB06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB06''')); --   11484, pg11:  1m45, pg13:   28s
+SELECT TT_ProduceDerivedCoverages('SK02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK02''')); --   27312, pg11:  2m03, pg13:   38s
+SELECT TT_ProduceDerivedCoverages('PE01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''PE01''')); --  107220, pg11:  4m23, pg13:  1m28
+SELECT TT_ProduceDerivedCoverages('AB16', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB16''')); --  120476, pg11:  9m50, pg13:  2m18
+SELECT TT_ProduceDerivedCoverages('YT02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''YT02''')); --  231137, pg11: 25m11, pg13:  4m03
+SELECT TT_ProduceDerivedCoverages('MB06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''MB06''')); --  160218, pg11: 43m28, pg13:  4m53
+SELECT TT_ProduceDerivedCoverages('NT01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NT01''')); --  281388, pg11: 27m38, pg13:  5m26
+SELECT TT_ProduceDerivedCoverages('SK06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK06''')); --  211482, pg11: 40m04, pg13:  6m24
+SELECT TT_ProduceDerivedCoverages('NT02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NT02''')); --  320944, pg11: 39m24, pg13:  7m04
+SELECT TT_ProduceDerivedCoverages('QC03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''QC03''')); --  401188, pg11:      , pg13:  8m49
+SELECT TT_ProduceDerivedCoverages('SK05', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK05''')); --  421977, pg11:  1h13, pg13:  9m42
+SELECT TT_ProduceDerivedCoverages('NS03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NS03''')); --  995886, pg11:  1h11, pg13: 13m13
+SELECT TT_ProduceDerivedCoverages('SK04', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK04''')); --  633522, pg11:  2h11, pg13: 15m46
+SELECT TT_ProduceDerivedCoverages('SK01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK01''')); -- 1501667, pg11:  3h13, pg13: 19m48
+SELECT TT_ProduceDerivedCoverages('NB01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NB01''')); --  927177, pg11:   BUG, pg13: 26m57
+SELECT TT_ProduceDerivedCoverages('NB02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NB02''')); -- 1123893, pg11:  BUG, infinite time, pg13: 31m48
+SELECT TT_ProduceDerivedCoverages('MB05', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''MB05''')); --  514157, pg11:  3h06, pg13: 32m33
+SELECT TT_ProduceDerivedCoverages('NL01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''NL01''')); -- 1863664, pg11:     ?, pg13: 38m11
+SELECT TT_ProduceDerivedCoverages('QC04', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''QC04''')); -- 2487519, pg11:     ?, pg13: 45m30
+SELECT TT_ProduceDerivedCoverages('BC08', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''BC08''')); -- 4677411, pg11:  5h21, pg13:  1h31
+SELECT TT_ProduceDerivedCoverages('BC10', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''BC10''')); -- 5151772, pg11:  6h13, pg13:  1h43
+SELECT TT_ProduceDerivedCoverages('QC05', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''QC05''')); -- 6768074, pg11:     ?, pg13:  2h07
+SELECT TT_ProduceDerivedCoverages('ON02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''ON02''')); -- 3629072, pg11: BUG ERROR, pg13: 4h01
 
 -- Recompute derived
 SELECT TT_ProduceDerivedCoverages('SK03', (SELECT geom FROM casfri50_coverage.detailed WHERE inv = 'SK03'));
 
 -- Display 
-SELECT * FROM casfri50_coverage.detailed;
-SELECT * FROM casfri50_coverage.noholes;
-SELECT * FROM casfri50_coverage.noislands;
-SELECT * FROM casfri50_coverage.simplified;
-SELECT * FROM casfri50_coverage.smoothed;
+SELECT * FROM casfri50_coverage.detailed ORDER BY nb_polys;
+SELECT * FROM casfri50_coverage.noholes ORDER BY nb_polys;
+SELECT * FROM casfri50_coverage.noislands ORDER BY nb_polys;
+SELECT * FROM casfri50_coverage.simplified ORDER BY nb_polys;
+SELECT * FROM casfri50_coverage.smoothed ORDER BY nb_polys;
