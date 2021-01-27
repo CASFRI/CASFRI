@@ -41,10 +41,10 @@ $$ LANGUAGE plpgsql VOLATILE;
 --SELECT TT_RowIsValid(ARRAY[att]) FROM test_geohistory;
 
 -------------------------------------------------------------------------------
--- ST_SafeDifference()
+-- TT_SafeDifference()
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS ST_SafeDifference(geometry, geometry, double precision, text, text, boolean);
-CREATE OR REPLACE FUNCTION ST_SafeDifference(
+DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean);
+CREATE OR REPLACE FUNCTION TT_SafeDifference(
   geom1 geometry,
   geom2 geometry,
   tolerance double precision DEFAULT NULL,
@@ -58,47 +58,47 @@ RETURNS geometry AS $$
     --RAISE NOTICE 'geom1=%', ST_AsText(geom1);
     --RAISE NOTICE 'geom2=%', ST_AsText(geom2);
     IF safe THEN
-      RAISE NOTICE 'ST_SafeDifference() Safe is TRUE...';
+      RAISE NOTICE 'TT_SafeDifference() Safe is TRUE...';
       BEGIN
         -- Attempt the normal operation
         RETURN ST_Difference(geom1, geom2);
       EXCEPTION WHEN OTHERS THEN
         IF tolerance IS NULL THEN
-          RAISE NOTICE 'ST_SafeDifference() ERROR 1: Normal ST_Difference() failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference() ERROR 1: Normal ST_Difference() failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
         ELSE
-          RAISE NOTICE 'ST_SafeDifference() ERROR 1: Normal ST_Difference() failed. Try by snapping the first polygon (%) to grid using tolerance...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference() ERROR 1: Normal ST_Difference() failed. Try by snapping the first polygon (%) to grid using tolerance...', coalesce(geom1id, 'no ID provided');
         END IF;
       END;
       IF NOT tolerance IS NULL THEN
         BEGIN
           RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), geom2);
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'ST_SafeDifference() ERROR 2: Snapping the first polygon failed. Try by snapping the second polygon (%) to grid using tolerance...', coalesce(geom2id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference() ERROR 2: Snapping the first polygon failed. Try by snapping the second polygon (%) to grid using tolerance...', coalesce(geom2id, 'no ID provided');
         END;
 
         BEGIN
           RETURN ST_Difference(geom1, ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'ST_SafeDifference() ERROR 3: Snapping the second polygon failed. Try by snapping the both polygons (% and %) to grid using tolerance...', coalesce(geom1id, 'no ID provided'), coalesce(geom2id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference() ERROR 3: Snapping the second polygon failed. Try by snapping the both polygons (% and %) to grid using tolerance...', coalesce(geom1id, 'no ID provided'), coalesce(geom2id, 'no ID provided');
         END;            
 
         BEGIN
           RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));          
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'ST_SafeDifference() ERROR 4: Snapping both polygons failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference() ERROR 4: Snapping both polygons failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
         END;            
       END IF;
 
       BEGIN
         RETURN ST_Difference(ST_Buffer(geom1, 0), geom2);
       EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'ST_SafeDifference() ERROR 5: Buffering the first polygon by 0 failed. Try by buffering the second polygon (%) by 0...', coalesce(geom2id, 'no ID provided');
+        RAISE NOTICE 'TT_SafeDifference() ERROR 5: Buffering the first polygon by 0 failed. Try by buffering the second polygon (%) by 0...', coalesce(geom2id, 'no ID provided');
       END;
 
       BEGIN
         RETURN ST_Difference(geom1, ST_Buffer(geom2, 0));
       EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'ST_SafeDifference() FATAL ERROR: Operation failed. Returning MULTIPOLYGON EMPTY...';
+        RAISE NOTICE 'TT_SafeDifference() FATAL ERROR: Operation failed. Returning MULTIPOLYGON EMPTY...';
       END;
       RETURN ST_GeomFromText('MULTIPOLYGON EMPTY');
     ELSE
@@ -542,9 +542,9 @@ RETURNS TABLE (id text,
              (ovlpRow.gh_photo_year > poly_photo_year AND NOT poly_is_valid) THEN
             IF debug_l2 THEN RAISE NOTICE '666 CASE SAME YEAR: Remove ovlpPoly from prePoly. year = %', ovlpRow.gh_photo_year;END IF;
 
-            preValidYearPoly = ST_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
+            preValidYearPoly = TT_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
             IF postValidYearPoly IS NOT NULL THEN
-              postValidYearPoly = ST_SafeDifference(postValidYearPoly, ovlpRow.gh_geom, 0.01, 'postValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
+              postValidYearPoly = TT_SafeDifference(postValidYearPoly, ovlpRow.gh_geom, 0.01, 'postValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
             END IF;
 
           -- CASE C - (A - B) RefYB -> AY - 1 and A AY -> RefYE (see logic table above)
@@ -553,7 +553,7 @@ RETURNS TABLE (id text,
             postValidYearPoly = coalesce(postValidYearPoly, preValidYearPoly);
             postValidYearPolyYearBegin = poly_photo_year;
 
-            preValidYearPoly = ST_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
+            preValidYearPoly = TT_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, 0.01, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
 
             preValidYearPolyYearEnd = poly_photo_year - 1;
 
@@ -578,7 +578,7 @@ RETURNS TABLE (id text,
                 RETURN NEXT;
               END IF;
 
-              postValidYearPoly = ST_SafeDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, 0.01, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
+              postValidYearPoly = TT_SafeDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, 0.01, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
               postValidYearPolyYearBegin = ovlpRow.gh_photo_year;
               preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, ovlpRow.gh_photo_year - 1);
             END IF;
