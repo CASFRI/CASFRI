@@ -17,6 +17,12 @@ SET tt.debug TO FALSE;
 
 CREATE SCHEMA IF NOT EXISTS casfri50;
 
+--------------------------------------------------------------------------
+-- Create index for qc stand structure
+--------------------------------------------------------------------------
+CREATE UNIQUE INDEX IF NOT EXISTS qc_nfl_stand_structure_lookup_idx
+ON translation.qc_standstructure_lookup (source_val)
+
 -------------------------------------------------------
 -- Translate all NFL tables into a common table. 33h32m
 -------------------------------------------------------
