@@ -26,12 +26,12 @@ WHERE TT_NotEmpty(pc02_species_codes);
 SELECT * FROM translation.pc_wbnp01_cas;
 DROP TABLE IF EXISTS translation_devel.pc02_wbnp01_cas_devel;
 CREATE TABLE translation_devel.pc02_wbnp01_cas_devel AS
-SELECT * FROM translation.pc_wbnp01_cas
+SELECT * FROM translation.pc_wbnp01_cas;
 --WHERE rule_id::int < 2;
 
-SELECT * FROM translation_devel.pc02_wbnp01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_cas_devel', '_pc02_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'pc02', 'pc_wbnp', 200);
+SELECT * FROM translation_devel.pc02_wbnp01_cas_devel;
 SELECT * FROM TT_Translate_pc02_cas_devel('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200', 'ogc_fid');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pc_wbnp01_cas_devel');
 
@@ -93,8 +93,30 @@ CREATE TABLE translation_devel.pc02_wbnp01_nfl_devel AS
 SELECT * FROM translation.pc_wbnp01_nfl; --WHERE rule_id::int != 4; --IN (0,1,2,3);
 SELECT * FROM translation_devel.pc02_wbnp01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'pc02_wbnp01_nfl_devel', '_pc02_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'pc02', 8, 'pc_wbnp', 1, 200);
-SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l2_to_pc_wbnp_l1_map_200', 'ogc_fid');
+SELECT TT_CreateMappingView('rawfri', 'pc02', 8, 'pc_wbnp', 1, 1000);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l8_to_pc_wbnp_l1_map_1000', 'ogc_fid');
+-- Layer 9
+SELECT TT_CreateMappingView('rawfri', 'pc02', 9, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l9_to_pc_wbnp_l1_map_200', 'ogc_fid');
+--Layer 10
+SELECT TT_CreateMappingView('rawfri', 'pc02', 10, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l10_to_pc_wbnp_l1_map_200', 'ogc_fid');
+--Layer 11
+SELECT TT_CreateMappingView('rawfri', 'pc02', 11, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l11_to_pc_wbnp_l1_map_200', 'ogc_fid');
+-- Layer 12
+SELECT TT_CreateMappingView('rawfri', 'pc02', 12, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l12_to_pc_wbnp_l1_map_200', 'ogc_fid');
+--Layer 13
+SELECT TT_CreateMappingView('rawfri', 'pc02', 13, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l13_to_pc_wbnp_l1_map_200', 'ogc_fid');
+--Layer 14
+SELECT TT_CreateMappingView('rawfri', 'pc02', 14, 'pc_wbnp', 1, 200);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l14_to_pc_wbnp_l1_map_200', 'ogc_fid');
+--Layer 15
+SELECT TT_CreateMappingView('rawfri', 'pc02', 15, 'pc_wbnp', 1, 1053);
+SELECT * FROM TT_Translate_pc02_nfl_devel('rawfri', 'pc02_l15_to_pc_wbnp_l1_map_1053', 'ogc_fid');
+
 SELECT * FROM TT_ShowLastLog('translation_devel', 'pc02_wbnp01_nfl_devel');
 
 -- ECO ATTRIBUTES
