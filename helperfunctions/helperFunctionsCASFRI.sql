@@ -597,7 +597,7 @@ $$ LANGUAGE plpgsql VOLATILE STRICT;
 -------------------------------------------------------------------------------
 -- TT_CreateMapping
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_CreateMapping(text, int, name, int); 
+--DROP FUNCTION IF EXISTS TT_CreateMapping(text, int, text, int); 
 CREATE OR REPLACE FUNCTION TT_CreateMapping( 
   fromTableName text,
   fromLayer int,

@@ -76,6 +76,12 @@ CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_pc02_species_codes_idx
 ON translation.species_code_mapping (pc02_species_codes)
 WHERE TT_NotEmpty(pc02_species_codes);
 
+--------------------------------------------------------------------------
+-- Create index for qc stand structure
+--------------------------------------------------------------------------
+CREATE UNIQUE INDEX IF NOT EXISTS qc_lyr_stand_structure_lookup_idx
+ON translation.qc_standstructure_lookup (source_val)
+
 -------------------------------------------------------
 -- Translate all LYR tables into a common table. 32h
 -------------------------------------------------------

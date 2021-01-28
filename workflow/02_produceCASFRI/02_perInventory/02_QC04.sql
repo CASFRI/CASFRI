@@ -17,6 +17,10 @@ SET tt.debug TO FALSE;
 --------------------------------------------------------------------------
 -- Translate all QC04. 43h56m
 --------------------------------------------------------------------------
+-- add index on standstructure lookup table
+CREATE UNIQUE INDEX IF NOT EXISTS qc04_stand_structure_lookup_idx
+ON translation.qc_standstructure_lookup (source_val)
+------------------------
 -- CAS
 ------------------------
 SELECT TT_Prepare('translation', 'qc_ini04_cas', '_qc04_cas', 'ab_avi01_cas'); 

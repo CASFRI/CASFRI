@@ -56,7 +56,11 @@ CREATE INDEX IF NOT EXISTS nl_photoyear_idx
 
 DROP TABLE rawfri.nl_photoyear;
 ALTER TABLE rawfri.new_photo_year RENAME TO nl_photoyear;
-
+--------------------------------------------------------------------------
+-- Create index for qc stand structure
+--------------------------------------------------------------------------
+CREATE UNIQUE INDEX IF NOT EXISTS qc_cas_stand_structure_lookup_idx
+ON translation.qc_standstructure_lookup (source_val)
 --------------------------------------------------------------------------
 -- Translate all CAS tables into a common table. 92h
 --------------------------------------------------------------------------
