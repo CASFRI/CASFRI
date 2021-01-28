@@ -58,6 +58,10 @@ SELECT TT_Prepare('translation', 'pe_pei01_cas', '_pe_cas_test', 'ab_avi01_cas')
 SELECT TT_Prepare('translation', 'mb_fri01_cas', '_mb_fri_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'mb_fli01_cas', '_mb_fli_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'nl_nli01_cas', '_nl_nli_cas_test', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'qc_ini03_cas', '_qc_ini03_cas_test', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'qc_ini04_cas', '_qc_ini04_cas_test', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'qc_ipf05_cas', '_qc_ipf05_cas_test', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'pc_panp01_cas', '_pc_panp_cas_test', 'ab_avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.cas_all_new CASCADE;
 ------------------------
@@ -177,6 +181,22 @@ SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', 900);
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_nl_nli_cas_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_900');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc03', 'qc_ini03', 400);
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_qc_ini03_cas_test('rawfri', 'qc03_l1_to_qc_ini03_l1_map_400');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc04', 'qc_ini04', 1000);
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_qc_ini04_cas_test('rawfri', 'qc04_l1_to_qc_ini04_l1_map_1000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc05', 'qc_ipf', 1000);
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_qc_ipf05_cas_test('rawfri', 'qc05_l1_to_qc_ipf_l1_map_1000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 'pc_panp', 200);
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_pc_panp_cas_test('rawfri', 'pc01_l1_to_pc_panp_l1_map_200');
+------------------------
 -- Create an ordered VIEW on the CAS table
 CREATE OR REPLACE VIEW casfri50_test.cas_all_new_ordered AS
 SELECT * FROM casfri50_test.cas_all_new
@@ -202,6 +222,9 @@ SELECT TT_Prepare('translation', 'pe_pei01_dst', '_pe_dst_test', 'ab_avi01_dst')
 SELECT TT_Prepare('translation', 'mb_fri01_dst', '_mb_fri_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'mb_fli01_dst', '_mb_fli_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl_nli_dst_test', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc_ini03_dst_test', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc_ini04_dst_test', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc_ipf05_dst_test', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.dst_all_new CASCADE;
 ------------------------
@@ -325,6 +348,18 @@ SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 20000); -- Generat
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_nl_nli_dst_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_20000');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc03', 1, 'qc_ini03', 1, 1800); -- Generates about 400 (363) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_qc_ini03_dst_test('rawfri', 'qc03_l1_to_qc_ini03_l1_map_1800');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc04', 1, 'qc_ini04', 1, 1500); -- Generates about 900 (880) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_qc_ini04_dst_test('rawfri', 'qc04_l1_to_qc_ini04_l1_map_1500');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf', 1, 1500); -- Generates about 900 (799) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_qc_ipf05_dst_test('rawfri', 'qc05_l1_to_qc_ipf_l1_map_1500');
+------------------------
 -- Create an ordered VIEW on the DST table
 CREATE OR REPLACE VIEW casfri50_test.dst_all_new_ordered AS
 SELECT * FROM casfri50_test.dst_all_new
@@ -351,6 +386,10 @@ SELECT TT_Prepare('translation', 'pe_pei01_eco', '_pe_eco_test', 'ab_avi01_eco')
 SELECT TT_Prepare('translation', 'mb_fri01_eco', '_mb_fri_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'mb_fli01_eco', '_mb_fli_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'nl_nli01_eco', '_nl_nli_eco_test', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'qc_ini03_eco', '_qc_ini03_eco_test', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'qc_ini04_eco', '_qc_ini04_eco_test', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'qc_ipf05_eco', '_qc_ipf05_eco_test', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'pc_panp01_eco', '_pc_panp_eco_test', 'ab_avi01_eco');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.eco_all_new CASCADE;
 ------------------------
@@ -466,6 +505,30 @@ SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', 900); -- Generates 0 ECO
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_nl_nli_eco_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_900');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc03', 'qc_ini03', 3000); -- Generates about 400 (354) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_qc_ini03_eco_test('rawfri', 'qc03_l1_to_qc_ini03_l1_map_3000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc04', 'qc_ini04', 9000); -- Generates about 900 (859) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_qc_ini04_eco_test('rawfri', 'qc04_l1_to_qc_ini04_l1_map_9000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc05', 'qc_ipf', 7000); -- Generates about 900 (918) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_qc_ipf05_eco_test('rawfri', 'qc05_l1_to_qc_ipf_l1_map_7000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 1000); -- Generates about 200 (195) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_pc_panp_eco_test('rawfri', 'pc01_l4_to_pc_panp_l1_map_1000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1); -- Generates about 200 (233) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_pc_panp_eco_test('rawfri', 'pc01_l5_to_pc_panp_l1_map');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1); -- Generates about 200 (6) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_pc_panp_eco_test('rawfri', 'pc01_l6_to_pc_panp_l1_map');
+------------------------
 -- Create an ordered VIEW on the ECO table
 CREATE OR REPLACE VIEW casfri50_test.eco_all_new_ordered AS
 SELECT * FROM casfri50_test.eco_all_new
@@ -488,7 +551,11 @@ SELECT TT_Prepare('translation', 'ns_nsi01_lyr', '_ns_lyr_test', 'ab_avi01_lyr')
 SELECT TT_Prepare('translation', 'pe_pei01_lyr', '_pe_lyr_test', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'mb_fri01_lyr', '_mb_fri_lyr_test', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'mb_fli01_lyr', '_mb_fli_lyr_test', 'ab_avi01_lyr'); 
-SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_nli_lyr_test', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_nli_lyr_test', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'qc_ini03_lyr', '_qc_ini03_lyr_test', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'qc_ini04_lyr', '_qc_ini04_lyr_test', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'qc_ipf05_lyr', '_qc_ipf05_lyr_test', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'pc_panp01_lyr', '_pc_panp_lyr_test', 'ab_avi01_lyr');
 -------------------------
 DROP TABLE IF EXISTS casfri50_test.lyr_all_new CASCADE;
 ------------------------
@@ -732,6 +799,42 @@ SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 2000); -- Generate
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_nl_nli_lyr_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_2000');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc03', 1, 'qc_ini03', 1, 800); -- Generates 400 (331) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_qc_ini03_lyr_test('rawfri', 'qc03_l1_to_qc_ini03_l1_map_800');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'qc_ini03', 1); -- Generates 400 (241) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_qc_ini03_lyr_test('rawfri', 'qc03_l2_to_qc_ini03_l1_map');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc04', 1, 'qc_ini04', 1, 1400); -- Generates 900 (930) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_qc_ini04_lyr_test('rawfri', 'qc04_l1_to_qc_ini04_l1_map_1400');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc04', 2, 'qc_ini04', 1, 80000); -- Generates 900 (873) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_qc_ini04_lyr_test('rawfri', 'qc04_l2_to_qc_ini04_l1_map_80000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf', 1, 1200); -- Generates 900 (894) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_qc_ipf05_lyr_test('rawfri', 'qc05_l1_to_qc_ipf_l1_map_1200');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc05', 2, 'qc_ipf', 1, 80000); -- Generates 900 (858) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_qc_ipf05_lyr_test('rawfri', 'qc05_l2_to_qc_ipf_l1_map_80000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1, 350); -- Generates 200 (236) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_pc_panp_lyr_test('rawfri', 'pc01_l1_to_pc_panp_l1_map_350');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 2, 'pc_panp', 1, 1000); -- Generates 200 (185) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_pc_panp_lyr_test('rawfri', 'pc01_l2_to_pc_panp_l1_map_1000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 3, 'pc_panp', 1); -- Generates 200 (137) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_pc_panp_lyr_test('rawfri', 'pc01_l3_to_pc_panp_l1_map');
+------------------------
 -- Create an ordered VIEW on the LYR table
 CREATE OR REPLACE VIEW casfri50_test.lyr_all_new_ordered AS
 SELECT * FROM casfri50_test.lyr_all_new
@@ -758,6 +861,10 @@ SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe_nfl_test', 'ab_avi01_nfl')
 SELECT TT_Prepare('translation', 'mb_fri01_nfl', '_mb_fri_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb_fli_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl_nli_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'qc_ini03_nfl', '_qc_ini03_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'qc_ini04_nfl', '_qc_ini04_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'qc_ipf05_nfl', '_qc_ipf05_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'pc_panp01_nfl', '_pc_panp_nfl_test', 'ab_avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.nfl_all_new CASCADE;
 ------------------------
@@ -972,6 +1079,30 @@ SELECT * FROM TT_Translate_mb_fli_nfl_test('rawfri', 'mb06_l6_to_mb_fli_l1_map_5
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 2450); -- Generates about 900 (881) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_nl_nli_nfl_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_2450');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc03', 3, 'qc_ini03', 1, 800); -- Generates about 400 (387) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_qc_ini03_nfl_test('rawfri', 'qc03_l3_to_qc_ini03_l1_map_800');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc04', 3, 'qc_ini04', 1, 7000); -- Generates about 900 (890) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_qc_ini04_nfl_test('rawfri', 'qc04_l3_to_qc_ini04_l1_map_7000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc05', 3, 'qc_ipf', 1, 6000); -- Generates about 900 (916) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_qc_ipf05_nfl_test('rawfri', 'qc05_l3_to_qc_ipf_l1_map_6000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 450); -- Generates 200 (189) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_panp_nfl_test('rawfri', 'pc01_l4_to_pc_panp_l1_map_450');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1, 6000); -- Generates 200 (215) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_panp_nfl_test('rawfri', 'pc01_l5_to_pc_panp_l1_map_6000');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1); -- Generates 200 (14) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_panp_nfl_test('rawfri', 'pc01_l6_to_pc_panp_l1_map');
 ------------------------
 -- Create an ordered VIEW on the NFL table
 CREATE OR REPLACE VIEW casfri50_test.nfl_all_new_ordered AS
