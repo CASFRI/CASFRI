@@ -79,7 +79,7 @@ WHERE TT_NotEmpty(pc02_species_codes);
 --------------------------------------------------------------------------
 -- Create index for qc stand structure
 --------------------------------------------------------------------------
-CREATE UNIQUE INDEX IF NOT EXISTS qc_lyr_stand_structure_lookup_idx
+CREATE UNIQUE INDEX IF NOT EXISTS qc_stand_structure_lookup_idx
 ON translation.qc_standstructure_lookup (source_val)
 
 -------------------------------------------------------

@@ -18,8 +18,8 @@ SET tt.debug TO FALSE;
 -- Translate all QC05. 117h
 --------------------------------------------------------------------------
 -- add index on standstructure lookup table
-CREATE UNIQUE INDEX IF NOT EXISTS qc05_stand_structure_lookup_idx
-ON translation.qc_standstructure_lookup (source_val)
+CREATE UNIQUE INDEX IF NOT EXISTS qc_stand_structure_lookup_idx
+ON translation.qc_standstructure_lookup (source_val);
 ------------------------
 -- CAS
 ------------------------
