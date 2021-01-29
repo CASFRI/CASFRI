@@ -170,8 +170,8 @@ WITH test_nb AS (
 	SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,           116 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_pc02_wetland_translation'::text function_tested,              117 maj_num,  3 nb_test UNION ALL
 	SELECT 'TT_pc02_wetland_validation'::text function_tested,               118 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_panp01_countOfNotNull'::text function_tested,                 119 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_panp01_hasCountOfNotNull'::text function_tested,              120 maj_num,  2 nb_test
+	SELECT 'TT_pc02_countOfNotNull'::text function_tested,                 119 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,              120 maj_num,  2 nb_test
 ),
 
 	
@@ -4229,63 +4229,63 @@ SELECT '118.2'::text number,
        'All null'::text description,
        TT_pc02_wetland_validation(NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
- -- TT_panp01_countOfNotNull
+ -- TT_pc02_countOfNotNull
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.1'::text number,
-       'TT_panp01_countOfNotNull'::text function_tested,
+       'TT_pc02_countOfNotNull'::text function_tested,
        'Basic pass 1'::text description,
-       TT_panp01_countOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 7 passed
+       TT_pc02_countOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 7 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.2'::text number,
-       'TT_panp01_countOfNotNull'::text function_tested,
+       'TT_pc02_countOfNotNull'::text function_tested,
        'Basic pass 2'::text description,
-       TT_panp01_countOfNotNull(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '2', '3', '4', '5', '6', '7', NULL::text, 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 7 passed
+       TT_pc02_countOfNotNull(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '2', '3', '4', '5', '6', '7', NULL::text, 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 7 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.3'::text number,
-       'TT_panp01_countOfNotNull'::text function_tested,
+       'TT_pc02_countOfNotNull'::text function_tested,
        'Basic pass 3'::text description,
-       TT_panp01_countOfNotNull('AL', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '', '', '', '', '', '', 'Z', 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 3 passed
+       TT_pc02_countOfNotNull('AL', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '', '', '', '', '', '', 'Z', 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.4'::text number,
-       'TT_panp01_countOfNotNull'::text function_tested,
+       'TT_pc02_countOfNotNull'::text function_tested,
        'Basic pass 3'::text description,
-       TT_panp01_countOfNotNull('AL', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '', '', '', '', '', '', 'Z', 'translation', 'species_code_mapping', 'pc02_species_codes', '14') = 2 passed
+       TT_pc02_countOfNotNull('AL', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '', '', '', '', '', '', 'Z', 'translation', 'species_code_mapping', 'pc02_species_codes', '14') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.5'::text number,
-       'TT_panp01_countOfNotNull'::text function_tested,
+       'TT_pc02_countOfNotNull'::text function_tested,
        'Zero count'::text description,
-       TT_panp01_countOfNotNull(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '14') = 0 passed
+       TT_pc02_countOfNotNull(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '14') = 0 passed
 ---------------------------------------------------------
- -- TT_panp01_hasCountOfNotNull
+ -- TT_pc02_hasCountOfNotNull
 ---------------------------------------------------------
 UNION ALL
 SELECT '120.1'::text number,
-       'TT_panp01_hasCountOfNotNull'::text function_tested,
+       'TT_pc02_hasCountOfNotNull'::text function_tested,
        'Basic pass 1'::text description,
-       TT_panp01_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '15', '7', 'TRUE') passed
+       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '7', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '120.2'::text number,
-       'TT_panp01_hasCountOfNotNull'::text function_tested,
+       'TT_pc02_hasCountOfNotNull'::text function_tested,
        'Basic fail 1'::text description,
-       TT_panp01_hasCountOfNotNull(NULL::text, 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '15', '7', 'FALSE') IS FALSE passed
+       TT_pc02_hasCountOfNotNull(NULL::text, 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '7', 'FALSE') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '120.3'::text number,
-       'TT_panp01_hasCountOfNotNull'::text function_tested,
+       'TT_pc02_hasCountOfNotNull'::text function_tested,
        'Basic pass 2'::text description,
-       TT_panp01_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '15', '1', 'FALSE') passed
+       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '1', 'FALSE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '120.4'::text number,
-       'TT_panp01_hasCountOfNotNull'::text function_tested,
+       'TT_pc02_hasCountOfNotNull'::text function_tested,
        'Basic fail 2'::text description,
-       TT_panp01_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '15', '1', 'TRUE') IS FALSE passed
+       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '1', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
 
 ) AS b 

@@ -4052,7 +4052,7 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql STABLE;
 -------------------------------------------------------------------------------
--- TT_panp01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
+-- TT_pc02_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
 --
 -- l1sp text, l2sp text, l3sp text, 
 -- l4sp text, l5sp text, l6sp text, l7sp text, 
@@ -4064,10 +4064,10 @@ $$ LANGUAGE plpgsql STABLE;
 -- count text, 
 -- exact text
 -- 
--- hasCountOfNotNull using panp01 custom countOfNotNull
+-- hasCountOfNotNull using pc02 custom countOfNotNull
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_panp01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_panp01_hasCountOfNotNull(
+--DROP FUNCTION IF EXISTS TT_pc02_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_pc02_hasCountOfNotNull(
   l1sp text, l2sp text, l3sp text, 
   l4sp text, l5sp text, l6sp text, l7sp text, 
   l8nfl text, l9nfl text, l10nfl text, l11nfl text, 
@@ -4089,7 +4089,7 @@ RETURNS boolean AS $$
     _exact = exact::boolean;
 
     -- process
-    _counted_nulls = tt_panp01_countOfNotNull(l1sp, l2sp, l3sp, l4sp, l5sp, l6sp, l7sp, l8nfl, l9nfl, l10nfl, l11nfl, l12nfl, l13nfl, l14nfl, l15lake, lookupSchema, lookupTable, lookupCol, '15');
+    _counted_nulls = tt_pc02_countOfNotNull(l1sp, l2sp, l3sp, l4sp, l5sp, l6sp, l7sp, l8nfl, l9nfl, l10nfl, l11nfl, l12nfl, l13nfl, l14nfl, l15lake, lookupSchema, lookupTable, lookupCol, '15');
 
     IF _exact THEN
       RETURN _counted_nulls = _count;
@@ -6865,7 +6865,7 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
--- TT_panp01_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
+-- TT_pc02_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
 --
 -- l1sp text, l2sp text, l3sp text, 
 -- l4sp text, l5sp text, l6sp text, l7sp text, 
@@ -6882,8 +6882,8 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- 
 -- Pass to countOfNotNull().
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_panp01_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_panp01_countOfNotNull(
+--DROP FUNCTION IF EXISTS TT_pc02_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_pc02_countOfNotNull(
   l1sp text, l2sp text, l3sp text, 
   l4sp text, l5sp text, l6sp text, l7sp text, 
   l8nfl text, l9nfl text, l10nfl text, l11nfl text, 
