@@ -4052,6 +4052,54 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql STABLE;
 -------------------------------------------------------------------------------
+-- TT_panp01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
+--
+-- l1sp text, l2sp text, l3sp text, 
+-- l4sp text, l5sp text, l6sp text, l7sp text, 
+-- l8nfl text, l9nfl text, l10nfl text, l11nfl text, 
+-- l12nfl text, l13nfl text, l14nfl text, l15lake text,
+-- lookupSchema text,
+-- lookupTable text,
+-- lookupCol text,
+-- count text, 
+-- exact text
+-- 
+-- hasCountOfNotNull using panp01 custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_panp01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_panp01_hasCountOfNotNull(
+  l1sp text, l2sp text, l3sp text, 
+  l4sp text, l5sp text, l6sp text, l7sp text, 
+  l8nfl text, l9nfl text, l10nfl text, l11nfl text, 
+  l12nfl text, l13nfl text, l14nfl text, l15lake text,
+  lookupSchema text,
+  lookupTable text,
+  lookupCol text,
+  count text, 
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = tt_panp01_countOfNotNull(l1sp, l2sp, l3sp, l4sp, l5sp, l6sp, l7sp, l8nfl, l9nfl, l10nfl, l11nfl, l12nfl, l13nfl, l14nfl, l15lake, lookupSchema, lookupTable, lookupCol, '15');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;    
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -6815,4 +6863,114 @@ RETURNS text AS $$
     END IF;
     RETURN TT_wetland_code_translation(_wetland_code, retCharPos);
   END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_panp01_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
+--
+-- l1sp text, l2sp text, l3sp text, 
+-- l4sp text, l5sp text, l6sp text, l7sp text, 
+-- l8nfl text, l9nfl text, l10nfl text, l11nfl text, 
+-- l12nfl text, l13nfl text, l14nfl text, l15lake text,
+-- lookupSchema text,
+-- lookupTable text,
+-- lookupCol text,
+-- maxRankToConsider text
+-- 
+-- Use match list to determine if LYR or NFL values are present.
+-- If they are assign them a string so they are counted as layers. If not assign
+-- NULL.
+-- 
+-- Pass to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_panp01_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_panp01_countOfNotNull(
+  l1sp text, l2sp text, l3sp text, 
+  l4sp text, l5sp text, l6sp text, l7sp text, 
+  l8nfl text, l9nfl text, l10nfl text, l11nfl text, 
+  l12nfl text, l13nfl text, l14nfl text, l15lake text,
+  lookupSchema text,
+  lookupTable text,
+  lookupCol text,
+  maxRankToConsider text
+)
+RETURNS int AS $$
+  DECLARE
+    nfl_string_list text;
+    lake_string_list text;
+    _lyr1 text;
+    _lyr2 text;
+    _lyr3 text;
+	_lyr4 text;
+	_lyr5 text;
+	_lyr6 text;
+	_lyr7 text;
+	_nfl8 text;
+	_nfl9 text;
+	_nfl10 text;
+	_nfl11 text;
+	_nfl12 text;
+	_nfl13 text;
+	_nfl14 text;
+	_lake15 text;
+  BEGIN
+
+    -- set up string lists
+    nfl_string_list = '{''1'', ''2'', ''3'', ''4'', ''5'', ''6'', ''7'', ''13'', ''17'', ''18'', ''98'', ''99''}';
+    lake_string_list = '{''Z'', ''U''}';
+	
+	-- check for all 7 LYR layers
+	IF tt_matchTable(l1sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+	  _lyr1 = 'lyr1_value';
+	END IF;
+	IF tt_matchTable(l2sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+	  _lyr2 = 'lyr2_value';
+	END IF;
+	IF tt_matchTable(l3sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+	  _lyr3 = 'lyr3_value';
+	END IF;
+	IF tt_matchTable(l4sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+	  _lyr4 = 'lyr4_value';
+	END IF;
+	IF tt_matchTable(l5sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+	  _lyr5 = 'lyr5_value';
+	END IF;
+	IF tt_matchTable(l6sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+	  _lyr6 = 'lyr6_value';
+	END IF;
+	IF tt_matchTable(l7sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+	  _lyr7 = 'lyr7_value';
+	END IF;
+	
+	-- check for all 7 nfl layers
+	IF tt_matchList(l8nfl, nfl_string_list) THEN
+	  _nfl8 = 'lyr8_value';
+	END IF;
+	IF tt_matchList(l9nfl, nfl_string_list) THEN
+	  _nfl9 = 'lyr9_value';
+	END IF;
+	IF tt_matchList(l10nfl, nfl_string_list) THEN
+	  _nfl10 = 'lyr10_value';
+	END IF;
+	IF tt_matchList(l11nfl, nfl_string_list) THEN
+	  _nfl11 = 'lyr11_value';
+	END IF;
+	IF tt_matchList(l12nfl, nfl_string_list) THEN
+	  _nfl12 = 'lyr12_value';
+	END IF;
+	IF tt_matchList(l13nfl, nfl_string_list) THEN
+	  _nfl13 = 'lyr13_value';
+	END IF;
+	IF tt_matchList(l14nfl, nfl_string_list) THEN
+	  _nfl14 = 'lyr14_value';
+	END IF;
+    
+    -- check for lake
+	IF tt_matchList(l15lake, lake_string_list) THEN
+	  _lake15 = 'lyr15_value';
+	END IF;
+	
+    -- call countOfNotNull
+    RETURN tt_countOfNotNull(_lyr1, _lyr2, _lyr3, _lyr4, _lyr5, _lyr6, _lyr7, _nfl8, _nfl9, _nfl10, _nfl11, _nfl12, _nfl13, _nfl14, _lake15, maxRankToConsider, 'FALSE');
+
+  END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
