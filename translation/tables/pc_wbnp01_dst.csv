@@ -13,4 +13,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 11,DIST_YEAR_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 12,DIST_EXT_UPPER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 13,DIST_EXT_LOWER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
-14,LAYER,integer,false(|-8886),nothingInt(),"Calculate number of layer according to vegetation composition.  Because of its horizontal structure, the present schema doesn't allow to consider verticality in PC01. Thus understory species are not considered in the count of layer. ",TRUE
+14,LAYER,integer,false(|-8886),nothingInt(),"Because of its horizontal structure, the source data do not allow to associated at which layer the disturbance occurred. ",TRUE

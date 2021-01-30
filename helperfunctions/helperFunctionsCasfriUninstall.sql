@@ -61,6 +61,7 @@ DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_validation(text, text, text, text, t
 DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_validation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_pc02_wetland_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_pc02_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -140,6 +141,7 @@ DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_translation(text, text, text, text, 
 DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_translation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_pc02_wetland_translation(text, text, text);
+DROP FUNCTION IF EXISTS TT_pc02_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

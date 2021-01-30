@@ -3,8 +3,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,"notNull(orig_stand_id);isInt(orig_stand_id);isGreaterThan(orig_stand_id, 0)",copyText(orig_stand_id),Copies source value to ORIG_STAND_ID,TRUE
 4,STAND_STRUCTURE,text,true(),copyText('HORIZONTAL'),"Validation catches rows with no forest info and returns NOT_APPLICABLE. Translation runs countOfNotNull for the two forest layers. If one layer, returns SINGLE_LAYERED, if two layers returns MULTI_LAYERED.",TRUE
-5,NUM_OF_LAYERS,integer,notEmpty(num_of_layers);notNull(num_of_layers);isNumeric(num_of_layers),copyInt(num_of_layers),Validation returns UNKNOWN_VALUE if NUM_OF_LAYERS is zero. ,TRUE
-6,MAP_SHEET_ID,text,notNull(map_sheet_id),copyText(map_sheet_id),Copies source value to MAP_SHEET_ID,TRUE
+5,NUM_OF_LAYERS,integer,"hasCountOfNotNull({l1_spcomp}, {l2_spcomp}, {l3_spcomp}, {l4_spcomp}, {l5_spcomp}, {l6_spcomp}, {l7_spcomp}, {l8_shrln}, 1, FALSE)","countOfNotNull({l1_spcomp}, {l2_spcomp}, {l3_spcomp}, {l4_spcomp}, {l5_spcomp}, {l6_spcomp}, {l7_spcomp},{l8_shrln}, 8, 'TRUE')",Calculate number of layers according to presence of vegetation strata and non-forested strata. ,TRUE
+6,MAP_SHEET_ID,text,notNull(map_sheet_id);notEmpty(map_sheet_id),copyText(map_sheet_id),Copies source value to MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0)","multiply(src_inv_area, 100)",Converts source area from km2 to ha,TRUE

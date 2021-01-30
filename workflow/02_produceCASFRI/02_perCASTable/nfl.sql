@@ -20,7 +20,7 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 --------------------------------------------------------------------------
 -- Create index for qc stand structure
 --------------------------------------------------------------------------
-CREATE UNIQUE INDEX IF NOT EXISTS qc_nfl_stand_structure_lookup_idx
+CREATE UNIQUE INDEX IF NOT EXISTS qc_stand_structure_lookup_idx
 ON translation.qc_standstructure_lookup (source_val)
 
 -------------------------------------------------------
