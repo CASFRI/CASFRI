@@ -260,7 +260,7 @@ RETURNS boolean AS $$
   BEGIN
     noHolesGeom = TT_RemoveHoles(detailedGeom, 10000000);
     noIslandsGeom = TT_BiggestSubPolygons(noHolesGeom, 10000000);
-    simplifiedGeom = ST_Simplify(noIslandsGeom, 10);
+    simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 10);
     smoothedGeom = TT_BiggestSubPolygons(ST_BufferedSmooth(ST_BufferedSmooth(simplifiedGeom, 100), -100), 10000000);
     SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE inv = fromInv INTO cnt;
     --detailedGeom = TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''' || upper(fromInv) || '''');
@@ -314,8 +314,56 @@ SELECT TT_ProduceDerivedCoverages('ON02', TT_SuperUnion('casfri50', 'geo_all', '
 SELECT TT_ProduceDerivedCoverages('SK03', (SELECT geom FROM casfri50_coverage.detailed WHERE inv = 'SK03'));
 
 -- Display 
-SELECT * FROM casfri50_coverage.detailed ORDER BY nb_polys;
-SELECT * FROM casfri50_coverage.noholes ORDER BY nb_polys;
-SELECT * FROM casfri50_coverage.noislands ORDER BY nb_polys;
-SELECT * FROM casfri50_coverage.simplified ORDER BY nb_polys;
-SELECT * FROM casfri50_coverage.smoothed ORDER BY nb_polys;
+SELECT inv, nb_polys, nb_points --, geom
+FROM casfri50_coverage.detailed 
+ORDER BY nb_polys;
+
+SELECT inv, nb_polys, nb_points --, geom
+FROM casfri50_coverage.noholes 
+ORDER BY nb_polys;
+
+SELECT inv, nb_polys, nb_points --, geom
+FROM casfri50_coverage.noislands 
+ORDER BY nb_polys;
+
+SELECT inv, nb_polys, nb_points --, geom
+FROM casfri50_coverage.simplified 
+ORDER BY nb_polys;
+
+SELECT inv, nb_polys, nb_points --, geom
+FROM casfri50_coverage.smoothed 
+ORDER BY nb_polys;
+
+-- Create a table of all intersection in the coverages
+CREATE OR REPLACE FUNCTION sig_digits(n anyelement, digits int) 
+RETURNS numeric
+AS $$
+    SELECT round(n::numeric, digits - 1 - floor(log(abs(n)))::int)
+$$ LANGUAGE sql IMMUTABLE STRICT;
+
+--SELECT sig_digits(0.0000372537::double precision, 3)
+--SELECT sig_digits(12353263256525, 5)
+
+DROP TABLE IF EXISTS casfri50_coverage.intersections;
+CREATE TABLE casfri50_coverage.intersections AS
+WITH unnested AS (
+  SELECT a.inv, unnest(ST_SplitAgg(a.geom, b.geom, 0.00001)) geom
+  FROM casfri50_coverage.simplified a,
+       casfri50_coverage.simplified b
+  WHERE ST_Equals(a.geom, b.geom) OR
+        ST_Contains(a.geom, b.geom) OR
+        ST_Contains(b.geom, a.geom) OR
+        ST_Overlaps(a.geom, b.geom)
+  GROUP BY a.inv, ST_AsEWKB(a.geom)
+)
+SELECT string_agg(inv, '-') invs, 
+       count(*) nb, 
+       sig_digits(ST_Area(geom), 8) area,
+       min(geom)::geometry geom
+FROM unnested
+GROUP BY sig_digits(ST_Area(geom), 8)
+HAVING count(*) > 1
+ORDER BY area DESC;
+
+-- Display
+SELECT * FROM casfri50_coverage.intersections;
