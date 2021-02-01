@@ -18,7 +18,7 @@ SET tt.debug_l2 TO FALSE;
 -- TT_RowIsValid()
 -- Returns TRUE if any value in the provided text array is NOT NULL AND NOT = '' 
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
+--DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
 CREATE OR REPLACE FUNCTION TT_RowIsValid(
   rowValues text[]
 )
@@ -43,7 +43,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_SafeDifference()
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean);
+--DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean);
 CREATE OR REPLACE FUNCTION TT_SafeDifference(
   geom1 geometry,
   geom2 geometry,
@@ -110,7 +110,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_GeoHistoryOverlaps()
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistoryOverlaps(geometry, geometry);
+--DROP FUNCTION IF EXISTS TT_GeoHistoryOverlaps(geometry, geometry);
 CREATE OR REPLACE FUNCTION TT_GeoHistoryOverlaps(
   geom1 geometry, 
   geom2 geometry
@@ -122,6 +122,7 @@ $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- New TYPE for TT_ValidYearUnionStateFct()
 ------------------------------------------------------------------
+--DROP TYPE IF EXISTS geomlowuppval;
 CREATE TYPE geomlowuppval AS
 (
   geom geometry,
@@ -131,6 +132,7 @@ CREATE TYPE geomlowuppval AS
 -------------------------------------------------------------------------------
 -- TT_UnnestValidYearUnion() aggregate state function
 ------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
 CREATE OR REPLACE FUNCTION TT_UnnestValidYearUnion(
   gluv geomlowuppval[]
 ) RETURNS TABLE (geom geometry, lowerVal int, upperVal int) AS $$
@@ -143,6 +145,7 @@ $$ LANGUAGE sql;
 -------------------------------------------------------------------------------
 -- TT_ValidYearUnion() aggregate state function
 ------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ValidYearUnionStateFct(geomlowuppval[], geometry, int, int);
 CREATE OR REPLACE FUNCTION TT_ValidYearUnionStateFct(
   storedGYRArr geomlowuppval[],
   geom geometry,
@@ -324,7 +327,7 @@ RETURNS geomlowuppval[] AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 --------------------------------------
-DROP AGGREGATE IF EXISTS TT_ValidYearUnion(geometry, int, int);
+--DROP AGGREGATE IF EXISTS TT_ValidYearUnion(geometry, int, int);
 CREATE AGGREGATE TT_ValidYearUnion(
   geom geometry,
   yearLower int,
