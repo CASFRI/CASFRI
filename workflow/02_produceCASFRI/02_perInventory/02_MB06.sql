@@ -67,6 +67,11 @@ SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_eco', 'mb06_l1_to_mb_fli_l
 ------------------------
 -- LYR
 ------------------------
+-- Check the uniqueness of MB species codes
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_mb06_species_codes_idx
+ON translation.species_code_mapping (mb_species_codes)
+WHERE TT_NotEmpty(mb_species_codes);
+
 -- Prepare the translation function
 SELECT TT_Prepare('translation', 'mb_fli01_lyr', '_mb06_lyr', 'ab_avi01_lyr'); 
 
