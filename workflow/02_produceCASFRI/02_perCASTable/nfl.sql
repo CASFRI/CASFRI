@@ -44,7 +44,7 @@ SELECT TT_Prepare('translation', 'qc_ini03_nfl', '_qc03_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ini04_nfl', '_qc04_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ipf05_nfl', '_qc05_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pc_panp01_nfl', '_pc01_nfl', 'ab_avi01_nfl');
---SELECT TT_Prepare('translation', 'pc_wbnp01_nfl', '_pc02_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'pc_wbnp01_nfl', '_pc02_nfl', 'ab_avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 ------------------------
@@ -608,7 +608,8 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_nfl', 'qc05_l3_to_qc_ipf_l1_map_nfl');
 ------------------------
--- Translate PC01 layer 4 
+-- Translate PC01 from PANP
+--layer 4 
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, NULL, 'nfl');
 
@@ -637,6 +638,89 @@ SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l6_to_pc_panp_l1_map_nfl', '
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l6_to_pc_panp_l1_map_nfl');
+
+------------------------
+-- Translate PC02 from WBNP
+--layer 8 
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 8, 'pc_wbnp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l8_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l8_to_pc_wbnp_l1_map_nfl');
+
+--layer 9 
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 9, 'pc_wbnp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l9_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l9_to_pc_wbnp_l1_map_nfl');
+
+--layer 10 
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 10, 'pc_wbnp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l10_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l10_to_pc_wbnp_l1_map_nfl');
+
+--layer 11 
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 11, 'pc_wbnp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l11_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l11_to_pc_wbnp_l1_map_nfl');
+
+--layer 12 
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 12, 'pc_wbnp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l12_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l12_to_pc_wbnp_l1_map_nfl');
+
+--layer 13 
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 13, 'pc_wbnp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l13_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l13_to_pc_wbnp_l1_map_nfl');
+
+--layer 14 
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 14, 'pc_wbnp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l14_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l14_to_pc_wbnp_l1_map_nfl');
+
+--layer 15 
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 15, 'pc_wbnp', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l15_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l15_to_pc_wbnp_l1_map_nfl');
+
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -670,6 +754,7 @@ ORDER BY inv;
 --SK06 	78506
 --YT02	76344
 --PC01  3593
+--PC02  1614
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.nfl_all
@@ -739,6 +824,13 @@ ORDER BY inv, layer;
 --PC01	2	933
 --PC01	3	274
 --PC01	4	6
+--PC02  1  163
+--PC02  2  166
+--PC02  3  504
+--PC02  4  555
+--PC02  5  151
+--PC02  6  64
+--PC02  7  11
 
 SELECT count(*) FROM casfri50.nfl_all; -- 9843418
 --------------------------------------------------------------------------

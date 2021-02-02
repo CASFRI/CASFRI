@@ -49,7 +49,7 @@ COMMIT;
 --INSERT INTO casfri50.dst_all -- 
 --SELECT * FROM TT_Translate_pc01_dst('rawfri', 'pc01_l1_to_pc_panp_l1_map', 'ogc_fid');
 
---SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_dst', 'qc05_l1_to_qc_ipf_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_dst', 'pc01_l1_to_pc_panp_l1_map');
 --COMMIT;
 
 ------------------------

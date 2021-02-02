@@ -103,7 +103,7 @@ SELECT TT_Prepare('translation', 'qc_ini03_lyr', '_qc03_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'qc_ini04_lyr', '_qc04_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'qc_ipf05_lyr', '_qc05_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'pc_panp01_lyr', '_pc01_lyr', 'ab_avi01_lyr'); 
---SELECT TT_Prepare('translation', 'pc_wbnp01_lyr', '_pc02_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'pc_wbnp01_lyr', '_pc02_lyr', 'ab_avi01_lyr'); 
 -------------------------
 DROP TABLE IF EXISTS casfri50.lyr_all CASCADE;
 ------------------------
@@ -796,6 +796,78 @@ SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l3_to_pc_panp_l1_map_lyr', '
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l3_to_pc_panp_l1_map_lyr');
+
+------------------------
+-- Translate PC02 using PC_WBNP translation table
+--Layer 1
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc02_lyr('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc02_wbnp01_lyr', 'pc02_l1_to_pc_wbnp_l1_map_lyr');
+
+--Layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 2, 'pc_wbnp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc02_lyr('rawfri', 'pc02_l2_to_pc_wbnp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc02_wbnp01_lyr', 'pc02_l2_to_pc_wbnp_l1_map_lyr');
+
+--Layer 3
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 3, 'pc_wbnp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc02_lyr('rawfri', 'pc02_l3_to_pc_wbnp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc02_wbnp01_lyr', 'pc02_l3_to_pc_wbnp_l1_map_lyr');
+
+--Layer 4
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 4, 'pc_wbnp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc02_lyr('rawfri', 'pc02_l4_to_pc_wbnp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc02_wbnp01_lyr', 'pc02_l4_to_pc_wbnp_l1_map_lyr');
+
+--Layer 5
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 5, 'pc_wbnp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc02_lyr('rawfri', 'pc02_l5_to_pc_wbnp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc02_wbnp01_lyr', 'pc02_l5_to_pc_wbnp_l1_map_lyr');
+
+--Layer 6
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 6, 'pc_wbnp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc02_lyr('rawfri', 'pc02_l6_to_pc_wbnp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc02_wbnp01_lyr', 'pc02_l6_to_pc_wbnp_l1_map_lyr');
+
+--Layer 7
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 7, 'pc_wbnp', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_pc02_lyr('rawfri', 'pc02_l7_to_pc_wbnp_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc02_wbnp01_lyr', 'pc02_l7_to_pc_wbnp_l1_map_lyr');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -828,6 +900,7 @@ ORDER BY inv;
 -- SK06	296399
 -- YT02	105102
 -- PC01 7319
+-- PC02 1760
 
 SELECT left(cas_id, 4) inv, layer, count(*) nb
 FROM casfri50.lyr_all
@@ -889,6 +962,9 @@ ORDER BY left(cas_id, 4), layer;
 -- PC01 1	11186
 -- PC01 2	1589
 -- PC01 3	137
-
+-- PC02 1   885
+-- PC02 2   644
+-- PC02 3   215
+-- PC02 4   16
 SELECT count(*) FROM casfri50.lyr_all; -- 26500563
 --------------------------------------------------------------------------
