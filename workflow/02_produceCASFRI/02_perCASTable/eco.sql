@@ -38,7 +38,7 @@ SELECT TT_Prepare('translation', 'qc_ini03_eco', '_qc03_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'qc_ini04_eco', '_qc04_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'qc_ipf05_eco', '_qc05_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'pc_panp01_eco', '_pc01_eco', 'ab_avi01_eco');
---SELECT TT_Prepare('translation', 'pc_wbnp01_eco', '_pc02_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'pc_wbnp01_eco', '_pc02_eco', 'ab_avi01_eco');
 ------------------------
 DROP TABLE IF EXISTS casfri50.eco_all CASCADE;
 ------------------------
@@ -283,33 +283,138 @@ SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_eco', 'qc04_l1_to_qc_ini04
 ------------------------
 -- Translate PC01 using PC_PANP translation table
 -- Add layer 4
-SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1);
+SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 'eco');
 
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l4_to_pc_panp_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l4_to_pc_panp_l1_map_eco', 'ogc_fid');
 
 -- Add layer 5
-SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1);
+SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1, 'eco');
 
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l5_to_pc_panp_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l5_to_pc_panp_l1_map_eco', 'ogc_fid');
 
 -- Add layer 6
-SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1);
+SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1, 'eco');
 
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l6_to_pc_panp_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l6_to_pc_panp_l1_map_eco', 'ogc_fid');
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_eco', 'pc01_l4_to_pc_panp_l1_map');
 
 ------------------------
 -- Translate PC02 using PC_WBNP translation table
---SELECT TT_CreateMappingView('rawfri', 'pc02', 'pc_wbnp', NULL, 'eco');
+-- layer 1 - ECOxLYR
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 'eco');
 
---INSERT INTO casfri50.eco_all -- 
---SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_eco');
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
 
---SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_eco', 'pc02_l1_to_pc_wbnp_l1_map_eco');
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l1_to_pc_wbnp_l1_map_eco');
+
+--layer 2 - ECOxLYR
+SELECT TT_CreateMappingView('rawfri', 'pc02', 2, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l2_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l2_to_pc_wbnp_l1_map_eco');
+
+--layer 3 - ECOxLYR
+SELECT TT_CreateMappingView('rawfri', 'pc02', 3, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l3_to_pc_wbnp_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l3_to_pc_wbnp_l1_map_eco');
+
+--layer 4 - ECOxLYR
+SELECT TT_CreateMappingView('rawfri', 'pc02', 4, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l4_to_pc_wbnp_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l4_to_pc_wbnp_l1_map_eco');
+
+--layer 5 - ECOxLYR
+SELECT TT_CreateMappingView('rawfri', 'pc02', 5, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l5_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l5_to_pc_wbnp_l1_map_eco');
+
+--layer 6 - ECOxLYR
+SELECT TT_CreateMappingView('rawfri', 'pc02', 6, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l6_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l6_to_pc_wbnp_l1_map_eco');
+
+--layer 7 - ECOxLYR
+SELECT TT_CreateMappingView('rawfri', 'pc02', 7, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l7_to_pc_wbnp_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l7_to_pc_wbnp_l1_map_eco');
+
+--layer 8 - ECOxNFL
+SELECT TT_CreateMappingView('rawfri', 'pc02', 8, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l8_to_pc_wbnp_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l8_to_pc_wbnp_l1_map_eco');
+
+--layer 9 - ECOxNFL
+SELECT TT_CreateMappingView('rawfri', 'pc02', 9, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l9_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l9_to_pc_wbnp_l1_map_eco');
+
+--layer 10 - ECOxNFL
+SELECT TT_CreateMappingView('rawfri', 'pc02', 10, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l10_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l10_to_pc_wbnp_l1_map_eco');
+
+--layer 11 - ECOxNFL
+SELECT TT_CreateMappingView('rawfri', 'pc02', 11, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l11_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l11_to_pc_wbnp_l1_map_eco');
+
+--layer 12 - ECOxNFL
+SELECT TT_CreateMappingView('rawfri', 'pc02', 12, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l12_to_pc_wbnp_l1_map_eco', 'ogc_fid');
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l12_to_pc_wbnp_l1_map_eco');
+
+--layer 13 - ECOxNFL
+SELECT TT_CreateMappingView('rawfri', 'pc02', 13, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l13_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l13_to_pc_wbnp_l1_map_eco');
+
+--layer 14 - ECOxNFL
+SELECT TT_CreateMappingView('rawfri', 'pc02', 14, 'pc_wbnp', 1, 'eco');
+
+INSERT INTO casfri50.eco_all --
+SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l14_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
+
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l14_to_pc_wbnp_l1_map_eco');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -331,6 +436,6 @@ ORDER BY inv;
 --QC04	243352
 --QC05	879228
 --PC01  1767
-
+--PC02  1947
 SELECT count(*) FROM casfri50.eco_all; -- 1861005
 --------------------------------------------------------------------------

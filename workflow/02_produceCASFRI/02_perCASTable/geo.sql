@@ -374,14 +374,14 @@ SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_geo', 'pc01_l1_to_pc_panp_l
 
 ------------------------
 -- Translate PC02 using PC_WBNP translation table
---BEGIN;
---SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, NULL, 'geo');
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, NULL, 'geo');
 
---INSERT INTO casfri50.geo_all -- 
---SELECT * FROM TT_Translate_pc02_geo('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_geo', 'ogc_fid');
---COMMIT;
+INSERT INTO casfri50.geo_all -- 
+SELECT * FROM TT_Translate_pc02_geo('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_geo', 'ogc_fid');
+COMMIT;
 
---SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_geo', 'pc02_l1_to_pc_wbnp_l1_map_geo');
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_geo', 'pc02_l1_to_pc_wbnp_l1_map_geo');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -415,6 +415,7 @@ ORDER BY inv;
 --SK06	211482
 --YT02	231137
 --PC01  8094
+--PC02  1053
 
 SELECT count(*) FROM casfri50.geo_all; -- 33711102
 SELECT count(*) FROM casfri50.geo_all WHERE ST_AsTexT(geometry) = 'POLYGON EMPTY'; -- 0
