@@ -37,7 +37,7 @@ SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc03_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc04_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc05_dst', 'ab_avi01_dst');
---SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc02_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc02_dst', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 ------------------------
@@ -372,14 +372,14 @@ COMMIT;
 SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_dst', 'qc05_l1_to_qc_ipf_l1_map_dst');
 ------------------------
 -- Translate PC02 using PC_WBNP generic translation table
---BEGIN;
---SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, NULL, 'dst');
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, NULL, 'dst');
 
---INSERT INTO casfri50.dst_all -- 
---SELECT * FROM TT_Translate_pc02_dst('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_dst', 'ogc_fid');
---COMMIT;
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_pc02_dst('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_dst', 'ogc_fid');
+COMMIT;
 
---SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_dst', 'pc02_l1_to_pc_wbnp_l1_map_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_dst', 'pc02_l1_to_pc_wbnp_l1_map_dst');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
@@ -417,5 +417,6 @@ ORDER BY inv, layer;
 --SK06 -8886  45081
 --YT02 -8886  19173
 --PC01          0 (no dst attribute)
+--PC02 -8886  505
 SELECT count(*) FROM casfri50.dst_all; -- 10907114
 --------------------------------------------------------------------------

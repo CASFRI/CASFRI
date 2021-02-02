@@ -167,7 +167,7 @@ SOFT_UNKN,GENC_SPP_###, ,,,,,,S,,,,,,,,,Softwood unknown
 SOFT_UNKN,GENC_SPP_###, ,,,,,,SH,,,,,,,,,Softwood unknown
 SORB_AUCU,SORB_AUC_###,Sorbus aucuparia ,,OD,,,EMA,,,,,,,,,,
 SORB_SUBS,SORB_SPP_###,Sorbus spp. ,,,,,AM,,,,,,,,,,
-SPEC_UNKN,UNKN_SPP_###,,,X,MS,,,UC,,,,,,,,,Species unknown
+SPEC_UNKN,UNKN_SPP_###,,,X,MS,,,UC,,,,,,,BC,,Species unknown
 SPEC_UNKN,UNKN_SPP_###,,,Z,NR,,,,,,,,,,,,Species unknown
 TAXU_BREV,TAXU_BRE_###,Taxus brevifolia ,,TW,,,,,,,,,,,,,
 THUJ_JUNI,JUNI_VIR_###,Juniperus virginiana ,,,,,CR,,,,,,,,,,
@@ -200,7 +200,6 @@ ULMU_THOM,ULMU_THO_###,Ulmus thomasii ,,,,,EU,,,,,OT,,,,,"Used prior to 2018. Po
 ,FRAX_LAT_###,Fraxinus latifolia ,,OG,,,,,,,,,,,,,
 ,FRAX_PEN_SUB,Fraxinus pennsylvanica var. subintegerrima ,,,,,,,,,,,GA,,,,Found in MB FLI manual from Louisiana Pacific
 ,MALU_FUS_###,Malus fusca ,,,,,,,,,,,,,,,
-,PICE_ENG_GLA,Picea engelmannii x glauca ,,,,,,,,,,,,,,,
 ,PINU_LAM_###,Pinus lambertiana ,,PS,,,,,,,,,,,,,
 ,POPU_AGU_###,Populus angustifolia ,,,,,,,,,,,,,,,
 ,POPU_SPP_###,Populus spp. ,,,,,,,,,,,,,,,

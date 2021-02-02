@@ -2232,22 +2232,28 @@ $$ LANGUAGE sql IMMUTABLE;
 -- TT_pc02_wetland_code(text, text, text)
 --
 -- Return 4-character wetland code
+-- In pc02 every ECO translation is associated with either a lYR or NFL horizontal layer.
+-- In order to correctly assign LAYER values for ECO, ROW_TRANSLATION_RULE should only run
+-- the wetland translations associated with LYR when a LYR row is being translated in the attribute
+-- dependencies. We use the lyr_or_nfl assigned to 'table' in the attribute_dependencies to do this.
+-- Same goes for NFL, should only run for NFL rows being translated in attribute_dependencies.
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_pc02_wetland_code(text, text);
 CREATE OR REPLACE FUNCTION TT_pc02_wetland_code(
   v_pcm text,
-  v_str text
+  v_str text,
+  lyr_or_nfl text
 )
 RETURNS text AS $$
   SELECT CASE
     -- Non Productive
-    WHEN v_pcm IN('7', '98') THEN 'SONS'
-    WHEN v_pcm IN('1', '2', '3', '4', '99') THEN 'MONG'
-    WHEN v_pcm IN('20') THEN 'STNN'
-	WHEN v_pcm IN('17') THEN 'FONG'
-	WHEN v_pcm IN('18') THEN 'SONS'
-	WHEN v_pcm ='19' AND v_str = 'N' THEN 'FTNN'
-	WHEN v_pcm ='19' AND v_str = 'P' THEN 'BTNN'
+    WHEN lyr_or_nfl = 'NFL' AND v_pcm IN('7', '98') THEN 'SONS'
+    WHEN lyr_or_nfl = 'NFL' AND v_pcm IN('1', '2', '3', '4', '99') THEN 'MONG'
+	WHEN lyr_or_nfl = 'NFL' AND v_pcm IN('17') THEN 'FONG'
+	WHEN lyr_or_nfl = 'NFL' AND v_pcm IN('18') THEN 'SONS'
+	WHEN lyr_or_nfl = 'LYR' AND v_pcm IN('20') THEN 'STNN'
+	WHEN lyr_or_nfl = 'LYR' AND v_pcm ='19' AND v_str = 'N' THEN 'FTNN'
+	WHEN lyr_or_nfl = 'LYR' AND v_pcm ='19' AND v_str = 'P' THEN 'BTNN'
 	ELSE NULL
   END;
 $$ LANGUAGE sql IMMUTABLE;
@@ -3987,10 +3993,11 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Assign 4 letter wetland character code and check value matches expected values.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pc02_wetland_validation(text, text, text);
+--DROP FUNCTION IF EXISTS TT_pc02_wetland_validation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_pc02_wetland_validation(
   v_pcm text,
   v_str text,
+  lyr_or_nfl text,
   retCharPos text
 )
 RETURNS boolean AS $$
@@ -3998,7 +4005,7 @@ RETURNS boolean AS $$
 	_wetland_code text;
 	_wetland_char text;
   BEGIN
-    _wetland_code = TT_pc02_wetland_code(v_pcm, v_str);
+    _wetland_code = TT_pc02_wetland_code(v_pcm, v_str, lyr_or_nfl);
 	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
 	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
@@ -6847,17 +6854,18 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Assign 4 letter wetland character code and check value matches expected values.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pc02_wetland_translation(text, text, text);
+--DROP FUNCTION IF EXISTS TT_pc02_wetland_translation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_pc02_wetland_translation(
   v_pcm text,
   v_str text,
+  lyr_or_nfl text,
   retCharPos text
 )
 RETURNS text AS $$
   DECLARE
 	_wetland_code text;
   BEGIN
-    _wetland_code = TT_pc02_wetland_code(v_pcm, v_str);
+    _wetland_code = TT_pc02_wetland_code(v_pcm, v_str, lyr_or_nfl);
     IF _wetland_code IS NULL THEN
       RETURN NULL;
     END IF;

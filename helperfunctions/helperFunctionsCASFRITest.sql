@@ -4201,19 +4201,19 @@ UNION ALL
 SELECT '117.1'::text number,
        'TT_pc02_wetland_translation'::text function_tested,
        'Basic pass 1'::text description,
-       TT_pc02_wetland_translation('98', '', '1') = 'SWAMP' passed
+       TT_pc02_wetland_translation('98', '', 'NFL', '1') = 'SWAMP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '117.2'::text number,
        'TT_pc02_wetland_translation'::text function_tested,
        'Basic pass 2'::text description,
-       TT_pc02_wetland_translation('19', 'N', '1') = 'FEN' passed
+       TT_pc02_wetland_translation('19', 'N', 'LYR', '1') = 'FEN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '117.3'::text number,
        'TT_pc02_wetland_translation'::text function_tested,
        'All null'::text description,
-       TT_pc02_wetland_translation(NULL::text, NULL::text, NULL::text) IS NULL passed
+       TT_pc02_wetland_translation(NULL::text, NULL::text, NULL::text, NULL::text) IS NULL passed
 ---------------------------------------------------------
  -- TT_pc02_wetland_validation
 ---------------------------------------------------------
@@ -4221,13 +4221,13 @@ UNION ALL
 SELECT '118.1'::text number,
        'TT_pc02_wetland_validation'::text function_tested,
        'Basic pass 1'::text description,
-       TT_pc02_wetland_validation('98', '', '1') passed
+       TT_pc02_wetland_validation('98', '', 'NFL', '1') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '118.2'::text number,
        'TT_pc02_wetland_validation'::text function_tested,
        'All null'::text description,
-       TT_pc02_wetland_validation(NULL::text, NULL::text, NULL::text) IS FALSE passed
+       TT_pc02_wetland_validation(NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
  -- TT_pc02_countOfNotNull
 ---------------------------------------------------------
