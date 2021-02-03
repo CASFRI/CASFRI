@@ -11,11 +11,41 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
--- CAUTION! This test requires the version of TT_HasPrecedence() from the 
--- workflow to be instanciated in order to work properly (not the default
--- one implemented in geohistory.sql)
+-- CAUTION! This test requires the versions of TT_RowIsValid() and 
+-- TT_HasPrecedence() from this file to be instanciated in order to work 
+-- properly (not the one implemented in geohistory_test.sql)
 ---------------------------------------------
 CREATE SCHEMA IF NOT EXISTS geohistory;
+------------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
+CREATE OR REPLACE FUNCTION TT_RowIsValid(
+  rowValues text[]
+)
+RETURNS boolean AS $$
+  DECLARE
+    val text;
+  BEGIN
+    FOREACH val IN ARRAY rowValues LOOP
+      IF val IS NOT NULL AND 
+         val != 'NULL_VALUE' AND 
+         val != 'EMPTY_STRING' AND 
+         val != 'NOT_APPLICABLE' AND 
+         val != 'UNKNOWN_VALUE' AND 
+         val != 'INVALID_VALUE' AND 
+         val != 'NOT_IN_SET' AND 
+         val != 'UNUSED_VALUE'  AND 
+         val != '-8888'  AND 
+         val != '-8887'  AND 
+         val != '-8886'  AND 
+         val != '-9997'  AND 
+         val != '-9999'  AND 
+         val != '-9995' THEN
+        RETURN TRUE;
+      END IF;
+    END LOOP;
+    RETURN FALSE;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 -- Create a table of inventory precedence rank. Polygons from inventories with 
 -- higher ranks have precedence over polygons from inventories having lower 

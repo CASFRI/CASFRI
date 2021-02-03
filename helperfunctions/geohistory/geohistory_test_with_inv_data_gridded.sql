@@ -31,7 +31,7 @@ CREATE INDEX sampling_area_nb1_gridded_casid_idx ON geohistory.sampling_area_nb1
 -- Display
 SELECT * FROM geohistory.sampling_area_nb1_gridded;
 
--- Generate history on gridded table, 1m09, 796 rows
+-- Generate history on gridded table - 796 rows, pg11: 1m09, pg13: 18s
 DROP TABLE IF EXISTS geohistory.sampling_area_nb1_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_nb1_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -66,7 +66,7 @@ CREATE INDEX sampling_area_nb2_gridded_casid_idx ON geohistory.sampling_area_nb2
 -- Display
 SELECT * FROM geohistory.sampling_area_nb2_gridded;
 
--- Generate history on gridded table, 3m54, 6693 rows
+-- Generate history on gridded table - 6693 rows, pg11: 3m54, pg13: 45s
 DROP TABLE IF EXISTS geohistory.sampling_area_nb2_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_nb2_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -102,7 +102,7 @@ CREATE INDEX sampling_area_nt1_gridded_casid_idx ON geohistory.sampling_area_nt1
 -- Display
 SELECT * FROM geohistory.sampling_area_nt1_gridded;
 
--- Generate history on gridded table, 1m36, 1253 rows
+-- Generate history on gridded table - 1253 rows, pg11: 1m36, pg13: 16s 
 DROP TABLE IF EXISTS geohistory.sampling_area_nt1_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_nt1_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -138,7 +138,7 @@ CREATE INDEX sampling_area_nt2_gridded_casid_idx ON geohistory.sampling_area_nt2
 -- Display
 SELECT * FROM geohistory.sampling_area_nt2_gridded;
 
--- Generate history on gridded table, 2m10, 1040 rows
+-- Generate history on gridded table - 1040 rows, pg11: 2m10, pg13: 22s 
 DROP TABLE IF EXISTS geohistory.sampling_area_nt2_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_nt2_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -173,7 +173,7 @@ CREATE INDEX sampling_area_bc1_gridded_casid_idx ON geohistory.sampling_area_bc1
 -- Display
 SELECT * FROM geohistory.sampling_area_bc1_gridded;
 
--- Generate history on gridded table, 2m49, 4607 rows
+-- Generate history on gridded table - 4607 rows, pg11: 2m49, pg13: 30s 
 DROP TABLE IF EXISTS geohistory.sampling_area_bc1_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_bc1_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -208,7 +208,7 @@ CREATE INDEX sampling_area_bc2_gridded_casid_idx ON geohistory.sampling_area_bc2
 -- Display
 SELECT * FROM geohistory.sampling_area_bc2_gridded;
 
--- Generate history on gridded table, 2m24, 4453 rows
+-- Generate history on gridded table - 4453 rows, pg11: 2m24, pg13: 26s 
 DROP TABLE IF EXISTS geohistory.sampling_area_bc2_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_bc2_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -244,7 +244,7 @@ CREATE INDEX sampling_area_sk1_gridded_casid_idx ON geohistory.sampling_area_sk1
 -- Display
 SELECT * FROM geohistory.sampling_area_sk1_gridded;
 
--- Generate history on gridded table, 1m17, 3688 rows
+-- Generate history on gridded table - 3688 rows, pg11: 1m17, pg13: 16s 
 DROP TABLE IF EXISTS geohistory.sampling_area_sk1_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_sk1_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -279,7 +279,7 @@ CREATE INDEX sampling_area_sk2_gridded_casid_idx ON geohistory.sampling_area_sk2
 -- Display
 SELECT * FROM geohistory.sampling_area_sk2_gridded;
 
--- Generate history on gridded table, 2m33, 4617 rows
+-- Generate history on gridded table - 4617 rows, pg11: 2m33, pg13: 40s
 DROP TABLE IF EXISTS geohistory.sampling_area_sk2_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_sk2_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -314,7 +314,7 @@ CREATE INDEX sampling_area_sk3_gridded_casid_idx ON geohistory.sampling_area_sk3
 -- Display
 SELECT * FROM geohistory.sampling_area_sk3_gridded;
 
--- Generate history on gridded table, 1m41, 3462 rows
+-- Generate history on gridded table - 3462 rows, pg11: 1m41, pg13: 22s
 DROP TABLE IF EXISTS geohistory.sampling_area_sk3_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_sk3_gridded_history_new AS
 WITH geohistory_gridded AS (
@@ -349,7 +349,7 @@ CREATE INDEX sampling_area_sk4_gridded_casid_idx ON geohistory.sampling_area_sk4
 -- Display
 SELECT * FROM geohistory.sampling_area_sk4_gridded;
 
--- Generate history on gridded table, 2m11, 4734 rows
+-- Generate history on gridded table - 4734 rows, pg11: 2m11, pg13: 28s 
 DROP TABLE IF EXISTS geohistory.sampling_area_sk4_gridded_history_new;
 CREATE TABLE geohistory.sampling_area_sk4_gridded_history_new AS
 WITH geohistory_gridded AS (
