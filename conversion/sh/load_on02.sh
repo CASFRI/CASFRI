@@ -43,7 +43,7 @@ do
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
     -nln $temp_table\
-    -nlt PROMOTE_TO_MULTI \
+    -nlt PROMOTE_TO_MULTI $gdal_3_options \
     -progress \
     -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id  FROM $F" \
     $layer_creation_options $other_options \
@@ -59,7 +59,7 @@ do
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
     -nln $temp_table \
-    -nlt PROMOTE_TO_MULTI \
+    -nlt PROMOTE_TO_MULTI $gdal_3_options \
     -progress \
     -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id, shape_leng AS perimeter FROM $F" \
     $layer_creation_options $other_options \
