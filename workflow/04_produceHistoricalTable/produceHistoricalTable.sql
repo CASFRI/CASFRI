@@ -73,16 +73,16 @@ SELECT TT_ProduceInvGeoHistory('NT02'); --  320944, pg11: , pg13:  1h40
 SELECT TT_ProduceInvGeoHistory('QC03'); --  401188, pg11: , pg13:  1h08
 SELECT TT_ProduceInvGeoHistory('SK05'); --  421977, pg11: , pg13:  2h05
 SELECT TT_ProduceInvGeoHistory('NS03'); --  995886, pg11: , pg13:  2h16
-SELECT TT_ProduceInvGeoHistory('SK04'); --  633522, pg11: , pg13: 
+SELECT TT_ProduceInvGeoHistory('SK04'); --  633522, pg11: , pg13:  3h04
 SELECT TT_ProduceInvGeoHistory('SK01'); -- 1501667, pg11: , pg13: ERROR:  TT_PolygonGeoHistory() ERROR: TT_SafeDifference() failed on SK01-xxxxxxxxxxxxUTM-xxxxxxxxxx-1269593033-1035665...
-SELECT TT_ProduceInvGeoHistory('NB01'); --  927177, pg11: , pg13: 
-SELECT TT_ProduceInvGeoHistory('NB02'); -- 1123893, pg11: , pg13: 
-SELECT TT_ProduceInvGeoHistory('MB05'); --  514157, pg11: , pg13: 
-SELECT TT_ProduceInvGeoHistory('NL01'); -- 1863664, pg11: , pg13: 
-SELECT TT_ProduceInvGeoHistory('QC04'); -- 2487519, pg11: , pg13: 
+SELECT TT_ProduceInvGeoHistory('NB01'); --  927177, pg11: , pg13:  3h32
+SELECT TT_ProduceInvGeoHistory('NB02'); -- 1123893, pg11: , pg13:  3h27
+SELECT TT_ProduceInvGeoHistory('MB05'); --  514157, pg11: , pg13: 18h32
+SELECT TT_ProduceInvGeoHistory('NL01'); -- 1863664, pg11: , pg13:  4h46
+SELECT TT_ProduceInvGeoHistory('QC04'); -- 2487519, pg11: , pg13: 12h51
 SELECT TT_ProduceInvGeoHistory('BC08'); -- 4677411, pg11: , pg13: 
 SELECT TT_ProduceInvGeoHistory('BC10'); -- 5151772, pg11: , pg13: 
-SELECT TT_ProduceInvGeoHistory('QC05'); -- 6768074, pg11: , pg13: 
+SELECT TT_ProduceInvGeoHistory('QC05'); -- 6768074, pg11: , pg13: 21h32
 SELECT TT_ProduceInvGeoHistory('ON02'); -- 3629072, pg11: , pg13:
 
 
