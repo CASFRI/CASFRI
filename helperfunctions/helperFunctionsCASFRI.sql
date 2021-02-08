@@ -1815,7 +1815,7 @@ RETURNS text AS $$
     END IF;
       
     -- swamp types
-    IF TYPE_ECO IN('RS37', 'RS39', 'RS18', 'RE37', 'RC38', 'MJ18', 'MF18', 'FO18', 'MS18', 'MS18P', 'MS28', 'MS68') THEN
+    IF TYPE_ECO IN('RS37', 'RS39', 'RS18', 'RE37', 'RC38', 'MJ18', 'MF18', 'FO18', 'MS18', 'MS18P', 'MS28', 'MS68', 'MJ28') THEN
       RETURN 'STNN';
     END IF;
     
