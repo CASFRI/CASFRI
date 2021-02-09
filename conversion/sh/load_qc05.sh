@@ -73,6 +73,7 @@ tableName_full=${fullTargetTableName}_full
 # into two tables before joining. A SUP table and an INF table. Will 
 # therefore be 4 table to join at the end. poly, meta, sup and inf.
 # Original tables are deleted at the end.
+# Split geocode into 2 columns for use in cas_id.
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
@@ -119,7 +120,7 @@ ALTER TABLE $tableName_meta RENAME COLUMN ver_prg TO meta_ver_prg;
 -- join qc05_poly, qc05_meta, qc05_etage_sup, and qc05_etage_inf
 DROP TABLE IF EXISTS $fullTargetTableName;
 CREATE TABLE $fullTargetTableName AS
-SELECT *
+SELECT *, substring(poly.geocode, 1, 10) geocode_1_10, substring(poly.geocode, 11, 10) geocode_11_20
 FROM $tableName_poly AS poly
 LEFT join $tableName_meta AS meta 
   on poly.geoc_maj = meta.meta_geoc_maj
