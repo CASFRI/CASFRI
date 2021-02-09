@@ -1503,6 +1503,7 @@ RETURNS text AS $$
 				  WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
 				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -1738,10 +1739,19 @@ RETURNS text AS $$
       RETURN 'SONS';
     END IF;
     
-    -- alder with bad drainage
+    -- alder with bad drainage - this will include some MA18 and MA18R TYPE_ECO codes, we prioritize alder
     IF CL_DRAIN = any(_bad_drainage) AND CO_TER = 'AL' THEN
       RETURN 'SONS';
     END IF;
+	
+	-- set the remaining MA18 and MA18R that do not have alders
+	IF TYPE_ECO = 'MA18' THEN
+	  RETURN 'MONS';
+	END IF;
+	
+	IF TYPE_ECO = 'MA18R' THEN
+	  RETURN 'SONS';
+	END IF;
     
     -- BTNN: bog, treed, no permafrost, lawns not present
     -- bad drainage, species is EE (prg 3) or EPEP (prg 4/5) with density 25-40% and height >12m
@@ -2226,6 +2236,35 @@ RETURNS text AS $$
     WHEN subtype IN ('16','17','30','31','32','36','37','56','57','70','71','72','76','77') THEN 'STNN'
     WHEN subtype='9E' THEN 'SONS'
     ELSE NULL
+  END;
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_pc02_wetland_code(text, text, text)
+--
+-- Return 4-character wetland code
+-- In pc02 every ECO translation is associated with either a lYR or NFL horizontal layer.
+-- In order to correctly assign LAYER values for ECO, ROW_TRANSLATION_RULE should only run
+-- the wetland translations associated with LYR when a LYR row is being translated in the attribute
+-- dependencies. We use the lyr_or_nfl assigned to 'table' in the attribute_dependencies to do this.
+-- Same goes for NFL, should only run for NFL rows being translated in attribute_dependencies.
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_pc02_wetland_code(text, text);
+CREATE OR REPLACE FUNCTION TT_pc02_wetland_code(
+  v_pcm text,
+  v_str text,
+  lyr_or_nfl text
+)
+RETURNS text AS $$
+  SELECT CASE
+    -- Non Productive
+    WHEN lyr_or_nfl = 'NFL' AND v_pcm IN('7', '98') THEN 'SONS'
+    WHEN lyr_or_nfl = 'NFL' AND v_pcm IN('1', '2', '3', '4', '99') THEN 'MONG'
+	WHEN lyr_or_nfl = 'NFL' AND v_pcm IN('17') THEN 'FONG'
+	WHEN lyr_or_nfl = 'NFL' AND v_pcm IN('18') THEN 'SONS'
+	WHEN lyr_or_nfl = 'LYR' AND v_pcm IN('20') THEN 'STNN'
+	WHEN lyr_or_nfl = 'LYR' AND v_pcm ='19' AND v_str = 'N' THEN 'FTNN'
+	WHEN lyr_or_nfl = 'LYR' AND v_pcm ='19' AND v_str = 'P' THEN 'BTNN'
+	ELSE NULL
   END;
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
