@@ -69,7 +69,7 @@ for %%F in (TMF_280_2D) do (
 
 SET query=DROP TABLE IF EXISTS %fullTargetTableName%; ^
 CREATE TABLE %fullTargetTableName% AS ^
-SELECT wkb_geometry, ogc_fid, inventory_id, src_filename, area, perimeter, fmfobjid, polyid, polytype, yrsource, source, formod, devstage, yrdep, deptype, ^
+SELECT wkb_geometry, ogc_fid, inventory_id, src_filename, area, perimeter, fmfobjid, polyid, substring(polyid, 1, 10) AS polyid_1_10, substring(polyid, 11, 10) AS polyid_11_20, polytype, yrsource, source, formod, devstage, yrdep, deptype, ^
        oyrorg, ospcomp, oleadspc, oage, oht, occlo, osi, osc, uyrorg, uspcomp, uleadspc, uage, uht, ucclo, usi, usc, ^
        incidspc, vert, horiz, pri_eco, sec_eco, access1, access2, mgmtcon1, mgmtcon2, mgmtcon3, verdate, sensitiv, bed ^
 FROM %temp_table% ^
