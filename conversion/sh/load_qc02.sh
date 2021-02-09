@@ -56,6 +56,7 @@ tableName_meta=${fullTargetTableName}_meta
 # Join META  tables to polygons using the GEOCODE attribute.
 # The ogc_fid attributes are no longer unique identifiers after the 
 # join so a new ogc_fid is created.
+# Split geocode into 2 columns for use in cas_id.
 # Original tables are deleted at the end.
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
@@ -69,7 +70,7 @@ ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 -- join qc02_poly, qc02_meta
 DROP TABLE IF EXISTS  $fullTargetTableName;
 CREATE TABLE  $fullTargetTableName AS
-SELECT *
+SELECT *, substring(poly.geocode, 1, 10) geocode_1_10, substring(poly.geocode, 11, 10) geocode_11_20
 FROM $tableName_poly AS poly
 LEFT join $tableName_meta AS meta 
   on poly.geocode = meta.meta_geocode;
