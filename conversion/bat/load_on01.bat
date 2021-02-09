@@ -37,8 +37,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 ECHO OFF
 
 :: Load 130 first to establish the right format for the area field
-:: for %%F in (130 030 040 175 230 260) do (
-for %%F in (130 030 040 060 067 120 140 150 175 177 178 210 220 230 260 280 350 360 370 375 390 405 415 421 438 444 451 490 509 535 565 601 615 644 680 702 754 780 796 840 851 853 889 898 930 970 993) do (
+for %%F in (130 012 030 040 060 067 120 140 150 175 177 178 210 220 230 260 280 350 360 370 375 390 405 415 421 438 444 451 490 509 535 565 601 615 644 680 702 754 780 796 840 851 853 889 898 930 970 993) do (
 
   SET shpName=mu%%Fl
   SET mdbName=shape_data_mu%%F.mdb
@@ -51,7 +50,7 @@ for %%F in (130 030 040 060 067 120 140 150 175 177 178 210 220 230 260 280 350 
   "%gdalFolder%/ogr2ogr" ^
   -f PostgreSQL %pg_connection_string% %srcFolder%/mu%%F/!shpName!.shp ^
   -nln %tempPoly% ^
-  -nlt PROMOTE_TO_MULTI %gdal_3_options% ^
+  -nlt PROMOTE_TO_MULTI ^
   -progress ^
   -sql "SELECT *, '%%F' AS src_filename, '%inventoryID%' AS inventory_id FROM !shpName!" ^
   !layer_creation_options! %other_options% ^
