@@ -1,4 +1,4 @@
-casfri_species_codes,nfi_species_code,scientific_name,ab_species_codes,bc_species_codes,nb_species_codes,nt_species_codes,on_species_codes,ns_species_codes,sk_species_codes,yt_species_codes,pe_species_codes,qc_species_codes,mb_species_codes,nl_species_codes,pc02_species_codes,pc01_species_codes,Comment
+casfri_species_codes_OLD,casfri_species_codes,scientific_name,ab_species_codes,bc_species_codes,nb_species_codes,nt_species_codes,on_species_codes,ns_species_codes,sk_species_codes,yt_species_codes,pe_species_codes,qc_species_codes,mb_species_codes,nl_species_codes,pc02_species_codes,pc01_species_codes,Comment
 ABIE_AMAB,ABIE_AMA_###,Abies amabilis ,,BA,,,,,,,,,,,,,
 ABIE_BALS,ABIE_BAL_###,Abies balsamea ,FB,BB,BF,,BF,BF,BF,,BF,SB,BF,BF,,AB,
 ABIE_FIRM,ABIE_FIR_###,Abies firma,,,JF,,,,,,,,,,,,
