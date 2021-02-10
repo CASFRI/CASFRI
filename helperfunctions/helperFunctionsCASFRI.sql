@@ -2287,26 +2287,28 @@ RETURNS text AS $$
     _cc int;
 	_sp1_per int;
 	_avg_ht int;
+	_smr text;
   BEGIN
     _cc = cc::int;
 	_sp1_per = sp1_per::int;
 	_avg_ht = avg_ht::int;
+	_smr = upper(smr);
 	
 	RETURN CASE
-	  WHEN smr='A' THEN 'MONG'
-	  WHEN smr='W' AND class_='S' THEN 'SONS' 
-	  WHEN smr='W' AND class_='H' THEN 'MONG' 
-	  WHEN smr='W' AND class_='M' THEN 'SONS' 
-	  WHEN smr='W' AND class_='C' THEN 'FONS' 
-	  WHEN smr='W' AND (sp1='SB' AND _sp1_per=100) AND _cc<50 AND _avg_ht<12 THEN 'BTNN'
-	  WHEN smr='W' AND (sp1='SB' AND _sp1_per=100) AND (_cc >= 50  AND  _cc < 70)  AND _avg_ht >= 12 THEN 'STNN'
-	  WHEN smr='W' AND (sp1='SB' AND _sp1_per=100) AND _cc >= 70  AND _avg_ht >= 12 THEN 'SFNN'
-	  WHEN smr='W' AND (sp1='SB' OR sp1='L') AND  (sp2='SB' OR sp2='L') AND _cc <= 50  AND _avg_ht < 12 THEN 'FTNN'
-	  WHEN smr='W' AND (sp1='SB' OR sp1='L' OR sp1='W') AND (sp2='SB' OR sp2='L' OR sp2='W') AND _cc > 50  AND _avg_ht > 12 THEN 'STNN'
-	  WHEN smr='W' AND (sp1='L' AND _sp1_per=100) AND _cc <= 50 THEN 'FTNN'
-	  WHEN smr='W' AND (sp1='L' OR sp1='W') AND _sp1_per=100 AND (_cc > 50  AND _cc < 70) THEN 'STNN'
-	  WHEN smr='W' AND (sp1='L' OR sp1='W') AND _sp1_per=100 AND (_cc >= 70) THEN 'SFNN'
-	  WHEN smr='W' THEN 'W---'
+	  WHEN _smr='A' THEN 'MONG'
+	  WHEN _smr='W' AND class_='S' THEN 'SONS' 
+	  WHEN _smr='W' AND class_='H' THEN 'MONG' 
+	  WHEN _smr='W' AND class_='M' THEN 'SONS' 
+	  WHEN _smr='W' AND class_='C' THEN 'FONS' 
+	  WHEN _smr='W' AND (sp1='SB' AND _sp1_per=100) AND _cc<50 AND _avg_ht<12 THEN 'BTNN'
+	  WHEN _smr='W' AND (sp1='SB' AND _sp1_per=100) AND (_cc >= 50  AND  _cc < 70)  AND _avg_ht >= 12 THEN 'STNN'
+	  WHEN _smr='W' AND (sp1='SB' AND _sp1_per=100) AND _cc >= 70  AND _avg_ht >= 12 THEN 'SFNN'
+	  WHEN _smr='W' AND (sp1='SB' OR sp1='L') AND  (sp2='SB' OR sp2='L') AND _cc <= 50  AND _avg_ht < 12 THEN 'FTNN'
+	  WHEN _smr='W' AND (sp1='SB' OR sp1='L' OR sp1='W') AND (sp2='SB' OR sp2='L' OR sp2='W') AND _cc > 50  AND _avg_ht > 12 THEN 'STNN'
+	  WHEN _smr='W' AND (sp1='L' AND _sp1_per=100) AND _cc <= 50 THEN 'FTNN'
+	  WHEN _smr='W' AND (sp1='L' OR sp1='W') AND _sp1_per=100 AND (_cc > 50  AND _cc < 70) THEN 'STNN'
+	  WHEN _smr='W' AND (sp1='L' OR sp1='W') AND _sp1_per=100 AND (_cc >= 70) THEN 'SFNN'
+	  WHEN _smr='W' THEN 'W---'
 	  ELSE NULL
 	END;
   END
