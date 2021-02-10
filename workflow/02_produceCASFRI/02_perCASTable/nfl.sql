@@ -27,10 +27,10 @@ ON translation.qc_standstructure_lookup (source_val)
 -- Translate all NFL tables into a common table. 33h32m
 -------------------------------------------------------
 -- Prepare the translation functions
-SELECT TT_Prepare('translation', 'ab_avi01_nfl', '_ab_nfl'); -- used for both AB06 and AB16
-SELECT TT_Prepare('translation', 'nb_nbi01_nfl', '_nb_nfl', 'ab_avi01_nfl'); -- used for both NB01 and NB02
-SELECT TT_Prepare('translation', 'bc_vri01_nfl', '_bc_nfl', 'ab_avi01_nfl'); -- used for both BC08 and BC10
-SELECT TT_Prepare('translation', 'nt_fvi01_nfl', '_nt_nfl', 'ab_avi01_nfl'); -- used for both NT01 and NT02, layer 1 and 2
+SELECT TT_Prepare('translation', 'ab_avi01_nfl', '_ab_nfl');
+SELECT TT_Prepare('translation', 'nb_nbi01_nfl', '_nb_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'bc_vri01_nfl', '_bc_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'nt_fvi01_nfl', '_nt_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'on_fim02_nfl', '_on_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'sk_utm01_nfl', '_sk_utm_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'sk_sfv01_nfl', '_sk_sfv_nfl', 'ab_avi01_nfl');
@@ -328,25 +328,25 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l4_to_nt_l1_map_nfl');
 ------------------------
--- Translate NT02 layer 3
+-- Translate NT03 layer 3
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'nt02', 3, 'nt', 1, NULL, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'nt03', 3, 'nt', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l3_to_nt_l1_map_nfl', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt03_l3_to_nt_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt02_l3_to_nt_l1_map_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt03_l3_to_nt_l1_map_nfl');
 ------------------------
--- Translate NT02 layer 4
+-- Translate NT03 layer 4
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'nt02', 4, 'nt', 1, NULL, 'nfl');
+SELECT TT_CreateMappingView('rawfri', 'nt03', 4, 'nt', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l4_to_nt_l1_map_nfl', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt03_l4_to_nt_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt02_l4_to_nt_l1_map_nfl');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt03_l4_to_nt_l1_map_nfl');
 ------------------------
 -- Translate ON02 layer 3
 BEGIN;
@@ -740,7 +740,7 @@ ORDER BY inv;
 --NL01	664096
 --NS03	212453
 --NT01	65299
---NT02	129291
+--NT03	?????
 --ON02	1318495
 --PE01	22223
 --QC03  197876
@@ -785,8 +785,8 @@ ORDER BY inv, layer;
 --NS03	2	11339
 --NT01	1	42836
 --NT01	2	22463
---NT02	1	53132
---NT02	2	76159
+--NT03	1	?????
+--NT03	2	?????
 --ON02	1	1318495
 --PE01	1	22223
 --QC03  1 197876

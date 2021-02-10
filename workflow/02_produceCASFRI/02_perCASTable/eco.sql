@@ -21,10 +21,10 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -- Translate all ECO tables into a common table
 -------------------------------------------------------
 -- Prepare the translation functions
-SELECT TT_Prepare('translation', 'ab_avi01_eco', '_ab_eco'); -- used for both AB06 and AB16
-SELECT TT_Prepare('translation', 'nb_nbi01_eco', '_nb_eco', 'ab_avi01_eco'); -- used for both NB01 and NB02
-SELECT TT_Prepare('translation', 'bc_vri01_eco', '_bc_eco', 'ab_avi01_eco'); -- used for both BC08 and BC10
-SELECT TT_Prepare('translation', 'nt_fvi01_eco', '_nt_eco', 'ab_avi01_eco'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'ab_avi01_eco', '_ab_eco');
+SELECT TT_Prepare('translation', 'nb_nbi01_eco', '_nb_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'bc_vri01_eco', '_bc_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'nt_fvi01_eco', '_nt_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'on_fim02_eco', '_on_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'sk_utm01_eco', '_sk_utm_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'sk_sfv01_eco', '_sk_sfv_eco', 'ab_avi01_eco');
@@ -153,13 +153,13 @@ SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt01_l1_to_nt_l1_map_eco', 'ogc_fid
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_eco', 'nt01_l1_to_nt_l1_map_eco');
 ------------------------
--- Translate NT02 using NT generic translation table
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', NULL, 'eco');
+-- Translate NT03 using NT generic translation table
+SELECT TT_CreateMappingView('rawfri', 'nt03', 'nt', NULL, 'eco');
 
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt02_l1_to_nt_l1_map_eco', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_eco('rawfri', 'nt03_l1_to_nt_l1_map_eco', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_eco', 'nt02_l1_to_nt_l1_map_eco');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_eco', 'nt03_l1_to_nt_l1_map_eco');
 ------------------------
 -- Translate ON02 using ON translation table
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', NULL, 'eco');

@@ -22,9 +22,9 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab_avi01_geo', '_ab_geo');
-SELECT TT_Prepare('translation', 'nb_nbi01_geo', '_nb_geo', 'ab_avi01_geo'); -- used for both NB01 and NB02
-SELECT TT_Prepare('translation', 'bc_vri01_geo', '_bc_geo', 'ab_avi01_geo'); -- used for both BC08 and BC10
-SELECT TT_Prepare('translation', 'nt_fvi01_geo', '_nt_geo', 'ab_avi01_geo'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nb_nbi01_geo', '_nb_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'bc_vri01_geo', '_bc_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'nt_fvi01_geo', '_nt_geo', 'ab_avi01_geo');
 SELECT TT_Prepare('translation', 'on_fim02_geo', '_on_geo', 'ab_avi01_geo'); 
 SELECT TT_Prepare('translation', 'sk_utm01_geo', '_sk_utm_geo', 'ab_avi01_geo'); 
 SELECT TT_Prepare('translation', 'sk_sfv01_geo', '_sk_sfv_geo', 'ab_avi01_geo'); 
@@ -192,15 +192,15 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_geo', 'nt01_l1_to_nt_l1_map_geo');
 ------------------------
--- Translate NT02 using NT generic translation table
+-- Translate NT03 using NT generic translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'nt02', 1, 'nt', 1, NULL, 'geo');
+SELECT TT_CreateMappingView('rawfri', 'nt03', 1, 'nt', 1, NULL, 'geo');
 
 INSERT INTO casfri50.geo_all -- 22m
-SELECT * FROM TT_Translate_nt_geo('rawfri', 'nt02_l1_to_nt_l1_map_geo', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_geo('rawfri', 'nt03_l1_to_nt_l1_map_geo', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_geo', 'nt02_l1_to_nt_l1_map_geo');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_geo', 'nt03_l1_to_nt_l1_map_geo');
 ------------------------
 -- Translate ON02 using ON generic translation table
 BEGIN;
@@ -401,7 +401,7 @@ ORDER BY inv;
 --NL01  1863664
 --NS03 	995886
 --NT01	281388
---NT02	320944
+--NT03	?????
 --ON02	3629073
 --PE01	107220
 --QC03  401188

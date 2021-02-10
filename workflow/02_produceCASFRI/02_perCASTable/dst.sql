@@ -22,9 +22,9 @@ CREATE SCHEMA IF NOT EXISTS casfri50;
 -------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab_avi01_dst', '_ab_dst');
-SELECT TT_Prepare('translation', 'nb_nbi01_dst', '_nb_dst', 'ab_avi01_dst'); -- used for both NB01 and NB02
+SELECT TT_Prepare('translation', 'nb_nbi01_dst', '_nb_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'bc_vri01_dst', '_bc_dst', 'ab_avi01_dst');
-SELECT TT_Prepare('translation', 'nt_fvi01_dst', '_nt_dst', 'ab_avi01_dst'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nt_fvi01_dst', '_nt_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'on_fim02_dst', '_on_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'sk_utm01_dst', '_sk_utm_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'sk_sfv01_dst', '_sk_sfv_dst', 'ab_avi01_dst'); 
@@ -201,15 +201,15 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_dst', 'nt01_l1_to_nt_l1_map_dst');
 ------------------------
--- Translate NT02 using NT generic translation table
+-- Translate NT03 using NT generic translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'nt02', 1, 'nt', 1, NULL, 'dst');
+SELECT TT_CreateMappingView('rawfri', 'nt03', 1, 'nt', 1, NULL, 'dst');
 
 INSERT INTO casfri50.dst_all -- 51m
-SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt02_l1_to_nt_l1_map_dst', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_dst('rawfri', 'nt03_l1_to_nt_l1_map_dst', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_dst', 'nt02_l1_to_nt_l1_map_dst');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_dst', 'nt03_l1_to_nt_l1_map_dst');
 ------------------------
 -- Translate ON02 using FIM generic translation table
 BEGIN;
@@ -403,7 +403,7 @@ ORDER BY inv, layer;
 --NB02 -8886  333114
 --NS03 -8886  69446
 --NT01 -8886  77270
---NT02 -8886  129866
+--NT03 -8886  ?????
 --ON02 -8886  1970286
 --PE01 -8886  29517
 --QC03 -8886  81902

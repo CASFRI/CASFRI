@@ -66,9 +66,9 @@ ON translation.qc_standstructure_lookup (source_val)
 --------------------------------------------------------------------------
 -- Prepare the translation functions
 SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab_cas');
-SELECT TT_Prepare('translation', 'nb_nbi01_cas', '_nb_cas', 'ab_avi01_cas'); -- used for both NB01 and NB02
+SELECT TT_Prepare('translation', 'nb_nbi01_cas', '_nb_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'bc_vri01_cas', '_bc_cas', 'ab_avi01_cas'); 
-SELECT TT_Prepare('translation', 'nt_fvi01_cas', '_nt_cas', 'ab_avi01_cas'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nt_fvi01_cas', '_nt_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'on_fim02_cas', '_on_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'sk_utm01_cas', '_sk_utm_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'sk_sfv01_cas', '_sk_sfv_cas', 'ab_avi01_cas'); 
@@ -226,15 +226,15 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_cas', 'nt01_l1_to_nt_l1_map_cas');
 ------------------------
--- Translate NT02 using NT generic translation table
+-- Translate NT03 using NT generic translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', NULL, 'cas');
+SELECT TT_CreateMappingView('rawfri', 'nt03', 'nt', NULL, 'cas');
 
 INSERT INTO casfri50.cas_all -- 57m
-SELECT * FROM TT_Translate_nt_cas('rawfri', 'nt02_l1_to_nt_l1_map_cas', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_cas('rawfri', 'nt03_l1_to_nt_l1_map_cas', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_cas', 'nt02_l1_to_nt_l1_map_cas');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_cas', 'nt03_l1_to_nt_l1_map_cas');
 ------------------------
 -- Translate ON02 using ON generic translation table
 BEGIN;
@@ -434,7 +434,7 @@ ORDER BY inv;
 --NL01  1863664
 --NS03	995886
 --NT01	281388
---NT02	320944
+--NT03	?????
 --ON02	3629073
 --PE01  107220
 --QC03  401188
