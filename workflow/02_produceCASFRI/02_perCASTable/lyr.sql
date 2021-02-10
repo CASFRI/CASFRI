@@ -86,10 +86,10 @@ ON translation.qc_standstructure_lookup (source_val)
 -- Translate all LYR tables into a common table. 32h
 -------------------------------------------------------
 -- Prepare the translation functions
-SELECT TT_Prepare('translation', 'ab_avi01_lyr', '_ab_lyr'); -- used for both AB16 and NB02AB06 layer 1 and 2
-SELECT TT_Prepare('translation', 'nb_nbi01_lyr', '_nb_lyr', 'ab_avi01_lyr'); -- used for both NB01 and NB02, layer 1 and 2
-SELECT TT_Prepare('translation', 'bc_vri01_lyr', '_bc_lyr', 'ab_avi01_lyr'); -- used for both BC08 and BC10, layer 1 and 2
-SELECT TT_Prepare('translation', 'nt_fvi01_lyr', '_nt_lyr', 'ab_avi01_lyr'); -- used for both NT01 and NT02, layer 1 and 2
+SELECT TT_Prepare('translation', 'ab_avi01_lyr', '_ab_lyr');
+SELECT TT_Prepare('translation', 'nb_nbi01_lyr', '_nb_lyr', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'bc_vri01_lyr', '_bc_lyr', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'nt_fvi01_lyr', '_nt_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'on_fim02_lyr', '_on_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'sk_utm01_lyr', '_sk_utm_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'sk_sfv01_lyr', '_sk_sfv_lyr', 'ab_avi01_lyr'); 
@@ -387,25 +387,25 @@ COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt01_l2_to_nt_l1_map_lyr');
 ------------------------
--- Translate NT02 using NT generic translation table
+-- Translate NT03 using NT generic translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'nt02', 1, 'nt', 1, NULL, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'nt03', 1, 'nt', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 1h45m
-SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_l1_to_nt_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt03_l1_to_nt_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt02_l1_to_nt_l1_map_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt03_l1_to_nt_l1_map_lyr');
 ------------------------
--- Translate NT02 layer 2 using NT layer 1 generic translation table
+-- Translate NT03 layer 2 using NT layer 1 generic translation table
 BEGIN;
-SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1, NULL, 'lyr');
+SELECT TT_CreateMappingView('rawfri', 'nt03', 2, 'nt', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 1h34m
-SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt02_l2_to_nt_l1_map_lyr', 'ogc_fid');
+SELECT * FROM TT_Translate_nt_lyr('rawfri', 'nt03_l2_to_nt_l1_map_lyr', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt02_l2_to_nt_l1_map_lyr');
+SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt03_l2_to_nt_l1_map_lyr');
 ------------------------
 -- Translate ON02 using ON translation table
 BEGIN;
@@ -887,7 +887,7 @@ ORDER BY inv;
 -- NL01 867045
 -- NS03	972710
 -- NT01	245832
--- NT02	349923
+-- NT03	??????
 -- ON02	2240815
 -- PE01	81073
 -- QC03 160597
@@ -929,8 +929,8 @@ ORDER BY left(cas_id, 4), layer;
 -- NS03	2	230393
 -- NT01 1	236612
 -- NT01 2	9220
--- NT02 1	265600
--- NT02 2	84324
+-- NT03 1	?????
+-- NT03 2	?????
 -- ON02	1	2066889
 -- ON02	2	173927
 -- PE01	1	81073

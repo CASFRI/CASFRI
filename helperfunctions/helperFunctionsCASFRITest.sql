@@ -170,8 +170,10 @@ WITH test_nb AS (
 	SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,           116 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_pc02_wetland_translation'::text function_tested,              117 maj_num,  3 nb_test UNION ALL
 	SELECT 'TT_pc02_wetland_validation'::text function_tested,               118 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc02_countOfNotNull'::text function_tested,                 119 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,              120 maj_num,  2 nb_test
+	SELECT 'TT_pc02_countOfNotNull'::text function_tested,                   119 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,                120 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_yt_wetland_translation'::text function_tested,                121 maj_num,  4 nb_test UNION ALL
+	SELECT 'TT_yt_wetland_validation'::text function_tested,                 122 maj_num,  2 nb_test
 ),
 
 	
@@ -1692,19 +1694,19 @@ UNION ALL
 SELECT '38.1'::text number,
        'TT_sk_utm01_species_translation'::text function_tested,
        'Expected species'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','BF','','','') = 'ABIE_BALS' passed
+       TT_sk_utm01_species_translation('2', 'WS','BF','','','') = 'ABIE_BAL_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '38.2'::text number,
        'TT_sk_utm01_species_translation'::text function_tested,
        'Expected species with empty strings'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','','','','BF') = 'ABIE_BALS' passed
+       TT_sk_utm01_species_translation('2', 'WS','','','','BF') = 'ABIE_BAL_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '38.3'::text number,
        'TT_sk_utm01_species_translation'::text function_tested,
        'Expected species with empty strings and nulls'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','',NULL::text,'','BF') = 'ABIE_BALS' passed
+       TT_sk_utm01_species_translation('2', 'WS','',NULL::text,'','BF') = 'ABIE_BAL_###' passed
 ---------------------------------------------------------
   -- TT_sfv01_stand_structure_translation
 ---------------------------------------------------------
@@ -2405,13 +2407,13 @@ UNION ALL
 SELECT '60.1'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'no_prg 4 species 1'::text description,
-       TT_qc_prg4_species_translation('FXPU', '1') = 'HARD_UNKN' passed
+       TT_qc_prg4_species_translation('FXPU', '1') = 'GENH_SPP_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.2'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'no_prg 4 species 2'::text description,
-       TT_qc_prg4_species_translation('FXPU', '2') = 'TSUG_CANA' passed
+       TT_qc_prg4_species_translation('FXPU', '2') = 'TSUG_CAN_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.3'::text number,
@@ -2429,7 +2431,7 @@ UNION ALL
 SELECT '60.5'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'Double species and species 1 requested'::text description,
-       TT_qc_prg4_species_translation('FXFX', '1') = 'HARD_UNKN' passed
+       TT_qc_prg4_species_translation('FXFX', '1') = 'GENH_SPP_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.6'::text number,
@@ -2441,31 +2443,31 @@ UNION ALL
 SELECT '60.7'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'Triple species, species 1'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '1') = 'HARD_UNKN' passed
+       TT_qc_prg4_species_translation('FXPUFX', '1') = 'GENH_SPP_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.8'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'Triple species, species 2'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '2') = 'TSUG_CANA' passed
+       TT_qc_prg4_species_translation('FXPUFX', '2') = 'TSUG_CAN_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.9'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'Triple species, species 3'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '3') = 'HARD_UNKN' passed
+       TT_qc_prg4_species_translation('FXPUFX', '3') = 'GENH_SPP_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.10'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        '6 char double, species 1'::text description,
-       TT_qc_prg4_species_translation('FXFXPU', '1') = 'HARD_UNKN' passed
+       TT_qc_prg4_species_translation('FXFXPU', '1') = 'GENH_SPP_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.11'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        '6 char double, species 2'::text description,
-       TT_qc_prg4_species_translation('FXFXPU', '2') = 'TSUG_CANA' passed
+       TT_qc_prg4_species_translation('FXFXPU', '2') = 'TSUG_CAN_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.12'::text number,
@@ -2477,7 +2479,7 @@ UNION ALL
 SELECT '60.13'::text number,
        'TT_qc_prg4_species_translation'::text function_tested,
        'test single species'::text description,
-       TT_qc_prg4_species_translation('PU', '1') = 'TSUG_CANA' passed
+       TT_qc_prg4_species_translation('PU', '1') = 'TSUG_CAN_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.14'::text number,
@@ -2491,31 +2493,31 @@ UNION ALL
 SELECT '61.1'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 1'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '1') = 'ACER_RUBR' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '1') = 'ACER_RUB_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.2'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 2'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '2') = 'ABIE_BALS' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '2') = 'ABIE_BAL_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.3'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 3'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '3') = 'BETU_PAPY' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '3') = 'BETU_PAP_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.4'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 4'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '4') = 'POPU_SUBS' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '4') = 'POPU_SPP_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.5'::text number,
        'TT_qc_prg5_species_translation'::text function_tested,
        '5th inv species 5'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '5') = 'PICE_MARI' passed
+       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '5') = 'PICE_MAR_###' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.6'::text number,
@@ -4287,7 +4289,47 @@ SELECT '120.4'::text number,
        'Basic fail 2'::text description,
        TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '1', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
-
+ -- TT_yt_wetland_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '121.1'::text number,
+       'TT_yt_wetland_translation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_yt_wetland_translation('W', NULL::text, 'S', NULL::text, NULL::text, NULL::text, NULL::text, '1') = 'SWAMP' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '121.2'::text number,
+       'TT_yt_wetland_translation'::text function_tested,
+       'Basic pass 2'::text description,
+       TT_yt_wetland_translation('W', '10', '', 'SB', NULL::text, '100', '10', '1') = 'BOG' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '121.3'::text number,
+       'TT_yt_wetland_translation'::text function_tested,
+       'Basic pass 3'::text description,
+       TT_yt_wetland_translation('W', '100', '', 'SB', NULL::text, '100', '10', '1') = 'WETLAND' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '121.4'::text number,
+       'TT_yt_wetland_translation'::text function_tested,
+       'NULLs'::text description,
+       TT_yt_wetland_translation(NULL::text, '100', '', 'SB', NULL::text, '100', '10', '1') IS NULL passed
+---------------------------------------------------------
+ -- TT_yt_wetland_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '122.1'::text number,
+       'TT_yt_wetland_validation'::text function_tested,
+       'Basic pass 1'::text description,
+       TT_yt_wetland_validation('W', NULL::text, 'S', NULL::text, NULL::text, NULL::text, NULL::text, '1') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '122.2'::text number,
+       'TT_yt_wetland_validation'::text function_tested,
+       'NULL fails'::text description,
+       TT_yt_wetland_validation(NULL::text, NULL::text, 'S', NULL::text, NULL::text, NULL::text, NULL::text, '1') IS FALSE passed
+	
+	
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

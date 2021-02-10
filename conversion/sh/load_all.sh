@@ -12,7 +12,7 @@
 "/c/program files/git/git-bash.exe" load_nl01.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_ns03.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_nt01.sh & > /dev/null
-"/c/program files/git/git-bash.exe" load_nt02.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_nt03.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_on02.bat
 
 "/c/program files/git/git-bash.exe" load_pc02.sh & > /dev/null
