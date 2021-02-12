@@ -18,3 +18,7 @@ gdal_1_11_4=False
 overwriteFRI=True
 overwriteTTables=True
 
+if [ ${pgversion}x == x ]; then
+pgversion=11
+fi
+pgFolder="/c/PROGRA~1/PostgreSQL/$pgversion"
