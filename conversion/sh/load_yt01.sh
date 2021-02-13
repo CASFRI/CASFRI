@@ -13,6 +13,10 @@
 # If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
 # in the configuration file.
 
+# The dist_code1 and dist_code2 columns need to be split into a column for the code and a column
+# for the year. This matches YT02. Some year values need to be appended with '19' to convert e.g.
+# DB51 into the code DB and the year 1951.
+
 ######################################## Set variables #######################################
 
 source ./common.sh
@@ -46,5 +50,23 @@ fi
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $srcFileName" \
 -progress $overwrite_tab
+
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "
+-- add new columns
+ALTER TABLE $fullTargetTableName ADD COLUMN dist_code1_type text;
+ALTER TABLE $fullTargetTableName ADD COLUMN dist_code1_year int;
+ALTER TABLE $fullTargetTableName ADD COLUMN dist_code2_type text;
+ALTER TABLE $fullTargetTableName ADD COLUMN dist_code2_year int;
+
+-- set code to first two characters
+UPDATE $fullTargetTableName SET dist_code1_type = LEFT(dist_code1,2) WHERE LENGTH(dist_code1)>1;
+UPDATE $fullTargetTableName SET dist_code2_type = LEFT(dist_code2,2) WHERE LENGTH(dist_code2)>1;
+
+-- set year to last 4 characters and append with 19 as needed
+UPDATE $fullTargetTableName SET dist_code1_year = RIGHT(dist_code1,4)::int WHERE LENGTH(dist_code1)=6;
+UPDATE $fullTargetTableName SET dist_code1_year = CONCAT('19', RIGHT(dist_code1,2)::text)::int WHERE LENGTH(dist_code1)=4;
+UPDATE $fullTargetTableName SET dist_code2_year = RIGHT(dist_code2,4)::int WHERE LENGTH(dist_code2)=6;
+"
 
 source ./common_postprocessing.sh
