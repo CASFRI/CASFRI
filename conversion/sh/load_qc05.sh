@@ -127,7 +127,8 @@ LEFT join $tableName_meta AS meta
 LEFT join $tableName_sup AS sup 
   on poly.geoc_maj = sup.sup_geoc_maj
 LEFT join $tableName_inf AS inf 
-  on poly.geoc_maj = inf.inf_geoc_maj;
+  on poly.geoc_maj = inf.inf_geoc_maj
+ORDER BY poly.geoc_maj;
     
 --update ogc_fid
 ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
