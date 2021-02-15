@@ -115,7 +115,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_nfl', 'ns03_l3_to_ns_nsi_l
 ------------------------
 -- GEO
 ------------------------
-SELECT TT_Prepare('translation', 'ns_nsi01_geo', '_ns03_geo', 'ab_avi01_geo'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'ns_nsi01_geo', '_ns03_geo', 'ab_avi01_geo');
 
 SELECT TT_CreateMappingView('rawfri', 'ns03', 'ns_nsi');
 
