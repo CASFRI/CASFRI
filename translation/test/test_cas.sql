@@ -56,12 +56,14 @@ SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt_cas_test', 'ab_avi01_cas')
 SELECT TT_Prepare('translation', 'ns_nsi01_cas', '_ns_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'pe_pei01_cas', '_pe_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'mb_fri01_cas', '_mb_fri_cas_test', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'mb_fri02_cas', '_mb_fri2_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'mb_fli01_cas', '_mb_fli_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'nl_nli01_cas', '_nl_nli_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'qc_ini03_cas', '_qc_ini03_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'qc_ini04_cas', '_qc_ini04_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'qc_ipf05_cas', '_qc_ipf05_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'pc_panp01_cas', '_pc_panp_cas_test', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'pc_wbnp01_cas', '_pc_wbnp_cas_test', 'ab_avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.cas_all_new CASCADE;
 ------------------------
@@ -157,9 +159,21 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 300, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_sk_sfv_cas_test('rawfri', 'sk06_l1_to_sk_sfv_l1_map_300_cas');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'yt01', 'yt', 300, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_yt_cas_test('rawfri', 'yt01_l1_to_yt_l1_map_300_cas');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 600, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_yt_cas_test('rawfri', 'yt02_l1_to_yt_l1_map_600_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns01', 'ns_nsi', 800, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_ns_cas_test('rawfri', 'ns01_l1_to_ns_nsi_l1_map_800_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns02', 'ns_nsi', 800, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_ns_cas_test('rawfri', 'ns02_l1_to_ns_nsi_l1_map_800_cas');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ns03', 'ns_nsi', 800, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
@@ -169,9 +183,25 @@ SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei', 300, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_pe_cas_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_300_cas');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb01', 'mb_fri2', 200, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_mb_fri2_cas_test('rawfri', 'mb01_l1_to_mb_fri2_l1_map_200_cas');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb05', 'mb_fri', 500, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_mb_fri_cas_test('rawfri', 'mb05_l1_to_mb_fri_l1_map_500_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb02', 'mb_fli', 200, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_mb_fli_cas_test('rawfri', 'mb02_l1_to_mb_fli_l1_map_200_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb04', 'mb_fli', 200, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_mb_fli_cas_test('rawfri', 'mb04_l1_to_mb_fli_l1_map_200_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb07', 'mb_fli', 300, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_mb_fli_cas_test('rawfri', 'mb07_l1_to_mb_fli_l1_map_300_cas');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb06', 'mb_fli', 300, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
@@ -196,6 +226,10 @@ SELECT * FROM TT_Translate_qc_ipf05_cas_test('rawfri', 'qc05_l1_to_qc_ipf_l1_map
 SELECT TT_CreateMappingView('rawfri', 'pc01', 'pc_panp', 200, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_pc_panp_cas_test('rawfri', 'pc01_l1_to_pc_panp_l1_map_200_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 'pc_wbnp', 200, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_pc_wbnp_cas_test('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200_cas');
 ------------------------
 -- Create an ordered VIEW on the CAS table
 CREATE OR REPLACE VIEW casfri50_test.cas_all_new_ordered AS

@@ -61,6 +61,7 @@ SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl_nli_dst_test', 'ab_avi01_d
 SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc_ini03_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc_ini04_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc_ipf05_dst_test', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc_wbnp01_dst_test', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.dst_all_new CASCADE;
 ------------------------
@@ -160,9 +161,21 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 1, 'sk_sfv', 1, 1500, NULL, 'dst')
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_sk_sfv_dst_test('rawfri', 'sk06_l1_to_sk_sfv_l1_map_1500_dst');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'yt01', 1, 'yt', 1, 3000, NULL, 'dst'); -- Generates about 300 (264) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_yt_dst_test('rawfri', 'yt01_l1_to_yt_l1_map_3000_dst');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, 7230, NULL, 'dst'); -- Generates about 600 (611) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_yt_dst_test('rawfri', 'yt02_l1_to_yt_l1_map_7230_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, 7230, NULL, 'dst'); -- Generates about 600 (556) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_ns_dst_test('rawfri', 'ns01_l1_to_ns_nsi_l1_map_7230_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns02', 1, 'ns_nsi', 1, 7230, NULL, 'dst'); -- Generates about 600 (573) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_ns_dst_test('rawfri', 'ns02_l1_to_ns_nsi_l1_map_7230_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, 7230, NULL, 'dst'); -- Generates about 600 (611) DST rows
 INSERT INTO casfri50_test.dst_all_new 
@@ -176,9 +189,21 @@ SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 1000, NULL, 'dst')
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_mb_fri_dst_test('rawfri', 'mb05_l1_to_mb_fri_l1_map_1000_dst');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb02', 1, 'mb_fli', 1, 1200, NULL, 'dst'); -- Generates about 200 (170) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_mb_fli_dst_test('rawfri', 'mb02_l1_to_mb_fli_l1_map_1200_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb04', 1, 'mb_fli', 1, 500, NULL, 'dst'); -- Generates about 200 (222) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_mb_fli_dst_test('rawfri', 'mb04_l1_to_mb_fli_l1_map_500_dst');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb_fli', 1, 1200, NULL, 'dst'); -- Generates about 300 (301) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_mb_fli_dst_test('rawfri', 'mb06_l1_to_mb_fli_l1_map_1200_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb07', 1, 'mb_fli', 1, 800, NULL, 'dst'); -- Generates about 300 (265) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_mb_fli_dst_test('rawfri', 'mb07_l1_to_mb_fli_l1_map_800_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 20000, NULL, 'dst'); -- Generates about 900 (955) DST rows
 INSERT INTO casfri50_test.dst_all_new 
@@ -195,6 +220,10 @@ SELECT * FROM TT_Translate_qc_ini04_dst_test('rawfri', 'qc04_l1_to_qc_ini04_l1_m
 SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf', 1, 1500, NULL, 'dst'); -- Generates about 900 (799) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_qc_ipf05_dst_test('rawfri', 'qc05_l1_to_qc_ipf_l1_map_1500_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 500, NULL, 'dst'); -- Generates about 200 (235) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_pc_wbnp01_dst_test('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_500_dst');
 ------------------------
 -- Create an ordered VIEW on the DST table
 CREATE OR REPLACE VIEW casfri50_test.dst_all_new_ordered AS

@@ -56,12 +56,14 @@ SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt_nfl_test', 'ab_avi01_nfl')
 SELECT TT_Prepare('translation', 'ns_nsi01_nfl', '_ns_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fri01_nfl', '_mb_fri_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'mb_fri02_nfl', '_mb_fri02_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb_fli_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl_nli_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ini03_nfl', '_qc_ini03_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ini04_nfl', '_qc_ini04_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ipf05_nfl', '_qc_ipf05_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pc_panp01_nfl', '_pc_panp_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'pc_wbnp01_nfl', '_pc_wbnp_nfl_test', 'ab_avi01_nfl');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.nfl_all_new CASCADE;
 ------------------------
@@ -253,9 +255,21 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 6, 'sk_sfv', 1, 35000, NULL, 'nfl'
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_sk_sfv_nfl_test('rawfri', 'sk06_l6_to_sk_sfv_l1_map_35000_nfl');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'yt01', 2, 'yt', 1, 1850, NULL, 'nfl'); -- Generates about 600 (596) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_yt_nfl_test('rawfri', 'yt01_l2_to_yt_l1_map_1850_nfl');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt02', 2, 'yt', 1, 1850, NULL, 'nfl'); -- Generates about 600 (613) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_yt_nfl_test('rawfri', 'yt02_l2_to_yt_l1_map_1850_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns01', 3, 'ns_nsi', 1, 4000, NULL, 'nfl'); -- Generates about 800 (769) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_ns_nfl_test('rawfri', 'ns01_l3_to_ns_nsi_l1_map_4000_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns02', 3, 'ns_nsi', 1, 4000, NULL, 'nfl'); -- Generates about 800 (788) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_ns_nfl_test('rawfri', 'ns02_l3_to_ns_nsi_l1_map_4000_nfl');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ns03', 3, 'ns_nsi', 1, 3800, NULL, 'nfl'); -- Generates about 800 (797) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
@@ -265,13 +279,29 @@ SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1, 1420, NULL, 'nfl')
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_pe_nfl_test('rawfri', 'pe01_l2_to_pe_pei_l1_map_1420_nfl');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb01', 2, 'mb_fri2', 1, 5000, NULL, 'nfl'); -- Generates about 500 (501) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_mb_fri02_nfl_test('rawfri', 'mb01_l2_to_mb_fri2_l1_map_5000_nfl');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb05', 2, 'mb_fri', 1, 1250, NULL, 'nfl'); -- Generates about 500 (479) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_mb_fri_nfl_test('rawfri', 'mb05_l2_to_mb_fri_l1_map_1250_nfl');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb02', 6, 'mb_fli', 1, 4000, NULL, 'nfl'); -- Generates about 300 (300) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_mb_fli_nfl_test('rawfri', 'mb02_l6_to_mb_fli_l1_map_4000_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb04', 5, 'mb_fli', 1, 3000, NULL, 'nfl'); -- Generates about 300 (269) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_mb_fli_nfl_test('rawfri', 'mb04_l5_to_mb_fli_l1_map_3000_nfl');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb06', 6, 'mb_fli', 1, 5000, NULL, 'nfl'); -- Generates about 300 (298) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_mb_fli_nfl_test('rawfri', 'mb06_l6_to_mb_fli_l1_map_5000_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'mb07', 6, 'mb_fli', 1, 3200, NULL, 'nfl'); -- Generates about 400 (379) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_mb_fli_nfl_test('rawfri', 'mb07_l6_to_mb_fli_l1_map_3200_nfl');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 2450, NULL, 'nfl'); -- Generates about 900 (881) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
@@ -300,6 +330,38 @@ SELECT * FROM TT_Translate_pc_panp_nfl_test('rawfri', 'pc01_l5_to_pc_panp_l1_map
 SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1, NULL, NULL, 'nfl'); -- Generates 200 (14) LYR rows
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_pc_panp_nfl_test('rawfri', 'pc01_l6_to_pc_panp_l1_map_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 8, 'pc_wbnp', 1, 450, NULL, 'nfl'); -- Generates 200 (156) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l8_to_pc_wbnp_l1_map_450_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 9, 'pc_wbnp', 1, 350, NULL, 'nfl'); -- Generates 200 (179) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l9_to_pc_wbnp_l1_map_350_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 10, 'pc_wbnp', 1, 1000, NULL, 'nfl'); -- Generates 200 (225) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l10_to_pc_wbnp_l1_map_1000_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 11, 'pc_wbnp', 1, 1000, NULL, 'nfl'); -- Generates 200 (175) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l11_to_pc_wbnp_l1_map_1000_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 12, 'pc_wbnp', 1, NULL, NULL, 'nfl'); -- Generates 200 (70) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l12_to_pc_wbnp_l1_map_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 13, 'pc_wbnp', 1, NULL, NULL, 'nfl'); -- Generates 200 (23) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l13_to_pc_wbnp_l1_map_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 14, 'pc_wbnp', 1, NULL, NULL, 'nfl'); -- Generates 200 (0) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l14_to_pc_wbnp_l1_map_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pc02', 15, 'pc_wbnp', 1, NULL, NULL, 'nfl'); -- Generates 200 (164) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l15_to_pc_wbnp_l1_map_nfl');
 ------------------------
 -- Create an ordered VIEW on the NFL table
 CREATE OR REPLACE VIEW casfri50_test.nfl_all_new_ordered AS
