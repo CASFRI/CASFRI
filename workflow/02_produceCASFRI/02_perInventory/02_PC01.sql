@@ -31,7 +31,6 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PC01';
 INSERT INTO casfri50.cas_all -- 
 SELECT * FROM TT_Translate_pc01_cas('rawfri', 'pc01_l1_to_pc_panp_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_cas', 'pc01_l1_to_pc_panp_l1_map');
 COMMIT;
 
 ------------------------
@@ -49,8 +48,7 @@ COMMIT;
 --INSERT INTO casfri50.dst_all -- 
 --SELECT * FROM TT_Translate_pc01_dst('rawfri', 'pc01_l1_to_pc_panp_l1_map');
 
---SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_dst', 'pc01_l1_to_pc_panp_l1_map');
---COMMIT;
+----COMMIT;
 
 ------------------------
 -- ECO
@@ -79,7 +77,6 @@ SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1);
 INSERT INTO casfri50.eco_all -- 
 SELECT * FROM TT_Translate_pc01_eco('rawfri', 'pc01_l6_to_pc_panp_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_eco', 'pc01_l4_to_pc_panp_l1_map');
 COMMIT;
 
 ------------------------
@@ -104,7 +101,6 @@ SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1);
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l1_to_pc_panp_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l1_to_pc_panp_l1_map');
 
 -- Layer 2 using translation table
 SELECT TT_CreateMappingView('rawfri', 'pc01', 2, 'pc_panp', 1);
@@ -112,7 +108,6 @@ SELECT TT_CreateMappingView('rawfri', 'pc01', 2, 'pc_panp', 1);
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l2_to_pc_panp_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l2_to_pc_panp_l1_map');
 COMMIT;
 
 -- Layer 3 using translation table
@@ -121,7 +116,6 @@ SELECT TT_CreateMappingView('rawfri', 'pc01', 3, 'pc_panp', 1);
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_pc01_lyr('rawfri', 'pc01_l3_to_pc_panp_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_lyr', 'pc01_l3_to_pc_panp_l1_map');
 COMMIT;
 
 ------------------------
@@ -140,7 +134,6 @@ SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l4_to_pc_panp_l1_map'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l4_to_pc_panp_l1_map');
 COMMIT;
 
 -- Layer 5 using translation table
@@ -149,7 +142,6 @@ SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l5_to_pc_panp_l1_map'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l5_to_pc_panp_l1_map');
 COMMIT;
 
 -- Layer 6 using translation table
@@ -158,7 +150,6 @@ SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l6_to_pc_panp_l1_map'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l6_to_pc_panp_l1_map');
 COMMIT;
 
 ------------------------
@@ -176,7 +167,6 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PC01';
 INSERT INTO casfri50.geo_all -- 
 SELECT * FROM TT_Translate_pc01_geo('rawfri', 'pc01_l1_to_pc_panp_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_geo', 'pc01_l1_to_pc_panp_l1_map');
 COMMIT;
 
 --------------------------------------------------------------------------

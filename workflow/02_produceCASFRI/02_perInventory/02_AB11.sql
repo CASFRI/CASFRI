@@ -51,7 +51,6 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'AB11';
 INSERT INTO casfri50.cas_all
 SELECT * FROM TT_Translate_ab11_cas('rawfri', 'ab11_l1_to_ab_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab11_l1_to_ab_l1_map');
 
 ------------------------
 -- DST
@@ -67,7 +66,6 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB11';
 INSERT INTO casfri50.dst_all
 SELECT * FROM TT_Translate_ab11_dst('rawfri', 'ab11_l1_to_ab_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab11_l1_to_ab_l1_map');
 
 ------------------------
 -- ECO
@@ -83,7 +81,6 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'AB11';
 INSERT INTO casfri50.eco_all
 SELECT * FROM TT_Translate_ab11_eco('rawfri', 'ab11_l1_to_ab_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_eco', 'ab11_l1_to_ab_l1_map');
 
 ------------------------
 -- LYR
@@ -106,7 +103,6 @@ SELECT TT_CreateMappingView('rawfri', 'ab11', 1, 'ab', 1);
 INSERT INTO casfri50.lyr_all
 SELECT * FROM TT_Translate_ab11_lyr('rawfri', 'ab11_l1_to_ab_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab11_l1_to_ab_l1_map');
 
 -- Layer 2 reusing AB11 layer 1 translation table
 
@@ -115,7 +111,6 @@ SELECT TT_CreateMappingView('rawfri', 'ab11', 2, 'ab', 1);
 INSERT INTO casfri50.lyr_all
 SELECT * FROM TT_Translate_ab11_lyr('rawfri', 'ab11_l2_to_ab_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab11_l2_to_ab_l1_map');
 
 ------------------------
 -- NFL
@@ -134,7 +129,6 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'AB11';
 INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab11_nfl('rawfri', 'ab11_l3_to_ab_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab11_l3_to_ab_l1_map');
 
 -- Layer 2 reusing AB11 layer 1 translation table
 
@@ -143,7 +137,6 @@ SELECT TT_CreateMappingView('rawfri', 'ab11', 4, 'ab', 1);
 INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab11_nfl('rawfri', 'ab11_l4_to_ab_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab11_l4_to_ab_l1_map');
 
 ------------------------
 -- GEO
@@ -159,7 +152,6 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'AB11';
 INSERT INTO casfri50.geo_all
 SELECT * FROM TT_Translate_ab11_geo('rawfri', 'ab11_l1_to_ab_l1_map'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab11_l1_to_ab_l1_map');
 --------------------------------------------------------------------------
 -- Check
 SELECT 'cas_all', count(*) nb

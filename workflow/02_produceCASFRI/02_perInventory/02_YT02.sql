@@ -30,7 +30,6 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'YT02';
 INSERT INTO casfri50.cas_all -- 
 SELECT * FROM TT_Translate_yt02_cas('rawfri', 'yt02_l1_to_yt_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_cas', 'yt02_l1_to_yt_l1_map');
 
 ------------------------
 -- DST
@@ -46,7 +45,6 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'YT02';
 INSERT INTO casfri50.dst_all -- 
 SELECT * FROM TT_Translate_yt02_dst('rawfri', 'yt02_l1_to_yt_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_dst', 'yt02_l1_to_yt_l1_map');
 
 ------------------------
 -- ECO
@@ -62,7 +60,6 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'YT02';
 INSERT INTO casfri50.eco_all -- 
 SELECT * FROM TT_Translate_yt02_eco('rawfri', 'yt02_l1_to_yt_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_eco', 'yt02_l1_to_yt_l1_map');
 
 ------------------------
 -- LYR
@@ -84,7 +81,6 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'YT02';
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_yt02_lyr('rawfri', 'yt02_l1_to_yt_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_lyr', 'yt02_l1_to_yt_l1_map');
 
 ------------------------
 -- NFL
@@ -100,7 +96,6 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'YT02';
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_yt02_nfl('rawfri', 'yt02_l1_to_yt_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl', 'yt02_l1_to_yt_l1_map');
 
 ------------------------
 -- GEO
@@ -116,7 +111,6 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'YT02';
 INSERT INTO casfri50.geo_all -- 
 SELECT * FROM TT_Translate_yt02_geo('rawfri', 'yt02_l1_to_yt_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_geo', 'yt02_l1_to_yt_l1_map');
 --------------------------------------------------------------------------
 -- Check
 SELECT 'cas_all' AS table, count(*) nb

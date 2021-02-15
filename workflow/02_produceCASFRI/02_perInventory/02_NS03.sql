@@ -30,7 +30,6 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'NS03';
 INSERT INTO casfri50.cas_all -- 
 SELECT * FROM TT_Translate_ns03_cas('rawfri', 'ns03_l1_to_ns_nsi_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_cas', 'ns03_l1_to_ns_nsi_l1_map');
 
 ------------------------
 -- DST
@@ -46,7 +45,6 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'NS03';
 INSERT INTO casfri50.dst_all -- 
 SELECT * FROM TT_Translate_ns03_dst('rawfri', 'ns03_l1_to_ns_nsi_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_dst', 'ns03_l1_to_ns_nsi_l1_map');
 
 ------------------------
 -- ECO
@@ -62,7 +60,6 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'NS03';
 INSERT INTO casfri50.eco_all -- 
 SELECT * FROM TT_Translate_ns03_eco('rawfri', 'ns03_l1_to_ns_nsi_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_eco', 'ns03_l1_to_ns_nsi_l1_map');
 
 ------------------------
 -- LYR
@@ -85,7 +82,6 @@ SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1);
 INSERT INTO casfri50.lyr_all -- 1h45m
 SELECT * FROM TT_Translate_ns03_lyr('rawfri', 'ns03_l1_to_ns_nsi_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_lyr', 'ns03_l1_to_ns_nsi_l1_map');
 
 -- Layer 2
 
@@ -94,7 +90,6 @@ SELECT TT_CreateMappingView('rawfri', 'ns03', 2, 'ns_nsi', 1);
 INSERT INTO casfri50.lyr_all -- 1h34m
 SELECT * FROM TT_Translate_ns03_lyr('rawfri', 'ns03_l2_to_ns_nsi_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_lyr', 'ns03_l2_to_ns_nsi_l1_map');
 
 ------------------------
 -- NFL
@@ -110,7 +105,6 @@ SELECT TT_CreateMappingView('rawfri', 'ns03', 3, 'ns_nsi', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_ns03_nfl('rawfri', 'ns03_l3_to_ns_nsi_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_nfl', 'ns03_l3_to_ns_nsi_l1_map');
 
 ------------------------
 -- GEO
@@ -126,7 +120,6 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NS03';
 INSERT INTO casfri50.geo_all -- 
 SELECT * FROM TT_Translate_ns03_geo('rawfri', 'ns03_l1_to_ns_nsi_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_geo', 'ns03_l1_to_ns_nsi_l1_map');
 --------------------------------------------------------------------------
 -- Check
 SELECT 'cas_all', count(*) nb

@@ -32,7 +32,6 @@ SELECT * FROM translation_devel.mb04_fli01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'mb04_fli01_cas_devel', '_mb04_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb04', 'mb_fli', 200);
 SELECT * FROM TT_Translate_mb04_cas_devel('rawfri', 'mb04_l1_to_mb_fli_l1_map_200');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'mb04_fli01_cas_devel');
 
 -- LYR1 ATTRIBUTES
 SELECT * FROM translation.mb_fli01_lyr;
@@ -44,7 +43,6 @@ SELECT * FROM translation_devel.mb04_fli01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'mb04_fli01_lyr_devel', '_mb04_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb04', 1, 'mb_fli', 1, 200);
 SELECT * FROM TT_Translate_mb04_lyr_devel('rawfri', 'mb04_l1_to_mb_fli_l1_map_200');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'mb04_fli01_lyr_devel');
 
 -- LYR2
 SELECT TT_CreateMappingView('rawfri', 'mb04', 2, 'mb_fli', 1, 200);
@@ -67,7 +65,6 @@ SELECT * FROM translation_devel.mb04_fli01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'mb04_fli01_dst_devel', '_mb04_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb04', 1, 'mb_fli', 1, 200);
 SELECT * FROM TT_Translate_mb04_dst_devel('rawfri', 'mb04_l1_to_mb_fli_l1_map_200'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'mb04_fli01_dst_devel');
 
 SELECT a.cas_id, b.dist_type_1, a.dist_type_1, a.dist_type_2 
 FROM TT_Translate_mb04_dst_devel('rawfri', 'mb04_l1_to_mb_fli_l1_map_200') a, rawfri.mb04_l1_to_mb_fli_l1_map_200 b
@@ -83,7 +80,6 @@ SELECT * FROM translation_devel.mb04_fli01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'mb04_fli01_nfl_devel', '_mb04_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb04', 6, 'mb_fli', 1, 200);
 SELECT * FROM TT_Translate_mb04_nfl_devel('rawfri', 'mb04_l6_to_mb_fli_l1_map_200');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'mb04_fli01_nfl_devel');
 
 -- ECO ATTRIBUTES
 SELECT * FROM translation.mb_fli01_eco;
@@ -94,7 +90,6 @@ SELECT * FROM translation_devel.mb04_fli01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'mb04_fli01_eco_devel', '_mb04_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb04', 1, 'mb_fli', 1, 200);
 SELECT * FROM TT_Translate_mb04_eco_devel('rawfri', 'mb04_l1_to_mb_fli_l1_map_200'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'mb04_fli01_nfl_devel');
 
 -- GEO ATTRIBUTES
 SELECT * FROM translation.mb_fli01_geo;
@@ -105,7 +100,6 @@ SELECT * FROM translation_devel.mb04_fli01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'mb04_fli01_geo_devel', '_mb04_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb04', 1, 'mb_fli', 1, 200);
 SELECT * FROM TT_Translate_mb04_geo_devel('rawfri', 'mb04_l1_to_mb_fli_l1_map_200'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'mb04_fli01_geo_devel');
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table

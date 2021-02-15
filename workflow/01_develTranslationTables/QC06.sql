@@ -110,32 +110,24 @@ SELECT TT_Prepare('translation_devel', 'qc06_ini04_geo_devel', '_qc06_geo_devel'
 -- Translate the samples
 SELECT TT_CreateMappingView('rawfri', 'qc06', 1, 'qc_ini04', 1, 200);
 SELECT * FROM TT_Translate_qc06_cas_devel('rawfri', 'qc06_l1_to_qc_ini04_l1_map_200'); -- 6 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc06_ini04_cas_devel', 'qc06_l1_to_qc_ini04_l1_map_200');
 
 SELECT * FROM TT_Translate_qc06_dst_devel('rawfri', 'qc06_l1_to_qc_ini04_l1_map_200'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc06_ini04_dst_devel', 'qc06_l1_to_qc_ini04_l1_map_200');
 
 SELECT * FROM TT_Translate_qc06_eco_devel('rawfri', 'qc06_l1_to_qc_ini04_l1_map_200'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc06_ini04_eco_devel', 'qc06_l1_to_qc_ini04_l1_map_200');
 --Layer 1
 SELECT * FROM TT_Translate_qc06_lyr_devel('rawfri', 'qc06_l1_to_qc_ini04_l1_map_200'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc06_ini04_lyr_devel', 'qc06_l1_to_qc_ini04_l1_map_200');
 --Layer 2
 SELECT TT_CreateMappingView('rawfri', 'qc06', 2, 'qc_ini04', 1, 200);
 SELECT * FROM TT_Translate_qc06_lyr_devel('rawfri', 'qc06_l2_to_qc_ini04_l1_map_200'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc06_ini04_lyr_devel', 'qc06_l2_to_qc_ini04_l1_map_200');
 
 -- LYR layer 2 doesn't exist in QC04
 SELECT TT_CreateMappingView('rawfri', 'qc06', 2, 'qc_ini04', 1, 20000);
 SELECT * FROM TT_Translate_qc06_lyr_devel('rawfri', 'qc06_l2_to_qc_ini04_l1_map_20000'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc06_ini04_lyr_devel', 'qc06_l2_to_qc_ini04_l1_map_20000');
 
 SELECT TT_CreateMappingView('rawfri', 'qc06', 3, 'qc_ini04', 1, 200);
 SELECT * FROM TT_Translate_qc06_nfl_devel('rawfri', 'qc06_l3_to_qc_ini04_l1_map_200'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc06_ini04_nfl_devel', 'qc06_l3_to_qc_ini04_l1_map_200');
 
 SELECT * FROM TT_Translate_qc06_geo_devel('rawfri', 'qc06_l1_to_qc_ini04_l1_map_200'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc06_ini04_geo_devel', 'qc06_l1_to_qc_ini04_l1_map_200');
 
 --------------------------------------------------------------------------
 SELECT TT_DeleteAllLogs('translation_devel');

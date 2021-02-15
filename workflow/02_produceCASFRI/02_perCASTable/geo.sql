@@ -53,7 +53,6 @@ CREATE TABLE casfri50.geo_all AS
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab03_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab03_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB06
 BEGIN;
@@ -63,7 +62,6 @@ CREATE TABLE casfri50.geo_all AS
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab06_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab06_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB07
 BEGIN;
@@ -73,7 +71,6 @@ CREATE TABLE casfri50.geo_all AS
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab07_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab07_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB08
 BEGIN;
@@ -83,7 +80,6 @@ CREATE TABLE casfri50.geo_all AS
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab08_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab08_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB10
 BEGIN;
@@ -93,7 +89,6 @@ CREATE TABLE casfri50.geo_all AS
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab10_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab10_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB11
 BEGIN;
@@ -103,7 +98,6 @@ CREATE TABLE casfri50.geo_all AS
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab11_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab11_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB16
 BEGIN;
@@ -113,7 +107,6 @@ INSERT INTO casfri50.geo_all
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab16_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab16_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB25
 BEGIN;
@@ -123,7 +116,6 @@ INSERT INTO casfri50.geo_all
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab25_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab25_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB29
 BEGIN;
@@ -133,7 +125,6 @@ INSERT INTO casfri50.geo_all
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab29_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab29_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate AB30
 BEGIN;
@@ -143,7 +134,6 @@ INSERT INTO casfri50.geo_all
 SELECT * FROM TT_Translate_ab_geo('rawfri', 'ab30_l1_to_ab_l1_map_geo'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab30_l1_to_ab_l1_map_geo');
 ------------------------
 -- Translate NB01 using the NB generic translation table
 BEGIN;
@@ -153,7 +143,6 @@ INSERT INTO casfri50.geo_all -- 48m52s
 SELECT * FROM TT_Translate_nb_geo('rawfri', 'nb01_l1_to_nb_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_geo', 'nb01_l1_to_nb_l1_map_geo');
 ------------------------
 -- Translate NB02 using the NB generic translation table
 BEGIN;
@@ -163,7 +152,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_nb_geo('rawfri', 'nb02_l1_to_nb_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_geo', 'nb02_l1_to_nb_l1_map_geo');
 ------------------------
 -- Translate BC08
 BEGIN;
@@ -173,7 +161,6 @@ INSERT INTO casfri50.geo_all --4h59m
 SELECT * FROM TT_Translate_bc_geo('rawfri', 'bc08_l1_to_bc_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_geo', 'bc08_l1_to_bc_l1_map_geo');
 ------------------------
 -- Translate BC10
 BEGIN;
@@ -183,7 +170,6 @@ INSERT INTO casfri50.geo_all --*h**m
 SELECT * FROM TT_Translate_bc_geo('rawfri', 'bc10_l1_to_bc_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_geo', 'bc10_l1_to_bc_l1_map_geo');
 ------------------------
 -- Translate NT01 using the NT generic translation table
 BEGIN;
@@ -193,7 +179,6 @@ INSERT INTO casfri50.geo_all -- 20m
 SELECT * FROM TT_Translate_nt_geo('rawfri', 'nt01_l1_to_nt_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_geo', 'nt01_l1_to_nt_l1_map_geo');
 ------------------------
 -- Translate NT03 using NT generic translation table
 BEGIN;
@@ -203,7 +188,6 @@ INSERT INTO casfri50.geo_all -- 22m
 SELECT * FROM TT_Translate_nt_geo('rawfri', 'nt03_l1_to_nt_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_geo', 'nt03_l1_to_nt_l1_map_geo');
 ------------------------
 -- Translate ON02 using ON generic translation table
 BEGIN;
@@ -213,7 +197,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_on_geo('rawfri', 'on02_l1_to_on_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_geo', 'on02_l1_to_on_l1_map_geo');
 ------------------------
 -- Translate SK01 using UTM translation table
 BEGIN;
@@ -223,7 +206,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_sk_utm_geo('rawfri', 'sk01_l1_to_sk_utm_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_geo', 'sk01_l1_to_sk_utm_l1_map_geo');
 ------------------------
 -- Translate SK02 using SFV translation table
 BEGIN;
@@ -233,7 +215,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_sk_sfv_geo('rawfri', 'sk02_l1_to_sk_sfv_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_geo', 'sk02_l1_to_sk_sfv_l1_map_geo');
 ------------------------
 -- Translate SK03 using SFV translation table
 BEGIN;
@@ -243,7 +224,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_sk_sfv_geo('rawfri', 'sk03_l1_to_sk_sfv_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_geo', 'sk03_l1_to_sk_sfv_l1_map_geo');
 ------------------------
 -- Translate SK04 using SFV translation table
 BEGIN;
@@ -253,7 +233,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_sk_sfv_geo('rawfri', 'sk04_l1_to_sk_sfv_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_geo', 'sk04_l1_to_sk_sfv_l1_map_geo');
 ------------------------
 -- Translate SK05 using SFV translation table
 BEGIN;
@@ -263,7 +242,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_sk_sfv_geo('rawfri', 'sk05_l1_to_sk_sfv_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_geo', 'sk05_l1_to_sk_sfv_l1_map_geo');
 ------------------------
 -- Translate SK06 using SFV translation table
 BEGIN;
@@ -273,7 +251,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_sk_sfv_geo('rawfri', 'sk06_l1_to_sk_sfv_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_geo', 'sk06_l1_to_sk_sfv_l1_map_geo');
 ------------------------
 -- Translate YT02 using YVI translation table
 BEGIN;
@@ -283,7 +260,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_yt_geo('rawfri', 'yt02_l1_to_yt_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_geo', 'yt02_l1_to_yt_l1_map_geo');
 ------------------------
 -- Translate NS03 using NS_NSI translation table
 BEGIN;
@@ -293,7 +269,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_ns_geo('rawfri', 'ns03_l1_to_ns_nsi_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_geo', 'ns03_l1_to_ns_nsi_l1_map_geo');
 ------------------------
 -- Translate PE01 using PE_PEI translation table
 BEGIN;
@@ -303,7 +278,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_pe_geo('rawfri', 'pe01_l1_to_pe_pei_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_geo', 'pe01_l1_to_pe_pei_l1_map_geo');
 ------------------------
 -- Translate MB05 using MB_FRI translation table
 BEGIN;
@@ -313,7 +287,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_mb_fri_geo('rawfri', 'mb05_l1_to_mb_fri_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_geo', 'mb05_l1_to_mb_fri_l1_map_geo');
 ------------------------
 -- Translate MB06 using MB_FLI translation table
 BEGIN;
@@ -323,7 +296,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_mb_fli_geo('rawfri', 'mb06_l1_to_mb_fli_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_geo', 'mb06_l1_to_mb_fli_l1_map_geo');
 ------------------------
 -- Translate NL01 using NL_FLI translation table
 BEGIN;
@@ -333,7 +305,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_nl_geo('rawfri', 'nl01_l1_to_nl_nli_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_geo', 'nl01_l1_to_nl_nli_l1_map_geo');
 ------------------------
 -- Translate QC03 using QC_INI03 translation table
 BEGIN;
@@ -343,7 +314,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_qc03_geo('rawfri', 'qc03_l1_to_qc_ini03_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_geo', 'qc03_l1_to_qc_ini03_l1_map_geo');
 ------------------------
 -- Translate QC04 using QC_INI04 translation table
 BEGIN;
@@ -353,7 +323,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_qc04_geo('rawfri', 'qc04_l1_to_qc_ini04_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_geo', 'qc04_l1_to_qc_ini04_l1_map_geo');
 ------------------------
 -- Translate QC05 using QC_IPF05 translation table
 BEGIN;
@@ -363,7 +332,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_qc05_geo('rawfri', 'qc05_l1_to_qc_ipf_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_geo', 'qc05_l1_to_qc_ipf_l1_map_geo');
 ------------------------
 -- Translate PC01 using PC_PANP translation table
 BEGIN;
@@ -373,7 +341,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_pc01_geo('rawfri', 'pc01_l1_to_pc_panp_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_geo', 'pc01_l1_to_pc_panp_l1_map_geo');
 
 ------------------------
 -- Translate PC02 using PC_WBNP translation table
@@ -384,7 +351,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_pc02_geo('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_geo', 'pc02_l1_to_pc_wbnp_l1_map_geo');
 ------------------------
 -- Translate QC02 using QC_INI03 translation table
 BEGIN;
@@ -394,7 +360,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_qc02_geo('rawfri', 'qc02_l1_to_qc_ini03_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_geo', 'qc02_l1_to_qc_ini03_l1_map_geo');
 ------------------------
 -- Translate QC04 using QC_INI04 translation table
 BEGIN;
@@ -404,7 +369,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_qc06_geo('rawfri', 'qc06_l1_to_qc_ini04_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_geo', 'qc06_l1_to_qc_ini04_l1_map_geo');
 ------------------------
 -- Translate QC05 using QC_IPF05 translation table
 BEGIN;
@@ -414,7 +378,6 @@ INSERT INTO casfri50.geo_all --
 SELECT * FROM TT_Translate_qc07_geo('rawfri', 'qc07_l1_to_qc_ipf_l1_map_geo');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_geo', 'qc07_l1_to_qc_ipf_l1_map_geo');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

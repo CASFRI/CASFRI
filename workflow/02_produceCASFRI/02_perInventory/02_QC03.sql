@@ -34,7 +34,6 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'QC03';
 INSERT INTO casfri50.cas_all -- 
 SELECT * FROM TT_Translate_qc03_cas('rawfri', 'qc03_l1_to_qc_ini03_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_cas', 'qc03_l1_to_qc_ini03_l1_map');
 
 ------------------------
 -- DST
@@ -50,7 +49,6 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'QC03';
 INSERT INTO casfri50.dst_all -- 
 SELECT * FROM TT_Translate_qc03_dst('rawfri', 'qc03_l1_to_qc_ini03_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_dst', 'qc03_l1_to_qc_ini03_l1_map');
 
 ------------------------
 -- ECO
@@ -66,7 +64,6 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'QC03';
 INSERT INTO casfri50.eco_all -- 
 SELECT * FROM TT_Translate_qc03_eco('rawfri', 'qc03_l1_to_qc_ini03_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_eco', 'qc03_l1_to_qc_ini03_l1_map');
 
 ------------------------
 -- LYR
@@ -90,7 +87,6 @@ SELECT TT_CreateMappingView('rawfri', 'qc03', 1, 'qc_ini03', 1);
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_qc03_lyr('rawfri', 'qc03_l1_to_qc_ini03_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_lyr', 'qc03_l1_to_qc_ini03_l1_map');
 
 -- Layer 2 using translation table
 SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'qc_ini03', 1);
@@ -98,7 +94,6 @@ SELECT TT_CreateMappingView('rawfri', 'qc03', 2, 'qc_ini03', 1);
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_qc03_lyr('rawfri', 'qc03_l2_to_qc_ini03_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_lyr', 'qc03_l2_to_qc_ini03_l1_map');
 
 ------------------------
 -- NFL
@@ -114,7 +109,6 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'QC03';
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_qc03_nfl('rawfri', 'qc03_l3_to_qc_ini03_l1_map'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_nfl', 'qc03_l3_to_qc_ini03_l1_map');
 
 ------------------------
 -- GEO
@@ -130,7 +124,6 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'QC03';
 INSERT INTO casfri50.geo_all -- 
 SELECT * FROM TT_Translate_qc03_geo('rawfri', 'qc03_l1_to_qc_ini03_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_geo', 'qc03_l1_to_qc_ini03_l1_map');
 --------------------------------------------------------------------------
 -- Check
 SELECT 'cas_all', count(*) nb

@@ -28,7 +28,6 @@ SELECT * FROM translation_devel.yt02_yvi01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_cas_devel', '_yt02_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200);
 SELECT * FROM TT_Translate_yt02_cas_devel('rawfri', 'yt02_l1_to_yt_l1_map_200'); -- 5 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_cas_devel');
 
 
 -- LYR ATTRIBUTES
@@ -39,7 +38,6 @@ SELECT * FROM translation_devel.yt02_yvi01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_lyr_devel', '_yt02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, 200);
 SELECT * FROM TT_Translate_yt02_lyr_devel('rawfri', 'yt02_l1_to_yt_l1_map_200'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_lyr_devel');
 
 
 -- DST ATTRIBUTES
@@ -50,7 +48,6 @@ SELECT * FROM translation_devel.yt02_yvi01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_dst_devel', '_yt02_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, 200);
 SELECT * FROM TT_Translate_yt02_dst_devel('rawfri', 'yt02_l1_to_yt_l1_map_200'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_dst_devel');
 
 
 -- NFL ATTRIBUTES
@@ -62,7 +59,6 @@ SELECT * FROM translation_devel.yt02_yvi01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_nfl_devel', '_yt02_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'yt02', 2, 'yt', 1, 200);
 SELECT * FROM TT_Translate_yt02_nfl_devel('rawfri', 'yt02_l2_to_yt_l1_map_200'); -- 3 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_nfl_devel');
 
 
 -- ECO ATTRIBUTES
@@ -74,7 +70,6 @@ SELECT * FROM translation_devel.yt02_yvi01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_eco_devel', '_yt02_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200);
 SELECT * FROM TT_Translate_yt02_eco_devel('rawfri', 'yt02_l1_to_yt_l1_map_200');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'on01_oni01_eco_devel');
 
 
 -- GEO ATTRIBUTES
@@ -86,7 +81,6 @@ SELECT * FROM translation_devel.yt02_yvi01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'yt02_yvi01_geo_devel', '_yt02_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', 200);
 SELECT * FROM TT_Translate_yt02_geo_devel('rawfri', 'yt02_l1_to_yt_l1_map_200'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'yt02_yvi01_geo_devel');
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table

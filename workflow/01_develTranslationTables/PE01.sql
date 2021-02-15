@@ -32,7 +32,6 @@ SELECT * FROM translation_devel.pe01_pei01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'pe01_pei01_cas_devel', '_pe01_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei', 200);
 SELECT * FROM TT_Translate_pe01_cas_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_cas_devel');
 
 -- LYR1 ATTRIBUTES
 SELECT * FROM translation.pe_pei01_lyr;
@@ -44,7 +43,6 @@ SELECT * FROM translation_devel.pe01_pei01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'pe01_pei01_lyr_devel', '_pe01_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
 SELECT * FROM TT_Translate_pe01_lyr_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_lyr_devel');
 
 -- DST ATTRIBUTES
 SELECT * FROM translation.pe_pei01_dst;
@@ -55,7 +53,6 @@ SELECT * FROM translation_devel.pe01_pei01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'pe01_pei01_dst_devel', '_pe01_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
 SELECT * FROM TT_Translate_pe01_dst_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_dst_devel');
 
 SELECT a.cas_id, b.dist_type_1, a.dist_type_1, a.dist_type_2 
 FROM TT_Translate_pe01_dst_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200') a, rawfri.pe01_l1_to_pe_pei_l1_map_200 b
@@ -70,7 +67,6 @@ SELECT * FROM translation_devel.pe01_pei01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'pe01_pei01_nfl_devel', '_pe01_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1, 200);
 SELECT * FROM TT_Translate_pe01_nfl_devel('rawfri', 'pe01_l2_to_pe_pei_l1_map_200');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_nfl_devel');
 
 -- ECO ATTRIBUTES
 SELECT * FROM translation.pe_pei01_eco;
@@ -81,7 +77,6 @@ SELECT * FROM translation_devel.pe01_pei01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'pe01_pei01_eco_devel', '_pe01_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
 SELECT * FROM TT_Translate_pe01_eco_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_eco_devel');
 
 -- GEO ATTRIBUTES
 SELECT * FROM translation.pe_pei01_geo;
@@ -92,7 +87,6 @@ SELECT * FROM translation_devel.pe01_pei01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'pe01_pei01_geo_devel', '_pe01_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 200);
 SELECT * FROM TT_Translate_pe01_geo_devel('rawfri', 'pe01_l1_to_pe_pei_l1_map_200'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pe01_pei01_geo_devel');
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
