@@ -123,9 +123,9 @@ SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, NULL, 'eco'); -- Genera
 INSERT INTO casfri50_test.eco_all_new
 SELECT * FROM TT_Translate_nt_eco_test('rawfri', 'nt01_l1_to_nt_l1_map_500_eco');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 500, NULL, 'eco'); -- Generates 0 ECO rows
+SELECT TT_CreateMappingView('rawfri', 'nt03', 'nt', 500, NULL, 'eco'); -- Generates 0 ECO rows
 INSERT INTO casfri50_test.eco_all_new 
-SELECT * FROM TT_Translate_nt_eco_test('rawfri', 'nt02_l1_to_nt_l1_map_500_eco');
+SELECT * FROM TT_Translate_nt_eco_test('rawfri', 'nt03_l1_to_nt_l1_map_500_eco');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 1000, NULL, 'eco'); -- Generates 0 ECO rows
 INSERT INTO casfri50_test.eco_all_new 
@@ -294,5 +294,5 @@ SELECT * FROM casfri50_test.eco_all_new
 -- ORDER BY all columns to ensure that only identical row can be intermixed
 ORDER BY cas_id, wetland_type, wet_veg_cover, wet_landform_mod, wet_local_mod, eco_site;
 ------------------------
-SELECT count(*) FROM casfri50_test.eco_all_new; -- 6266, 2m
+SELECT count(*) FROM casfri50_test.eco_all_new; -- 6321, 2m
 -------------------------------------------------------

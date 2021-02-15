@@ -49,9 +49,8 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'NL01';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
-SELECT * FROM TT_Translate_nl01_cas('rawfri', 'nl01_l1_to_nl_nli_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nl01_cas('rawfri', 'nl01_l1_to_nl_nli_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_cas', 'nl01_l1_to_nl_nli_l1_map');
 
 ------------------------
 -- DST
@@ -65,9 +64,8 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'NL01';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_nl01_dst('rawfri', 'nl01_l1_to_nl_nli_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nl01_dst('rawfri', 'nl01_l1_to_nl_nli_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_dst', 'nl01_l1_to_nl_nli_l1_map');
 
 ------------------------
 -- ECO
@@ -81,9 +79,8 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'NL01';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_nl01_eco('rawfri', 'nl01_l1_to_nl_nli_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nl01_eco('rawfri', 'nl01_l1_to_nl_nli_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_eco', 'nl01_l1_to_nl_nli_l1_map');
 
 ------------------------
 -- LYR
@@ -103,9 +100,8 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NL01';
 
 -- Add translated ones
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_nl01_lyr('rawfri', 'nl01_l1_to_nl_nli_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nl01_lyr('rawfri', 'nl01_l1_to_nl_nli_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_lyr', 'nl01_l1_to_nl_nli_l1_map');
 
 ------------------------
 -- NFL
@@ -119,9 +115,8 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NL01';
 
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nl01_nfl('rawfri', 'nl01_l1_to_nl_nli_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nl01_nfl('rawfri', 'nl01_l1_to_nl_nli_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_nfl', 'nl01_l1_to_nl_nli_l1_map');
 
 ------------------------
 -- GEO
@@ -135,9 +130,8 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NL01';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_nl01_geo('rawfri', 'nl01_l1_to_nl_nli_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nl01_geo('rawfri', 'nl01_l1_to_nl_nli_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_geo', 'nl01_l1_to_nl_l1_map');
 --------------------------------------------------------------------------
 -- Check
 SELECT 'cas_all' AS table, count(*) nb

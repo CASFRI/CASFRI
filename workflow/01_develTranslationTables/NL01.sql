@@ -27,9 +27,7 @@ CREATE TABLE translation_devel.nl01_nli01_cas_devel AS SELECT * FROM translation
 SELECT * FROM translation_devel.nl01_nli01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'nl01_nli01_cas_devel', '_nl01_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', 200);
-SELECT * FROM TT_Translate_nl01_cas_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200', 'ogc_fid'); -- 5 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'nl01_nli01_cas_devel', 'nl01_l1_to_nl_nli_l1_map_200')
-
+SELECT * FROM TT_Translate_nl01_cas_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200'); -- 5 s.
 
 -- LYR ATTRIBUTES
 SELECT * FROM translation.nl_nli01_lyr;
@@ -38,9 +36,7 @@ CREATE TABLE translation_devel.nl01_nli01_lyr_devel AS SELECT * FROM translation
 SELECT * FROM translation_devel.nl01_nli01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'nl01_nli01_lyr_devel', '_nl01_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 200);
-SELECT * FROM TT_Translate_nl01_lyr_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'nl01_nli01_lyr_devel', 'nl01_l1_to_nl_nli_l1_map_200') ORDER BY message;
-
+SELECT * FROM TT_Translate_nl01_lyr_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200'); -- 7 s.
 
 -- DST ATTRIBUTES
 SELECT * FROM translation.nl_nli01_dst;
@@ -49,8 +45,7 @@ CREATE TABLE translation_devel.nl01_nli01_dst_devel AS SELECT * FROM translation
 SELECT * FROM translation_devel.nl01_nli01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'nl01_nli01_dst_devel', '_nl01_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 2000);
-SELECT * FROM TT_Translate_nl01_dst_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_2000', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'nl01_nli01_dst_devel', 'nl01_l1_to_nl_nli_l1_map_2000');
+SELECT * FROM TT_Translate_nl01_dst_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_2000'); -- 4 s.
 
 
 -- NFL ATTRIBUTES
@@ -61,8 +56,7 @@ SELECT * FROM translation.nl_nli01_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.nl01_nli01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'nl01_nli01_nfl_devel', '_nl01_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl01', 2, 'nl_nli', 1, 200);
-SELECT * FROM TT_Translate_nl01_nfl_devel('rawfri', 'nl01_l2_to_nl_nli_l1_map_200', 'ogc_fid'); -- 3 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'nl01_nli01_nfl_devel', 'nl01_l2_to_nl_nli_l1_map_200');
+SELECT * FROM TT_Translate_nl01_nfl_devel('rawfri', 'nl01_l2_to_nl_nli_l1_map_200'); -- 3 s.
 
 
 -- ECO ATTRIBUTES
@@ -73,8 +67,7 @@ SELECT * FROM translation.nl_nli01_eco; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.nl01_nli01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'nl01_nli01_eco_devel', '_nl01_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', 200);
-SELECT * FROM TT_Translate_nl01_eco_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'nl01_nli01_eco_devel', 'nl01_l1_to_nl_nli_l1_map_200');
+SELECT * FROM TT_Translate_nl01_eco_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200');
 
 
 -- GEO ATTRIBUTES
@@ -85,8 +78,7 @@ SELECT * FROM translation.nl_nli01_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.nl01_nli01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'nl01_nli01_geo_devel', '_nl01_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', 200);
-SELECT * FROM TT_Translate_nl01_geo_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200', 'ogc_fid'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'nl01_nli01_geo_devel', 'nl01_l1_to_nl_nli_l1_map_200');
+SELECT * FROM TT_Translate_nl01_geo_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200'); -- 2 s.
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table

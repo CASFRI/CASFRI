@@ -129,9 +129,9 @@ SELECT TT_CreateMappingView('rawfri', 'nt01', 1, 'nt', 1, 1870, NULL, 'dst'); --
 INSERT INTO casfri50_test.dst_all_new
 SELECT * FROM TT_Translate_nt_dst_test('rawfri', 'nt01_l1_to_nt_l1_map_1870_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nt02', 1, 'nt', 1, 1300, NULL, 'dst'); -- Generates about 500 (521) DST rows
+SELECT TT_CreateMappingView('rawfri', 'nt03', 1, 'nt', 1, 1300, NULL, 'dst'); -- Generates about 500 (521) DST rows
 INSERT INTO casfri50_test.dst_all_new 
-SELECT * FROM TT_Translate_nt_dst_test('rawfri', 'nt02_l1_to_nt_l1_map_1300_dst');
+SELECT * FROM TT_Translate_nt_dst_test('rawfri', 'nt03_l1_to_nt_l1_map_1300_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'on02', 1, 'on', 1, 1800, NULL, 'dst'); -- Generates about 1000 (985) DST rows
 INSERT INTO casfri50_test.dst_all_new 
@@ -234,5 +234,5 @@ ORDER BY cas_id, layer,
          dist_type_2, dist_year_2, dist_ext_upper_2, dist_ext_lower_2,
          dist_type_3, dist_year_3, dist_ext_upper_3, dist_ext_lower_3;
 ------------------------
-SELECT count(*) FROM casfri50_test.dst_all_new; -- 16775, 23m
+SELECT count(*) FROM casfri50_test.dst_all_new; -- 16798, 23m
 -------------------------------------------------------

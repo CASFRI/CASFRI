@@ -33,9 +33,8 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'QC05';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
-SELECT * FROM TT_Translate_qc05_cas('rawfri', 'qc05_l1_to_qc_ipf_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_cas('rawfri', 'qc05_l1_to_qc_ipf_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_cas', 'qc05_l1_to_qc_ipf_l1_map');
 COMMIT;
 
 ------------------------
@@ -51,9 +50,8 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'QC05';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_qc05_dst('rawfri', 'qc05_l1_to_qc_ipf_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_dst('rawfri', 'qc05_l1_to_qc_ipf_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_dst', 'qc05_l1_to_qc_ipf_l1_map');
 COMMIT;
 
 ------------------------
@@ -69,9 +67,8 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'QC05';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_qc05_eco('rawfri', 'qc05_l1_to_qc_ipf_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_eco('rawfri', 'qc05_l1_to_qc_ipf_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_eco', 'qc05_l1_to_qc_ipf_l1_map');
 COMMIT;
 
 ------------------------
@@ -95,17 +92,15 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'QC05';
 SELECT TT_CreateMappingView('rawfri', 'qc05', 1, 'qc_ipf', 1);
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l1_to_qc_ipf_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l1_to_qc_ipf_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_lyr', 'qc05_l1_to_qc_ipf_l1_map');
 
 -- Layer 2 using translation table
 SELECT TT_CreateMappingView('rawfri', 'qc05', 2, 'qc_ipf', 1);
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l2_to_qc_ipf_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_lyr('rawfri', 'qc05_l2_to_qc_ipf_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_lyr', 'qc05_l2_to_qc_ipf_l1_map');
 COMMIT;
 
 ------------------------
@@ -121,9 +116,8 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'QC05';
 
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_qc05_nfl('rawfri', 'qc05_l3_to_qc_ipf_l1_map', 'ogc_fid'); 
+SELECT * FROM TT_Translate_qc05_nfl('rawfri', 'qc05_l3_to_qc_ipf_l1_map'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_nfl', 'qc05_l3_to_qc_ipf_l1_map');
 COMMIT;
 
 ------------------------
@@ -139,9 +133,8 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'QC05';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_qc05_geo('rawfri', 'qc05_l1_to_qc_ipf_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_qc05_geo('rawfri', 'qc05_l1_to_qc_ipf_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_geo', 'qc05_l1_to_qc_ipf_l1_map');
 COMMIT;
 
 --------------------------------------------------------------------------

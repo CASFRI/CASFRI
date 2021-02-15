@@ -28,9 +28,8 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PE01';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
-SELECT * FROM TT_Translate_pe01_cas('rawfri', 'pe01_l1_to_pe_pei_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pe01_cas('rawfri', 'pe01_l1_to_pe_pei_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_cas', 'pe01_l1_to_pe_pei_l1_map');
 
 ------------------------
 -- DST
@@ -44,9 +43,8 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PE01';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_pe01_dst('rawfri', 'pe01_l1_to_pe_pei_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pe01_dst('rawfri', 'pe01_l1_to_pe_pei_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_dst', 'pe01_l1_to_pe_pei_l1_map');
 
 ------------------------
 -- ECO
@@ -60,9 +58,8 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PE01';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_pe01_eco('rawfri', 'pe01_l1_to_pe_pei_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pe01_eco('rawfri', 'pe01_l1_to_pe_pei_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_eco', 'pe01_l1_to_pe_pei_l1_map');
 
 ------------------------
 -- LYR
@@ -83,9 +80,8 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'PE01';
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1);
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_pe01_lyr('rawfri', 'pe01_l1_to_pe_pei_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pe01_lyr('rawfri', 'pe01_l1_to_pe_pei_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_lyr', 'pe01_l1_to_pe_pei_l1_map');
 
 ------------------------
 -- NFL
@@ -99,14 +95,13 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'PE01';
 SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1);
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_pe01_nfl('rawfri', 'pe01_l2_to_pe_pei_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pe01_nfl('rawfri', 'pe01_l2_to_pe_pei_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_nfl', 'pe01_l2_to_pe_pei_l1_map');
 
 ------------------------
 -- GEO
 ------------------------
-SELECT TT_Prepare('translation', 'pe_pei01_geo', '_pe01_geo', 'ab_avi01_geo'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'pe_pei01_geo', '_pe01_geo', 'ab_avi01_geo');
 
 SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei');
 
@@ -115,9 +110,8 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PE01';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_pe01_geo('rawfri', 'pe01_l1_to_pe_pei_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_pe01_geo('rawfri', 'pe01_l1_to_pe_pei_l1_map');
 
-SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_geo', 'pe01_l1_to_pe_pei_l1_map');
 --------------------------------------------------------------------------
 -- Check
 SELECT 'cas_all', count(*) nb

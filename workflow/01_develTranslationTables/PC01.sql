@@ -32,8 +32,7 @@ SELECT * FROM translation.pc_panp01_cas
 SELECT * FROM translation_devel.pc01_panp01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'pc01_panp01_cas_devel', '_pc01_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'pc01', 'pc_panp', 200);
-SELECT * FROM TT_Translate_pc01_cas_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pc_panp01_cas_devel');
+SELECT * FROM TT_Translate_pc01_cas_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200');
 
 -- DST ATTRIBUTES 
 -- No disturbance history found in PC01
@@ -47,17 +46,14 @@ SELECT * FROM translation.pc_panp01_lyr;
 SELECT * FROM translation_devel.pc01_panp01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'pc01_panp01_lyr_devel', '_pc01_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_lyr_devel');
+SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200');
 
 -- LYR2 ATTRIBUTES
 SELECT TT_CreateMappingView('rawfri', 'pc01', 2, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l2_to_pc_panp_l1_map_200', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_lyr_devel');
+SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l2_to_pc_panp_l1_map_200');
 -- LYR3 ATTRIBUTES
 SELECT TT_CreateMappingView('rawfri', 'pc01', 3, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l3_to_pc_panp_l1_map_200', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_lyr_devel');
+SELECT * FROM TT_Translate_pc01_lyr_devel('rawfri', 'pc01_l3_to_pc_panp_l1_map_200');
 
 -- NFL ATTRIBUTES
 SELECT * FROM translation.pc_panp01_nfl;
@@ -68,14 +64,13 @@ SELECT * FROM translation_devel.pc01_panp01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'pc01_panp01_nfl_devel', '_pc01_nfl_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l4_to_pc_panp_l1_map_200', 'ogc_fid');
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_nfl_devel');
+SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l4_to_pc_panp_l1_map_200');
 
 SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l5_to_pc_panp_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l5_to_pc_panp_l1_map_200');
 
 SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1, 200); 
-SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l6_to_pc_panp_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_pc01_nfl_devel('rawfri', 'pc01_l6_to_pc_panp_l1_map_200');
 
 -- ECO ATTRIBUTES
 SELECT * FROM translation.pc_panp01_eco;
@@ -86,14 +81,13 @@ SELECT * FROM translation_devel.pc01_panp01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'pc01_panp01_eco_devel', '_pc01_eco_devel');
 --Layer 4
 SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_eco_devel('rawfri', 'pc01_l4_to_pc_panp_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_pc01_eco_devel('rawfri', 'pc01_l4_to_pc_panp_l1_map_200'); -- 4 s.
 --Layer 5
 SELECT TT_CreateMappingView('rawfri', 'pc01', 5, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_eco_devel('rawfri', 'pc01_l5_to_pc_panp_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_pc01_eco_devel('rawfri', 'pc01_l5_to_pc_panp_l1_map_200'); -- 4 s.
 --Layer 6
 SELECT TT_CreateMappingView('rawfri', 'pc01', 6, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_eco_devel('rawfri', 'pc01_l6_to_pc_panp_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_eco_devel');
+SELECT * FROM TT_Translate_pc01_eco_devel('rawfri', 'pc01_l6_to_pc_panp_l1_map_200'); -- 4 s.
 
 -- GEO ATTRIBUTES
 SELECT * FROM translation.pc_panp01_geo;
@@ -103,8 +97,7 @@ SELECT * FROM translation.pc_panp01_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.pc01_panp01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'pc01_panp01_geo_devel', '_pc01_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1, 200);
-SELECT * FROM TT_Translate_pc01_geo_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'pc01_panp01_geo_devel');
+SELECT * FROM TT_Translate_pc01_geo_devel('rawfri', 'pc01_l1_to_pc_panp_l1_map_200'); -- 4 s.
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table

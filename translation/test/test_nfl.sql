@@ -179,13 +179,13 @@ SELECT TT_CreateMappingView('rawfri', 'nt01', 4, 'nt', 1, 6220, NULL, 'nfl'); --
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_nt_nfl_test('rawfri', 'nt01_l4_to_nt_l1_map_6220_nfl');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nt02', 3, 'nt', 1, 3020, NULL, 'nfl'); -- Generates about 500 (513) NFL rows
+SELECT TT_CreateMappingView('rawfri', 'nt03', 3, 'nt', 1, 3020, NULL, 'nfl'); -- Generates about 500 (513) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
-SELECT * FROM TT_Translate_nt_nfl_test('rawfri', 'nt02_l3_to_nt_l1_map_3020_nfl');
+SELECT * FROM TT_Translate_nt_nfl_test('rawfri', 'nt03_l3_to_nt_l1_map_3020_nfl');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nt02', 4, 'nt', 1, 2100, NULL, 'nfl'); -- Generates about 500 (523) NFL rows
+SELECT TT_CreateMappingView('rawfri', 'nt03', 4, 'nt', 1, 2100, NULL, 'nfl'); -- Generates about 500 (523) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
-SELECT * FROM TT_Translate_nt_nfl_test('rawfri', 'nt02_l4_to_nt_l1_map_2100_nfl');
+SELECT * FROM TT_Translate_nt_nfl_test('rawfri', 'nt03_l4_to_nt_l1_map_2100_nfl');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'on02', 3, 'on', 1, 2450, NULL, 'nfl'); -- Generates about 1000 (1005) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
@@ -370,5 +370,5 @@ SELECT * FROM casfri50_test.nfl_all_new
 ORDER BY cas_id, layer, layer_rank, soil_moist_reg, structure_per, crown_closure_upper, crown_closure_lower, 
          height_upper, height_lower, nat_non_veg, non_for_anth, non_for_veg;
 ------------------------
-SELECT count(*) FROM casfri50_test.nfl_all_new; -- 25725, 38m
+SELECT count(*) FROM casfri50_test.nfl_all_new; -- 25715, 38m
 ---------------------------------------------------------
