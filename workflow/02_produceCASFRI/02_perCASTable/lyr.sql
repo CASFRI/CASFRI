@@ -104,6 +104,9 @@ SELECT TT_Prepare('translation', 'qc_ini04_lyr', '_qc04_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'qc_ipf05_lyr', '_qc05_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'pc_panp01_lyr', '_pc01_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'pc_wbnp01_lyr', '_pc02_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'qc_ini03_lyr', '_qc02_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'qc_ini04_lyr', '_qc06_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'qc_ipf05_lyr', '_qc07_lyr', 'ab_avi01_lyr'); 
 -------------------------
 DROP TABLE IF EXISTS casfri50.lyr_all CASCADE;
 ------------------------
@@ -868,6 +871,66 @@ SELECT * FROM TT_Translate_pc02_lyr('rawfri', 'pc02_l7_to_pc_wbnp_l1_map_lyr', '
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc02_wbnp01_lyr', 'pc02_l7_to_pc_wbnp_l1_map_lyr');
+------------------------
+-- Translate QC02 layer 1 using QC_INI03 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc02', 1, 'qc_ini03', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc02_lyr('rawfri', 'qc02_l1_to_qc_ini03_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_lyr', 'qc02_l1_to_qc_ini03_l1_map_lyr');
+------------------------
+-- Translate QC02 layer 2 using QC_INI03 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc02', 2, 'qc_ini03', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc02_lyr('rawfri', 'qc02_l2_to_qc_ini03_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_lyr', 'qc02_l2_to_qc_ini03_l1_map_lyr');
+------------------------
+-- Translate QC06 layer 1 using QC_INI04 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc06', 1, 'qc_ini04', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc06_lyr('rawfri', 'qc06_l1_to_qc_ini04_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_lyr', 'qc06_l1_to_qc_ini04_l1_map_lyr');
+------------------------
+-- Translate QC06 layer 2 using QC_INI04 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc06', 2, 'qc_ini04', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc06_lyr('rawfri', 'qc06_l2_to_qc_ini04_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_lyr', 'qc06_l2_to_qc_ini04_l1_map_lyr');
+------------------------
+-- Translate QC07 layer 1 using QC_IPF05 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc07', 1, 'qc_ipf', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc07_lyr('rawfri', 'qc07_l1_to_qc_ipf_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc07_l1_to_qc_ipf_l1_map_lyr');
+------------------------
+-- Translate QC07 layer 2 using QC_IPF05 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc07', 2, 'qc_ipf', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_qc07_lyr('rawfri', 'qc07_l2_to_qc_ipf_l1_map_lyr', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_lyr', 'qc07_l2_to_qc_ipf_l1_map_lyr');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

@@ -83,6 +83,9 @@ SELECT TT_Prepare('translation', 'qc_ini04_cas', '_qc04_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'qc_ipf05_cas', '_qc05_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'pc_panp01_cas', '_pc01_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'pc_wbnp01_cas', '_pc02_cas', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'qc_ini03_cas', '_qc02_cas', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'qc_ini04_cas', '_qc06_cas', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'qc_ipf05_cas', '_qc07_cas', 'ab_avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50.cas_all CASCADE;
 ------------------------
@@ -415,6 +418,37 @@ SELECT * FROM TT_Translate_pc02_cas('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_cas', '
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_cas', 'pc02_l1_to_pc_wbnp_l1_map_cas');
+
+------------------------
+-- Translate QC02 using QC_INI03 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc02', 'qc_ini03', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_qc02_cas('rawfri', 'qc02_l1_to_qc_ini03_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_cas', 'qc02_l1_to_qc_ini03_l1_map_cas');
+------------------------
+-- Translate QC06 using QC_INI04 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc06', 'qc_ini04', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_qc06_cas('rawfri', 'qc06_l1_to_qc_ini04_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_cas', 'qc06_l1_to_qc_ini04_l1_map_cas');
+------------------------
+-- Translate QC07 using QC_IPF05 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc07', 'qc_ipf', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_qc07_cas('rawfri', 'qc07_l1_to_qc_ipf_l1_map_cas', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_cas', 'qc07_l1_to_qc_ipf_l1_map_cas');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

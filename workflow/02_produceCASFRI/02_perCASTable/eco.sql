@@ -39,6 +39,9 @@ SELECT TT_Prepare('translation', 'qc_ini04_eco', '_qc04_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'qc_ipf05_eco', '_qc05_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'pc_panp01_eco', '_pc01_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'pc_wbnp01_eco', '_pc02_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'qc_ini03_eco', '_qc02_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'qc_ini04_eco', '_qc06_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'qc_ipf05_eco', '_qc07_eco', 'ab_avi01_eco');
 ------------------------
 DROP TABLE IF EXISTS casfri50.eco_all CASCADE;
 ------------------------
@@ -281,6 +284,14 @@ SELECT * FROM TT_Translate_qc04_eco('rawfri', 'qc04_l1_to_qc_ini04_l1_map_eco');
 
 SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_eco', 'qc04_l1_to_qc_ini04_l1_map_eco');
 ------------------------
+-- Translate QC05 using QC_IPF05 translation table
+SELECT TT_CreateMappingView('rawfri', 'qc05', 'qc_ipf', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_qc05_eco('rawfri', 'qc05_l1_to_qc_ipf_l1_map_eco');
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_eco', 'qc05_l1_to_qc_ipf_l1_map_eco');
+------------------------
 -- Translate PC01 using PC_PANP translation table
 -- Add layer 4
 SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 'eco');
@@ -415,6 +426,30 @@ INSERT INTO casfri50.eco_all --
 SELECT * FROM TT_Translate_pc02_eco('rawfri', 'pc02_l14_to_pc_wbnp_l1_map_eco', 'ogc_fid'); 
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp01_eco', 'pc02_l14_to_pc_wbnp_l1_map_eco');
+------------------------
+-- Translate QC02 using QC_INI03 translation table
+SELECT TT_CreateMappingView('rawfri', 'qc02', 'qc_ini03', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_qc02_eco('rawfri', 'qc02_l1_to_qc_ini03_l1_map_eco');
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_eco', 'qc02_l1_to_qc_ini03_l1_map_eco');
+------------------------
+-- Translate QC06 using QC_INI04 translation table
+SELECT TT_CreateMappingView('rawfri', 'qc06', 'qc_ini04', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_qc06_eco('rawfri', 'qc06_l1_to_qc_ini04_l1_map_eco');
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_eco', 'qc06_l1_to_qc_ini04_l1_map_eco');
+------------------------
+-- Translate QC07 using QC_IPF05 translation table
+SELECT TT_CreateMappingView('rawfri', 'qc07', 'qc_ipf', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_qc07_eco('rawfri', 'qc07_l1_to_qc_ipf_l1_map_eco');
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf_eco', 'qc07_l1_to_qc_ipf_l1_map_eco');
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------

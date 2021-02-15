@@ -121,16 +121,13 @@ SELECT * FROM TT_ShowLastLog('translation_devel', 'qc07_ipf05_eco_devel', 'qc07_
 SELECT * FROM TT_Translate_qc07_lyr_devel('rawfri', 'qc07_l1_to_qc_ipf_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'qc07_ipf05_lyr_devel', 'qc07_l1_to_qc_ipf_l1_map_200');
 
-SELECT TT_CreateMappingView('rawfri', 'qc07', 2, 'qc_ipf', 1, 20000);
-SELECT * FROM TT_Translate_qc07_lyr_devel('rawfri', 'qc07_l2_to_qc_ipf_l1_map_20000', 'ogc_fid'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'qc07', 2, 'qc_ipf', 1, 200);
+SELECT * FROM TT_Translate_qc07_lyr_devel('rawfri', 'qc07_l2_to_qc_ipf_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'qc07_ipf05_lyr_devel', 'qc07_l2_to_qc_ipf_l1_map_20000');
 
-SELECT TT_CreateMappingView('rawfri', 'qc05', 3, 'qc_ipf', 1, 200);
-SELECT * FROM TT_Translate_qc07_nfl_devel('rawfri', 'qc05_l3_to_qc_ipf_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'qc05_ipf05_nfl_devel', 'qc05_l3_to_qc_ipf_l1_map_200');
-
---SELECT * FROM TT_Translate_qc07_nfl_devel('rawfri', 'qc07_l2_to_nt_l1_map_200', 'ogc_fid'); -- 7 s.
---SELECT * FROM TT_ShowLastLog('translation_devel', 'qc07_ipf05_nfl_devel');
+SELECT TT_CreateMappingView('rawfri', 'qc07', 3, 'qc_ipf', 1, 200);
+SELECT * FROM TT_Translate_qc07_nfl_devel('rawfri', 'qc07_l3_to_qc_ipf_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_ShowLastLog('translation_devel', 'qc07_ipf05_nfl_devel', 'qc07_l3_to_qc_ipf_l1_map_200');
 
 SELECT * FROM TT_Translate_qc07_geo_devel('rawfri', 'qc07_l1_to_qc_ipf_l1_map_200', 'ogc_fid'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'qc07_ipf05_geo_devel', 'qc07_l1_to_qc_ipf_l1_map_200');

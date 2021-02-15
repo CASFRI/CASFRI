@@ -38,6 +38,9 @@ SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc03_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc04_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc05_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc02_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc02_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc06_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc07_dst', 'ab_avi01_dst');
 ------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 ------------------------
@@ -380,6 +383,37 @@ SELECT * FROM TT_Translate_pc02_dst('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_dst', '
 COMMIT;
 
 SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_dst', 'pc02_l1_to_pc_wbnp_l1_map_dst');
+------------------------
+-- Translate QC02 using QC_INI03 generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc02', 1, 'qc_ini03', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_qc02_dst('rawfri', 'qc02_l1_to_qc_ini03_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_dst', 'qc02_l1_to_qc_ini03_l1_map_dst');
+------------------------
+-- Translate QC06 using QC_INI04 generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc06', 1, 'qc_ini04', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_qc06_dst('rawfri', 'qc06_l1_to_qc_ini04_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_dst', 'qc06_l1_to_qc_ini04_l1_map_dst');
+------------------------
+-- Translate QC05 using QC_IPF05 generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'qc07', 1, 'qc_ipf', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_qc07_dst('rawfri', 'qc07_l1_to_qc_ipf_l1_map_dst', 'ogc_fid');
+COMMIT;
+
+SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_dst', 'qc07_l1_to_qc_ipf_l1_map_dst');
+------------------------
 --------------------------------------------------------------------------
 -- Check processed inventories and count
 --------------------------------------------------------------------------
