@@ -28,7 +28,7 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'MB05';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
-SELECT * FROM TT_Translate_mb05_cas('rawfri', 'mb05_l1_to_mb_fri_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_cas('rawfri', 'mb05_l1_to_mb_fri_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_cas', 'mb05_l1_to_mb_fri_l1_map');
 
@@ -44,7 +44,7 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'MB05';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_mb05_dst('rawfri', 'mb05_l1_to_mb_fri_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_dst('rawfri', 'mb05_l1_to_mb_fri_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_dst', 'mb05_l1_to_mb_fri_l1_map');
 
@@ -60,7 +60,7 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'MB05';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_mb05_eco('rawfri', 'mb05_l1_to_mb_fri_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_eco('rawfri', 'mb05_l1_to_mb_fri_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_eco', 'mb05_l1_to_mb_fri_l1_map');
 
@@ -83,7 +83,7 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'MB05';
 SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1);
 
 INSERT INTO casfri50.lyr_all -- 
-SELECT * FROM TT_Translate_mb05_lyr('rawfri', 'mb05_l1_to_mb_fri_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_lyr('rawfri', 'mb05_l1_to_mb_fri_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_lyr', 'mb05_l1_to_mb_fri_l1_map');
 
@@ -99,7 +99,7 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'MB05';
 SELECT TT_CreateMappingView('rawfri', 'mb05', 2, 'mb_fri', 1);
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_mb05_nfl('rawfri', 'mb05_l2_to_mb_fri_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_nfl('rawfri', 'mb05_l2_to_mb_fri_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_nfl', 'mb05_l2_to_mb_fri_l1_map');
 
@@ -115,7 +115,7 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'MB05';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_mb05_geo('rawfri', 'mb05_l1_to_mb_fri_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_geo('rawfri', 'mb05_l1_to_mb_fri_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_geo', 'mb05_l1_to_mb_fri_l1_map');
 --------------------------------------------------------------------------

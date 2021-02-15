@@ -31,7 +31,7 @@ SELECT * FROM translation.mb_fri01_cas;
 SELECT * FROM translation_devel.mb05_fri01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'mb05_fri01_cas_devel', '_mb05_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb05', 'mb_fri', 200);
-SELECT * FROM TT_Translate_mb05_cas_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_cas_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'mb05_fri01_cas_devel');
 
 -- LYR1 ATTRIBUTES
@@ -43,7 +43,7 @@ SELECT * FROM translation.mb_fri01_lyr;
 SELECT * FROM translation_devel.mb05_fri01_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'mb05_fri01_lyr_devel', '_mb05_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 200);
-SELECT * FROM TT_Translate_mb05_lyr_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_lyr_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'mb05_fri01_lyr_devel');
 
 -- DST ATTRIBUTES
@@ -54,7 +54,7 @@ SELECT * FROM translation.mb_fri01_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.mb05_fri01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'mb05_fri01_dst_devel', '_mb05_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 200);
-SELECT * FROM TT_Translate_mb05_dst_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_mb05_dst_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'mb05_fri01_dst_devel');
 
 SELECT a.cas_id, b.dist_type_1, a.dist_type_1, a.dist_type_2 
@@ -70,7 +70,7 @@ SELECT * FROM translation.mb_fri01_nfl;
 SELECT * FROM translation_devel.mb05_fri01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'mb05_fri01_nfl_devel', '_mb05_nfl_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb05', 2, 'mb_fri', 1, 200);
-SELECT * FROM TT_Translate_mb05_nfl_devel('rawfri', 'mb05_l2_to_mb_fri_l1_map_200', 'ogc_fid');
+SELECT * FROM TT_Translate_mb05_nfl_devel('rawfri', 'mb05_l2_to_mb_fri_l1_map_200');
 SELECT * FROM TT_ShowLastLog('translation_devel', 'mb05_fri01_nfl_devel');
 
 -- ECO ATTRIBUTES
@@ -81,7 +81,7 @@ SELECT * FROM translation.mb_fri01_eco; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.mb05_fri01_eco_devel;
 SELECT TT_Prepare('translation_devel', 'mb05_fri01_eco_devel', '_mb05_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 200);
-SELECT * FROM TT_Translate_mb05_eco_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_mb05_eco_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'mb05_fri01_nfl_devel');
 
 -- GEO ATTRIBUTES
@@ -92,7 +92,7 @@ SELECT * FROM translation.mb_fri01_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.mb05_fri01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'mb05_fri01_geo_devel', '_mb05_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 200);
-SELECT * FROM TT_Translate_mb05_geo_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_mb05_geo_devel('rawfri', 'mb05_l1_to_mb_fri_l1_map_200'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'mb05_fri01_geo_devel');
 
 

@@ -28,7 +28,7 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'NT01';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 43m
-SELECT * FROM TT_Translate_nt01_cas('rawfri', 'nt01_l1_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_cas('rawfri', 'nt01_l1_to_nt_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_cas', 'nt01_l1_to_nt_l1_map');
 
@@ -44,7 +44,7 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'NT01';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 36m
-SELECT * FROM TT_Translate_nt01_dst('rawfri', 'nt01_l1_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_dst('rawfri', 'nt01_l1_to_nt_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_dst', 'nt01_l1_to_nt_l1_map');
 
@@ -60,7 +60,7 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'NT01';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all -- 
-SELECT * FROM TT_Translate_nt01_eco('rawfri', 'nt01_l1_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_eco('rawfri', 'nt01_l1_to_nt_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_eco', 'nt01_l1_to_nt_l1_map');
 
@@ -83,7 +83,7 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NT01';
 SELECT TT_CreateMappingView('rawfri', 'nt01', 1, 'nt', 1);
 
 INSERT INTO casfri50.lyr_all -- 1h49m
-SELECT * FROM TT_Translate_nt01_lyr('rawfri', 'nt01_l1_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_lyr('rawfri', 'nt01_l1_to_nt_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt01_l1_to_nt_l1_map');
 
@@ -92,7 +92,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt01_l1_to_nt_l1_ma
 SELECT TT_CreateMappingView('rawfri', 'nt01', 2, 'nt', 1);
 
 INSERT INTO casfri50.lyr_all -- 1h24m
-SELECT * FROM TT_Translate_nt01_lyr('rawfri', 'nt01_l2_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_lyr('rawfri', 'nt01_l2_to_nt_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt01_l2_to_nt_l1_map');
 
@@ -109,7 +109,7 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NT01';
 SELECT TT_CreateMappingView('rawfri', 'nt01', 3, 'nt', 1); 
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt01_nfl('rawfri', 'nt01_l3_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_nfl('rawfri', 'nt01_l3_to_nt_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l3_to_nt_l1_map');
 
@@ -118,7 +118,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l3_to_nt_l1_ma
 SELECT TT_CreateMappingView('rawfri', 'nt01', 4, 'nt', 1);
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nt01_nfl('rawfri', 'nt01_l4_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_nfl('rawfri', 'nt01_l4_to_nt_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l4_to_nt_l1_map');
 
@@ -134,7 +134,7 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NT01';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 20m
-SELECT * FROM TT_Translate_nt01_geo('rawfri', 'nt01_l1_to_nt_l1_map', 'ogc_fid');
+SELECT * FROM TT_Translate_nt01_geo('rawfri', 'nt01_l1_to_nt_l1_map');
 
 SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_geo', 'nt01_l1_to_nt_l1_map');
 --------------------------------------------------------------------------

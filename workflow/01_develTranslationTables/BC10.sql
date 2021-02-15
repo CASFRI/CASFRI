@@ -109,27 +109,27 @@ SELECT TT_Prepare('translation_devel', 'bc10_vri01_geo_devel', '_bc10_geo_devel'
 
 -- Translate the samples
 SELECT TT_CreateMappingView('rawfri', 'bc10', 1, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc10_cas_devel('rawfri', 'bc10_l1_to_bc_l1_map_200', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_Translate_bc10_cas_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc10_vri01_cas_devel');
 
-SELECT * FROM TT_Translate_bc10_dst_devel('rawfri', 'bc10_l1_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_bc10_dst_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc10_vri01_dst_devel');
 
-SELECT * FROM TT_Translate_bc10_eco_devel('rawfri', 'bc10_l1_to_bc_l1_map_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_bc10_eco_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc10_vri01_eco_devel');
 
-SELECT * FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l1_to_bc_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc10_vri01_lyr_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'bc10', 2, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l2_to_bc_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l2_to_bc_l1_map_200'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc10_vri01_lyr_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'bc10', 3, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc10_nfl_devel('rawfri', 'bc10_l3_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_bc10_nfl_devel('rawfri', 'bc10_l3_to_bc_l1_map_200'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc10_vri01_nfl_devel');
 
-SELECT * FROM TT_Translate_bc10_geo_devel('rawfri', 'bc10_l1_to_bc_l1_map_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_bc10_geo_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'bc10_vri01_geo_devel');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table

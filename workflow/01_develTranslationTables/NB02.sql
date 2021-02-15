@@ -30,27 +30,27 @@ WHERE TT_NotEmpty(nb_species_codes);
 --------------------------------------------------------------------------
 -- Translate the samples (reusing NB01 translation functions prepared by NB01.sql)
 SELECT TT_CreateMappingView('rawfri', 'nb02', 1, 'nb', 1, 200);
-SELECT * FROM TT_Translate_nb01_cas_devel('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 5 s.
+SELECT * FROM TT_Translate_nb01_cas_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 5 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_cas_devel');
 
-SELECT * FROM TT_Translate_nb01_dst_devel('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 4 s.
+SELECT * FROM TT_Translate_nb01_dst_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 4 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_dst_devel');
 
-SELECT * FROM TT_Translate_nb01_eco_devel('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_nb01_eco_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_eco_devel');
 
-SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_lyr_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb', 1, 200);
-SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l2_to_nb_l1_map_200', 'ogc_fid'); -- 7 s.
+SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l2_to_nb_l1_map_200'); -- 7 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_lyr_devel');
 
 SELECT TT_CreateMappingView('rawfri', 'nb02', 3, 'nb', 1, 200);
-SELECT * FROM TT_Translate_nb01_nfl_devel('rawfri', 'nb02_l3_to_nb_l1_map_200', 'ogc_fid'); -- 3 s.
+SELECT * FROM TT_Translate_nb01_nfl_devel('rawfri', 'nb02_l3_to_nb_l1_map_200'); -- 3 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_nfl_devel');
 
-SELECT * FROM TT_Translate_nb01_geo_devel('rawfri', 'nb02_l1_to_nb_l1_map_200', 'ogc_fid'); -- 2 s.
+SELECT * FROM TT_Translate_nb01_geo_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 2 s.
 SELECT * FROM TT_ShowLastLog('translation_devel', 'nb01_nbi01_geo_devel');
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
