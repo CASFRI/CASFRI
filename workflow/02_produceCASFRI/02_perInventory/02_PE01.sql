@@ -106,7 +106,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_nfl', 'pe01_l2_to_pe_pei_l
 ------------------------
 -- GEO
 ------------------------
-SELECT TT_Prepare('translation', 'pe_pei01_geo', '_pe01_geo', 'ab_avi01_geo'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'pe_pei01_geo', '_pe01_geo', 'ab_avi01_geo');
 
 SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei');
 

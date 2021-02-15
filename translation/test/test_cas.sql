@@ -125,9 +125,9 @@ SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 500, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_nt_cas_test('rawfri', 'nt01_l1_to_nt_l1_map_500_cas');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nt02', 'nt', 500, NULL, 'cas');
+SELECT TT_CreateMappingView('rawfri', 'nt03', 'nt', 500, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
-SELECT * FROM TT_Translate_nt_cas_test('rawfri', 'nt02_l1_to_nt_l1_map_500_cas');
+SELECT * FROM TT_Translate_nt_cas_test('rawfri', 'nt03_l1_to_nt_l1_map_500_cas');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'on02', 'on', 1000, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
@@ -205,5 +205,5 @@ ORDER BY cas_id, inventory_id, orig_stand_id, stand_structure,
          num_of_layers, map_sheet_id, casfri_area, 
          casfri_perimeter, src_inv_area, stand_photo_year; 
 ------------------------
-SELECT count(*) FROM casfri50_test.cas_all_new; -- 15800, 36m
+SELECT count(*) FROM casfri50_test.cas_all_new; -- 15794, 36m
 ---------------------------------------------------------

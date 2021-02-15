@@ -19,7 +19,7 @@ SET tt.debug TO FALSE;
 --------------------------------------------------------------------------
 -- CAS
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi01_cas', '_nt01_cas', 'ab_avi01_cas'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nt_fvi01_cas', '_nt01_cas', 'ab_avi01_cas');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt');
 
@@ -35,7 +35,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_cas', 'nt01_l1_to_nt_l1_ma
 ------------------------
 -- DST
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi01_dst', '_nt01_dst', 'ab_avi01_dst'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nt_fvi01_dst', '_nt01_dst', 'ab_avi01_dst');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 1, 'nt', 1);
 
@@ -51,7 +51,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_dst', 'nt01_l1_to_nt_l1_ma
 ------------------------
 -- ECO
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi01_eco', '_nt01_eco', 'ab_avi01_eco'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nt_fvi01_eco', '_nt01_eco', 'ab_avi01_eco');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt');
 
@@ -73,7 +73,7 @@ ON translation.species_code_mapping (nt_species_codes)
 WHERE TT_NotEmpty(nt_species_codes);
 
 -- Prepare the translation function
-SELECT TT_Prepare('translation', 'nt_fvi01_lyr', '_nt01_lyr', 'ab_avi01_lyr'); -- used for both NT01 and NT02, layer 1 and 2
+SELECT TT_Prepare('translation', 'nt_fvi01_lyr', '_nt01_lyr', 'ab_avi01_lyr');
 
 -- Delete existing entries
 DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NT01';
@@ -99,7 +99,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_lyr', 'nt01_l2_to_nt_l1_ma
 ------------------------
 -- NFL
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi01_nfl', '_nt01_nfl', 'ab_avi01_nfl'); -- used for both NT01 and NT02, layer 1 and 2
+SELECT TT_Prepare('translation', 'nt_fvi01_nfl', '_nt01_nfl', 'ab_avi01_nfl');
 
 -- Delete existing entries
 DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NT01';
@@ -125,7 +125,7 @@ SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l4_to_nt_l1_ma
 ------------------------
 -- GEO
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi01_geo', '_nt01_geo', 'ab_avi01_geo'); -- used for both NT01 and NT02
+SELECT TT_Prepare('translation', 'nt_fvi01_geo', '_nt01_geo', 'ab_avi01_geo');
 
 SELECT TT_CreateMappingView('rawfri', 'nt01', 1, 'nt', 1);
 
