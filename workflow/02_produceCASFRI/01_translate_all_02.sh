@@ -12,8 +12,10 @@ source ../../config.sh
 # NS03  995886
 # SK01 1501667
 # SK04  633522
+# NS01 1127926
+# NS02 1090671
 
-for F in AB25 AB29 MB05 NB01 NB02 NL01 NS03 SK01 SK04
+for F in AB25 AB29 MB05 NB01 NB02 NL01 NS03 SK01 SK04 NS01 NS02
 do
   "/c/program files/git/git-bash.exe" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -f ./02_perInventory/02_$F.sql" &
 done
