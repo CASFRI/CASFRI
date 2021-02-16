@@ -793,7 +793,7 @@ RETURNS text AS $$
               ELSE key
          END to_att
       FROM mapping
-      WHERE TT_NotEmpty(from_att)
+      WHERE NOT from_att IS NULL AND from_att != ''
       ORDER BY to_att, from_att
     ), ordered_maps AS (
       SELECT num, key, 
