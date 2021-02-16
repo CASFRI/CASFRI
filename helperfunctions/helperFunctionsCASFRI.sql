@@ -1903,8 +1903,13 @@ RETURNS text[] AS $$
     per_array text[];
   BEGIN
     
-    sp_array = string_to_array(trim(translate(eta_ess_pc, '0123456789', ' ')), ' ');
-    per_array = string_to_array(trim(regexp_replace(eta_ess_pc, '[[:alpha:]]', ' ', 'g')), '  ');
+	-- replace any integers with spaces. For qc05 there are always two integers, for qc07 always one. So replace any
+	-- double spaces with single spaces. Then do string to array using a single space separator.
+    sp_array = string_to_array(trim(replace(translate(eta_ess_pc, '0123456789', '          '), '  ', ' ')), ' ');
+    
+	-- remove any characters, then do string to array using double space as separator. Both qc05 and qc07 always have
+	-- two characters for species.
+	per_array = string_to_array(trim(regexp_replace(eta_ess_pc, '[[:alpha:]]', ' ', 'g')), '  ');
     
     RETURN ARRAY( -- converts table to array
       SELECT code FROM(
@@ -6001,11 +6006,17 @@ CREATE OR REPLACE FUNCTION TT_qc_prg5_species_per_translation(
 RETURNS int AS $$
   DECLARE
     code_array text[];
+	per int;
   BEGIN
     
     code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-    RETURN regexp_replace(code_array[species_number::int], '[[:alpha:]]', '', 'g')::int;
-    
+    per = regexp_replace(code_array[species_number::int], '[[:alpha:]]', '', 'g')::int;
+	
+	-- for qc07, percent values need to be multiplied by 10. Any zero values in QC07 represent
+	-- 100%. Catch those first.
+	RETURN CASE WHEN per = 0 THEN 100 -- qc07
+	            WHEN per < 10 THEN per*10 -- qc07
+				ELSE per END; -- qc05
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
