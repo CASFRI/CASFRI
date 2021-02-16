@@ -18,7 +18,7 @@ CALL .\common.bat
 SET srcFileName=photoyear
 SET srcFullPath="%friDir%/NL/NL01/data/photoyear/%srcFileName%.shp"
 
-SET fullTargetTableName=%targetFRISchema%.nl_photoYear
+SET fullTargetTableName=%targetFRISchema%.nl_photoyear
 
 :: ########################################## Process ######################################
 
@@ -28,3 +28,19 @@ SET fullTargetTableName=%targetFRISchema%.nl_photoYear
 -nln %fullTargetTableName% %layer_creation_options% %other_options% ^
 -nlt PROMOTE_TO_MULTI ^
 -progress %overwrite_tab%
+
+:: Fix it
+SET query=DROP TABLE IF EXISTS %targetFRISchema%.new_photo_year; ^
+CREATE TABLE %targetFRISchema%.new_photo_year AS ^
+SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, photoyear, ogc_fid ^
+FROM %fullTargetTableName%; ^
+DROP TABLE %fullTargetTableName%; ^
+ALTER TABLE %targetFRISchema%.new_photo_year RENAME TO nl_photoyear;
+
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query%"
+
+SET createSQLSpatialIndex=True
+
+CALL .\common_postprocessing.bat
+
+ENDLOCAL

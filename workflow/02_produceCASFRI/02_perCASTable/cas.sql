@@ -16,46 +16,6 @@ SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 
 CREATE SCHEMA IF NOT EXISTS casfri50;
-
---------------------------------------------------------------------------
--- Validate AB photo year table
---------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab_photoyear_validation', '_ab_photo_val');
-SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear');
-
--- make table valid and subset by rows with valid photo years
-DROP TABLE IF EXISTS rawfri.new_photo_year;
-CREATE TABLE rawfri.new_photo_year AS
-SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photo_yr
-FROM rawfri.ab_photoyear
-WHERE TT_IsInt(photo_yr);
-
-CREATE INDEX IF NOT EXISTS ab_photoyear_idx 
- ON rawfri.new_photo_year
- USING GIST(wkb_geometry);
-
-DROP TABLE rawfri.ab_photoyear;
-ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
-
---------------------------------------------------------------------------
--- Validate NL photo year table
---------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'nl_photoyear_validation', '_nl_photo_val');
-SELECT * FROM TT_Translate_nl_photo_val('rawfri', 'nl_photoyear');
-
--- make table valid and subset by rows with valid photo years
-DROP TABLE IF EXISTS rawfri.new_photo_year;
-CREATE TABLE rawfri.new_photo_year AS
-SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photoyear
-FROM rawfri.nl_photoyear
-WHERE TT_IsInt(photoyear::text);
-
-CREATE INDEX IF NOT EXISTS nl_photoyear_idx 
- ON rawfri.new_photo_year
- USING GIST(wkb_geometry);
-
-DROP TABLE rawfri.nl_photoyear;
-ALTER TABLE rawfri.new_photo_year RENAME TO nl_photoyear;
 --------------------------------------------------------------------------
 -- Create index for qc stand structure
 --------------------------------------------------------------------------
@@ -131,6 +91,15 @@ SELECT TT_CreateMappingView('rawfri', 'ab10', 'ab', NULL, 'cas');
 
 CREATE TABLE casfri50.cas_all AS 
 SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab10_l1_to_ab_l1_map_cas');
+COMMIT;
+
+------------------------
+-- Translate AB11
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ab11', 'ab', NULL, 'cas');
+
+CREATE TABLE casfri50.cas_all AS 
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab11_l1_to_ab_l1_map_cas');
 COMMIT;
 
 ------------------------
@@ -421,33 +390,41 @@ FROM casfri50.cas_all
 GROUP BY left(cas_id, 4)
 ORDER BY inv;
 --inv   nb
---AB06	11484
---AB16	120476
+--AB03    61633
+--AB06	  11484
+--AB07    23268
+--AB08    34474
+--AB10   194696
+--AB11   118624
+--AB16   120476
+--AB25   527038
+--AB29   620944
+--AB30     4555
 --BC08	4677411
 --BC10	5151772
 --MB05  1644808
---MB06  163064
---NB01	927177
+--MB06   163064
+--NB01	 927177
 --NB02	1123893
 --NL01  1863664
---NS03	995886
---NT01	281388
---NT03	?????
---ON02	3629073
---PE01  107220
---QC03  401188
+--NS03	 995886
+--NT01	 281388
+--NT02	 320944
+--ON02	3629073 - GDAL v. 3.1.4 loads one more row than GDAL 1.11.4 (3629072)
+--PC01     8094
+--PC02     1053
+--PE01   107220
+--QC03   401188
 --QC04  2487519
 --QC05  6768074
 --SK01	1501667
---SK02	27312
---SK03	8964
---SK04	633522
---SK05	421977
---SK06	211482
---YT02	231137
---PC01  8094
---PC02  1053
+--SK02	  27312
+--SK03	   8964
+--SK04	 633522
+--SK05	 421977
+--SK06	 211482
+--YT02	 231137
 
-SELECT count(*) FROM casfri50.cas_all; -- 33711102
+SELECT count(*) FROM casfri50.cas_all; -- 35305480
 --------------------------------------------------------------------------
 

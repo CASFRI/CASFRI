@@ -151,7 +151,8 @@ SELECT * FROM TT_Translate_bc08_geo('rawfri', 'bc08_l1_to_bc_l1_map');
 COMMIT;
 --------------------------------------------------------------------------
 -- Check
-SELECT 'cas_all', count(*) nb
+/*
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'BC08'
 UNION ALL
@@ -174,4 +175,5 @@ UNION ALL
 SELECT 'geo_all', count(*) nb
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'BC08';
+*/
 --------------------------------------------------------------------------

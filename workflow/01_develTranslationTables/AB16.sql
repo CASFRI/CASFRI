@@ -95,26 +95,6 @@ SELECT * FROM translation_devel.ab16_avi01_geo_devel;
 -------------------------------------------------------
 CREATE UNIQUE INDEX ON translation.species_code_mapping (ab_species_codes)
 WHERE TT_NotEmpty(ab_species_codes);
-
--------------------------------------------------------
--- AB photo year
--------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab_photoyear_validation', '_ab_photo_val');
-SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear'); -- 5s
-
--- Make table valid and subset by rows with valid photo years
-CREATE TABLE rawfri.new_photo_year AS
-SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photo_yr
-FROM rawfri.ab_photoyear
-WHERE TT_IsInt(photo_yr);
-
-CREATE INDEX IF NOT EXISTS ab_photoyear_idx 
- ON rawfri.new_photo_year
- USING GIST(wkb_geometry);
-
-DROP TABLE rawfri.ab_photoyear;
-ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
-
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Translate the sample table
