@@ -185,6 +185,8 @@ $$ LANGUAGE plpgsql VOLATILE STRICT;
 -- TT_IsJsonGeometry 
 -- 
 -- Return TRUE if jsonbstr is a jsonb geometry.
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);
 CREATE OR REPLACE FUNCTION TT_IsJsonGeometry(
   jsonbstr text
 )
