@@ -96,6 +96,7 @@ SELECT TT_Prepare('translation', 'sk_sfv01_lyr', '_sk_sfv_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'yt_yvi01_lyr', '_yt_lyr', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'ns_nsi01_lyr', '_ns_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'pe_pei01_lyr', '_pe_lyr', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'mb_fri02_lyr', '_mb_fri2_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'mb_fri01_lyr', '_mb_fri_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'mb_fli01_lyr', '_mb_fli_lyr', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_lyr', 'ab_avi01_lyr');
@@ -551,12 +552,55 @@ SELECT * FROM TT_Translate_sk_sfv_lyr('rawfri', 'sk06_l3_to_sk_sfv_l1_map_lyr');
 COMMIT;
 
 ------------------------
+-- Translate YT01 using YVI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'yt01', 1, 'yt', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt01_l1_to_yt_l1_map_lyr');
+COMMIT;
+
+------------------------
 -- Translate YT02 using YVI translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_yt_lyr('rawfri', 'yt02_l1_to_yt_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate NS01 layer 1 using NS generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, NULL, 'lyr');
+INSERT INTO casfri50.lyr_all
+SELECT * FROM TT_Translate_ns_lyr('rawfri', 'ns01_l1_to_ns_nsi_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate NS01 layer 2 using NS generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns01', 2, 'ns_nsi', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_ns_lyr('rawfri', 'ns01_l2_to_ns_nsi_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate NS02 layer 1 using NS generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns02', 1, 'ns_nsi', 1, NULL, 'lyr');
+INSERT INTO casfri50.lyr_all
+SELECT * FROM TT_Translate_ns_lyr('rawfri', 'ns02_l1_to_ns_nsi_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate NS02 layer 2 using NS generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns02', 2, 'ns_nsi', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_ns_lyr('rawfri', 'ns02_l2_to_ns_nsi_l1_map_lyr');
 COMMIT;
 
 ------------------------
@@ -586,12 +630,102 @@ SELECT * FROM TT_Translate_pe_lyr('rawfri', 'pe01_l1_to_pe_pei_l1_map_lyr');
 COMMIT;
 
 ------------------------
+-- Translate MB01 layer 1 using MB_FRI2 generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri2', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fri2_lyr('rawfri', 'mb01_l1_to_mb_fri2_l1_map_lyr');
+COMMIT;
+
+------------------------
 -- Translate MB05 layer 1 using MB_FRI generic translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_mb_fri_lyr('rawfri', 'mb05_l1_to_mb_fri_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB02 layer 1 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb02', 1, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb02_l1_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB02 layer 2 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb02', 2, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb02_l2_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB02 layer 3 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb02', 3, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb02_l3_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB02 layer 4 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb02', 4, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb02_l4_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB02 layer 5 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb02', 5, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb02_l5_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB04 layer 1 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb04', 1, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb04_l1_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB04 layer 2 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb04', 2, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb04_l2_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB04 layer 3 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb04', 3, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb04_l3_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB04 layer 4 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb04', 4, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb04_l4_to_mb_fli_l1_map_lyr');
 COMMIT;
 
 ------------------------
@@ -637,6 +771,51 @@ SELECT TT_CreateMappingView('rawfri', 'mb06', 5, 'mb_fli', 1, NULL, 'lyr');
 
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb06_l5_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB07 layer 1 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb07', 1, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb07_l1_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB07 layer 2 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb07', 2, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb07_l2_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB07 layer 3 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb07', 3, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb07_l3_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB07 layer 4 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb07', 4, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb07_l4_to_mb_fli_l1_map_lyr');
+COMMIT;
+
+------------------------
+-- Translate MB07 layer 5 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb07', 5, 'mb_fli', 1, NULL, 'lyr');
+
+INSERT INTO casfri50.lyr_all -- 
+SELECT * FROM TT_Translate_mb_fli_lyr('rawfri', 'mb07_l5_to_mb_fli_l1_map_lyr');
 COMMIT;
 
 ------------------------

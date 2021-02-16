@@ -37,6 +37,7 @@ SELECT TT_Prepare('translation', 'sk_sfv01_nfl', '_sk_sfv_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'ns_nsi01_nfl', '_ns_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'mb_fri02_nfl', '_mb_fri2_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fri01_nfl', '_mb_fri_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb_fli_nfl', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl_nfl', 'ab_avi01_nfl');
@@ -474,12 +475,39 @@ SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk06_l6_to_sk_sfv_l1_map_nfl');
 COMMIT;
 
 ------------------------
+-- Translate YT01 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'yt01', 2, 'yt', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_yt_nfl('rawfri', 'yt01_l2_to_yt_l1_map_nfl');
+COMMIT;
+
+------------------------
 -- Translate YT02 layer 2
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'yt02', 2, 'yt', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_yt_nfl('rawfri', 'yt02_l2_to_yt_l1_map_nfl');
+COMMIT;
+
+------------------------
+-- Translate NS01 layer 3
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns01', 3, 'ns_nsi', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_ns_nfl('rawfri', 'ns01_l3_to_ns_nsi_l1_map_nfl');
+COMMIT;
+
+------------------------
+-- Translate NS02 layer 3
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns02', 3, 'ns_nsi', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_ns_nfl('rawfri', 'ns02_l3_to_ns_nsi_l1_map_nfl');
 COMMIT;
 
 ------------------------
@@ -501,6 +529,15 @@ SELECT * FROM TT_Translate_pe_nfl('rawfri', 'pe01_l2_to_pe_pei_l1_map_nfl');
 COMMIT;
 
 ------------------------
+-- Translate MB01 layer 2
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb01', 2, 'mb_fri2', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_mb_fri_nfl('rawfri', 'mb01_l2_to_mb_fri2_l1_map_nfl');
+COMMIT;
+
+------------------------
 -- Translate MB05 layer 2
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'mb05', 2, 'mb_fri', 1, NULL, 'nfl');
@@ -510,12 +547,39 @@ SELECT * FROM TT_Translate_mb_fri_nfl('rawfri', 'mb05_l2_to_mb_fri_l1_map_nfl');
 COMMIT;
 
 ------------------------
+-- Translate MB02 layer 6
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb02', 6, 'mb_fli', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_mb_fli_nfl('rawfri', 'mb02_l6_to_mb_fli_l1_map_nfl');
+COMMIT;
+
+------------------------
+-- Translate MB04 layer 5
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb05', 5, 'mb_fli', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_mb_fli_nfl('rawfri', 'mb04_l5_to_mb_fli_l1_map_nfl');
+COMMIT;
+
+------------------------
 -- Translate MB06 layer 6
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'mb06', 6, 'mb_fli', 1, NULL, 'nfl');
 
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_mb_fli_nfl('rawfri', 'mb06_l6_to_mb_fli_l1_map_nfl');
+COMMIT;
+
+------------------------
+-- Translate MB07 layer 6
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb07', 6, 'mb_fli', 1, NULL, 'nfl');
+
+INSERT INTO casfri50.nfl_all -- 
+SELECT * FROM TT_Translate_mb_fli_nfl('rawfri', 'mb07_l6_to_mb_fli_l1_map_nfl');
 COMMIT;
 
 ------------------------
