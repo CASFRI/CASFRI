@@ -13,8 +13,10 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 :: NS03  995886
 :: SK01 1501667
 :: SK04  633522
+:: NS01 1127926
+:: NS02 1090671
 
-FOR %%F IN (AB25 AB29 MB05 NB01 NB02 NL01 NS03 SK01 SK04) DO (
+FOR %%F IN (AB25 AB29 MB05 NB01 NB02 NL01 NS03 SK01 SK04 NS01 NS02) DO (
   START /max CMD /k ""%pgFolder%\bin\psql" -p %pgport% -U %pguser% -w -d %pgdbname% -P pager=off -f ./02_perInventory/02_%%F.sql"
 )
 
