@@ -13,7 +13,7 @@ start CMD /C "load_nl01.bat"
 start CMD /C "load_ns03.bat"
 start CMD /C "load_nt01.bat"
 start CMD /C "load_nt02.bat"
-start /wait CMD /C "load_on02.bat "
+start /wait CMD /C "load_on02.bat"
 
 start CMD /C "load_pc02.bat"
 start CMD /C "load_pe01.bat"

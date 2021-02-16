@@ -1873,7 +1873,7 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_qc_prg5_species_code_to_reordered_array(text, text)
+-- TT_qc_prg5_species_code_to_reordered_array(text)
 --
 -- eta_ess_pc text
 --
