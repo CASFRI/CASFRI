@@ -122,7 +122,8 @@ SELECT * FROM TT_Translate_on02_geo('rawfri', 'on02_l1_to_on_l1_map');
 
 --------------------------------------------------------------------------
 -- Check
-SELECT 'cas_all', count(*) nb
+/*
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'ON02'
 UNION ALL
@@ -145,4 +146,5 @@ UNION ALL
 SELECT 'geo_all', count(*) nb
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'ON02';
+*/
 --------------------------------------------------------------------------

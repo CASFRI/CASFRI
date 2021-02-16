@@ -134,6 +134,7 @@ SELECT * FROM TT_Translate_nl01_geo('rawfri', 'nl01_l1_to_nl_nli_l1_map');
 
 --------------------------------------------------------------------------
 -- Check
+/*
 SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'NL01'
@@ -157,4 +158,5 @@ UNION ALL
 SELECT 'geo_all', count(*) nb
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'NL01';
+*/
 --------------------------------------------------------------------------
