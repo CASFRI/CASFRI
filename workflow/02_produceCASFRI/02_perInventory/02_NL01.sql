@@ -30,11 +30,13 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'NL01';
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
 SELECT * FROM TT_Translate_nl01_cas('rawfri', 'nl01_l1_to_nl_nli_l1_map');
+COMMIT;
 
 
 ------------------------
 -- DST
 ------------------------
+BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl01_dst', 'ab_avi01_dst');
 
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1);
@@ -45,11 +47,13 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'NL01';
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 
 SELECT * FROM TT_Translate_nl01_dst('rawfri', 'nl01_l1_to_nl_nli_l1_map');
+COMMIT;
 
 
 ------------------------
 -- ECO
 ------------------------
+BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_eco', '_nl01_eco', 'ab_avi01_eco');
 
 SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl');
@@ -60,12 +64,14 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'NL01';
 -- Add translated ones
 INSERT INTO casfri50.eco_all -- 
 SELECT * FROM TT_Translate_nl01_eco('rawfri', 'nl01_l1_to_nl_nli_l1_map');
+COMMIT;
 
 
 ------------------------
 -- LYR
 ------------------------
 -- Check the uniqueness of YT species codes
+BEGIN;
 CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nl01_species_codes_idx
 ON translation.species_code_mapping (nl_species_codes)
 WHERE TT_NotEmpty(nl_species_codes);
@@ -81,11 +87,13 @@ DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NL01';
 -- Add translated ones
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_nl01_lyr('rawfri', 'nl01_l1_to_nl_nli_l1_map');
+COMMIT;
 
 
 ------------------------
 -- NFL
 ------------------------
+BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl01_nfl', 'ab_avi01_nfl');
 
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1);
@@ -96,11 +104,13 @@ DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NL01';
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_nl01_nfl('rawfri', 'nl01_l1_to_nl_nli_l1_map');
+COMMIT;
 
 
 ------------------------
 -- GEO
 ------------------------
+BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_geo', '_nl01_geo', 'ab_avi01_geo'); 
 
 SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1);
@@ -111,6 +121,7 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NL01';
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 
 SELECT * FROM TT_Translate_nl01_geo('rawfri', 'nl01_l1_to_nl_nli_l1_map');
+COMMIT;
 
 --------------------------------------------------------------------------
 -- Check
