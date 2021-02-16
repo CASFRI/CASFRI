@@ -78,7 +78,7 @@ ALTER TABLE $tableName_meta RENAME COLUMN ver_prg TO meta_ver_prg;
 -- join qc03_poly, qc03_meta
 DROP TABLE IF EXISTS  $fullTargetTableName;
 CREATE TABLE  $fullTargetTableName AS
-SELECT *, substring(replace(poly.geocode, ',','.'), 1, 10) geocode_1_10, substring(replace(poly.geocode, ',','.'), 11, 10) geocode_11_20
+SELECT *, substring(replace(poly.geoc_maj, ',','.'), 1, 10) geoc_maj_1_10, substring(replace(poly.geoc_maj, ',','.'), 11, 10) geoc_maj_11_20
 FROM $tableName_poly AS poly
 LEFT join $tableName_meta AS meta 
   on poly.geoc_maj = meta.meta_geoc_maj;
