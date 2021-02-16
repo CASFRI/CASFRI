@@ -140,7 +140,7 @@ COMMIT;
 --------------------------------------------------------------------------
 -- Check
 /*
-SELECT 'cas_all' AS table, count* nb
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'QC05'
 UNION ALL

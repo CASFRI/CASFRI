@@ -143,7 +143,7 @@ SELECT * FROM TT_Translate_sk02_geo('rawfri', 'sk02_l1_to_sk_sfv_l1_map');
 --------------------------------------------------------------------------
 -- Check
 /*
-SELECT 'cas_all' AS table, count* nb
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'SK02'
 UNION ALL

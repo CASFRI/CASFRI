@@ -127,7 +127,7 @@ SELECT * FROM TT_Translate_qc06_geo('rawfri', 'qc06_l1_to_qc_ini04_l1_map');
 --------------------------------------------------------------------------
 -- Check
 /*
-SELECT 'cas_all' AS table, count* nb
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'QC06'
 UNION ALL
