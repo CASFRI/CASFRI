@@ -14,32 +14,12 @@
 -- No not display debug messages.
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
-
---------------------------------------------------------------------------
--- Validate NL photo year table
---------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'nl_photoyear_validation', '_nl_photo_val');
-SELECT * FROM TT_Translate_nl_photo_val('rawfri', 'nl_photoyear');
-
--- make table valid and subset by rows with valid photo years
-DROP TABLE IF EXISTS rawfri.new_photo_year;
-CREATE TABLE rawfri.new_photo_year AS
-SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photoyear
-FROM rawfri.nl_photoyear
-WHERE TT_IsInt(photoyear::text);
-
-CREATE INDEX IF NOT EXISTS nl_photoyear_idx 
- ON rawfri.new_photo_year
- USING GIST(wkb_geometry);
-
-DROP TABLE rawfri.nl_photoyear;
-ALTER TABLE rawfri.new_photo_year RENAME TO nl_photoyear;
-
 --------------------------------------------------------------------------
 -- Translate all NL01. 14h47m 
 --------------------------------------------------------------------------
 -- CAS 
 ------------------------
+BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_cas', '_nl01_cas', 'ab_avi01_cas'); 
 
 SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli');
