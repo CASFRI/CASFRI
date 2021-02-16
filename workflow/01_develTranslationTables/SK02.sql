@@ -85,7 +85,7 @@ FROM TT_Translate_sk02_nfl_devel('rawfri', 'sk02_l1_to_sk_sfv_l1_map_200') a, ra
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 SELECT a.cas_id, b.nvsl, b.aquatic_class, b.luc, b.transp_class, a.nat_non_veg, a.non_for_anth, a.non_for_veg, a.layer
-FROM TT_Translate_sk02_nfl_devel('rawfri', 'sk02_l6_to_sk_sfv_l1_map_200', 'ogc_fid') a, rawfri.sk02_l6_to_sk_sfv_l1_map_200_nfl b
+FROM TT_Translate_sk02_nfl_devel('rawfri', 'sk02_l6_to_sk_sfv_l1_map_200') a, rawfri.sk02_l6_to_sk_sfv_l1_map_200_nfl b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 -- ECO ATTRIBUTES

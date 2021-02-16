@@ -99,7 +99,7 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'ab11', 'ab', NULL, 'cas');
 
 CREATE TABLE casfri50.cas_all AS 
-SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab11_l1_to_ab_l1_map_cas', 'ogc_fid');
+SELECT * FROM TT_Translate_ab_cas('rawfri', 'ab11_l1_to_ab_l1_map_cas');
 COMMIT;
 
 ------------------------
