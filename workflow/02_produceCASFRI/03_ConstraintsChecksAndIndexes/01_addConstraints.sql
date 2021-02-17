@@ -240,7 +240,9 @@ SELECT '1.21'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
                         ARRAY['stand_photo_year_greater_than_zero', 
-                              'stand_photo_year > 0']) AS (passed boolean, cstr_query text)) foo
+                              'stand_photo_year > 0 OR 
+                               stand_photo_year = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the DST_ALL table
 -------------------------------------------------------
