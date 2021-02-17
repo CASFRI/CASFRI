@@ -20,7 +20,7 @@ Release Procedure
 
     3. Check the count of loaded inventory with the checkCounts.sql script. Fix inventories not reporting the right number of rows and add any missing test.
 
-8. In pgAdmin, check that the unsinstall scripts uninstall everything:
+8. In pgAdmin, check that the uninstall scripts work properly and uninstall everything (i.e. that after running them, there is no Table Translation Framework and CASFRI Helper function left in the database):
 
     1. DROP all TT_Translate functions with "SELECT TT_DropAllTranslateFct();"
 
