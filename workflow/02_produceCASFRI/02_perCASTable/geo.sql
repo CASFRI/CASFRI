@@ -425,7 +425,7 @@ ORDER BY inv;
 --SK06	211482
 --YT02	231137
 
-SELECT count(*) FROM casfri50.geo_all; -- 33711102
+SELECT count(*) FROM casfri50.geo_all; -- 35305480
 SELECT count(*) FROM casfri50.geo_all WHERE ST_AsTexT(geometry) = 'POLYGON EMPTY'; -- 0
 
 -- Set the geometry type to be able to display in some GIS
