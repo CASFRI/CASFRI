@@ -30,7 +30,7 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'SK06';
 INSERT INTO casfri50.cas_all -- 
 SELECT * FROM TT_Translate_sk06_cas('rawfri', 'sk06_l1_to_sk_sfv_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_cas', 'sk06_l1_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_cas', 'sk06_l1_to_sk_sfv_l1_map');
 
 ------------------------
 -- DST
@@ -46,7 +46,7 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'SK06';
 INSERT INTO casfri50.dst_all -- 
 SELECT * FROM TT_Translate_sk06_dst('rawfri', 'sk06_l1_to_sk_sfv_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_dst', 'sk06_l1_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_dst', 'sk06_l1_to_sk_sfv_l1_map');
 
 ------------------------
 -- ECO
@@ -62,7 +62,7 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'SK06';
 INSERT INTO casfri50.eco_all -- 
 SELECT * FROM TT_Translate_sk06_eco('rawfri', 'sk06_l1_to_sk_sfv_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco', 'sk06_l1_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_eco', 'sk06_l1_to_sk_sfv_l1_map');
 
 ------------------------
 -- LYR
@@ -85,7 +85,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 1, 'sk_sfv', 1);
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_sk06_lyr('rawfri', 'sk06_l1_to_sk_sfv_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l1_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l1_to_sk_sfv_l1_map');
 
 -- Layer 2 using SFVI translation table
 SELECT TT_CreateMappingView('rawfri', 'sk06', 2, 'sk_sfv', 1);
@@ -93,7 +93,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 2, 'sk_sfv', 1);
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_sk06_lyr('rawfri', 'sk06_l2_to_sk_sfv_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l2_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l2_to_sk_sfv_l1_map');
 
 -- Layer 3 using SFVI translation table
 SELECT TT_CreateMappingView('rawfri', 'sk06', 3, 'sk_sfv', 1);
@@ -101,7 +101,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 3, 'sk_sfv', 1);
 INSERT INTO casfri50.lyr_all -- 
 SELECT * FROM TT_Translate_sk06_lyr('rawfri', 'sk06_l3_to_sk_sfv_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l3_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_lyr', 'sk06_l3_to_sk_sfv_l1_map');
 
 ------------------------
 -- NFL
@@ -118,7 +118,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 4, 'sk_sfv', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_sk06_nfl('rawfri', 'sk06_l4_to_sk_sfv_l1_map', 'ogc_fid'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l4_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l4_to_sk_sfv_l1_map');
 
 --layer 2 - non_for_veg: herbs
 SELECT TT_CreateMappingView('rawfri', 'sk06', 5, 'sk_sfv', 1);
@@ -126,7 +126,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 5, 'sk_sfv', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_sk06_nfl('rawfri', 'sk06_l5_to_sk_sfv_l1_map', 'ogc_fid'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l5_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l5_to_sk_sfv_l1_map');
 
 --layer 2 - nat_non_veg and non_for_anth
 SELECT TT_CreateMappingView('rawfri', 'sk06', 6, 'sk_sfv', 1);
@@ -134,7 +134,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 6, 'sk_sfv', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_sk06_nfl('rawfri', 'sk06_l6_to_sk_sfv_l1_map', 'ogc_fid'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l6_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l6_to_sk_sfv_l1_map');
 ------------------------
 -- GEO
 ------------------------
@@ -149,10 +149,11 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'SK06';
 INSERT INTO casfri50.geo_all -- 
 SELECT * FROM TT_Translate_sk06_geo('rawfri', 'sk06_l1_to_sk_sfv_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_geo', 'sk06_l1_to_sk_sfv_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_geo', 'sk06_l1_to_sk_sfv_l1_map');
 --------------------------------------------------------------------------
 -- Check
-SELECT 'cas_all', count(*) nb
+/*
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'SK06'
 UNION ALL
@@ -175,4 +176,5 @@ UNION ALL
 SELECT 'geo_all', count(*) nb
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'SK06';
+*/
 --------------------------------------------------------------------------

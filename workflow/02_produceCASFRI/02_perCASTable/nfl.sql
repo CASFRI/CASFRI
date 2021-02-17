@@ -56,7 +56,7 @@ CREATE TABLE casfri50.nfl_all AS
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab03_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab03_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab03_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB03 layer 4
 BEGIN;
@@ -66,7 +66,7 @@ INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab03_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab03_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab03_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB06 layer 3
 BEGIN;
@@ -76,7 +76,7 @@ CREATE TABLE casfri50.nfl_all AS -- 2m24s
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab06_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab06_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab06_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB06 layer 4
 BEGIN;
@@ -86,7 +86,7 @@ INSERT INTO casfri50.nfl_all -- 2m1s
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab06_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab06_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab06_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB07 layer 3
 BEGIN;
@@ -96,7 +96,7 @@ CREATE TABLE casfri50.nfl_all AS
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab07_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab07_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab07_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB07 layer 4
 BEGIN;
@@ -106,7 +106,7 @@ INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab07_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab07_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab07_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB08 layer 3
 BEGIN;
@@ -116,7 +116,7 @@ CREATE TABLE casfri50.nfl_all AS
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab08_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab08_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab08_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB08 layer 4
 BEGIN;
@@ -126,7 +126,7 @@ INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab08_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab08_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab08_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB10 layer 3
 BEGIN;
@@ -136,7 +136,7 @@ CREATE TABLE casfri50.nfl_all AS
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab10_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab10_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab10_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB10 layer 4
 BEGIN;
@@ -146,7 +146,7 @@ INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab10_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab10_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab10_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB11 layer 3
 BEGIN;
@@ -156,7 +156,7 @@ CREATE TABLE casfri50.nfl_all AS
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab11_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab11_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab11_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB11 layer 4
 BEGIN;
@@ -166,7 +166,7 @@ INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab11_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab11_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab11_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB16 layer 3
 BEGIN;
@@ -176,7 +176,7 @@ INSERT INTO casfri50.nfl_all -- 23m43s
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab16_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB16 layer 4
 BEGIN;
@@ -186,7 +186,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab16_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB25 layer 3
 BEGIN;
@@ -196,7 +196,7 @@ INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab25_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab25_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab25_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB25 layer 4
 BEGIN;
@@ -206,7 +206,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab25_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab25_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab25_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB29 layer 3
 BEGIN;
@@ -216,7 +216,7 @@ INSERT INTO casfri50.nfl_all
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab29_l3_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab29_l3_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab29_l3_to_ab_l1_map_nfl');
 ------------------------
 -- Translate AB29 layer 4
 BEGIN;
@@ -226,7 +226,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_ab_nfl('rawfri', 'ab29_l4_to_ab_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab29_l4_to_ab_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab29_l4_to_ab_l1_map_nfl');
 ------------------------
 -- Translate NB01 layer 3
 BEGIN;
@@ -236,7 +236,7 @@ INSERT INTO casfri50.nfl_all -- 1h4m
 SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb01_l3_to_nb_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl', 'nb01_l3_to_nb_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl', 'nb01_l3_to_nb_l1_map_nfl');
 ------------------------
 -- Translate NB02 layer 3
 BEGIN;
@@ -246,7 +246,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_nb_nfl('rawfri', 'nb02_l3_to_nb_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl', 'nb02_l3_to_nb_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'nb_nbi01_nfl', 'nb02_l3_to_nb_l1_map_nfl');
 ------------------------
 -- Translate BC08 NFL layer 1
 BEGIN;
@@ -256,7 +256,7 @@ INSERT INTO casfri50.nfl_all -- 16h38m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l3_to_bc_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l3_to_bc_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l3_to_bc_l1_map_nfl');
 ------------------------
 -- Translate BC08 layer NFL 2
 BEGIN;
@@ -266,7 +266,7 @@ INSERT INTO casfri50.nfl_all -- 16h38m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l4_to_bc_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l4_to_bc_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l4_to_bc_l1_map_nfl');
 ------------------------
 -- Translate BC08 layer NFL 3
 BEGIN;
@@ -276,7 +276,7 @@ INSERT INTO casfri50.nfl_all -- 16h38m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc08_l5_to_bc_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l5_to_bc_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l5_to_bc_l1_map_nfl');
 ------------------------
 -- Translate BC10 layer 3
 BEGIN;
@@ -286,7 +286,7 @@ INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc10_l3_to_bc_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l3_to_bc_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l3_to_bc_l1_map_nfl');
 ------------------------
 -- Translate BC10 layer 4
 BEGIN;
@@ -296,7 +296,7 @@ INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc10_l4_to_bc_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l4_to_bc_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l4_to_bc_l1_map_nfl');
 ------------------------
 -- Translate BC10 layer 5
 BEGIN;
@@ -306,7 +306,7 @@ INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc_nfl('rawfri', 'bc10_l5_to_bc_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l5_to_bc_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc10_l5_to_bc_l1_map_nfl');
 ------------------------
 -- Translate NT01 layer 3
 BEGIN;
@@ -316,7 +316,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l3_to_nt_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l3_to_nt_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l3_to_nt_l1_map_nfl');
 ------------------------
 -- Translate NT01 layer 4
 BEGIN;
@@ -326,7 +326,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt01_l4_to_nt_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l4_to_nt_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt01_l4_to_nt_l1_map_nfl');
 ------------------------
 -- Translate NT02 layer 3
 BEGIN;
@@ -336,7 +336,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l3_to_nt_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt02_l3_to_nt_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt02_l3_to_nt_l1_map_nfl');
 ------------------------
 -- Translate NT02 layer 4
 BEGIN;
@@ -346,7 +346,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_nt_nfl('rawfri', 'nt02_l4_to_nt_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt02_l4_to_nt_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'nt_fvi01_nfl', 'nt02_l4_to_nt_l1_map_nfl');
 ------------------------
 -- Translate ON02 layer 3
 BEGIN;
@@ -356,7 +356,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_on_nfl('rawfri', 'on02_l3_to_on_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_nfl', 'on02_l3_to_on_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'on_fim02_nfl', 'on02_l3_to_on_l1_map_nfl');
 ------------------------
 -- Translate SK01 layer 3
 BEGIN;
@@ -366,7 +366,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_utm_nfl('rawfri', 'sk01_l3_to_sk_utm_l1_map_nfl', 'ogc_fid'); 
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl', 'sk01_l3_to_sk_utm_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_utm01_nfl', 'sk01_l3_to_sk_utm_l1_map_nfl');
 ------------------------
 -- Translate SK02 layer 4
 BEGIN;
@@ -376,7 +376,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk02_l4_to_sk_sfv_l1_map_nfl');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l4_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l4_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK02 layer 5
 BEGIN;
@@ -386,7 +386,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk02_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l5_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l5_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK02 layer 6
 BEGIN;
@@ -396,7 +396,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk02_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l6_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk02_l6_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK03 layer 4
 BEGIN;
@@ -406,7 +406,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk03_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l4_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l4_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK03 layer 5
 BEGIN;
@@ -416,7 +416,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk03_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l5_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l5_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK03 layer 6
 BEGIN;
@@ -426,7 +426,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk03_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l6_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk03_l6_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK04 layer 4
 BEGIN;
@@ -436,7 +436,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk04_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l4_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l4_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK04 layer 5
 BEGIN;
@@ -446,7 +446,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk04_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l5_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l5_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK04 layer 6
 BEGIN;
@@ -456,7 +456,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk04_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l6_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk04_l6_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK05 layer 4
 BEGIN;
@@ -466,7 +466,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk05_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l4_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l4_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK05 layer 5
 BEGIN;
@@ -476,7 +476,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk05_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l5_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l5_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK05 layer 6
 BEGIN;
@@ -486,7 +486,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk05_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l6_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk05_l6_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK06 layer 4
 BEGIN;
@@ -496,7 +496,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk06_l4_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l4_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l4_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK06 layer 5
 BEGIN;
@@ -506,7 +506,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk06_l5_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l5_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l5_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate SK06 layer 6
 BEGIN;
@@ -516,7 +516,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_sk_sfv_nfl('rawfri', 'sk06_l6_to_sk_sfv_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l6_to_sk_sfv_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'sk_sfv01_nfl', 'sk06_l6_to_sk_sfv_l1_map_nfl');
 ------------------------
 -- Translate YT02 layer 2
 BEGIN;
@@ -526,7 +526,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_yt_nfl('rawfri', 'yt02_l2_to_yt_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl', 'yt02_l2_to_yt_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'yt_yvi01_nfl', 'yt02_l2_to_yt_l1_map_nfl');
 ------------------------
 -- Translate NS03 layer 3
 BEGIN;
@@ -536,7 +536,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_ns_nfl('rawfri', 'ns03_l3_to_ns_nsi_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_nfl', 'ns03_l3_to_ns_nsi_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'ns_nsi01_nfl', 'ns03_l3_to_ns_nsi_l1_map_nfl');
 ------------------------
 -- Translate PE01 layer 2
 BEGIN;
@@ -546,7 +546,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pe_nfl('rawfri', 'pe01_l2_to_pe_pei_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_nfl', 'pe01_l2_to_pe_pei_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pe_pei01_nfl', 'pe01_l2_to_pe_pei_l1_map_nfl');
 ------------------------
 -- Translate MB05 layer 2
 BEGIN;
@@ -556,7 +556,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_mb_fri_nfl('rawfri', 'mb05_l2_to_mb_fri_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_nfl', 'mb05_l2_to_mb_fri_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'mb_fri01_nfl', 'mb05_l2_to_mb_fri_l1_map_nfl');
 ------------------------
 -- Translate MB06 layer 6
 BEGIN;
@@ -566,7 +566,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_mb_fli_nfl('rawfri', 'mb06_l6_to_mb_fli_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_nfl', 'mb06_l6_to_mb_fli_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'mb_fli01_nfl', 'mb06_l6_to_mb_fli_l1_map_nfl');
 ------------------------
 -- Translate NL01 layer 2
 BEGIN;
@@ -576,7 +576,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_nl_nfl('rawfri', 'nl01_l2_to_nl_nli_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_nfl', 'nl01_l2_to_nl_nli_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'nl_nli01_nfl', 'nl01_l2_to_nl_nli_l1_map_nfl');
 ------------------------
 -- Translate QC03 layer 1
 BEGIN;
@@ -586,7 +586,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_qc03_nfl('rawfri', 'qc03_l3_to_qc_ini03_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_nfl', 'qc03_l3_to_qc_ini03_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'qc_ini03_nfl', 'qc03_l3_to_qc_ini03_l1_map_nfl');
 ------------------------
 -- Translate QC04 layer 1
 BEGIN;
@@ -596,7 +596,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_qc04_nfl('rawfri', 'qc04_l3_to_qc_ini04_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_nfl', 'qc04_l3_to_qc_ini04_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'qc_ini04_nfl', 'qc04_l3_to_qc_ini04_l1_map_nfl');
 ------------------------
 -- Translate QC05 layer 1
 BEGIN;
@@ -606,7 +606,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_qc05_nfl('rawfri', 'qc05_l3_to_qc_ipf_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_nfl', 'qc05_l3_to_qc_ipf_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'qc_ipf05_nfl', 'qc05_l3_to_qc_ipf_l1_map_nfl');
 ------------------------
 -- Translate PC01 from PANP
 --layer 4 
@@ -617,7 +617,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l4_to_pc_panp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l1_to_pc_panp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l1_to_pc_panp_l1_map_nfl');
 
 -- Translate layer 5 
 BEGIN;
@@ -627,7 +627,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l5_to_pc_panp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l5_to_pc_panp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l5_to_pc_panp_l1_map_nfl');
 
 -- Translate layer 6 
 BEGIN;
@@ -637,7 +637,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc01_nfl('rawfri', 'pc01_l6_to_pc_panp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l6_to_pc_panp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_panp_nfl', 'pc01_l6_to_pc_panp_l1_map_nfl');
 
 ------------------------
 -- Translate PC02 from WBNP
@@ -649,7 +649,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l8_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l8_to_pc_wbnp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l8_to_pc_wbnp_l1_map_nfl');
 
 --layer 9 
 BEGIN;
@@ -659,7 +659,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l9_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l9_to_pc_wbnp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l9_to_pc_wbnp_l1_map_nfl');
 
 --layer 10 
 BEGIN;
@@ -669,7 +669,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l10_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l10_to_pc_wbnp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l10_to_pc_wbnp_l1_map_nfl');
 
 --layer 11 
 BEGIN;
@@ -679,7 +679,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l11_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l11_to_pc_wbnp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l11_to_pc_wbnp_l1_map_nfl');
 
 --layer 12 
 BEGIN;
@@ -689,7 +689,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l12_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l12_to_pc_wbnp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l12_to_pc_wbnp_l1_map_nfl');
 
 --layer 13 
 BEGIN;
@@ -699,7 +699,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l13_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l13_to_pc_wbnp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l13_to_pc_wbnp_l1_map_nfl');
 
 --layer 14 
 BEGIN;
@@ -709,7 +709,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l14_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l14_to_pc_wbnp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l14_to_pc_wbnp_l1_map_nfl');
 
 --layer 15 
 BEGIN;
@@ -719,7 +719,7 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pc02_nfl('rawfri', 'pc02_l15_to_pc_wbnp_l1_map_nfl', 'ogc_fid');
 COMMIT;
 
-SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l15_to_pc_wbnp_l1_map_nfl');
+--SELECT * FROM TT_ShowLastLog('translation', 'pc_wbnp_nfl', 'pc02_l15_to_pc_wbnp_l1_map_nfl');
 
 --------------------------------------------------------------------------
 -- Check processed inventories and count

@@ -31,7 +31,7 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'BC08';
 INSERT INTO casfri50.cas_all -- **h**m
 SELECT * FROM TT_Translate_bc08_cas('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_cas', 'bc08_l1_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_cas', 'bc08_l1_to_bc_l1_map');
 COMMIT;
 
 ------------------------
@@ -49,7 +49,7 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'BC08';
 INSERT INTO casfri50.dst_all -- 7h3m
 SELECT * FROM TT_Translate_bc08_dst('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_dst', 'bc08_l1_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_dst', 'bc08_l1_to_bc_l1_map');
 COMMIT;
 
 ------------------------
@@ -67,7 +67,7 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'BC08';
 INSERT INTO casfri50.eco_all -- *h**m
 SELECT * FROM TT_Translate_bc08_eco('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_eco', 'bc08_l1_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_eco', 'bc08_l1_to_bc_l1_map');
 COMMIT;
 
 ------------------------
@@ -92,7 +92,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 1, 'bc', 1);
 INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l1_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l1_to_bc_l1_map');
 
 -- Layer 2 reusing BC08 layer 1 translation table
 
@@ -101,7 +101,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1);
 INSERT INTO casfri50.lyr_all -- *m**s
 SELECT * FROM TT_Translate_bc08_lyr('rawfri', 'bc08_l2_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l2_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_lyr', 'bc08_l2_to_bc_l1_map');
 COMMIT;
 
 ------------------------
@@ -120,7 +120,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 3, 'bc', 1);
 INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l3_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l3_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l3_to_bc_l1_map');
 
 -- layer 2
 SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1);
@@ -129,7 +129,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1);
 INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l4_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l4_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l4_to_bc_l1_map');
 
 -- layer 3
 SELECT TT_CreateMappingView('rawfri', 'bc08', 5, 'bc', 1);
@@ -138,7 +138,7 @@ SELECT TT_CreateMappingView('rawfri', 'bc08', 5, 'bc', 1);
 INSERT INTO casfri50.nfl_all -- **h**m
 SELECT * FROM TT_Translate_bc08_nfl('rawfri', 'bc08_l5_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l5_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_nfl', 'bc08_l5_to_bc_l1_map');
 COMMIT;
 
 ------------------------
@@ -156,11 +156,12 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'BC08';
 INSERT INTO casfri50.geo_all --*h**m
 SELECT * FROM TT_Translate_bc08_geo('rawfri', 'bc08_l1_to_bc_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_geo', 'bc08_l1_to_bc_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'bc_vri01_geo', 'bc08_l1_to_bc_l1_map');
 COMMIT;
 --------------------------------------------------------------------------
 -- Check
-SELECT 'cas_all', count(*) nb
+/*
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'BC08'
 UNION ALL
@@ -183,4 +184,5 @@ UNION ALL
 SELECT 'geo_all', count(*) nb
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'BC08';
+*/
 --------------------------------------------------------------------------

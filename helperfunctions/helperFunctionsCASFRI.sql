@@ -185,6 +185,8 @@ $$ LANGUAGE plpgsql VOLATILE STRICT;
 -- TT_IsJsonGeometry 
 -- 
 -- Return TRUE if jsonbstr is a jsonb geometry.
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);
 CREATE OR REPLACE FUNCTION TT_IsJsonGeometry(
   jsonbstr text
 )
@@ -1863,7 +1865,7 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_qc_prg5_species_code_to_reordered_array(text, text)
+-- TT_qc_prg5_species_code_to_reordered_array(text)
 --
 -- eta_ess_pc text
 --

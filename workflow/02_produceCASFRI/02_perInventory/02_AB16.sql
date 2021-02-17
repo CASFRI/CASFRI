@@ -14,27 +14,6 @@
 -- No not display debug messages.
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
-
---------------------------------------------------------------------------
--- Validate AB photo year table
---------------------------------------------------------------------------
-SELECT TT_Prepare('translation', 'ab_photoyear_validation', '_ab_photo_val');
-SELECT * FROM TT_Translate_ab_photo_val('rawfri', 'ab_photoyear');
-
--- Make table valid and subset by rows with valid photo years
-DROP TABLE IF EXISTS rawfri.new_photo_year;
-CREATE TABLE rawfri.new_photo_year AS
-SELECT TT_GeoMakeValid(wkb_geometry) as wkb_geometry, photo_yr
-FROM rawfri.ab_photoyear
-WHERE TT_IsInt(photo_yr);
-
-CREATE INDEX IF NOT EXISTS ab16_photoyear_idx 
-ON rawfri.new_photo_year
-USING GIST(wkb_geometry);
-
-DROP TABLE rawfri.ab_photoyear;
-ALTER TABLE rawfri.new_photo_year RENAME TO ab_photoyear;
-
 --------------------------------------------------------------------------
 -- Translate all AB16. XXhXXm
 --------------------------------------------------------------------------
@@ -51,7 +30,7 @@ DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'AB16';
 INSERT INTO casfri50.cas_all -- 37m35s
 SELECT * FROM TT_Translate_ab16_cas('rawfri', 'ab16_l1_to_ab_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab16_l1_to_ab_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_cas', 'ab16_l1_to_ab_l1_map');
 
 ------------------------
 -- DST
@@ -67,7 +46,7 @@ DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB16';
 INSERT INTO casfri50.dst_all -- 1m50s
 SELECT * FROM TT_Translate_ab16_dst('rawfri', 'ab16_l1_to_ab_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab16_l1_to_ab_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_dst', 'ab16_l1_to_ab_l1_map');
 
 ------------------------
 -- ECO
@@ -83,7 +62,7 @@ DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'AB16';
 INSERT INTO casfri50.eco_all -- 6m2s
 SELECT * FROM TT_Translate_ab16_eco('rawfri', 'ab16_l1_to_ab_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_eco', 'ab16_l1_to_ab_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_eco', 'ab16_l1_to_ab_l1_map');
 
 ------------------------
 -- LYR
@@ -106,7 +85,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab16', 1, 'ab', 1);
 INSERT INTO casfri50.lyr_all -- 46m20s
 SELECT * FROM TT_Translate_ab16_lyr('rawfri', 'ab16_l1_to_ab_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab16_l1_to_ab_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab16_l1_to_ab_l1_map');
 
 -- Layer 2
 
@@ -115,7 +94,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab16', 2, 'ab', 1);
 INSERT INTO casfri50.lyr_all -- 3m56s
 SELECT * FROM TT_Translate_ab16_lyr('rawfri', 'ab16_l2_to_ab_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab16_l2_to_ab_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_lyr', 'ab16_l2_to_ab_l1_map');
 
 ------------------------
 -- NFL
@@ -133,7 +112,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab16', 3, 'ab', 1);
 INSERT INTO casfri50.nfl_all -- 23m43s
 SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_l3_to_ab_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l3_to_ab_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l3_to_ab_l1_map');
 
 -- Layer 2 reusing AB16 layer 1 translation table
 
@@ -142,7 +121,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab16', 4, 'ab', 1);
 INSERT INTO casfri50.nfl_all -- 
 SELECT * FROM TT_Translate_ab16_nfl('rawfri', 'ab16_l4_to_ab_l1_map', 'ogc_fid');
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l4_to_ab_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_nfl', 'ab16_l4_to_ab_l1_map');
 
 ------------------------
 -- GEO
@@ -158,10 +137,11 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'AB16';
 INSERT INTO casfri50.geo_all -- 7m30s
 SELECT * FROM TT_Translate_ab16_geo('rawfri', 'ab16_l1_to_ab_l1_map', 'ogc_fid'); 
 
-SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab16_l1_to_ab_l1_map');
+--SELECT * FROM TT_ShowLastLog('translation', 'ab_avi01_geo', 'ab16_l1_to_ab_l1_map');
 --------------------------------------------------------------------------
 -- Check
-SELECT 'cas_all', count(*) nb
+/*
+SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
 WHERE left(cas_id, 4) = 'AB16'
 UNION ALL
@@ -184,4 +164,5 @@ UNION ALL
 SELECT 'geo_all', count(*) nb
 FROM casfri50.geo_all
 WHERE left(cas_id, 4) = 'AB16';
+*/
 --------------------------------------------------------------------------
