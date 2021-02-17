@@ -12,17 +12,23 @@
 "/c/program files/git/git-bash.exe" load_ab30.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_bc08.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_bc10.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_mb01.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_mb02.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_mb03.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_mb05.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_mb06.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_mb07.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_nb01.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_nb02.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_nl_photoyear.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_nl01.sh & > /dev/null
-"/c/program files/git/git-bash.exe" load_ns03.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_nt01.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_nt03.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_on02.sh
 
+"/c/program files/git/git-bash.exe" load_ns01.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_ns02.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_ns03.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_pc01.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_pc02.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_pe01.sh & > /dev/null
@@ -37,4 +43,5 @@
 "/c/program files/git/git-bash.exe" load_sk04.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_sk05.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_sk06.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_yt01.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_yt02.sh & > /dev/null
