@@ -35,8 +35,9 @@ SELECT TT_Prepare('translation', 'sk_sfv01_cas', '_sk_sfv_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'ns_nsi01_cas', '_ns_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'pe_pei01_cas', '_pe_cas', 'ab_avi01_cas');
-SELECT TT_Prepare('translation', 'mb_fri01_cas', '_mb05_cas', 'ab_avi01_cas');
-SELECT TT_Prepare('translation', 'mb_fli01_cas', '_mb06_cas', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'mb_fri02_cas', '_mb_fri2_cas', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'mb_fri01_cas', '_mb_fri_cas', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'mb_fli01_cas', '_mb_fli_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'nl_nli01_cas', '_nl_cas', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'qc_ini03_cas', '_qc03_cas', 'ab_avi01_cas'); 
 SELECT TT_Prepare('translation', 'qc_ini04_cas', '_qc04_cas', 'ab_avi01_cas'); 
@@ -256,12 +257,39 @@ SELECT * FROM TT_Translate_sk_sfv_cas('rawfri', 'sk06_l1_to_sk_sfv_l1_map_cas');
 COMMIT;
 
 ------------------------
+-- Translate YT01 using YVI01 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'yt01', 'yt', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all -- 
+SELECT * FROM TT_Translate_yt_cas('rawfri', 'yt01_l1_to_yt_l1_map_cas');
+COMMIT;
+
+------------------------
 -- Translate YT02 using YVI01 translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', NULL, 'cas');
 
 INSERT INTO casfri50.cas_all -- 
 SELECT * FROM TT_Translate_yt_cas('rawfri', 'yt02_l1_to_yt_l1_map_cas');
+COMMIT;
+
+------------------------
+-- Translate NS01 using NS_NSI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns01', 'ns_nsi', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_ns_cas('rawfri', 'ns01_l1_to_ns_nsi_l1_map_cas');
+COMMIT;
+
+------------------------
+-- Translate NS02 using NS_NSI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns02', 'ns_nsi', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_ns_cas('rawfri', 'ns02_l1_to_ns_nsi_l1_map_cas');
 COMMIT;
 
 ------------------------
@@ -283,12 +311,39 @@ SELECT * FROM TT_Translate_pe_cas('rawfri', 'pe01_l1_to_pe_pei_l1_map_cas');
 COMMIT;
 
 ------------------------
+-- Translate MB01 using MB_FRI2 translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb01', 'mb_fri2', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_mb_fri2_cas('rawfri', 'mb01_l1_to_mb_fri2_l1_map_cas');
+COMMIT;
+
+------------------------
 -- Translate MB05 using MB_FRI translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'mb05', 'mb_fri', NULL, 'cas');
 
 INSERT INTO casfri50.cas_all
-SELECT * FROM TT_Translate_mb05_cas('rawfri', 'mb05_l1_to_mb_fri_l1_map_cas');
+SELECT * FROM TT_Translate_mb_fri_cas('rawfri', 'mb05_l1_to_mb_fri_l1_map_cas');
+COMMIT;
+
+------------------------
+-- Translate MB02 using MB_FLI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb02', 'mb_fli', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_mb_fli_cas('rawfri', 'mb02_l1_to_mb_fli_l1_map_cas');
+COMMIT;
+
+------------------------
+-- Translate MB04 using MB_FLI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb04', 'mb_fli', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_mb_fli_cas('rawfri', 'mb04_l1_to_mb_fli_l1_map_cas');
 COMMIT;
 
 ------------------------
@@ -297,7 +352,16 @@ BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'mb06', 'mb_fli', NULL, 'cas');
 
 INSERT INTO casfri50.cas_all
-SELECT * FROM TT_Translate_mb06_cas('rawfri', 'mb06_l1_to_mb_fli_l1_map_cas');
+SELECT * FROM TT_Translate_mb_fli_cas('rawfri', 'mb06_l1_to_mb_fli_l1_map_cas');
+COMMIT;
+
+------------------------
+-- Translate MB07 using MB_FLI translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb07', 'mb_fli', NULL, 'cas');
+
+INSERT INTO casfri50.cas_all
+SELECT * FROM TT_Translate_mb_fli_cas('rawfri', 'mb07_l1_to_mb_fli_l1_map_cas');
 COMMIT;
 
 ------------------------

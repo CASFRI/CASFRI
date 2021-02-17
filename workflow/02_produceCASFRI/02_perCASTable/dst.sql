@@ -31,8 +31,9 @@ SELECT TT_Prepare('translation', 'sk_sfv01_dst', '_sk_sfv_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'ns_nsi01_dst', '_ns_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'pe_pei01_dst', '_pe_dst', 'ab_avi01_dst');
-SELECT TT_Prepare('translation', 'mb_fri01_dst', '_mb05_dst', 'ab_avi01_dst');
-SELECT TT_Prepare('translation', 'mb_fli01_dst', '_mb06_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'mb_fri02_dst', '_mb_fri2_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'mb_fri01_dst', '_fri_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'mb_fli01_dst', '_fli_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc03_dst', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc04_dst', 'ab_avi01_dst');
@@ -260,12 +261,39 @@ SELECT * FROM TT_Translate_sk_sfv_dst('rawfri', 'sk06_l1_to_sk_sfv_l1_map_dst');
 COMMIT;
 
 ------------------------
+-- Translate YT01 using YVI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'yt01', 1, 'yt', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_yt_dst('rawfri', 'yt01_l1_to_yt_l1_map_dst');
+COMMIT;
+
+------------------------
 -- Translate YT02 using YVI generic translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, NULL, 'dst');
 
 INSERT INTO casfri50.dst_all -- 
 SELECT * FROM TT_Translate_yt_dst('rawfri', 'yt02_l1_to_yt_l1_map_dst');
+COMMIT;
+
+------------------------
+-- Translate NS01 using NS_NSI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_ns_dst('rawfri', 'ns01_l1_to_ns_nsi_l1_map_dst');
+COMMIT;
+
+------------------------
+-- Translate NS02 using NS_NSI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'ns02', 1, 'ns_nsi', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_ns_dst('rawfri', 'ns02_l1_to_ns_nsi_l1_map_dst');
 COMMIT;
 
 ------------------------
@@ -287,12 +315,39 @@ SELECT * FROM TT_Translate_pe_dst('rawfri', 'pe01_l1_to_pe_pei_l1_map_dst');
 COMMIT;
 
 ------------------------
+-- Translate MB01 using MB_FRI2 generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri2', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_mb_fri2_dst('rawfri', 'mb01_l1_to_mb_fri2_l1_map_dst');
+COMMIT;
+
+------------------------
 -- Translate MB05 using MB_FRI generic translation table
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, NULL, 'dst');
 
 INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_mb05_dst('rawfri', 'mb05_l1_to_mb_fri_l1_map_dst');
+SELECT * FROM TT_Translate_mb_fri_dst('rawfri', 'mb05_l1_to_mb_fri_l1_map_dst');
+COMMIT;
+
+------------------------
+-- Translate MB02 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb02', 1, 'mb_fli', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_mb_fli_dst('rawfri', 'mb02_l1_to_mb_fli_l1_map_dst');
+COMMIT;
+
+------------------------
+-- Translate MB04 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb04', 1, 'mb_fli', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all -- 
+SELECT * FROM TT_Translate_mb_fli_dst('rawfri', 'mb04_l1_to_mb_fli_l1_map_dst');
 COMMIT;
 
 ------------------------
@@ -300,8 +355,17 @@ COMMIT;
 BEGIN;
 SELECT TT_CreateMappingView('rawfri', 'mb06', 1, 'mb_fli', 1, NULL, 'dst');
 
-INSERT INTO casfri50.dst_all -- 
-SELECT * FROM TT_Translate_mb06_dst('rawfri', 'mb06_l1_to_mb_fli_l1_map_dst');
+INSERT INTO casfri50.dst_all
+SELECT * FROM TT_Translate_mb_fli_dst('rawfri', 'mb06_l1_to_mb_fli_l1_map_dst');
+COMMIT;
+
+------------------------
+-- Translate MB07 using MB_FLI generic translation table
+BEGIN;
+SELECT TT_CreateMappingView('rawfri', 'mb07', 1, 'mb_fli', 1, NULL, 'dst');
+
+INSERT INTO casfri50.dst_all
+SELECT * FROM TT_Translate_mb_fli_dst('rawfri', 'mb07_l1_to_mb_fli_l1_map_dst');
 COMMIT;
 
 ------------------------
