@@ -154,7 +154,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.15'::text number,
        'cas_all' target_table,
-       'Ensure CAS table NUM_OF_LAYERS is greater than 0' description, 
+       'Issue #609. Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table NUM_OF_LAYERS is greater than 0' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -178,11 +178,11 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.17'::text number,
        'cas_all' target_table,
-       'Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
+       'Issue #609. Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
-                        ARRAY['num_of_layers_greater_than_zero', 
+                        ARRAY['stand_structure_match_num_of_layers', 
                               '((stand_structure = ''MULTI_LAYERED'' OR 
                                  stand_structure = ''HORIZONTAL'' OR 
                                  stand_structure = ''COMPLEX'' OR
@@ -235,7 +235,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.21'::text number,
        'cas_all' target_table,
-       'Issue #248. Ensure CAS table STAND_PHOTO_YEAR is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Ensure CAS table STAND_PHOTO_YEAR is greater than 0' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
