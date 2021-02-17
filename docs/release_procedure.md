@@ -2,7 +2,7 @@ Release Procedure
 
 1. In GitKraken, create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
-2. In pgAdmin, create a new PostgreSQL database to test and certify what is on those branches. Your goal is to stabilize those branches before creating releases with them.
+2. In pgAdmin, create a new PostgreSQL database to test and certify what is on those two branches. Your goal is to stabilize those branches before creating releases with them.
 
 3. In pgAdmin, create the PostGIS extension in the database.
 
