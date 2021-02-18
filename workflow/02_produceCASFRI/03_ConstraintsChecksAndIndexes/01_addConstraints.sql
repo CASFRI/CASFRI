@@ -733,15 +733,6 @@ FROM (SELECT *
                         ARRAY['INT_LAWN_SCAR', 'INT_LAWN_ISLAND', 'INT_LAWN', 'NO_LAWN', 'SHRUB_COVER', 'GRAMINOIDS',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
-UNION ALL
-SELECT '3.14'::text number,
-       'eco_all' target_table,
-       'Issue #376. eco_site does not seems to be translated. Ensure ECO table ECO_SITE values match the corresponding lookup table. Cannot be TT_IsMissingOrInvalidText()' description, 
-       passed, cstr_query
-FROM (SELECT * 
-      FROM TT_AddConstraint('casfri50', 'eco_all', 'CHECK', 
-                        ARRAY['eco_site_not_applicable', 'eco_site != ''NOT_APPLICABLE''']) AS (passed boolean, cstr_query text)) foo
--------------------------------------------------------
 -- Add some constraints to the LYR_ALL table
 -------------------------------------------------------
 UNION ALL
