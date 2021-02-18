@@ -617,7 +617,7 @@ SELECT '3.1'::text number,
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'PK', 
-                        ARRAY['cas_id']) AS (passed boolean, cstr_query text)) foo
+                        ARRAY['cas_id, layer']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '3.2'::text number,
