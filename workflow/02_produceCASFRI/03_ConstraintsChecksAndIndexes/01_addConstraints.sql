@@ -1132,7 +1132,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.46'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table HEIGHT_LOWER is smaller than or equal to HEIGHT_UPPER' description, 
+       'Issue #614. Wrong error code -8886. Ensure LYR table HEIGHT_LOWER is smaller than or equal to HEIGHT_UPPER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
