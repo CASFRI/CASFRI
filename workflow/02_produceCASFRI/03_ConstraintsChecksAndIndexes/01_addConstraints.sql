@@ -400,7 +400,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.19'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_TYPE_1 values match the corresponding lookup table. Cannot be NOT_APPLICABLE' description, 
+       'Issue #610. DIST_TYPE_1 was wrongly assigned FIRE. Ensure DST table DIST_TYPE_1 values match the corresponding lookup table. Cannot be NOT_APPLICABLE' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
