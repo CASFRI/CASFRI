@@ -1675,7 +1675,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.25'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
+       'Issue #617. TRANSLATION_ERROR. Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
