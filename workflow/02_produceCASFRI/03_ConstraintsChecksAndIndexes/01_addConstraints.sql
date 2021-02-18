@@ -1588,65 +1588,79 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.18'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table CROWN_CLOSURE_UPPER is greater than 0, smaller than or equal to 100 and greater than CROWN_CLOSURE_LOWER' description, 
+       'Ensure NFL table CROWN_CLOSURE_LOWER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['crown_closure_upper_between_0_and_100_and_greater_than_crown_closure_lower',
-                              '(crown_closure_upper >= 0 AND crown_closure_upper <= 100 AND 
-                                (crown_closure_lower <= crown_closure_upper OR
-                                 crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_lower_between_0_and_100',
+                              '(crown_closure_lower >= 0 AND crown_closure_lower <= 100) OR 
+                               crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.19'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table CROWN_CLOSURE_LOWER is greater than 0, smaller than or equal to 100 and smaller than CROWN_CLOSURE_UPPER' description, 
+       'Ensure NFL table CROWN_CLOSURE_UPPER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['crown_closure_lower_between_0_and_100_and_smaller_than_crown_closure_upper',
-                              '(crown_closure_lower >= 0 AND crown_closure_lower <= 100 AND 
-                                (crown_closure_lower <= crown_closure_upper OR 
-                                 crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                              ) OR crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_upper_between_0_and_100',
+                              '(crown_closure_upper >= 0 AND crown_closure_upper <= 100) OR 
+                               crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.20'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table HEIGHT_UPPER is greater than 0, smaller than or equal to 100 and greater than HEIGHT_LOWER' description, 
+       'Ensure NFL table CROWN_CLOSURE_LOWER is smaller than CROWN_CLOSURE_UPPER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['height_upper_between_0_and_100_and_greater_than_height_lower',
-                              '(height_upper >= 0 AND height_upper <= 100 AND 
-                                (height_upper >= height_lower OR 
-                                 height_lower = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                              ) OR height_upper = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_lower_smaller_than_crown_closure_upper',
+                              'crown_closure_lower <= crown_closure_upper OR 
+                               crown_closure_upper = ANY(TT_IsMissingOrInvalidRange()) OR
+                               crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.21'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table HEIGHT_LOWER is greater than 0, smaller than or equal to 100 and smaller than HEIGHT_UPPER' description, 
+       'Ensure NFL table HEIGHT_LOWER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['height_lower_between_0_and_100_and_smaller_than_height_upper',
-                              '(height_lower >= 0 AND height_lower <= 100 AND 
-                                (height_upper >= height_lower OR 
-                                 height_upper = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR height_lower = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['height_lower_between_0_and_100',
+                              '(height_lower >= 0 AND height_lower <= 100) OR 
+                               height_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.22'::text number,
+       'nfl_all' target_table,
+       'Ensure NFL table HEIGHT_UPPER is greater than or equal to 0 and smaller than or equal to 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
+                        ARRAY['height_upper_between_0_and_100',
+                              '(height_upper >= 0 AND height_upper <= 100) OR 
+                               height_upper = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '5.23'::text number,
+       'nfl_all' target_table,
+       'Ensure NFL table HEIGHT_LOWER is smaller than HEIGHT_UPPER' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
+                        ARRAY['height_lower_smaller_than_height_upper',
+                              'height_upper >= height_lower OR 
+                               height_upper = ANY(TT_IsMissingOrInvalidRange()) OR
+                               height_lower = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '5.24'::text number,
        'nfl_all' target_table,
        'Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1659,7 +1673,7 @@ FROM (SELECT *
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '5.23'::text number,
+SELECT '5.25'::text number,
        'nfl_all' target_table,
        'Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1671,7 +1685,7 @@ FROM (SELECT *
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '5.24'::text number,
+SELECT '5.26'::text number,
        'nfl_all' target_table,
        'Issue #347: Invalid or undocumented codes. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1684,7 +1698,7 @@ FROM (SELECT *
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '5.25'::text number,
+SELECT '5.27'::text number,
        'nfl_all' target_table,
        'Issue #526 #365: Exactly one NFL record per row, except in AB03, AB10, AB25 and AB29 where multiple attributes per row are needed when structure is horizontal.' description, 
        passed, cstr_query
