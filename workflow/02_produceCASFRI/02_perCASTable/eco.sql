@@ -31,6 +31,7 @@ SELECT TT_Prepare('translation', 'sk_sfv01_eco', '_sk_sfv_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'ns_nsi01_eco', '_ns_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'pe_pei01_eco', '_pe_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'mb_fri02_eco', '_mb_fri2_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'mb_fri01_eco', '_mb_fri_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'mb_fli01_eco', '_mb_fli_eco', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'nl_nli01_eco', '_nl_eco', 'ab_avi01_eco');
@@ -198,11 +199,32 @@ INSERT INTO casfri50.eco_all --
 SELECT * FROM TT_Translate_sk_sfv_eco('rawfri', 'sk06_l1_to_sk_sfv_l1_map_eco');
 
 ------------------------
+-- Translate YT01 using YT translation table
+SELECT TT_CreateMappingView('rawfri', 'yt01', 'yt', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_yt_eco('rawfri', 'yt01_l1_to_yt_l1_map_eco');
+
+------------------------
 -- Translate YT02 using YT translation table
 SELECT TT_CreateMappingView('rawfri', 'yt02', 'yt', NULL, 'eco');
 
 INSERT INTO casfri50.eco_all -- 
 SELECT * FROM TT_Translate_yt_eco('rawfri', 'yt02_l1_to_yt_l1_map_eco');
+
+------------------------
+-- Translate NS01 using NS_NSI translation table
+SELECT TT_CreateMappingView('rawfri', 'ns01', 'ns_nsi', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_ns_eco('rawfri', 'ns01_l1_to_ns_nsi_l1_map_eco');
+
+------------------------
+-- Translate NS02 using NS_NSI translation table
+SELECT TT_CreateMappingView('rawfri', 'ns02', 'ns_nsi', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_ns_eco('rawfri', 'ns02_l1_to_ns_nsi_l1_map_eco');
 
 ------------------------
 -- Translate NS03 using NS_NSI translation table
@@ -219,6 +241,13 @@ INSERT INTO casfri50.eco_all --
 SELECT * FROM TT_Translate_pe_eco('rawfri', 'pe01_l1_to_pe_pei_l1_map_eco');
 
 ------------------------
+-- Translate MB01 using MB_FRI2 translation table
+SELECT TT_CreateMappingView('rawfri', 'mb01', 'mb_fri2', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_mb_fri2_eco('rawfri', 'mb01_l1_to_mb_fri2_l1_map_eco');
+
+------------------------
 -- Translate MB05 using MB_FRI translation table
 SELECT TT_CreateMappingView('rawfri', 'mb05', 'mb_fri', NULL, 'eco');
 
@@ -226,11 +255,32 @@ INSERT INTO casfri50.eco_all --
 SELECT * FROM TT_Translate_mb_fri_eco('rawfri', 'mb05_l1_to_mb_fri_l1_map_eco');
 
 ------------------------
+-- Translate MB02 using MB_FLI translation table
+SELECT TT_CreateMappingView('rawfri', 'mb02', 'mb_fli', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_mb_fli_eco('rawfri', 'mb02_l1_to_mb_fli_l1_map_eco');
+
+------------------------
+-- Translate MB04 using MB_FLI translation table
+SELECT TT_CreateMappingView('rawfri', 'mb04', 'mb_fli', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_mb_fli_eco('rawfri', 'mb04_l1_to_mb_fli_l1_map_eco');
+
+------------------------
 -- Translate MB06 using MB_FLI translation table
 SELECT TT_CreateMappingView('rawfri', 'mb06', 'mb_fli', NULL, 'eco');
 
 INSERT INTO casfri50.eco_all -- 
 SELECT * FROM TT_Translate_mb_fli_eco('rawfri', 'mb06_l1_to_mb_fli_l1_map_eco');
+
+------------------------
+-- Translate MB07 using MB_FLI translation table
+SELECT TT_CreateMappingView('rawfri', 'mb07', 'mb_fli', NULL, 'eco');
+
+INSERT INTO casfri50.eco_all -- 
+SELECT * FROM TT_Translate_mb_fli_eco('rawfri', 'mb07_l1_to_mb_fli_l1_map_eco');
 
 ------------------------
 -- Translate NL01 using NL_FLI translation table
@@ -409,36 +459,47 @@ FROM casfri50.eco_all
 GROUP BY left(cas_id, 4)
 ORDER BY inv;
 --inv   count
---AB03  3776
---AB06 	1174
---AB07  1516
---AB08  1022
---AB10  25183
---AB11  7441
---AB16 	5528
---AB25  47372
---AB29  53682
---BC08 	66837
---BC10 	70989
+--AB03    3776
+--AB06    1174
+--AB07    1516
+--AB08    1022
+--AB10   25183
+--AB11    7441
+--AB16    5528
+--AB25   47372
+--AB29   53682
+--AB30       0
+--BC08 	 66837
+--BC10   70989
+--MB01   ?????
+--MB02   ?????
+--MB04   ?????
 --MB05  171269
---NB01 	72978
---NB02	107264
---NL01	238785
---NS03	122782
---NT01  49989
---NT02  69141
---PC01  1767
---PC02  1947
---PE01	1488
---QC03	50600
---QC04	243352
---QC05	879228
+--MB06   ?????
+--MB07   ?????
+--NB01   72978
+--NB02  107264
+--NL01  238785
+--NS01   ?????
+--NS02   ?????
+--NS03  122782
+--NT01   49989
+--NT03   ?????
+--ON02   ?????
+--PC01    1767
+--PC02    1947
+--PE01    1488
+--QC03   50600
+--QC04  243352
+--QC05  879228
 --SK01  474842
---SK02  953
---SK03  407
+--SK02     953
+--SK03     407
 --SK04  106590
---SK05  85120
---SK06  28356
+--SK05   85120
+--SK06   28356
+--YT01   ?????
+--YT02   ?????
 
 SELECT count(*) FROM casfri50.eco_all; -- 2991378
 --------------------------------------------------------------------------

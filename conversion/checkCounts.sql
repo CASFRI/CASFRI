@@ -43,17 +43,17 @@ SELECT * FROM (
 WITH test_nb AS (
     SELECT 'Check count'::text function_tested,  1 maj_num, 11 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  2 maj_num,  2 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested,  3 maj_num,  2 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested,  3 maj_num,  6 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  4 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  5 maj_num,  2 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested,  6 maj_num,  1 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested,  6 maj_num,  3 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  7 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  8 maj_num,  1 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  9 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 10 maj_num,  1 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 11 maj_num,  5 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 12 maj_num,  6 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested, 13 maj_num,  1 nb_test
+    SELECT 'Check count'::text function_tested, 13 maj_num,  2 nb_test
 ), test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
 SELECT function_tested, maj_num::text, nb_test, generate_series(1, nb_test)::text min_num
@@ -149,14 +149,38 @@ SELECT '2.2'::text number,
 UNION ALL
 SELECT '3.1'::text number,
        'Check count'::text function_tested,
-       'MB05'::text description,
-       TT_Count('rawfri', 'mb05') = 1644808 passed
+       'MB01'::text description,
+       TT_Count('rawfri', 'mb01') = 134790 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.2'::text number,
        'Check count'::text function_tested,
+       'MB02'::text description,
+       TT_Count('rawfri', 'mb02') = 60370 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.3'::text number,
+       'Check count'::text function_tested,
+       'MB04'::text description,
+       TT_Count('rawfri', 'mb04') = 27221 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.4'::text number,
+       'Check count'::text function_tested,
+       'MB05'::text description,
+       TT_Count('rawfri', 'mb05') = 1644808 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.5'::text number,
+       'Check count'::text function_tested,
        'MB06'::text description,
        TT_Count('rawfri', 'mb06') = 163064 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '3.6'::text number,
+       'Check count'::text function_tested,
+       'MB07'::text description,
+       TT_Count('rawfri', 'mb07') = 219682 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.1'::text number,
@@ -185,6 +209,18 @@ SELECT '5.2'::text number,
 UNION ALL
 SELECT '6.1'::text number,
        'Check count'::text function_tested,
+       'NS01'::text description,
+       TT_Count('rawfri', 'ns01') = 1127926 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '6.2'::text number,
+       'Check count'::text function_tested,
+       'NS02'::text description,
+       TT_Count('rawfri', 'ns02') = 1090671 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '6.3'::text number,
+       'Check count'::text function_tested,
        'NS03'::text description,
        TT_Count('rawfri', 'ns03') = 995886 passed
 ---------------------------------------------------------
@@ -197,8 +233,8 @@ SELECT '7.1'::text number,
 UNION ALL
 SELECT '7.2'::text number,
        'Check count'::text function_tested,
-       'NT02'::text description,
-       TT_Count('rawfri', 'nt02') = 320944 passed
+       'NT03'::text description,
+       TT_Count('rawfri', 'nt03') = 320523 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '8.1'::text number,
@@ -292,6 +328,12 @@ SELECT '12.6'::text number,
 ---------------------------------------------------------
 UNION ALL
 SELECT '13.1'::text number,
+       'Check count'::text function_tested,
+       'YT01'::text description,
+       TT_Count('rawfri', 'yt01') = 249636 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '13.2'::text number,
        'Check count'::text function_tested,
        'YT02'::text description,
        TT_Count('rawfri', 'yt02') = 231137 passed
