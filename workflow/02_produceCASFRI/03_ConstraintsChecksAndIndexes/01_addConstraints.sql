@@ -435,136 +435,177 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.22'::text number,
        'dst_all' target_table,
-       'Issue #337 & #408. DIST_YEAR_1 is sometimes invalid and not well ordered in time. Ensure DST table DIST_YEAR_1 is greater than 1000, below 2020 and smaller than or equal to DIST_YEAR_2' description, 
+       'Ensure DST table DIST_YEAR_1 is greater than 1000 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_year_1_greater_than_1000_and_smaller_than_dist_year_2', 
-                              '(1000 <= dist_year_1 AND dist_year_1 <= 2020 AND 
-                                (dist_year_1 <= dist_year_2 OR
-                                 dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_1_greater_than_1000_and_smaller_2020', 
+                              '(1000 <= dist_year_1 AND dist_year_1 <= 2020) OR
+                               dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.23'::text number,
        'dst_all' target_table,
-       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 is greater than 1900, below 2020 and smaller than or equal to DIST_YEAR_3' description, 
+       'Ensure DST table DIST_YEAR_2 is greater than 1900 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_year_2_greater_than_1900_and_smaller_than_dist_year_3', 
-                              '(1900 <= dist_year_2 AND dist_year_2 <= 2020 AND 
-                                (dist_year_2 <= dist_year_3 OR 
-                                 dist_year_3 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_2_greater_than_1900_and_smaller_2020', 
+                              '(1900 <= dist_year_2 AND dist_year_2 <= 2020) OR 
+                               dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.24'::text number,
        'dst_all' target_table,
-       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_3 is greater than 1900, below 2020 and greater than or equal to DIST_YEAR_1' description, 
+       'Ensure DST table DIST_YEAR_3 is greater than 1900 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_year_3_greater_than_1900', 
-                              '((1900 <= dist_year_3 AND dist_year_3 <= 2020) AND 
-                                (dist_year_1 <= dist_year_3 OR 
-                                 dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_year_3 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_3_greater_than_1900_and_smaller_2020', 
+                              '(1900 <= dist_year_3 AND dist_year_3 <= 2020) OR
+                                dist_year_3 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.25'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_1' description, 
+       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_1 smaller than or equal to DIST_YEAR_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_upper_1_betweeen_10_and_100_and_greater_than_dist_ext_lower_1', 
-                              '(10 <= dist_ext_upper_1 AND dist_ext_upper_1 <= 100 AND 
-                                (dist_ext_upper_1 >= dist_ext_lower_1 OR 
-                                 dist_ext_lower_1 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_1_smaller_than_dist_year_2', 
+                              '(dist_year_1 <= dist_year_2 OR
+                                dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
+                               ) OR dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.26'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_2 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_2' description, 
+       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 smaller than or equal to DIST_YEAR_3' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_upper_2_betweeen_10_and_100_and_greater_than_dist_ext_lower_2', 
-                              '(10 <= dist_ext_upper_2 AND dist_ext_upper_2 <= 100 AND 
-                                (dist_ext_upper_2 >= dist_ext_lower_2 OR 
-                                 dist_ext_lower_2 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_2_smaller_than_dist_year_3', 
+                              '(dist_year_2 <= dist_year_3 OR 
+                                 dist_year_3 = ANY(TT_IsMissingOrInvalidRange())
+                               ) OR dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.27'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_3 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_3' description, 
+       'Ensure DST table DIST_EXT_LOWER_1 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_upper_3_betweeen_10_and_100_and_greater_than_dist_ext_lower_3', 
-                              '(10 <= dist_ext_upper_3 AND dist_ext_upper_3 <= 100 AND 
-                                (dist_ext_upper_3 >= dist_ext_lower_3 OR 
-                                 dist_ext_lower_3 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_ext_lower_1_betweeen_10_and_100', 
+                              '(1 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 100) OR 
+                               dist_ext_lower_1 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.28'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_LOWER_1 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_1' description, 
+       'Ensure DST table DIST_EXT_LOWER_2 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_lower_1_betweeen_10_and_100_and_smaller_than_dist_ext_upper_1', 
-                              '(1 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 100 AND 
-                                (dist_ext_lower_1 <= dist_ext_upper_1 OR 
-                                 dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_lower_1 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_ext_lower_2_betweeen_10_and_100', 
+                              '(1 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 100) OR 
+                               dist_ext_lower_2 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.29'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_LOWER_2 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_2' description, 
+       'Ensure DST table DIST_EXT_LOWER_3 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_lower_2_betweeen_10_and_100_and_smaller_than_dist_ext_upper_2', 
-                              '(1 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 100 AND 
-                                (dist_ext_lower_2 <= dist_ext_upper_2 OR 
-                                 dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_lower_2 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_ext_lower_3_betweeen_10_and_100', 
+                              '(1 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 100) OR 
+                               dist_ext_lower_3 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.30'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_LOWER_3 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_3' description, 
+       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_lower_3_betweeen_10_and_100_and_smaller_than_dist_ext_upper_3', 
-                              '(1 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 100 AND 
-                                (dist_ext_lower_3 <= dist_ext_upper_3 OR 
-                                 dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_lower_3 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_ext_upper_1_betweeen_10_and_100', 
+                              '(10 <= dist_ext_upper_1 AND dist_ext_upper_1 <= 100) OR
+                                dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.31'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_2 is greater than 10 and smaller than 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_2_betweeen_10_and_100', 
+                              '(10 <= dist_ext_upper_2 AND dist_ext_upper_2 <= 100) OR
+                                dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.32'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_3 is greater than 10 and smaller than 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_3_betweeen_10_and_100', 
+                              '(10 <= dist_ext_upper_3 AND dist_ext_upper_3 <= 100) OR 
+                               dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.33'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_1 is greater than or equal to DIST_EXT_LOWER_1' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_1_greater_than_dist_ext_lower_1', 
+                              '(dist_ext_upper_1 >= dist_ext_lower_1 OR 
+                                dist_ext_lower_1 = ANY(TT_IsMissingOrInvalidRange())
+                               ) OR
+                               dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.34'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_2 is greater than or equal to DIST_EXT_LOWER_2' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_2_greater_than_dist_ext_lower_2', 
+                              '(dist_ext_upper_2 >= dist_ext_lower_2 OR 
+                                 dist_ext_lower_2 = ANY(TT_IsMissingOrInvalidRange())
+                                ) OR
+                               dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.35'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_3 is greater than or equal to DIST_EXT_LOWER_3' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_3_greater_than_dist_ext_lower_3', 
+                              '(dist_ext_upper_3 >= dist_ext_lower_3 OR 
+                                 dist_ext_lower_3 = ANY(TT_IsMissingOrInvalidRange())
+                                ) OR
+                               dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the ECO_ALL table
