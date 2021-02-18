@@ -724,7 +724,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.13'::text number,
        'eco_all' target_table,
-       'Issue #377. ''B'' is found in the database but not in the specs. Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table. Cannot be TT_IsMissingOrNotInSetCode()' description, 
+       'Issue #612. TRANSLATION_ERROR. Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table. Cannot be TT_IsMissingOrNotInSetCode()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
