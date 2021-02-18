@@ -1157,6 +1157,18 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.48'::text number,
        'lyr_all' target_table,
+       'Ensure LYR table PRODUCTIVITY_TYPE values match the corresponding lookup table' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
+                        ARRAY['casfri50_lookup', 
+                              'productivity_type'],
+                        ARRAY['HARVESTABLE', 'PROTECTION_FOREST', 'TREED_MUSKEG', 'TREED_ROCK', 'ALPINE_FOREST', 'SCRUB_SHRUB', 'ALDER'] || 
+                        TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.49'::text number,
+       'lyr_all' target_table,
        'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
@@ -1164,7 +1176,7 @@ FROM (SELECT *
                         ARRAY['species_1', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.49'::text number,
+SELECT '4.50'::text number,
        'lyr_all' target_table,
        'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_2 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1173,7 +1185,7 @@ FROM (SELECT *
                         ARRAY['species_2', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.50'::text number,
+SELECT '4.51'::text number,
        'lyr_all' target_table,
        'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_3 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1182,7 +1194,7 @@ FROM (SELECT *
                         ARRAY['species_3', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.51'::text number,
+SELECT '4.52'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_4 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1191,7 +1203,7 @@ FROM (SELECT *
                         ARRAY['species_4', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.52'::text number,
+SELECT '4.53'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_5 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1200,7 +1212,7 @@ FROM (SELECT *
                         ARRAY['species_5', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.53'::text number,
+SELECT '4.54'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_6 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1209,7 +1221,7 @@ FROM (SELECT *
                         ARRAY['species_6', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.54'::text number,
+SELECT '4.55'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_7 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1218,7 +1230,7 @@ FROM (SELECT *
                         ARRAY['species_7', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.55'::text number,
+SELECT '4.56'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_8 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1227,7 +1239,7 @@ FROM (SELECT *
                         ARRAY['species_8', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.56'::text number,
+SELECT '4.57'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_9 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1236,7 +1248,7 @@ FROM (SELECT *
                         ARRAY['species_9', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.57'::text number,
+SELECT '4.58'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_10 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1245,7 +1257,7 @@ FROM (SELECT *
                         ARRAY['species_10', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.58'::text number,
+SELECT '4.59'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_1 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1257,7 +1269,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.59'::text number,
+SELECT '4.60'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_2 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1269,7 +1281,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.60'::text number,
+SELECT '4.61'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_3 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1281,7 +1293,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.61'::text number,
+SELECT '4.62'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_4 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1293,7 +1305,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.62'::text number,
+SELECT '4.63'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_5 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1305,7 +1317,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.63'::text number,
+SELECT '4.64'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_6 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1317,7 +1329,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.64'::text number,
+SELECT '4.65'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_7 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1329,7 +1341,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.65'::text number,
+SELECT '4.66'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_8 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1341,7 +1353,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.66'::text number,
+SELECT '4.67'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_9 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1353,7 +1365,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.67'::text number,
+SELECT '4.68'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_10 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1365,7 +1377,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.68'::text number,
+SELECT '4.69'::text number,
        'lyr_all' target_table,
        'Issue #616. Wrong error code (-9998). Ensure LYR table ORIGIN_LOWER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
@@ -1377,7 +1389,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.69'::text number,
+SELECT '4.70'::text number,
        'lyr_all' target_table,
        'Issue #616. Wrong error code (-9998). Ensure LYR table ORIGIN_UPPER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
@@ -1389,7 +1401,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.70'::text number,
+SELECT '4.71'::text number,
        'lyr_all' target_table,
        'Ensure LYR table ORIGIN_LOWER is smaller than ORIGIN_UPPER' description, 
        passed, cstr_query
@@ -1402,7 +1414,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.71'::text number,
+SELECT '4.72'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SITE_CLASS values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1414,7 +1426,7 @@ FROM (SELECT *
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.72'::text number,
+SELECT '4.73'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SITE_INDEX is greater than 0 and smaller than 100' description, 
        passed, cstr_query
@@ -1424,18 +1436,6 @@ FROM (SELECT *
                               '(site_index >= 0 AND site_index < 100) OR 
                                site_index = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
--------------------------------------------------------
-UNION ALL
-SELECT '4.73'::text number,
-       'lyr_all' target_table,
-       'Ensure LYR table PRODUCTIVITY_TYPE values match the corresponding lookup table' description, 
-       passed, cstr_query
-FROM (SELECT * 
-      FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
-                        ARRAY['casfri50_lookup', 
-                              'productivity_type'],
-                        ARRAY['HARVESTABLE', 'PROTECTION_FOREST', 'TREED_MUSKEG', 'TREED_ROCK', 'ALPINE_FOREST', 'SCRUB_SHRUB', 'ALDER'] || 
-                        TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 
 -------------------------------------------------------
 -- Add some constraints to the NFL_ALL table
