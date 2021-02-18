@@ -1,4 +1,4 @@
-Release Procedure
+**Release Procedure**
 
 1. In GitKraken, create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
