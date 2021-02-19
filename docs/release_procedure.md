@@ -4,7 +4,7 @@
 
 2. In pgAdmin, create a new PostgreSQL database to test and certify what is on those two branches. Your goal is to stabilize those branches before creating releases with them.
 
-3. In pgAdmin, create the PostGIS extension.
+3. In pgAdmin, create the PostGIS extension in the new database.
 
 4. Open a DOS or a Bash shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh or the load_all.bat script.
 
