@@ -988,5 +988,5 @@ ORDER BY left(cas_id, 4), layer;
 -- SK06	3	10394
 -- YT02	1	105102
 
-SELECT count(*) FROM casfri50.lyr_all; -- 26500563
+SELECT count(*) FROM casfri50.lyr_all; -- 28179225
 --------------------------------------------------------------------------
