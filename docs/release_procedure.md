@@ -6,7 +6,7 @@
 
 3. In pgAdmin, create the PostGIS extension in the new database.
 
-4. Open a DOS or a Bash shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh or the load_all.bat script.
+4. Open a DOS or a Bash shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script.
 
 5. In the same shell, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
 
