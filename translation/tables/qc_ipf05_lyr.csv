@@ -33,7 +33,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 30,SPECIES_PER_9,integer,false(),nothingInt(),attribute does not occur,TRUE
 31,SPECIES_10,text,false(),nothingText(),attribute does not occur,TRUE
 32,SPECIES_PER_10,integer,false(),nothingInt(),attribute does not occur,TRUE
-33,ORIGIN_UPPER,integer,"isInt(stand_photo_year|-8886);notNull(cl_age);notEmpty(cl_age);matchTable(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val','TRUE')","qc_origin_translation(cl_age, stand_photo_year)","Map age using lookup table, then calculates origin as photo year minus age. ",TRUE
-34,ORIGIN_LOWER,integer,"isInt(stand_photo_year|-8886);notNull(cl_age);notEmpty(cl_age);matchTable(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val','TRUE')","qc_origin_translation(cl_age, stand_photo_year)","Map age using lookup table, then calculates origin as photo year minus age. ",TRUE
+33,ORIGIN_UPPER,integer,"isInt(stand_photo_year|-8886);notNull(cl_age);notEmpty(cl_age);matchTable(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val','TRUE'|-9999)","qc_origin_translation(cl_age, stand_photo_year)","Map age using lookup table, then calculates origin as photo year minus age. ",TRUE
+34,ORIGIN_LOWER,integer,"isInt(stand_photo_year|-8886);notNull(cl_age);notEmpty(cl_age);matchTable(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val','TRUE'|-9999)","qc_origin_translation(cl_age, stand_photo_year)","Map age using lookup table, then calculates origin as photo year minus age. ",TRUE
 35,SITE_CLASS,text,false(),nothingText(),Attribute does not occur,TRUE
 36,SITE_INDEX,double precision,false(),nothingDouble(),attribute does not occur,TRUE
