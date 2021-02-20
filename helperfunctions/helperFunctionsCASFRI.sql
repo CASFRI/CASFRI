@@ -3469,8 +3469,15 @@ RETURNS boolean AS $$
     sp_code text;
   BEGIN
     
-    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-    sp_code = translate(code_array[species_number::int], '0123456789', '');
+	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
+	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
+	ELSE
+	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
+      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+      sp_code = translate(code_array[species_number::int], '0123456789', '');
+    END IF;
+	
     RETURN TT_matchTable(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'FALSE');
     
   END; 
@@ -5963,9 +5970,12 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- eta_ess_pc text,
 -- species_number text
 --
+-- First checks if the code is a species group code (e.g. FXFN) which have no percent values.
+-- If it is, passes the requested code to the lookupText.
+-- If not, it is a normal code with species percent values (e.g. BF1BS9).
 -- Runs TT_qc_prg5_species_code_to_reordered_array then returns the species code from the requested position.
+--
 -- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
-
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_qc_prg5_species_translation(
@@ -5978,9 +5988,15 @@ RETURNS text AS $$
     sp_code text;
   BEGIN
     
-    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-    sp_code = translate(code_array[species_number::int], '0123456789', '');
-    
+	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
+	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
+	ELSE
+	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
+      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+      sp_code = translate(code_array[species_number::int], '0123456789', '');
+    END IF;
+	
     IF sp_code IS NULL OR sp_code = '' THEN
       RETURN NULL;
     ELSE
@@ -5996,8 +6012,17 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- eta_ess_pc text,
 -- species_number text
 --
--- Runs TT_qc_prg5_species_code_to_reordered_array then returns the percent value from the requested position.
--- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
+-- First checks if the code is a species group code (e.g. FXFN) which have no percent values.
+  -- If it is, return the following percentages based on length of code and requested species:
+  -- if 3 species groups (length is 6), return percent's as 35%, 35%, 30%
+  -- if 2 species groups (length is 4), return percent's as 65%, 35%
+  -- if 1 species group (length is 2), return percent as 100%
+-- If not, it is a normal code with species percent values (e.g. BF1BS9).
+-- Runs TT_qc_prg5_species_code_to_reordered_array then gets the percent value from the requested position.
+  -- If it's 0 return 100, if <10 multiply by 10 (these are both specific to QC07).
+  -- Otherwise just return the value (for QC05).
+--
+-- e.g. TT_qc_prg5_species_per_translation('BS20WS60TA20', 1) would return 60.
 
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_species_per_translation(text, text);
@@ -6011,14 +6036,26 @@ RETURNS int AS $$
 	per int;
   BEGIN
     
-    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-    per = regexp_replace(code_array[species_number::int], '[[:alpha:]]', '', 'g')::int;
-	
-	-- for qc07, percent values need to be multiplied by 10. Any zero values in QC07 represent
-	-- 100%. Catch those first.
-	RETURN CASE WHEN per = 0 THEN 100 -- qc07
+	-- check if code contains any integers. If no, its a species group type code.
+	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+	  RETURN CASE 
+	    WHEN LENGTH(eta_ess_pc) = 2 AND species_number = '1' THEN 100
+		WHEN LENGTH(eta_ess_pc) = 4 AND species_number = '1' THEN 65 
+		WHEN LENGTH(eta_ess_pc) = 4 AND species_number = '2' THEN 35
+		WHEN LENGTH(eta_ess_pc) = 6 AND species_number = '1' THEN 35
+		WHEN LENGTH(eta_ess_pc) = 6 AND species_number = '2' THEN 35
+		WHEN LENGTH(eta_ess_pc) = 6 AND species_number = '3' THEN 30
+		ELSE NULL END;
+	ELSE
+      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+      per = regexp_replace(code_array[species_number::int], '[[:alpha:]]', '', 'g')::int;
+	  
+	  -- for qc07, percent values need to be multiplied by 10. Any zero values in QC07 represent
+	  -- 100%. Catch those first.
+	  RETURN CASE WHEN per = 0 THEN 100 -- qc07
 	            WHEN per < 10 THEN per*10 -- qc07
 				ELSE per END; -- qc05
+	END IF;		
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
