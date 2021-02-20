@@ -29,6 +29,9 @@ source ./common.sh
 inventoryID=QC01
 srcFullPath=$friDir/QC/$inventoryID/data/inventory/
 fullTargetTableName=$targetFRISchema.qc01
+tempTargetTableName=${fullTargetTableName}_temp
+photoFullPath=${srcFullPath}photoyear_per_mapsheet.csv
+photoTargetTableName=${fullTargetTableName}_photo
 
 overwrite_option="$overwrite_tab"
 
@@ -52,7 +55,7 @@ do
 
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
-    -nln $fullTargetTableName \
+    -nln $tempTargetTableName \
     -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
     -progress \
     $layer_creation_options $other_options \
@@ -75,11 +78,39 @@ do
 
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
-    -nln $fullTargetTableName \
+    -nln $tempTargetTableName \
     -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
     -progress \
     $layer_creation_options $other_options \
     $overwrite_option
 done
+
+# Load the photo year table to join
+"$gdalFolder/ogr2ogr" \
+-f PostgreSQL "$pg_connection_string" "$photoFullPath" \
+-nln $photoTargetTableName \
+-progress \
+$overwrite_option
+
+# Union on geocode to merge polygons that were split by mapsheet grid
+# Sum area during union.
+# Join photo year table on FCA_NO
+
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "
+CREATE UNIQUE INDEX IF NOT EXISTS qc01_photoyear_idx
+ON $photoFullPath (FCA_NO)
+
+DROP TABLE IF EXISTS $fullTargetTableName;
+CREATE TABLE $fullTargetTableName AS
+SELECT ST_Union(a.wkb_geometry) a.wkb_geometry, sum(a.superficie) superficie, a.*, b.*
+FROM $tempTargetTableName a
+LEFT JOIN $photoFullPath b
+  ON a.FCA_NO = b.FCA_NO
+GROUP BY(geocode);
+
+--DROP TABLE $tempTargetTableName;
+--DROP TABLE $photoTargetTableName;
+"
 
 source ./common_postprocessing.sh
