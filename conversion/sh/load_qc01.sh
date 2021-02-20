@@ -29,9 +29,12 @@ source ./common.sh
 inventoryID=QC01
 srcFullPath=$friDir/QC/$inventoryID/data/inventory/
 fullTargetTableName=$targetFRISchema.qc01
-tempTargetTableName=${fullTargetTableName}_temp
 photoFullPath=${srcFullPath}photoyear_per_mapsheet.csv
-photoTargetTableName=${fullTargetTableName}_photo
+
+tempTable=${fullTargetTableName}_temp
+tempPhoto=${fullTargetTableName}_photo
+tempAttributes=${fullTargetTableName}_attributes
+tempPolygons=${fullTargetTableName}_polygons
 
 overwrite_option="$overwrite_tab"
 
@@ -55,7 +58,7 @@ do
 
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
-    -nln $tempTargetTableName \
+    -nln $tempTable \
     -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
     -progress \
     $layer_creation_options $other_options \
@@ -78,7 +81,7 @@ do
 
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
-    -nln $tempTargetTableName \
+    -nln $tempTable \
     -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
     -progress \
     $layer_creation_options $other_options \
@@ -88,7 +91,7 @@ done
 # Load the photo year table to join
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$photoFullPath" \
--nln $photoTargetTableName \
+-nln $tempPhoto \
 -progress \
 $overwrite_option
 
@@ -99,18 +102,36 @@ $overwrite_option
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 CREATE UNIQUE INDEX IF NOT EXISTS qc01_photoyear_idx
-ON $photoFullPath (FCA_NO)
+ON $tempPhoto (FCA_NO);
+
+DROP TABLE IF EXISTS $tempAttributes;
+CREATE TABLE $tempAttributes AS
+SELECT 
+  DISTINCT ON(geocode) geocode, ogc_fid, c08peefd_, c08peefd_i, fca_no, pee_dt_mjg, pee_sp_pee, pee_gc_ori, pee_no_maj, prg_no, uco_no_uco, pee_no_auc, pee_dt_mju, toponyme, tco_co,
+  ges_co, psc_co, cde_co, cha_co, per_co_ori, per_an_ori, cag_co, per_co_moy, pee_nb_int, per_an_moy, clp_co, ter_co, dsu_co, cdr_co, tec_co_tec,
+  pee_dt_mjd, ppr_co_ppr, pee_dh_tra, prb_co_prb, pee_va_app, pee_dc_meo, phc_co_phc, ser_co_ser, pee_dc_aut, tvs_no, no_id, nog, indicatif, pee_dh_cre, pee_dh_maj,
+  txl_no_txl, met_no, tme_co, prs_co, prs_an_sou, mst_co_mst, eti_in_gen, src_filename, inventory_id
+FROM $tempTable;
+
+DROP TABLE IF EXISTS $tempPolygons;
+CREATE TABLE $tempPolygons AS
+SELECT geocode, ST_Union(wkb_geometry) wkb_geometry, sum(area) area
+FROM $tempTable
+GROUP BY(geocode);
 
 DROP TABLE IF EXISTS $fullTargetTableName;
 CREATE TABLE $fullTargetTableName AS
-SELECT ST_Union(a.wkb_geometry) a.wkb_geometry, sum(a.superficie) superficie, a.*, b.*
-FROM $tempTargetTableName a
-LEFT JOIN $photoFullPath b
-  ON a.FCA_NO = b.FCA_NO
-GROUP BY(geocode);
+SELECT polys.wkb_geometry, polys.area, atts.*, ph.photoyear
+FROM $tempPolygons polys
+LEFT JOIN $tempAttributes atts
+  ON polys.geocode = atts.geocode
+LEFT JOIN $tempPhoto ph
+  ON atts.fca_no = ph.fca_no;
 
---DROP TABLE $tempTargetTableName;
---DROP TABLE $photoTargetTableName;
+DROP TABLE $tempTable;
+DROP TABLE $tempPhoto;
+DROP TABLE $tempPolygons;
+DROP TABLE $tempAttributes;
 "
 
 source ./common_postprocessing.sh
