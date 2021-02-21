@@ -2,11 +2,11 @@
 
 1. In GitKraken, create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
-2. In pgAdmin, create a new PostgreSQL database to test and certify what is on those two branches. Your goal is to stabilize those branches before creating releases with them.
+2. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
 
 3. In pgAdmin, create the PostGIS extension in the new database.
 
-4. Open a DOS or a Bash shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script.
+4. Open a DOS or a Bash shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script. Those scripts split the loading process in three in order to avoid overloading the server. A first window init the process. You have to close this window for the other loading scripts to be launched. The second step loads about 25 inventories. You have to close all those windows when they are finished to launch the third and last series of loading scripts.
 
 5. In the same shell, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
 
@@ -20,9 +20,9 @@
 
     3. Check the count of loaded inventory with the checkCounts.sql script. Fix inventories not reporting the right number of rows and add any missing test.
 
-8. In pgAdmin, check that the uninstall scripts work properly and uninstall everything (i.e. that after running them, there is no Table Translation Framework and CASFRI Helper function left in the database):
+8. In pgAdmin, make sure the uninstall scripts uninstall everything and leave no Table Translation Framework and CASFRI Helper function in the database:
 
-    1. DROP all TT_Translate functions with "SELECT TT_DropAllTranslateFct();"
+    1. DROP all TT_Translate() functions with "SELECT TT_DropAllTranslateFct();"
 
     2. Uninstall the CASFRI Helper Functions using the helperFunctionsCASFRIUninstall.sql script.
 
