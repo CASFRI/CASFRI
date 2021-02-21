@@ -1471,6 +1471,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isForest' THEN '-8887'
                   WHEN rulelc = 'qc_hasCountOfNotNull' THEN '-8886'
 				  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
+				  WHEN rulelc = 'pc02_hasCountOfNotNull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -4674,7 +4675,7 @@ RETURNS text AS $$
   BEGIN
     PERFORM TT_ValidateParams('TT_nb_nbi01_wetland_translation',
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
-	  wetland_code = TT_nb_nbi01_wetland_code(wc, vt, im);
+	wetland_code = TT_nb_nbi01_wetland_code(wc, vt, im);
 
     RETURN TT_wetland_code_translation(wetland_code, ret_char_pos);
     
