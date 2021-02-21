@@ -4928,22 +4928,18 @@ CREATE OR REPLACE FUNCTION TT_yvi01_non_for_veg_translation(
   cl_mod text
 )
 RETURNS text AS $$
-  BEGIN
-    IF type_lnd IN('VN') THEN
-      IF class_ IN('S','H','C','M') THEN
-        IF cl_mod IN('TS','TSo','TSc','LS') THEN
-          RETURN TT_mapText(cl_mod, '{''TS'',''TSo'',''TSc'',''LS''}', '{''TALL_SHRUB'',''TALL_SHRUB'',''TALL_SHRUB'',''LOW_SHRUB''}');
-        END IF;
-        
-        IF class_ IN('C','H','M') THEN
-          RETURN TT_mapText(class_, '{''C'',''H'',''M''}', '{''BRYOID'',''HERBS'',''HERBS''}');
-        END IF;
-      END IF;
-    END IF;
     
-    RETURN NULL;
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
+	SELECT CASE 
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TS' THEN 'TALL_SHRUB'
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TSo' THEN 'TALL_SHRUB'
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TSc' THEN 'TALL_SHRUB'
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'LS' THEN 'LOW_SHRUB'
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = '' THEN 'TALL_SHRUB' -- assign generic shrub to TALL_SHRUB
+	  WHEN type_lnd = 'VN' AND class_ = 'C' THEN 'BRYOID'
+	  WHEN type_lnd = 'VN' AND class_ = 'H' THEN 'HERBS'
+	  WHEN type_lnd = 'VN' AND class_ = 'M' THEN 'HERBS'
+      ELSE NULL END;
+$$ LANGUAGE sql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_generic_stand_structure_translation(text, text, text, text)

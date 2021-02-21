@@ -1286,7 +1286,7 @@ UNION ALL
 SELECT '29.4'::text number,
        'TT_yvi01_non_for_veg_translation'::text function_tested,
        'Test correct cl_mod'::text description,
-       TT_yvi01_non_for_veg_translation('VN', 'C', 'TS') = 'TALL_SHRUB' passed
+       TT_yvi01_non_for_veg_translation('VN', 'S', 'TS') = 'TALL_SHRUB' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '29.5'::text number,
@@ -1307,7 +1307,7 @@ UNION ALL
 SELECT '30.2'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test non_for_veg fail'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', '', '') IS FALSE passed
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', NULL::text, '') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '30.3'::text number,
