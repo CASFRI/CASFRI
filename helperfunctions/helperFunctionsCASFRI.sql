@@ -1472,6 +1472,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'qc_hasCountOfNotNull' THEN '-8886'
 				  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
 				  WHEN rulelc = 'pc02_hasCountOfNotNull' THEN '-8886'
+				  WHEN rulelc = 'bc_height_validation' THEN '-9997'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -4206,6 +4207,66 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_bc_height_validation(text, text, text, text)
+--
+-- proj_height_1 - species 1 height
+-- proj_height_2 - species 2 height
+-- species_pct_1 - species 1 percent
+-- species_pct_2 - species 2 percent
+--
+-- Converts any null percent values to zero.
+-- If one of the height values is null, just return the other height value. If both are null return null.
+-- If both percent values are zero, return the standard mean of the heights.
+--
+-- Calculates the weighted average height using the formula:
+-- ((proj_height_1 * (species_pct_1/100)) / ((species_pct_1 + species_pct_2)/100)) + ((proj_height_2 * (species_pct_2/100)) / ((species_pct_1 + species_pct_2)/100))
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_bc_height(
+  proj_height_1 text,
+  proj_height_2 text,
+  species_pct_1 text,
+  species_pct_2 text
+)
+RETURNS double precision AS $$
+  DECLARE
+    _proj_height_1 double precision := proj_height_1::double precision;
+    _proj_height_2 double precision := proj_height_2::double precision;
+    _species_pct_1 double precision := species_pct_1::double precision;
+    _species_pct_2 double precision := species_pct_2::double precision;
+  BEGIN
+    
+    -- If any percent inputs are null, set them to 0. This ensures the averaging still works and the null percent attribute will not be considered in the calculation.
+    IF species_pct_1 IS NULL THEN
+      _species_pct_1 = 0;
+    END IF;
+    IF species_pct_2 IS NULL THEN
+      _species_pct_2 = 0;
+    END IF;
+    
+    -- If one of the height values is null, just return the other height value. If both are null return null.
+	IF proj_height_1 IS NULL AND proj_height_2 IS NULL THEN
+      RETURN NULL;
+    END IF;
+    IF proj_height_1 IS NULL THEN
+      RETURN _proj_height_2;
+    END IF;
+    IF proj_height_2 IS NULL THEN
+      RETURN _proj_height_1;
+    END IF;
+    
+    -- If both percent values are zero, return the mean of the heights.
+    IF _species_pct_1 = 0 AND _species_pct_2 = 0 THEN
+      RETURN (_proj_height_1 + _proj_height_2) / 2;
+    END IF;
+    
+    RETURN ((_proj_height_1 * (_species_pct_1/100)) / ((_species_pct_1 + _species_pct_2)/100)) + ((_proj_height_2 * (_species_pct_2/100)) / ((_species_pct_1 + _species_pct_2)/100));
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -5710,61 +5771,6 @@ RETURNS int AS $$
     -- call countOfNotNull
     RETURN tt_countOfNotNull(species, is_nfl, max_rank_to_consider, 'FALSE');
 
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
--- TT_bc_height(text, text, text, text)
---
--- proj_height_1 - species 1 height
--- proj_height_2 - species 2 height
--- species_pct_1 - species 1 percent
--- species_pct_2 - species 2 percent
---
--- Calculates the weighted average height using the formula:
--- ((proj_height_1 * (species_pct_1/100)) / ((species_pct_1 + species_pct_2)/100)) + ((proj_height_2 * (species_pct_2/100)) / ((species_pct_1 + species_pct_2)/100))
-
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_bc_height(
-  proj_height_1 text,
-  proj_height_2 text,
-  species_pct_1 text,
-  species_pct_2 text
-)
-RETURNS double precision AS $$
-  DECLARE
-    _proj_height_1 double precision := proj_height_1::double precision;
-    _proj_height_2 double precision := proj_height_2::double precision;
-    _species_pct_1 double precision := species_pct_1::double precision;
-    _species_pct_2 double precision := species_pct_2::double precision;
-  BEGIN
-    
-    -- If any percent inputs are null, set them to 0. This ensures the averaging still works and the null percent attribute will not be considered in the calculation.
-    IF species_pct_1 IS NULL THEN
-      _species_pct_1 = 0;
-    END IF;
-    IF species_pct_2 IS NULL THEN
-      _species_pct_2 = 0;
-    END IF;
-    
-    -- If any height values are null, set them to zero so the calculation still works, but also set percent to zero so the height is dropped from the equation.
-    -- i.e. any null height values are not considered.
-    IF proj_height_1 IS NULL THEN
-      _proj_height_1 = 0;
-      _species_pct_1 = 0;
-    END IF;
-    IF proj_height_2 IS NULL THEN
-      _proj_height_2 = 0;
-      _species_pct_2 = 0;
-    END IF;
-    
-    -- If both percent values are zero, return NULL. This avoids error trying to divide by zero.
-    IF _species_pct_1 = 0 AND _species_pct_2 = 0 THEN
-      RETURN NULL;
-    END IF;
-    
-    RETURN ((_proj_height_1 * (_species_pct_1/100)) / ((_species_pct_1 + _species_pct_2)/100)) + ((_proj_height_2 * (_species_pct_2/100)) / ((_species_pct_1 + _species_pct_2)/100));
-    
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------

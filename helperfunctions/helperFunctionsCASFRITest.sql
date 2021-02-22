@@ -2223,13 +2223,13 @@ UNION ALL
 SELECT '53.8'::text number,
        'TT_bc_height'::text function_tested,
        'Both pct zero'::text description,
-       TT_bc_height('4', '1', '0', '0') IS NULL passed
+       TT_bc_height('4', '1', '0', '0') = 2.5 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.9'::text number,
        'TT_bc_height'::text function_tested,
        'All zero'::text description,
-       TT_bc_height('0', '0', '0', '0') IS NULL passed
+       TT_bc_height('0', '0', '0', '0') = 0 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.10'::text number,
@@ -2265,7 +2265,7 @@ UNION ALL
 SELECT '53.15'::text number,
        'TT_bc_height'::text function_tested,
        'Both pct zero'::text description,
-       TT_bc_height('4', '1', NULL::text, NULL::text) IS NULL passed
+       TT_bc_height('4', '1', NULL::text, NULL::text) = 2.5 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.16'::text number,
@@ -3700,13 +3700,13 @@ UNION ALL
 SELECT '93.5'::text number,
        'TT_bc_lyr_layer_translation'::text function_tested,
        'test two null pcnt'::text description,
-       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '1') = 1 passed
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '1') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '93.6'::text number,
        'TT_bc_lyr_layer_translation'::text function_tested,
        'test layer 2 with two null pcnt'::text description,
-       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '2') = 2 passed
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '2') = 1 passed
 ---------------------------------------------------------
  -- TT_ab_avi01_wetland_translation
 ---------------------------------------------------------
