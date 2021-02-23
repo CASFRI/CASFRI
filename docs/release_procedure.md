@@ -60,9 +60,9 @@
 
 14. In pgAdmin, run the 01_addConstraints.sql script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues.
 
-**Flat Table (Denormalized)**
+**Flat (Denormalized) Tables**
 
-13. Run the workflow\03_flatCASFRI script to produce the flat version of the database.
+13. Run the workflow\03_flatCASFRI scripts to produce the two different flat versions of the database.
 
 **Inventories Spatial Coverages**
 
