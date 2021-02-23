@@ -73,7 +73,7 @@ FROM test_series AS a FULL OUTER JOIN (
 SELECT '1.1'::text number,
        'Check count'::text function_tested,
        'ab_photoyear'::text description,
-       TT_Count('rawfri', 'ab_photoyear') = 901 passed
+       TT_Count('rawfri', 'ab_photoyear') = 560 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
@@ -271,7 +271,7 @@ UNION ALL
 SELECT '11.2'::text number,
        'Check count'::text function_tested,
        'QC02'::text description,
-       TT_Count('rawfri', 'qc02') = 6581710 passed
+       TT_Count('rawfri', 'qc02') = 2876326 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '11.3'::text number,
