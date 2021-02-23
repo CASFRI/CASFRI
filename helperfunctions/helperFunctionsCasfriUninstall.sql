@@ -192,3 +192,30 @@ DROP FUNCTION IF EXISTS TT_IsMissingOrNotInSetCode() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidNumber() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidRange() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);
+DROP FUNCTION IF EXISTS TT_Count(name, name);
+-------------------------------------------------------------------------------
+-- Test VIEWs
+-------------------------------------------------------------------------------
+DROP VIEW IF EXISTS rawfri.ab06_lyr1 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_nfl3 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_dst1 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_nfl3_dst1 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_lyr CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_nfl4 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_dst_or_nfl3_and_nfl4 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_and_nfl2_or_dst CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4_or_dst CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_or_nfl2_not_dst CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_or_nfl4_not_dst CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_and_nfl2_not_dst CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4_not_dst CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl3_or_eco CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl3_and_eco_not_dst2 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_extra_lyr1_for_nfl3_and_nfl4_not_dst CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_null CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_cas_id CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_lyr1_cas_id_nfl CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_not_lyr1 CASCADE;
+DROP VIEW IF EXISTS rawfri.ab06_site_class CASCADE;
