@@ -47,7 +47,7 @@ do
   "$gdalFolder/ogr2ogr" \
   -f PostgreSQL "$pg_connection_string" "$F/forest" \
   -nln $fullTargetTableName \
-  -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id, 'FOREST#' as 'forest_id_1', 'FOREST-ID' AS 'forest_id_2' FROM $ogrTab" \
+  -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM $ogrTab" \
   $layer_creation_options $other_options \
   $overwrite_option
 
