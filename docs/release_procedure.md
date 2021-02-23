@@ -36,7 +36,7 @@
 
     4. Make sure all table_translation_framework and all CASFRI Helper Functions were dropped properly by looking for any remaining TT_ functions in the public.function item in the pgAdmin browser. If not, add the unDROPed ones to the proper uninstall.sql script.
 
-9. Reinstall everything as in step 7.
+9. Reinstall all the functions as in step 7.
 
 **Translation Samples Tests**
 
