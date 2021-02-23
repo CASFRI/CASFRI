@@ -1471,6 +1471,8 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isForest' THEN '-8887'
                   WHEN rulelc = 'qc_hasCountOfNotNull' THEN '-8886'
 				  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
+				  WHEN rulelc = 'pc02_hasCountOfNotNull' THEN '-8886'
+				  WHEN rulelc = 'bc_height_validation' THEN '-9997'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -3469,8 +3471,15 @@ RETURNS boolean AS $$
     sp_code text;
   BEGIN
     
-    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-    sp_code = translate(code_array[species_number::int], '0123456789', '');
+	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
+	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
+	ELSE
+	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
+      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+      sp_code = translate(code_array[species_number::int], '0123456789', '');
+    END IF;
+	
     RETURN TT_matchTable(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'FALSE');
     
   END; 
@@ -4198,6 +4207,66 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_bc_height_validation(text, text, text, text)
+--
+-- proj_height_1 - species 1 height
+-- proj_height_2 - species 2 height
+-- species_pct_1 - species 1 percent
+-- species_pct_2 - species 2 percent
+--
+-- Converts any null percent values to zero.
+-- If one of the height values is null, just return the other height value. If both are null return null.
+-- If both percent values are zero, return the standard mean of the heights.
+--
+-- Calculates the weighted average height using the formula:
+-- ((proj_height_1 * (species_pct_1/100)) / ((species_pct_1 + species_pct_2)/100)) + ((proj_height_2 * (species_pct_2/100)) / ((species_pct_1 + species_pct_2)/100))
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_bc_height(
+  proj_height_1 text,
+  proj_height_2 text,
+  species_pct_1 text,
+  species_pct_2 text
+)
+RETURNS double precision AS $$
+  DECLARE
+    _proj_height_1 double precision := proj_height_1::double precision;
+    _proj_height_2 double precision := proj_height_2::double precision;
+    _species_pct_1 double precision := species_pct_1::double precision;
+    _species_pct_2 double precision := species_pct_2::double precision;
+  BEGIN
+    
+    -- If any percent inputs are null, set them to 0. This ensures the averaging still works and the null percent attribute will not be considered in the calculation.
+    IF species_pct_1 IS NULL THEN
+      _species_pct_1 = 0;
+    END IF;
+    IF species_pct_2 IS NULL THEN
+      _species_pct_2 = 0;
+    END IF;
+    
+    -- If one of the height values is null, just return the other height value. If both are null return null.
+	IF proj_height_1 IS NULL AND proj_height_2 IS NULL THEN
+      RETURN NULL;
+    END IF;
+    IF proj_height_1 IS NULL THEN
+      RETURN _proj_height_2;
+    END IF;
+    IF proj_height_2 IS NULL THEN
+      RETURN _proj_height_1;
+    END IF;
+    
+    -- If both percent values are zero, return the mean of the heights.
+    IF _species_pct_1 = 0 AND _species_pct_2 = 0 THEN
+      RETURN (_proj_height_1 + _proj_height_2) / 2;
+    END IF;
+    
+    RETURN ((_proj_height_1 * (_species_pct_1/100)) / ((_species_pct_1 + _species_pct_2)/100)) + ((_proj_height_2 * (_species_pct_2/100)) / ((_species_pct_1 + _species_pct_2)/100));
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -4667,7 +4736,7 @@ RETURNS text AS $$
   BEGIN
     PERFORM TT_ValidateParams('TT_nb_nbi01_wetland_translation',
                               ARRAY['ret_char_pos', ret_char_pos, 'int']);
-	  wetland_code = TT_nb_nbi01_wetland_code(wc, vt, im);
+	wetland_code = TT_nb_nbi01_wetland_code(wc, vt, im);
 
     RETURN TT_wetland_code_translation(wetland_code, ret_char_pos);
     
@@ -4920,22 +4989,18 @@ CREATE OR REPLACE FUNCTION TT_yvi01_non_for_veg_translation(
   cl_mod text
 )
 RETURNS text AS $$
-  BEGIN
-    IF type_lnd IN('VN') THEN
-      IF class_ IN('S','H','C','M') THEN
-        IF cl_mod IN('TS','TSo','TSc','LS') THEN
-          RETURN TT_mapText(cl_mod, '{''TS'',''TSo'',''TSc'',''LS''}', '{''TALL_SHRUB'',''TALL_SHRUB'',''TALL_SHRUB'',''LOW_SHRUB''}');
-        END IF;
-        
-        IF class_ IN('C','H','M') THEN
-          RETURN TT_mapText(class_, '{''C'',''H'',''M''}', '{''BRYOID'',''HERBS'',''HERBS''}');
-        END IF;
-      END IF;
-    END IF;
     
-    RETURN NULL;
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
+	SELECT CASE 
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TS' THEN 'TALL_SHRUB'
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TSo' THEN 'TALL_SHRUB'
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TSc' THEN 'TALL_SHRUB'
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'LS' THEN 'LOW_SHRUB'
+	  WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = '' THEN 'TALL_SHRUB' -- assign generic shrub to TALL_SHRUB
+	  WHEN type_lnd = 'VN' AND class_ = 'C' THEN 'BRYOID'
+	  WHEN type_lnd = 'VN' AND class_ = 'H' THEN 'HERBS'
+	  WHEN type_lnd = 'VN' AND class_ = 'M' THEN 'HERBS'
+      ELSE NULL END;
+$$ LANGUAGE sql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_generic_stand_structure_translation(text, text, text, text)
@@ -5709,61 +5774,6 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
--- TT_bc_height(text, text, text, text)
---
--- proj_height_1 - species 1 height
--- proj_height_2 - species 2 height
--- species_pct_1 - species 1 percent
--- species_pct_2 - species 2 percent
---
--- Calculates the weighted average height using the formula:
--- ((proj_height_1 * (species_pct_1/100)) / ((species_pct_1 + species_pct_2)/100)) + ((proj_height_2 * (species_pct_2/100)) / ((species_pct_1 + species_pct_2)/100))
-
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_bc_height(
-  proj_height_1 text,
-  proj_height_2 text,
-  species_pct_1 text,
-  species_pct_2 text
-)
-RETURNS double precision AS $$
-  DECLARE
-    _proj_height_1 double precision := proj_height_1::double precision;
-    _proj_height_2 double precision := proj_height_2::double precision;
-    _species_pct_1 double precision := species_pct_1::double precision;
-    _species_pct_2 double precision := species_pct_2::double precision;
-  BEGIN
-    
-    -- If any percent inputs are null, set them to 0. This ensures the averaging still works and the null percent attribute will not be considered in the calculation.
-    IF species_pct_1 IS NULL THEN
-      _species_pct_1 = 0;
-    END IF;
-    IF species_pct_2 IS NULL THEN
-      _species_pct_2 = 0;
-    END IF;
-    
-    -- If any height values are null, set them to zero so the calculation still works, but also set percent to zero so the height is dropped from the equation.
-    -- i.e. any null height values are not considered.
-    IF proj_height_1 IS NULL THEN
-      _proj_height_1 = 0;
-      _species_pct_1 = 0;
-    END IF;
-    IF proj_height_2 IS NULL THEN
-      _proj_height_2 = 0;
-      _species_pct_2 = 0;
-    END IF;
-    
-    -- If both percent values are zero, return NULL. This avoids error trying to divide by zero.
-    IF _species_pct_1 = 0 AND _species_pct_2 = 0 THEN
-      RETURN NULL;
-    END IF;
-    
-    RETURN ((_proj_height_1 * (_species_pct_1/100)) / ((_species_pct_1 + _species_pct_2)/100)) + ((_proj_height_2 * (_species_pct_2/100)) / ((_species_pct_1 + _species_pct_2)/100));
-    
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
 -- TT_fvi01_structure_per(text, text)
 --
 -- stand_structure text
@@ -5963,9 +5973,12 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- eta_ess_pc text,
 -- species_number text
 --
+-- First checks if the code is a species group code (e.g. FXFN) which have no percent values.
+-- If it is, passes the requested code to the lookupText.
+-- If not, it is a normal code with species percent values (e.g. BF1BS9).
 -- Runs TT_qc_prg5_species_code_to_reordered_array then returns the species code from the requested position.
+--
 -- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
-
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_qc_prg5_species_translation(
@@ -5978,9 +5991,15 @@ RETURNS text AS $$
     sp_code text;
   BEGIN
     
-    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-    sp_code = translate(code_array[species_number::int], '0123456789', '');
-    
+	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
+	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
+	ELSE
+	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
+      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+      sp_code = translate(code_array[species_number::int], '0123456789', '');
+    END IF;
+	
     IF sp_code IS NULL OR sp_code = '' THEN
       RETURN NULL;
     ELSE
@@ -5996,8 +6015,17 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- eta_ess_pc text,
 -- species_number text
 --
--- Runs TT_qc_prg5_species_code_to_reordered_array then returns the percent value from the requested position.
--- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
+-- First checks if the code is a species group code (e.g. FXFN) which have no percent values.
+  -- If it is, return the following percentages based on length of code and requested species:
+  -- if 3 species groups (length is 6), return percent's as 35%, 35%, 30%
+  -- if 2 species groups (length is 4), return percent's as 65%, 35%
+  -- if 1 species group (length is 2), return percent as 100%
+-- If not, it is a normal code with species percent values (e.g. BF1BS9).
+-- Runs TT_qc_prg5_species_code_to_reordered_array then gets the percent value from the requested position.
+  -- If it's 0 return 100, if <10 multiply by 10 (these are both specific to QC07).
+  -- Otherwise just return the value (for QC05).
+--
+-- e.g. TT_qc_prg5_species_per_translation('BS20WS60TA20', 1) would return 60.
 
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_species_per_translation(text, text);
@@ -6011,14 +6039,26 @@ RETURNS int AS $$
 	per int;
   BEGIN
     
-    code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-    per = regexp_replace(code_array[species_number::int], '[[:alpha:]]', '', 'g')::int;
-	
-	-- for qc07, percent values need to be multiplied by 10. Any zero values in QC07 represent
-	-- 100%. Catch those first.
-	RETURN CASE WHEN per = 0 THEN 100 -- qc07
+	-- check if code contains any integers. If no, its a species group type code.
+	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+	  RETURN CASE 
+	    WHEN LENGTH(eta_ess_pc) = 2 AND species_number = '1' THEN 100
+		WHEN LENGTH(eta_ess_pc) = 4 AND species_number = '1' THEN 65 
+		WHEN LENGTH(eta_ess_pc) = 4 AND species_number = '2' THEN 35
+		WHEN LENGTH(eta_ess_pc) = 6 AND species_number = '1' THEN 35
+		WHEN LENGTH(eta_ess_pc) = 6 AND species_number = '2' THEN 35
+		WHEN LENGTH(eta_ess_pc) = 6 AND species_number = '3' THEN 30
+		ELSE NULL END;
+	ELSE
+      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+      per = regexp_replace(code_array[species_number::int], '[[:alpha:]]', '', 'g')::int;
+	  
+	  -- for qc07, percent values need to be multiplied by 10. Any zero values in QC07 represent
+	  -- 100%. Catch those first.
+	  RETURN CASE WHEN per = 0 THEN 100 -- qc07
 	            WHEN per < 10 THEN per*10 -- qc07
 				ELSE per END; -- qc05
+	END IF;		
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------

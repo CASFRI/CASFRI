@@ -116,7 +116,7 @@ WITH test_nb AS (
     SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  12 nb_test UNION ALL
     SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  10 nb_test UNION ALL
     SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  7 nb_test UNION ALL
+    SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  6 nb_test UNION ALL
     SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                 66 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test UNION ALL
     SELECT 'TT_mb_fli01_stand_structure_translation'::text function_tested,  68 maj_num,  3 nb_test UNION ALL
@@ -1286,7 +1286,7 @@ UNION ALL
 SELECT '29.4'::text number,
        'TT_yvi01_non_for_veg_translation'::text function_tested,
        'Test correct cl_mod'::text description,
-       TT_yvi01_non_for_veg_translation('VN', 'C', 'TS') = 'TALL_SHRUB' passed
+       TT_yvi01_non_for_veg_translation('VN', 'S', 'TS') = 'TALL_SHRUB' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '29.5'::text number,
@@ -1307,7 +1307,7 @@ UNION ALL
 SELECT '30.2'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test non_for_veg fail'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', '', '') IS FALSE passed
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', NULL::text, '') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '30.3'::text number,
@@ -2223,13 +2223,13 @@ UNION ALL
 SELECT '53.8'::text number,
        'TT_bc_height'::text function_tested,
        'Both pct zero'::text description,
-       TT_bc_height('4', '1', '0', '0') IS NULL passed
+       TT_bc_height('4', '1', '0', '0') = 2.5 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.9'::text number,
        'TT_bc_height'::text function_tested,
        'All zero'::text description,
-       TT_bc_height('0', '0', '0', '0') IS NULL passed
+       TT_bc_height('0', '0', '0', '0') = 0 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.10'::text number,
@@ -2265,7 +2265,7 @@ UNION ALL
 SELECT '53.15'::text number,
        'TT_bc_height'::text function_tested,
        'Both pct zero'::text description,
-       TT_bc_height('4', '1', NULL::text, NULL::text) IS NULL passed
+       TT_bc_height('4', '1', NULL::text, NULL::text) = 2.5 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.16'::text number,
@@ -2537,6 +2537,25 @@ SELECT '61.8'::text number,
        'test qc07 code'::text description,
        TT_qc_prg5_species_translation('BP2EO3PE1EN1SB3', '5') = 'PICE_MAR_###' passed
 ---------------------------------------------------------
+UNION ALL
+SELECT '61.10'::text number,
+       'TT_qc_prg5_species_translation'::text function_tested,
+       'test species group code 1'::text description,
+       TT_qc_prg5_species_translation('FXFNRX', '1') = 'GENH_SPP_###' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '61.11'::text number,
+       'TT_qc_prg5_species_translation'::text function_tested,
+       'test species group code 2'::text description,
+       TT_qc_prg5_species_translation('FXFNRX', '2') = 'HARD_NON_###' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '61.12'::text number,
+       'TT_qc_prg5_species_translation'::text function_tested,
+       'test species group code 3'::text description,
+       TT_qc_prg5_species_translation('FXFNRX', '3') = 'GENC_SPP_###' passed
+
+---------------------------------------------------------
  -- TT_qc_prg4_species_per_translation
 ---------------------------------------------------------
 UNION ALL
@@ -2672,7 +2691,36 @@ SELECT '63.10'::text number,
        'TT_qc_prg5_species_per_translation'::text function_tested,
        'test qc05 single species'::text description,
        TT_qc_prg5_species_per_translation('BP100', '1') = 100 passed
-
+---------------------------------------------------------
+UNION ALL
+SELECT '63.11'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       'test species group code 1'::text description,
+       TT_qc_prg5_species_per_translation('FXFNRX', '1') = 35 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.12'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       'test species group code 2'::text description,
+       TT_qc_prg5_species_per_translation('FXFNRX', '3') = 30 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.12'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       'test species group code 3'::text description,
+       TT_qc_prg5_species_per_translation('FNRX', '2') = 35 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.12'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       'test species group code 4'::text description,
+       TT_qc_prg5_species_per_translation('FNRX', '1') = 65 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '63.12'::text number,
+       'TT_qc_prg5_species_per_translation'::text function_tested,
+       'test species group code 5'::text description,
+       TT_qc_prg5_species_per_translation('FN', '1') = 100 passed
 ---------------------------------------------------------
  -- TT_qc_prg4_not_double_species_validation
 ---------------------------------------------------------
@@ -2717,29 +2765,23 @@ SELECT '65.2'::text number,
 UNION ALL
 SELECT '65.3'::text number,
        'TT_qc_prg5_species_matchTable_validation'::text function_tested,
-       '5th inv species empty string'::text description,
-       TT_qc_prg5_species_matchTable_validation('', '1') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '65.4'::text number,
-       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
-       '5th inv species empty string'::text description,
+       '5th inv species null'::text description,
        TT_qc_prg5_species_matchTable_validation(NULL::text, '1') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '65.5'::text number,
+SELECT '65.4'::text number,
        'TT_qc_prg5_species_matchTable_validation'::text function_tested,
        'test qc07'::text description,
        TT_qc_prg5_species_matchTable_validation('BP2EO3PE1EN1SB3', '1')  passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '65.6'::text number,
+SELECT '65.5'::text number,
        'TT_qc_prg5_species_matchTable_validation'::text function_tested,
        'test qc07 single species'::text description,
        TT_qc_prg5_species_matchTable_validation('BP0', '1')  passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '65.7'::text number,
+SELECT '65.6'::text number,
        'TT_qc_prg5_species_matchTable_validation'::text function_tested,
        'test qc05 single species'::text description,
        TT_qc_prg5_species_matchTable_validation('BP100', '1')  passed
@@ -3658,13 +3700,13 @@ UNION ALL
 SELECT '93.5'::text number,
        'TT_bc_lyr_layer_translation'::text function_tested,
        'test two null pcnt'::text description,
-       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '1') = 1 passed
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '1') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '93.6'::text number,
        'TT_bc_lyr_layer_translation'::text function_tested,
        'test layer 2 with two null pcnt'::text description,
-       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '2') = 2 passed
+       TT_bc_lyr_layer_translation('10', '5', '50', '50', '11', '6', NULL::text, NULL::text, 'a', 'b', '2') = 1 passed
 ---------------------------------------------------------
  -- TT_ab_avi01_wetland_translation
 ---------------------------------------------------------
