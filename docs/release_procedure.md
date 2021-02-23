@@ -44,7 +44,7 @@
 
     2. In the shell, CD to workflow/02_produceCASFRI and execute the 01_translate_all_0X.sh (or .bat) scripts one AFTER the other.
 
-12. In pgAdmin, once all translation scripts are finished, run the workflow\02_produceCASFRI\00_checkCounts.sql script to check if the count of translated rows matches what is expected.
+12. In pgAdmin, once all translation scripts are finished, run the workflow\02_produceCASFRI\00_checkCounts.sql script to check if the count of translated rows matches what is expected. You should be able to explain every differences.
 
 14. In pgAdmin, run the 01_addConstraints.sql script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues.
 
