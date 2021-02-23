@@ -1,5 +1,5 @@
 #!/bin/bash -x
-"/c/program files/git/git-bash.exe" load_ab_photoYear.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_ab_photoYear.sh > /dev/null
 "/c/program files/git/git-bash.exe" load_ab03.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_ab06.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_ab07.sh & > /dev/null
