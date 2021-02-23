@@ -31,13 +31,13 @@ SET fullTargetTableName=%targetFRISchema%.ab_photoyear
 -progress %overwrite_tab%
 
 :: Fix it
-SET query=DROP TABLE IF EXISTS %targetFRISchema%.new_photo_year; ^
-CREATE TABLE %targetFRISchema%.new_photo_year AS ^
+SET query=DROP TABLE IF EXISTS %targetFRISchema%.new_ab_photoyear; ^
+CREATE TABLE %targetFRISchema%.new_ab_photoyear AS ^
 SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, photo_yr::int, ogc_fid ^
 FROM %fullTargetTableName% ^
 WHERE photo_yr ~ '^^[0-9]{4}$'; ^
-DROP TABLE %fullTargetTableName%; ^
-ALTER TABLE %targetFRISchema%.new_photo_year RENAME TO ab_photoyear;
+DROP TABLE IF EXISTS %fullTargetTableName%; ^
+ALTER TABLE %targetFRISchema%.new_ab_photoyear RENAME TO ab_photoyear;
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "%query%"
 
