@@ -37,6 +37,7 @@
 "/c/program files/git/git-bash.exe" load_qc03.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_qc04.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_qc05.sh & > /dev/null
+"/c/program files/git/git-bash.exe" load_qc06.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_sk01.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_sk02.sh & > /dev/null
 "/c/program files/git/git-bash.exe" load_sk03.sh & > /dev/null
