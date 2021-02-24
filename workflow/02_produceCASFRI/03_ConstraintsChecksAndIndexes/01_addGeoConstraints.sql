@@ -23,7 +23,7 @@
 -------------------------------------------------------
 SELECT '6.1'::text number,
        'geo_all' target_table,
-       'Add primary key to GEO_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add primary key to GEO_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'geo_all', 'PK', 
@@ -32,7 +32,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '6.2'::text number,
        'geo_all' target_table,
-       'Add foreign key from GEO_ALL to HDR_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from GEO_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'geo_all', 'FK', 
@@ -57,7 +57,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '6.5'::text number,
        'cas_all' target_table,
-       'Ensure GEO table CAS_ID is 50 characters long' description, 
+       'Issue #623. Some NULL cas_id. Ensure GEO table CAS_ID is 50 characters long' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'geo_all', 'CHECK', 
