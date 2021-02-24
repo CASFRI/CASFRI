@@ -13,9 +13,9 @@
 -------------------------------------------------------------------------------
 
 SELECT '1.1'::text number,
-       'Check that all cas_all rows have at least one matching row in LYR, NFL, DST or ECO' description, 
+       'Issue #625. Check that all cas_all rows have at least one matching row in LYR, NFL, DST or ECO' description, 
        passed, 
-       'SELECT cas_id
+       'SELECT inventory_id, count(*) nb
 FROM casfri50.cas_all cas
 LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
 LEFT JOIN casfri50.nfl_all nfl USING (cas_id)
@@ -24,7 +24,8 @@ LEFT JOIN casfri50.eco_all eco USING (cas_id)
 WHERE lyr.cas_id IS NULL AND
       nfl.cas_id IS NULL AND
       dst.cas_id IS NULL AND
-      eco.cas_id IS NULL;' list_query
+      eco.cas_id IS NULL
+GROUP BY inventory_id;' list_query
 FROM (SELECT count(*) = 0 passed
       FROM casfri50.cas_all cas
       LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
