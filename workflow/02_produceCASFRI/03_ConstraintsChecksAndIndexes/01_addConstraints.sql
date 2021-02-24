@@ -610,7 +610,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.1'::text number,
        'eco_all' target_table,
-       'Issue #611. Add primary key to ECO_ALL' description, 
+       'Add primary key to ECO_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'PK', 
