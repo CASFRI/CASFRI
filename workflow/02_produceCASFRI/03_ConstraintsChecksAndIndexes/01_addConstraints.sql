@@ -1443,7 +1443,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.1'::text number,
        'nfl_all' target_table,
-       'Issue #420. Duplicate cas_id/layer couple in NT02. Add primary key to NFL_ALL' description, 
+       'Add primary key to NFL_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'PK', 
