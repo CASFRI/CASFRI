@@ -203,7 +203,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.18'::text number,
        'cas_all' target_table,
-       'Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624. One geom = 0. Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -213,7 +213,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.19'::text number,
        'cas_all' target_table,
-       'Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624. One geom = 0. Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
