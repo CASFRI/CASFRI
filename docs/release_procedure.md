@@ -75,19 +75,19 @@ Note that only major issues preventing the conversion or the translation process
 
 **Generate the flat (denormalized) tables**
 
-1. Run the workflow\03_flatCASFRI scripts to produce the two different flat versions of the database.
+Run the workflow\03_flatCASFRI scripts to produce the two different flat versions of the database.
 
 **Generate the inventories geographical coverages**
 
-1. Run the docs\inv_coverage\produce_inv_coverage.sql to produce the coverage of each inventory.
+Run the docs\inv_coverage\produce_inv_coverage.sql to produce the coverage of each inventory.
 
 **Generate the historical version of the database**
 
-1. Run the workflow\04_produceHistoricalTable\produceHistoricalTable.sql to produce a historical version of the database resolving all overlaps in space and time.
+Run the workflow\04_produceHistoricalTable\produceHistoricalTable.sql to produce a historical version of the database resolving all overlaps in space and time.
 
 **Merge code mocifications to trunk**
 
-1. Commit all changes you made to stabilize the release and get the complete translation to work to the branch and report all those changes to the trunk. Make sure to associate all those changes to the release issue created at the beginning of the release process and to the issue describing each actual fix.
+Commit all changes you made to stabilize the release and get the complete translation to work to the branch and report all those changes to the trunk. Make sure to associate all those changes to the release issue created at the beginning of the release process and to the issue describing each actual fix.
 
 **Document and create the release**
 
