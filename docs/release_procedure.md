@@ -15,15 +15,15 @@ The whole release process should take about one week... This is necessary to ens
 
 Note that only major issues preventing the conversion or the translation process to work properly should be fixed during the release process. Leave other small issues to subsequent releases.
 
-**Preparation**
+**1. Preparation**
 
-1. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate changes done during the release process and prepare the text and the list of fixed issues describing the releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the releases to those issue when commiting in addition to the issue describing the actual fix.
+    1. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate changes done during the release process and prepare the text and the list of fixed issues describing the releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the releases to those issue when commiting in addition to the issue describing the actual fix.
 
-2. In GitKraken (or your favorite git client), create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
+    2. In GitKraken (or your favorite git client), create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
-3. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
+    3. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
 
-4. In pgAdmin, create the PostGIS extension in the new database.\
+    4. In pgAdmin, create the PostGIS extension in the new database.\
 
 **Conversion and Loading of the Translation Tables**
 
