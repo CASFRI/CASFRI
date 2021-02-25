@@ -2,8 +2,8 @@
 
 A whole release process includes:
 
-- a complete translation of all the acquired inventories,
-- stabilization of the code to complete this complete translation,
+- the complete conversion and translation of all the acquired inventories,
+- the stabilization of the code to complete this whole translation,
 - a validation of the final completed database,
 - the generation of two flat (denormalized) versions of the database,
 - the generation of the inventories geographical coverages,
