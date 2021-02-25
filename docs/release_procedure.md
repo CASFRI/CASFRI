@@ -73,7 +73,7 @@ Note that only major issues preventing the conversion or the translation process
 
 2. In pgAdmin, run the 01_addConstraints.sql script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues.
 
-**Generate the flat (denormalized) tables**
+**7. Generate the flat (denormalized) tables**
 
 Run the workflow\03_flatCASFRI scripts to produce the two different flat versions of the database.
 
@@ -81,15 +81,15 @@ Run the workflow\03_flatCASFRI scripts to produce the two different flat version
 
 Run the docs\inv_coverage\produce_inv_coverage.sql to produce the coverage of each inventory.
 
-**Generate the historical version of the database**
+**8. Generate the historical version of the database**
 
 Run the workflow\04_produceHistoricalTable\produceHistoricalTable.sql to produce a historical version of the database resolving all overlaps in space and time.
 
-**Merge code modifications to trunk**
+**9. Merge code modifications to trunk**
 
 Commit all changes you made to stabilize the release and get the complete translation to work to the branch and report all those changes to the trunk. Make sure to associate all those changes to the release issue created at the beginning of the release process and to the issue describing each actual fix.
 
-**Document and create the release**
+**10. Document and create the release**
 
 1. List all the issues still in the "Done current project" column of the [project](https://github.com/edwardsmarc/CASFRI/projects) in the release issue. Group them by main feature added or "Other bug fixes" and progrssively move them to the "Done old projects" column. Look at previous releases for reference on how to describe the release.
 
