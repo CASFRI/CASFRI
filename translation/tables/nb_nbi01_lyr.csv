@@ -5,7 +5,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,STRUCTURE_RANGE,double precision,false(),nothingDouble(),No complex structure,TRUE
 5,LAYER,integer,true(),"lyr_layer_translation({height_layer1, height_layer2}, {species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1, species_5_layer1}, {species_1_layer2, species_2_layer2, species_3_layer2, species_4_layer2, species_5_layer2}, layer)",Reorder the layers that exist in the polygon by height and return the index of the layer being processed,TRUE
-6,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
+6,LAYER_RANK,integer,true(),copyInt(layer_rank),"Layer rank is assigned as 1 for overstory layer (e.g. l1s1), and 2 for understory layer (e.g. l2s1).",TRUE
 7,CROWN_CLOSURE_UPPER,integer,"notNull(crown_closure_upper);notEmpty(crown_closure_upper|-8888);isNumeric(crown_closure_upper);matchList(crown_closure_upper,{0,1,2,3,4,5}|-9997)","mapInt(crown_closure_upper, {0,1,2,3,4,5}, {10,30,50,70,90,100})",Maps source value to CROWN_CLOSURE_UPPER using lists of values,TRUE
 8,CROWN_CLOSURE_LOWER,integer,"notNull(crown_closure_lower);notEmpty(crown_closure_lower|-8888);isNumeric(crown_closure_lower);matchList(crown_closure_lower,{0,1,2,3,4,5}|-9997)","mapInt(crown_closure_lower, {0,1,2,3,4,5}, {0,10,31,51,71,91})",Maps source value to CROWN_CLOSURE_LOWER using lists of values,TRUE
 9,HEIGHT_UPPER,double precision,"notNull(height_upper);isNumeric(height_upper);isBetween(height_upper,0,100,FALSE,TRUE)",copyDouble(height_upper),Copies source value to HEIGHT_UPPER,TRUE
