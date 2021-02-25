@@ -11,7 +11,7 @@ A whole release process includes:
 - the documentation of remaining issues discovered while completing the complete, actual translation,
 - the documentation of the release itself.
 
-The whole release process should take about one week... This is necessary to ensure that relase are stable and actually able to do what is their intend without issues. 
+The whole release process should take about one week... This is necessary to ensure that release are stables and actually able to do what they are supposed to do without issues. 
 
 Note that only major issues preventing the conversion or the translation process to work properly should be fixed during the release process. Leave other small issues to subsequent releases.
 
