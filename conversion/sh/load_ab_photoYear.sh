@@ -29,3 +29,18 @@ fullTargetTableName=$targetFRISchema.ab_photoYear
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab
+
+# Fix it
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "
+DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_photoyear;
+CREATE TABLE ${targetFRISchema}.new_ab_photoyear AS
+SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, photo_yr::int, ogc_fid
+FROM ${fullTargetTableName}
+WHERE photo_yr ~ '^^[0-9]{4}$';
+DROP TABLE IF EXISTS ${fullTargetTableName};
+ALTER TABLE ${targetFRISchema}.new_ab_photoyear RENAME TO ab_photoyear;
+"
+createSQLSpatialIndex=True
+
+source ./common_postprocessing.sh

@@ -38,7 +38,7 @@ ADD PRIMARY KEY (code);
 -------------------------------------------------------
 SELECT '1.1'::text number,
        'cas_all' target_table,
-       'Add primary key to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add primary key to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'PK', 
@@ -136,7 +136,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.13'::text number,
        'cas_all' target_table,
-       'Ensure CAS table CAS_ID is 50 characters long' description, 
+       'Issue #623. Some NULL cas_id. Ensure CAS table CAS_ID is 50 characters long' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -203,7 +203,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.18'::text number,
        'cas_all' target_table,
-       'Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624. One geom = 0. Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -213,7 +213,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.19'::text number,
        'cas_all' target_table,
-       'Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624. One geom = 0. Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -258,7 +258,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.2'::text number,
        'dst_all' target_table,
-       'Add foreign key from DST_ALL to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from DST_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'FK', 
@@ -400,7 +400,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.19'::text number,
        'dst_all' target_table,
-       'Issue #610. DIST_TYPE_1 was wrongly assigned FIRE. Ensure DST table DIST_TYPE_1 values match the corresponding lookup table. Cannot be NOT_APPLICABLE' description, 
+       'Ensure DST table DIST_TYPE_1 values match the corresponding lookup table. Cannot be NOT_APPLICABLE' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
@@ -610,7 +610,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.1'::text number,
        'eco_all' target_table,
-       'Issue #611. Add primary key to ECO_ALL' description, 
+       'Add primary key to ECO_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'PK', 
@@ -619,7 +619,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.2'::text number,
        'eco_all' target_table,
-       'Add foreign key from ECO_ALL to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from ECO_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'FK', 
@@ -744,7 +744,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.2'::text number,
        'lyr_all' target_table,
-       'Add foreign key from LYR_ALL to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from LYR_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -1443,7 +1443,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.1'::text number,
        'nfl_all' target_table,
-       'Issue #420. Duplicate cas_id/layer couple in NT02. Add primary key to NFL_ALL' description, 
+       'Add primary key to NFL_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'PK', 
@@ -1452,7 +1452,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.2'::text number,
        'nfl_all' target_table,
-       'Add foreign key from NFL_ALL to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from NFL_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'FK', 

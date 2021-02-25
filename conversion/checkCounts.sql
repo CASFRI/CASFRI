@@ -13,6 +13,7 @@
 -------------------------------------------------------------------------------
 SET lc_messages TO 'en_US.UTF-8';
 ------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_Count(name, name);
 CREATE OR REPLACE FUNCTION TT_Count(
   schemaName name,
   tableName name
@@ -51,7 +52,7 @@ WITH test_nb AS (
     SELECT 'Check count'::text function_tested,  8 maj_num,  1 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  9 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 10 maj_num,  1 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested, 11 maj_num,  5 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested, 11 maj_num,  6 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 12 maj_num,  6 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 13 maj_num,  2 nb_test
 ), test_series AS (
@@ -72,7 +73,7 @@ FROM test_series AS a FULL OUTER JOIN (
 SELECT '1.1'::text number,
        'Check count'::text function_tested,
        'ab_photoyear'::text description,
-       TT_Count('rawfri', 'ab_photoyear') = 901 passed
+       TT_Count('rawfri', 'ab_photoyear') = 560 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
@@ -270,7 +271,7 @@ UNION ALL
 SELECT '11.2'::text number,
        'Check count'::text function_tested,
        'QC02'::text description,
-       TT_Count('rawfri', 'qc02') = 6581710 passed
+       TT_Count('rawfri', 'qc02') = 2876326 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '11.3'::text number,
@@ -289,6 +290,12 @@ SELECT '11.5'::text number,
        'Check count'::text function_tested,
        'QC05'::text description,
        TT_Count('rawfri', 'qc05') = 6768074 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '11.6'::text number,
+       'Check count'::text function_tested,
+       'QC06'::text description,
+       TT_Count('rawfri', 'qc06') = 4809274 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '12.1'::text number,
@@ -343,5 +350,5 @@ ON ((regexp_split_to_array(number, '\.'))[1] = maj_num AND (regexp_split_to_arra
 ORDER BY maj_num::int, min_num::int
 -- This last line has to be commented out, with the line at the beginning,
 -- to display only failing tests...
-) foo WHERE NOT passed;
+) foo --WHERE NOT passed;
 

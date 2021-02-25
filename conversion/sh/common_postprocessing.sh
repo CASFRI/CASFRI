@@ -10,3 +10,8 @@ fi
 
 # VACUUM ANALYZE the table
 "$gdalFolder/ogrinfo" "$pg_connection_string" -sql "VACUUM ANALYZE $fullTargetTableName";
+
+echo
+echo CONVERSION OF "$fullTargetTableName" DONE......
+
+/bin/bash
