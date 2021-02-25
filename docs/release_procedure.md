@@ -78,9 +78,10 @@
 
 16. Commit all the changes you made to stabilize the release and get the complete translation to work to the branch and report all those changes to the trunk. Make sure to associate all those changes to the release issue created at the beginning of the release process and to the issue describing the actual fix.
 
-**Release**
+**Document and Create the Release**
 
-17. Document and create the release
+17. List all the issues still in the "Done current project" column of the [project](https://github.com/edwardsmarc/CASFRI/projects) in the release issue grouping them by main feature added or "Other bug fixes". Look at previous release for reference.
 
-    1. List all the issues still in the "Done current project" column of the [project](https://github.com/edwardsmarc/CASFRI/projects) in the release issue grouping them by main feature added or "Other bug fixes". Look at previous release for reference.
-    2. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
+19. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
+
+You're done!
