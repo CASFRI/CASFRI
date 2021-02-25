@@ -1,4 +1,4 @@
-**Release Procedure**
+**CASFRI and PostgreSQL Table Translation Framework Release Procedure**
 
 A whole release process includes:
 
