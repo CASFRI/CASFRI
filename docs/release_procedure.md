@@ -85,13 +85,13 @@ Run the docs\inv_coverage\produce_inv_coverage.sql to produce the coverage of ea
 
 Run the workflow\04_produceHistoricalTable\produceHistoricalTable.sql to produce a historical version of the database resolving all overlaps in space and time.
 
-**Merge code mocifications to trunk**
+**Merge code modifications to trunk**
 
 Commit all changes you made to stabilize the release and get the complete translation to work to the branch and report all those changes to the trunk. Make sure to associate all those changes to the release issue created at the beginning of the release process and to the issue describing each actual fix.
 
 **Document and create the release**
 
-1. List all the issues still in the "Done current project" column of the [project](https://github.com/edwardsmarc/CASFRI/projects) in the release issue grouping them by main feature added or "Other bug fixes". Look at previous release for reference.
+1. List all the issues still in the "Done current project" column of the [project](https://github.com/edwardsmarc/CASFRI/projects) in the release issue. Group them by main feature added or "Other bug fixes" and progrssively move them to the "Done old projects" column. Look at previous releases for reference on how to describe the release.
 
 2. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
 
