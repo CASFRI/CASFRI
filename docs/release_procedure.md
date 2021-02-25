@@ -2,23 +2,25 @@
 
 **Preparation**
 
-1. In GitKraken, create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
+1. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate changes done during the release process and prepare the text and list of fixed issues describing the releases. Simply name them "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the release to this issue in addition to the issue describing the actual fix.
 
-2. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
+2. In GitKraken, create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
-3. In pgAdmin, create the PostGIS extension in the new database.\
+3. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
+
+4. In pgAdmin, create the PostGIS extension in the new database.\
 
 **Conversion and Loading of the Translation Tables**
 
-4. Open a DOS or a Bash shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script. Those scripts split the loading process in three in order to avoid overloading the server. A first window init the process. You have to close this window for the other loading scripts to be launched. The second step loads about 25 inventories. You have to close all those windows when they are finished to launch the third and last series of loading scripts.
+5. Open a DOS or a Bash shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script. Those scripts split the loading process in three in order to avoid overloading the server. A first window init the process. You have to close this window for the other loading scripts to be launched. The second step loads about 25 inventories. You have to close all those windows when they are finished to launch the third and last series of loading scripts.
 
-5. In the same shell, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
+6. In the same shell, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
 
 **Installation and Unsintallation Check**
 
-6. In the same shell, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produce a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
+7. In the same shell, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produce a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
 
-7. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
+8. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
 
     1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts. Fix any non passing test (by fixing the function tested or the test itself).
 
@@ -26,7 +28,7 @@
 
     3. Check the count of loaded inventory with the checkCounts.sql script. Fix inventories not reporting the right number of rows and add any missing test.
 
-8. In pgAdmin, make sure the uninstall scripts uninstall everything and leave no Table Translation Framework and CASFRI Helper function in the database:
+9. In pgAdmin, make sure the uninstall scripts uninstall everything and leave no Table Translation Framework and CASFRI Helper function in the database:
 
     1. DROP all TT_Translate() functions with "SELECT TT_DropAllTranslateFct();"
 
@@ -36,11 +38,11 @@
 
     4. Make sure all table_translation_framework and all CASFRI Helper Functions were dropped properly by looking for any remaining TT_ functions in the public.function item in the pgAdmin browser. If not, add the unDROPed ones to the proper uninstall.sql script.
 
-9. Reinstall all the functions as in step 7.
+10. Reinstall all the functions as in step 7.
 
 **Translation Samples Tests**
 
-10. Test the translations:
+11. Test the translations:
 
     1. Execute the CASFRI/translation/test/testTranslation.sh (or .bat) script. You can also run each test_cas.sql, test_dst.sql, test_eco.sql, test_lyr.sql and test_nfl.sql in pgAdmin. This will produce a series of table in the CASFRI50_test schema.
 
@@ -48,7 +50,7 @@
 
 **Actual Translation**
 
-11. Run the translations:
+12. Run the translations:
 
     1. If necessary, edit the workflow/02_produceCASFRI/01_translate_all_0X.sh (or .bat) scripts to translate only the inventories you want to translate. Each script launch a certain number of inventories in order to avoid overloading the system (which might result in system crashes). 01_translate_all_00.sh initialise the database. 01_translate_all_01.sh and 01_translate_all_02.sh are for bigger inventories and 01_translate_all_03.sh and 01_translate_all_04.sh for smaller inventories.
 
@@ -56,7 +58,7 @@
 
 **Translations Validation**
 
-12. In pgAdmin, once all translation scripts are finished, run the workflow\02_produceCASFRI\00_checkCounts.sql script to check if the count of translated rows matches what is expected. You should be able to explain every differences.
+13. In pgAdmin, once all translation scripts are finished, run the workflow\02_produceCASFRI\00_checkCounts.sql script to check if the count of translated rows matches what is expected. You should be able to explain every differences.
 
 14. In pgAdmin, run the 01_addConstraints.sql script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues.
 
@@ -74,5 +76,11 @@
 
 **Merge to trunk**
 
+16. Commit all the changes you made to stabilize the release and get the complete translation to work to the branch and report all those changes to the trunk. Make sure to associate all those changes to the release issue created at the beginning of the release process and to the issue describing the actual fix.
 
-16. Commit all the changes you made to get the complete translation to work to the branch and report all those changes to the trunk.
+**Release**
+
+17. Document and create the release
+
+    1. List all the issues still in the "Done current project" column of the project(https://github.com/edwardsmarc/CASFRI/projects) in the release issue grouping them by main feature added or "Other bug fixes". Look at previous release for reference.
+    2. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
