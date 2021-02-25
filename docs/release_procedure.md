@@ -82,5 +82,5 @@
 
 17. Document and create the release
 
-    1. List all the issues still in the "Done current project" column of the project(https://github.com/edwardsmarc/CASFRI/projects) in the release issue grouping them by main feature added or "Other bug fixes". Look at previous release for reference.
+    1. List all the issues still in the "Done current project" column of the [project](https://github.com/edwardsmarc/CASFRI/projects) in the release issue grouping them by main feature added or "Other bug fixes". Look at previous release for reference.
     2. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
