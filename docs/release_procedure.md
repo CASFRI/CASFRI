@@ -1,5 +1,18 @@
 **Release Procedure**
 
+A whole release process includes:
+
+- a complete translation of all the acquired inventories,
+- stabilization of the code to complete this complete translation,
+- a validation of the final completed database,
+- the generation of two flat (denormalized) versions of the database,
+- the generation of the inventories geographical coverages,
+- the generation of a historical version of the translated database
+- the documentation of remaining issues discovered while completing the complete, actual translation,
+- the documentation of the release itself.
+
+The whole release process should take about one week...
+
 **Preparation**
 
 1. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate changes done during the release process and prepare the text and the list of fixed issues describing the releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the releases to those issue when commiting in addition to the issue describing the actual fix.
