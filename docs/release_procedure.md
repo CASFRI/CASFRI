@@ -2,9 +2,9 @@
 
 **Preparation**
 
-1. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate changes done during the release process and prepare the text and list of fixed issues describing the releases. Simply name them "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the release to this issue in addition to the issue describing the actual fix.
+1. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate changes done during the release process and prepare the text and the list of fixed issues describing the releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the releases to those issue when commiting in addition to the issue describing the actual fix.
 
-2. In GitKraken, create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
+2. In GitKraken (or your favorite git client), create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
 3. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
 
