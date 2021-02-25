@@ -23,7 +23,7 @@ Note that only major issues preventing the conversion or the translation process
 
 3. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
 
-4. In pgAdmin, create the PostGIS extension in the new database.\
+4. In pgAdmin, create the PostGIS extension in the new database.
 
 **2. Convert the inventories and load the translation tables in the database**
 
