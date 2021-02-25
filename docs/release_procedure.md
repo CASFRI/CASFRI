@@ -21,7 +21,9 @@ Note that only major issues preventing the conversion or the translation process
 
 2. In GitKraken (or your favorite git client), create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
-3. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
+3. In GitHub, create a new column in each repository [Project](https://github.com/edwardsmarc/CASFRI/projects) named after the release and move all fixed issues to this column. This is to avoid that issues fixed after the creation of the branch get mixed with issues fixed in the branch.
+
+4. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
 
 4. In pgAdmin, create the PostGIS extension in the new database.
 
@@ -91,7 +93,7 @@ Commit all changes you made to stabilize the release and get the complete transl
 
 **10. Document and create the release**
 
-1. List all the issues still in the "Done current project" column of the [project](https://github.com/edwardsmarc/CASFRI/projects) in the release issue. Group them by main feature added or "Other bug fixes" and progrssively move them to the "Done old projects" column. Look at previous releases for reference on how to describe the release.
+1. List all the issues still in the [Project](https://github.com/edwardsmarc/CASFRI/projects) column created at the beginning of the release process in the issue named after the release. Group them by main feature added or "Other bug fixes". Look at previous releases for reference on how to describe the release.
 
 2. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
 
