@@ -17,7 +17,7 @@ DROP SEQUENCE IF EXISTS bug_splitbygrid;
 CREATE SEQUENCE bug_splitbygrid START 1;
 SELECT nextval('bug_splitbygrid');
 
--- Create a gridded version of the flat version of CASFRI
+-- Create a gridded version of the flat version of CASFRI 13h00
 DROP TABLE IF EXISTS casfri50_history.casflat_gridded;
 CREATE TABLE casfri50_history.casflat_gridded AS
 SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
