@@ -58,6 +58,7 @@ CREATE SCHEMA IF NOT EXISTS casfri50_flat;
 -- so many rows per CAS_ID.
 -- DST info is always joined to row with layer = 1.
 -- NB01 dst on layer 2 are left out.
+-- 10h18
 -------------------------------------------------------
 DROP MATERIALIZED VIEW IF EXISTS casfri50_flat.cas_flat_one_layer_per_row;
 CREATE MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row AS

@@ -71,8 +71,6 @@ WITH cas_lyr1 AS (
          coalesce(soil_moist_reg, 'NOT_APPLICABLE') lyr1_soil_moist_reg,
          coalesce(structure_per, -8887) lyr1_structure_per,
          coalesce(structure_range, -8887) lyr1_structure_range,
-         --coalesce(layer, -8887) layer,
-         --coalesce(layer_rank, -8887) layer_rank,
          coalesce(crown_closure_lower, -8887) lyr1_crown_closure_lower,
          coalesce(crown_closure_upper, -8887) lyr1_crown_closure_upper,
          coalesce(height_lower, -8887) lyr1_height_lower,
@@ -106,8 +104,6 @@ WITH cas_lyr1 AS (
          coalesce(soil_moist_reg, 'NOT_APPLICABLE') lyr2_soil_moist_reg,
          coalesce(structure_per, -8887) lyr2_structure_per,
          coalesce(structure_range, -8887) lyr2_structure_range,
-         --coalesce(layer, -8887) layer,
-         --coalesce(layer_rank, -8887) layer_rank,
          coalesce(crown_closure_lower, -8887) lyr2_crown_closure_lower,
          coalesce(crown_closure_upper, -8887) lyr2_crown_closure_upper,
          coalesce(height_lower, -8887) lyr2_height_lower,
@@ -138,7 +134,6 @@ WITH cas_lyr1 AS (
   -- Aggregate NFL components
 --WITH nfl1_nfl2 AS (
   SELECT min(cas_id) cas_id,
-         --array_agg(layer ORDER BY layer) layer,
          array_agg(soil_moist_reg ORDER BY layer) soil_moist_reg,
          array_agg(structure_per ORDER BY layer) structure_per,
          array_agg(crown_closure_lower ORDER BY layer) crown_closure_lower,
@@ -222,7 +217,7 @@ TABLESAMPLE SYSTEM ((100 * 100) / (SELECT count(*) FROM casfri50_flat.cas_flat_a
 REPEATABLE (1.2)
 ORDER BY cas_id;
 
--- Make sure cas_flat_all_layers_same_row has the right count (XXXX, 21057159)
+-- Make sure cas_flat_all_layers_same_row has the right count (41091682, 41093124)
 SELECT count(*) 
 FROM casfri50.cas_all;
 
