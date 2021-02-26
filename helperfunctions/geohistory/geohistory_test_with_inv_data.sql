@@ -196,7 +196,7 @@ SELECT * FROM geohistory.sampling_area_nb1;
 -- Generate history table not taking attribute values validity into account - pg11: 1m51, 794 rows. pg13: 11s, 783 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_new;
 CREATE TABLE geohistory.sampling_area_nb1_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_nb1
@@ -249,7 +249,7 @@ WHERE NOT TT_RowIsValid(ARRAY[lyr1_soil_moist_reg::text,
 
 DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_with_validity_new;
 CREATE TABLE geohistory.sampling_area_nb1_history_with_validity_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM TT_TableGeoHistory('geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id', ARRAY['lyr1_soil_moist_reg', 
                                                                                                                      'lyr1_species_1', 
                                                                                                                      'lyr1_species_2', 
@@ -324,7 +324,7 @@ SELECT * FROM geohistory.sampling_area_nb2;
 -- Generate history table - pg11: 17m07, 6670 rows, pg13: 1m26, 6594 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_nb2_history_new;
 CREATE TABLE geohistory.sampling_area_nb2_history_new AS
-SELECT id, ST_AsText(wkb_geometry) wkt_geometry, valid_year_begin, valid_year_end
+SELECT id, valid_year_begin, valid_year_end, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_nb2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_nb2
@@ -361,7 +361,7 @@ SELECT * FROM geohistory.sampling_area_nt1;
 -- Generate history table - pg11: 6m14, 1183 rows, pg13: 22s, 1130 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_nt1_history_new;
 CREATE TABLE geohistory.sampling_area_nt1_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_nt1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_nt1
@@ -399,7 +399,7 @@ SELECT * FROM geohistory.sampling_area_nt2;
 -- Generate history table - pg11: 4m50, 1028 rows, pg13: 13s, 520 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_nt2_history_new;
 CREATE TABLE geohistory.sampling_area_nt2_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_nt2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_nt2
@@ -436,7 +436,7 @@ SELECT * FROM geohistory.sampling_area_bc1;
 -- Generate history table - pg11: 3m11, 4430 rows, pg13: 30s, 4409 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_bc1_history_new;
 CREATE TABLE geohistory.sampling_area_bc1_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_bc1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
 FROM geohistory.sampling_area_bc1
@@ -473,7 +473,7 @@ SELECT * FROM geohistory.sampling_area_bc2;
 -- Generate history table - pg11: 2m33, 4395 rows, pg13: 25s, 4372 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_bc2_history_new;
 CREATE TABLE geohistory.sampling_area_bc2_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_bc2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_bc2
@@ -511,7 +511,7 @@ SELECT * FROM geohistory.sampling_area_sk1;
 -- Generate history table - pg11: 2m19, 3662 rows, pg13: 17s, 3653 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_sk1_history_new;
 CREATE TABLE geohistory.sampling_area_sk1_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_sk1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_sk1
@@ -548,7 +548,7 @@ SELECT * FROM geohistory.sampling_area_sk2;
 -- Generate history table - pg11: 5m19, 4506 rows, pg13: 2m54, 4122 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_sk2_history_new;
 CREATE TABLE geohistory.sampling_area_sk2_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_sk2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_sk2
@@ -585,7 +585,7 @@ SELECT * FROM geohistory.sampling_area_sk3;
 -- Generate history table - pg11: 3m21, 3407 rows, pg13: 29s, 3390 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_sk3_history_new;
 CREATE TABLE geohistory.sampling_area_sk3_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_sk3', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_sk3
@@ -622,7 +622,7 @@ SELECT * FROM geohistory.sampling_area_sk4;
 -- Generate history table - pg11: 3m05, 4718 rows, pg13: 30s, 4670 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_sk4_history_new;
 CREATE TABLE geohistory.sampling_area_sk4_history_new AS
-SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+SELECT id, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'geohistory', 'sampling_area_sk4', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM geohistory.sampling_area_sk4

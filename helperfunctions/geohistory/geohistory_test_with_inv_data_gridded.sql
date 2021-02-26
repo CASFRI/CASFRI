@@ -44,7 +44,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -79,7 +79,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -115,7 +115,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -151,7 +151,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -186,7 +186,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -221,7 +221,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -257,7 +257,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -292,7 +292,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -327,7 +327,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
@@ -362,7 +362,7 @@ WITH geohistory_gridded AS (
   FROM geohistory_gridded
   GROUP BY id
 )
-SELECT id, ST_AsText(geom) wkt_geometry, lowerval valid_year_begin, upperval valid_year_end
+SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
 FROM wkb_version;
 
 -- Display
