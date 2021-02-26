@@ -245,35 +245,35 @@ SELECT TT_CreateMappingView('rawfri', 'nt03', 2, 'nt', 1, 2000, NULL, 'lyr'); --
 INSERT INTO casfri50_test.lyr_all_new 
 SELECT * FROM TT_Translate_nt_lyr_test('rawfri', 'nt03_l2_to_nt_l1_map_2000_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'on02', 1, 'on', 1, 1750, NULL, 'lyr'); -- Generates about 1000 (1007) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'on02', 1, 'on', 1, 1600, NULL, 'lyr'); -- Generates about 1000 (1000) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
-SELECT * FROM TT_Translate_on_lyr_test('rawfri', 'on02_l1_to_on_l1_map_1750_lyr');
+SELECT * FROM TT_Translate_on_lyr_test('rawfri', 'on02_l1_to_on_l1_map_1600_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'on02', 2, 'on', 1, 22200, NULL, 'lyr'); -- Generates about 1000 (1038) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_on_lyr_test('rawfri', 'on02_l2_to_on_l1_map_22200_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'sk01', 1, 'sk_utm', 1, 1280, NULL, 'lyr'); -- Generates about 700 (741) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'sk01', 1, 'sk_utm', 1, 900, NULL, 'lyr'); -- Generates about 700 (659) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
-SELECT * FROM TT_Translate_sk_utm_lyr_test('rawfri', 'sk01_l1_to_sk_utm_l1_map_1280_lyr');
+SELECT * FROM TT_Translate_sk_utm_lyr_test('rawfri', 'sk01_l1_to_sk_utm_l1_map_900_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'sk01', 2, 'sk_utm', 1, 80000, NULL, 'lyr'); -- Generates about 700 (727) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_utm_lyr_test('rawfri', 'sk01_l2_to_sk_utm_l1_map_80000_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'sk02', 1, 'sk_sfv', 1, 230, NULL, 'lyr'); -- Generates about 200 (210) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'sk02', 1, 'sk_sfv', 1, 230, NULL, 'lyr'); -- Generates about 200 (200) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk02_l1_to_sk_sfv_l1_map_230_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'sk02', 2, 'sk_sfv', 1, 1200, NULL, 'lyr'); -- Generates about 200 (218) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'sk02', 2, 'sk_sfv', 1, 1200, NULL, 'lyr'); -- Generates about 200 (208) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk02_l2_to_sk_sfv_l1_map_1200_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'sk02', 3, 'sk_sfv', 1, 27000, NULL, 'lyr'); -- Generates about 200 (165) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'sk02', 3, 'sk_sfv', 1, 27000, NULL, 'lyr'); -- Generates about 200 (164) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk02_l3_to_sk_sfv_l1_map_27000_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'sk03', 1, 'sk_sfv', 1, 240, NULL, 'lyr'); -- Generates about 200 (198) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'sk03', 1, 'sk_sfv', 1, 240, NULL, 'lyr'); -- Generates about 200 (204) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk03_l1_to_sk_sfv_l1_map_240_lyr');
 ------------------------
@@ -285,7 +285,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk03', 3, 'sk_sfv', 1, 8900, NULL, 'lyr')
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk03_l3_to_sk_sfv_l1_map_8900_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'sk04', 1, 'sk_sfv', 1, 580, NULL, 'lyr'); -- Generates about 500 (517) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'sk04', 1, 'sk_sfv', 1, 580, NULL, 'lyr'); -- Generates about 500 (524) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk04_l1_to_sk_sfv_l1_map_580_lyr');
 ------------------------
@@ -297,7 +297,7 @@ SELECT TT_CreateMappingView('rawfri', 'sk04', 3, 'sk_sfv', 1, 90000, NULL, 'lyr'
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk04_l3_to_sk_sfv_l1_map_90000_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'sk05', 1, 'sk_sfv', 1, 570, NULL, 'lyr'); -- Generates about 500 (526) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'sk05', 1, 'sk_sfv', 1, 570, NULL, 'lyr'); -- Generates about 500 (538) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_sk_sfv_lyr_test('rawfri', 'sk05_l1_to_sk_sfv_l1_map_570_lyr');
 ------------------------
@@ -329,7 +329,7 @@ SELECT TT_CreateMappingView('rawfri', 'yt02', 1, 'yt', 1, 1300, NULL, 'lyr'); --
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_yt_lyr_test('rawfri', 'yt02_l1_to_yt_l1_map_1300_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, 1070, NULL, 'lyr'); -- Generates about 800 (786) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, 1070, NULL, 'lyr'); -- Generates about 800 (833) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns01_l1_to_ns_nsi_l1_map_1070_lyr');
 ------------------------
@@ -337,7 +337,7 @@ SELECT TT_CreateMappingView('rawfri', 'ns01', 2, 'ns_nsi', 1, 5000, NULL, 'lyr')
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns01_l2_to_ns_nsi_l1_map_5000_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns02', 1, 'ns_nsi', 1, 1070, NULL, 'lyr'); -- Generates about 800 (781) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns02', 1, 'ns_nsi', 1, 1070, NULL, 'lyr'); -- Generates about 800 (825) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns02_l1_to_ns_nsi_l1_map_1070_lyr');
 ------------------------
@@ -357,13 +357,13 @@ SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 400, NULL, 'lyr');
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_400_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri2', 1, 500, NULL, 'lyr'); -- Generates about 300 (318) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri2', 1, 350, NULL, 'lyr'); -- Generates about 300 (301) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
-SELECT * FROM TT_Translate_mb_fri02_lyr_test('rawfri', 'mb01_l1_to_mb_fri2_l1_map_500_lyr'); 
+SELECT * FROM TT_Translate_mb_fri02_lyr_test('rawfri', 'mb01_l1_to_mb_fri2_l1_map_350_lyr'); 
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 1100, NULL, 'lyr'); -- Generates about 300 (300) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'mb05', 1, 'mb_fri', 1, 400, NULL, 'lyr'); -- Generates about 300 (272) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
-SELECT * FROM TT_Translate_mb_fri_lyr_test('rawfri', 'mb05_l1_to_mb_fri_l1_map_1100_lyr'); -- Generates about 500 (508) LYR rows
+SELECT * FROM TT_Translate_mb_fri_lyr_test('rawfri', 'mb05_l1_to_mb_fri_l1_map_400_lyr'); -- Generates about 500 (508) LYR rows
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb02', 1, 'mb_fli', 1, 300, NULL, 'lyr'); -- Generates about 200 (256) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
@@ -441,9 +441,9 @@ SELECT TT_CreateMappingView('rawfri', 'mb07', 5, 'mb_fli', 1, NULL, NULL, 'lyr')
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb07_l5_to_mb_fli_l1_map_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 2000, NULL, 'lyr'); -- Generates 900 (901) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 1500, NULL, 'lyr'); -- Generates 900 (964) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
-SELECT * FROM TT_Translate_nl_nli_lyr_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_2000_lyr');
+SELECT * FROM TT_Translate_nl_nli_lyr_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_1500_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'qc03', 1, 'qc_ini03', 1, 800, NULL, 'lyr'); -- Generates 400 (331) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
