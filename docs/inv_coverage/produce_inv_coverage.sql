@@ -252,10 +252,13 @@ SELECT left(cas_id, 4) inv, count(*) cnt
 FROM casfri50.geo_all
 GROUP BY left(cas_id, 4);
 ------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ProduceDerivedCoverages(text, geometry) CASCADE;
+--DROP FUNCTION IF EXISTS TT_ProduceDerivedCoverages(text, geometry, double precision, boolean, double precision) CASCADE;
 CREATE OR REPLACE FUNCTION TT_ProduceDerivedCoverages(
   fromInv text,
-  detailedGeom geometry
+  detailedGeom geometry, 
+  minArea double precision DEFAULT 10000000,
+  sparse boolean DEFAULT FALSE,
+  sparseBuf double precision DEFAULT 5000
 )
 RETURNS boolean AS $$
   DECLARE
@@ -263,19 +266,21 @@ RETURNS boolean AS $$
     tableName text;
     queryStr text;
     outGeom geometry;
-    --detailedGeom geometry;
     noHolesGeom geometry;
     noIslandsGeom geometry;
     simplifiedGeom geometry;
     smoothedGeom geometry;
     cnt int;
   BEGIN
-    noHolesGeom = TT_RemoveHoles(detailedGeom, 10000000);
-    noIslandsGeom = TT_BiggestSubPolygons(noHolesGeom, 10000000);
-    simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 10);
-    smoothedGeom = TT_BiggestSubPolygons(TT_BufferedSmooth(simplifiedGeom, 100), 10000000);
+    noHolesGeom = TT_RemoveHoles(detailedGeom, minArea);
+    noIslandsGeom = TT_BiggestSubPolygons(noHolesGeom, minArea);
+    simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 100);
+    IF sparse THEN
+      smoothedGeom = TT_BiggestSubPolygons(TT_BufferedSmooth(simplifiedGeom, sparseBuf), minArea);
+    ELSE
+      smoothedGeom = TT_BiggestSubPolygons(TT_BufferedSmooth(simplifiedGeom, 100), minArea);
+    END IF;
     SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE inv = fromInv INTO cnt;
-    --detailedGeom = TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''' || upper(fromInv) || '''');
     FOREACH tableName IN ARRAY tableNameArr LOOP
       outGeom = CASE WHEN tableName = 'detailed' THEN detailedGeom
                      WHEN tableName = 'noholes' THEN noHolesGeom
@@ -305,7 +310,7 @@ SELECT TT_ProduceDerivedCoverages('AB11', TT_SuperUnion('casfri50', 'geo_all', '
 SELECT TT_ProduceDerivedCoverages('AB16', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB16''')); --  120476, pg11:  9m50, pg13:  3m05
 SELECT TT_ProduceDerivedCoverages('AB25', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB25''')); --  527038, pg11:  xmxx, pg13: 15m03
 SELECT TT_ProduceDerivedCoverages('AB29', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB29''')); --  620944, pg11:  xmxx, pg13: 20m50
-SELECT TT_ProduceDerivedCoverages('AB30', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB30''')); --    4555, pg11:  xmxx, pg13:   56s
+SELECT TT_ProduceDerivedCoverages('AB30', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB30'''), 10000 ,TRUE); -- 4555, pg11:  xmxx, pg13:   56s
 SELECT TT_ProduceDerivedCoverages('BC08', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''BC08''')); -- 4677411, pg11:  5h21, pg13:  2h26
 SELECT TT_ProduceDerivedCoverages('BC10', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''BC10''')); -- 5151772, pg11:  6h13, pg13:  3h01
 SELECT TT_ProduceDerivedCoverages('MB01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''MB01''')); --  134790, pg11:  xmxx, pg13:  3m38
