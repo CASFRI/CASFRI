@@ -87,7 +87,7 @@ SELECT 'NS03', 3
 UNION ALL
 SELECT 'NT01', 1
 UNION ALL
-SELECT 'NT02', 2
+SELECT 'NT03', 2
 UNION ALL
 SELECT 'ON02', 2
 UNION ALL
@@ -158,9 +158,9 @@ SELECT 'NB1' id, 'NB01 (2009) and NB02 (2009)' description, ST_MakeEnvelope(2200
 UNION ALL
 SELECT 'NB2' id, 'NB01 (2004) and NB02 (2014)', ST_MakeEnvelope(2200000, 1100000, 2210000, 1110000, 900914) geometry
 UNION ALL
-SELECT 'NT1' id, 'NT01 (-9999) and NT02 (1970)', ST_MakeEnvelope(-1400000, 2600000, -1390000, 2610000, 900914) geometry
+SELECT 'NT1' id, 'NT01 (-9999) and NT03 (1970)', ST_MakeEnvelope(-1400000, 2600000, -1390000, 2610000, 900914) geometry
 UNION ALL
-SELECT 'NT2' id, 'NT01 (2003-2006) and NT02 (2003-2006)', ST_MakeEnvelope(-1200000, 2600000, -1190000, 2610000, 900914) geometry
+SELECT 'NT2' id, 'NT01 (2003-2006) and NT03 (2003-2006)', ST_MakeEnvelope(-1200000, 2600000, -1190000, 2610000, 900914) geometry
 UNION ALL
 SELECT 'BC1' id, 'BC08 (2005-2015) and BC10 (2018)', ST_MakeEnvelope(-1940000, 1980000, -1930000, 1990000, 900914) geometry
 UNION ALL
@@ -193,7 +193,7 @@ CREATE INDEX sampling_area_nb1_casid_idx ON geohistory.sampling_area_nb1 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_nb1;
 
--- Generate history table not taking attribute values validity into account - 1m51, 794 rows
+-- Generate history table not taking attribute values validity into account - pg11: 1m51, 794 rows. pg13: 11s, 783 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_nb1_history_new;
 CREATE TABLE geohistory.sampling_area_nb1_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -321,7 +321,7 @@ CREATE INDEX sampling_area_nb2_casid_idx ON geohistory.sampling_area_nb2 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_nb2;
 
--- Generate history table - 17m07, 6670 rows
+-- Generate history table - pg11: 17m07, 6670 rows, pg13: 1m26, 6594 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_nb2_history_new;
 CREATE TABLE geohistory.sampling_area_nb2_history_new AS
 SELECT id, ST_AsText(wkb_geometry) wkt_geometry, valid_year_begin, valid_year_end
@@ -358,7 +358,7 @@ CREATE INDEX sampling_area_nt1_casid_idx ON geohistory.sampling_area_nt1 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_nt1;
 
--- Generate history table - 6m14, 1183 rows
+-- Generate history table - pg11: 6m14, 1183 rows, pg13: 22s, 1130 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_nt1_history_new;
 CREATE TABLE geohistory.sampling_area_nt1_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -396,7 +396,7 @@ CREATE INDEX sampling_area_nt2_casid_idx ON geohistory.sampling_area_nt2 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_nt2;
 
--- Generate history table - 4m50, 1028 rows
+-- Generate history table - pg11: 4m50, 1028 rows, pg13: 13s, 520 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_nt2_history_new;
 CREATE TABLE geohistory.sampling_area_nt2_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -433,7 +433,7 @@ CREATE INDEX sampling_area_bc1_casid_idx ON geohistory.sampling_area_bc1 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_bc1;
 
--- Generate history table - 3m11, 4430 rows
+-- Generate history table - pg11: 3m11, 4430 rows, pg13: 30s, 4409 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_bc1_history_new;
 CREATE TABLE geohistory.sampling_area_bc1_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -470,7 +470,7 @@ CREATE INDEX sampling_area_bc2_casid_idx ON geohistory.sampling_area_bc2 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_bc2;
 
--- Generate history table - 2m33, 4395 rows
+-- Generate history table - pg11: 2m33, 4395 rows, pg13: 25s, 4372 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_bc2_history_new;
 CREATE TABLE geohistory.sampling_area_bc2_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -508,7 +508,7 @@ CREATE INDEX sampling_area_sk1_casid_idx ON geohistory.sampling_area_sk1 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_sk1;
 
--- Generate history table - 2m19, 3662 rows
+-- Generate history table - pg11: 2m19, 3662 rows, pg13: 17s, 3653 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_sk1_history_new;
 CREATE TABLE geohistory.sampling_area_sk1_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -545,7 +545,7 @@ CREATE INDEX sampling_area_sk2_casid_idx ON geohistory.sampling_area_sk2 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_sk2;
 
--- Generate history table - 5m19, 4506 rows
+-- Generate history table - pg11: 5m19, 4506 rows, pg13: 2m54, 4122 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_sk2_history_new;
 CREATE TABLE geohistory.sampling_area_sk2_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -582,7 +582,7 @@ CREATE INDEX sampling_area_sk3_casid_idx ON geohistory.sampling_area_sk3 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_sk3;
 
--- Generate history table - 3m21, 3407 rows
+-- Generate history table - pg11: 3m21, 3407 rows, pg13: 29s, 3390 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_sk3_history_new;
 CREATE TABLE geohistory.sampling_area_sk3_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
@@ -619,7 +619,7 @@ CREATE INDEX sampling_area_sk4_casid_idx ON geohistory.sampling_area_sk4 USING b
 -- Display
 SELECT * FROM geohistory.sampling_area_sk4;
 
--- Generate history table - 3m05, 4718 rows
+-- Generate history table - pg11: 3m05, 4718 rows, pg13: 30s, 4670 rows
 DROP TABLE IF EXISTS geohistory.sampling_area_sk4_history_new;
 CREATE TABLE geohistory.sampling_area_sk4_history_new AS
 SELECT id, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
