@@ -117,7 +117,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 DROP TABLE IF EXISTS geohistory.test_0_without_validity_new;
 CREATE TABLE geohistory.test_0_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
@@ -130,7 +130,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 DROP TABLE IF EXISTS geohistory.test_0_with_validity_new;
 CREATE TABLE geohistory.test_0_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
@@ -269,7 +269,7 @@ ORDER BY test, idx;
 DROP TABLE IF EXISTS geohistory.test_2_without_validity_new;
 CREATE TABLE geohistory.test_2_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
@@ -282,7 +282,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 DROP TABLE IF EXISTS geohistory.test_2_with_validity_new;
 CREATE TABLE geohistory.test_2_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
@@ -410,7 +410,7 @@ ORDER BY test, idx;
 DROP TABLE IF EXISTS geohistory.test_3_without_validity_new;
 CREATE TABLE geohistory.test_3_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
@@ -423,7 +423,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 DROP TABLE IF EXISTS geohistory.test_3_with_validity_new;
 CREATE TABLE geohistory.test_3_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
@@ -623,7 +623,7 @@ CREATE INDEX test_4_geom_idx
 DROP TABLE IF EXISTS geohistory.test_4_without_validity_new;
 CREATE TABLE geohistory.test_4_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
@@ -636,7 +636,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 DROP TABLE IF EXISTS geohistory.test_4_with_validity_new;
 CREATE TABLE geohistory.test_4_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
