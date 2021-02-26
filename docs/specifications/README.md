@@ -557,7 +557,7 @@ See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon.
 
-LAYER is related to STAND_STRUCTURE and NUMBER_OF_LAYERS and is recorded for all LYR and NFL records. Layer 1 will always be the top (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.
+LAYER is related to STAND_STRUCTURE and NUMBER_OF_LAYERS and is recorded for all LYR and NFL records. Layer 1 will always be the tallest (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. [The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.]DELETE?
 
 LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exsists, an NFL layer will get a value of 1.
 
@@ -567,14 +567,16 @@ LAYER is calculated for CASFRI based on the presence of forest and non-forest in
 
 Notes:
 
-- LAYER is a CASFRI specific attribute that is compute based on the presence or absence of values for different layers. This is why it can not be assigned an error code.
-- One exception is the BC08 inventory. Only the rank 1 data is available which could represent any canopy layer from the full source inventory. Layer info is therefore copied directly from the inventory. This prevent mis-representing the source data by assigning layer 1 to a layer that is not actually the top layer. 
+- LAYER is a CASFRI specific attribute that is compute based on the presence or absence of values for different layers. This is why it cannot be assigned an error code.
+- One exception is the BC08 inventory. Only the rank 1 data is available which could represent any canopy layer from the full source inventory. Layer info is therefore copied directly from the inventory. This prevent mis-representing the source data by assigning layer 1 to a layer that is not actually the top layer - **no longer true, delete**
 
 
 <a name=LAYER_RANK></a>
 ### LAYER_RANK
 
-Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code.  
+Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code. 
+
+Some inventories (AB, NB, NT, ON, SK SKVI, and NS) do not have an explicit rank attribute, but do have attributes repeated for an overstory (or primary) and understory (or secondary) layer. SK SFVI has attributes repeated for three forest layers. In these cases we assign the overstory (primary) values to LAYER_RANK 1, the understory (secondary) values to LAYER_RANK 2 etc. The overstory (primary) layer is not always the tallest, so LAYER and LAYER_RANK in these inventories are not always the same.
 
 | Values | Description |
 | :----- | :----- |

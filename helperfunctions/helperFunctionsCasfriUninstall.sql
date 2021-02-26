@@ -31,7 +31,7 @@ DROP FUNCTION IF EXISTS TT_ns_nsi01_hasCountOfNotNull(text, text, text, text, te
 DROP FUNCTION IF EXISTS TT_fvi01_hasCountOfNotNull(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_on_fim02_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_validation(text, text, text, text, text, text, text);
@@ -63,6 +63,7 @@ DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_pc02_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pc02_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_wetland_validation(text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nb_hasCountOfNotNull(text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -91,7 +92,7 @@ DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_yvi01_non_for_veg_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_countOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_sfv01_countOfNotNull(text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_sfv01_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sfv01_stand_structure_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_translation(text,text,text,text,text,text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_species_translation(text,text,text,text,text,text);
@@ -144,6 +145,11 @@ DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_translation(text, text, text);
 DROP FUNCTION IF EXISTS TT_pc02_wetland_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pc02_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_wetland_translation(text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nb_lyr_layer_translation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nb_countofnotnull(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_ns_lyr_layer_translation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_on_lyr_layer_translation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_sk_sfvi_lyr_layer_translation(text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

@@ -3128,13 +3128,14 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- 
 -- hasCountOfNotNull calling sfvi countOfNotNull
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION tt_sfv01_hasCountOfNotNull(
   vals1 text,
   vals2 text,
   vals3 text,
   vals4 text,
   vals5 text,
+  _type text,
   nvsl text,
   aquatic_class text,
   luc text,
@@ -3153,7 +3154,7 @@ RETURNS boolean AS $$
     _exact = exact::boolean;
 
     -- process
-    _counted_nulls = TT_sfv01_countOfNotNull(vals1, vals2, vals3, vals4, vals5, nvsl, aquatic_class, luc, transp_class, '6');
+    _counted_nulls = TT_sfv01_countOfNotNull(vals1, vals2, vals3, vals4, vals5, _type, nvsl, aquatic_class, luc, transp_class, '6');
 
     IF _exact THEN
       RETURN _counted_nulls = _count;
@@ -4268,7 +4269,48 @@ RETURNS double precision AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
+-- TT_nb_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
+--
+-- layer1_sp
+-- layer2_sp
+-- wc
+-- slu
+-- water_code
+-- maxRankToConsider
+-- 
+-- hasCountOfNotNull using nb custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nb_hasCountOfNotNull(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nb_hasCountOfNotNull(
+  layer1_sp text,
+  layer2_sp text,
+  wc text,
+  slu text,
+  water_code text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
 
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = tt_nb_countOfNotNull(layer1_sp, layer2_sp, wc, slu, water_code, '3');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;    
+
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -5535,6 +5577,7 @@ CREATE OR REPLACE FUNCTION TT_sfv01_countOfNotNull(
   vals3 text,
   vals4 text,
   vals5 text,
+  _type text,
   nvsl text,
   aquatic_class text,
   luc text,
@@ -5556,6 +5599,11 @@ RETURNS int AS $$
     ELSE
       is_nfl = NULL::text;
     END IF;
+	
+	-- If type is non-productive code, force vals1 to be present by assigning it a string
+	IF _type IN('BSH', 'TMS') THEN
+	  vals1 = 'a_string';
+	END IF;
     
     -- call countOfNotNull
     RETURN tt_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, 'FALSE');
@@ -5573,10 +5621,12 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- 
 -- Determine if the row contains an NFL record. If it does assign a string
 -- so it can be counted as a non-null layer.
+-- If fornon is a non-productive type, make sure vals1 returns true. This indicates 
+-- a LYR layer that needs to be counted ecen if no species code exists.
 -- 
 -- Pass vals1-vals2 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ns_nsi01_countOfNotNull(text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_ns_nsi01_countOfNotNull(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_ns_nsi01_countOfNotNull(
   vals1 text,
   vals2 text,
@@ -5590,12 +5640,16 @@ RETURNS int AS $$
 
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF tt_matchList(fornon,'{''71'',''76'',''77'',''78'',''84'',''85'',''94'', ''5'',''86'',''87'',''91'',''92'',''93'',''95'',''96'',''97'',''98'',''99'', ''33'',''38'',''39'',''70'',''72'',''74'',''75'',''83'',''88'',''89''}') THEN
+    IF fornon IN('71','76','77','78','84','85','94', '5','86','87','91','92','3','95','96','97','98','99', '70','72','74','75','83','88','89') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
     END IF;
     
+	IF fornon IN('33', '38', '39', '73') THEN
+	  vals1 = 'a_string';
+	END IF;
+	
     -- call countOfNotNull
     RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, 'FALSE');
 
@@ -5671,6 +5725,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- 
 -- Determine if the row contains an NFL record. If it does assign a string
 -- so it can be counted as a non-null layer.
+-- If polytype contains a non-productive LYR record, count vals1 as present.
 -- 
 -- Pass vals1-vals2 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
@@ -5688,17 +5743,22 @@ RETURNS int AS $$
 
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF tt_matchList(polytype,'{''ISL'',''WAT'',''RCK'',''DAL'',''UCL'',''GRS'',''OMS''}') THEN
+    IF polytype IN ('ISL','WAT','RCK','DAL','UCL','GRS','OMS') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
     END IF;
+	
+	IF polytype IN ('BSH', 'TMS') THEN
+      vals1 = 'a_value';
+	END IF;
     
     -- call countOfNotNull
     RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, 'FALSE');
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+
 -------------------------------------------------------------------------------
 -- TT_sk_utm_countOfNotNull(text, text, text, text)
 --
@@ -5726,12 +5786,17 @@ RETURNS int AS $$
 
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF tt_matchList(np,'{''3300'',''3500'',''3600'',''3900'',''3700'',''9000'',''4000'',''3800'',''5100'',''3400'',''5210'',''5220'',''5200''}') THEN
+    IF np IN ('3300','3500','3600','3900','3700','9000','4000','3800','5100','3400','5210','5220','5200') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
     END IF;
-    
+
+    -- if np is a non-productive type, set vals to string.
+    IF np IN ('3100','3200') THEN
+      vals1 = 'a_value';
+    END IF;
+
     -- call countOfNotNull
     RETURN tt_countOfNotNull(vals1, vals2, is_nfl, max_rank_to_consider, 'FALSE');
 
@@ -5766,6 +5831,12 @@ RETURNS int AS $$
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
+    END IF;
+	
+	-- if val is a non-productive type, we know there is a LYR record. It's the same attribute as nfl
+    -- set species to be a valid string.
+    IF tt_matchList(nfl,'{''701'', ''702'', ''703'', ''704'', ''711'', ''712'', ''713'', ''721'', ''722'', ''723'', ''724'', ''725'', ''731'', ''732'', ''733'', ''734''}') THEN
+      species = 'a_value';
     END IF;
     
     -- call countOfNotNull
@@ -6594,6 +6665,138 @@ RETURNS int AS $$
 $$ LANGUAGE sql IMMUTABLE;
 
 -------------------------------------------------------------------------------
+-- TT_nb_lyr_layer_translation(text, text, text, text, text)
+--
+-- heights
+-- l1_species
+-- l2_species
+-- getIndex
+-- productivity
+-- 
+-- If productivity is a non-productive type (FW), then set l1_species to a string.
+-- Then run lyr_layer_translation as normal.
+-- This creates a layer for l1_species when FW is present. Since species never occur
+-- when productivity is FW, any FW values should always be layer 1.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nb_lyr_layer_translation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nb_lyr_layer_translation(
+  heights text, 
+  l1_species text,
+  l2_species text,
+  productivity text,
+  getIndex text
+)
+RETURNS int AS $$
+  BEGIN
+    
+	IF upper(productivity) = 'FW' THEN
+	  l1_species = 'a_string';
+	END IF;
+	
+	RETURN TT_lyr_layer_translation(heights, l1_species, l2_species, getIndex);
+	
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_ns_lyr_layer_translation(text, text, text, text, text)
+--
+-- heights
+-- l1_species
+-- l2_species
+-- getIndex
+-- productivity
+-- 
+-- If productivity is a non-productive type (FW), then set l1_species to a string.
+-- Then run lyr_layer_translation as normal.
+-- This creates a layer for l1_species when FW is present. Since species never occur
+-- when productivity is FW, any FW values should always be layer 1.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ns_lyr_layer_translation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_ns_lyr_layer_translation(
+  heights text, 
+  l1_species text,
+  l2_species text,
+  productivity text,
+  getIndex text
+)
+RETURNS int AS $$
+  BEGIN
+    
+	IF productivity IN('33','38','39','73') THEN
+	  l1_species = 'a_string';
+	END IF;
+	
+	RETURN TT_lyr_layer_translation(heights, l1_species, l2_species, getIndex);
+	
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_on_lyr_layer_translation(text, text, text, text, text)
+--
+-- heights
+-- l1_species
+-- l2_species
+-- getIndex
+-- productivity
+-- 
+-- If productivity is a non-productive type (BSH, TMS), then set l1_species to a string.
+-- Then run lyr_layer_translation as normal.
+-- This creates a layer for l1_species when BSH or TMS is present. Since species never occur
+-- when productivity is BSH or TMS, any BSH or TMS values should always be layer 1.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_on_lyr_layer_translation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_on_lyr_layer_translation(
+  heights text, 
+  l1_species text,
+  l2_species text,
+  productivity text,
+  getIndex text
+)
+RETURNS int AS $$
+  BEGIN
+    
+	IF productivity IN ('BSH', 'TMS') THEN
+	  l1_species = 'a_string';
+	END IF;
+	
+	RETURN TT_lyr_layer_translation(heights, l1_species, l2_species, getIndex);
+	
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_sk_sfvi_lyr_layer_translation(text, text, text, text, text)
+--
+-- heights
+-- l1_species
+-- l2_species
+-- getIndex
+-- productivity
+-- 
+-- If productivity is a non-productive type (BSH, TMS), then set l1_species to a string.
+-- Then run lyr_layer_translation as normal.
+-- This creates a layer for l1_species when BSH or TMS is present. 
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_sk_sfvi_lyr_layer_translation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_sfvi_lyr_layer_translation(
+  heights text, 
+  l1_species text,
+  l2_species text,
+  l3_species text,
+  productivity text,
+  getIndex text
+)
+RETURNS int AS $$
+  BEGIN
+    
+	IF productivity IN ('BSH', 'TMS') THEN
+	  l1_species = 'a_string';
+	END IF;
+	
+	RETURN TT_lyr_layer_translation(heights, l1_species, l2_species, l3_species, getIndex);
+	
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 -- TT_bc_lyr_layer_translation(text, text, text, text, text, text, text, text)
 --
 -- l1_proj_height_1 
@@ -6637,7 +6840,6 @@ RETURNS int AS $$
 	
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
-
 -------------------------------------------------------------------------------
 -- TT_ab_avi01_wetland_translation(text, text, text, text, text, text, text, text)
 --
@@ -7145,5 +7347,39 @@ RETURNS text AS $$
       RETURN NULL;
     END IF;
     RETURN TT_wetland_code_translation(_wetland_code, retCharPos);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_nb_countofnotnull(text, text, text)
+--
+-- Identify any NFL layers. Identify any non-productve LYR layers and set layer1_sp to a string.
+-- Pass strings and species to countofnotnull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nb_countofnotnull(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nb_countofnotnull(
+  layer1_sp text,
+  layer2_sp text,
+  wc text,
+  slu text,
+  water_code text,
+  maxRankToConsider text
+)
+RETURNS int AS $$
+  DECLARE
+	_nfl text;
+  BEGIN
+    
+	IF wc = 'FW' THEN
+	  layer1_sp = 'a string';
+	END IF;
+	
+	IF CONCAT(slu, water_code) IN('BL','RF','RO', 'LK', 'RV', 'ON', 'PN', 'SL', 'WA', '4', '6', '7', '8', '9', '100', '416', 'AI','AR','BA','CB','CG','CH','CL','CO','CS','CT','EA','FD','FP','GC','GP','IP','IZ','LE','LF','MI','PA','PB','PP','PR','QU','RD','RR','RU','RY','SG','SK','TM','TR','UR','WR','AQ','415', 'BO') THEN
+      _nfl = 'a_string';
+	ELSE
+	  _nfl = NULL;
+    END IF;
+			  
+    RETURN tt_countOfNotNull(layer1_sp, layer2_sp, _nfl, maxRankToConsider, 'FALSE');
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
