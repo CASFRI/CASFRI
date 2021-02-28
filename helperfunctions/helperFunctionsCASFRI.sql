@@ -4401,21 +4401,21 @@ RETURNS boolean AS $$
     -- assign source values to variables depending on the inventory id
     IF inventory_id IN('SK02','SK03','SK04','SK05','SK06') THEN
       _shrub_herb = _source_vals[1];
-      _nvsl_aquatic_class = _source_vals[2] || _source_vals[3]; -- concatenate for use in matchList
-      _luc_transp_class = _source_vals[4] || _source_vals[5]; -- concatenate for use in matchList
+      _nvsl_aquatic_class = trim(_source_vals[2]) || trim(_source_vals[3]); -- concatenate nvsl and aquatic class for use in matchList
+      _luc_transp_class = trim(_source_vals[4]) || trim(_source_vals[5]) || trim(_source_vals[5]); -- concatenate luc, transp_class and aquatic class for use in matchList
     END IF;
     
     -- run validations
     IF inventory_id IN('SK02', 'SK03', 'SK04', 'SK05', 'SK06') THEN
       IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
-        IF tt_matchList(_nvsl_aquatic_class,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R''}')
+        IF tt_matchList(_nvsl_aquatic_class,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'', ''R''}')
         THEN
           _nat_non_veg_boolean = TRUE;
         END IF;
       END IF;
       
       IF 'non_for_anth' = ANY (_fiter_attributes) THEN
-        IF tt_matchList(_luc_transp_class,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}')
+        IF tt_matchList(_luc_transp_class,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow'', ''FP'', ''WADI''}')
         THEN
           _non_for_anth_boolean = TRUE;
         END IF;
@@ -5570,46 +5570,44 @@ $$ LANGUAGE plpgsql STABLE;
 -- 
 -- Pass vals1-vals5 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_sfv01_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_sfv01_countOfNotNull(
-  vals1 text,
-  vals2 text,
-  vals3 text,
-  vals4 text,
-  vals5 text,
-  _type text,
-  nvsl text,
-  aquatic_class text,
-  luc text,
-  transp_class text,
-  max_rank_to_consider text
-)
-RETURNS int AS $$
-  DECLARE
-    is_nfl text;
-  BEGIN
+	--DROP FUNCTION IF EXISTS TT_sfv01_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text);
+	CREATE OR REPLACE FUNCTION TT_sfv01_countOfNotNull(
+	  vals1 text,
+	  vals2 text,
+	  vals3 text,
+	  vals4 text,
+	  vals5 text,
+	  _type text,
+	  nvsl text,
+	  aquatic_class text,
+	  luc text,
+	  transp_class text,
+	  max_rank_to_consider text
+	)
+	RETURNS int AS $$
+	  DECLARE
+		is_nfl text;
+	  BEGIN
 
-    -- if any of the nfl functions return true, we know there is an NFL record.
-    -- set is_nfl to be a valid string.
-    IF tt_matchList(nvsl,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R'',''FL''}') 
-    OR tt_matchList(aquatic_class,'{''UK'', ''CB'', ''RK'', ''SA'', ''MS'', ''GR'', ''SB'', ''WA'', ''LA'', ''RI'', ''FL'', ''SF'', ''FP'', ''ST'', ''WASF'', ''WALA'', ''UKLA'', ''WARI'', ''WAFL'', ''WAFP'', ''WAST'',''L'',''R'',''FL''}') 
-    OR tt_matchList(luc,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}')
-    OR tt_matchList(transp_class,'{''ALA'', ''POP'', ''REC'', ''PEX'', ''GPI'', ''BPI'', ''MIS'', ''ASA'', ''NSA'', ''OIS'', ''OUS'', ''AFS'', ''CEM'', ''WEH'', ''TOW'', ''RWC'', ''RRC'', ''TLC'', ''PLC'', ''MPC'',''PL'',''RD'',''TL'',''vegu'', ''bugp'', ''towu'', ''cmty'', ''dmgu'', ''gsof'', ''rwgu'', ''muou'', ''mg'', ''peatc'', ''lmby'', ''sdgu'', ''bupo'', ''ftow''}') THEN
-      is_nfl = 'a_value';
-    ELSE
-      is_nfl = NULL::text;
-    END IF;
-	
-	-- If type is non-productive code, force vals1 to be present by assigning it a string
-	IF _type IN('BSH', 'TMS') THEN
-	  vals1 = 'a_string';
-	END IF;
-    
-    -- call countOfNotNull
-    RETURN tt_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, 'FALSE');
+		-- if any of the nfl functions return true, we know there is an NFL record.
+		-- set is_nfl to be a valid string.
+		IF CONCAT(trim(nvsl),trim(aquatic_class)) IN('CB', 'RK', 'SA', 'MS', 'GR', 'SB', 'WA', 'LA', 'RI', 'FL', 'SF', 'FP', 'ST', 'WASF', 'WALA', 'UKLA', 'WARI', 'WAFL', 'WAFP', 'WAST','L','R')
+		OR CONCAT(trim(luc), trim(transp_class), trim(aquatic_class)) IN('ALA', 'POP', 'REC', 'PEX', 'GPI', 'BPI', 'MIS', 'ASA', 'NSA', 'OIS', 'OUS', 'AFS', 'CEM', 'WEH', 'TOW', 'RWC', 'RRC', 'TLC', 'PLC', 'MPC','PL','RD','TL','vegu', 'bugp', 'towu', 'cmty', 'dmgu', 'gsof', 'rwgu', 'muou', 'mg', 'peatc', 'lmby', 'sdgu', 'bupo', 'ftow', 'FP', 'WADI') THEN
+		  is_nfl = 'a_value';
+		ELSE
+		  is_nfl = NULL::text;
+		END IF;
 
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
+		-- If type is non-productive code, force vals1 to be present by assigning it a string
+		IF _type IN('BSH', 'TMS') THEN
+		  vals1 = 'a_string';
+		END IF;
+
+		-- call countOfNotNull
+		RETURN tt_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, 'FALSE');
+
+	  END; 
+	$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_ns_nsi01_countOfNotNull(text, text, text, text, text, text, text)
