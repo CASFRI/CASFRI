@@ -1508,6 +1508,7 @@ RETURNS text AS $$
 				  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'fim_species_validation' THEN 'NOT_IN_SET'
 				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -1635,30 +1636,31 @@ CREATE OR REPLACE FUNCTION TT_nb_nbi01_wetland_code(
 )
 RETURNS text AS $$
   SELECT CASE
-           WHEN wc='BO' AND vt='EV' AND im='BP' THEN 'BO-B'
-           WHEN wc='FE' AND vt='EV' AND im='BP' THEN 'FO-B'
-           WHEN wc='BO' AND vt='EV' AND im='DI' THEN 'BO--'
-           WHEN wc='BO' AND vt='AW' AND im='BP' THEN 'BT-B'
-           WHEN wc='BO' AND vt='OV' AND im='BP' THEN 'OO-B'
-           WHEN wc='FE' AND vt='EV' AND im IN ('MI', 'DI') THEN 'FO--'
-           WHEN wc='FE' AND vt='OV' AND im='MI' THEN 'OO--'
+           -- Note the commented logic below came from the CASFRI04 code and cannot be validated. For example we don't know what B translates to as a wet_loca_mod value.
+           --WHEN wc='BO' AND vt='EV' AND im='BP' THEN 'BO-B'
+           --WHEN wc='FE' AND vt='EV' AND im='BP' THEN 'FO-B'
+           --WHEN wc='BO' AND vt='EV' AND im='DI' THEN 'BO--'
+           --WHEN wc='BO' AND vt='AW' AND im='BP' THEN 'BT-B'
+           --WHEN wc='BO' AND vt='OV' AND im='BP' THEN 'OO-B'
+           --WHEN wc='FE' AND vt='EV' AND im IN ('MI', 'DI') THEN 'FO--'
+           --WHEN wc='FE' AND vt='OV' AND im='MI' THEN 'OO--'
            WHEN wc='BO' AND vt='FS' THEN 'BTNN'
            WHEN wc='BO' AND vt='SV' THEN 'BONS'
            WHEN wc='FE' AND vt IN ('FH', 'FS') THEN 'FTNN'
            WHEN wc='FE' AND vt IN ('AW', 'SV') THEN 'FONS'
-           WHEN wc='FW' AND im='BP' THEN 'OF-B'
-           WHEN wc='FE' AND vt='EV' THEN 'FO--'
-           WHEN wc IN ('FE', 'BO') AND vt='OV' THEN 'OO--'
-           WHEN wc IN ('FE', 'BO') AND vt='OW' THEN 'O---'
-           WHEN wc='BO' AND vt='EV' THEN 'BO--'
-           WHEN wc='BO' AND vt='AW' THEN 'BT--'
+           --WHEN wc='FW' AND im='BP' THEN 'OF-B'
+           --WHEN wc='FE' AND vt='EV' THEN 'FO--'
+           --WHEN wc IN ('FE', 'BO') AND vt='OV' THEN 'OO--'
+           --WHEN wc IN ('FE', 'BO') AND vt='OW' THEN 'O---'
+           --WHEN wc='BO' AND vt='EV' THEN 'BO--'
+           --WHEN wc='BO' AND vt='AW' THEN 'BT--'
            WHEN wc='AB' THEN 'OONN'
            WHEN wc='FM' THEN 'MONG'
            WHEN wc='FW' THEN 'STNN'
            WHEN wc='SB' THEN 'SONS'
-           WHEN wc='CM' THEN 'MCNG'
-           WHEN wc='TF' THEN 'TMNN'
-           WHEN wc IN ('NP', 'WL') THEN 'W---'
+           WHEN wc='CM' AND vt='FV' THEN 'MCNG'
+           WHEN wc='TF' AND vt IN ('FV', 'FU') THEN 'TMNN'
+           --WHEN wc IN ('NP', 'WL') THEN 'W---'
            ELSE NULL
          END;
 $$ LANGUAGE sql IMMUTABLE;
@@ -4899,6 +4901,51 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
+-- TT_fim_species_validation(text, text, text, text, text)
+--
+-- sp_string text - source string of species and percentages
+-- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
+-- lookup_schema text, 
+-- lookup_table text,
+-- lookup_col text
+--
+-- This functions calls TT_fim_species_code() to extract the requested species-percent code,
+-- then extracts the species code as the first two characters. Then runs TT_MatchTable() to
+-- the species value is in the species lookup table.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fim_species_validation(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_fim_species_validation(
+  sp_string text,
+  sp_number text,
+  lookup_schema text, 
+  lookup_table text,
+  lookup_col text
+)
+RETURNS boolean AS $$
+  DECLARE
+    code text;
+    species text;
+    _sp_number int;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_fim_species_validation',
+                              ARRAY['sp_number', sp_number, 'int',
+                                    'lookup_schema', lookup_schema, 'name',
+                                    'lookup_table', lookup_table, 'name',
+                                    'lookup_col', lookup_col, 'name']);
+    _sp_number = sp_number::int;
+    code = TT_fim_species_code(sp_string, _sp_number); -- get the requested species code and percent
+    
+    IF TT_Length(code) > 1 THEN -- 
+      species = (regexp_split_to_array (code, '\s+'))[1];
+    ELSE
+      RETURN FALSE;
+    END IF;
+    
+    -- transform species to casfri species using lookup table
+    RETURN TT_MatchTable(species, lookup_schema, lookup_table, lookup_col, 'TRUE');
+  END; 
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
 -- TT_fim_species_translation(text, text, text, text, text)
 --
 -- sp_string text - source string of species and percentages
@@ -4953,8 +5000,9 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
 --
 -- This functions calls TT_fim_species_code() to extract the requested species-percent code,
--- then extracts the percentage as the fifth and sixth characters, or the fourth fifth and sixth characters
--- if 100%.
+-- then extracts the percentage.
+-- Uses alpha numeric codes to lookup if the percent values need to be multiplied by 10.
+-- Uses alpha numeric codes to return 100 when code has a zero value and a single species (ON01).
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_fim_species_percent_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_fim_species_percent_translation(
@@ -4963,16 +5011,24 @@ CREATE OR REPLACE FUNCTION TT_fim_species_percent_translation(
 )
 RETURNS int AS $$
   DECLARE
-    code text;
+    _code text;
     _sp_number int;
+	_alpha_numeric text;
+	_multiplier int;
   BEGIN
     PERFORM TT_ValidateParams('TT_fim_species_translation',
                               ARRAY['sp_number', sp_number, 'int']);
     _sp_number = sp_number::int;
-    code = TT_fim_species_code(sp_string, _sp_number);
-    
-    IF TT_Length(code) > 1 THEN
-      RETURN (regexp_split_to_array (code, '\s+'))[2];
+    _code = TT_fim_species_code(sp_string, _sp_number);
+    _alpha_numeric = replace(translate(sp_string, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000000'), ' ', '');
+	_multiplier = tt_lookupInt(_alpha_numeric, 'translation', 'on_species_valid_alpha_numeric_codes', 'source_val', 'percent_multiplier');
+	
+    IF TT_Length(_code) > 1 THEN
+	  IF _alpha_numeric IN('x0', 'x00', 'xx0') THEN -- these codes use a zero to indicate 100 percent cover of a single species.
+	    RETURN 100;
+	  ELSE
+        RETURN (regexp_split_to_array (_code, '\s+'))[2]::int * _multiplier;
+	  END IF;
     ELSE
       RETURN NULL;
     END IF;
@@ -5591,7 +5647,7 @@ $$ LANGUAGE plpgsql STABLE;
 
 		-- if any of the nfl functions return true, we know there is an NFL record.
 		-- set is_nfl to be a valid string.
-		IF CONCAT(trim(nvsl),trim(aquatic_class)) IN('CB', 'RK', 'SA', 'MS', 'GR', 'SB', 'WA', 'LA', 'RI', 'FL', 'SF', 'FP', 'ST', 'WASF', 'WALA', 'UKLA', 'WARI', 'WAFL', 'WAFP', 'WAST','L','R')
+		IF CONCAT(trim(nvsl),trim(aquatic_class)) IN('UK', 'CB', 'RK', 'SA', 'MS', 'GR', 'SB', 'WA', 'LA', 'RI', 'FL', 'SF', 'FP', 'ST', 'WASF', 'WALA', 'UKLA', 'WARI', 'WAFL', 'WAFP', 'WAST','L','R')
 		OR CONCAT(trim(luc), trim(transp_class), trim(aquatic_class)) IN('ALA', 'POP', 'REC', 'PEX', 'GPI', 'BPI', 'MIS', 'ASA', 'NSA', 'OIS', 'OUS', 'AFS', 'CEM', 'WEH', 'TOW', 'RWC', 'RRC', 'TLC', 'PLC', 'MPC','PL','RD','TL','vegu', 'bugp', 'towu', 'cmty', 'dmgu', 'gsof', 'rwgu', 'muou', 'mg', 'peatc', 'lmby', 'sdgu', 'bupo', 'ftow', 'FP', 'WADI') THEN
 		  is_nfl = 'a_value';
 		ELSE
