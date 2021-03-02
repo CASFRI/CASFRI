@@ -88,7 +88,7 @@ WITH non_forested_distinct AS (
   FROM $tempNonForAtt
   ORDER BY src_filename, recno, fixed_area DESC
 )
-SELECT a.ogc_fid, a.area_meter, a.perimeter_, a.polyid, a.polytype, a.owner, a.age, a.hectares,
+SELECT a.ogc_fid, a.area_meter, a.perimeter_, replace(a.polyid, '{1}', '') polyid, a.polytype, a.owner, a.age, a.hectares,
        a.recno, a.provid, a.x, a.y, a.src_filename, a.inventory_id, a.wkb_geometry, a.area, a.perimeter,
        a.type mutype, a.polyid_1, a.mnrcode, a.geognum,
        coalesce(b.fixed_area, c.fixed_area) fixed_area,
