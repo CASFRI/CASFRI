@@ -76,8 +76,8 @@ WITH test_nb AS (
     SELECT 'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,     22 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,23 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  7 nb_test UNION ALL
-    SELECT 'TT_fim_species_translation'::text function_tested,               25 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  5 nb_test UNION ALL
+    SELECT 'TT_fim_species_translation'::text function_tested,               25 maj_num,  8 nb_test UNION ALL
+    SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  8 nb_test UNION ALL
     SELECT 'TT_yvi01_nat_non_veg_validation'::text function_tested,          27 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_yvi01_nat_non_veg_translation'::text function_tested,         28 maj_num,  4 nb_test UNION ALL
     SELECT 'TT_yvi01_non_for_veg_translation'::text function_tested,         29 maj_num,  5 nb_test UNION ALL
@@ -179,7 +179,8 @@ WITH test_nb AS (
 	SELECT 'TT_nb_hascountofnotnull'::text function_tested,                  125 maj_num,  3 nb_test UNION ALL
 	SELECT 'TT_ns_lyr_layer_translation'::text function_tested,              126 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_on_lyr_layer_translation'::text function_tested,              127 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,         128 maj_num,  5 nb_test
+	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,         128 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_fim_species_validation'::text function_tested,                129 maj_num,  4 nb_test
 ),
 
 	
@@ -1184,6 +1185,18 @@ SELECT '25.6'::text number,
        'Null string'::text description,
        TT_fim_species_translation(null::text, '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') IS NULL passed
 ---------------------------------------------------------
+UNION ALL
+SELECT '25.7'::text number,
+       'TT_fim_species_translation'::text function_tested,
+       'ON01 example 1'::text description,
+       TT_fim_species_translation('Sw  0', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_GLAU' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '25.8'::text number,
+       'TT_fim_species_translation'::text function_tested,
+       'ON01 example 2'::text description,
+       TT_fim_species_translation('SB 6B  2SB 1PO 1', '3', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_MARI' passed
+---------------------------------------------------------
   -- TT_fim_species_percent_translation
 ---------------------------------------------------------
 UNION ALL
@@ -1215,6 +1228,24 @@ SELECT '26.5'::text number,
        'TT_fim_species_percent_translation'::text function_tested,
        'Null string'::text description,
        TT_fim_species_percent_translation(null::text, '1') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '26.6'::text number,
+       'TT_fim_species_percent_translation'::text function_tested,
+       'Test on01 1'::text description,
+       TT_fim_species_percent_translation('Sw 90Bf 10', '1') = 90 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '26.7'::text number,
+       'TT_fim_species_percent_translation'::text function_tested,
+       'Test on01 1'::text description,
+       TT_fim_species_percent_translation('Sw  0', '1') = 100 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '26.8'::text number,
+       'TT_fim_species_percent_translation'::text function_tested,
+       'Test on01 1'::text description,
+       TT_fim_species_percent_translation('SB 7PO 2B  1', '3') = 10 passed
 ---------------------------------------------------------
   -- TT_yvi01_nat_non_veg_validation
 ---------------------------------------------------------
@@ -4641,7 +4672,32 @@ SELECT '128.5'::text number,
        'TT_sk_sfvi_lyr_layer_translation'::text function_tested,
        'species without productivity'::text description,
        TT_sk_sfvi_lyr_layer_translation('{NULL, 10, 11}', '{NULL, NULL}', '{bf, bs}', '{bf, bs}', 'BSH', '1') = 3 passed
-	
+---------------------------------------------------------
+ -- TT_fim_species_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '129.1'::text number,
+       'TT_fim_species_validation'::text function_tested,
+       'Basic pass ON02'::text description,
+       TT_fim_species_validation('BF 9MF 1', '1', 'translation', 'species_code_mapping', 'on_species_codes') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '129.2'::text number,
+       'TT_fim_species_validation'::text function_tested,
+       'Basic pass ON01 species 2'::text description,
+       TT_fim_species_validation('BF 9MF 1', '2', 'translation', 'species_code_mapping', 'on_species_codes') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '129.3'::text number,
+       'TT_fim_species_validation'::text function_tested,
+       'Basic pass ON02 species'::text description,
+       TT_fim_species_validation('BF 90MF 10', '2', 'translation', 'species_code_mapping', 'on_species_codes') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '129.4'::text number,
+       'TT_fim_species_validation'::text function_tested,
+       'Basic pass ON02 species 2'::text description,
+       TT_fim_species_validation('BF 100', '1', 'translation', 'species_code_mapping', 'on_species_codes') passed	
 	
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
