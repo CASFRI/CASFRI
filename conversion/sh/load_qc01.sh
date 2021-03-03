@@ -59,7 +59,7 @@ do
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
     -nln $tempTable \
-    -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
+    -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab WHERE geocode IS NOT NULL" \
     -progress \
     $layer_creation_options $other_options \
     $overwrite_option
@@ -82,7 +82,7 @@ do
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
     -nln $tempTable \
-    -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab" \
+    -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab WHERE geocode IS NOT NULL" \
     -progress \
     $layer_creation_options $other_options \
     $overwrite_option
@@ -107,7 +107,7 @@ ON $tempPhoto (FCA_NO);
 DROP TABLE IF EXISTS $tempAttributes;
 CREATE TABLE $tempAttributes AS
 SELECT 
-  DISTINCT ON(geocode) geocode, ogc_fid, c08peefd_, c08peefd_i, fca_no, pee_dt_mjg, pee_sp_pee, pee_gc_ori, pee_no_maj, prg_no, uco_no_uco, pee_no_auc, pee_dt_mju, toponyme, tco_co,
+  DISTINCT ON(geocode) geocode, substring(geocode,1,10) geocode_1_10, substring(geocode,11,10) geocode_11_20, ogc_fid, c08peefd_, c08peefd_i, fca_no, pee_dt_mjg, pee_sp_pee, pee_gc_ori, pee_no_maj, prg_no, uco_no_uco, pee_no_auc, pee_dt_mju, toponyme, tco_co,
   ges_co, psc_co, cde_co, cha_co, per_co_ori, per_an_ori, cag_co, per_co_moy, pee_nb_int, per_an_moy, clp_co, ter_co, dsu_co, cdr_co, tec_co_tec,
   pee_dt_mjd, ppr_co_ppr, pee_dh_tra, prb_co_prb, pee_va_app, pee_dc_meo, phc_co_phc, ser_co_ser, pee_dc_aut, tvs_no, no_id, nog, indicatif, pee_dh_cre, pee_dh_maj,
   txl_no_txl, met_no, tme_co, prs_co, prs_an_sou, mst_co_mst, eti_in_gen, src_filename, inventory_id
