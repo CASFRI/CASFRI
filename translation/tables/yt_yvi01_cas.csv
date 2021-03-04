@@ -7,5 +7,5 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 6,MAP_SHEET_ID,text,false(),nothingText(),No source attribute for MAP_SHEET_ID,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
-9,SRC_INV_AREA,double precision,notNull(src_inv_area);isNumeric(src_inv_area),copyDouble(src_inv_area),Copies the source area value,TRUE
+9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE)","divideDouble(src_inv_area, 10000)",Convert source area from m2 to ha. Report any zero values as OUT_OF_RANGE.,TRUE
 10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isInt(stand_photo_year);isBetween(stand_photo_year, 1900, 2020)",copyInt(stand_photo_year),Copies source value to STAND_PHOTO_YEAR,TRUE
