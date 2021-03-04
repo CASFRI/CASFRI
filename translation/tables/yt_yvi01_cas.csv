@@ -1,5 +1,5 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-1,CAS_ID,text,notEmpty(inventory_id);notNull(orig_stand_id);notNull(src_filename);notNull(poly_id),"padConcat({inventory_id, src_filename, '', orig_stand_id, poly_id}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(orig_stand_id);notNull(poly_id),"padConcat({inventory_id, src_filename, '', orig_stand_id, poly_id}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,notNull(orig_stand_id),copyText(orig_stand_id),Copies source value to ORIG_STAND_ID,TRUE
 4,STAND_STRUCTURE,text,"matchList(type_lnd, {'VF'}|NOT_APPLICABLE)",copyText('SINGLE_LAYERED'),"Since NUM_OF_LAYERS is always 1, stand structure is always SINGLE_LAYERED for forested polygons. Validation applies NOT_APPLICABLE unless polygon is forested.",TRUE

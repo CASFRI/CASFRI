@@ -1,6 +1,6 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 0,ROW_TRANSLATION_RULE,NA,"notEmpty({species_1, species_2, species_3, species_4, species_5}, TRUE);matchList(row_wc, {'FW'})",NA,"Translate only rows where l1s1, l1s2, l1s3, l1s4 or l1s5 is not empty. And where wc is FW (treed muskeg). Note that row productivity values are mapped to null for layer 2, this is to avoid double counting in the case that only productivity values are available. So layer 2 will only be included if layer 2 species info is available.", TRUE
-1,CAS_ID,text,notEmpty(inventory_id);notNull(orig_stand_id);notNull(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,STRUCTURE_RANGE,double precision,false(),nothingDouble(),No complex structure,TRUE
