@@ -1,9 +1,9 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 0,ROW_TRANSLATION_RULE,NA,"matchListTwice(non_for, species_1,{'FL', 'C', 'M1', 'M2', 'U1', 'U2'}, {'WATER', 'ISLAND'})",NA,Translate every row that has a valid NFL attribute. Note only one NFL attribute exists per layer in the source data., TRUE
-1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID.,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID.,TRUE
 2,SOIL_MOIST_REG,text,"matchList(soil_moist_reg,{'M1','M2','FL'} |UNKNOWN_VALUE)","mapText(soil_moist_reg, {'M1','M2','FL'}, {'WET','WET','WET'})",Can derive a wet moisture using source value lowland and flooded.,TRUE
 3,STRUCTURE_PER,integer,"notEmpty(structure_per);notNull(structure_per);isInt(structure_per);isBetween(structure_per, 1, 10|-9997)","mapInt(structure_per, {'1','2','3','4','5','6','7','8','9','10'}, {10,20,30,40,50,60,70,80,90,100})",Maps source value percent of coverage to STRUCTURE_PER,TRUE
-4,LAYER,integer,true(),"countOfNotNull({species_layer1,height_layer1}, {species_layer2,height_layer2}, {species_layer3,height_layer3}, {nfl_layer1}, {nfl_layer2}, {nfl_layer3}, layer, 'TRUE')",Calculate number of layer according to vegetation composition. ,TRUE
+4,LAYER,integer,true(),"countOfNotNull({species_layer1,height_layer1}, {species_layer2,height_layer2}, {species_layer3,height_layer3}, {nfl_layer1}, {nfl_layer2}, {nfl_layer3}, layer, TRUE)",Calculate number of layer according to vegetation composition. ,TRUE
 5,LAYER_RANK,integer,false(),nothingInt(),No rank attribute.,TRUE
 6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),Attribute does not occur,TRUE
 7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur,TRUE
