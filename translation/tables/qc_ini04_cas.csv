@@ -5,7 +5,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 4,STAND_STRUCTURE,text,"notNull(cl_age|NOT_APPLICABLE);notEmpty(cl_age);matchTable(cl_age, 'translation', 'qc_standstructure_lookup',TRUE,TRUE)","lookupText(cl_age, 'translation', 'qc_standstructure_lookup', 'stand_structure')",Stand structure is based on the cl_age code and is copied form the lookup table,TRUE
 5,NUM_OF_LAYERS,integer,"qc_hasCountOfNotNull(cl_age, co_ter, 1, FALSE|-8886)","qc_countOfNotNull(cl_age, co_ter, 3)","Uses the qc_standstructure_lookup table to find number of lyr layers, then tests to see if nfl is present and counts the total number of layers. Max number of layers is 3.",TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Attribute does not occur,TRUE
-7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
-8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|NULL_VALUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|NULL_VALUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE)",copyDouble(src_inv_area),Copies source value to SRC_INV_AREA. Return OUT_OF_RANGE for any zero values.,TRUE
 10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isInt(stand_photo_year);isBetween(stand_photo_year, 1900, 2020)",copyInt(stand_photo_year),Copies source value to STAND_PHOTO_YEAR,TRUE

@@ -5,7 +5,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 4,STAND_STRUCTURE,text,true(),copyText('HORIZONTAL'),Always HORIZONTAL,TRUE
 5,NUM_OF_LAYERS,integer,"hasCountOfNotNullOrZero({species_layer1, height_layer1}, {species_layer2, height_layer2}, {species_layer3, height_layer3}, {nfl_layer1}, {nfl_layer2}, {nfl_layer3},1, FALSE|-8886)","countOfNotNull({species_layer1, height_layer1}, {species_layer2, height_layer2}, {species_layer3, height_layer3}, {nfl_layer1}, {nfl_layer2}, {nfl_layer3},6, TRUE)","Count layers up to max of 6. Layers are the canopy species or non-forest types. PC02 can have understory species in a vertical layer beneath canopy species, but since the current schema does not support both horizontal and vertical structure in the same polygon, understory species are not included here. Zero values are considered null for species and non-forest codes. Validation returns UNKNOWN_VALUE if num_of_layers is zero.",TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Attribute does not occur,TRUE
-7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
-8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|NULL_VALUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|NULL_VALUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE)","divideDouble(src_inv_area, 10000)",Converts source area from m2 to ha. Return OUT_OF_RANGE for any zero values.,TRUE
 10,STAND_PHOTO_YEAR,integer,true(),copyInt(1968),Always 1968,TRUE
