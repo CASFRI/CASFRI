@@ -247,6 +247,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
 ------------------------------------------------------------------------------
 -- Create a table of polygon counts
+--DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
 CREATE TABLE casfri50_coverage.inv_counts AS
 SELECT left(cas_id, 4) inv, count(*) cnt
 FROM casfri50.geo_all
@@ -329,6 +330,7 @@ SELECT TT_ProduceDerivedCoverages('PE01', TT_SuperUnion('casfri50', 'geo_all', '
 SELECT TT_ProduceDerivedCoverages('QC03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''QC03''')); --  401188, pg11:      , pg13:  8m45
 SELECT TT_ProduceDerivedCoverages('QC04', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''QC04''')); -- 2487519, pg11:     ?, pg13: 59m12
 SELECT TT_ProduceDerivedCoverages('QC05', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''QC05''')); -- 6768074, pg11:     ?, pg13:  2h07
+SELECT TT_ProduceDerivedCoverages('QC06', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''QC06''')); -- 2487519, pg11:     ?, pg13:  2h07
 SELECT TT_ProduceDerivedCoverages('SK01', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK01''')); -- 1501667, pg11:  3h13, pg13: 41m53
 SELECT TT_ProduceDerivedCoverages('SK02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK02''')); --   27312, pg11:  2m03, pg13:   49s
 SELECT TT_ProduceDerivedCoverages('SK03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK03''')); --    8964, pg11:   49s, pg13:   23s
