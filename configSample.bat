@@ -19,6 +19,6 @@ SET overwriteFRI=True
 SET overwriteTTables=True
 
 IF "%pgversion%"=="" SET pgversion=11
-SET pgFolder="C:\Program Files\PostgreSQL\%pgversion%"
+SET pgFolder=C:\Program Files\PostgreSQL\%pgversion%
 
 
