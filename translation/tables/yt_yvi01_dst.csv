@@ -5,12 +5,12 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 3,DIST_YEAR_1,integer,"notNull(dist_year_1);isInt(dist_year_1);isBetween(dist_year_1, 1000, 2020)",copyInt(dist_year_1),Copies source attribute to DIST_YEAR_1,TRUE
 4,DIST_EXT_UPPER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
 5,DIST_EXT_LOWER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
-6,DIST_TYPE_2,text,"notNull(dist_type_2);notEmpty(dist_type_2);matchList(dist_type_2,{'DB','DD','DF','DI','DL','DS','DW'})","mapText(dist_type_2, {'DB','DD','DF','DI','DL','DS','DW'}, {'BURN','DISEASE','FLOOD','INSECT','CUT','SLIDE','WINDFALL'})",Maps source value to DIST_TYPE_2 using lists of values,TRUE
-7,DIST_YEAR_2,integer,"notNull(dist_year_2);isInt(dist_year_2);isBetween(dist_year_2, 1000, 2020)",copyInt(dist_year_2),Copies source attribute to DIST_YEAR_2,TRUE
-8,DIST_EXT_UPPER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
-9,DIST_EXT_LOWER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
+6,DIST_TYPE_2,text,"hasCountOfNotNull({dist_type_1}, {dist_type_2}, 2, TRUE|NOT_APPLICABLE);notNull(dist_type_2);notEmpty(dist_type_2);matchList(dist_type_2,{'DB','DD','DF','DI','DL','DS','DW'})","mapText(dist_type_2, {'DB','DD','DF','DI','DL','DS','DW'}, {'BURN','DISEASE','FLOOD','INSECT','CUT','SLIDE','WINDFALL'})",Maps source value to DIST_TYPE_2 using lists of values. Check there is second disturbance and return not applicable if there isn't.,TRUE
+7,DIST_YEAR_2,integer,"hasCountOfNotNull({dist_type_1}, {dist_type_2}, 2, TRUE|-8887);notNull(dist_year_2);isInt(dist_year_2);isBetween(dist_year_2, 1000, 2020)",copyInt(dist_year_2),Copies source attribute to DIST_YEAR_2. Check there is second disturbance and return not applicable if there isn't.,TRUE
+8,DIST_EXT_UPPER_2,integer,"hasCountOfNotNull({dist_type_1}, {dist_type_2}, 2, TRUE|-8887);false(-8886)",nothingInt(),Attribute does not occur. Check there is second disturbance and return not applicable if there isn't.,TRUE
+9,DIST_EXT_LOWER_2,integer,"hasCountOfNotNull({dist_type_1}, {dist_type_2}, 2, TRUE|-8887);false(-8886)",nothingInt(),Attribute does not occur. Check there is second disturbance and return not applicable if there isn't.,TRUE
 10,DIST_TYPE_3,text,false(),nothingText(),Attribute does not occur,TRUE
 11,DIST_YEAR_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 12,DIST_EXT_UPPER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 13,DIST_EXT_LOWER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
-14,LAYER,integer,true(),copyInt(1),"Disturbance has to be on layer 1, because there is only one layer.",TRUE
+14,LAYER,integer,false(|-8886),nothingInt(),Disturbance layer is unknown,TRUE
