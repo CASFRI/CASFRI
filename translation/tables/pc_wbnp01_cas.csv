@@ -5,7 +5,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 4,STAND_STRUCTURE,text,true(),copyText('HORIZONTAL'),Always horizontal,TRUE
 5,NUM_OF_LAYERS,integer,"pc02_hasCountOfNotNull(v1sp1, v2sp1, v3sp1, v4sp1, v5sp1, v6sp1, v7sp1, v1pcm, v2pcm, v3pcm, v4pcm, v5pcm, v6pcm, v7pcm, shrln, 'translation', 'species_code_mapping', 'pc02_species_codes', 1, FALSE|-8886)","pc02_countOfNotNull(v1sp1, v2sp1, v3sp1, v4sp1, v5sp1, v6sp1, v7sp1, v1pcm, v2pcm, v3pcm, v4pcm, v5pcm, v6pcm, v7pcm, shrln, 'translation', 'species_code_mapping', 'pc02_species_codes', 15)","Calculate number of layers according to presence of forest strata and non-forested strata. Possible layers are the 7 forested attributes, the 7 nfl attributes, and an 8th nfl attribute representing lakes. Total num_of_layers should not exceed 8, but any combination of the 15 attributes is possible.",TRUE
 6,MAP_SHEET_ID,text,notNull(map_sheet_id);notEmpty(map_sheet_id),copyText(map_sheet_id),Copies source value,TRUE
-7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|NULL_VALUE)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
-8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|NULL_VALUE)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE)","multiply(src_inv_area, 100)",Converts source area from km2 to ha. Return OUT_OF_RANGE for any zero values.,TRUE
 10,STAND_PHOTO_YEAR,integer,true(),copyInt(1979),Always 1979,TRUE
