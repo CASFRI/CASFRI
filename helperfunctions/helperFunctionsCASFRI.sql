@@ -1282,10 +1282,22 @@ RETURNS TABLE (ttable text,
     -- Handle when only one keyword parameter is provided instead of a schema and a table
     IF transTableList IS NULL AND lower(schemaName) IN ('cas', 'lyr', 'nfl', 'dst', 'eco', 'geo') THEN
       transTableList = 'ab_avi01_' || lower(schemaName) || ', ' || 
-                       'nt_fvi01_' || lower(schemaName) || ', ' || 
-                       'nb_nbi01_' || lower(schemaName) || ', ' || 
-                       'bc_vri01_' || lower(schemaName) || ', ' || 
-                       'on_fim02_' || lower(schemaName) || ', ' || 
+                       'bc_vri01_' || lower(schemaName) || ', ' ||
+					   'mb_fli01_' || lower(schemaName) || ', ' ||
+					   'mb_fri01_' || lower(schemaName) || ', ' ||
+					   'mb_fri02_' || lower(schemaName) || ', ' ||
+					   'nb_nbi01_' || lower(schemaName) || ', ' ||
+					   'nl_nli01_' || lower(schemaName) || ', ' ||
+					   'ns_nsi01_' || lower(schemaName) || ', ' ||
+					   'nt_fvi01_' || lower(schemaName) || ', ' ||
+					   'on_fim02_' || lower(schemaName) || ', ' ||
+					   'pc_panp01_' || lower(schemaName) || ', ' ||
+					   'pc_wbnp01_' || lower(schemaName) || ', ' ||
+                       'pe_pei01_' || lower(schemaName) || ', ' ||
+                       'qc_ini03_' || lower(schemaName) || ', ' ||
+                       'qc_ini04_' || lower(schemaName) || ', ' ||
+					   'qc_ipf05_' || lower(schemaName) || ', ' ||
+                       'sk_sfv01_' || lower(schemaName) || ', ' || 
                        'sk_utm01_' || lower(schemaName) || ', ' || 
                        'yt_yvi01_' || lower(schemaName);
       schemaName = 'translation';
@@ -5393,8 +5405,8 @@ CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
   bclcs_level_4 text,
   non_productive_descriptor_cd text,
   non_veg_cover_type_1 text,
-  max_rank_to_consider text,
-  inventory_id text
+  max_rank_to_consider text
+  --inventory_id text
 )
 RETURNS int AS $$
   DECLARE
