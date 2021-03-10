@@ -120,7 +120,7 @@ SELECT * FROM TT_Translate_qc01_lyr_devel('rawfri', 'qc01_l1_to_qc_ini03_l1_map_
 
 -- LYR layer 2
 SELECT TT_CreateMappingView('rawfri', 'qc01', 2, 'qc_ini03', 1, 200);
-SELECT * FROM TT_Translate_qc01_lyr_devel('rawfri', 'qc01_l2_to_qc_ini03_l1_map_20000'); -- 7 s.
+SELECT * FROM TT_Translate_qc01_lyr_devel('rawfri', 'qc01_l2_to_qc_ini03_l1_map_200'); -- 7 s.
 
 SELECT TT_CreateMappingView('rawfri', 'qc01', 3, 'qc_ini03', 1, 200);
 SELECT * FROM TT_Translate_qc01_nfl_devel('rawfri', 'qc01_l3_to_qc_ini03_l1_map_200'); -- 7 s.
