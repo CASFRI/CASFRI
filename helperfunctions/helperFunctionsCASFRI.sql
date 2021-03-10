@@ -2923,7 +2923,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- 
 -- hasCountOfNotNull using custom vri countOfNotNull
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_hasCountOfNotNull(
   vals1 text,
   vals2 text,
@@ -2932,7 +2932,6 @@ CREATE OR REPLACE FUNCTION TT_vri01_hasCountOfNotNull(
   bclcs_level_4 text,
   non_productive_descriptor_cd text,
   non_veg_cover_type_1 text,
-  inventory_id text,
   count text,
   exact text
 )
@@ -2947,7 +2946,7 @@ RETURNS boolean AS $$
     _exact = exact::boolean;
 
     -- process
-    _counted_nulls = tt_vri01_countOfNotNull(vals1, vals2, inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1, '5', inventory_id);
+    _counted_nulls = tt_vri01_countOfNotNull(vals1, vals2, inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1, '5');
 
     IF _exact THEN
       RETURN _counted_nulls = _count;

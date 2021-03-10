@@ -1,8 +1,8 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-0,ROW_TRANSLATION_RULE,NA,"notEmpty(dist_type_1);isGreaterThan(dist_year_1, 0, FALSE)",NA,Translate only rows having disturbance info or disturbance year greater than 0, TRUE
+0,ROW_TRANSLATION_RULE,NA,"notEmpty(dist_type_1);isGreaterThan(dist_year_1, 0, FALSE)",NA,Translate rows having disturbance info or disturbance year greater than 0, TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
 2,DIST_TYPE_1,text,"notNull(dist_type_1);notEmpty(dist_type_1);matchList(dist_type_1,{'BB','CC','CL','CT','CV','FP','FT','FW','IT','PA','PB','PC','PL','PT','RC','RR','SA','SC','SH','SR','ST','TI','TP'})","mapText(dist_type_1, {'BB','CC','CL','CT','CV','FP','FT','FW','IT','PA','PB','PC','PL','PT','RC','RR','SA','SC','SH','SR','ST','TI','TP'}, {'BURN','CUT','SILVICULTURE_TREATMENT','PARTIAL_CUT','PARTIAL_CUT','SILVICULTURE_TREATMENT','OTHER','PARTIAL_CUT','PARTIAL_CUT','PARTIAL_CUT','BURN','PARTIAL_CUT','SILVICULTURE_TREATMENT','OTHER','PARTIAL_CUT','OTHER','PARTIAL_CUT','PARTIAL_CUT','PARTIAL_CUT','PARTIAL_CUT','PARTIAL_CUT','SILVICULTURE_TREATMENT','PARTIAL_CUT'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
-3,DIST_YEAR_1,integer,"notNull(dist_year_1);isInt(dist_year_1);isBetween(dist_year_1, 1000, 2020)",copyInt(dist_year_1),Copies disturbance to DIST_YEAR_1,TRUE
+3,DIST_YEAR_1,integer,"notNull(dist_year_1|-8886);notMatchList(dist_year_1, {0}|-8886);isInt(dist_year_1);isBetween(dist_year_1, 1000, 2020)",copyInt(dist_year_1),Copies disturbance to DIST_YEAR_1,TRUE
 4,DIST_EXT_UPPER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
 5,DIST_EXT_LOWER_1,integer,false(),nothingInt(),Attribute does not occur,TRUE
 6,DIST_TYPE_2,text,false(),nothingText(),Attribute does not occur,TRUE
@@ -13,4 +13,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 11,DIST_YEAR_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 12,DIST_EXT_UPPER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
 13,DIST_EXT_LOWER_3,integer,false(),nothingInt(),Attribute does not occur,TRUE
-14,LAYER,integer,"matchList(inventory_id, 'NB01'|-8886)",copyInt(layer),"For NB01, assign disturbances to whichever layer is being translated. For NB01 disturbances are specified to layer 1 or 2. In NB02, disturbance is for the polygon so report UNKNOWN for layer.",TRUE
+14,LAYER,integer,"matchList(inventory_id, 'NB02'|-8886)",copyInt(layer),"For NB01, assign disturbances to whichever layer is being translated. For NB01 disturbances are specified to layer 1 or 2. In NB02, disturbance is for the polygon so report UNKNOWN for layer.",TRUE

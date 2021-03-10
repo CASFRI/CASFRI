@@ -42,7 +42,7 @@ SELECT inventory_id, jurisdiction, owner_name, standard_type, standard_version,
        data_availability, redistribution, permission, license_agreement, 
        photo_year_start, photo_year_end, photo_year_src
 FROM translation.inventory_list_cas05
-WHERE inventory_id IN ('AB03', 'AB06', 'AB07', 'AB08', 'AB10', 'AB11', 'AB16', 'AB25', 'AB29', 'AB30', 'BC08', 'BC10', 'MB01', 'MB02', 'MB04', 'MB05', 'MB06', 'MB07', 'NB01', 'NB02', 'NL01', 'NS01', 'NS02', 'NS03', 'NT01', 'NT03', 'ON02', 'PC01', 'PC02', 'PE01', 'QC02', 'QC03', 'QC04', 'QC05', 'QC06', 'QC07', 'SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06', 'YT01', 'YT02');
+WHERE inventory_id IN ('AB03', 'AB06', 'AB07', 'AB08', 'AB10', 'AB11', 'AB16', 'AB25', 'AB29', 'AB30', 'BC08', 'BC10', 'MB01', 'MB02', 'MB04', 'MB05', 'MB06', 'MB07', 'NB01', 'NB02', 'NL01', 'NS01', 'NS02', 'NS03', 'NT01', 'NT03', 'ON02', 'PC01', 'PC02', 'PE01', 'QC01', 'QC02', 'QC03', 'QC04', 'QC05', 'QC06', 'QC07', 'SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06', 'YT01', 'YT02');
 ------------------------
 SELECT count(*) FROM casfri50.hdr_all; -- 5
 
