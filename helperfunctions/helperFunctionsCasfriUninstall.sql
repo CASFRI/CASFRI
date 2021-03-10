@@ -201,6 +201,10 @@ DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidRange() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);
 DROP FUNCTION IF EXISTS TT_Count(name, name);
 -------------------------------------------------------------------------------
+-- Tools views
+-------------------------------------------------------------------------------
+DROP VIEW IF EXISTS TT_Queries;
+-------------------------------------------------------------------------------
 -- Test VIEWs
 -------------------------------------------------------------------------------
 DROP VIEW IF EXISTS rawfri.ab06_lyr1 CASCADE;
