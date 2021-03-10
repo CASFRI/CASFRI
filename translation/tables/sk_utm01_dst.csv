@@ -5,7 +5,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 3,DIST_YEAR_1,integer,"notNull(dist_year_1);isInt(dist_year_1);notMatchList(dist_year_1, {0}|-8886);isBetween(dist_year_1, 1000, 2020)",copyInt(dist_year_1),Copies source attribute to DIST_YEAR_1. Catch zero values as null.,TRUE
 4,DIST_EXT_UPPER_1,integer,false(|-8886),nothingInt(),Attribute does not occur,TRUE
 5,DIST_EXT_LOWER_1,integer,false(|-8886),nothingInt(),Attribute does not occur,TRUE
-6,DIST_TYPE_2,text,false(|-8886),nothingText(),Attribute does not occur,TRUE
+6,DIST_TYPE_2,text,false(),nothingText(),Attribute does not occur,TRUE
 7,DIST_YEAR_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
 8,DIST_EXT_UPPER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
 9,DIST_EXT_LOWER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
