@@ -38,19 +38,23 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_nb1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_nb1_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nb1_gridded_history_new
+-- WHERE valid_year_begin <= 2008 AND 2008 <= valid_year_end
+-- WHERE valid_year_begin <= 2009 AND 2009 <= valid_year_end
+-- WHERE valid_year_begin <= 2010 AND 2010 <= valid_year_end
 ORDER BY id, valid_year_begin;
+
 --------------------------------------------------------------------------------------
 -- Sampling area NB2
 --------------------------------------------------------------------------------------
@@ -73,18 +77,21 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_nb2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_nb2_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nb2_gridded_history_new
+-- WHERE valid_year_begin <= 2003 AND 2003 <= valid_year_end
+-- WHERE valid_year_begin <= 2010 AND 2010 <= valid_year_end
+-- WHERE valid_year_begin <= 2020 AND 2020 <= valid_year_end
 ORDER BY id, valid_year_begin;
 
 --------------------------------------------------------------------------------------
@@ -109,18 +116,20 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_nt1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_nt1_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nt1_gridded_history_new
+-- WHERE valid_year_begin <= 1960 AND 1960 <= valid_year_end
+-- WHERE valid_year_begin <= 1980 AND 1980 <= valid_year_end
 ORDER BY id, valid_year_begin;
 
 --------------------------------------------------------------------------------------
@@ -145,18 +154,21 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_nt2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_nt2_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_nt2_gridded_history_new
+-- WHERE valid_year_begin <= 2000 AND 2000 <= valid_year_end
+-- WHERE valid_year_begin <= 2004 AND 2004 <= valid_year_end
+-- WHERE valid_year_begin <= 2010 AND 2010 <= valid_year_end
 ORDER BY id, valid_year_begin;
 --------------------------------------------------------------------------------------
 -- Sampling area BC1
@@ -180,18 +192,22 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_bc1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_bc1_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_bc1_gridded_history_new
+-- WHERE valid_year_begin <= 2004 AND 2004 <= valid_year_end
+-- WHERE valid_year_begin <= 2010 AND 2010 <= valid_year_end
+-- WHERE valid_year_begin <= 2016 AND 2016 <= valid_year_end
+-- WHERE valid_year_begin <= 2020 AND 2020 <= valid_year_end
 ORDER BY id, valid_year_begin;
 --------------------------------------------------------------------------------------
 -- Sampling area BC2
@@ -215,18 +231,20 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_bc2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_bc2_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_bc2_gridded_history_new
+-- WHERE valid_year_begin <= 2000 AND 2000 <= valid_year_end
+-- WHERE valid_year_begin <= 2015 AND 2015 <= valid_year_end
 ORDER BY id, valid_year_begin;
 
 --------------------------------------------------------------------------------------
@@ -251,18 +269,21 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_sk1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_sk1_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_sk1_gridded_history_new
+-- WHERE valid_year_begin <= 2000 AND 2000 <= valid_year_end
+-- WHERE valid_year_begin <= 2002 AND 2002 <= valid_year_end
+-- WHERE valid_year_begin <= 2015 AND 2015 <= valid_year_end
 ORDER BY id, valid_year_begin;
 --------------------------------------------------------------------------------------
 -- Sampling area SK2
@@ -286,18 +307,22 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_sk2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_sk2_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_sk2_gridded_history_new
+-- WHERE valid_year_begin <= 1980 AND 1980 <= valid_year_end
+-- WHERE valid_year_begin <= 2000 AND 2000 <= valid_year_end
+-- WHERE valid_year_begin <= 2005 AND 2005 <= valid_year_end
+-- WHERE valid_year_begin <= 2010 AND 2010 <= valid_year_end
 ORDER BY id, valid_year_begin;
 --------------------------------------------------------------------------------------
 -- Sampling area SK3
@@ -321,18 +346,21 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_sk3_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_sk3_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_sk3_gridded_history_new
+-- WHERE valid_year_begin <= 1990 AND 1990 <= valid_year_end
+-- WHERE valid_year_begin <= 2004 AND 2004 <= valid_year_end
+-- WHERE valid_year_begin <= 2010 AND 2010 <= valid_year_end
 ORDER BY id, valid_year_begin;
 --------------------------------------------------------------------------------------
 -- Sampling area SK4
@@ -356,18 +384,22 @@ WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                                'geohistory', 'sampling_area_sk4_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM geohistory.sampling_area_sk4_gridded
-  ORDER BY id, poly_id
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM geohistory_gridded
   GROUP BY id
 )
 SELECT id, lowerval valid_year_begin, upperval valid_year_end, ST_AsText(geom) wkt_geometry
-FROM wkb_version;
+FROM wkb_version
+ORDER BY id, valid_year_begin;
 
 -- Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM geohistory.sampling_area_sk4_gridded_history_new
+-- WHERE valid_year_begin <= 1990 AND 1990 <= valid_year_end
+-- WHERE valid_year_begin <= 1998 AND 1998 <= valid_year_end
+-- WHERE valid_year_begin <= 2004 AND 2004 <= valid_year_end
+-- WHERE valid_year_begin <= 2010 AND 2010 <= valid_year_end
 ORDER BY id, valid_year_begin;
 ---------------------------------------------
 -- Begin tests

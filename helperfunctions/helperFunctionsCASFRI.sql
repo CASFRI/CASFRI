@@ -11,6 +11,28 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
+-- Begin Tools View Definitions...
+------------------------------------------------------------------------------- 
+CREATE OR REPLACE VIEW TT_Queries AS
+SELECT
+    act.query AS query,
+    act.pid AS pid,
+    act.datname AS database,
+    act.xact_start::timestamp(0) AS start_time, 
+    TT_PrettyDuration(EXTRACT(EPOCH FROM now() - act.xact_start)::int) process_time,
+    act.wait_event_type waiting_for,
+    act.wait_event,
+    CASE WHEN NOT act.wait_event_type IS NULL THEN TT_PrettyDuration(EXTRACT(EPOCH FROM now()::time - act.state_change::time)::int) ELSE NULL END AS waiting_time,
+    lockact.query AS locking_query,
+    lockact.pid AS locking_pid,
+    t.schemaname || '.' || t.relname AS locked_table
+ FROM (((pg_stat_activity act
+      LEFT JOIN pg_locks l1 ON act.pid = l1.pid AND NOT l1.granted)
+      LEFT JOIN pg_locks l2 ON l1.relation = l2.relation AND l2.granted)
+      LEFT JOIN pg_stat_activity lockact ON l2.pid = lockact.pid)
+      LEFT JOIN pg_stat_user_tables t ON l1.relation = t.relid
+WHERE act.state != 'idle';
+-------------------------------------------------------------------------------
 -- Begin Tools Function Definitions...
 ------------------------------------------------------------------------------- 
 -- TT_IsMissingOrInvalidText
