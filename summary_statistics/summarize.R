@@ -7,14 +7,14 @@ library(summarytools)
 
 ################################################################################
 # Select tables
-cas_tables = c("cas", "dst", "eco", "lyr", "nfl")
+cas_tables = c("cas", "dst", "eco", "lyr", "lyr_spp", "nfl")
 lyr_vars = c("soil_moist_reg", "structure_per", "structure_range", "layer", "layer_rank",
     "crown_closure_upper", "crown_closure_lower", "height_upper", "height_lower",
-    "productivity", "productivity_type", "species_1", "species_per_1", "species_2",
+    "productivity", "productivity_type", "origin_upper", "origin_lower", "site_class", "site_index")
+lyr_spp_vars = c("species_1", "species_per_1", "species_2",
     "species_per_2", "species_3", "species_per_3", "species_4", "species_per_4", "species_5",
     "species_per_5", "species_6", "species_per_6", "species_7", "species_per_7", "species_8",
-    "species_per_8", "species_9", "species_per_9", "species_10", "species_per_10",
-    "origin_upper", "origin_lower", "site_class", "site_index")
+    "species_per_8", "species_9", "species_per_9", "species_10", "species_per_10")
 nfl_vars = c("soil_moist_reg", "structure_per", "layer", "layer_rank",
     "crown_closure_upper", "crown_closure_lower", "height_upper", "height_lower",
     "nat_non_veg", "non_for_anth", "non_for_veg")
@@ -96,3 +96,11 @@ sink()
 rmarkdown::render(paste0(fi, ".Rmd"))
 file.remove(paste0(fi, ".Rmd"))
 }
+
+################################################################################
+# Split lyr.md into 2 files since one is too large to view in GitHub
+
+cfg = readr::read_lines("lyr.md")
+for (r in cfg) {
+    if (startsWith(r, "pgdbname_pr")) {
+
