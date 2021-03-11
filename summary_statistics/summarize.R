@@ -7,7 +7,7 @@ library(summarytools)
 
 ################################################################################
 # Select tables
-cas_tables = "cas" #c("cas", "dst", "eco", "lyr", "nfl")
+cas_tables = c("cas", "dst", "eco", "lyr", "nfl")
 lyr_vars = c("soil_moist_reg", "structure_per", "structure_range", "layer", "layer_rank",
     "crown_closure_upper", "crown_closure_lower", "height_upper", "height_lower",
     "productivity", "productivity_type", "species_1", "species_per_1", "species_2",
@@ -94,5 +94,5 @@ sink()
 ################################################################################
 # Render rmarkdown to html
 rmarkdown::render(paste0(fi, ".Rmd"))
-#file.remove(paste0(fi, ".Rmd"))
+file.remove(paste0(fi, ".Rmd"))
 }
