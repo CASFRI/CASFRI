@@ -254,5 +254,5 @@ ORDER BY cas_id, layer,
          dist_type_2, dist_year_2, dist_ext_upper_2, dist_ext_lower_2,
          dist_type_3, dist_year_3, dist_ext_upper_3, dist_ext_lower_3;
 ------------------------
-SELECT count(*) FROM casfri50_test.dst_all_new; -- 16798, 23m
+SELECT count(*) FROM casfri50_test.dst_all_new; -- 20409, 2m12
 -------------------------------------------------------
