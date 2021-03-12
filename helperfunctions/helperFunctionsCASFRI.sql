@@ -2559,12 +2559,12 @@ RETURNS boolean AS $$
                                     'lookup_table', lookup_table, 'name']);
 	
     IF cl_age IS NOT NULL AND in_etage = 'O' THEN
-      num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'num_of_layers');
+      num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'source_val', 'num_of_layers');
       
       IF num_of_layers = 2 THEN
         IF et_domi IS NULL OR et_domi = 'EQU' THEN        
-          layer_1_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, 'layer_1_age'::text);
-          layer_2_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, 'layer_2_age'::text);
+          layer_1_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, 'source_val', 'layer_1_age'::text);
+          layer_2_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, 'source_val', 'layer_2_age'::text);
 
           -- if layer 1 doesn't match either value, return FALSE
           IF layer_1_age_code NOT IN (sup_cl_age_et, inf_cl_age_et) THEN
@@ -2682,7 +2682,7 @@ RETURNS boolean AS $$
   BEGIN
     
     IF in_etage = 'N' THEN
-      num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'num_of_layers');
+      num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'source_val', 'num_of_layers');
       IF num_of_layers = 2 THEN
         RETURN FALSE;
       END IF;
@@ -6546,7 +6546,7 @@ RETURNS int AS $$
   DECLARE
     _age int;
   BEGIN
-    _age = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'l1_age_origin');
+    _age = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val', 'l1_age_origin');
     RETURN an_pro_ori::int - _age;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -6581,7 +6581,7 @@ RETURNS int AS $$
   BEGIN
 
     -- assign lyr 1 and 2
-    lyr_layers = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'num_of_layers');
+    lyr_layers = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val', 'num_of_layers');
     CASE 
       WHEN lyr_layers = 1 THEN
         is_lyr1 = 'a_value';
@@ -7354,25 +7354,25 @@ RETURNS int AS $$
     lake_string_list = '{''Z'', ''U''}';
 	
 	-- check for all 7 LYR layers
-	IF tt_matchTable(l1sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+	IF tt_matchTable(l1sp, lookupSchema, lookupTable, lookupCol, 'TRUE'::text) THEN
 	  _lyr1 = 'lyr1_value';
 	END IF;
-	IF tt_matchTable(l2sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+  IF tt_matchTable(l2sp, lookupSchema, lookupTable, lookupCol, 'TRUE'::text) THEN
 	  _lyr2 = 'lyr2_value';
 	END IF;
-	IF tt_matchTable(l3sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+  IF tt_matchTable(l3sp, lookupSchema, lookupTable, lookupCol, 'TRUE'::text) THEN
 	  _lyr3 = 'lyr3_value';
 	END IF;
-	IF tt_matchTable(l4sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+  IF tt_matchTable(l4sp, lookupSchema, lookupTable, lookupCol, 'TRUE'::text) THEN
 	  _lyr4 = 'lyr4_value';
 	END IF;
-	IF tt_matchTable(l5sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+  IF tt_matchTable(l5sp, lookupSchema, lookupTable, lookupCol, 'TRUE'::text) THEN
 	  _lyr5 = 'lyr5_value';
 	END IF;
-	IF tt_matchTable(l6sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+  IF tt_matchTable(l6sp, lookupSchema, lookupTable, lookupCol, 'TRUE'::text) THEN
 	  _lyr6 = 'lyr6_value';
 	END IF;
-	IF tt_matchTable(l7sp, lookupSchema, lookupTable, lookupCol, 'TRUE') THEN
+  IF tt_matchTable(l7sp, lookupSchema, lookupTable, lookupCol, 'TRUE'::text) THEN
 	  _lyr7 = 'lyr7_value';
 	END IF;
 	
