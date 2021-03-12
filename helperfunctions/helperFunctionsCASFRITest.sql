@@ -180,7 +180,8 @@ WITH test_nb AS (
 	SELECT 'TT_ns_lyr_layer_translation'::text function_tested,              126 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_on_lyr_layer_translation'::text function_tested,              127 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,         128 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_fim_species_validation'::text function_tested,                129 maj_num,  4 nb_test
+	SELECT 'TT_fim_species_validation'::text function_tested,                129 maj_num,  4 nb_test UNION ALL
+	SELECT 'TT_qc_prg3_src_inv_area_translation'::text function_tested,      130 maj_num,  3 nb_test
 ),
 
 	
@@ -4698,6 +4699,26 @@ SELECT '129.4'::text number,
        'TT_fim_species_validation'::text function_tested,
        'Basic pass ON02 species 2'::text description,
        TT_fim_species_validation('BF 100', '1', 'translation', 'species_code_mapping', 'on_species_codes') passed	
+---------------------------------------------------------
+ -- TT_qc_prg3_src_inv_area_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '130.1'::text number,
+       'TT_qc_prg3_src_inv_area_translation'::text function_tested,
+       'QC01 test'::text description,
+       TT_qc_prg3_src_inv_area_translation('QC01', '10000') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '130.2'::text number,
+       'TT_qc_prg3_src_inv_area_translation'::text function_tested,
+       'QC02 test'::text description,
+       TT_qc_prg3_src_inv_area_translation('QC02', '10000') = 10000 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '130.3'::text number,
+       'TT_qc_prg3_src_inv_area_translation'::text function_tested,
+       'Test null'::text description,
+       TT_qc_prg3_src_inv_area_translation('QC02', NULL::text) IS NULL passed
 	
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

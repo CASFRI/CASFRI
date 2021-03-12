@@ -151,6 +151,7 @@ DROP FUNCTION IF EXISTS TT_nb_countofnotnull(text, text, text, text, text, text)
 DROP FUNCTION IF EXISTS TT_ns_lyr_layer_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_on_lyr_layer_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfvi_lyr_layer_translation(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_ini03_src_inv_area_translation(text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

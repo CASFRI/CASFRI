@@ -7470,3 +7470,23 @@ RETURNS int AS $$
     RETURN tt_countOfNotNull(layer1_sp, layer2_sp, _nfl, maxRankToConsider, 'FALSE');
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_qc_prg3_src_inv_area_translation(text, text)
+--
+-- If inventory_id is QC01, use divideDouble(src_inv_area, 10000)
+-- Else(QC02, QC03, and possibly future datasets using this standrad), use copyDouble(src_inv_area)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg3_src_inv_area_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg3_src_inv_area_translation(
+  inventory_id text,
+  src_inv_area text
+)
+RETURNS double precision AS $$
+  BEGIN
+    IF inventory_id = 'QC01' THEN
+	  RETURN tt_divideDouble(src_inv_area, '10000');
+	ELSE
+	  RETURN src_inv_area::double precision;
+	END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
