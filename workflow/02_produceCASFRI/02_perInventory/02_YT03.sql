@@ -136,33 +136,33 @@ DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'YT03';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 
-SELECT * FROM TT_Translate_yt02_geo('rawfri', 'yt03_l1_to_yt_yvi02_l1_map');
+SELECT * FROM TT_Translate_yt03_geo('rawfri', 'yt03_l1_to_yt_yvi02_l1_map');
 
 --------------------------------------------------------------------------
 -- Check
 /*
 SELECT 'cas_all' AS table, count(*) nb
 FROM casfri50.cas_all
-WHERE left(cas_id, 4) = 'YT02'
+WHERE left(cas_id, 4) = 'YT03'
 UNION ALL
 SELECT 'dst_all', count(*) nb
 FROM casfri50.dst_all
-WHERE left(cas_id, 4) = 'YT02'
+WHERE left(cas_id, 4) = 'YT03'
 UNION ALL
 SELECT 'eco_all', count(*) nb
 FROM casfri50.eco_all
-WHERE left(cas_id, 4) = 'YT02'
+WHERE left(cas_id, 4) = 'YT03'
 UNION ALL
 SELECT 'lyr_all', count(*) nb
 FROM casfri50.lyr_all
-WHERE left(cas_id, 4) = 'YT02'
+WHERE left(cas_id, 4) = 'YT03'
 UNION ALL
 SELECT 'nfl_all', count(*) nb
 FROM casfri50.nfl_all
-WHERE left(cas_id, 4) = 'YT02'
+WHERE left(cas_id, 4) = 'YT03'
 UNION ALL
 SELECT 'geo_all', count(*) nb
 FROM casfri50.geo_all
-WHERE left(cas_id, 4) = 'YT02';
+WHERE left(cas_id, 4) = 'YT03';
 */
 --------------------------------------------------------------------------
