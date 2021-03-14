@@ -181,7 +181,15 @@ WITH test_nb AS (
 	SELECT 'TT_on_lyr_layer_translation'::text function_tested,              127 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,         128 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_fim_species_validation'::text function_tested,                129 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_qc_prg3_src_inv_area_translation'::text function_tested,      130 maj_num,  3 nb_test
+	SELECT 'TT_qc_prg3_src_inv_area_translation'::text function_tested,      130 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_stand_structure_translation'::text function_tested,  131 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_copyText'::text function_tested,         132 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_mapText'::text function_tested,          133 maj_num,  1 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_matchList'::text function_tested,        134 maj_num,  1 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_notNull'::text function_tested,          135 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,          136 maj_num,  1 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested, 137 maj_num,  4 nb_test
+
 ),
 
 	
@@ -4719,7 +4727,122 @@ SELECT '130.3'::text number,
        'TT_qc_prg3_src_inv_area_translation'::text function_tested,
        'Test null'::text description,
        TT_qc_prg3_src_inv_area_translation('QC02', NULL::text) IS NULL passed
-	
+---------------------------------------------------------
+ -- TT_yt_yvi02_stand_structure_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '131.1'::text number,
+       'TT_yt_yvi02_stand_structure_translation'::text function_tested,
+       'Complex test'::text description,
+       TT_yt_yvi02_stand_structure_translation('Complex', '', '', '', '', '', '') = 'COMPLEX' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '131.2'::text number,
+       'TT_yt_yvi02_stand_structure_translation'::text function_tested,
+       'Single test'::text description,
+       TT_yt_yvi02_stand_structure_translation('', 'sp', '', '', '', '', '') = 'SINGLE_LAYERED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '131.3'::text number,
+       'TT_yt_yvi02_stand_structure_translation'::text function_tested,
+       'Multi test'::text description,
+       TT_yt_yvi02_stand_structure_translation('', 'sp', '', '', 'sp', '', '') = 'MULTI_LAYERED' passed
+---------------------------------------------------------
+ -- TT_yt_yvi02_disturbance_copyText
+---------------------------------------------------------
+UNION ALL
+SELECT '132.1'::text number,
+       'TT_yt_yvi02_disturbance_copyText'::text function_tested,
+       'test layer 1'::text description,
+       TT_yt_yvi02_disturbance_copyText('{BURN, WIND, INSECT}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '1') = 'BURN' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '132.2'::text number,
+       'TT_yt_yvi02_disturbance_copyText'::text function_tested,
+       'Test second disturbance'::text description,
+       TT_yt_yvi02_disturbance_copyText('{BURN, WIND, INSECT}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '2') = 'WIND' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '132.3'::text number,
+       'TT_yt_yvi02_disturbance_copyText'::text function_tested,
+       'Test third is null'::text description,
+       TT_yt_yvi02_disturbance_copyText('{BURN, WIND, INSECT}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '3') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '132.4'::text number,
+       'TT_yt_yvi02_disturbance_copyText'::text function_tested,
+       'test layer 2'::text description,
+       TT_yt_yvi02_disturbance_copyText('{BURN, WIND, INSECT}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '2', '1') = 'INSECT' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '132.5'::text number,
+       'TT_yt_yvi02_disturbance_copyText'::text function_tested,
+       'test null year'::text description,
+       TT_yt_yvi02_disturbance_copyText('{BURN, WIND, INSECT}', '{1990, 1995, null}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '2', '1') = 'BURN' passed
+---------------------------------------------------------
+ -- TT_yt_yvi02_disturbance_mapText
+---------------------------------------------------------
+UNION ALL
+SELECT '133.1'::text number,
+       'TT_yt_yvi02_disturbance_mapText'::text function_tested,
+       'test layer 1'::text description,
+       TT_yt_yvi02_disturbance_mapText('{BURN, WIND, INSECT}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '1', '{''BURN'',''WIND'',''INSECT''}', '{''B'',''W'',''I''}') = 'B' passed
+---------------------------------------------------------
+ -- TT_yt_yvi02_disturbance_matchList
+---------------------------------------------------------
+UNION ALL
+SELECT '134.1'::text number,
+       'TT_yt_yvi02_disturbance_matchList'::text function_tested,
+       'test layer 1'::text description,
+       TT_yt_yvi02_disturbance_matchList('{BURN, WIND, INSECT}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '1', '{''BURN''}') passed
+---------------------------------------------------------
+ -- TT_yt_yvi02_disturbance_notNull
+---------------------------------------------------------
+UNION ALL
+SELECT '135.1'::text number,
+       'TT_yt_yvi02_disturbance_notNull'::text function_tested,
+       'test layer 1'::text description,
+       TT_yt_yvi02_disturbance_notNull('{BURN, WIND, INSECT}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '1') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '135.2'::text number,
+       'TT_yt_yvi02_disturbance_notNull'::text function_tested,
+       'test layer 1'::text description,
+       TT_yt_yvi02_disturbance_notNull('{NULL, WIND, INSECT}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '1') IS FALSE passed
+---------------------------------------------------------
+ -- TT_yt_yvi02_disturbance_copyInt
+---------------------------------------------------------
+UNION ALL
+SELECT '136.1'::text number,
+       'TT_yt_yvi02_disturbance_copyInt'::text function_tested,
+       'test layer 1'::text description,
+       TT_yt_yvi02_disturbance_copyInt('{1, 2, 3}', '{1990, 1995, 1980}', '{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '1') = 1 passed
+---------------------------------------------------------
+ -- TT_yt_yvi02_disturbance_hasCountOfLayers
+---------------------------------------------------------
+UNION ALL
+SELECT '137.1'::text number,
+       'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,
+       'test 1'::text description,
+       TT_yt_yvi02_disturbance_hasCountOfLayers('{''Entire polygon disturbed'', ''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '2', 'TRUE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '137.2'::text number,
+       'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,
+       'test 2'::text description,
+       TT_yt_yvi02_disturbance_hasCountOfLayers('{''Layer 1 disturbance'', ''Layer 2 disturbance''}', '1', '1', 'TRUE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '137.3'::text number,
+       'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,
+       'test 3'::text description,
+       TT_yt_yvi02_disturbance_hasCountOfLayers('{''Entire polygon disturbed'', ''Layer 2 disturbance'', ''Layer 2 disturbance''}', '2', '2', 'FALSE') passed
+---------------------------------------------------------
+UNION ALL
+SELECT '137.4'::text number,
+       'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,
+       'test null'::text description,
+       TT_yt_yvi02_disturbance_hasCountOfLayers('{''Entire polygon disturbed'', ''Layer 2 disturbance'', NULL}', '2', '2', 'TRUE') passed
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
