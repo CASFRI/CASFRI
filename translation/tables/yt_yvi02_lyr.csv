@@ -1,6 +1,6 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 0,ROW_TRANSLATION_RULE,NA,"notEmpty({species_1, species_2, species_3, species_4}, TRUE)",NA,"Translate only rows where sp1, sp2, sp3 or sp4 is not empty.", TRUE
-1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notEmpty(map_sheet_id);notEmpty(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(soil_moist_reg);notEmpty(soil_moist_reg);matchList(soil_moist_reg,{'Dry','Fresh','Moderately Dry','Moderately Fresh','Moderately Moist','Moderately Wet','Moist','Very Fresh','Very Moist','Very Wet','Wet'}, FALSE, FALSE, TRUE, FALSE)","mapText(soil_moist_reg, {'Dry','Fresh','Moderately Dry','Moderately Fresh','Moderately Moist','Moderately Wet','Moist','Very Fresh','Very Moist','Very Wet','Wet'}, {'DRY','MESIC','DRY','MESIC','MOIST','WET','MOIST','MESIC','MOIST','WET','WET'}, FALSE, FALSE)",Translate the polygons soil moisture if it is available,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,STRUCTURE_RANGE,double precision,"matchList(stand_structure, 'Complex'|-8887)","XMinusYDouble(max_height, min_height)",Maximum height minus minimum height for complex stands,TRUE
@@ -13,13 +13,13 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 11,PRODUCTIVITY,text,false(|UNKNOWN_VALUE),nothingText(),No productivity info,TRUE
 12,PRODUCTIVITY_TYPE,text,false(|UNKNOWN_VALUE),nothingText(),No productivity info,TRUE
 13,SPECIES_1,text,"notNull(species_1);notEmpty(species_1);matchTable(species_1, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_1, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
-14,SPECIES_PER_1,integer,"notNull(species_per_1);isNumeric(species_per_1|-9997);isBetween(species_per_1,0,100)",copyInt(species_per_1),Copies source value to SPECIES_PER_1,TRUE
+14,SPECIES_PER_1,integer,"notNull(species_per_1);isNumeric(species_per_1|-9997);isBetween(species_per_1,1,100)",copyInt(species_per_1),Copies source value to SPECIES_PER_1,TRUE
 15,SPECIES_2,text,"notNull(species_2);notEmpty(species_2);matchTable(species_2, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_2, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
-16,SPECIES_PER_2,integer,"notNull(species_per_2);isNumeric(species_per_2|-9997);isBetween(species_per_2,0,100)",copyInt(species_per_2),Copies source value to SPECIES_PER_2,TRUE
+16,SPECIES_PER_2,integer,"notNull(species_per_2);isNumeric(species_per_2|-9997);isBetween(species_per_2,1,100)",copyInt(species_per_2),Copies source value to SPECIES_PER_2,TRUE
 17,SPECIES_3,text,"notNull(species_3);notEmpty(species_3);matchTable(species_3, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_3, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_3 using lookup table,TRUE
-18,SPECIES_PER_3,integer,"notNull(species_per_3);isNumeric(species_per_3|-9997);isBetween(species_per_3,0,100)",copyInt(species_per_3),Copies source value to SPECIES_PER_3,TRUE
+18,SPECIES_PER_3,integer,"notNull(species_per_3);isNumeric(species_per_3|-9997);isBetween(species_per_3,1,100)",copyInt(species_per_3),Copies source value to SPECIES_PER_3,TRUE
 19,SPECIES_4,text,"notNull(species_4);notEmpty(species_4);matchTable(species_4, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_4, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_4 using lookup table,TRUE
-20,SPECIES_PER_4,integer,"notNull(species_per_4);isNumeric(species_per_4|-9997);isBetween(species_per_4,0,100)",copyInt(species_per_4),Copies source value to SPECIES_PER_4,TRUE
+20,SPECIES_PER_4,integer,"notNull(species_per_4);isNumeric(species_per_4|-9997);isBetween(species_per_4,1,100)",copyInt(species_per_4),Copies source value to SPECIES_PER_4,TRUE
 21,SPECIES_5,text,false(),nothingText(),Maps source value to SPECIES_5 using lookup table,TRUE
 22,SPECIES_PER_5,integer,false(),nothingInt(),Copies source value to SPECIES_PER_5,TRUE
 23,SPECIES_6,text,false(),nothingText(),Attribute does not occur,TRUE
@@ -35,4 +35,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 33,ORIGIN_UPPER,integer,"notNull({age, ref_year});isInt(age);isInt(ref_year);isGreaterThan(ref_year, 1|-8888);isXMinusYBetween(ref_year, age, 1000, 2020)","XMinusYInt(ref_year, age)","Calculates origin as reference year minus age. Validations checks both attributes have a value, returns null_value if ref_year is zero.",TRUE
 34,ORIGIN_LOWER,integer,"notNull({age, ref_year});isInt(age);isInt(ref_year);isGreaterThan(ref_year, 1|-8888);isXMinusYBetween(ref_year, age, 1000, 2020)","XMinusYInt(ref_year, age)",Calculates origin as reference year minus age,TRUE
 35,SITE_CLASS,text,"notNull(site_class);notEmpty(site_class);matchList(site_class,{'Low','Poor','Medium','Good'})","mapText(site_class, {'Low','Poor','Medium','Good'}, {'POOR','POOR','MEDIUM','GOOD'})",Maps source value to SITE_CLASS,TRUE
-36,SITE_INDEX,double precision,"notNull(site_index);isNumeric(site_index);isBetween(site_index,'0.1',40)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
+36,SITE_INDEX,double precision,"notNull(site_index);isNumeric(site_index);isBetween(site_index, 0.1, 40)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
