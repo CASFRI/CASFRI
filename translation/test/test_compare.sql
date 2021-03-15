@@ -55,7 +55,7 @@ UNION ALL
 SELECT '2.0' number, 
        'Compare "dst_all_new_ordered" and "dst_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''dst_all_test'', ''casfri50_test'' , ''dst_all_new_ordered'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''dst_all_test'', ''casfri50_test'' , ''dst_all_new_ordered'', ''cas_id, layer'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.dst_all_new_ordered a 
       FULL OUTER JOIN casfri50_test.dst_all_test b USING (cas_id, layer)) foo
@@ -64,16 +64,16 @@ UNION ALL
 SELECT '3.0' number, 
        'Compare "eco_all_new_ordered" and "eco_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''eco_all_test'', ''casfri50_test'' , ''eco_all_new_ordered'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''eco_all_test'', ''casfri50_test'' , ''eco_all_new_ordered'', ''cas_id, layer'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.eco_all_new_ordered a 
-      FULL OUTER JOIN casfri50_test.eco_all_test b USING (cas_id)) foo
+      FULL OUTER JOIN casfri50_test.eco_all_test b USING (cas_id, layer)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.0' number, 
        'Compare "lyr_all_new_ordered" and "lyr_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''lyr_all_test'', ''casfri50_test'' , ''lyr_all_new_ordered'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''lyr_all_test'', ''casfri50_test'' , ''lyr_all_new_ordered'', ''cas_id, layer'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.lyr_all_new_ordered a 
       FULL OUTER JOIN casfri50_test.lyr_all_test b USING (cas_id, layer)) foo
@@ -82,7 +82,7 @@ UNION ALL
 SELECT '5.0' number, 
        'Compare "nfl_all_new_ordered" and "nfl_all_test"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''nfl_all_test'', ''casfri50_test'' , ''nfl_all_new_ordered'', ''cas_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_test'' , ''nfl_all_test'', ''casfri50_test'' , ''nfl_all_new_ordered'', ''cas_id, layer'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_test.nfl_all_new_ordered a 
       FULL OUTER JOIN casfri50_test.nfl_all_test b USING (cas_id, layer)) foo
