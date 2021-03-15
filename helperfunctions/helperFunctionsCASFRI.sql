@@ -237,6 +237,9 @@ RETURNS TABLE (attribute text,
     keys text[];
     row1val text;
     row2val text;
+    newrow1val numeric;
+    newrow2val numeric;
+    roundDigits int;
   BEGIN
     attribute = 'row';
 
@@ -258,7 +261,23 @@ RETURNS TABLE (attribute text,
     FOR i IN 1..cardinality(keys) LOOP
       row1val = row1 -> keys[i];
       row2val = row2 -> keys[i];
-      IF (softGeomCmp AND TT_IsJsonGeometry(row1val) AND TT_IsJsonGeometry(row2val) AND NOT ST_Equals(ST_GeomFromGeoJSON(row1val), ST_GeomFromGeoJSON(row2val))) OR (NOT softGeomCmp AND row1val != row2val) THEN
+      IF TT_IsNumeric(row1val) AND TT_IsNumeric(row2val) AND row1val != row2val THEN
+        -- Try truncating both values to the same number of digits (up to 6)
+        roundDigits = greatest(least(scale(row1val::numeric), scale(row2val::numeric)), 6);
+        newrow1val = rtrim(rtrim(trunc(row1val::numeric, roundDigits)::text, '0'), '.')::numeric;
+        newrow2val = rtrim(rtrim(trunc(row2val::numeric, roundDigits)::text, '0'), '.')::numeric;
+        -- If truncating does not make them equal, round them
+        IF newrow1val != newrow2val THEN
+          row1val = rtrim(rtrim(round(row1val::numeric, roundDigits)::text, '0'), '.');
+          row2val = rtrim(rtrim(round(row2val::numeric, roundDigits)::text, '0'), '.');
+        ELSE
+           row1val = newrow1val::text;
+           row2val = newrow2val::text;
+        END IF;
+      END IF;
+      IF (softGeomCmp AND TT_IsJsonGeometry(row1val) AND TT_IsJsonGeometry(row2val) AND 
+          NOT ST_Equals(ST_GeomFromGeoJSON(row1val), ST_GeomFromGeoJSON(row2val))) OR 
+          (NOT softGeomCmp AND row1val != row2val) THEN
         attribute = keys[i];
         row_1 = row1val::text;
         row_2 = row2val::text;
@@ -349,10 +368,11 @@ RETURNS TABLE (row_id text,
     END LOOP;
     
     --SELECT regexp_replace(regexp_replace('aa, bb', '\s*,\s*', '::text || ''_'' || ', 'g'), '$', '::text ', 'g')
-    query = 'SELECT ' || regexp_replace(regexp_replace(uniqueIDCol, '\s*,\s*', '::text || ''_'' || ', 'g'), '$', '::text ', 'g') || ' row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b), ' || softGeomCmp::text || ')).* ' ||
-            'FROM ' || schemaName1 || '.' || tableName1 || ' a ' ||
-            'FULL OUTER JOIN ' || schemaName2 || '.' || tableName2 || ' b USING (' || uniqueIDCol || ')' ||
+    query = 'SELECT ' || regexp_replace(regexp_replace(uniqueIDCol, '\s*,\s*', '::text || ''_'' || ', 'g'), '$', '::text', 'g') || ' row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b), ' || softGeomCmp::text || ')).* ' || CHR(10) ||
+            'FROM ' || schemaName1 || '.' || tableName1 || ' a ' || CHR(10) ||
+            'FULL OUTER JOIN ' || schemaName2 || '.' || tableName2 || ' b USING (' || uniqueIDCol || ')' || CHR(10) ||
             'WHERE NOT coalesce(ROW(a.*) = ROW(b.*), FALSE);';
+RAISE NOTICE 'query=%', query;
     RETURN QUERY EXECUTE query;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
