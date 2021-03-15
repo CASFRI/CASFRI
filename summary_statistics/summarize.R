@@ -7,13 +7,13 @@ library(summarytools)
 
 ################################################################################
 # Select tables
-cas_tables = c("cas", "dst", "eco", "lyr", "nfl")
+cas_tables = "dst" # c("cas", "dst", "eco", "lyr", "nfl")
 lyr_vars = c("soil_moist_reg", "structure_per", "structure_range", "layer", "layer_rank",
     "crown_closure_upper", "crown_closure_lower", "height_upper", "height_lower",
     "productivity", "productivity_type", "species_1", "species_per_1", "species_2",
     "species_per_2", "species_3", "species_per_3", "species_4", "species_per_4", "species_5",
     "species_per_5", "species_6", "species_per_6", "species_7", "species_per_7", "species_8",
-    "species_per_8", "species_9", "species_per_9", "species_10", "species_per_10",
+    "species_per_8", "species_9", "species_per_9", "species_10", "species_per_10", 
     "origin_upper", "origin_lower", "site_class", "site_index")
 nfl_vars = c("soil_moist_reg", "structure_per", "layer", "layer_rank",
     "crown_closure_upper", "crown_closure_lower", "height_upper", "height_lower",
@@ -61,11 +61,10 @@ cat('---
 title: ', toupper(fi), ' Attributes
 date: "Updated: `r format(Sys.time(), \'%d %B %Y\')`"
 output:
-  html_document:
-    code_folding: hide
+  html_document:  
     toc: true
     toc_float:
-      toc_collapsed: true
+      collapsed: false
     css: styles.css
 ---
 
