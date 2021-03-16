@@ -4413,7 +4413,7 @@ RETURNS boolean AS $$
     -- BC
     -----------
     -- assign source values to variables depending on the inventory id
-    IF inventory_id IN('BC08','BC10') THEN
+    IF inventory_id IN('BC08','BC10', 'BC11', 'BC12') THEN
       _inventory_standard_cd = _source_vals[1]; 
       _land_cover_class_cd_1 = _source_vals[2];
       _bclcs_level_4 = _source_vals[3];
@@ -6849,7 +6849,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- getIndex
 -- productivity
 -- 
--- If productivity is a non-productive type, then set l1_species to a string.
+-- If productivity is a non-productive type (FW), then set l1_species to a string.
 -- Then run lyr_layer_translation as normal.
 -- This creates a layer for l1_species when FW is present. Since species never occur
 -- when productivity is FW, any FW values should always be layer 1.
