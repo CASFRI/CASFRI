@@ -4,7 +4,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"ns_nsi01_countOfNotNull({species_1_layer1, species_2_layer1, species_3_layer1, species_4_layer1 }, {species_1_layer2}, fornon, layer)",Counts number of layers based on the presence of a not null value for attributes representing each layer. Custom function decides if NFL layer is present based on rules in NFL table.,TRUE
-5,LAYER_RANK,integer,false(|-8887),nothingInt(),Attribute does not occur,TRUE
+5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,"matchList(fornon,{83,88,89,5}|-8887)","mapInt(fornon, {83,88,89,5}, {99,74,100,24})",Crown closure upper and lower extracted from fornon descriptions in manual.,TRUE
 7,CROWN_CLOSURE_LOWER,integer,"matchList(fornon,{83,88,89,5}|-8887)","mapInt(fornon, {83,88,89,5}, {25,1,75,1})",Crown closure upper and lower extracted from fornon descriptions in manual.,TRUE
 8,HEIGHT_UPPER,double precision,"matchList(fornon,{5}|-8887)","mapDouble(fornon, {5}, {'0.99'})",Height upper and lower extracted from fornon descriptions in manual.,TRUE
