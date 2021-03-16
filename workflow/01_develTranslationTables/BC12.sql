@@ -123,6 +123,12 @@ SELECT * FROM TT_Translate_bc12_lyr_devel('rawfri', 'bc12_l2_to_bc_l1_map_2000')
 SELECT TT_CreateMappingView('rawfri', 'bc12', 3, 'bc', 1, 2000);
 SELECT * FROM TT_Translate_bc12_nfl_devel('rawfri', 'bc12_l3_to_bc_l1_map_2000'); -- 4 s.
 
+SELECT TT_CreateMappingView('rawfri', 'bc12', 4, 'bc', 1, 200);
+SELECT * FROM TT_Translate_bc12_nfl_devel('rawfri', 'bc12_l4_to_bc_l1_map_200'); -- 4 s.
+
+SELECT TT_CreateMappingView('rawfri', 'bc12', 5, 'bc', 1, 200);
+SELECT * FROM TT_Translate_bc12_nfl_devel('rawfri', 'bc12_l5_to_bc_l1_map_200'); -- 4 s.
+
 SELECT * FROM TT_Translate_bc12_geo_devel('rawfri', 'bc12_l1_to_bc_l1_map_2000'); -- 2 s.
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
