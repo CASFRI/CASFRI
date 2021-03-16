@@ -3,8 +3,8 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(orig_stand_id);notNull(poly_id),"padConcat({inventory_id, src_filename, '', orig_stand_id, poly_id}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
 2,SOIL_MOIST_REG,text,"notNull(soil_moist_reg);notEmpty(soil_moist_reg);matchList(soil_moist_reg,{'a','A','d','D','m','M','w','W'})","mapText(soil_moist_reg, {'a','A','d','D','m','M','w','W'}, {'AQUATIC','AQUATIC','DRY','DRY','MESIC','MESIC','WET','WET'})",Map source attribute to SOIL_MOIST_REG,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
-4,STRUCTURE_RANGE,double precision,false(),nothingDouble(),To be added for YT03,TRUE
-5,LAYER,integer,true(),copyInt(1),Only 1 layer possible in YT. Every polygon is either LYR or NFL.,TRUE
+4,STRUCTURE_RANGE,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
+5,LAYER,integer,true(),copyInt(1),Only 1 layer possible in. Every polygon is either LYR or NFL.,TRUE
 6,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
 7,CROWN_CLOSURE_UPPER,integer,"notNull(crown_closure_upper);isInt(crown_closure_upper);isBetween(crown_closure_upper,0,100)",copyInt(crown_closure_upper),Copies source value to CROWN_CLOSURE_UPPER,TRUE
 8,CROWN_CLOSURE_LOWER,integer,"notNull(crown_closure_lower);isInt(crown_closure_lower);isBetween(crown_closure_lower,0,100)",copyInt(crown_closure_lower),Copies source value to CROWN_CLOSURE_LOWER,TRUE
@@ -13,15 +13,15 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 11,PRODUCTIVITY,text,false(|UNKNOWN_VALUE),nothingText(),No productivity info,TRUE
 12,PRODUCTIVITY_TYPE,text,false(|UNKNOWN_VALUE),nothingText(),No productivity info,TRUE
 13,SPECIES_1,text,"notNull(species_1);notEmpty(species_1);matchTable(species_1, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_1, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
-14,SPECIES_PER_1,integer,"notNull(species_per_1);isNumeric(species_per_1|-9997);isBetween(species_per_1,0,100)",copyInt(species_per_1),Copies source value to SPECIES_PER_1,TRUE
+14,SPECIES_PER_1,integer,"notNull(species_per_1);isNumeric(species_per_1|-9997);isBetween(species_per_1,1,100)",copyInt(species_per_1),Copies source value to SPECIES_PER_1,TRUE
 15,SPECIES_2,text,"notNull(species_2);notEmpty(species_2);matchTable(species_2, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_2, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
-16,SPECIES_PER_2,integer,"notNull(species_per_2);isNumeric(species_per_2|-9997);isBetween(species_per_2,0,100)",copyInt(species_per_2),Copies source value to SPECIES_PER_2,TRUE
+16,SPECIES_PER_2,integer,"notNull(species_per_2);isNumeric(species_per_2|-9997);isBetween(species_per_2,1,100)",copyInt(species_per_2),Copies source value to SPECIES_PER_2,TRUE
 17,SPECIES_3,text,"notNull(species_3);notEmpty(species_3);matchTable(species_3, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_3, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_3 using lookup table,TRUE
-18,SPECIES_PER_3,integer,"notNull(species_per_3);isNumeric(species_per_3|-9997);isBetween(species_per_3,0,100)",copyInt(species_per_3),Copies source value to SPECIES_PER_3,TRUE
+18,SPECIES_PER_3,integer,"notNull(species_per_3);isNumeric(species_per_3|-9997);isBetween(species_per_3,1,100)",copyInt(species_per_3),Copies source value to SPECIES_PER_3,TRUE
 19,SPECIES_4,text,"notNull(species_4);notEmpty(species_4);matchTable(species_4, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_4, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_4 using lookup table,TRUE
-20,SPECIES_PER_4,integer,"notNull(species_per_4);isNumeric(species_per_4|-9997);isBetween(species_per_4,0,100)",copyInt(species_per_4),Copies source value to SPECIES_PER_4,TRUE
-21,SPECIES_5,text,false(),nothingText(),Maps source value to SPECIES_5 using lookup table,TRUE
-22,SPECIES_PER_5,integer,false(),nothingInt(),Copies source value to SPECIES_PER_5,TRUE
+20,SPECIES_PER_4,integer,"notNull(species_per_4);isNumeric(species_per_4|-9997);isBetween(species_per_4,1,100)",copyInt(species_per_4),Copies source value to SPECIES_PER_4,TRUE
+21,SPECIES_5,text,false(),nothingText(),Attribute does not occur,TRUE
+22,SPECIES_PER_5,integer,false(),nothingInt(),Attribute does not occur,TRUE
 23,SPECIES_6,text,false(),nothingText(),Attribute does not occur,TRUE
 24,SPECIES_PER_6,integer,false(),nothingInt(),Attribute does not occur,TRUE
 25,SPECIES_7,text,false(),nothingText(),Attribute does not occur,TRUE
@@ -33,6 +33,6 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 31,SPECIES_10,text,false(),nothingText(),Attribute does not occur,TRUE
 32,SPECIES_PER_10,integer,false(),nothingInt(),Attribute does not occur,TRUE
 33,ORIGIN_UPPER,integer,"notNull({age, ref_year});isInt(age);isInt(ref_year);isGreaterThan(ref_year, 1|-8888);isXMinusYBetween(ref_year, age, 1000, 2020)","XMinusYInt(ref_year, age)","Calculates origin as reference year minus age. Validations checks both attributes have a value, returns null_value if ref_year is zero.",TRUE
-34,ORIGIN_LOWER,integer,"notNull({age, ref_year});isInt(age);isInt(ref_year);isGreaterThan(ref_year, 1|-8888);isXMinusYBetween(ref_year, age, 1000, 2020)","XMinusYInt(ref_year, age)",Calculates origin as reference year minus age,TRUE
+34,ORIGIN_LOWER,integer,"notNull({age, ref_year});isInt(age);isInt(ref_year);isGreaterThan(ref_year, 1|-8888);isXMinusYBetween(ref_year, age, 1000, 2020)","XMinusYInt(ref_year, age)","Calculates origin as reference year minus age. Validations checks both attributes have a value, returns null_value if ref_year is zero.",TRUE
 35,SITE_CLASS,text,"notNull(site_class);notEmpty(site_class);matchList(site_class,{'L','P','M','G'})","mapText(site_class, {'L','P','M','G'}, {'POOR','POOR','MEDIUM','GOOD'})",Maps source value to SITE_CLASS,TRUE
-36,SITE_INDEX,double precision,"notNull(site_index);isNumeric(site_index);isBetween(site_index,'0.1',40)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
+36,SITE_INDEX,double precision,"notNull(site_index);isNumeric(site_index);isBetween(site_index, 0.1, 40)",copyDouble(site_index),Copies source value to SITE_INDEX,TRUE
