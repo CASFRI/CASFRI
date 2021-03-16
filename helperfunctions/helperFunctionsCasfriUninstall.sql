@@ -65,6 +65,9 @@ DROP FUNCTION IF EXISTS TT_pc02_hasCountOfNotNull(text, text, text, text, text, 
 DROP FUNCTION IF EXISTS TT_yt_wetland_validation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nb_hasCountOfNotNull(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fim_species_validation(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_mapText(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_notNull(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_hasCountOfLayers(text, text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -152,6 +155,10 @@ DROP FUNCTION IF EXISTS TT_ns_lyr_layer_translation(text, text, text, text, text
 DROP FUNCTION IF EXISTS TT_on_lyr_layer_translation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfvi_lyr_layer_translation(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_ini03_src_inv_area_translation(text, text);
+DROP FUNCTION IF EXISTS TT_yt_yvi02_stand_structure_translation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyText(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyInt(text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_matchList(text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
