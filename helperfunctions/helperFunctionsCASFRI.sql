@@ -6849,7 +6849,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- getIndex
 -- productivity
 -- 
--- If productivity is a non-productive type (FW), then set l1_species to a string.
+-- If productivity is a non-productive type, then set l1_species to a string.
 -- Then run lyr_layer_translation as normal.
 -- This creates a layer for l1_species when FW is present. Since species never occur
 -- when productivity is FW, any FW values should always be layer 1.
