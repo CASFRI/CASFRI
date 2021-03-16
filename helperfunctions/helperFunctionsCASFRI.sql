@@ -1321,7 +1321,8 @@ RETURNS TABLE (ttable text,
 					   'qc_ipf05_' || lower(schemaName) || ', ' ||
                        'sk_sfv01_' || lower(schemaName) || ', ' || 
                        'sk_utm01_' || lower(schemaName) || ', ' || 
-                       'yt_yvi01_' || lower(schemaName);
+                       'yt_yvi01_' || lower(schemaName) || ', ' || 
+                       'yt_yvi02_' || lower(schemaName);
       schemaName = 'translation';
                        
     END IF;
@@ -1486,30 +1487,31 @@ RETURNS text AS $$
                   WHEN rulelc = 'qc_ipf_not_etage_layer1_validation' THEN '-8887'
                   WHEN rulelc = 'qc_ipf_not_etage_dens_layers_validation' THEN '-8887'
                   WHEN rulelc = 'sk_utm01_species_percent_validation' THEN '-9997'
-                  WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'vri01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'fvi01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'ns_nsi01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'vri01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'fvi01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'fvi01_structure_per_validation' THEN '-8887'
-                  WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'pe_pei01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'qc_prg4_lengthMatchList' THEN '-9998'
-                  WHEN rulelc = 'qc_prg5_species_matchTable_validation' THEN '-9998'
-                  WHEN rulelc = 'sk_utm_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'sfv01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'pe_pei01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN '-9998'
+                  WHEN rulelc = 'qc_prg5_species_matchtable_validation' THEN '-9998'
+                  WHEN rulelc = 'sk_utm_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'sfv01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'ns_nsi01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'nl_nli01_origin_lower_validation' THEN '-8886'
-                  WHEN rulelc = 'nl_nli01_isCommercial' THEN '-8887'
-                  WHEN rulelc = 'nl_nli01_isNonCommercial' THEN '-8887'
-                  WHEN rulelc = 'nl_nli01_isForest' THEN '-8887'
-                  WHEN rulelc = 'qc_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'nl_nli01_iscommercial' THEN '-8887'
+                  WHEN rulelc = 'nl_nli01_isnoncommercial' THEN '-8887'
+                  WHEN rulelc = 'nl_nli01_isforest' THEN '-8887'
+                  WHEN rulelc = 'qc_hascountofnotnull' THEN '-8886'
 				  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
-				  WHEN rulelc = 'pc02_hasCountOfNotNull' THEN '-8886'
+				  WHEN rulelc = 'pc02_hascountofnotnull' THEN '-8886'
 				  WHEN rulelc = 'bc_height_validation' THEN '-9997'
 				  WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN '-9998'
 				  WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN '-8888'
 				  WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN '-8887'
+				  WHEN rulelc = 'row_translation_rule_nt_lyr' THEN '-9997'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1523,13 +1525,13 @@ RETURNS text AS $$
                   WHEN rulelc = 'yvi01_nfl_soil_moisture_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'avi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'qc_prg4_lengthMatchList' THEN 'NOT_IN_SET'
-                  WHEN rulelc = 'nl_nli01_isForest' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_species_matchTable_validation' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'qc_ipf_wetland_validation' THEN 'NOT_IN_SET'
-                  WHEN rulelc = 'nl_nli01_isCommercial' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'nl_nli01_isNonCommercial' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'nl_nli01_isForest' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_iscommercial' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_isnoncommercial' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg3_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_wetland_validation' THEN 'NOT_APPLICABLE'
@@ -1550,6 +1552,7 @@ RETURNS text AS $$
 				  WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN 'NOT_IN_SET'
 				  WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN 'NULL_VALUE'
 				  WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'row_translation_rule_nt_lyr' THEN 'INVALID_VALUE'
 				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -4252,7 +4255,7 @@ RETURNS boolean AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_bc_height_validation(text, text, text, text)
+-- TT_bc_height(text, text, text, text)
 --
 -- proj_height_1 - species 1 height
 -- proj_height_2 - species 2 height
@@ -4294,18 +4297,18 @@ RETURNS double precision AS $$
       RETURN NULL;
     END IF;
     IF proj_height_1 IS NULL THEN
-      RETURN _proj_height_2;
+      RETURN round(_proj_height_2::numeric, 1);
     END IF;
     IF proj_height_2 IS NULL THEN
-      RETURN _proj_height_1;
+      RETURN round(_proj_height_1::numeric, 1);
     END IF;
     
     -- If both percent values are zero, return the mean of the heights.
     IF _species_pct_1 = 0 AND _species_pct_2 = 0 THEN
-      RETURN (_proj_height_1 + _proj_height_2) / 2;
+      RETURN round(((_proj_height_1 + _proj_height_2) / 2)::numeric, 1);
     END IF;
     
-    RETURN ((_proj_height_1 * (_species_pct_1/100)) / ((_species_pct_1 + _species_pct_2)/100)) + ((_proj_height_2 * (_species_pct_2/100)) / ((_species_pct_1 + _species_pct_2)/100));
+    RETURN round((((_proj_height_1 * (_species_pct_1/100)) / ((_species_pct_1 + _species_pct_2)/100)) + ((_proj_height_2 * (_species_pct_2/100)) / ((_species_pct_1 + _species_pct_2)/100)))::numeric, 1);
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -4479,9 +4482,9 @@ RETURNS boolean AS $$
 	---------
 	-- assign source values to variables depending on the inventory id
     IF inventory_id IN('YT03') THEN
-      _yt03_nat_non_veg = source_vals[1];
-      _yt03_non_for_anth = source_vals[2];
-      _yt03_non_for_veg = source_vals[3];
+      _yt03_nat_non_veg = _source_vals[1];
+      _yt03_non_for_anth = _source_vals[2];
+      _yt03_non_for_veg = _source_vals[3];
     END IF;
 	
 	-- run validations
@@ -6846,7 +6849,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- getIndex
 -- productivity
 -- 
--- If productivity is a non-productive type (FW), then set l1_species to a string.
+-- If productivity is a non-productive type, then set l1_species to a string.
 -- Then run lyr_layer_translation as normal.
 -- This creates a layer for l1_species when FW is present. Since species never occur
 -- when productivity is FW, any FW values should always be layer 1.
