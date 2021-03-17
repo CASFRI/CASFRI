@@ -27,18 +27,18 @@ x = RPostgreSQL::dbGetQuery(con, 'SELECT cas_id, inventory_id, casfri_area, casf
 dbDisconnect(con)
 invids = sort(unique(x$inventory_id))
 
-z = tibble(values=invids, src_area=0, src_area_8888=0, src_area_8887=0, src_area_8886=0, src_area_9997=0, cas_area=0, cas_perim=0, area_diff=0) 
+z = tibble(inventory=invids, src_area=0, src_area_8888=0, src_area_8887=0, src_area_8886=0, src_area_9997=0, cas_area=0, cas_perim=0, area_diff=0) 
 for (i in 1:length(invids)) {
     cat(invids[i],'...\n'); flush.console()
     casids = x$cas_id[x$inventory_id==invids[i]]
     x1 = filter(x, cas_id %in% casids)
-    z[i,'src_area'] = mean(x1$src_inv_area[x$src_inv_area>0.01])
-    z[i,'src_area_8888'] = mean(x1$src_inv_area[x$src_inv_area==-8888])
-    z[i,'src_area_8887'] = mean(x1$src_inv_area[x$src_inv_area==-8887])
-    z[i,'src_area_8886'] = mean(x1$src_inv_area[x$src_inv_area==-8886])
-    z[i,'src_area_9997'] = mean(x1$src_inv_area[x$src_inv_area==-9997])
-    z[i,'cas_area'] = mean(x1$casfri_area[x$casfri_area>0.01])
-    z[i,'cas_perim'] = mean(x1$casfri_perimeter[x$casfri_perimeter>0.01])
+    z[i,'src_area'] = mean(x1$src_inv_area[x1$src_inv_area>0.01])
+    z[i,'src_area_8888'] = mean(x1$src_inv_area[x1$src_inv_area==-8888])
+    z[i,'src_area_8887'] = mean(x1$src_inv_area[x1$src_inv_area==-8887])
+    z[i,'src_area_8886'] = mean(x1$src_inv_area[x1$src_inv_area==-8886])
+    z[i,'src_area_9997'] = mean(x1$src_inv_area[x1$src_inv_area==-9997])
+    z[i,'cas_area'] = mean(x1$casfri_area[x1$casfri_area>0.01])
+    #z[i,'cas_perim'] = mean(x1$casfri_perimeter[x1$casfri_perimeter>0.01])
 }
 
 z$area_diff = round((z$src_area - z$cas_area)/z$src_area*100,3)
