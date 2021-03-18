@@ -2275,7 +2275,7 @@ UNION ALL
 SELECT '53.2'::text number,
        'TT_bc_height'::text function_tested,
        'Test with all values present, different weights'::text description,
-       TT_bc_height('4', '1', '75', '25') = 3.25 passed
+       TT_bc_height('4', '1', '75', '25') = 3.3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.3'::text number,
@@ -2287,7 +2287,7 @@ UNION ALL
 SELECT '53.4'::text number,
        'TT_bc_height'::text function_tested,
        'Test with other zero height'::text description,
-       TT_bc_height('0', '1', '75', '25') = 0.25 passed
+       TT_bc_height('0', '1', '75', '25') = 0.3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '53.5'::text number,
