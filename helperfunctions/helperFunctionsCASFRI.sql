@@ -4786,6 +4786,7 @@ CREATE OR REPLACE FUNCTION TT_avi01_non_for_veg_translation(
 RETURNS text AS $$
   DECLARE
     _nfl_height double precision;
+    _nfl_code text;
   BEGIN
     PERFORM TT_ValidateParams('TT_avi01_non_for_veg_translation',
                               ARRAY['nfl_code', nfl_code, 'text',
@@ -5843,6 +5844,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text,text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_countOfNotNull(
   spec1 text,
+  spec2 text,
   spec3 text,
   spec4 text,
   spec5 text,
