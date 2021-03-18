@@ -237,6 +237,9 @@ RETURNS TABLE (attribute text,
     keys text[];
     row1val text;
     row2val text;
+    newrow1val numeric;
+    newrow2val numeric;
+    roundDigits int;
   BEGIN
     attribute = 'row';
 
@@ -258,7 +261,23 @@ RETURNS TABLE (attribute text,
     FOR i IN 1..cardinality(keys) LOOP
       row1val = row1 -> keys[i];
       row2val = row2 -> keys[i];
-      IF (softGeomCmp AND TT_IsJsonGeometry(row1val) AND TT_IsJsonGeometry(row2val) AND NOT ST_Equals(ST_GeomFromGeoJSON(row1val), ST_GeomFromGeoJSON(row2val))) OR (NOT softGeomCmp AND row1val != row2val) THEN
+      IF TT_IsNumeric(row1val) AND TT_IsNumeric(row2val) AND row1val != row2val THEN
+        -- Try truncating both values to the same number of digits (up to 6)
+        roundDigits = greatest(least(scale(row1val::numeric), scale(row2val::numeric)), 6);
+        newrow1val = rtrim(rtrim(trunc(row1val::numeric, roundDigits)::text, '0'), '.')::numeric;
+        newrow2val = rtrim(rtrim(trunc(row2val::numeric, roundDigits)::text, '0'), '.')::numeric;
+        -- If truncating does not make them equal, round them
+        IF newrow1val != newrow2val THEN
+          row1val = rtrim(rtrim(round(row1val::numeric, roundDigits)::text, '0'), '.');
+          row2val = rtrim(rtrim(round(row2val::numeric, roundDigits)::text, '0'), '.');
+        ELSE
+           row1val = newrow1val::text;
+           row2val = newrow2val::text;
+        END IF;
+      END IF;
+      IF (softGeomCmp AND TT_IsJsonGeometry(row1val) AND TT_IsJsonGeometry(row2val) AND 
+          NOT ST_Equals(ST_GeomFromGeoJSON(row1val), ST_GeomFromGeoJSON(row2val))) OR 
+          (NOT softGeomCmp AND row1val != row2val) THEN
         attribute = keys[i];
         row_1 = row1val::text;
         row_2 = row2val::text;
@@ -349,10 +368,11 @@ RETURNS TABLE (row_id text,
     END LOOP;
     
     --SELECT regexp_replace(regexp_replace('aa, bb', '\s*,\s*', '::text || ''_'' || ', 'g'), '$', '::text ', 'g')
-    query = 'SELECT ' || regexp_replace(regexp_replace(uniqueIDCol, '\s*,\s*', '::text || ''_'' || ', 'g'), '$', '::text ', 'g') || ' row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b), ' || softGeomCmp::text || ')).* ' ||
-            'FROM ' || schemaName1 || '.' || tableName1 || ' a ' ||
-            'FULL OUTER JOIN ' || schemaName2 || '.' || tableName2 || ' b USING (' || uniqueIDCol || ')' ||
+    query = 'SELECT ' || regexp_replace(regexp_replace(uniqueIDCol, '\s*,\s*', '::text || ''_'' || ', 'g'), '$', '::text', 'g') || ' row_id, (TT_CompareRows(to_jsonb(a), to_jsonb(b), ' || softGeomCmp::text || ')).* ' || CHR(10) ||
+            'FROM ' || schemaName1 || '.' || tableName1 || ' a ' || CHR(10) ||
+            'FULL OUTER JOIN ' || schemaName2 || '.' || tableName2 || ' b USING (' || uniqueIDCol || ')' || CHR(10) ||
             'WHERE NOT coalesce(ROW(a.*) = ROW(b.*), FALSE);';
+RAISE NOTICE 'query=%', query;
     RETURN QUERY EXECUTE query;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
@@ -6194,7 +6214,36 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species(
+  eta_ess_pc text,
+  species_number text
+)
+RETURNS text AS $$
+  DECLARE
+    code_array text[];
+    sp_code text;
+  BEGIN
+    
+	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
+	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
+	ELSE
+	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
+      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+      sp_code = translate(code_array[species_number::int], '0123456789', '');
+    END IF;
+	
+    IF sp_code IS NULL OR sp_code = '' THEN
+      RETURN NULL;
+    ELSE
+      RETURN sp_code;
+      --RETURN TT_lookupText(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'casfri_species_codes');
+    END IF;
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 CREATE OR REPLACE FUNCTION TT_qc_prg5_species_translation(
   eta_ess_pc text,
   species_number text
@@ -6595,17 +6644,12 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_origin_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_qc_origin_translation(
-  cl_age text,
+  age text,
   an_pro_ori text
 )
 RETURNS int AS $$
-  DECLARE
-    _age int;
-  BEGIN
-    _age = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val', 'l1_age_origin');
-    RETURN an_pro_ori::int - _age;
-  END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+  SELECT an_pro_ori::int - age::int;
+$$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_qc_countOfNotNull(text, text, text)
 --
