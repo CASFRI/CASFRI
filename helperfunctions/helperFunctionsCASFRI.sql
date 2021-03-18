@@ -1341,7 +1341,8 @@ RETURNS TABLE (ttable text,
 					   'qc_ipf05_' || lower(schemaName) || ', ' ||
                        'sk_sfv01_' || lower(schemaName) || ', ' || 
                        'sk_utm01_' || lower(schemaName) || ', ' || 
-                       'yt_yvi01_' || lower(schemaName);
+                       'yt_yvi01_' || lower(schemaName) || ', ' || 
+                       'yt_yvi02_' || lower(schemaName);
       schemaName = 'translation';
                        
     END IF;
@@ -1506,27 +1507,31 @@ RETURNS text AS $$
                   WHEN rulelc = 'qc_ipf_not_etage_layer1_validation' THEN '-8887'
                   WHEN rulelc = 'qc_ipf_not_etage_dens_layers_validation' THEN '-8887'
                   WHEN rulelc = 'sk_utm01_species_percent_validation' THEN '-9997'
-                  WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'vri01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'fvi01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'ns_nsi01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'vri01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'fvi01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'fvi01_structure_per_validation' THEN '-8887'
-                  WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'pe_pei01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'qc_prg4_lengthMatchList' THEN '-9998'
-                  WHEN rulelc = 'qc_prg5_species_matchTable_validation' THEN '-9998'
-                  WHEN rulelc = 'sk_utm_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'sfv01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'pe_pei01_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'on_fim02_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'ns_nsi01_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN '-9998'
+                  WHEN rulelc = 'qc_prg5_species_matchtable_validation' THEN '-9998'
+                  WHEN rulelc = 'sk_utm_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'sfv01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'ns_nsi01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'nl_nli01_origin_lower_validation' THEN '-8886'
-                  WHEN rulelc = 'nl_nli01_isCommercial' THEN '-8887'
-                  WHEN rulelc = 'nl_nli01_isNonCommercial' THEN '-8887'
-                  WHEN rulelc = 'nl_nli01_isForest' THEN '-8887'
-                  WHEN rulelc = 'qc_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
-                  WHEN rulelc = 'pc02_hasCountOfNotNull' THEN '-8886'
-                  WHEN rulelc = 'bc_height_validation' THEN '-9997'
+                  WHEN rulelc = 'nl_nli01_iscommercial' THEN '-8887'
+                  WHEN rulelc = 'nl_nli01_isnoncommercial' THEN '-8887'
+                  WHEN rulelc = 'nl_nli01_isforest' THEN '-8887'
+                  WHEN rulelc = 'qc_hascountofnotnull' THEN '-8886'
+				  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
+				  WHEN rulelc = 'pc02_hascountofnotnull' THEN '-8886'
+				  WHEN rulelc = 'bc_height_validation' THEN '-9997'
+				  WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN '-9998'
+				  WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN '-8888'
+				  WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN '-8887'
+				  WHEN rulelc = 'row_translation_rule_nt_lyr' THEN '-9997'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1540,30 +1545,35 @@ RETURNS text AS $$
                   WHEN rulelc = 'yvi01_nfl_soil_moisture_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'avi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'qc_prg4_lengthMatchList' THEN 'NOT_IN_SET'
-                  WHEN rulelc = 'nl_nli01_isForest' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_species_matchTable_validation' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'qc_ipf_wetland_validation' THEN 'NOT_IN_SET'
-                  WHEN rulelc = 'nl_nli01_isCommercial' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'nl_nli01_isNonCommercial' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'nl_nli01_isForest' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_iscommercial' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_isnoncommercial' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg3_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'ab_avi01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'nl_nli01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'fim_species_validation' THEN 'NOT_IN_SET'
-                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
+				  WHEN rulelc = 'ab_avi01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'nl_nli01_wetland_validation' THEN 'NOT_APPLICABLE'
+ 				  WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
+ 				  WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'fim_species_validation' THEN 'NOT_IN_SET'
+				  WHEN rulelc = 'yvi02_stand_structure_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN 'NOT_IN_SET'
+				  WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN 'NULL_VALUE'
+				  WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'row_translation_rule_nt_lyr' THEN 'INVALID_VALUE'
+				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
@@ -4265,7 +4275,7 @@ RETURNS boolean AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_bc_height_validation(text, text, text, text)
+-- TT_bc_height(text, text, text, text)
 --
 -- proj_height_1 - species 1 height
 -- proj_height_2 - species 2 height
@@ -4307,18 +4317,18 @@ RETURNS double precision AS $$
       RETURN NULL;
     END IF;
     IF proj_height_1 IS NULL THEN
-      RETURN _proj_height_2;
+      RETURN round(_proj_height_2::numeric, 1);
     END IF;
     IF proj_height_2 IS NULL THEN
-      RETURN _proj_height_1;
+      RETURN round(_proj_height_1::numeric, 1);
     END IF;
     
     -- If both percent values are zero, return the mean of the heights.
     IF _species_pct_1 = 0 AND _species_pct_2 = 0 THEN
-      RETURN (_proj_height_1 + _proj_height_2) / 2;
+      RETURN round(((_proj_height_1 + _proj_height_2) / 2)::numeric, 1);
     END IF;
     
-    RETURN ((_proj_height_1 * (_species_pct_1/100)) / ((_species_pct_1 + _species_pct_2)/100)) + ((_proj_height_2 * (_species_pct_2/100)) / ((_species_pct_1 + _species_pct_2)/100));
+    RETURN round((((_proj_height_1 * (_species_pct_1/100)) / ((_species_pct_1 + _species_pct_2)/100)) + ((_proj_height_2 * (_species_pct_2/100)) / ((_species_pct_1 + _species_pct_2)/100)))::numeric, 1);
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -4406,6 +4416,9 @@ RETURNS boolean AS $$
     _shrub_herb text; -- SK - needs to be 1st in string list
     _nvsl_aquatic_class text; -- SK - nvsl needs to be 2nd in string list, aquatic_class needs to be 3rd
     _luc_transp_class text; -- SK - luc needs to be 4th in string list, transp_class needs to be 5th
+	_yt03_nat_non_veg text; -- YT03 - needs to be 1st in string list
+    _yt03_non_for_anth text; -- YT03 - needs to be 2nd in string list
+    _yt03_non_for_veg text; -- YT03 - needs to be 3rd in string list
   BEGIN
     -- parse string lists
     _fiter_attributes = TT_ParseStringList(filter_attributes, TRUE);
@@ -4420,7 +4433,7 @@ RETURNS boolean AS $$
     -- BC
     -----------
     -- assign source values to variables depending on the inventory id
-    IF inventory_id IN('BC08','BC10') THEN
+    IF inventory_id IN('BC08','BC10', 'BC11', 'BC12') THEN
       _inventory_standard_cd = _source_vals[1]; 
       _land_cover_class_cd_1 = _source_vals[2];
       _bclcs_level_4 = _source_vals[3];
@@ -4484,6 +4497,36 @@ RETURNS boolean AS $$
       END IF;
     END IF;
     
+	---------
+	-- YT03
+	---------
+	-- assign source values to variables depending on the inventory id
+    IF inventory_id IN('YT03') THEN
+      _yt03_nat_non_veg = _source_vals[1];
+      _yt03_non_for_anth = _source_vals[2];
+      _yt03_non_for_veg = _source_vals[3];
+    END IF;
+	
+	-- run validations
+	IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
+      IF tt_notEmpty(_yt03_nat_non_veg) THEN
+        _nat_non_veg_boolean = TRUE;
+      END IF;
+    END IF;
+	
+	IF 'non_for_anth' = ANY (_fiter_attributes) THEN
+      IF tt_notEmpty(_yt03_non_for_anth) THEN
+        _non_for_anth_boolean = TRUE;
+      END IF;
+    END IF;
+	
+	IF 'non_for_veg' = ANY (_fiter_attributes) THEN
+      IF tt_notEmpty(_yt03_non_for_veg) THEN
+        _non_for_veg_boolean = TRUE;
+      END IF;
+    END IF;
+	
+	-------------------------------------------------------------
     -- return TRUE if any of the nfl attribute validations passed
     IF _nat_non_veg_boolean OR _non_for_veg_boolean OR _non_for_anth_boolean THEN
       RETURN TRUE;
@@ -4528,7 +4571,6 @@ RETURNS boolean AS $$
     
   END; 
 $$ LANGUAGE plpgsql;
-
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -4749,16 +4791,17 @@ RETURNS text AS $$
                               ARRAY['nfl_code', nfl_code, 'text',
                                     'nfl_height', nfl_height, 'numeric']);
     _nfl_height = nfl_height::double precision;
-    
-    IF nfl_code IN('HF','HG','SC','SO','BR') THEN
-      IF nfl_code IN('SC','SO') THEN
+    _nfl_code = UPPER(nfl_code);
+	
+    IF _nfl_code IN('HF','HG','SC','SO','BR') THEN
+      IF _nfl_code IN('SC','SO') THEN
         IF _nfl_height < 2 THEN
           RETURN 'LOW_SHRUB';
         ELSE
           RETURN 'TALL_SHRUB';
         END IF;
       ELSE
-        RETURN tt_mapText(nfl_code, '{''HF'',''HG'',''BR''}', '{''FORBS'',''GRAMINOIDS'',''BRYOID''}');
+        RETURN tt_mapText(_nfl_code, '{''HF'',''HG'',''BR''}', '{''FORBS'',''GRAMINOIDS'',''BRYOID''}');
       END IF;
     END IF;
 
@@ -5232,8 +5275,8 @@ RETURNS text AS $$
     _count = _count1 + _count2 + _count3 + _count4 + _count5;
   
     -- if stand structure is H or C, return H or C. Note CX was added so this function can be re-used in ON02.
-    IF stand_structure IN ('H', 'h', 'C', 'c', 'C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'CX') THEN
-      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C0'', ''C1'', ''C2'', ''C3'', ''C4'', ''C5'', ''C6'', ''C7'', ''C8'', ''C9'', ''CX''}', '{''HORIZONTAL'', ''HORIZONTAL'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX''}');
+    IF stand_structure IN ('H', 'h', 'C', 'c', 'C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'CX', 'Complex') THEN
+      RETURN tt_mapText(stand_structure, '{''H'', ''h'', ''C'', ''c'', ''C0'', ''C1'', ''C2'', ''C3'', ''C4'', ''C5'', ''C6'', ''C7'', ''C8'', ''C9'', ''CX'', ''Complex''}', '{''HORIZONTAL'', ''HORIZONTAL'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX'', ''COMPLEX''}');
     
     -- if stand structure is not HORIZONTAL or COMPLEX, it must be SINGLE_LAYERED or MULTI_LAYERED.
     -- if only one species layer, return S (this should always be sp1)
@@ -5356,6 +5399,20 @@ CREATE OR REPLACE FUNCTION TT_mb_fli01_stand_structure_translation(
 )
 RETURNS text AS $$
   SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, layer3_sp1, layer3_sp2, layer3_sp3, layer4_sp1, layer4_sp2, layer4_sp3, layer5_sp1, layer5_sp2, layer5_sp3);
+$$ LANGUAGE sql IMMUTABLE;
+
+-- YT YVI02 signature - 2 layers, 4 species
+CREATE OR REPLACE FUNCTION TT_yt_yvi02_stand_structure_translation(
+  stand_structure text,
+  layer1_sp1 text,
+  layer1_sp2 text,
+  layer1_sp3 text,
+  layer2_sp1 text,
+  layer2_sp2 text,
+  layer2_sp3 text
+)
+RETURNS text AS $$
+  SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_fvi01_countOfNotNull(text, text, text, text, text)
@@ -5786,7 +5843,6 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text,text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_countOfNotNull(
   spec1 text,
-  spec2 text,
   spec3 text,
   spec4 text,
   spec5 text,
@@ -7512,5 +7568,207 @@ RETURNS int AS $$
     END IF;
 			  
     RETURN tt_countOfNotNull(layer1_sp, layer2_sp, _nfl, maxRankToConsider, 'FALSE');
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_qc_prg3_src_inv_area_translation(text, text)
+--
+-- If inventory_id is QC01, use divideDouble(src_inv_area, 10000)
+-- Else(QC02, QC03, and possibly future datasets using this standrad), use copyDouble(src_inv_area)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_qc_prg3_src_inv_area_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg3_src_inv_area_translation(
+  inventory_id text,
+  src_inv_area text
+)
+RETURNS double precision AS $$
+  BEGIN
+    IF inventory_id = 'QC01' THEN
+	  RETURN tt_divideDouble(src_inv_area, '10000');
+	ELSE
+	  RETURN src_inv_area::double precision;
+	END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_yt_yvi02_disturbance_copyText(text, text, text, text, text)
+--
+-- returnList stringList - list of values to return (e.g. disturbance codes)
+-- yearList stringList - list of disturbance years
+-- layerList text - list of layer assignments ('Entire polygon disturbed', 'Layer 1 disturbance', 'Layer 2 disturbance')
+-- layerNumber - 1 or 2
+-- indexToReturn - the index to test
+-- lst - list to test against
+--
+-- If layer is 1, remove any disturbances labelled 'Layer 2 disturbance'
+-- If layer is 2, remove any disturbances labelled 'Layer 1 disturbance'
+-- Order by year, return requested index from returnList
+------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyText(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_copyText(
+  returnList text,
+  yearList text,
+  layerList text,
+  layerNumber text,
+  indexToReturn text
+)
+RETURNS text AS $$
+  DECLARE
+    _returnList text[];
+	_yearList int[];
+	_layerList text[];
+    _layerArray text[];
+  BEGIN
+    
+	-- Parse inputs
+	_returnList = TT_ParseStringList(returnList, 'TRUE');
+	_yearList = TT_ParseStringList(yearList, 'TRUE');
+	_layerList = TT_ParseStringList(layerList, 'TRUE');
+	
+	-- set up layers to filter by
+	IF layerNumber = '1' THEN
+	  _layerArray = ARRAY['Entire polygon disturbed', 'Layer 1 disturbance']::text[];
+	ELSIF layerNumber = '2' THEN
+	  _layerArray = ARRAY['Entire polygon disturbed', 'Layer 2 disturbance']::text[];
+	ELSE
+	  RETURN NULL;
+	END IF;
+	
+	-- run the getIndexMatc hlist code but add in the filter for layer values
+    RETURN (ARRAY( -- converts table to array
+      SELECT returnVal FROM(
+        SELECT a returnVal, b yearVal, c layerVal, a IS NULL::int not_null_order, ROW_NUMBER() OVER () org_order
+        FROM unnest(
+          _returnList, 
+          _yearList,
+		  _layerList
+        ) AS t(a,b,c) -- converts arrays to a table
+		WHERE c = ANY(_layerArray) -- filter by the layer assignments
+        ORDER BY yearVal, not_null_order, org_order asc -- order by the values, ties are ordered by not null values first, then ordered by their original order in the string
+      ) x
+    ))[indexToReturn::int];
+    
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_yt_yvi02_disturbance_copyInt(text, text, text, text, text)
+--
+-- Cast TT_yt_yvi02_disturbance_copyText to int
+------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyInt(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_copyInt(
+  returnList text,
+  yearList text,
+  layerList text,
+  layerNumber text,
+  indexToReturn text
+)
+RETURNS int AS $$
+  SELECT TT_yt_yvi02_disturbance_copyText(returnList, yearList, layerList, layerNumber, indexToReturn)::int
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+-- TT_yt_yvi02_disturbance_mapText(text, text, text, text, text)
+--
+-- Pass TT_yt_yvi02_disturbance_copyText result to mapText
+------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_mapText(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_mapText(
+  returnList text,
+  yearList text,
+  layerList text,
+  layerNumber text,
+  indexToReturn text,
+  srcList text,
+  mapList text
+)
+RETURNS text AS $$
+  SELECT tt_mapText(TT_yt_yvi02_disturbance_copyText(returnList, yearList, layerList, layerNumber, indexToReturn), srcList, mapList)
+$$ LANGUAGE sql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_yt_yvi02_disturbance_matchList(text, text, text, text, text)
+--
+-- Pass TT_yt_yvi02_disturbance_copyText result to matchList
+------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_matchList(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_matchList(
+  returnList text,
+  yearList text,
+  layerList text,
+  layerNumber text,
+  indexToReturn text,
+  srcList text
+)
+RETURNS boolean AS $$
+  SELECT tt_matchList(TT_yt_yvi02_disturbance_copyText(returnList, yearList, layerList, layerNumber, indexToReturn), srcList)
+$$ LANGUAGE sql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-- TT_yt_yvi02_disturbance_notNull(text, text, text, text, text)
+--
+-- Pass TT_yt_yvi02_disturbance_copyText result to notNull
+------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_notNull(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_notNull(
+  returnList text,
+  yearList text,
+  layerList text,
+  layerNumber text,
+  indexToReturn text
+)
+RETURNS boolean AS $$
+  SELECT tt_notNull(TT_yt_yvi02_disturbance_copyText(returnList, yearList, layerList, layerNumber, indexToReturn))
+$$ LANGUAGE sql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+	-- TT_yt_yvi02_disturbance_hasCountOfLayers(text, text, text, text, text)
+--
+-- returnList stringList - list of values to return (e.g. disturbance codes)
+-- yearList stringList - list of disturbance years
+-- layerList text - list of layer assignments ('Entire polygon disturbed', 'Layer 1 disturbance', 'Layer 2 disturbance')
+-- layerNumber - 1 or 2
+-- testVal
+-- exact
+--
+-- If layer is 1, remove any disturbances labelled 'Layer 2 disturbance'
+-- If layer is 2, remove any disturbances labelled 'Layer 1 disturbance'
+-- count the number of layers, is it equal to, or greater than or equal to the count argument?
+------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_hasCountOfLayers(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_hasCountOfLayers(
+  layerList text,
+  layerNumber text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+	_layerList text[];
+	_counted_rows int;
+	_exact boolean;
+  BEGIN
+    
+	-- Parse inputs
+	_layerList = TT_ParseStringList(layerList, 'TRUE');
+	
+	_exact = exact::boolean;
+	
+	-- for layer 1, remove layer 2. For layer 2 remove layer 1
+	IF layerNumber = '1' THEN
+	  _layerList = array_remove(_layerList, 'Layer 2 disturbance');
+	ELSIF layerNumber = '2' THEN
+	  _layerList = array_remove(_layerList, 'Layer 1 disturbance');
+	ELSE
+	  RETURN FALSE;
+	END IF;
+	
+    -- count rows
+	_counted_rows = count(*) FROM unnest(_layerList) WHERE unnest IS NOT NULL;
+	
+	IF _exact THEN
+      RETURN _counted_rows = count::int;
+    ELSE
+      RETURN _counted_rows >= count::int;
+    END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
