@@ -133,7 +133,7 @@ WITH test_nb AS (
     SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,   4 nb_test UNION ALL
     SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,   5 nb_test UNION ALL
     SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,   4 nb_test UNION ALL
-    SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   3 nb_test UNION ALL
+    SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   1 nb_test UNION ALL
     SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,83 maj_num,  3 nb_test UNION ALL
     SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,     84 maj_num,   2 nb_test UNION ALL
     SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,   2 nb_test UNION ALL
@@ -3347,20 +3347,8 @@ SELECT '81.4'::text number,
 UNION ALL
 SELECT '82.1'::text number,
        'TT_qc_origin_translation'::text function_tested,
-       'Simple test'::text description,
-       TT_qc_origin_translation('JIR', '2000') = 1950 passed
----------------------------------------------------------
-UNION ALL
-SELECT '82.2'::text number,
-       'TT_qc_origin_translation'::text function_tested,
        'Simple test 2'::text description,
        TT_qc_origin_translation('120', '2000') = 1880 passed
----------------------------------------------------------
-UNION ALL
-SELECT '82.3'::text number,
-       'TT_qc_origin_translation'::text function_tested,
-       'Fail'::text description,
-       TT_qc_origin_translation('120xx', '2000') IS NULL passed
 ---------------------------------------------------------
 -- TT_nl_nli01_origin_newfoundland_validation
 ---------------------------------------------------------

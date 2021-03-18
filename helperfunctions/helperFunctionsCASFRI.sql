@@ -1524,9 +1524,9 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isNonCommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isForest' THEN '-8887'
                   WHEN rulelc = 'qc_hasCountOfNotNull' THEN '-8886'
-				  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
-				  WHEN rulelc = 'pc02_hasCountOfNotNull' THEN '-8886'
-				  WHEN rulelc = 'bc_height_validation' THEN '-9997'
+                  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
+                  WHEN rulelc = 'pc02_hasCountOfNotNull' THEN '-8886'
+                  WHEN rulelc = 'bc_height_validation' THEN '-9997'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1550,20 +1550,20 @@ RETURNS text AS $$
                   WHEN rulelc = 'qc_prg3_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'ab_avi01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'nl_nli01_wetland_validation' THEN 'NOT_APPLICABLE'
- 				  WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
- 				  WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'fim_species_validation' THEN 'NOT_IN_SET'
-				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
+                  WHEN rulelc = 'ab_avi01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'fim_species_validation' THEN 'NOT_IN_SET'
+                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
@@ -6158,7 +6158,36 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_prg5_species_translation(text, text);
+--DROP FUNCTION IF EXISTS TT_qc_prg5_species(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg5_species(
+  eta_ess_pc text,
+  species_number text
+)
+RETURNS text AS $$
+  DECLARE
+    code_array text[];
+    sp_code text;
+  BEGIN
+    
+	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
+	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
+	ELSE
+	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
+      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
+      sp_code = translate(code_array[species_number::int], '0123456789', '');
+    END IF;
+	
+    IF sp_code IS NULL OR sp_code = '' THEN
+      RETURN NULL;
+    ELSE
+      RETURN sp_code;
+      --RETURN TT_lookupText(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'casfri_species_codes');
+    END IF;
+    
+  END; 
+$$ LANGUAGE plpgsql IMMUTABLE;
+
 CREATE OR REPLACE FUNCTION TT_qc_prg5_species_translation(
   eta_ess_pc text,
   species_number text
@@ -6559,17 +6588,12 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_origin_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_qc_origin_translation(
-  cl_age text,
+  age text,
   an_pro_ori text
 )
 RETURNS int AS $$
-  DECLARE
-    _age int;
-  BEGIN
-    _age = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val', 'l1_age_origin');
-    RETURN an_pro_ori::int - _age;
-  END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+  SELECT an_pro_ori::int - age::int;
+$$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_qc_countOfNotNull(text, text, text)
 --

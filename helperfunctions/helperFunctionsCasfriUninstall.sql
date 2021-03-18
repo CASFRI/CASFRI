@@ -169,6 +169,7 @@ DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_code(text, text);
 DROP FUNCTION IF EXISTS TT_pc02_wetland_code(text, text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg5_species_code_to_reordered_array(text);
 DROP FUNCTION IF EXISTS TT_yt_wetland_code(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_qc_prg5_species(text, text);
 -------------------------------------------------------------------------------
 -- Tools functions
 -------------------------------------------------------------------------------
