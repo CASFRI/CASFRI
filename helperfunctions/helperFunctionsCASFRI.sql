@@ -4771,16 +4771,17 @@ RETURNS text AS $$
                               ARRAY['nfl_code', nfl_code, 'text',
                                     'nfl_height', nfl_height, 'numeric']);
     _nfl_height = nfl_height::double precision;
-    
-    IF nfl_code IN('HF','HG','SC','SO','BR') THEN
-      IF nfl_code IN('SC','SO') THEN
+    _nfl_code = UPPER(nfl_code);
+	
+    IF _nfl_code IN('HF','HG','SC','SO','BR') THEN
+      IF _nfl_code IN('SC','SO') THEN
         IF _nfl_height < 2 THEN
           RETURN 'LOW_SHRUB';
         ELSE
           RETURN 'TALL_SHRUB';
         END IF;
       ELSE
-        RETURN tt_mapText(nfl_code, '{''HF'',''HG'',''BR''}', '{''FORBS'',''GRAMINOIDS'',''BRYOID''}');
+        RETURN tt_mapText(_nfl_code, '{''HF'',''HG'',''BR''}', '{''FORBS'',''GRAMINOIDS'',''BRYOID''}');
       END IF;
     END IF;
 
@@ -5822,7 +5823,6 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text,text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_countOfNotNull(
   spec1 text,
-  spec2 text,
   spec3 text,
   spec4 text,
   spec5 text,
