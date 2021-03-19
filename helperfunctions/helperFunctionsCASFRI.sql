@@ -6698,7 +6698,7 @@ RETURNS int AS $$
 
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF tt_matchList(nfl,'{''BAT'',''DS'',''EAU'',''ILE'',''INO'', ''A'',''AEP'',''AER'',''AF'',''ANT'',''BAS'',''CFO'',''CU'',''DEF'',''DEP'',''GR'',''HAB'',''LTE'',''MI'',''NF'',''RO'',''US'',''VIL'', ''AL'',''DH'',''NX''}') THEN
+    IF tt_matchList(nfl,'{''BAT'',''DS'',''EAU'',''ILE'',''INO'',''A'',''AEP'',''AER'',''AF'',''ANT'',''BAS'',''CFO'',''CU'',''DEF'',''DEP'',''GR'',''HAB'',''LTE'',''MI'',''NF'',''RO'',''US'',''VIL'',''AL'',''DH'',''NX'',''BHE'',''BLE'',''CAM'',''CAR'',''CEX'',''CHE'',''CIM'',''CNE'',''CS'',''CV'',''DEM'',''GOL'',''PIC'',''PPN'',''QUA'',''SC'',''TOE'',''VRG'',''IMP'',''OBS'',''PAI''}') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
