@@ -11,6 +11,9 @@
 
 CALL ..\conversion\bat\common.bat
 
+SET tables_to_load=%1
+
+ECHO %tables_to_load%
 
 :: Folder containing translation file to be loaded:
 SET load_folders=%~dp0tables %~dp0tables\lookup %~dp0..\docs
@@ -20,16 +23,23 @@ SET load_folders=%~dp0tables %~dp0tables\lookup %~dp0..\docs
 :: Make schema if it doesn't exist
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "CREATE SCHEMA IF NOT EXISTS %targetTranslationFileSchema%";
 
-:: load all files in the folder
-(for %%f IN (%load_folders%) DO (
-  if exist %%f (
-    for %%g IN (%%f\*.csv) DO (
-      echo loading %%~ng
+IF "%tables_to_load%" == "" (
+  :: load all files in the folder
+  FOR %%f IN (%load_folders%) DO (
+    FOR %%g IN (%%f\*.csv) DO (
+      ECHO loading %%~ng
       "%gdalFolder%/ogr2ogr" ^
       -f "PostgreSQL" %pg_connection_string% "%%g" ^
       -nln %targetTranslationFileSchema%.%%~ng ^
       %overwrite_tab%
-  )) else (
-    echo FOLDER DOESN'T EXIST: %%g
+    )
   )
-))
+) ELSE (
+  FOR %%g IN (%tables_to_load%) DO (
+    ECHO loading %%~ng
+    "%gdalFolder%/ogr2ogr" ^
+    -f "PostgreSQL" %pg_connection_string% %~dp0tables/"%%g" ^
+    -nln %targetTranslationFileSchema%.%%~ng ^
+    %overwrite_tab%
+  )
+)
