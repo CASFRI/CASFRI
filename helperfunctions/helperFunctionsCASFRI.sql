@@ -1502,10 +1502,8 @@ RETURNS text AS $$
   BEGIN
     IF targetTypelc = 'integer' OR targetTypelc = 'int' OR targetTypelc = 'double precision' THEN 
       RETURN CASE WHEN rulelc = 'projectrule1' THEN '-9999'
-                  WHEN rulelc = 'qc_ipf_2layer_age_codes_validation' THEN '-9997'
                   WHEN rulelc = 'qc_ipf_not_etage_notnull_validation' THEN '-8888'
                   WHEN rulelc = 'qc_ipf_not_etage_layer1_validation' THEN '-8887'
-                  WHEN rulelc = 'qc_ipf_not_etage_dens_layers_validation' THEN '-8887'
                   WHEN rulelc = 'sk_utm01_species_percent_validation' THEN '-9997'
                   WHEN rulelc = 'ns_nsi01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'vri01_hascountofnotnull' THEN '-8886'
@@ -1514,7 +1512,6 @@ RETURNS text AS $$
                   WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN '-9998'
-                  WHEN rulelc = 'qc_prg5_species_matchtable_validation' THEN '-9998'
                   WHEN rulelc = 'sk_utm_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'sfv01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
@@ -1547,7 +1544,6 @@ RETURNS text AS $$
                   WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'qc_prg5_species_matchTable_validation' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'qc_ipf_wetland_validation' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'nl_nli01_iscommercial' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN 'NOT_APPLICABLE'
@@ -1555,25 +1551,25 @@ RETURNS text AS $$
                   WHEN rulelc = 'qc_prg3_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'ab_avi01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'nl_nli01_wetland_validation' THEN 'NOT_APPLICABLE'
- 				  WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
- 				  WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'fim_species_validation' THEN 'NOT_IN_SET'
-				  WHEN rulelc = 'yvi02_stand_structure_validation' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN 'NOT_IN_SET'
-				  WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN 'NULL_VALUE'
-				  WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN 'NOT_APPLICABLE'
-				  WHEN rulelc = 'row_translation_rule_nt_lyr' THEN 'INVALID_VALUE'
-				  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
+                  WHEN rulelc = 'ab_avi01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'fim_species' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'yvi02_stand_structure_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN 'NULL_VALUE'
+                  WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'row_translation_rule_nt_lyr' THEN 'INVALID_VALUE'
+                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
@@ -2558,76 +2554,6 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_qc_ipf_2layer_age_codes_validation()
---
--- When num_of_layers is 2, do the 2 age codes from cl_age match the age codes in
--- sup_cl_age_et and inf_cl_age_et?
---
--- Also need to do this check when et_domi is EQU because in that case we don't know the dominant layer
--- and have to id it using the age code order.
---
--- e.g. TT_qc_ipf_2layer_age_codes_validation()
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_ipf_2layer_age_codes_validation(text,text,text,text,text,text,text);
-CREATE OR REPLACE FUNCTION TT_qc_ipf_2layer_age_codes_validation(
-  cl_age text,
-  lookup_schema text,
-  lookup_table text,
-  in_etage text,
-  et_domi text,
-  sup_cl_age_et text,
-  inf_cl_age_et text
-)
-RETURNS boolean AS $$
-  DECLARE
-		layer_1_age_code text;
-    layer_2_age_code text;
-    num_of_layers int;
-  BEGIN
-    PERFORM TT_ValidateParams('TT_qc_ipf_2layer_age_codes_validation',
-                              ARRAY['lookup_schema', lookup_schema, 'name',
-                                    'lookup_table', lookup_table, 'name']);
-	
-    IF cl_age IS NOT NULL AND in_etage = 'O' THEN
-      num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'source_val', 'num_of_layers');
-      
-      IF num_of_layers = 2 THEN
-        IF et_domi IS NULL OR et_domi = 'EQU' THEN        
-          layer_1_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, 'source_val', 'layer_1_age'::text);
-          layer_2_age_code = TT_lookupText(cl_age, lookup_schema, lookup_table, 'source_val', 'layer_2_age'::text);
-
-          -- if layer 1 doesn't match either value, return FALSE
-          IF layer_1_age_code NOT IN (sup_cl_age_et, inf_cl_age_et) THEN
-            RETURN FALSE;
-          END IF;
-
-          -- if layer 1 matches one of the values, check layer 2 matches the other
-          IF layer_1_age_code = sup_cl_age_et THEN
-            IF layer_2_age_code = inf_cl_age_et THEN
-              RETURN TRUE;
-            ELSE
-              RETURN FALSE;
-            END IF;
-          END IF;
-
-          -- if layer 1 matches one of the values, check layer 2 matches the other
-          IF layer_1_age_code = inf_cl_age_et THEN
-            IF layer_2_age_code = sup_cl_age_et THEN
-              RETURN TRUE;
-            ELSE
-              RETURN FALSE;
-            END IF;
-          END IF;
-        END IF;
-      END IF;
-    END IF;
-    
-    RETURN TRUE; -- this rule only applies in etage table where cl_age has 2 layers defined, and et_domi ir null or EQU. For all other cases return TRUE to skip this validation.
-  END;
-$$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
 -- TT_qc_ipf_not_etage_notnull_validation()
 --
 -- in_etage text
@@ -2687,40 +2613,6 @@ RETURNS boolean AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------
--- TT_qc_ipf_not_etage_dens_layers_validation()
---
--- in_etage text
--- cl_age text
--- lookup_schema text,
--- lookup_table text,
---
--- When in_etage = 'N', for density, check if num_of_layer > 1, if so return FALSE
---
--- e.g. TT_qc_ipf_not_etage_dens_layers_validation(in_etage, layer)
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_dens_layers_validation(text,text,text,text);
-CREATE OR REPLACE FUNCTION TT_qc_ipf_not_etage_dens_layers_validation(
-  in_etage text,  
-  cl_age text,
-  lookup_schema text,
-  lookup_table text  
-)
-RETURNS boolean AS $$		
-  DECLARE
-    num_of_layers int;
-  BEGIN
-    
-    IF in_etage = 'N' THEN
-      num_of_layers = TT_lookupInt(cl_age, lookup_schema, lookup_table, 'source_val', 'num_of_layers');
-      IF num_of_layers = 2 THEN
-        RETURN FALSE;
-      END IF;
-    END IF;
-    
-    RETURN TRUE; -- if row is in_etage = 'O', or layer = 1, return true.
-  END;
-$$ LANGUAGE plpgsql STABLE;
 -------------------------------------------------------------------------------
 -- TT_yvi01_nat_non_veg_validation()
 --
@@ -3397,10 +3289,10 @@ RETURNS boolean AS $$
 	_wetland_char text;
   BEGIN
     _wetland_code = TT_qc_wetland_code(CO_TER, CL_DRAIN, gr_ess, cl_den, cl_haut, TYPE_ECO, 'QC04');
-	_wetland_char = substring(_wetland_code from retCharPos::int for 1);
-	IF _wetland_char IS NULL OR _wetland_char = '-' THEN
+	  _wetland_char = substring(_wetland_code from retCharPos::int for 1);
+	  IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
-	END IF;
+	  END IF;
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -3455,9 +3347,8 @@ RETURNS boolean AS $$
   DECLARE
     sp_1 text;
     sp_2 text;
-  BEGIN
-    
-    -- return TRUE if null or empty. Only case of double species should fail validation.
+  BEGIN  
+    -- Return TRUE if null or empty. Only case of double species should fail validation.
     IF NOT tt_notEmpty(gr_ess) THEN
       RETURN TRUE;
     END IF;
@@ -3516,41 +3407,6 @@ RETURNS boolean AS $$
     RETURN tt_lengthMatchList(_gr_ess, lst);
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
--- TT_qc_prg5_species_matchTable_validation(text, text)
---
--- eta_ess_pc text,
--- species_number text
---
--- Runs TT_qc_prg5_species_code_to_reordered_array then passes the species code 
--- to matchTable to check it's in the lookup table.
-
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_prg5_species_matchTable_validation(text, text);
-CREATE OR REPLACE FUNCTION TT_qc_prg5_species_matchTable_validation(
-  eta_ess_pc text,
-  species_number text
-)
-RETURNS boolean AS $$
-  DECLARE
-    code_array text[];
-    sp_code text;
-  BEGIN
-    
-	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
-	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
-	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
-	ELSE
-	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
-      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-      sp_code = translate(code_array[species_number::int], '0123456789', '');
-    END IF;
-	
-    RETURN TT_matchTable(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'FALSE');
-    
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
-
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_isCommercial(text, text)
 --
@@ -4998,37 +4854,27 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_fim_species_validation(text, text, text, text, text)
+-- TT_fim_species(text, text)
 --
 -- sp_string text - source string of species and percentages
 -- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
--- lookup_schema text, 
--- lookup_table text,
--- lookup_col text
 --
 -- This functions calls TT_fim_species_code() to extract the requested species-percent code,
--- then extracts the species code as the first two characters. Then runs TT_MatchTable() to
--- the species value is in the species lookup table.
+-- then extracts the species code as the first two characters.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fim_species_validation(text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_fim_species_validation(
+--DROP FUNCTION IF EXISTS TT_fim_species(text, text);
+CREATE OR REPLACE FUNCTION TT_fim_species(
   sp_string text,
-  sp_number text,
-  lookup_schema text, 
-  lookup_table text,
-  lookup_col text
+  sp_number text
 )
-RETURNS boolean AS $$
+RETURNS text AS $$
   DECLARE
     code text;
     species text;
     _sp_number int;
   BEGIN
-    PERFORM TT_ValidateParams('TT_fim_species_validation',
-                              ARRAY['sp_number', sp_number, 'int',
-                                    'lookup_schema', lookup_schema, 'name',
-                                    'lookup_table', lookup_table, 'name',
-                                    'lookup_col', lookup_col, 'name']);
+    PERFORM TT_ValidateParams('TT_fim_species',
+                              ARRAY['sp_number', sp_number, 'int']);
     _sp_number = sp_number::int;
     code = TT_fim_species_code(sp_string, _sp_number); -- get the requested species code and percent
     
@@ -5037,59 +4883,9 @@ RETURNS boolean AS $$
     ELSE
       RETURN FALSE;
     END IF;
-    
-    -- transform species to casfri species using lookup table
-    RETURN TT_MatchTable(species, lookup_schema, lookup_table, lookup_col, 'TRUE');
+    RETURN species;
   END; 
 $$ LANGUAGE plpgsql VOLATILE;
--------------------------------------------------------------------------------
--- TT_fim_species_translation(text, text, text, text, text)
---
--- sp_string text - source string of species and percentages
--- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
--- lookup_schema text, 
--- lookup_table text,
--- lookup_col text
---
--- This functions calls TT_fim_species_code() to extract the requested species-percent code,
--- then extracts the species code as the first two characters. Then runs TT_LookupText() to
--- convert the ON code into the CASFRI code using a lookup table.
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_fim_species_translation(text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_fim_species_translation(
-  sp_string text,
-  sp_number text,
-  lookup_schema text, 
-  lookup_table text,
-  lookup_col text,
-  retrieveCol text
-)
-RETURNS text AS $$
-  DECLARE
-    code text;
-    species text;
-    _sp_number int;
-  BEGIN
-    PERFORM TT_ValidateParams('TT_fim_species_translation',
-                              ARRAY['sp_number', sp_number, 'int',
-                                    'lookup_schema', lookup_schema, 'name',
-                                    'lookup_table', lookup_table, 'name',
-                                    'lookup_col', lookup_col, 'name',
-                                    'retrieveCol', retrieveCol, 'name']);
-    _sp_number = sp_number::int;
-    code = TT_fim_species_code(sp_string, _sp_number); -- get the requested species code and percent
-    
-    IF TT_Length(code) > 1 THEN -- 
-      species = (regexp_split_to_array (code, '\s+'))[1];
-    ELSE
-      RETURN NULL;
-    END IF;
-    
-    -- transform species to casfri species using lookup table
-    RETURN TT_LookupText(species, lookup_schema, lookup_table, lookup_col, retrieveCol, TRUE::text);
-  END; 
-$$ LANGUAGE plpgsql VOLATILE;
-
 -------------------------------------------------------------------------------
 -- TT_fim_species_percent_translation(text, text)
 --
@@ -5100,19 +4896,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- then extracts the percentage.
 -- Uses alpha numeric codes to lookup if the percent values need to be multiplied by 10.
 -- Uses alpha numeric codes to return 100 when code has a zero value and a single species (ON01).
---
--- ON01 has many formats of species codes mixed together without standardization. There appeared
--- to be lots of error codes and codes that would need editing to become valid. For example many
--- codes have a trailing 0 (e.g. 'L  7SB 3   0') that should be removed.
---
--- Currently we only report percent for the formats that don't require any error fixing:
--- xx00xx00 - species codes separated by 2-digit percent values. Percent is just copied. This is all of ON02.
--- xx00xx0  - species codes separated by 2-digit percent values, then 1 digit percent values. 1-digit vales always come after 2-digit values. Percent is just copied.
--- xx000xx000 - species codes separated by 3-digit percent values (e.g. AB 080CE 020). Cast to integer and copy percent.
--- x0x0xx0 - species codes separated by 1-digit percent values. Multiply by 10.
--- xx0 - species codes with a single percent value of zero. Return 100 percent.
---
--- More info in issue #678
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_fim_species_percent_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_fim_species_percent_translation(
@@ -5123,28 +4906,31 @@ RETURNS int AS $$
   DECLARE
     _code text;
     _sp_number int;
-	_alpha_numeric text;
-	_multiplier int;
+    _alpha_numeric text;
+    _multiplier int;
   BEGIN
     PERFORM TT_ValidateParams('TT_fim_species_translation',
                               ARRAY['sp_number', sp_number, 'int']);
     _sp_number = sp_number::int;
     _code = TT_fim_species_code(sp_string, _sp_number);
     _alpha_numeric = replace(translate(sp_string, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000000'), ' ', '');
-	_multiplier = tt_lookupInt(_alpha_numeric, 'translation', 'on_species_valid_alpha_numeric_codes', 'source_val', 'percent_multiplier');
+    --_multiplier = tt_lookupInt(_alpha_numeric, 'translation', 'on_species_valid_alpha_numeric_codes', 'source_val', 'percent_multiplier');
+    _multiplier = CASE WHEN (_alpha_numeric ~ '^[a-zA-Z]0{1,2}$') THEN NULL 
+                       WHEN (_alpha_numeric ~ '00') THEN 1 
+                       ELSE 10 
+                  END newpercentmultiplier;
 	
     IF TT_Length(_code) > 1 THEN
-	  IF _alpha_numeric IN('x0', 'x00', 'xx0') THEN -- these codes use a zero to indicate 100 percent cover of a single species.
-	    RETURN 100;
-	  ELSE
+	    IF _alpha_numeric IN('x0', 'x00', 'xx0') THEN -- these codes use a zero to indicate 100 percent cover of a single species.
+	      RETURN 100;
+	    ELSE
         RETURN (regexp_split_to_array (_code, '\s+'))[2]::int * _multiplier;
-	  END IF;
+	    END IF;
     ELSE
       RETURN NULL;
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
-
 -------------------------------------------------------------------------------
 -- TT_yvi01_nat_non_veg_translation(text, text, text)
 --
@@ -5683,7 +5469,7 @@ RETURNS int AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_sk_utm01_species_translation(text, text, text, text, text, text, text)
+-- TT_sk_utm01_species(text, text, text, text, text, text, text)
 --
 -- sp_number text - the species number being requested (i.e. SPECIES 1-10 in casfri)
 -- sp10 text
@@ -5697,8 +5483,8 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Once the correct species code is identified, it is run through the lookup table and returned.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_sk_utm01_species_translation(text, text, text, text, text, text);
-CREATE OR REPLACE FUNCTION TT_sk_utm01_species_translation(
+--DROP FUNCTION IF EXISTS TT_sk_utm01_species(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_sk_utm01_species(
   sp_number text,
   sp10 text,
   sp11 text,
@@ -5725,9 +5511,7 @@ RETURNS text AS $$
 
     -- return the requested index, after removing all zero values
     sp_to_lookup = sp_array[_sp_number];
-    
-    RETURN TT_LookupText(sp_to_lookup, 'translation', 'species_code_mapping', 'sk_species_codes', 'casfri_species_codes', 'TRUE');
-
+    RETURN sp_to_lookup;
   END; 
 $$ LANGUAGE plpgsql STABLE;
 
@@ -6172,21 +5956,19 @@ RETURNS text AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
--- TT_qc_prg4_species_translation(text, text)
+-- TT_qc_prg4_species(text, text)
 --
 -- gr_ess text,
 -- species_number text
 --
 -- For QC fourth inventory, species are coded in gr_ess column, gr_ess code needs to be split
--- to get species 1, 2, 3 etc. Requested species code is then extracted based on species_number
--- and passed to lookup table.
+-- to get species 1, 2, 3 etc. Requested species code is then extracted based on species_number.
 --
 -- If species is a doubled code (e.g. FXFX, PUPU etc.) then only species 1 should be returned.
 -- These codes should be interpreted as species 1 with 100%.
-
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_prg4_species_translation(text, text);
-CREATE OR REPLACE FUNCTION TT_qc_prg4_species_translation(
+--DROP FUNCTION IF EXISTS TT_qc_prg4_species(text, text);
+CREATE OR REPLACE FUNCTION TT_qc_prg4_species(
   gr_ess text,
   species_number text
 )
@@ -6196,38 +5978,38 @@ RETURNS text AS $$
     _gr_ess text;
   BEGIN
         
-    -- if gr_ess starts with a double species code, it should only be one species. Remove the first two characters.
+    -- If gr_ess starts with a double species code, it should only be one species. Remove the first two characters.
     IF NOT tt_qc_prg4_not_double_species_validation(gr_ess) THEN
       _gr_ess = substring(gr_ess, 3, 4);
     ELSE
       _gr_ess = gr_ess;
     END IF;
     
-    -- translate the gr_ess code according to position
+    -- Translate the gr_ess code according to position
     sp_val = trim(SPLIT_PART(species, ' ', species_number::int))
       FROM (SELECT trim(regexp_replace(_gr_ess, '(.{2})', E'\\1 ', 'g')) as species) r;
       
-    -- pass the value to the lookup table
+    -- Pass the value to the lookup table
     IF sp_val IS NULL OR sp_val = '' THEN
       RETURN NULL;
     ELSE
-      RETURN tt_lookupText(sp_val, 'translation', 'species_code_mapping', 'qc_species_codes', 'casfri_species_codes');
+      RETURN sp_val;
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
--- TT_qc_prg5_species_translation(text, text)
+-- TT_qc_prg5_species(text, text)
 --
 -- eta_ess_pc text,
 -- species_number text
 --
 -- First checks if the code is a species group code (e.g. FXFN) which have no percent values.
--- If it is, passes the requested code to the lookupText.
+-- If it is, return the requested species code.
 -- If not, it is a normal code with species percent values (e.g. BF1BS9).
 -- Runs TT_qc_prg5_species_code_to_reordered_array then returns the species code from the requested position.
 --
--- e.g. TT_qc_prg5_species_translation('BS20WS60TA20', 1) would return 'WS'.
+-- e.g. TT_qc_prg5_species('BS20WS60TA20', 1) would return 'WS'.
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_prg5_species(text, text);
 CREATE OR REPLACE FUNCTION TT_qc_prg5_species(
@@ -6239,12 +6021,11 @@ RETURNS text AS $$
     code_array text[];
     sp_code text;
   BEGIN
-    
-	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
-	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
-	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
-	ELSE
-	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
+    -- Check if code contains any integers. If no, its a species group type code. Get the requested species code.
+    IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
+      sp_code = substring(eta_ess_pc, (species_number::int * 2) - 1, 2);
+    ELSE
+	  -- If the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
       code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
       sp_code = translate(code_array[species_number::int], '0123456789', '');
     END IF;
@@ -6253,40 +6034,10 @@ RETURNS text AS $$
       RETURN NULL;
     ELSE
       RETURN sp_code;
-      --RETURN TT_lookupText(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'casfri_species_codes');
     END IF;
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
-
-CREATE OR REPLACE FUNCTION TT_qc_prg5_species_translation(
-  eta_ess_pc text,
-  species_number text
-)
-RETURNS text AS $$
-  DECLARE
-    code_array text[];
-    sp_code text;
-  BEGIN
-    
-	-- check if code contains any integers. If no, its a species group type code. Get the requested species code.
-	IF translate(eta_ess_pc, '0123456789', '') = eta_ess_pc THEN
-	  sp_code = substring(eta_ess_pc, (species_number::int * 2)-1, 2);
-	ELSE
-	  -- if the code contains numbers, parse them out in order using code_to_reordered_array, then grab the requested code and drop the percent value.
-      code_array = TT_qc_prg5_species_code_to_reordered_array(eta_ess_pc);
-      sp_code = translate(code_array[species_number::int], '0123456789', '');
-    END IF;
-	
-    IF sp_code IS NULL OR sp_code = '' THEN
-      RETURN NULL;
-    ELSE
-      RETURN TT_lookupText(sp_code, 'translation', 'species_code_mapping', 'qc_species_codes', 'casfri_species_codes');
-    END IF;
-    
-  END; 
-$$ LANGUAGE plpgsql IMMUTABLE;
-
 -------------------------------------------------------------------------------
 -- TT_qc_prg5_species_per_translation(text, text)
 --

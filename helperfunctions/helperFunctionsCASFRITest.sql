@@ -55,94 +55,90 @@ SELECT * FROM (
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'TT_vri01_non_for_veg_validation'::text function_tested,           1 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_vri01_nat_non_veg_validation'::text function_tested,           2 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_anth_validation'::text function_tested,          3 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_vri01_origin_translation'::text function_tested,               4 maj_num,  1 nb_test UNION ALL
-    SELECT 'TT_vri01_site_index_translation'::text function_tested,           5 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,          6 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,          7 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,         8 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_avi01_non_for_veg_translation'::text function_tested,          9 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,     10 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_nb_nbi01_wetland_validation'::text function_tested,           12 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_nb_nbi01_wetland_translation'::text function_tested,          13 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
-    SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 23 nb_test UNION ALL
-    SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,     20 maj_num,  8 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,    21 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,     22 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,23 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  7 nb_test UNION ALL
-    SELECT 'TT_fim_species_translation'::text function_tested,               25 maj_num,  8 nb_test UNION ALL
-    SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  8 nb_test UNION ALL
-    SELECT 'TT_yvi01_nat_non_veg_validation'::text function_tested,          27 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_yvi01_nat_non_veg_translation'::text function_tested,         28 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_yvi01_non_for_veg_translation'::text function_tested,         29 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,    30 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_avi01_stand_structure_validation'::text function_tested,      31 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_avi01_stand_structure_translation'::text function_tested,     32 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,      33 maj_num,  7 nb_test UNION ALL
-    SELECT 'TT_fvi01_countOfNotNull'::text function_tested,                  34 maj_num,  7 nb_test UNION ALL
-    SELECT 'TT_vri01_countOfNotNull'::text function_tested,                  35 maj_num, 17 nb_test UNION ALL
-    SELECT 'TT_sk_utm01_species_percent_validation'::text function_tested,   36 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,  37 maj_num, 11 nb_test UNION ALL
-    SELECT 'TT_sk_utm01_species_translation'::text function_tested,          38 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num, 13 nb_test UNION ALL
-    SELECT 'TT_pe_pei01_countOfNotNull'::text function_tested,               43 maj_num,  8 nb_test UNION ALL
-    SELECT 'TT_vri01_hasCountOfNotNull'::text function_tested,               44 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_ns_nsi01_hasCountOfNotNull'::text function_tested,            45 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_fvi01_hasCountOfNotNull'::text function_tested,               46 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_on_fim02_countOfNotNull'::text function_tested,               47 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_on_fim02_hasCountOfNotNull'::text function_tested,            48 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_pe_pei01_hasCountOfNotNull'::text function_tested,            49 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_sfv01_hasCountOfNotNull'::text function_tested,               50 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_sk_utm_countOfNotNull'::text function_tested,                 51 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_fvi01_structure_per_validation'::text function_tested,        55 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_wetland_code_translation'::text function_tested,              56 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_qc_prg3_wetland_validation'::text function_tested,            57 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_wetland_validation'::text function_tested,            58 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_species_translation'::text function_tested,           60 maj_num,  14 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_species_translation'::text function_tested,           61 maj_num,  8 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  12 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  10 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_species_matchTable_validation'::text function_tested, 65 maj_num,  6 nb_test UNION ALL
-    SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                 66 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test UNION ALL
-    SELECT 'TT_mb_fli01_stand_structure_translation'::text function_tested,  68 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_isCommercial'::text function_tested,                 69 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_isNonCommercial'::text function_tested,              70 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,71 maj_num,3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,72 maj_num,3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_height_upper_translation'::text function_tested,     73 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_height_lower_translation'::text function_tested,     74 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_isForest'::text function_tested,                     75 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,     76 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num,  13 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,   4 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,   5 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,   4 nb_test UNION ALL
-    SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   1 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,83 maj_num,  3 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,     84 maj_num,   2 nb_test UNION ALL
-    SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,   2 nb_test UNION ALL
-    SELECT 'TT_qc_prg3_wetland_translation'::text function_tested,           86 maj_num,   15 nb_test UNION ALL
-    SELECT 'TT_qc_prg5_wetland_translation'::text function_tested,           87 maj_num,   7 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,           88 maj_num,   7 nb_test UNION ALL
-    SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,   2 nb_test UNION ALL
-    SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,   5 nb_test UNION ALL
-    SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                  91 maj_num,   4 nb_test UNION ALL
+  SELECT 'TT_vri01_non_for_veg_validation'::text function_tested,           1 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_vri01_nat_non_veg_validation'::text function_tested,           2 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_vri01_non_for_anth_validation'::text function_tested,          3 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_vri01_origin_translation'::text function_tested,               4 maj_num,  1 nb_test UNION ALL
+  SELECT 'TT_vri01_site_index_translation'::text function_tested,           5 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,          6 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,          7 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,         8 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_avi01_non_for_veg_translation'::text function_tested,          9 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,     10 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_nb_nbi01_wetland_validation'::text function_tested,           12 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nb_nbi01_wetland_translation'::text function_tested,          13 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
+  SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 23 nb_test UNION ALL
+  SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,   21 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,    22 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  8 nb_test UNION ALL
+  SELECT 'TT_yvi01_nat_non_veg_validation'::text function_tested,          27 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_nat_non_veg_translation'::text function_tested,         28 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_non_for_veg_translation'::text function_tested,         29 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,    30 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_avi01_stand_structure_validation'::text function_tested,      31 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_avi01_stand_structure_translation'::text function_tested,     32 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,      33 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_fvi01_countOfNotNull'::text function_tested,                  34 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_vri01_countOfNotNull'::text function_tested,                  35 maj_num, 17 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_species_percent_validation'::text function_tested,   36 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,  37 maj_num, 11 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_species'::text function_tested,          38 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num, 13 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_countOfNotNull'::text function_tested,               43 maj_num,  8 nb_test UNION ALL
+  SELECT 'TT_vri01_hasCountOfNotNull'::text function_tested,               44 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_ns_nsi01_hasCountOfNotNull'::text function_tested,            45 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_fvi01_hasCountOfNotNull'::text function_tested,               46 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_on_fim02_countOfNotNull'::text function_tested,               47 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_on_fim02_hasCountOfNotNull'::text function_tested,            48 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_hasCountOfNotNull'::text function_tested,            49 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_sfv01_hasCountOfNotNull'::text function_tested,               50 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_sk_utm_countOfNotNull'::text function_tested,                 51 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_fvi01_structure_per_validation'::text function_tested,        55 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_wetland_code_translation'::text function_tested,              56 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_qc_prg3_wetland_validation'::text function_tested,            57 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_wetland_validation'::text function_tested,            58 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_species'::text function_tested,                       60 maj_num,  14 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_species'::text function_tested,                       61 maj_num,  8 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  12 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  10 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                 66 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_stand_structure_translation'::text function_tested,  68 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_isCommercial'::text function_tested,                 69 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_isNonCommercial'::text function_tested,              70 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,71 maj_num,3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,72 maj_num,3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_height_upper_translation'::text function_tested,     73 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_height_lower_translation'::text function_tested,     74 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_isForest'::text function_tested,                     75 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,     76 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num,  13 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,   4 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,   5 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,   4 nb_test UNION ALL
+  SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   1 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,83 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,     84 maj_num,   2 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,   2 nb_test UNION ALL
+  SELECT 'TT_qc_prg3_wetland_translation'::text function_tested,           86 maj_num,   15 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_wetland_translation'::text function_tested,           87 maj_num,   7 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,           88 maj_num,   7 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,   2 nb_test UNION ALL
+  SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,   5 nb_test UNION ALL
+  SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                  91 maj_num,   4 nb_test UNION ALL
 	SELECT 'TT_lyr_layer_translation'::text function_tested,                 92 maj_num,   15 nb_test UNION ALL
 	SELECT 'TT_bc_lyr_layer_translation'::text function_tested,              93 maj_num,   6 nb_test UNION ALL
 	SELECT 'TT_ab_avi01_wetland_translation'::text function_tested,          94 maj_num,   5 nb_test UNION ALL
@@ -166,7 +162,7 @@ WITH test_nb AS (
 	SELECT 'TT_sk_sfv01_wetland_validation'::text function_tested,           112 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_mb_fli01_wetland_translation'::text function_tested,          113 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_mb_fli01_wetland_validation'::text function_tested,           114 maj_num,  2 nb_test UNION ALL
-    SELECT 'TT_mb_fri01_wetland_translation'::text function_tested,          115 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_mb_fri01_wetland_translation'::text function_tested,          115 maj_num,  3 nb_test UNION ALL
 	SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,           116 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_pc02_wetland_translation'::text function_tested,              117 maj_num,  3 nb_test UNION ALL
 	SELECT 'TT_pc02_wetland_validation'::text function_tested,               118 maj_num,  2 nb_test UNION ALL
@@ -180,7 +176,6 @@ WITH test_nb AS (
 	SELECT 'TT_ns_lyr_layer_translation'::text function_tested,              126 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_on_lyr_layer_translation'::text function_tested,              127 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,         128 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_fim_species_validation'::text function_tested,                129 maj_num,  4 nb_test UNION ALL
 	SELECT 'TT_qc_prg3_src_inv_area_translation'::text function_tested,      130 maj_num,  3 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_stand_structure_translation'::text function_tested,  131 maj_num,  3 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_disturbance_copyText'::text function_tested,         132 maj_num,  5 nb_test UNION ALL
@@ -189,10 +184,7 @@ WITH test_nb AS (
 	SELECT 'TT_yt_yvi02_disturbance_notNull'::text function_tested,          135 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,          136 maj_num,  1 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested, 137 maj_num,  4 nb_test
-
 ),
-
-	
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
 SELECT function_tested, maj_num, nb_test, generate_series(1, nb_test)::text min_num
@@ -207,7 +199,6 @@ SELECT coalesce(maj_num || '.' || min_num, b.number) AS number,
           (regexp_split_to_array(number, '\.'))[1] = maj_num::text AND 
           (regexp_split_to_array(number, '\.'))[2] = min_num AND passed passed
 FROM test_series AS a FULL OUTER JOIN (
-
 
 ---------------------------------------------------------
 -- TT_vri01_non_for_veg_validation
@@ -970,7 +961,6 @@ CREATE OR REPLACE VIEW rawfri.ab06_site_class AS
 SELECT tpr, sp1, sp2, sp3
 FROM rawfri.ab06;' passed
 ---------------------------------------------------------
----------------------------------------------------------
   -- TT_vri01_dist_yr_translation
 ---------------------------------------------------------
 UNION ALL
@@ -996,58 +986,6 @@ SELECT '17.4'::text number,
        'TT_vri01_dist_yr_translation'::text function_tested,
        'Test value >10, greater than cutoff'::text description,
        TT_vri01_dist_yr_translation('B17', '16') = 1917::int passed
----------------------------------------------------------
----------------------------------------------------------
-  -- TT_qc_ipf_2layer_age_codes_validation
----------------------------------------------------------
-UNION ALL
-SELECT '20.1'::text number,
-       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
-       'Only 1 layer, rule is skipped so should return true'::text description,
-       TT_qc_ipf_2layer_age_codes_validation('VIR', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', 'NULL') passed
----------------------------------------------------------
-UNION ALL
-SELECT '20.2'::text number,
-       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
-       'Codes match'::text description,
-       TT_qc_ipf_2layer_age_codes_validation('VIR10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', '10') passed
----------------------------------------------------------
-UNION ALL
-SELECT '20.3'::text number,
-       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
-       'Codes match'::text description,
-       TT_qc_ipf_2layer_age_codes_validation('VIR10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '10', 'VIN') passed
----------------------------------------------------------
-UNION ALL
-SELECT '20.4'::text number,
-       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
-       'Codes dont match'::text description,
-       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, 'VIN', 'VIN') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '20.5'::text number,
-       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
-       'Codes dont match'::text description,
-       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '10', '10') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '20.6'::text number,
-       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
-       'Codes dont match'::text description,
-       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', NULL::text, '', '') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '20.7'::text number,
-       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
-       'et_domi not null'::text description,
-       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', 'VAL', '', '') passed
----------------------------------------------------------
-UNION ALL
-SELECT '20.8'::text number,
-       'TT_qc_ipf_2layer_age_codes_validation'::text function_tested,
-       'Should still run test if et_domi is EQU'::text description,
-       TT_qc_ipf_2layer_age_codes_validation('VIN10', 'public', 'test_lookup_qc_stdstr', 'O', 'EQU', '', '') IS FALSE passed
----------------------------------------------------------
 ---------------------------------------------------------
   -- TT_qc_ipf_not_etage_notnull_validation
 ---------------------------------------------------------
@@ -1089,28 +1027,6 @@ SELECT '22.3'::text number,
        'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,
        'in etage = O'::text description,
        TT_qc_ipf_not_etage_layer1_validation('O', '2') passed
----------------------------------------------------------
----------------------------------------------------------
-  -- TT_qc_ipf_not_etage_dens_layers_validation
----------------------------------------------------------
-UNION ALL
-SELECT '23.1'::text number,
-       'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,
-       'In etage = O'::text description,
-       TT_qc_ipf_not_etage_dens_layers_validation('O', '10', 'public', 'test_lookup_qc_stdstr') passed
----------------------------------------------------------
-UNION ALL
-SELECT '23.2'::text number,
-       'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,
-       'In etage = N, num_of_layers = 1'::text description,
-       TT_qc_ipf_not_etage_dens_layers_validation('N', '10', 'public', 'test_lookup_qc_stdstr') passed
----------------------------------------------------------
-UNION ALL
-SELECT '23.3'::text number,
-       'TT_qc_ipf_not_etage_dens_layers_validation'::text function_tested,
-       'In etage = N, num_of_layers = 2'::text description,
-       TT_qc_ipf_not_etage_dens_layers_validation('N', '1010', 'public', 'test_lookup_qc_stdstr') IS FALSE passed
----------------------------------------------------------
 ---------------------------------------------------------
   -- TT_fim_species_code
 ---------------------------------------------------------
@@ -1155,56 +1071,6 @@ SELECT '24.7'::text number,
        'TT_fim_species_code'::text function_tested,
        'Species code with preceding space at the beginning. Issue #346'::text description,
        TT_fim_species_code(' PO 100', 1) = 'PO 100' passed
----------------------------------------------------------
-  -- TT_fim_species_translation
----------------------------------------------------------
-UNION ALL
-SELECT '25.1'::text number,
-       'TT_fim_species_translation'::text function_tested,
-       'Get species code 1'::text description,
-       TT_fim_species_translation('Sw  10Sb  90', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_GLAU' passed
----------------------------------------------------------
-UNION ALL
-SELECT '25.2'::text number,
-       'TT_fim_species_translation'::text function_tested,
-       'Get species code 2'::text description,
-       TT_fim_species_translation('Sw  10Sb  90', '2', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_MARI' passed
----------------------------------------------------------
-UNION ALL
-SELECT '25.3'::text number,
-       'TT_fim_species_translation'::text function_tested,
-       'Get species code 100'::text description,
-       TT_fim_species_translation('Sw 100', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_GLAU' passed
----------------------------------------------------------
-UNION ALL
-SELECT '25.4'::text number,
-       'TT_fim_species_translation'::text function_tested,
-       'Species code doesnt exist'::text description,
-       TT_fim_species_translation('Sw 100', '2', 'public', 'test_lookup_on_species', 'source_val', 'spec1') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '25.5'::text number,
-       'TT_fim_species_translation'::text function_tested,
-       'Species code not in table'::text description,
-       TT_fim_species_translation('Ss 100', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '25.6'::text number,
-       'TT_fim_species_translation'::text function_tested,
-       'Null string'::text description,
-       TT_fim_species_translation(null::text, '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') IS NULL passed
----------------------------------------------------------
-UNION ALL
-SELECT '25.7'::text number,
-       'TT_fim_species_translation'::text function_tested,
-       'ON01 example 1'::text description,
-       TT_fim_species_translation('Sw  0', '1', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_GLAU' passed
----------------------------------------------------------
-UNION ALL
-SELECT '25.8'::text number,
-       'TT_fim_species_translation'::text function_tested,
-       'ON01 example 2'::text description,
-       TT_fim_species_translation('SB 6B  2SB 1PO 1', '3', 'public', 'test_lookup_on_species', 'source_val', 'spec1') = 'PICE_MARI' passed
 ---------------------------------------------------------
   -- TT_fim_species_percent_translation
 ---------------------------------------------------------
@@ -1734,25 +1600,25 @@ SELECT '37.11'::text number,
        TT_sk_utm01_species_percent_translation('1', '','','','','') IS NULL passed
 ---------------------------------------------------------
 ---------------------------------------------------------
- -- TT_sk_utm01_species_translation
+ -- TT_sk_utm01_species
 ---------------------------------------------------------
 UNION ALL
 SELECT '38.1'::text number,
-       'TT_sk_utm01_species_translation'::text function_tested,
+       'TT_sk_utm01_species'::text function_tested,
        'Expected species'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','BF','','','') = 'ABIE_BAL_###' passed
+       TT_sk_utm01_species('2', 'WS','BF','','','') = 'BF' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '38.2'::text number,
-       'TT_sk_utm01_species_translation'::text function_tested,
+       'TT_sk_utm01_species'::text function_tested,
        'Expected species with empty strings'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','','','','BF') = 'ABIE_BAL_###' passed
+       TT_sk_utm01_species('2', 'WS','','','','BF') = 'BF' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '38.3'::text number,
-       'TT_sk_utm01_species_translation'::text function_tested,
+       'TT_sk_utm01_species'::text function_tested,
        'Expected species with empty strings and nulls'::text description,
-       TT_sk_utm01_species_translation('2', 'WS','',NULL::text,'','BF') = 'ABIE_BAL_###' passed
+       TT_sk_utm01_species('2', 'WS','',NULL::text,'','BF') = 'BF' passed
 ---------------------------------------------------------
   -- TT_sfv01_stand_structure_translation
 ---------------------------------------------------------
@@ -2489,160 +2355,159 @@ SELECT '59.4'::text number,
        'Test typeclas but no sp'::text description,
        TT_row_translation_rule_nt_lyr('TM', '', '', '', '') IS FALSE passed
 ---------------------------------------------------------
- -- tt_qc_prg4_species_translation
+ -- tt_qc_prg4_species
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.1'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'no_prg 4 species 1'::text description,
-       TT_qc_prg4_species_translation('FXPU', '1') = 'GENH_SPP_###' passed
+       TT_qc_prg4_species('FXPU', '1') = 'FX' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.2'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'no_prg 4 species 2'::text description,
-       TT_qc_prg4_species_translation('FXPU', '2') = 'TSUG_CAN_###' passed
+       TT_qc_prg4_species('FXPU', '2') = 'PU' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.3'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'null gr_ess'::text description,
-       TT_qc_prg4_species_translation(NULL::text, '2') IS NULL passed
+       TT_qc_prg4_species(NULL::text, '2') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.4'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'no_prg 4 no species 3'::text description,
-       TT_qc_prg4_species_translation('FXPU', '3') IS NULL passed
+       TT_qc_prg4_species('FXPU', '3') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.5'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'Double species and species 1 requested'::text description,
-       TT_qc_prg4_species_translation('FXFX', '1') = 'GENH_SPP_###' passed
+       TT_qc_prg4_species('FXFX', '1') = 'FX' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.6'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'Double species and species 2 requested'::text description,
-       TT_qc_prg4_species_translation('FXFX', '2') IS NULL passed
+       TT_qc_prg4_species('FXFX', '2') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.7'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'Triple species, species 1'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '1') = 'GENH_SPP_###' passed
+       TT_qc_prg4_species('FXPUFX', '1') = 'FX' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.8'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'Triple species, species 2'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '2') = 'TSUG_CAN_###' passed
+       TT_qc_prg4_species('FXPUFX', '2') = 'PU' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.9'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'Triple species, species 3'::text description,
-       TT_qc_prg4_species_translation('FXPUFX', '3') = 'GENH_SPP_###' passed
+       TT_qc_prg4_species('FXPUFX', '3') = 'FX' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.10'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        '6 char double, species 1'::text description,
-       TT_qc_prg4_species_translation('FXFXPU', '1') = 'GENH_SPP_###' passed
+       TT_qc_prg4_species('FXFXPU', '1') = 'FX' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.11'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        '6 char double, species 2'::text description,
-       TT_qc_prg4_species_translation('FXFXPU', '2') = 'TSUG_CAN_###' passed
+       TT_qc_prg4_species('FXFXPU', '2') = 'PU' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.12'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        '6 char double, species 3'::text description,
-       TT_qc_prg4_species_translation('FXFXPU', '3') IS NULL passed
+       TT_qc_prg4_species('FXFXPU', '3') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.13'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'test single species'::text description,
-       TT_qc_prg4_species_translation('PU', '1') = 'TSUG_CAN_###' passed
+       TT_qc_prg4_species('PU', '1') = 'PU' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '60.14'::text number,
-       'TT_qc_prg4_species_translation'::text function_tested,
+       'TT_qc_prg4_species'::text function_tested,
        'test single species'::text description,
-       TT_qc_prg4_species_translation('PU', '2') IS NULL passed
+       TT_qc_prg4_species('PU', '2') IS NULL passed
 ---------------------------------------------------------
- -- tt_qc_prg5_species_translation
+ -- tt_qc_prg5_species
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.1'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        '5th inv species 1'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '1') = 'ACER_RUB_###' passed
+       TT_qc_prg5_species('BP20EO30PE10EN10SB30', '1') = 'EO' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.2'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        '5th inv species 2'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '2') = 'ABIE_BAL_###' passed
+       TT_qc_prg5_species('BP20EO30PE10EN10SB30', '2') = 'SB' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.3'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        '5th inv species 3'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '3') = 'BETU_PAP_###' passed
+       TT_qc_prg5_species('BP20EO30PE10EN10SB30', '3') = 'BP' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.4'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        '5th inv species 4'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '4') = 'POPU_SPP_###' passed
+       TT_qc_prg5_species('BP20EO30PE10EN10SB30', '4') = 'PE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.5'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        '5th inv species 5'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '5') = 'PICE_MAR_###' passed
+       TT_qc_prg5_species('BP20EO30PE10EN10SB30', '5') = 'EN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.6'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        '5th inv species too high'::text description,
-       TT_qc_prg5_species_translation('BP20EO30PE10EN10SB30', '20') IS NULL passed
+       TT_qc_prg5_species('BP20EO30PE10EN10SB30', '20') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.7'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        '5th inv null'::text description,
-       TT_qc_prg5_species_translation('', '1') IS NULL passed
+       TT_qc_prg5_species('', '1') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.8'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        'test qc07 code'::text description,
-       TT_qc_prg5_species_translation('BP2EO3PE1EN1SB3', '5') = 'PICE_MAR_###' passed
+       TT_qc_prg5_species('BP2EO3PE1EN1SB3', '5') = 'EN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.10'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        'test species group code 1'::text description,
-       TT_qc_prg5_species_translation('FXFNRX', '1') = 'GENH_SPP_###' passed
+       TT_qc_prg5_species('FXFNRX', '1') = 'FX' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.11'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        'test species group code 2'::text description,
-       TT_qc_prg5_species_translation('FXFNRX', '2') = 'HARD_NON_###' passed
+       TT_qc_prg5_species('FXFNRX', '2') = 'FN' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '61.12'::text number,
-       'TT_qc_prg5_species_translation'::text function_tested,
+       'TT_qc_prg5_species'::text function_tested,
        'test species group code 3'::text description,
-       TT_qc_prg5_species_translation('FXFNRX', '3') = 'GENC_SPP_###' passed
-
+       TT_qc_prg5_species('FXFNRX', '3') = 'RX' passed
 ---------------------------------------------------------
  -- TT_qc_prg4_species_per_translation
 ---------------------------------------------------------
@@ -2835,44 +2700,6 @@ SELECT '64.4'::text number,
        'TT_qc_prg4_not_double_species_validation'::text function_tested,
        'Species is empty'::text description,
        TT_qc_prg4_not_double_species_validation('') passed
----------------------------------------------------------
- -- tt_qc_prg5_species_matchTable_validation
----------------------------------------------------------
-UNION ALL
-SELECT '65.1'::text number,
-       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
-       '5th inv species 1'::text description,
-       TT_qc_prg5_species_matchTable_validation('BP20EO30PE10EN10SB30', '1')  passed
----------------------------------------------------------
-UNION ALL
-SELECT '65.2'::text number,
-       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
-       '5th inv species fail'::text description,
-       TT_qc_prg5_species_matchTable_validation('ZZ100', '1') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '65.3'::text number,
-       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
-       '5th inv species null'::text description,
-       TT_qc_prg5_species_matchTable_validation(NULL::text, '1') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '65.4'::text number,
-       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
-       'test qc07'::text description,
-       TT_qc_prg5_species_matchTable_validation('BP2EO3PE1EN1SB3', '1')  passed
----------------------------------------------------------
-UNION ALL
-SELECT '65.5'::text number,
-       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
-       'test qc07 single species'::text description,
-       TT_qc_prg5_species_matchTable_validation('BP0', '1')  passed
----------------------------------------------------------
-UNION ALL
-SELECT '65.6'::text number,
-       'TT_qc_prg5_species_matchTable_validation'::text function_tested,
-       'test qc05 single species'::text description,
-       TT_qc_prg5_species_matchTable_validation('BP100', '1')  passed
 ---------------------------------------------------------
   -- TT_mb_fri_countOfNotNull
 ---------------------------------------------------------
@@ -4669,32 +4496,6 @@ SELECT '128.5'::text number,
        'TT_sk_sfvi_lyr_layer_translation'::text function_tested,
        'species without productivity'::text description,
        TT_sk_sfvi_lyr_layer_translation('{NULL, 10, 11}', '{NULL, NULL}', '{bf, bs}', '{bf, bs}', 'BSH', '1') = 3 passed
----------------------------------------------------------
- -- TT_fim_species_validation
----------------------------------------------------------
-UNION ALL
-SELECT '129.1'::text number,
-       'TT_fim_species_validation'::text function_tested,
-       'Basic pass ON02'::text description,
-       TT_fim_species_validation('BF 9MF 1', '1', 'translation', 'species_code_mapping', 'on_species_codes') passed
----------------------------------------------------------
-UNION ALL
-SELECT '129.2'::text number,
-       'TT_fim_species_validation'::text function_tested,
-       'Basic pass ON01 species 2'::text description,
-       TT_fim_species_validation('BF 9MF 1', '2', 'translation', 'species_code_mapping', 'on_species_codes') passed
----------------------------------------------------------
-UNION ALL
-SELECT '129.3'::text number,
-       'TT_fim_species_validation'::text function_tested,
-       'Basic pass ON02 species'::text description,
-       TT_fim_species_validation('BF 90MF 10', '2', 'translation', 'species_code_mapping', 'on_species_codes') passed
----------------------------------------------------------
-UNION ALL
-SELECT '129.4'::text number,
-       'TT_fim_species_validation'::text function_tested,
-       'Basic pass ON02 species 2'::text description,
-       TT_fim_species_validation('BF 100', '1', 'translation', 'species_code_mapping', 'on_species_codes') passed	
 ---------------------------------------------------------
  -- TT_qc_prg3_src_inv_area_translation
 ---------------------------------------------------------
