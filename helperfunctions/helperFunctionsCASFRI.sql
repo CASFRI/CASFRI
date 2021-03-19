@@ -5100,6 +5100,19 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- then extracts the percentage.
 -- Uses alpha numeric codes to lookup if the percent values need to be multiplied by 10.
 -- Uses alpha numeric codes to return 100 when code has a zero value and a single species (ON01).
+--
+-- ON01 has many formats of species codes mixed together without standardization. There appeared
+-- to be lots of error codes and codes that would need editing to become valid. For example many
+-- codes have a trailing 0 (e.g. 'L  7SB 3   0') that should be removed.
+--
+-- Currently we only report percent for the formats that don't require any error fixing:
+-- xx00xx00 - species codes separated by 2-digit percent values. Percent is just copied. This is all of ON02.
+-- xx00xx0  - species codes separated by 2-digit percent values, then 1 digit percent values. 1-digit vales always come after 2-digit values. Percent is just copied.
+-- xx000xx000 - species codes separated by 3-digit percent values (e.g. AB 080CE 020). Cast to integer and copy percent.
+-- x0x0xx0 - species codes separated by 1-digit percent values. Multiply by 10.
+-- xx0 - species codes with a single percent value of zero. Return 100 percent.
+--
+-- More info in issue #678
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_fim_species_percent_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_fim_species_percent_translation(
