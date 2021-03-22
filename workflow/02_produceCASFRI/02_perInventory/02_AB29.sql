@@ -25,7 +25,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab29_cas');
 SELECT TT_CreateMappingView('rawfri', 'ab29', 'ab');
 
 -- Delete existing entries
-DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'AB29';
+-- DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'AB29';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all
@@ -40,7 +40,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_dst', '_ab29_dst');
 SELECT TT_CreateMappingView('rawfri', 'ab29', 1, 'ab', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB29';
+-- DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB29';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all
@@ -55,7 +55,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_eco', '_ab29_eco');
 SELECT TT_CreateMappingView('rawfri', 'ab29', 'ab');
 
 -- Delete existing entries
-DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'AB29';
+-- DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'AB29';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all
@@ -71,7 +71,7 @@ ON translation.species_code_mapping (ab_species_codes)
 WHERE TT_NotEmpty(ab_species_codes);
 
 -- Delete existing entries
-DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'AB29';
+-- DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'AB29';
 
 -- Add translated ones
 -- Layer 1
@@ -101,7 +101,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_nfl', '_ab29_nfl');
 SELECT TT_CreateMappingView('rawfri', 'ab29', 3, 'ab', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'AB29';
+-- DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'AB29';
 
 -- Add translated ones
 -- Layer 1
@@ -126,7 +126,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_geo', '_ab29_geo');
 SELECT TT_CreateMappingView('rawfri', 'ab29', 1, 'ab', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'AB29';
+-- DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'AB29';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all
