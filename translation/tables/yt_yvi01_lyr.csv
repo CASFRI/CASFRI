@@ -10,16 +10,16 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 8,CROWN_CLOSURE_LOWER,integer,"notNull(crown_closure_lower);isInt(crown_closure_lower);isBetween(crown_closure_lower,0,100)",copyInt(crown_closure_lower),Copies source value to CROWN_CLOSURE_LOWER,TRUE
 9,HEIGHT_UPPER,double precision,"notNull(height_upper);isNumeric(height_upper);isGreaterThan(height_upper, 0, FALSE|-8888);isBetween(height_upper,0,100)",copyDouble(height_upper),Copies source value to HEIGHT_UPPER,TRUE
 10,HEIGHT_LOWER,double precision,"notNull(height_lower);isNumeric(height_lower);isGreaterThan(height_lower, 0, FALSE|-8888);isBetween(height_lower,0,100)",copyDouble(height_lower),Copies source value to HEIGHT_LOWER,TRUE
-11,PRODUCTIVITY,text,false(|UNKNOWN_VALUE),nothingText(),No productivity info,TRUE
-12,PRODUCTIVITY_TYPE,text,false(|UNKNOWN_VALUE),nothingText(),No productivity info,TRUE
-13,SPECIES_1,text,"notNull(species_1);notEmpty(species_1);matchTable(species_1, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_1, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
-14,SPECIES_PER_1,integer,"notNull(species_per_1);isNumeric(species_per_1|-9997);isBetween(species_per_1,1,100)",copyInt(species_per_1),Copies source value to SPECIES_PER_1,TRUE
-15,SPECIES_2,text,"notNull(species_2);notEmpty(species_2);matchTable(species_2, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_2, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
-16,SPECIES_PER_2,integer,"notNull(species_per_2);isNumeric(species_per_2|-9997);isBetween(species_per_2,1,100)",copyInt(species_per_2),Copies source value to SPECIES_PER_2,TRUE
-17,SPECIES_3,text,"notNull(species_3);notEmpty(species_3);matchTable(species_3, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_3, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_3 using lookup table,TRUE
-18,SPECIES_PER_3,integer,"notNull(species_per_3);isNumeric(species_per_3|-9997);isBetween(species_per_3,1,100)",copyInt(species_per_3),Copies source value to SPECIES_PER_3,TRUE
-19,SPECIES_4,text,"notNull(species_4);notEmpty(species_4);matchTable(species_4, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_4, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_4 using lookup table,TRUE
-20,SPECIES_PER_4,integer,"notNull(species_per_4);isNumeric(species_per_4|-9997);isBetween(species_per_4,1,100)",copyInt(species_per_4),Copies source value to SPECIES_PER_4,TRUE
+11,PRODUCTIVITY,text,false(),nothingText(),No productivity info,TRUE
+12,PRODUCTIVITY_TYPE,text,false(),nothingText(),No productivity info,TRUE
+13,SPECIES_1,text,"notNull(species_1);notEmpty(species_1|-8888);matchTable(species_1, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_1, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_1 using lookup table,TRUE
+14,SPECIES_PER_1,integer,"notNull(species_per_1);isNumeric(species_per_1);isGreaterThan(species_per_1, 1|-8888);isBetween(species_per_1,1,100)",copyInt(species_per_1),Copies source value to SPECIES_PER_1,TRUE
+15,SPECIES_2,text,"notNull(species_2);notEmpty(species_2|-8888);matchTable(species_2, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_2, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_2 using lookup table,TRUE
+16,SPECIES_PER_2,integer,"notNull(species_per_2);isNumeric(species_per_2);isGreaterThan(species_per_2, 1|-8888);isBetween(species_per_2,1,100)",copyInt(species_per_2),Copies source value to SPECIES_PER_2,TRUE
+17,SPECIES_3,text,"notNull(species_3);notEmpty(species_3|-8888);matchTable(species_3, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_3, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_3 using lookup table,TRUE
+18,SPECIES_PER_3,integer,"notNull(species_per_3);isNumeric(species_per_3);isGreaterThan(species_per_3, 1|-8888);isBetween(species_per_3,1,100)",copyInt(species_per_3),Copies source value to SPECIES_PER_3,TRUE
+19,SPECIES_4,text,"notNull(species_4);notEmpty(species_4|-8888);matchTable(species_4, 'translation', 'species_code_mapping', 'yt_species_codes', TRUE)","lookupText(species_4, 'translation', 'species_code_mapping', 'yt_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_4 using lookup table,TRUE
+20,SPECIES_PER_4,integer,"notNull(species_per_4);isNumeric(species_per_4);isGreaterThan(species_per_4, 1|-8888);isBetween(species_per_4,1,100)",copyInt(species_per_4),Copies source value to SPECIES_PER_4,TRUE
 21,SPECIES_5,text,false(),nothingText(),Attribute does not occur,TRUE
 22,SPECIES_PER_5,integer,false(),nothingInt(),Attribute does not occur,TRUE
 23,SPECIES_6,text,false(),nothingText(),Attribute does not occur,TRUE

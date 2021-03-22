@@ -13,13 +13,13 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 11,PRODUCTIVITY,text," notMatchList(species_1, {'AL', 'WW' }|UNKNOWN_VALUE);false(|NOT_APPLICABLE)",nothingText(),Assigned UNKNOWN_VALUE when PRODUCTIVE_TYPE is ALDER. Default value is NOT_APPLICABLE,TRUE
 12,PRODUCTIVITY_TYPE,text,"notNull(species_1);notEmpty(species_1);matchList(species_1,{'AL','WW'} |NOT_APPLICABLE)","mapText(species_1, {'AL', 'WW'}, {'ALDER','ALDER'})","When dominant species is alder, we assigned ALDER as PRODUCTIVE_TYPE ",TRUE
 13,SPECIES_1,text,"notNull(species_1);notEmpty(species_1);notMatchList(species_1,'BC' |NOT_IN_SET);matchTable(species_1, 'translation', 'species_code_mapping', 'pc02_species_codes', TRUE)","lookupText(species_1, 'translation', 'species_code_mapping', 'pc02_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_1 using lookup table. BC represents unknown species so catch it during validation.,TRUE
-14,SPECIES_PER_1,integer,"hasCountOfNotNull(species_1, species_2, species_3, species_4, 1, FALSE)","countOfNotNullMapInt(species_1, species_2, species_3, species_4, 4, {1,2,3,4}, {100,60,40,35})",Check at least 1 species are present. Map percent based on the number of species.,TRUE
+14,SPECIES_PER_1,integer,"hasCountOfNotNull(species_1, species_2, species_3, species_4, 1, FALSE|-8888)","countOfNotNullMapInt(species_1, species_2, species_3, species_4, 4, {1,2,3,4}, {100,60,40,35})",Check at least 1 species are present. Map percent based on the number of species.,TRUE
 15,SPECIES_2,text,"notNull(species_2);notEmpty(species_2);notMatchList(species_1,'BC' |NOT_IN_SET);matchTable(species_2, 'translation', 'species_code_mapping', 'pc02_species_codes', TRUE)","lookupText(species_2, 'translation', 'species_code_mapping', 'pc02_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_2 using lookup table. BC represents unknown species so catch it during validation.,TRUE
-16,SPECIES_PER_2,integer,"hasCountOfNotNull(species_1, species_2, species_3, species_4, 2, FALSE)","countOfNotNullMapInt(species_1, species_2, species_3, species_4, 4, {2,3,4}, {40,30,35})",Check at least 2 species are present. Map percent based on the number of species.,TRUE
+16,SPECIES_PER_2,integer,"hasCountOfNotNull(species_1, species_2, species_3, species_4, 2, FALSE|-8888)","countOfNotNullMapInt(species_1, species_2, species_3, species_4, 4, {2,3,4}, {40,30,35})",Check at least 2 species are present. Map percent based on the number of species.,TRUE
 17,SPECIES_3,text,"notNull(species_3);notEmpty(species_3);notMatchList(species_1,'BC' |NOT_IN_SET);matchTable(species_3, 'translation', 'species_code_mapping', 'pc02_species_codes', TRUE)","lookupText(species_3, 'translation', 'species_code_mapping', 'pc02_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_3 using lookup table. BC represents unknown species so catch it during validation.,TRUE
-18,SPECIES_PER_3,integer,"hasCountOfNotNull(species_1, species_2, species_3, species_4, 3, FALSE)","countOfNotNullMapInt(species_1, species_2, species_3, species_4, 4, {3,4}, {30,15})",Check at least 3 species are present. Map percent based on the number of species.,TRUE
+18,SPECIES_PER_3,integer,"hasCountOfNotNull(species_1, species_2, species_3, species_4, 3, FALSE|-8888)","countOfNotNullMapInt(species_1, species_2, species_3, species_4, 4, {3,4}, {30,15})",Check at least 3 species are present. Map percent based on the number of species.,TRUE
 19,SPECIES_4,text,"notNull(species_4);notEmpty(species_4);notMatchList(species_1,'BC' |NOT_IN_SET);matchTable(species_4, 'translation', 'species_code_mapping', 'pc02_species_codes', TRUE)","lookupText(species_4, 'translation', 'species_code_mapping', 'pc02_species_codes', 'casfri_species_codes', TRUE)",Maps source value to SPECIES_4 using lookup table. BC represents unknown species so catch it during validation.,TRUE
-20,SPECIES_PER_4,integer,"hasCountOfNotNull(species_1, species_2, species_3, species_4, 4, FALSE)","countOfNotNullMapInt(species_1, species_2, species_3, species_4, 4, {4}, {15})",Check at least 4 species are present. Map percent based on the number of species.,TRUE
+20,SPECIES_PER_4,integer,"hasCountOfNotNull(species_1, species_2, species_3, species_4, 4, FALSE|-8888)","countOfNotNullMapInt(species_1, species_2, species_3, species_4, 4, {4}, {15})",Check at least 4 species are present. Map percent based on the number of species.,TRUE
 21,SPECIES_5,text,false(),nothingText(),Attribute does not occur,TRUE
 22,SPECIES_PER_5,integer,false(),nothingInt(),Attribute does not occur,TRUE
 23,SPECIES_6,text,false(),nothingText(),Attribute does not occur,TRUE
@@ -32,7 +32,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 30,SPECIES_PER_9,integer,false(),nothingInt(),Attribute does not occur,TRUE
 31,SPECIES_10,text,false(),nothingText(),Attribute does not occur,TRUE
 32,SPECIES_PER_10,integer,false(),nothingInt(),Attribute does not occur,TRUE
-33,ORIGIN_UPPER,integer,false(),nothingInt(),Attribute does not occur,TRUE
-34,ORIGIN_LOWER,integer,false(),nothingInt(),Attribute does not occur,TRUE
+33,ORIGIN_UPPER,integer,false(|-8886),nothingInt(),Attribute does not occur,TRUE
+34,ORIGIN_LOWER,integer,false(|-8886),nothingInt(),Attribute does not occur,TRUE
 35,SITE_CLASS,text,false(),nothingText(),Attribute does not occur,TRUE
 36,SITE_INDEX,double precision,false(),nothingDouble(),Attribute does not occur,TRUE
