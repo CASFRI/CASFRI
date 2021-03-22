@@ -16,88 +16,88 @@ SET coltypes_gridded="id=text,wkt_geometry=text,valid_year_begin=int,valid_year_
 
 :: Make schema if it doesn't exist
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "CREATE SCHEMA IF NOT EXISTS geohistory";
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "CREATE SCHEMA IF NOT EXISTS casfri50_history_test";
 
 ::Run ogr2ogr
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nb1_history.csv" -nln "geohistory.sampling_area_nb1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nb1_history.csv" -nln "casfri50_history_test.sampling_area_nb1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_nb1_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_nb1_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nb2_history.csv" -nln "geohistory.sampling_area_nb2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nb2_history.csv" -nln "casfri50_history_test.sampling_area_nb2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_nb2_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_nb2_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nt1_history.csv" -nln "geohistory.sampling_area_nt1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nt1_history.csv" -nln "casfri50_history_test.sampling_area_nt1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_nt1_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_nt1_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nt2_history.csv" -nln "geohistory.sampling_area_nt2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nt2_history.csv" -nln "casfri50_history_test.sampling_area_nt2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_nt2_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_nt2_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_bc1_history.csv" -nln "geohistory.sampling_area_bc1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_bc1_history.csv" -nln "casfri50_history_test.sampling_area_bc1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_bc1_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_bc1_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_bc2_history.csv" -nln "geohistory.sampling_area_bc2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_bc2_history.csv" -nln "casfri50_history_test.sampling_area_bc2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_bc2_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_bc2_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk1_history.csv" -nln "geohistory.sampling_area_sk1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk1_history.csv" -nln "casfri50_history_test.sampling_area_sk1_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk1_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_sk1_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk2_history.csv" -nln "geohistory.sampling_area_sk2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk2_history.csv" -nln "casfri50_history_test.sampling_area_sk2_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk2_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_sk2_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk3_history.csv" -nln "geohistory.sampling_area_sk3_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk3_history.csv" -nln "casfri50_history_test.sampling_area_sk3_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk3_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_sk3_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk4_history.csv" -nln "geohistory.sampling_area_sk4_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk4_history.csv" -nln "casfri50_history_test.sampling_area_sk4_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk4_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_sk4_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nb1_gridded_history.csv" -nln "geohistory.sampling_area_nb1_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nb1_gridded_history.csv" -nln "casfri50_history_test.sampling_area_nb1_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_nb1_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_nb1_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nb2_gridded_history.csv" -nln "geohistory.sampling_area_nb2_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nb2_gridded_history.csv" -nln "casfri50_history_test.sampling_area_nb2_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_nb2_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_nb2_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nt1_gridded_history.csv" -nln "geohistory.sampling_area_nt1_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nt1_gridded_history.csv" -nln "casfri50_history_test.sampling_area_nt1_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_nt1_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_nt1_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nt2_gridded_history.csv" -nln "geohistory.sampling_area_nt2_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_nt2_gridded_history.csv" -nln "casfri50_history_test.sampling_area_nt2_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_nt2_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_nt2_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_bc1_gridded_history.csv" -nln "geohistory.sampling_area_bc1_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_bc1_gridded_history.csv" -nln "casfri50_history_test.sampling_area_bc1_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_bc1_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_bc1_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_bc2_gridded_history.csv" -nln "geohistory.sampling_area_bc2_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_bc2_gridded_history.csv" -nln "casfri50_history_test.sampling_area_bc2_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_bc2_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_bc2_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk1_gridded_history.csv" -nln "geohistory.sampling_area_sk1_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk1_gridded_history.csv" -nln "casfri50_history_test.sampling_area_sk1_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk1_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_sk1_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk2_gridded_history.csv" -nln "geohistory.sampling_area_sk2_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk2_gridded_history.csv" -nln "casfri50_history_test.sampling_area_sk2_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk2_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_sk2_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk3_gridded_history.csv" -nln "geohistory.sampling_area_sk3_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk3_gridded_history.csv" -nln "casfri50_history_test.sampling_area_sk3_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk3_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_sk3_gridded_history DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk4_gridded_history.csv" -nln "geohistory.sampling_area_sk4_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./testtables/sampling_area_sk4_gridded_history.csv" -nln "casfri50_history_test.sampling_area_sk4_gridded_history" %overwrite_tab% -lco COLUMN_TYPES=%coltypes_gridded%
 
-"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE geohistory.sampling_area_sk4_gridded_history DROP COLUMN ogc_fid"
+"%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_history_test.sampling_area_sk4_gridded_history DROP COLUMN ogc_fid"
 
 ENDLOCAL
