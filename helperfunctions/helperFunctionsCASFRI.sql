@@ -3657,7 +3657,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_hasCountOfNotNull(text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_qc_hasCountOfNotNull(
-  cl_age text,
+  num_of_layers text,
   co_ter text,
   count text,
   exact text
@@ -3678,7 +3678,7 @@ RETURNS boolean AS $$
     _exact = exact::boolean;
 
     -- process
-    _counted_nulls = tt_qc_countOfNotNull(cl_age, co_ter, '3');
+    _counted_nulls = TT_qc_CountOfNotNull(num_of_layers, co_ter, '3');
 
     IF _exact THEN
       RETURN _counted_nulls = _count;
@@ -6419,7 +6419,7 @@ $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_qc_countOfNotNull(text, text, text)
 --
--- age_cl text - lookup code for number of lyr layer in lookup table
+-- lyr_layers text - lyr layer from qc_standstructure_lookup table
 -- nfl text - nfl code
 -- max_rank_to_consider text
 -- 
@@ -6434,25 +6434,23 @@ $$ LANGUAGE sql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_qc_countOfNotNull(text, text, text);
 CREATE OR REPLACE FUNCTION TT_qc_countOfNotNull(
-  cl_age text,
+  lyr_layers text,
   nfl text,
   max_rank_to_consider text
 )
 RETURNS int AS $$
   DECLARE
-    lyr_layers int;
     is_lyr1 text;
     is_lyr2 text;
     is_nfl text;
   BEGIN
 
     -- assign lyr 1 and 2
-    lyr_layers = tt_lookupInt(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val', 'num_of_layers');
     CASE 
-      WHEN lyr_layers = 1 THEN
+      WHEN lyr_layers = '1' THEN
         is_lyr1 = 'a_value';
         is_lyr2 = NULL::text;
-      WHEN lyr_layers = 2 THEN
+      WHEN lyr_layers = '2' THEN
         is_lyr1 = 'a_value';
         is_lyr2 = 'a_value';
       ELSE

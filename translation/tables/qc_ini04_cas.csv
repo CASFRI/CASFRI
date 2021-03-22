@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,notNull(orig_stand_id),copyText(orig_stand_id),Copies source value,TRUE
 4,STAND_STRUCTURE,text,"notNull(cl_age|NOT_APPLICABLE);notEmpty(cl_age);matchTable(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val')","lookupText(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val', 'stand_structure')",Stand structure is based on the cl_age code and is copied form the lookup table,TRUE
-5,NUM_OF_LAYERS,integer,"qc_hasCountOfNotNull(cl_age, co_ter, 1, FALSE|-8886)","qc_countOfNotNull(cl_age, co_ter, 3)","Uses the qc_standstructure_lookup table to find number of lyr layers, then tests to see if nfl is present and counts the total number of layers. Max number of layers is 3.",TRUE
+5,NUM_OF_LAYERS,integer,"qc_hasCountOfNotNull(lookupText(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val', 'num_of_layers'), co_ter, 1, FALSE|-8886)","qc_countOfNotNull(lookupText(cl_age, 'translation', 'qc_standstructure_lookup', 'source_val', 'num_of_layers'), co_ter, 3)","Uses the qc_standstructure_lookup table to find number of lyr layers, then tests to see if nfl is present and counts the total number of layers. Max number of layers is 3.",TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Attribute does not occur,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
