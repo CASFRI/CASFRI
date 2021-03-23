@@ -103,10 +103,10 @@ Translation of loaded source tables into target tables formatted to the CASFRI s
 
 ### CASFRI tables and ROW_TRANSLATION_RULE
 CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications):
-1. Header (HDR) attributes - summarizing reference information for each FRI;  
-2. CAS Base Polygon (CAS) attributes - polygon level attributes providing a link between the CAS polygon and the original inventory polygon;  
+1. Header (HDR) attributes - summarizing reference information for each dataset;  
+2. CAS Base Polygon (CAS) attributes - attributes describing the source polygon and any identifiers;  
 3. Forest-Level (LYR) attributes - attributes describing productive and non-productive forest land;  
-4. Non-Forest Land (NFL) attributes - attributes describing naturally non-vegetated, non-forest anthropogenic, and non-forest vegetated land;  
+4. Non-Forest Land (NFL) attributes - attributes describing non-forested land;  
 5. Disturbance history (DST) attributes - attributes describing the type, year and extent of disturbances;  
 6. Ecological specific (ECO) attributes - attributes describing wetlands;  
 7. Geometry attributes - polygon geometries.
