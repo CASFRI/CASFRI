@@ -23,7 +23,7 @@ Note that only major issues preventing the conversion or the translation process
 
 3. In GitKraken (or your favorite git client), create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
-4. In GitHub, create a new column in each repository [Project](https://github.com/edwardsmarc/CASFRI/projects) named after the release and move all fixed issues to this column. This is to avoid that issues fixed on the trunk, after the creation of the branch, get mixed with issues fixed in the branch.
+4. In GitHub, create a new column in each repository [Project](https://github.com/edwardsmarc/CASFRI/projects) named after the release and move all fixed issues to this column. This is to avoid that issues fixed on the trunk, after the creation of the branch, get mixed with issues fixed on the branch.
 
 5. In pgAdmin, create a new PostgreSQL database to test and certify the code found on those two branches. Your goal is to stabilize those branches before creating releases with them.
 
