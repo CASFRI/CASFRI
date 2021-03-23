@@ -107,6 +107,12 @@ Error codes are needed during translation if source values are invalid, null, or
 ### Validating Dependency Tables
 Some translations require dependency tables. Examples are species lookup tables used for mapping source species to target species, and photo year geometries used to intersect source geometries and assign photo year values. These tables need to be validated before being used in the translations. This is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) and some pseudo-translation tables (stored in the dependencyvalidation/tables folder). These pseudo-translation tables are run on the dependency tables themselves and run only validation rules. The engine is therefore only used for its validation capacities and since no real translation is performed, the output of the translation is not saved to tables. If any rows fail a validation rule, the dependency table needs to be fixed before using it in a translation process.
 
+# Temporalization
+
+# Update procedure
+
+# Parallelization
+
 # Workflow
 
 ### Installation
