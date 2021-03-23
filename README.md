@@ -93,7 +93,7 @@ Currently supported FRI formats are:
 * Shapefile
 * Arc/Info Binary Coverage
 
-Arc/Info E00 files are not currently supported due to an incomplete support in GDAL/OGR. Source tables in this format should be converted into a supported format before loading, for example a file geodatabase.
+Arc/Info E00 files are not currently supported in GDAL/OGR. Source tables in this format should be converted into a supported format before loading (e.g. a file geodatabase).
 
 ### Projection
 All source tables are transformed to the Canada Albers Equal Area Conic projection during loading.
