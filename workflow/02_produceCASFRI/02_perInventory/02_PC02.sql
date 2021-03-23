@@ -25,7 +25,7 @@ SELECT TT_Prepare('translation', 'pc_wbnp01_cas', '_pc02_cas', 'ab_avi01_cas');
 SELECT TT_CreateMappingView('rawfri', 'pc02', 'pc_wbnp');
 
 -- Delete existing entries
-DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PC02';
+-- DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PC02';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
@@ -42,7 +42,7 @@ SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc02_dst', 'ab_avi01_dst');
 SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PC02';
+-- DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PC02';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 
@@ -57,7 +57,7 @@ BEGIN;
 SELECT TT_Prepare('translation', 'pc_wbnp01_eco', '_pc02_eco', 'ab_avi01_eco');
 
 -- Delete existing entries
-DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PC02';
+-- DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PC02';
 
 -- Add translated ECOxLYR layer 1  
 SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1);
@@ -183,7 +183,7 @@ BEGIN;
 SELECT TT_Prepare('translation', 'pc_wbnp01_lyr', '_pc02_lyr', 'ab_avi01_lyr'); 
 
 -- Delete existing entries
-DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'PC02';
+-- DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'PC02';
 
 -- Add translated ones
 -- Layer 1
@@ -243,7 +243,7 @@ BEGIN;
 SELECT TT_Prepare('translation', 'pc_wbnp01_nfl', '_pc02_nfl', 'ab_avi01_nfl');
 
 -- Delete existing entries
-DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'PC02';
+-- DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'PC02';
 
 -- Add translated ones
 -- Layer 8
@@ -318,7 +318,7 @@ SELECT TT_Prepare('translation', 'pc_wbnp01_geo', '_pc02_geo', 'ab_avi01_geo');
 SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PC02';
+-- DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PC02';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 

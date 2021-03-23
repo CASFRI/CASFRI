@@ -29,7 +29,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab30_cas');
 SELECT TT_CreateMappingView('rawfri', 'ab30', 'ab');
 
 -- Delete existing entries
-DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'AB30';
+-- DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'AB30';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all
@@ -44,7 +44,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_dst', '_ab30_dst');
 SELECT TT_CreateMappingView('rawfri', 'ab30', 1, 'ab', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB30';
+-- DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB30';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all
@@ -59,7 +59,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_geo', '_ab30_geo');
 SELECT TT_CreateMappingView('rawfri', 'ab30', 1, 'ab', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'AB30';
+-- DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'AB30';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all

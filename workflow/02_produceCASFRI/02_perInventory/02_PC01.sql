@@ -25,7 +25,7 @@ SELECT TT_Prepare('translation', 'pc_panp01_cas', '_pc01_cas', 'ab_avi01_cas');
 SELECT TT_CreateMappingView('rawfri', 'pc01', 'pc_panp');
 
 -- Delete existing entries
-DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PC01';
+-- DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PC01';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
@@ -42,7 +42,7 @@ COMMIT;
 --SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1);
 
 -- Delete existing entries
---DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PC01';
+---- DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PC01';
 
 -- Add translated ones
 --INSERT INTO casfri50.dst_all -- 
@@ -57,7 +57,7 @@ BEGIN;
 SELECT TT_Prepare('translation', 'pc_panp01_eco', '_pc01_eco', 'ab_avi01_eco');
 
 -- Delete existing entries
-DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PC01';
+-- DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PC01';
 
 -- Add translated ones layer 4
 SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1);
@@ -92,7 +92,7 @@ BEGIN;
 SELECT TT_Prepare('translation', 'pc_panp01_lyr', '_pc01_lyr', 'ab_avi01_lyr'); 
 
 -- Delete existing entries
-DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'PC01';
+-- DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'PC01';
 
 -- Add translated ones
 -- Layer 1
@@ -125,7 +125,7 @@ BEGIN;
 SELECT TT_Prepare('translation', 'pc_panp01_nfl', '_pc01_nfl', 'ab_avi01_nfl');
 
 -- Delete existing entries
-DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'PC01';
+-- DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'PC01';
 
 -- Add translated ones
 -- Layer 4
@@ -161,7 +161,7 @@ SELECT TT_Prepare('translation', 'pc_panp01_geo', '_pc01_geo', 'ab_avi01_geo');
 SELECT TT_CreateMappingView('rawfri', 'pc01', 1, 'pc_panp', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PC01';
+-- DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PC01';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 

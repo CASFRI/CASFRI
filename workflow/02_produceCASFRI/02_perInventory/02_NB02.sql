@@ -24,7 +24,7 @@ SELECT TT_Prepare('translation', 'nb_nbi01_cas', '_nb02_cas', 'ab_avi01_cas'); -
 SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb');
 
 -- Delete existing entries
-DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'NB02';
+-- DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'NB02';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all -- 
@@ -39,7 +39,7 @@ SELECT TT_Prepare('translation', 'nb_nbi01_dst', '_nb02_dst', 'ab_avi01_dst'); -
 SELECT TT_CreateMappingView('rawfri', 'nb02', 1, 'nb', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'NB02';
+-- DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'NB02';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 34m
@@ -54,7 +54,7 @@ SELECT TT_Prepare('translation', 'nb_nbi01_eco', '_nb02_eco', 'ab_avi01_eco'); -
 SELECT TT_CreateMappingView('rawfri', 'nb02', 'nb');
 
 -- Delete existing entries
-DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'NB02';
+-- DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'NB02';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all -- 
@@ -73,7 +73,7 @@ WHERE TT_NotEmpty(nb_species_codes);
 SELECT TT_Prepare('translation', 'nb_nbi01_lyr', '_nb02_lyr', 'ab_avi01_lyr'); -- used for both NB01 and NB02, layer 1 and 2
 
 -- Delete existing entries
-DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NB02';
+-- DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NB02';
 
 -- Add translated ones
 -- Layer 1 reusing NB01 layer 1 translation table
@@ -101,7 +101,7 @@ SELECT TT_Prepare('translation', 'nb_nbi01_nfl', '_nb02_nfl', 'ab_avi01_nfl'); -
 SELECT TT_CreateMappingView('rawfri', 'nb02', 3, 'nb', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NB02';
+-- DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NB02';
 
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
@@ -116,7 +116,7 @@ SELECT TT_Prepare('translation', 'nb_nbi01_geo', '_nb02_geo', 'ab_avi01_geo'); -
 SELECT TT_CreateMappingView('rawfri', 'nb02', 1, 'nb', 1);
 
 -- Delete existing entries
-DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NB02';
+-- DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NB02';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all -- 
