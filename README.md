@@ -9,7 +9,7 @@ A number of CASFRI instances have been produced since 2009. CASFRI 5.x is the fi
 
 * Addition of new and more up-to-date inventories.
 * Implementation of a new conversion and loading procedure focused around the open source software GDAL/OGR (in place of ArcGIS).
-* Implementation of a SQL based translation engine abstracting the numerous issues related to this kind of conversion to simple translation files.
+* Implementation of an SQL based translation engine abstracting the numerous issues related to this kind of conversion to simple translation files.
 * Implementation of a temporalization procedure to create a temporal database of all available inventories.
 * Enhancement of attribute generic and specific error codes.
 
@@ -23,9 +23,9 @@ Note that forest resource inventories converted and translated by this package a
 
 # Version Releases
 
-CASFRI follows the [Semantic Versioning 2.0.0](https://semver.org/) versioning scheme (major.minor.revision) adapted for a dataset. Increments in revision version numbers are for bug fixes. Increment in minor version numbers are for new features, support for new inventories, additions to the schema (new attributes), and bug fixes. Increments in minor versions do not break backward compatibility with previous CASFRI schemas. Increments in major version number are for schema changes breaking backward compatibility in existing code manipulating the data (e.g. renaming attributes, removing attributes, and inventory support deprecation).
+CASFRI follows the [Semantic Versioning 2.0.0](https://semver.org/) versioning scheme (major.minor.revision) adapted for a dataset. Increments in revision version numbers are for bug fixes. Increment in minor version numbers are for new features, support for new inventories, additions to the schema (new attributes), and bug fixes. Increments in minor versions do not break backward compatibility with previous CASFRI schemas. Increments in major version number are for schema changes that break backward compatibility with existsing code (e.g. renaming attributes, removing attributes, and inventory support deprecation).
 
-The current version is 5.0.2-beta and is available for download at https://github.com/edwardsmarc/CASFRI/releases/tag/v5.0.2-beta
+The current version is 5.2.0 and is available for download at https://github.com/edwardsmarc/CASFRI/releases/tag/v5.2.0
 
 # Directory structure
 <pre>
@@ -37,6 +37,8 @@ The current version is 5.0.2-beta and is available for download at https://githu
 
 ./helperfunctions       CASFRI specific helper functions used for table translation
 
+./summary_statistics    R scripts to summarize CASFRI output for validation checks
+
 ./translation           Translation tables and associated loading scripts (2nd step)
 
 ./workflow              Actual SQL translation workflow (3rd step)
@@ -46,9 +48,9 @@ The current version is 5.0.2-beta and is available for download at https://githu
 
 The production process of CASFRI 5.x requires:
 
-* [GDAL v1.11.4](http://www.gisinternals.com/query.html?content=filelist&file=release-1800-x64-gdal-1-11-4-mapserver-6-4-3.zip) and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.X. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34).
+* [GDAL v3.1.x](https://www.gisinternals.com/query.html?content=filelist&file=release-1911-x64-gdal-3-1-4-mapserver-7-6-1.zip) and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.x. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34). Production has also been tested using GDAL 1.11.4.
 
-* PostgreSQL 9.6 and PostGIS 2.3.x to store and translate the database. More recent versions should work as well.
+* PostgreSQL 13 and PostGIS 3.1.1 to store and translate the database (PostgreSQL 9.6/11/12 and PostGIS 2.3.x have also been tested). More recent versions should work as well.
 
 * The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) to translate the database.
 
@@ -75,14 +77,12 @@ Inventory standards are the attribute specifications applied to a given inventor
 All identifiers are listed in the [FRI inventory list CSV file](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv) listing all the forest inventories used as source datasets in this project.
 
 # Handling updates
-Historical forestry data is of great value which is why CASFRI accommodates updates. One type of update we often see in FRIs is re-inventories, i.e., when old photo-interpretation is updated to modern standards. The other types of update are so-called “depletion updates” related to various disturbances. In many jurisdictions, depletion-updates are produced annually to “cut-in” polygons disturbed by harvesting, wildfire or insects. Both types of updates are incorporated in CASFRI 5.x by loading and translationg the updated dataset and labelling the dataset with an incremented Inventory_ID. Any duplicate records will be dealt with in an upcoming temporalization procedure.
+Historical forestry data is of great value which is why CASFRI accommodates updates. One type of update we often see in FRIs is re-inventories, i.e., when old photo-interpretation is updated to modern standards. The other types of update are so-called “depletion updates” related to various disturbances. In many jurisdictions, depletion-updates are produced annually to “cut-in” polygons disturbed by harvesting, wildfire or insects. Both types of updates are incorporated in CASFRI 5.x by loading and translationg the updated dataset and labelling the dataset with an incremented Inventory_ID. Any duplicate records will be dealt with in the temporalization procedure.
 
 For an update to be incorporated in the database, the date of publication should be at least one year apart from a previous version. When data are available online, this information can be found in the metadata. For data received from a collaborator, information on the last version received should be shared in order to identify if ny new datasets meet the 1-year criteria. 
 
 # Conversion and Loading
-Conversion and loading happen at the same time and are implemented using the GDAL/OGR ogr2ogr tool. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. Some FRIs are accompanied by an extra shapefile making it possible to associate a photo year with each stand. They are loaded with a second script. Every loading script adds a new "src_filename" attribute to the target table with the name of the source file. This is used when constructing the CAS_ID, a unique row identifier code tracing each target row back to its original row in the source dataset.
-
-Loading scripts are configured by defining local paths and other options in a copy of the configSample.bat and configSample.sh files that you have to name config.bat and config.sh in the same folder. More workflow details are provided below.
+Conversion and loading happen at the same time and are implemented using the GDAL/OGR ogr2ogr tool. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. Some FRIs are accompanied by an extra shapefile that associates each stand with a photo year. These are loaded with a second script. Every loading script adds a new "src_filename" attribute to the target table with the name of the source file, and an "inventory_id" attribute with the dataset name. These are used when constructing the CAS_ID (a unique row identifier tracing each target row back to its original row in the source dataset).
 
 ### Supported File Types
 All conversion/loading scripts are provided as both .sh and .bat files.
@@ -93,7 +93,7 @@ Currently supported FRI formats are:
 * Shapefile
 * Arc/Info Binary Coverage
 
-Arc/Info E00 files are not currently supported due to an incomplete support in GDAL/OGR. Source tables in this format should be converted into a supported format before loading, for example a file geodatabase.
+Arc/Info E00 files are not currently supported in GDAL/OGR. Source tables in this format should be converted into a supported format before loading (e.g. a file geodatabase).
 
 ### Projection
 All source tables are transformed to the Canada Albers Equal Area Conic projection during loading.
@@ -106,6 +106,12 @@ Error codes are needed during translation if source values are invalid, null, or
 
 ### Validating Dependency Tables
 Some translations require dependency tables. Examples are species lookup tables used for mapping source species to target species, and photo year geometries used to intersect source geometries and assign photo year values. These tables need to be validated before being used in the translations. This is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) and some pseudo-translation tables (stored in the dependencyvalidation/tables folder). These pseudo-translation tables are run on the dependency tables themselves and run only validation rules. The engine is therefore only used for its validation capacities and since no real translation is performed, the output of the translation is not saved to tables. If any rows fail a validation rule, the dependency table needs to be fixed before using it in a translation process.
+
+# Temporalization
+
+# Update procedure
+
+# Parallelization
 
 # Workflow
 
