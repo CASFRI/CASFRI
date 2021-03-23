@@ -128,10 +128,14 @@ The function TT_StackTranslationRules() creates a table of all translation and v
 The [summary_statistics](https://github.com/edwardsmarc/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to create summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be downloaded (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpeted values, correct assignment of errors codes etc.
 
 # Temporalization
+All translated datasets are combined into a single historical database that allows querying for the best available inventory information at any point in time accross the full CASFRI coverage. The historical database is created using the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). The output is a historical database that uses the photo year of each polygon as the reference date to determine its valid start and end time. No polygons overlap in time or space, so for any given location at any time, there is only one valid set of CASFRI records. In cases where source polygons overlap in space and time, the polygon containing the most complete information is prioritized.
+**add description of what "complete" means**.
 
 # Update procedure
+**To be written**
 
 # Parallelization
+
 
 # Workflow
 
