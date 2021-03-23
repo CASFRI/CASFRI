@@ -568,5 +568,5 @@ ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_
          species_6, species_per_6, species_7, species_per_7, species_8, species_per_8, species_9, species_per_9, species_10, species_per_10, 
          origin_upper, origin_lower, site_class, site_index;
 ------------------------
-SELECT count(*) FROM casfri50_test.lyr_all_new; -- 30167, 2h26
+SELECT count(*) FROM casfri50_test.lyr_all_new; -- 45652 rows, 2h26, new engine 11m48
 ---------------------------------------------------------

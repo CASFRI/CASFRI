@@ -264,5 +264,5 @@ ORDER BY cas_id, inventory_id, orig_stand_id, stand_structure,
          num_of_layers, map_sheet_id, casfri_area, 
          casfri_perimeter, src_inv_area, stand_photo_year; 
 ------------------------
-SELECT count(*) FROM casfri50_test.cas_all_new; -- 15794, 36m
+SELECT count(*) FROM casfri50_test.cas_all_new; -- 23645, 1m51
 ---------------------------------------------------------
