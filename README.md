@@ -37,6 +37,8 @@ The current version is 5.0.2-beta and is available for download at https://githu
 
 ./helperfunctions       CASFRI specific helper functions used for table translation
 
+./summary_statistics    R scripts to summarize CASFRI output for validation checks
+
 ./translation           Translation tables and associated loading scripts (2nd step)
 
 ./workflow              Actual SQL translation workflow (3rd step)
@@ -46,9 +48,9 @@ The current version is 5.0.2-beta and is available for download at https://githu
 
 The production process of CASFRI 5.x requires:
 
-* [GDAL v1.11.4](http://www.gisinternals.com/query.html?content=filelist&file=release-1800-x64-gdal-1-11-4-mapserver-6-4-3.zip) and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.X. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34).
+* [GDAL v3.1.x](https://www.gisinternals.com/query.html?content=filelist&file=release-1911-x64-gdal-3-1-4-mapserver-7-6-1.zip) and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.X. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34). Productions has also been tested using GDAL 1.11.4.
 
-* PostgreSQL 9.6 and PostGIS 2.3.x to store and translate the database. More recent versions should work as well.
+* PostgreSQL 13 and PostGIS 3.1.1 to store and translate the database (PostgreSQL 9.6/11/12 and PostGIS 2.3.x have also been tested). More recent versions should work as well.
 
 * The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) to translate the database.
 
