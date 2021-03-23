@@ -1625,6 +1625,7 @@ RETURNS text AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_wetland_code(text, text, text)
 --
@@ -1649,6 +1650,8 @@ RETURNS text AS $$
 		ELSE NULL
     END;
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_ab_avi01_wetland_code(text, text, text)
 --
@@ -1685,6 +1688,7 @@ RETURNS text AS $$
     END;
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nb_nbi01_wetland_code(text, text, text)
 -------------------------------------------------------------------------------
@@ -1725,6 +1729,7 @@ RETURNS text AS $$
          END;
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_fim_species_code(text, int)
 --
@@ -1755,6 +1760,7 @@ RETURNS text AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE STRICT;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_qc_wetland_code(text, text, text, text, text, text)
 --
@@ -1899,6 +1905,7 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_wetland_code_translation(text, text)
 --
@@ -1937,6 +1944,7 @@ RETURNS text AS $$
 	  END CASE;    
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_qc_prg5_species_code_to_reordered_array(text)
@@ -1990,6 +1998,7 @@ RETURNS text[] AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_ns_nsi01_wetland_code(text, text, text, text)
 --
@@ -2024,6 +2033,7 @@ RETURNS text AS $$
     END;
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_pe_pei01_wetland_code(text, text)
@@ -2045,6 +2055,7 @@ RETURNS text AS $$
            ELSE NULL
          END;
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_nt_fvi01_wetland_code(text, text, text, text, text, text, text, text, text, text, text)
@@ -2140,6 +2151,8 @@ RETURNS text AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_sk_utm01_wetland_code(text, text, text)
 --
 -- Return 4-character wetland code
@@ -2182,6 +2195,8 @@ RETURNS text AS $$
 	END;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_sk_sfv01_wetland_code(text, text, text)
 --
@@ -2241,6 +2256,8 @@ RETURNS text AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_mb_fli01_wetland_code(text, text, text)
 --
 -- Return 4-character wetland code
@@ -2287,6 +2304,8 @@ RETURNS text AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_mb_fri01_wetland_code(text, text, text)
 --
 -- Return 4-character wetland code
@@ -2309,6 +2328,8 @@ RETURNS text AS $$
     ELSE NULL
   END;
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_pc02_wetland_code(text, text, text)
 --
@@ -2338,6 +2359,8 @@ RETURNS text AS $$
 	ELSE NULL
   END;
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_yt_wetland_code(text, text, text)
 --
@@ -2392,6 +2415,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
 -- TT_vri01_non_for_veg_validation(text, text, text, text)
 --
 -- Check the correct combination of values exists based on the translation rules.
@@ -2485,6 +2509,7 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_vri01_non_for_anth_validation(text, text, text, text)
 ------------------------------------------------------------
@@ -2519,6 +2544,7 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nb_nbi01_wetland_validation(text, text, text, text)
 --
@@ -2642,6 +2668,7 @@ RETURNS boolean AS $$
     RETURN FALSE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_yvi01_nfl_soil_moisture_validation()
@@ -2688,6 +2715,8 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_avi01_stand_structure_validation(text, text, text, text)
 --
 -- stand_structure text
@@ -2727,6 +2756,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_fvi01_stand_structure_validation(text, text)
 --
@@ -2776,6 +2807,7 @@ RETURNS boolean AS $$
     RETURN FALSE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_sk_utm01_species_percent_validation(text, text, text, text, text)
@@ -2852,6 +2884,7 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text)
@@ -2900,6 +2933,7 @@ RETURNS boolean AS $$
                                     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_ns_nsi01_hasCountOfNotNull(text, text, text, text, text, text, text, text)
@@ -2942,6 +2976,8 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_fvi01_hasCountOfNotNull(text, text, text, text, text, text, text, text)
 --
 -- vals1 text
@@ -2983,6 +3019,8 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 ------------------------------------------------------------
 -- TT_on_fim02_hasCountOfNotNull(text, text, text, text, text, text, text, text)
 --
@@ -3023,6 +3061,8 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text)
 --
@@ -3068,6 +3108,8 @@ RETURNS boolean AS $$
     END IF; 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- sfv01_hasCountOfNotNull(text, text, text, text, text, text, text)
 --
@@ -3120,7 +3162,9 @@ RETURNS boolean AS $$
     END IF; 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
-------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_sk_utm_hasCountOfNotNull(text, text, text, text, text)
 --
 -- vals1 text
@@ -3160,7 +3204,9 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
-------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_mb_fri_hasCountOfNotNull(text, text, text, text)
 --
 -- species text - species
@@ -3199,6 +3245,8 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_fvi01_structure_per_validation(text, text)
 --
 -- stand_structure text
@@ -3226,6 +3274,8 @@ RETURNS boolean AS $$
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_qc_prg3_wetland_validation(text, text, text, text, text, text)
 --
@@ -3262,6 +3312,8 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_qc_prg4_wetland_validation(text, text, text, text, text, text)
 --
 -- CO_TER text,
@@ -3296,6 +3348,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_qc_prg5_wetland_validation(text, text, text, text, text, text)
 --
@@ -3332,6 +3386,8 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_qc_prg4_not_double_species_validation(text)
 --
 -- gr_ess text,
@@ -3366,6 +3422,8 @@ RETURNS boolean AS $$
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_qc_prg4_lengthMatchList(text)
 --
@@ -3408,6 +3466,8 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_nl_nli01_isCommercial(text, text)
 --
 -- stand_id text,
@@ -3415,7 +3475,6 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Is the row defined as commercial forest?
 -- Commercial polygons are those with stand_id 1-899 or 1000-7000, and working_group value not equal to CS or DS
-
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_nl_nli01_isCommercial(text, text);
 CREATE OR REPLACE FUNCTION TT_nl_nli01_isCommercial(
@@ -3447,6 +3506,7 @@ RETURNS boolean AS $$
     RETURN FALSE;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_isNonCommercial(text, text)
@@ -3489,6 +3549,8 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_nl_nli01_isForest(text, text)
 --
 -- stand_id text,
@@ -3510,6 +3572,8 @@ RETURNS boolean AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_origin_lower_validation(text, text)
 --
@@ -3549,6 +3613,8 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_nl_nli01_origin_newfoundland_validation(text, text)
 --
 -- density_code text,
@@ -3578,6 +3644,8 @@ RETURNS boolean AS $$
     
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_crown_closure_validation(text, text, text)
 --
@@ -3612,6 +3680,8 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_nl_nli01_height_validation(text, text, text)
 --
 -- height_code text,
@@ -3644,7 +3714,9 @@ RETURNS boolean AS $$
     
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
-------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_qc_hasCountOfNotNull(text, text, text, text)
 --
 -- cl_age text
@@ -3689,6 +3761,8 @@ RETURNS boolean AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_ab_avi01_wetland_validation(text, text, text, text, text, text, text)
 --
 -- Check translation creates a valid 4 letter wetland code.
@@ -3718,6 +3792,8 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_nl_nli01_wetland_validation(text, text, text, text)
 --
 -- Check for valid 4 letter code.
@@ -3744,6 +3820,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_bc_vri01_wetland_validation(text, text, text, text)
 --
@@ -3779,6 +3857,8 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_ns_nsi01_wetland_validation(text, text, text, text)
 --
 -- Assign 4 letter wetland character code, then return true if the requested character (1-4)
@@ -3807,6 +3887,7 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_pe_pei01_wetland_validation(text, text, text)
@@ -3833,6 +3914,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nt_fvi01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text)
 -- Assign 4 letter wetland character code and check value matches expected values.
@@ -3868,6 +3951,8 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_sk_utm01_wetland_validation(text, text, text, text, text, text, text, text, text, text)
 --
 -- Assign 4 letter wetland character code and check value matches expected values.
@@ -3898,6 +3983,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_sk_sfv01_wetland_validation(text, text, text, text, text, text, text, text, text, text)
 --
@@ -3930,6 +4017,8 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_mb_fli01_wetland_validation(text, text, text, text, text, text, text, text, text, text)
 --
 -- Assign 4 letter wetland character code and check value matches expected values.
@@ -3959,6 +4048,8 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_mb_fri01_wetland_validation(text, text, text, text, text, text, text, text, text, text)
 --
 -- Assign 4 letter wetland character code and check value matches expected values.
@@ -3982,6 +4073,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_pc02_wetland_validation(text, text, text)
 --
@@ -4007,6 +4100,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_yt_wetland_validation(text, text, text)
 --
@@ -4036,6 +4131,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_ab_photo_year_validation(text, text, text, text, text, text, text, text, text, text)
 --
@@ -4081,6 +4178,8 @@ RETURNS boolean AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql STABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_pc02_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
 --
@@ -4129,6 +4228,7 @@ RETURNS boolean AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_bc_height(text, text, text, text)
@@ -4188,6 +4288,7 @@ RETURNS double precision AS $$
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_nb_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
@@ -4392,6 +4493,7 @@ RETURNS boolean AS $$
     
   END; 
 $$ LANGUAGE plpgsql;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- tt_row_translation_rule_nt_lyr
@@ -4432,6 +4534,8 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 -- Begin Translation Function Definitions...
 -------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_vri01_origin_translation(text, text)
 --
@@ -4778,6 +4882,7 @@ RETURNS text AS $$
     RETURN 'PRODUCTIVE_FOREST';
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_nbi01_nb02_productive_for_translation(text, text, text, text, text)
@@ -4810,6 +4915,8 @@ RETURNS text AS $$
 	RETURN NULL;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_vri01_dist_yr_translation(text)
 --
@@ -4852,6 +4959,7 @@ RETURNS int AS $$
   END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_fim_species(text, text)
@@ -4964,6 +5072,7 @@ RETURNS text AS $$
       
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_yvi01_non_for_veg_translation(text, text)
@@ -4995,6 +5104,7 @@ RETURNS text AS $$
 	  WHEN type_lnd = 'VN' AND class_ = 'M' THEN 'HERBS'
       ELSE NULL END;
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_generic_stand_structure_translation(text, text, text, text)
@@ -5215,6 +5325,8 @@ RETURNS text AS $$
   SELECT TT_generic_stand_structure_translation(stand_structure, layer1_sp1, layer1_sp2, layer1_sp3, layer2_sp1, layer2_sp2, layer2_sp3, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text);
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_fvi01_countOfNotNull(text, text, text, text, text)
 --
 -- vals1 text
@@ -5276,6 +5388,7 @@ RETURNS int AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text)
@@ -5346,6 +5459,7 @@ RETURNS int AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_sk_utm01_species_percent_translation(text, text, text, text, text, text, text)
@@ -5467,6 +5581,7 @@ RETURNS int AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_sk_utm01_species(text, text, text, text, text, text, text)
@@ -5514,6 +5629,7 @@ RETURNS text AS $$
     RETURN sp_to_lookup;
   END; 
 $$ LANGUAGE plpgsql STABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_sfv01_countOfNotNull(text, text, text, text, text, text, text)
@@ -5572,6 +5688,7 @@ $$ LANGUAGE plpgsql STABLE;
 
 	  END; 
 	$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_ns_nsi01_countOfNotNull(text, text, text, text, text, text, text)
@@ -5617,6 +5734,7 @@ RETURNS int AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_pe_pie01_countOfNotNull(text, text, text, text, text, text, text)
@@ -5676,6 +5794,7 @@ RETURNS int AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_on_fim02_countOfNotNull(text, text, text, text)
@@ -5720,6 +5839,7 @@ RETURNS int AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_sk_utm_countOfNotNull(text, text, text, text)
@@ -5765,6 +5885,8 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_mb_fri_countOfNotNull(text, text, text, text)
 --
 -- species text - string list of species attributes. This is carried through to couneOfNotNull
@@ -5807,6 +5929,8 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_fvi01_structure_per(text, text)
 --
 -- stand_structure text
@@ -5839,6 +5963,7 @@ RETURNS int AS $$
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_qc_prg3_wetland_translation(text, text, text, text, text, text, text)
@@ -5877,6 +6002,7 @@ RETURNS text AS $$
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_qc_prg4_wetland_translation(text, text, text, text, text, text, text)
@@ -5917,6 +6043,8 @@ RETURNS text AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_qc_prg5_wetland_translation(text, text, text, text, text, text, text)
 --
 -- CO_TER text,
@@ -5955,6 +6083,8 @@ RETURNS text AS $$
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_qc_prg4_species(text, text)
 --
@@ -5997,6 +6127,7 @@ RETURNS text AS $$
     END IF;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_qc_prg5_species(text, text)
@@ -6038,6 +6169,8 @@ RETURNS text AS $$
     
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_qc_prg5_species_per_translation(text, text)
 --
@@ -6090,6 +6223,8 @@ RETURNS int AS $$
 	END IF;		
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_qc_prg4_species_per_translation(text, text)
 --
@@ -6152,6 +6287,8 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_nl_nli01_crown_closure_upper_translation(text, text, text)
 --
 -- stand_id text,
@@ -6178,6 +6315,8 @@ RETURNS int AS $$
     END IF;    
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_crown_closure_lower_translation(text, text, text)
 --
@@ -6206,6 +6345,7 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_height_upper_translation(text, text, text)
 --
@@ -6234,6 +6374,8 @@ RETURNS double precision AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_nl_nli01_height_lower_translation(text, text, text)
 --
 -- stand_id text,
@@ -6261,6 +6403,7 @@ RETURNS double precision AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_productivity_translation(text, text)
 --
@@ -6285,6 +6428,8 @@ RETURNS text AS $$
     END IF;      
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_productivity_type_translation(text, text)
 --
@@ -6311,6 +6456,8 @@ RETURNS text AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- tt_nl_nli01_origin_upper_translation(text, text)
 --
@@ -6354,6 +6501,8 @@ RETURNS int AS $$
     
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- tt_nl_nli01_origin_lower_translation(text, text)
 --
@@ -6399,6 +6548,8 @@ RETURNS int AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- tt_qc_origin_translation(text, text)
 --
 -- cl_age text
@@ -6416,6 +6567,8 @@ CREATE OR REPLACE FUNCTION TT_qc_origin_translation(
 RETURNS int AS $$
   SELECT an_pro_ori::int - age::int;
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_qc_countOfNotNull(text, text, text)
 --
@@ -6471,6 +6624,7 @@ RETURNS int AS $$
 
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_lyr_layer_translation(text, text, text, text, text, text, text, text)
@@ -6614,6 +6768,7 @@ CREATE OR REPLACE FUNCTION TT_lyr_layer_translation(
 RETURNS int AS $$
   SELECT TT_lyr_layer_translation(heights, layer1spp, layer2spp, NULL::text, NULL::text, NULL::text, getIndex, '2');
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_nb_lyr_layer_translation(text, text, text, text, text)
@@ -6649,6 +6804,8 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_ns_lyr_layer_translation(text, text, text, text, text)
 --
 -- heights
@@ -6681,6 +6838,8 @@ RETURNS int AS $$
 	
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_on_lyr_layer_translation(text, text, text, text, text)
 --
@@ -6715,6 +6874,8 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_sk_sfvi_lyr_layer_translation(text, text, text, text, text)
 --
 -- heights
@@ -6747,6 +6908,8 @@ RETURNS int AS $$
 	
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_bc_lyr_layer_translation(text, text, text, text, text, text, text, text)
 --
@@ -6792,6 +6955,8 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_ab_avi01_wetland_translation(text, text, text, text, text, text, text, text)
 --
 -- Assign 4 letter wetland character code, then return the requested character (1-4)
@@ -6820,8 +6985,8 @@ RETURNS text AS $$
     RETURN TT_wetland_code_translation(_wetland_code, ret_char);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
-
 -------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nl_nli01_wetland_translation(text, text, text, text)
 --
@@ -6880,6 +7045,8 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_ns_nsi01_wetland_translation(text, text, text, text)
 --
 -- Assign 4 letter wetland character code, then return the requested character (1-4)
@@ -6905,6 +7072,7 @@ RETURNS text AS $$
     RETURN TT_wetland_code_translation(_wetland_code, ret_char);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_pe_pei01_wetland_translation(text, int, text)
@@ -6928,6 +7096,8 @@ RETURNS text AS $$
     RETURN TT_wetland_code_translation(_wetland_code, ret_char_pos);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_nt_fvi01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text, text)
 --
@@ -6961,6 +7131,7 @@ RETURNS text AS $$
     RETURN TT_wetland_code_translation(_wetland_code, ret_char);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_pc01_species_per_translation(text, text)
@@ -7002,6 +7173,7 @@ RETURNS int AS $$
 	END;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_sk_utm01_wetland_translation(text, text, text, text, text, text, text, text, text, text)
@@ -7034,6 +7206,8 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_ab_photo_year_translation(text, text, text, text, text, text, text, text, text, text)
 --
 -- AB inventories pre AB25 need to intersect with the photo year table to get photo year.
@@ -7061,6 +7235,8 @@ RETURNS int AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql STABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_sk_sfv01_wetland_translation(text, text, text, text, text, text, text, text, text, text)
 --
@@ -7092,6 +7268,8 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_mb_fli01_wetland_validation(text, text, text, text, text, text, text, text, text, text)
 --
 -- Assign 4 letter wetland character code and check value matches expected values.
@@ -7119,6 +7297,8 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_mb_fri01_wetland_translation(text, text, text, text, text, text, text, text, text, text)
 --
 -- Assign 4 letter wetland character code and check value matches expected values.
@@ -7140,6 +7320,8 @@ RETURNS text AS $$
     RETURN TT_wetland_code_translation(_wetland_code, retCharPos);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_pc02_wetland_translation(text, text, text)
 --
@@ -7163,6 +7345,8 @@ RETURNS text AS $$
     RETURN TT_wetland_code_translation(_wetland_code, retCharPos);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_pc02_countOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text)
 --
@@ -7274,6 +7458,8 @@ RETURNS int AS $$
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_yt_wetland_translation(text, text, text)
 --
 -- Assign 4 letter wetland character code and check value matches expected values.
@@ -7300,6 +7486,7 @@ RETURNS text AS $$
     RETURN TT_wetland_code_translation(_wetland_code, retCharPos);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_nb_countofnotnull(text, text, text)
@@ -7335,6 +7522,8 @@ RETURNS int AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_qc_prg3_src_inv_area_translation(text, text)
 --
 -- If inventory_id is QC01, use divideDouble(src_inv_area, 10000)
@@ -7354,6 +7543,8 @@ RETURNS double precision AS $$
 	END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_yt_yvi02_disturbance_copyText(text, text, text, text, text)
 --
@@ -7415,6 +7606,8 @@ RETURNS text AS $$
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_yt_yvi02_disturbance_copyInt(text, text, text, text, text)
 --
 -- Cast TT_yt_yvi02_disturbance_copyText to int
@@ -7430,6 +7623,8 @@ CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_copyInt(
 RETURNS int AS $$
   SELECT TT_yt_yvi02_disturbance_copyText(returnList, yearList, layerList, layerNumber, indexToReturn)::int
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_yt_yvi02_disturbance_mapText(text, text, text, text, text)
 --
@@ -7448,6 +7643,7 @@ CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_mapText(
 RETURNS text AS $$
   SELECT tt_mapText(TT_yt_yvi02_disturbance_copyText(returnList, yearList, layerList, layerNumber, indexToReturn), srcList, mapList)
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_yt_yvi02_disturbance_matchList(text, text, text, text, text)
@@ -7466,6 +7662,7 @@ CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_matchList(
 RETURNS boolean AS $$
   SELECT tt_matchList(TT_yt_yvi02_disturbance_copyText(returnList, yearList, layerList, layerNumber, indexToReturn), srcList)
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_yt_yvi02_disturbance_notNull(text, text, text, text, text)
@@ -7483,6 +7680,7 @@ CREATE OR REPLACE FUNCTION TT_yt_yvi02_disturbance_notNull(
 RETURNS boolean AS $$
   SELECT tt_notNull(TT_yt_yvi02_disturbance_copyText(returnList, yearList, layerList, layerNumber, indexToReturn))
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 	-- TT_yt_yvi02_disturbance_hasCountOfLayers(text, text, text, text, text)
