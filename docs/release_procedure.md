@@ -17,7 +17,7 @@ Note that only major issues preventing the conversion or the translation process
 
 **1. Prepare the release**
 
-1. Make sure every fixed issues has been closed.
+1. Make sure every fixed issue has been closed.
 
 2. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate changes done during the release process and prepare the text and the list of fixed issues describing the releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the releases to those issue when commiting in addition to the issue describing the actual fix.
 
