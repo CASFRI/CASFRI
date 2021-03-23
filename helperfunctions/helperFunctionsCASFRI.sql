@@ -1522,13 +1522,13 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isforest' THEN '-8887'
                   WHEN rulelc = 'qc_hascountofnotnull' THEN '-8886'
-				  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
-				  WHEN rulelc = 'pc02_hascountofnotnull' THEN '-8886'
-				  WHEN rulelc = 'bc_height_validation' THEN '-9997'
-				  WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN '-9998'
-				  WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN '-8888'
-				  WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN '-8887'
-				  WHEN rulelc = 'row_translation_rule_nt_lyr' THEN '-9997'
+                  WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
+                  WHEN rulelc = 'pc02_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'bc_height_validation' THEN '-9997'
+                  WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN '-9998'
+                  WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN '-8888'
+                  WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN '-8887'
+                  WHEN rulelc = 'row_translation_rule_nt_lyr' THEN '-9997'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -4995,6 +4995,38 @@ RETURNS text AS $$
   END; 
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_fim_species_count_validate(text)
+--
+-- sp_string text - source string of species and percentages
+--
+-- This functions count the number of species present in sp_string.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_fim_species_count_validate(text, text);
+CREATE OR REPLACE FUNCTION TT_fim_species_count_validate(
+  sp_string text,
+  sp_number text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _sp_number int;
+  BEGIN
+    PERFORM TT_ValidateParams('TT_fim_species',
+                              ARRAY['sp_number', sp_number, 'int']);
+    _sp_number = sp_number::int;
+    RETURN NOT TT_fim_species_code(sp_string, _sp_number) IS NULL;
+  END; 
+$$ LANGUAGE plpgsql VOLATILE;
+/*
+SELECT TT_fim_species_count_validate('ab 10bb 3c 10 0', '1');
+SELECT TT_fim_species_count_validate('ab 10bb 3c 10 0', '2');
+SELECT TT_fim_species_count_validate('ab 10bb 3c 10 0', '3');
+SELECT TT_fim_species_count_validate('ab 10bb 3c 10 0', '4');
+*/
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_fim_species_percent_translation(text, text)
 --
 -- sp_string text - source string of species and percentages
@@ -5014,31 +5046,44 @@ RETURNS int AS $$
   DECLARE
     _code text;
     _sp_number int;
-    _alpha_numeric text;
-    _multiplier int;
+    _short_percent int;
   BEGIN
     PERFORM TT_ValidateParams('TT_fim_species_translation',
                               ARRAY['sp_number', sp_number, 'int']);
     _sp_number = sp_number::int;
     _code = TT_fim_species_code(sp_string, _sp_number);
-    _alpha_numeric = replace(translate(sp_string, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000000'), ' ', '');
-    --_multiplier = tt_lookupInt(_alpha_numeric, 'translation', 'on_species_valid_alpha_numeric_codes', 'source_val', 'percent_multiplier');
-    _multiplier = CASE WHEN (_alpha_numeric ~ '^[a-zA-Z]0{1,2}$') THEN NULL 
-                       WHEN (_alpha_numeric ~ '00') THEN 1 
-                       ELSE 10 
-                  END newpercentmultiplier;
-	
-    IF TT_Length(_code) > 1 THEN
-	    IF _alpha_numeric IN('x0', 'x00', 'xx0') THEN -- these codes use a zero to indicate 100 percent cover of a single species.
-	      RETURN 100;
-	    ELSE
-        RETURN (regexp_split_to_array (_code, '\s+'))[2]::int * _multiplier;
-	    END IF;
-    ELSE
-      RETURN NULL;
-    END IF;
+    _short_percent = (regexp_split_to_array(_code, '\s+'))[2]::int;
+    RETURN CASE WHEN (sp_string ~ '^[a-zA-Z]+\s*0{1,2}$') AND _short_percent = 0 THEN 100 -- cases 'x 0', 'xx 0' and 'x 00'
+                WHEN _short_percent > 100 THEN _short_percent / 10 -- case when _short_percent > 100
+                WHEN (sp_string ~ '[02-9][0-9]') THEN _short_percent -- case when two digit value other than 10 are found 
+                WHEN _short_percent = 10 THEN 10 -- case 10
+                ELSE _short_percent * 10 
+           END;
   END; 
 $$ LANGUAGE plpgsql IMMUTABLE;
+/*
+SELECT TT_fim_species_percent_translation('a 40b 10 0', '1') -- 40
+SELECT TT_fim_species_percent_translation('a 40b 10 0', '2') -- 10
+SELECT TT_fim_species_percent_translation('a 40b 10 0', '3') -- NULL
+
+SELECT TT_fim_species_percent_translation('a 4b 10 0', '1') -- 4
+SELECT TT_fim_species_percent_translation('a 4b 10 0', '2') -- 10
+SELECT TT_fim_species_percent_translation('a 4b 10 0', '3') -- NULL
+
+SELECT TT_fim_species_percent_translation('a 4b 1 0', '1') -- 4
+SELECT TT_fim_species_percent_translation('a 4b 1 0', '2') -- 10
+SELECT TT_fim_species_percent_translation('a 4b 1 0', '3') -- NULL
+
+SELECT TT_fim_species_percent_translation('SB 5B 2O 10', '1') -- 4
+SELECT TT_fim_species_percent_translation('SB 5B 2O 10', '2') -- 20
+SELECT TT_fim_species_percent_translation('SB 5B 2O 10', '3') -- 10
+
+SELECT TT_fim_species_percent_translation('SB 500B 2O 10', '1') -- 50
+SELECT TT_fim_species_percent_translation('SB 500B 9O 10', '2') -- 9
+SELECT TT_fim_species_percent_translation('SB 500B 2O 10', '3') -- 10
+*/
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_yvi01_nat_non_veg_translation(text, text, text)
 --
