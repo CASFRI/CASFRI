@@ -134,7 +134,7 @@ FRI/
 Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). The translation engine uses a translation table that describes rules to validate each loaded source table and translate each row into a target table. Validation and translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a function named isBetween() validates that the source data is within the expected range of values, and a function named mapText() maps a set of source values to a set of target values. A list of all helper functions is available in the PostgreSQL Table Translation Framework [readMe](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). After the translation engine has run on all loaded source tables, the result is a complete set of target tables, each with matching attributes as defined by the CASFRI standard. 
 
 ### Translation tables
-A detailed description of translation table properties is included in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). In short, each translation table lists a set of attribute names, their type in the target table, a set of validation helper functions which any input value has to pass, and a set of translation helper functions to convert the input value to the CASFRI value.
+A detailed description of translation table properties is included in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). In short, each translation table lists a set of attribute names, their type in the target table, a set of validation helper functions which any input value has to pass, and a set of translation helper functions to convert the input value to the CASFRI value. A set of generic helper functions are included with the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework), these perform standardized validations and translations that are used in many different translation tables. The CASFRI project also has its own more specific [helper functions](https://github.com/edwardsmarc/CASFRI/tree/master/helperfunctions) that apply more complex translations specific to individual inventories.
 
 CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications):
 1. Header (HDR) attributes - summarizing reference information for each dataset;  
@@ -165,7 +165,7 @@ The function TT_StackTranslationRules() creates a table of all translation and v
 The [summary_statistics](https://github.com/edwardsmarc/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to create summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be downloaded (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpeted values, correct assignment of errors codes etc.
 
 ### Workflow scripts
-The translation of each dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI/02_perInventory](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI/02_perInventory) folder. The main translation functions are TT_Prepare() which validates are prepares the translation table, and TT_Translate() which runs the translation. These are described in detail in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). 
+The translation of each dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI/02_perInventory](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI/02_perInventory) folder. The main translation functions are TT_Prepare() which validates and prepares the translation table, and TT_Translate() which runs the translation. These are described in detail in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). 
 
 It is important that a single translation table can be used for multiple translations, either for different layers within the same dataset, or for different datasets using the same standard but different attributes names. The workflow scripts accomodate this by combining three elements:
 
@@ -202,6 +202,20 @@ The following diagram illustrates the relationship between the translation table
 
 ![Workflow diagram](workflow_diagram.jpg)
 
+# Translation procedure
+The steps to produce a complete build of the CASFRI database are detailed in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). A subset of these steps can be used to translate a single dataset as follows:
+
+1. Set up the config.sh or config.bat file with you system settings
+2. Load the dataset into PostgreSQL (e.g. AB03) by launching either the .bat (conversion/bat/load_ab03.bat) or .sh (conversion/sh/load_ab03.sh) loading script in a Bash or DOS command window.
+3. Load the translation tables into PostgreSQL by launching the CASFRI/translation/load_tables.sh (or .bat) script.
+4. Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions
+    1. Install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produces a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
+    2. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
+      1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts. Fix any non passing test (by fixing the function tested or the test itself).
+      2. Load the CASFRI Helper Functions with the helperFunctionsCASFRI.sql script and test them using the helperFunctionsCASFRITest.sql.
+5. Run the translation by launching the workflow sql script (CASFRI/workflow/02_produceCASFRI/02_perInventory/02_AB03.sql) in pgAdmin (or a psql window).
+
+The steps to add a new inventory to the CASFRI database are detailed in issue [#471](https://github.com/edwardsmarc/CASFRI/issues/471).
 
 # Temporalization
 All translated datasets are combined into a single historical database that allows querying for the best available inventory information at any point in time accross the full CASFRI coverage. The historical database is created using the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). The output is a historical database that uses the photo year of each polygon as the reference date to determine its valid start and end time. No polygons overlap in time or space, so for any given location at any time, there is only one valid set of CASFRI records. In cases where source polygons overlap in space and time, the polygon containing the most complete information is prioritized.
