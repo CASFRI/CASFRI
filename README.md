@@ -197,6 +197,7 @@ If 'layer' integers are provided, the row corresponding to the provided layer nu
 If the number of rows are provided, the view name is ends with the number of randomly selected rows. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, 200);` creates a view name **bc08_l2_to_bc_l1_map_200**.
 
 The following diagram illustrates the relationship between the translation table, the attribute dependencies table, and TT_CreateMappingView() using a simple attribute - SPECIES_1_PER. The translation rule is a simple copy, but the attribute has a different name for layer 1 and layer 2 in the AB03 source dataset. Each layer is run as a separate translation: for the layer 1 translation the source attribute sp1_per needs to be mapped to the placeholder name (species_per_1), and for the layer 2 translation the understory attribute usp1_per needs to be mapped. Views are used to map from the source attribute names to the placeholder names used in the translation table.
+
 ![Workflow diagram](workflow_diagram.jpg)
 
 
