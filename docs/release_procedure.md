@@ -31,7 +31,7 @@ Note that only major issues preventing the conversion or the translation process
 
 **2. Convert the inventories and load the translation tables in the database**
 
-1. Open a DOS or a Bash shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script. Those scripts split the loading process in three in order to avoid overloading the server. A first window init the process. You have to close this window for the other loading scripts to be launched. The second step loads about 25 inventories. You have to close all those windows when they are finished to launch the third and last series of loading scripts.
+1. Open a Bash (or DOS) shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script. Those scripts split the loading process in three in order to avoid overloading the server. A first window init the process. You have to close this window for the other loading scripts to be launched. The second step loads about 25 inventories. You have to close all those windows when they are finished to launch the third and last series of loading scripts.
 
 2. In the same shell, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
 
