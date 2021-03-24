@@ -165,7 +165,7 @@ The function TT_StackTranslationRules() creates a table of all translation and v
 The [summary_statistics](https://github.com/edwardsmarc/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to create summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be downloaded (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpeted values, correct assignment of errors codes etc.
 
 ### Workflow scripts
-The translation of each dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI) folder. The workflow scripts combine three elements:
+The translation of each dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI/02_perInventory](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI/02_perInventory) folder. The workflow scripts combine three elements:
 
 **1. Translation tables.**
 Translation tables helper functions use placeholder arguments which are also listed in the attribute dependencies table. We create VIEWs that map the source data attributes to the placeholder names used in the translation table. We can then run the translation using the VIEW and the translation table.
