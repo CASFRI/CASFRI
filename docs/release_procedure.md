@@ -31,13 +31,13 @@ Note that only major issues preventing the conversion or the translation process
 
 **2. Convert the inventories and load the translation tables in the database**
 
-1. Open a Bash (or DOS) shell, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script. Those scripts split the loading process in three in order to avoid overloading the server. A first window init the process. You have to close this window for the other loading scripts to be launched. The second step loads about 25 inventories. You have to close all those windows when they are finished to launch the third and last series of loading scripts.
+1. Open a Bash (or DOS) command window, CD to the CASFRI conversion folder and load all the necessary inventories using the load_all.sh (or .bat) script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
 
-2. In the same shell, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
+2. In the same command window, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
 
 **3. Install and unsintall the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
 
-1. In the same shell, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produce a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
+1. In the same command window, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produce a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
 
 2. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
 
@@ -69,7 +69,7 @@ Note that only major issues preventing the conversion or the translation process
 
 1. If necessary, edit the workflow/02_produceCASFRI/01_translate_all_0X.sh (or .bat) scripts to translate only the inventories you want to translate. Each script launch a certain number of inventories in order to avoid overloading the system (which might result in system crashes). 01_translate_all_00.sh initialise the database. 01_translate_all_01.sh and 01_translate_all_02.sh are for bigger inventories and 01_translate_all_03.sh and 01_translate_all_04.sh for smaller inventories.
 
-2. In the shell, CD to workflow/02_produceCASFRI and execute the 01_translate_all_0X.sh (or .bat) scripts one AFTER the other.
+2. In the command window, CD to workflow/02_produceCASFRI and execute the 01_translate_all_0X.sh (or .bat) scripts one AFTER the other.
 
 **6. Validate the translation**
 
