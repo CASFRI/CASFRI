@@ -15,18 +15,18 @@ source ../../conversion/sh/common.sh
 
 rm ./testtables/*.csv
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_0_without_validity.csv" "$pg_connection_string" "geohistory.test_0_without_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_0_without_validity.csv" "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_0_without_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_0_with_validity.csv"    "$pg_connection_string" "geohistory.test_0_with_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_0_with_validity.csv"    "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_0_with_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_2_without_validity.csv" "$pg_connection_string" "geohistory.test_2_without_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_2_without_validity.csv" "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_2_without_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_2_with_validity.csv"    "$pg_connection_string" "geohistory.test_2_with_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_2_with_validity.csv"    "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_2_with_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_3_without_validity.csv" "$pg_connection_string" "geohistory.test_3_without_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_3_without_validity.csv" "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_3_without_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_3_with_validity.csv"    "$pg_connection_string" "geohistory.test_3_with_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_3_with_validity.csv"    "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_3_with_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_4_without_validity.csv" "$pg_connection_string" "geohistory.test_4_without_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_4_without_validity.csv" "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_4_without_validity_new"
 
-"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_4_with_validity.csv"    "$pg_connection_string" "geohistory.test_4_with_validity_new"
+"$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_4_with_validity.csv"    "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_4_with_validity_new"

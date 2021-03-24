@@ -38,7 +38,7 @@ ADD PRIMARY KEY (code);
 -------------------------------------------------------
 SELECT '1.1'::text number,
        'cas_all' target_table,
-       'Add primary key to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add primary key to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'PK', 
@@ -136,7 +136,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.13'::text number,
        'cas_all' target_table,
-       'Ensure CAS table CAS_ID is 50 characters long' description, 
+       'Issue #623. Some NULL cas_id. Ensure CAS table CAS_ID is 50 characters long' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -154,7 +154,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.15'::text number,
        'cas_all' target_table,
-       'Ensure CAS table NUM_OF_LAYERS is greater than 0' description, 
+       'Issue #609. Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table NUM_OF_LAYERS is greater than 0' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -178,11 +178,11 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.17'::text number,
        'cas_all' target_table,
-       'Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
+       'Issue #609. Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
-                        ARRAY['num_of_layers_greater_than_zero', 
+                        ARRAY['stand_structure_match_num_of_layers', 
                               '((stand_structure = ''MULTI_LAYERED'' OR 
                                  stand_structure = ''HORIZONTAL'' OR 
                                  stand_structure = ''COMPLEX'' OR
@@ -203,7 +203,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.18'::text number,
        'cas_all' target_table,
-       'Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624. One geom = 0. Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -213,7 +213,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.19'::text number,
        'cas_all' target_table,
-       'Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624. One geom = 0. Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -235,12 +235,14 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.21'::text number,
        'cas_all' target_table,
-       'Issue #248. Ensure CAS table STAND_PHOTO_YEAR is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Ensure CAS table STAND_PHOTO_YEAR is greater than 0' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
                         ARRAY['stand_photo_year_greater_than_zero', 
-                              'stand_photo_year > 0']) AS (passed boolean, cstr_query text)) foo
+                              'stand_photo_year > 0 OR 
+                               stand_photo_year = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the DST_ALL table
 -------------------------------------------------------
@@ -256,7 +258,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.2'::text number,
        'dst_all' target_table,
-       'Add foreign key from DST_ALL to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from DST_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'FK', 
@@ -433,136 +435,174 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.22'::text number,
        'dst_all' target_table,
-       'Issue #337 & #408. DIST_YEAR_1 is sometimes invalid and not well ordered in time. Ensure DST table DIST_YEAR_1 is greater than 1000, below 2020 and smaller than or equal to DIST_YEAR_2' description, 
+       'Ensure DST table DIST_YEAR_1 is greater than 1000 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_year_1_greater_than_1000_and_smaller_than_dist_year_2', 
-                              '(1000 <= dist_year_1 AND dist_year_1 <= 2020 AND 
-                                (dist_year_1 <= dist_year_2 OR
-                                 dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_1_greater_than_1000_and_smaller_2020', 
+                              '(1000 <= dist_year_1 AND dist_year_1 <= 2020) OR
+                               dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.23'::text number,
        'dst_all' target_table,
-       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 is greater than 1900, below 2020 and smaller than or equal to DIST_YEAR_3' description, 
+       'Ensure DST table DIST_YEAR_2 is greater than 1900 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_year_2_greater_than_1900_and_smaller_than_dist_year_3', 
-                              '(1900 <= dist_year_2 AND dist_year_2 <= 2020 AND 
-                                (dist_year_2 <= dist_year_3 OR 
-                                 dist_year_3 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_2_greater_than_1900_and_smaller_2020', 
+                              '(1900 <= dist_year_2 AND dist_year_2 <= 2020) OR 
+                               dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.24'::text number,
        'dst_all' target_table,
-       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_3 is greater than 1900, below 2020 and greater than or equal to DIST_YEAR_1' description, 
+       'Ensure DST table DIST_YEAR_3 is greater than 1900 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_year_3_greater_than_1900', 
-                              '((1900 <= dist_year_3 AND dist_year_3 <= 2020) AND 
-                                (dist_year_1 <= dist_year_3 OR 
-                                 dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_year_3 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_3_greater_than_1900_and_smaller_2020', 
+                              '(1900 <= dist_year_3 AND dist_year_3 <= 2020) OR
+                                dist_year_3 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.25'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_1' description, 
+       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_1 smaller than or equal to DIST_YEAR_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_upper_1_betweeen_10_and_100_and_greater_than_dist_ext_lower_1', 
-                              '(10 <= dist_ext_upper_1 AND dist_ext_upper_1 <= 100 AND 
-                                (dist_ext_upper_1 >= dist_ext_lower_1 OR 
-                                 dist_ext_lower_1 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_1_smaller_than_dist_year_2', 
+                              '(dist_year_1 <= dist_year_2 OR
+                                dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
+                               ) OR dist_year_1 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.26'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_2 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_2' description, 
+       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 smaller than or equal to DIST_YEAR_3' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_upper_2_betweeen_10_and_100_and_greater_than_dist_ext_lower_2', 
-                              '(10 <= dist_ext_upper_2 AND dist_ext_upper_2 <= 100 AND 
-                                (dist_ext_upper_2 >= dist_ext_lower_2 OR 
-                                 dist_ext_lower_2 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_year_2_smaller_than_dist_year_3', 
+                              '(dist_year_2 <= dist_year_3 OR 
+                                 dist_year_3 = ANY(TT_IsMissingOrInvalidRange())
+                               ) OR dist_year_2 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.27'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_3 is greater than 10, below 100 and greater than or equal to DIST_EXT_LOWER_3' description, 
+       'Ensure DST table DIST_EXT_LOWER_1 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_upper_3_betweeen_10_and_100_and_greater_than_dist_ext_lower_3', 
-                              '(10 <= dist_ext_upper_3 AND dist_ext_upper_3 <= 100 AND 
-                                (dist_ext_upper_3 >= dist_ext_lower_3 OR 
-                                 dist_ext_lower_3 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_ext_lower_1_betweeen_10_and_100', 
+                              '(1 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 100) OR 
+                               dist_ext_lower_1 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.28'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_LOWER_1 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_1' description, 
+       'Ensure DST table DIST_EXT_LOWER_2 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_lower_1_betweeen_10_and_100_and_smaller_than_dist_ext_upper_1', 
-                              '(1 <= dist_ext_lower_1 AND dist_ext_lower_1 <= 100 AND 
-                                (dist_ext_lower_1 <= dist_ext_upper_1 OR 
-                                 dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_lower_1 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_ext_lower_2_betweeen_10_and_100', 
+                              '(1 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 100) OR 
+                               dist_ext_lower_2 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.29'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_LOWER_2 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_2' description, 
+       'Ensure DST table DIST_EXT_LOWER_3 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_lower_2_betweeen_10_and_100_and_smaller_than_dist_ext_upper_2', 
-                              '(1 <= dist_ext_lower_2 AND dist_ext_lower_2 <= 100 AND 
-                                (dist_ext_lower_2 <= dist_ext_upper_2 OR 
-                                 dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_lower_2 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_ext_lower_3_betweeen_10_and_100', 
+                              '(1 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 100) OR 
+                               dist_ext_lower_3 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.30'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_LOWER_3 is greater than 10, below 100 and smaller than or equal to DIST_EXT_UPPER_3' description, 
+       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
-                        ARRAY['dist_ext_lower_3_betweeen_10_and_100_and_smaller_than_dist_ext_upper_3', 
-                              '(1 <= dist_ext_lower_3 AND dist_ext_lower_3 <= 100 AND 
-                                (dist_ext_lower_3 <= dist_ext_upper_3 OR 
-                                 dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR dist_ext_lower_3 = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['dist_ext_upper_1_betweeen_10_and_100', 
+                              '(10 <= dist_ext_upper_1 AND dist_ext_upper_1 <= 100) OR
+                                dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.31'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_2 is greater than 10 and smaller than 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_2_betweeen_10_and_100', 
+                              '(10 <= dist_ext_upper_2 AND dist_ext_upper_2 <= 100) OR
+                                dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.32'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_3 is greater than 10 and smaller than 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_3_betweeen_10_and_100', 
+                              '(10 <= dist_ext_upper_3 AND dist_ext_upper_3 <= 100) OR 
+                               dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.33'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_1 is greater than or equal to DIST_EXT_LOWER_1' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_1_greater_than_dist_ext_lower_1', 
+                              'dist_ext_upper_1 >= dist_ext_lower_1 OR 
+                               dist_ext_lower_1 = ANY(TT_IsMissingOrInvalidRange()) OR
+                               dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.34'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_2 is greater than or equal to DIST_EXT_LOWER_2' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_2_greater_than_dist_ext_lower_2', 
+                              'dist_ext_upper_2 >= dist_ext_lower_2 OR 
+                               dist_ext_lower_2 = ANY(TT_IsMissingOrInvalidRange()) OR
+                               dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '2.35'::text number,
+       'dst_all' target_table,
+       'Ensure DST table DIST_EXT_UPPER_3 is greater than or equal to DIST_EXT_LOWER_3' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
+                        ARRAY['dist_ext_upper_3_greater_than_dist_ext_lower_3', 
+                              'dist_ext_upper_3 >= dist_ext_lower_3 OR 
+                               dist_ext_lower_3 = ANY(TT_IsMissingOrInvalidRange()) OR
+                               dist_ext_upper_3 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the ECO_ALL table
@@ -574,12 +614,12 @@ SELECT '3.1'::text number,
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'PK', 
-                        ARRAY['cas_id']) AS (passed boolean, cstr_query text)) foo
+                        ARRAY['cas_id, layer']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '3.2'::text number,
        'eco_all' target_table,
-       'Add foreign key from ECO_ALL to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from ECO_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'FK', 
@@ -681,7 +721,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.13'::text number,
        'eco_all' target_table,
-       'Issue #377. ''B'' is found in the database but not in the specs. Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table. Cannot be TT_IsMissingOrNotInSetCode()' description, 
+       'Issue #612. TRANSLATION_ERROR. Ensure ECO table WET_LOCAL_MOD values match the corresponding lookup table. Cannot be TT_IsMissingOrNotInSetCode()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
@@ -689,15 +729,6 @@ FROM (SELECT *
                               'wet_local_mod'],
                         ARRAY['INT_LAWN_SCAR', 'INT_LAWN_ISLAND', 'INT_LAWN', 'NO_LAWN', 'SHRUB_COVER', 'GRAMINOIDS',
                               'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
--------------------------------------------------------
-UNION ALL
-SELECT '3.14'::text number,
-       'eco_all' target_table,
-       'Issue #376. eco_site does not seems to be translated. Ensure ECO table ECO_SITE values match the corresponding lookup table. Cannot be TT_IsMissingOrInvalidText()' description, 
-       passed, cstr_query
-FROM (SELECT * 
-      FROM TT_AddConstraint('casfri50', 'eco_all', 'CHECK', 
-                        ARRAY['eco_site_not_applicable', 'eco_site != ''NOT_APPLICABLE''']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 -- Add some constraints to the LYR_ALL table
 -------------------------------------------------------
@@ -713,7 +744,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.2'::text number,
        'lyr_all' target_table,
-       'Add foreign key from LYR_ALL to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from LYR_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -1040,65 +1071,79 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.41'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table CROWN_CLOSURE_UPPER is greater than 0, smaller than or equal to 100 and greater than CROWN_CLOSURE_LOWER' description, 
+       'Ensure LYR table CROWN_CLOSURE_LOWER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
-                        ARRAY['crown_closure_upper_between_0_and_100_and_greater_than_crown_closure_lower',
-                              '(crown_closure_upper >= 0 AND crown_closure_upper <= 100 AND 
-                                (crown_closure_lower <= crown_closure_upper OR
-                                 crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_lower_between_0_and_100',
+                              '(crown_closure_lower >= 0 AND crown_closure_lower <= 100) OR 
+                               crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '4.42'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table CROWN_CLOSURE_LOWER is greater than 0, smaller than or equal to 100 and smaller than CROWN_CLOSURE_UPPER' description, 
+       'Ensure LYR table CROWN_CLOSURE_UPPER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
-                        ARRAY['crown_closure_lower_between_0_and_100_and_smaller_than_crown_closure_upper',
-                              '(crown_closure_lower >= 0 AND crown_closure_lower <= 100 AND 
-                                (crown_closure_lower <= crown_closure_upper OR 
-                                 crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                              ) OR crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_upper_between_0_and_100',
+                              '(crown_closure_upper >= 0 AND crown_closure_upper <= 100) OR 
+                               crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '4.43'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table HEIGHT_UPPER is greater than 0, smaller than or equal to 100 and greater than HEIGHT_LOWER' description, 
+       'Ensure LYR table CROWN_CLOSURE_LOWER is smaller than or equal to CROWN_CLOSURE_UPPER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
-                        ARRAY['height_upper_between_0_and_100_and_greater_than_height_lower',
-                              '(height_upper >= 0 AND height_upper <= 100 AND 
-                                (height_upper >= height_lower OR 
-                                 height_lower = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                              ) OR height_upper = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_upper_greater_than_crown_closure_lower',
+                              'crown_closure_lower <= crown_closure_upper OR
+                               crown_closure_lower = ANY(TT_IsMissingOrInvalidRange()) OR
+                               crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '4.44'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table HEIGHT_LOWER is greater than 0, smaller than or equal to 100 and smaller than HEIGHT_UPPER' description, 
+       'Issue #613. TRANSLATION_ERROR. Ensure LYR table HEIGHT_LOWER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
-                        ARRAY['height_lower_between_0_and_100_and_smaller_than_height_upper',
-                              '(height_lower >= 0 AND height_lower <= 100 AND 
-                                (height_upper >= height_lower OR 
-                                 height_upper = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR height_lower = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['height_lower_between_0_and_100',
+                              '(height_lower >= 0 AND height_lower <= 100) OR 
+                               height_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '4.45'::text number,
+       'lyr_all' target_table,
+       'Issue #613. TRANSLATION_ERROR. Ensure LYR table HEIGHT_UPPER is greater than 0, smaller than or equal to 100 and greater than HEIGHT_LOWER' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
+                        ARRAY['height_upper_between_0_and_100',
+                              '(height_upper >= 0 AND height_upper <= 100) OR 
+                               height_upper = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.46'::text number,
+       'lyr_all' target_table,
+       'Ensure LYR table HEIGHT_LOWER is smaller than or equal to HEIGHT_UPPER' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
+                        ARRAY['height_upper_between_0_and_100_and_greater_than_height_lower',
+                              'height_lower <= height_upper OR 
+                               height_lower = ANY(TT_IsMissingOrInvalidRange()) OR
+                               height_upper = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.47'::text number,
        'lyr_all' target_table,
        'Ensure LYR table PRODUCTIVITY values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1110,34 +1155,46 @@ FROM (SELECT *
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.46'::text number,
+SELECT '4.48'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
+       'Ensure LYR table PRODUCTIVITY_TYPE values match the corresponding lookup table' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
+                        ARRAY['casfri50_lookup', 
+                              'productivity_type'],
+                        ARRAY['HARVESTABLE', 'PROTECTION_FOREST', 'TREED_MUSKEG', 'TREED_ROCK', 'ALPINE_FOREST', 'SCRUB_SHRUB', 'ALDER'] || 
+                        TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.49'::text number,
+       'lyr_all' target_table,
+       'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
                         ARRAY['species_1', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.47'::text number,
+SELECT '4.50'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table SPECIES_2 values match the corresponding lookup table' description, 
+       'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_2 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
                         ARRAY['species_2', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.48'::text number,
+SELECT '4.51'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table SPECIES_3 values match the corresponding lookup table' description, 
+       'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_3 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
                         ARRAY['species_3', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.49'::text number,
+SELECT '4.52'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_4 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1146,7 +1203,7 @@ FROM (SELECT *
                         ARRAY['species_4', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.50'::text number,
+SELECT '4.53'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_5 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1155,7 +1212,7 @@ FROM (SELECT *
                         ARRAY['species_5', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.51'::text number,
+SELECT '4.54'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_6 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1164,7 +1221,7 @@ FROM (SELECT *
                         ARRAY['species_6', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.52'::text number,
+SELECT '4.55'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_7 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1173,7 +1230,7 @@ FROM (SELECT *
                         ARRAY['species_7', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.53'::text number,
+SELECT '4.56'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_8 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1182,7 +1239,7 @@ FROM (SELECT *
                         ARRAY['species_8', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.54'::text number,
+SELECT '4.57'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_9 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1191,7 +1248,7 @@ FROM (SELECT *
                         ARRAY['species_9', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.55'::text number,
+SELECT '4.58'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_10 values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1200,7 +1257,7 @@ FROM (SELECT *
                         ARRAY['species_10', 'casfri50_lookup', 'species_codes', 'code']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.56'::text number,
+SELECT '4.59'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_1 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1212,7 +1269,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.57'::text number,
+SELECT '4.60'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_2 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1224,7 +1281,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.58'::text number,
+SELECT '4.61'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_3 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1236,7 +1293,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.59'::text number,
+SELECT '4.62'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_4 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1248,7 +1305,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.60'::text number,
+SELECT '4.63'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_5 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1260,7 +1317,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.61'::text number,
+SELECT '4.64'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_6 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1272,7 +1329,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.62'::text number,
+SELECT '4.65'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_7 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1284,7 +1341,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.63'::text number,
+SELECT '4.66'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_8 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1296,7 +1353,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.64'::text number,
+SELECT '4.67'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_9 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1308,7 +1365,7 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.65'::text number,
+SELECT '4.68'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SPECIES_PER_10 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
@@ -1320,37 +1377,44 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.66'::text number,
+SELECT '4.69'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table ORIGIN_UPPER is greater than 1000, smaller than 2050 and greater than ORIGIN_LOWER' description, 
+       'Issue #616. Wrong error code (-9998). Ensure LYR table ORIGIN_LOWER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
-                        ARRAY['origin_upper_between_1000_and_2050_and_greater_than_origin_lower',
-                              '(origin_upper > 1000 AND origin_upper <= 2050 AND 
-                                (origin_lower <= origin_upper OR 
-                                 origin_lower = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR origin_upper = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['origin_lower_between_0_and_2050',
+                              '(origin_lower > 1000 AND origin_lower <= 2050) OR 
+                               origin_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.67'::text number,
+SELECT '4.70'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table ORIGIN_LOWER is greater than 1000, smaller than 2050 and smaller than ORIGIN_UPPER' description, 
+       'Issue #616. Wrong error code (-9998). Ensure LYR table ORIGIN_UPPER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
-                        ARRAY['origin_lower_between_0_and_2050_and_smaller_than_origin_upper',
-                              '(origin_lower > 1000 AND origin_lower <= 2050 AND 
-                                (origin_lower <= origin_upper OR 
-                                 origin_upper = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR origin_lower = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['origin_upper_between_1000_and_2050',
+                              '(origin_upper > 1000 AND origin_upper <= 2050) OR 
+                               origin_upper = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.68'::text number,
+SELECT '4.71'::text number,
+       'lyr_all' target_table,
+       'Ensure LYR table ORIGIN_LOWER is smaller than ORIGIN_UPPER' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
+                        ARRAY['origin_lower_smaller_than_origin_upper',
+                              'origin_lower <= origin_upper OR 
+                               origin_upper = ANY(TT_IsMissingOrInvalidRange()) OR 
+                               origin_lower = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '4.72'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SITE_CLASS values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1362,7 +1426,7 @@ FROM (SELECT *
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '4.69'::text number,
+SELECT '4.73'::text number,
        'lyr_all' target_table,
        'Ensure LYR table SITE_INDEX is greater than 0 and smaller than 100' description, 
        passed, cstr_query
@@ -1372,18 +1436,6 @@ FROM (SELECT *
                               '(site_index >= 0 AND site_index < 100) OR 
                                site_index = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
--------------------------------------------------------
-UNION ALL
-SELECT '4.70'::text number,
-       'lyr_all' target_table,
-       'Ensure LYR table PRODUCTIVITY_TYPE values match the corresponding lookup table' description, 
-       passed, cstr_query
-FROM (SELECT * 
-      FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
-                        ARRAY['casfri50_lookup', 
-                              'productivity_type'],
-                        ARRAY['HARVESTABLE', 'PROTECTION_FOREST', 'TREED_MUSKEG', 'TREED_ROCK', 'ALPINE_FOREST', 'SCRUB_SHRUB', 'ALDER'] || 
-                        TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 
 -------------------------------------------------------
 -- Add some constraints to the NFL_ALL table
@@ -1391,7 +1443,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.1'::text number,
        'nfl_all' target_table,
-       'Issue #420. Duplicate cas_id/layer couple in NT02. Add primary key to NFL_ALL' description, 
+       'Add primary key to NFL_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'PK', 
@@ -1400,7 +1452,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.2'::text number,
        'nfl_all' target_table,
-       'Add foreign key from NFL_ALL to CAS_ALL' description, 
+       'Issue #623. Some NULL cas_id. Add foreign key from NFL_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'FK', 
@@ -1536,65 +1588,79 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.18'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table CROWN_CLOSURE_UPPER is greater than 0, smaller than or equal to 100 and greater than CROWN_CLOSURE_LOWER' description, 
+       'Ensure NFL table CROWN_CLOSURE_LOWER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['crown_closure_upper_between_0_and_100_and_greater_than_crown_closure_lower',
-                              '(crown_closure_upper >= 0 AND crown_closure_upper <= 100 AND 
-                                (crown_closure_lower <= crown_closure_upper OR
-                                 crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_lower_between_0_and_100',
+                              '(crown_closure_lower >= 0 AND crown_closure_lower <= 100) OR 
+                               crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.19'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table CROWN_CLOSURE_LOWER is greater than 0, smaller than or equal to 100 and smaller than CROWN_CLOSURE_UPPER' description, 
+       'Ensure NFL table CROWN_CLOSURE_UPPER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['crown_closure_lower_between_0_and_100_and_smaller_than_crown_closure_upper',
-                              '(crown_closure_lower >= 0 AND crown_closure_lower <= 100 AND 
-                                (crown_closure_lower <= crown_closure_upper OR 
-                                 crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                              ) OR crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_upper_between_0_and_100',
+                              '(crown_closure_upper >= 0 AND crown_closure_upper <= 100) OR 
+                               crown_closure_upper = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.20'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table HEIGHT_UPPER is greater than 0, smaller than or equal to 100 and greater than HEIGHT_LOWER' description, 
+       'Ensure NFL table CROWN_CLOSURE_LOWER is smaller than CROWN_CLOSURE_UPPER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['height_upper_between_0_and_100_and_greater_than_height_lower',
-                              '(height_upper >= 0 AND height_upper <= 100 AND 
-                                (height_upper >= height_lower OR 
-                                 height_lower = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                              ) OR height_upper = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['crown_closure_lower_smaller_than_crown_closure_upper',
+                              'crown_closure_lower <= crown_closure_upper OR 
+                               crown_closure_upper = ANY(TT_IsMissingOrInvalidRange()) OR
+                               crown_closure_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.21'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table HEIGHT_LOWER is greater than 0, smaller than or equal to 100 and smaller than HEIGHT_UPPER' description, 
+       'Ensure NFL table HEIGHT_LOWER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['height_lower_between_0_and_100_and_smaller_than_height_upper',
-                              '(height_lower >= 0 AND height_lower <= 100 AND 
-                                (height_upper >= height_lower OR 
-                                 height_upper = ANY(TT_IsMissingOrInvalidRange())
-                                )
-                               ) OR height_lower = ANY(TT_IsMissingOrInvalidRange())
+                        ARRAY['height_lower_between_0_and_100',
+                              '(height_lower >= 0 AND height_lower <= 100) OR 
+                               height_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.22'::text number,
+       'nfl_all' target_table,
+       'Ensure NFL table HEIGHT_UPPER is greater than or equal to 0 and smaller than or equal to 100' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
+                        ARRAY['height_upper_between_0_and_100',
+                              '(height_upper >= 0 AND height_upper <= 100) OR 
+                               height_upper = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '5.23'::text number,
+       'nfl_all' target_table,
+       'Ensure NFL table HEIGHT_LOWER is smaller than HEIGHT_UPPER' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
+                        ARRAY['height_lower_smaller_than_height_upper',
+                              'height_upper >= height_lower OR 
+                               height_upper = ANY(TT_IsMissingOrInvalidRange()) OR
+                               height_lower = ANY(TT_IsMissingOrInvalidRange())
+                              ']) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '5.24'::text number,
        'nfl_all' target_table,
        'Ensure NFL table NAT_NON_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1607,9 +1673,9 @@ FROM (SELECT *
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '5.23'::text number,
+SELECT '5.25'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
+       'Issue #617. TRANSLATION_ERROR. Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
@@ -1619,7 +1685,7 @@ FROM (SELECT *
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '5.24'::text number,
+SELECT '5.26'::text number,
        'nfl_all' target_table,
        'Issue #347: Invalid or undocumented codes. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
@@ -1630,5 +1696,19 @@ FROM (SELECT *
                         ARRAY['OPEN_SHRUB', 'CLOSED_SHRUB', 'ALPINE_FOREST', 'TALL_SHRUB', 'LOW_SHRUB', 
 						                  'FORBS', 'HERBS', 'GRAMINOIDS', 'BRYOID', 'OPEN_MUSKEG', 'TUNDRA', 'OTHER'] ||
                         TT_IsMissingOrNotInSetCode()) AS (passed boolean, cstr_query text)) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '5.27'::text number,
+       'nfl_all' target_table,
+       'Issue #526 #365: Exactly one NFL record per row, except in AB03, AB10, AB25 and AB29 where multiple attributes per row are needed when structure is horizontal.' description, 
+       passed, cstr_query
+FROM (SELECT * 
+      FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
+                        ARRAY['one_nfl_per_row',
+                              'LEFT(cas_id, 4) IN(''AB03'', ''AB25'', ''AB29'', ''AB10'') OR
+							  (
+							  ((non_for_veg=ANY(TT_IsMissingOrNotInSetCode()))::int + (nat_non_veg=ANY(TT_IsMissingOrNotInSetCode()))::int + (non_for_anth=ANY(TT_IsMissingOrNotInSetCode()))::int)=2
+							  )
+                              ']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 --) foo WHERE NOT passed;

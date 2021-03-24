@@ -27,7 +27,7 @@ IF "%pgversion%"=="" SET pgversion=11
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_test.dst_all_test DROP COLUMN ogc_fid"
 
-"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./data%pgversion%/eco_all_test.csv" -nln "casfri50_test.eco_all_test" %overwrite_tab% -lco COLUMN_TYPES="cas_id=text,wetland_type=text,wet_veg_cover=text,wet_landform_mod=text,wet_local_mod=text,eco_site=text"
+"%gdalFolder%/ogr2ogr" -f "PostgreSQL" %pg_connection_string% "./data%pgversion%/eco_all_test.csv" -nln "casfri50_test.eco_all_test" %overwrite_tab% -lco COLUMN_TYPES="cas_id=text,wetland_type=text,wet_veg_cover=text,wet_landform_mod=text,wet_local_mod=text,eco_site=text,layer=int"
 
 "%gdalFolder%/ogrinfo" %pg_connection_string% -sql "ALTER TABLE casfri50_test.eco_all_test DROP COLUMN ogc_fid"
 

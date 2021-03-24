@@ -11,121 +11,11 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION array_sort (ANYARRAY)
-RETURNS ANYARRAY AS $$
-  SELECT ARRAY(SELECT unnest($1) ORDER BY 1)
-$$ LANGUAGE SQL;
 
-DROP FUNCTION IF EXISTS TT_TestCount(int, text, int[]);
-CREATE OR REPLACE FUNCTION TT_TestCount(
-  majorNb int,
-  expectedCnts int[],
-  inv text DEFAULT NULL
-)
-RETURNS TABLE (number text,
-               description text,
-               passed boolean,
-               list_query text) AS $$
-  DECLARE
-    cnt int;
-    exptCnt int;
-    minorNb int = 1;
-    tableNames text[] = ARRAY['CAS_ALL', 'DST_ALL', 'ECO_ALL', 'LYR_ALL', 'NFL_ALL', 'GEO_ALL'];
-  BEGIN
-    IF cardinality(expectedCnts) != 5 THEN
-      RAISE EXCEPTION 'TT_TestCount() ERROR: expectedCnts must have 5 values...';
-    END IF;
-    -- Make the expected count for GEO_ALL the same as for CAS_ALL
-    expectedCnts = array_append(expectedCnts, expectedCnts[1]);
-
-    FOREACH exptCnt IN ARRAY (expectedCnts) LOOP
-      number = majorNb::text || '.' || minorNb::text;
-      list_query = 'SELECT count(*) ' ||
-                   'FROM casfri50.' || lower(tableNames[minorNb]);
-      IF NOT inv IS NULL THEN
-        list_query = list_query || ' WHERE left(cas_id, 4) = ''' || upper(inv) || '''';
-      END IF;
-      list_query = list_query || ';';
-      RAISE NOTICE 'TT_TestCount(): Executing ''%''...', list_query;
-      EXECUTE list_query INTO cnt;
-
-      passed = cnt = exptCnt;
-      description = tableNames[minorNb] || ' rows count';
-      IF NOT inv IS NULL THEN
-        description = description || ' for ' || upper(inv);
-      END IF;
-      description = description || ' = ' || cnt::text;
-      IF NOT passed THEN
-        description = description || ' (expected ' || exptCnt || ')';
-      END IF;
-      RETURN NEXT;
-      minorNb = minorNb + 1;
-    END LOOP;
-    RETURN;
-  END
-$$ LANGUAGE plpgsql VOLATILE;
--------------------------------------------------------
--- Begin test section
--------------------------------------------------------
--- Uncomment to display only failing tests (at the end also)
---SELECT * FROM (
--------------------------------------------------------
--- Checks counts for main CASFRI tables
--- Order of counts in the provided ARRAY is CAS, DST, ECO, LYR and NFL.
--- GEO is the same as CAS.
--------------------------------------------------------
-SELECT * FROM TT_TestCount(1, ARRAY[21057159, 5768577, 184113, 17999158, 7499272])
--------------------------------------------------------
--- Checks counts for main CASFRI tables per inventory
--- Order of counts in the provided ARRAY is CAS, DST, ECO, LYR and NFL.
--- GEO is the same as CAS.
--------------------------------------------------------
-UNION ALL
-SELECT * FROM TT_TestCount(2, ARRAY[11484, 1875, 0, 14179, 3515], 'AB06')
-UNION ALL
-SELECT * FROM TT_TestCount(3, ARRAY[120476, 8873, 0, 149674, 26858], 'AB16')
-UNION ALL
-SELECT * FROM TT_TestCount(4, ARRAY[4677411, 1142604, 0, 4272025, 1998885], 'BC08')
-UNION ALL
-SELECT * FROM TT_TestCount(5, ARRAY[5151772, 1421223, 0, 4744673, 2276213], 'BC10')
-UNION ALL
-SELECT * FROM TT_TestCount(6, ARRAY[927177, 252564, 72978, 932271, 78227], 'NB01')
-UNION ALL
-SELECT * FROM TT_TestCount(7, ARRAY[1123893, 333114, 111135, 1053554, 139930], 'NB02')
-UNION ALL
-SELECT * FROM TT_TestCount(8, ARRAY[281388, 77270, 0, 245832, 65299], 'NT01')
-UNION ALL
-SELECT * FROM TT_TestCount(9, ARRAY[320944, 129867, 0, 349923, 129291], 'NT02')
-UNION ALL
-SELECT * FROM TT_TestCount(10, ARRAY[3629072, 1970285, 0, 2240815, 1318495], 'ON02')
-UNION ALL
-SELECT * FROM TT_TestCount(11, ARRAY[1501667, 64052, 0, 860394, 340357], 'SK01')
-UNION ALL
-SELECT * FROM TT_TestCount(12, ARRAY[27312, 9020, 0, 28983, 17529], 'SK02')
-UNION ALL
-SELECT * FROM TT_TestCount(13, ARRAY[8964, 236, 0, 10767, 6845], 'SK03')
-UNION ALL
-SELECT * FROM TT_TestCount(14, ARRAY[633522, 93980, 0, 708553, 311133], 'SK04')
-UNION ALL
-SELECT * FROM TT_TestCount(15, ARRAY[421977, 58248, 0, 483663, 184184], 'SK05')
-UNION ALL
-SELECT * FROM TT_TestCount(16, ARRAY[211482, 45081, 0, 296399, 78506], 'SK06')
-UNION ALL
-SELECT * FROM TT_TestCount(17, ARRAY[231137, 19173, 0, 105102, 76344], 'YT02')
-UNION ALL
-SELECT * FROM TT_TestCount(18, ARRAY[107220, 29517, 0, 81073, 22223], 'PE01')
-UNION ALL
-SELECT * FROM TT_TestCount(19, ARRAY[995886, 69446, 0, 972710, 212453], 'NS03')
-UNION ALL
-SELECT * FROM TT_TestCount(20, ARRAY[514157, 0, 0, 237280, 203479], 'MB05')
-UNION ALL
-SELECT * FROM TT_TestCount(21, ARRAY[160218, 42149, 0, 211288, 9506], 'MB06')
--------------------------------------------------------
-UNION ALL
-SELECT '30.1'::text number,
-       'Check that all cas_all rows have at least one matching row in LYR, NFL, DST or ECO' description, 
+SELECT '1.1'::text number,
+       'Issue #625. Check that all cas_all rows have at least one matching row in LYR, NFL, DST or ECO' description, 
        passed, 
-       'SELECT cas_id
+       'SELECT inventory_id, count(*) nb
 FROM casfri50.cas_all cas
 LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
 LEFT JOIN casfri50.nfl_all nfl USING (cas_id)
@@ -134,7 +24,8 @@ LEFT JOIN casfri50.eco_all eco USING (cas_id)
 WHERE lyr.cas_id IS NULL AND
       nfl.cas_id IS NULL AND
       dst.cas_id IS NULL AND
-      eco.cas_id IS NULL;' list_query
+      eco.cas_id IS NULL
+GROUP BY inventory_id;' list_query
 FROM (SELECT count(*) = 0 passed
       FROM casfri50.cas_all cas
       LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
@@ -147,7 +38,7 @@ FROM (SELECT count(*) = 0 passed
             eco.cas_id IS NULL) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '31.1'::text number,
+SELECT '1.2'::text number,
        'Check that that CAS number_of_layers matches the actual layers and that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
        passed, 
        'WITH cas_only AS ( 

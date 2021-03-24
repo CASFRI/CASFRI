@@ -11,12 +11,12 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS geohistory;
+CREATE SCHEMA IF NOT EXISTS casfri50_history_test;
 ---------------------------------------------
 -- Create a test table
 -- 2,3 and 4 polygons test table below cover most of the test_0 table but we keep it in order to test very specific cases
-DROP TABLE IF EXISTS geohistory.test_0 CASCADE;
-CREATE TABLE geohistory.test_0 AS
+DROP TABLE IF EXISTS casfri50_history_test.test_0 CASCADE;
+CREATE TABLE casfri50_history_test.test_0 AS
 SELECT 0 idx, 1998 valid_year, '1' att, ST_GeomFromText('POLYGON((24 13, 24 23, 34 23, 34 13, 24 13))') geom
 UNION ALL
 SELECT 1 idx, 2000 valid_year, '2' att, ST_GeomFromText('POLYGON((13 13, 13 23, 23 23, 23 13, 13 13))') geom
@@ -114,51 +114,51 @@ $$ LANGUAGE plpgsql VOLATILE;
 --SELECT TT_HasPrecedence('1', '13', '1', '2', true, true); -- true
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
-DROP TABLE IF EXISTS geohistory.test_0_without_validity_new;
-CREATE TABLE geohistory.test_0_without_validity_new AS
+DROP TABLE IF EXISTS casfri50_history_test.test_0_without_validity_new;
+CREATE TABLE casfri50_history_test.test_0_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
-ALTER TABLE geohistory.test_0_without_validity_new 
+ALTER TABLE casfri50_history_test.test_0_without_validity_new 
 ADD PRIMARY KEY (row_id, id, poly_id);
       
--- SELECT * FROM geohistory.test_0_without_validity_new;
+-- SELECT * FROM casfri50_history_test.test_0_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS geohistory.test_0_with_validity_new;
-CREATE TABLE geohistory.test_0_with_validity_new AS
+DROP TABLE IF EXISTS casfri50_history_test.test_0_with_validity_new;
+CREATE TABLE casfri50_history_test.test_0_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
-ALTER TABLE geohistory.test_0_with_validity_new 
+ALTER TABLE casfri50_history_test.test_0_with_validity_new 
 ADD PRIMARY KEY (id, poly_id);
 
--- SELECT * FROM geohistory.test_0_with_validity_new;
+-- SELECT * FROM casfri50_history_test.test_0_with_validity_new;
 
 ---------------------------------------------
 -- Display test table flat
 SELECT idx, att, valid_year, 
        geom, ST_AsText(geom),
        idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_0;
+FROM casfri50_history_test.test_0;
 
 -- Display oblique
 SELECT idx, att, valid_year,
        TT_GeoOblique(geom, valid_year, 0.4, 0.4), 
        idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_0;
+FROM casfri50_history_test.test_0;
 
 -- Display geohistory flat 
 
 -- Without taking validity into account
-SELECT * FROM geohistory.test_0_without_validity_new;
+SELECT * FROM casfri50_history_test.test_0_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM geohistory.test_0_with_validity_new;
+SELECT * FROM casfri50_history_test.test_0_with_validity_new;
 
 -- Display geohistory oblique 
 
@@ -166,19 +166,19 @@ SELECT * FROM geohistory.test_0_with_validity_new;
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_0_without_validity_new;
+FROM casfri50_history_test.test_0_without_validity_new;
 
 -- Taking validity into account
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_0_with_validity_new;
+FROM casfri50_history_test.test_0_with_validity_new;
 
 ---------------------------------------------
 -- test_1 - Only one polygon
 ---------------------------------------------
-DROP TABLE IF EXISTS geohistory.test_1 CASCADE;
-CREATE TABLE geohistory.test_1 AS
+DROP TABLE IF EXISTS casfri50_history_test.test_1 CASCADE;
+CREATE TABLE casfri50_history_test.test_1 AS
 WITH validities AS (
   SELECT 1 v_order, '' a1
   UNION ALL
@@ -200,12 +200,12 @@ ORDER BY test;
 -- Display flat
 SELECT *,
        idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_1;
+FROM casfri50_history_test.test_1;
 
 -- Display oblique
 SELECT TT_GeoOblique(geom, valid_year),
        idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_1;
+FROM casfri50_history_test.test_1;
 
 -- Display flat history
 SELECT * FROM TT_TableGeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
@@ -217,8 +217,8 @@ SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_1', 'idx', 'geom', 'valid
 -- test_2 - Pairs of polygons representing 
 -- all permutations of valid/invalid attributes, years and ids
 ---------------------------------------------
-DROP TABLE IF EXISTS geohistory.test_2 CASCADE;
-CREATE TABLE geohistory.test_2 AS
+DROP TABLE IF EXISTS casfri50_history_test.test_2 CASCADE;
+CREATE TABLE casfri50_history_test.test_2 AS
 WITH validities AS (
   -- all permutations of validity for two polygons
   SELECT 1 v_order, '' a1, '' a2
@@ -263,54 +263,54 @@ SELECT all_test_nb, idx2 + all_test_nb * 2, a2, y2,
 FROM numbered_tests
 ORDER BY test, idx;
 
--- SELECT * FROM geohistory.test_2;
+-- SELECT * FROM casfri50_history_test.test_2;
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
-DROP TABLE IF EXISTS geohistory.test_2_without_validity_new;
-CREATE TABLE geohistory.test_2_without_validity_new AS
+DROP TABLE IF EXISTS casfri50_history_test.test_2_without_validity_new;
+CREATE TABLE casfri50_history_test.test_2_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
-ALTER TABLE geohistory.test_2_without_validity_new 
+ALTER TABLE casfri50_history_test.test_2_without_validity_new 
 ADD PRIMARY KEY (row_id, id, poly_id);
       
--- SELECT * FROM geohistory.test_2_without_validity_new;
+-- SELECT * FROM casfri50_history_test.test_2_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS geohistory.test_2_with_validity_new;
-CREATE TABLE geohistory.test_2_with_validity_new AS
+DROP TABLE IF EXISTS casfri50_history_test.test_2_with_validity_new;
+CREATE TABLE casfri50_history_test.test_2_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
-ALTER TABLE geohistory.test_2_with_validity_new 
+ALTER TABLE casfri50_history_test.test_2_with_validity_new 
 ADD PRIMARY KEY (id, poly_id);
 
--- SELECT * FROM geohistory.test_2_with_validity_new;
+-- SELECT * FROM casfri50_history_test.test_2_with_validity_new;
 
 ---------------------------------------------
 -- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_2;
+FROM casfri50_history_test.test_2;
 
 -- Display oblique
 SELECT test, idx, att, valid_year,
        TT_GeoOblique(geom, valid_year, 0.2, 0.4), 
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_2;
+FROM casfri50_history_test.test_2;
 
 -- Display geohistory flat 
 
 -- Without taking validity into account
-SELECT * FROM geohistory.test_2_without_validity_new;
+SELECT * FROM casfri50_history_test.test_2_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM geohistory.test_2_with_validity_new;
+SELECT * FROM casfri50_history_test.test_2_with_validity_new;
 
 -- Display geohistory oblique 
 
@@ -318,20 +318,20 @@ SELECT * FROM geohistory.test_2_with_validity_new;
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_2_without_validity_new;
+FROM casfri50_history_test.test_2_without_validity_new;
 
 -- Taking validity into account
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_2_with_validity_new;
+FROM casfri50_history_test.test_2_with_validity_new;
 
 ---------------------------------------------
 -- test_3 - Triplet of polygons representing
 -- all permutations of valid/invalid attributes, years and ids
 ---------------------------------------------
-DROP TABLE IF EXISTS geohistory.test_3 CASCADE;
-CREATE TABLE geohistory.test_3 AS
+DROP TABLE IF EXISTS casfri50_history_test.test_3 CASCADE;
+CREATE TABLE casfri50_history_test.test_3 AS
 WITH validities AS (
   -- all permutations of validity for three polygons
   SELECT 1 v_order, '' a1, '' a2, '' a3
@@ -404,54 +404,54 @@ SELECT all_test_nb, idx3 + all_test_nb * 3, a3, y3,
 FROM numbered_tests
 ORDER BY test, idx;
 
--- SELECT * FROM geohistory.test_3;
+-- SELECT * FROM casfri50_history_test.test_3;
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
-DROP TABLE IF EXISTS geohistory.test_3_without_validity_new;
-CREATE TABLE geohistory.test_3_without_validity_new AS
+DROP TABLE IF EXISTS casfri50_history_test.test_3_without_validity_new;
+CREATE TABLE casfri50_history_test.test_3_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
-ALTER TABLE geohistory.test_3_without_validity_new 
+ALTER TABLE casfri50_history_test.test_3_without_validity_new 
 ADD PRIMARY KEY (row_id, id, poly_id);
       
--- SELECT * FROM geohistory.test_3_without_validity_new;
+-- SELECT * FROM casfri50_history_test.test_3_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS geohistory.test_3_with_validity_new;
-CREATE TABLE geohistory.test_3_with_validity_new AS
+DROP TABLE IF EXISTS casfri50_history_test.test_3_with_validity_new;
+CREATE TABLE casfri50_history_test.test_3_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
-ALTER TABLE geohistory.test_3_with_validity_new 
+ALTER TABLE casfri50_history_test.test_3_with_validity_new 
 ADD PRIMARY KEY (row_id, id, poly_id);
 
--- SELECT * FROM geohistory.test_3_with_validity_new;
+-- SELECT * FROM casfri50_history_test.test_3_with_validity_new;
 
 ---------------------------------------------
 -- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_3;
+FROM casfri50_history_test.test_3;
 
 -- Display oblique
 SELECT test, idx, att, valid_year,
        TT_GeoOblique(geom, valid_year, 0.2, 0.4), 
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_3;
+FROM casfri50_history_test.test_3;
 
 -- Display geohistory flat 
 
 -- Without taking validity into account
-SELECT * FROM geohistory.test_3_without_validity_new;
+SELECT * FROM casfri50_history_test.test_3_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM geohistory.test_3_with_validity_new;
+SELECT * FROM casfri50_history_test.test_3_with_validity_new;
 
 -- Display geohistory oblique 
 
@@ -459,20 +459,20 @@ SELECT * FROM geohistory.test_3_with_validity_new;
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_3_without_validity_new;
+FROM casfri50_history_test.test_3_without_validity_new;
 
 -- Taking validity into account
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_3_with_validity_new;
+FROM casfri50_history_test.test_3_with_validity_new;
 
 ---------------------------------------------
 -- test_4 - Quatriplet of polygons representing
 -- all permutations of valid/invalid attributes, years and ids
 ---------------------------------------------
-DROP TABLE IF EXISTS geohistory.test_4 CASCADE;
-CREATE TABLE geohistory.test_4 AS
+DROP TABLE IF EXISTS casfri50_history_test.test_4 CASCADE;
+CREATE TABLE casfri50_history_test.test_4 AS
 WITH validities AS (
   -- all permutations of validity for three polygons
   SELECT 1 v_order, '' a1, '' a2, '' a3, '' a4
@@ -612,59 +612,59 @@ FROM numbered_tests
 ORDER BY test, idx;
 
 CREATE INDEX test_4_idx_idx
-  ON geohistory.test_4 USING btree(idx);
+  ON casfri50_history_test.test_4 USING btree(idx);
 
 CREATE INDEX test_4_geom_idx
-  ON geohistory.test_4 USING gist(geom);
+  ON casfri50_history_test.test_4 USING gist(geom);
 
--- SELECT * FROM geohistory.test_4;
+-- SELECT * FROM casfri50_history_test.test_4;
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
-DROP TABLE IF EXISTS geohistory.test_4_without_validity_new;
-CREATE TABLE geohistory.test_4_without_validity_new AS
+DROP TABLE IF EXISTS casfri50_history_test.test_4_without_validity_new;
+CREATE TABLE casfri50_history_test.test_4_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
-ALTER TABLE geohistory.test_4_without_validity_new 
+ALTER TABLE casfri50_history_test.test_4_without_validity_new 
 ADD PRIMARY KEY (row_id, id, poly_id);
       
--- SELECT * FROM geohistory.test_4_without_validity_new;
+-- SELECT * FROM casfri50_history_test.test_4_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS geohistory.test_4_with_validity_new;
-CREATE TABLE geohistory.test_4_with_validity_new AS
+DROP TABLE IF EXISTS casfri50_history_test.test_4_with_validity_new;
+CREATE TABLE casfri50_history_test.test_4_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
-FROM (SELECT id::int, poly_id, isvalid, ST_AsText(wkb_geometry) wkt_geometry, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
       FROM TT_TableGeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
-ALTER TABLE geohistory.test_4_with_validity_new 
+ALTER TABLE casfri50_history_test.test_4_with_validity_new 
 ADD PRIMARY KEY (row_id, id, poly_id);
 
--- SELECT * FROM geohistory.test_4_with_validity_new;
+-- SELECT * FROM casfri50_history_test.test_4_with_validity_new;
 
 ---------------------------------------------
 -- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_4;
+FROM casfri50_history_test.test_4;
 
 -- Display oblique
 SELECT test, idx, att, valid_year,
        TT_GeoOblique(geom, valid_year, 0.4, 0.4), 
        test || '_' || idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
-FROM geohistory.test_4;
+FROM casfri50_history_test.test_4;
 
 -- Display geohistory flat 
 
 -- Without taking validity into account
-SELECT * FROM geohistory.test_4_without_validity_new;
+SELECT * FROM casfri50_history_test.test_4_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM geohistory.test_4_with_validity_new;
+SELECT * FROM casfri50_history_test.test_4_with_validity_new;
 
 -- Display geohistory oblique 
 
@@ -672,24 +672,24 @@ SELECT * FROM geohistory.test_4_with_validity_new;
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_4_without_validity_new;
+FROM casfri50_history_test.test_4_without_validity_new;
 
 -- Taking validity into account
 SELECT row_id, id, poly_id, isvalid, 
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
-FROM geohistory.test_4_with_validity_new;
+FROM casfri50_history_test.test_4_with_validity_new;
 
 ---------------------------------------------
 -- Debug procedure
 ---------------------------------------------
 -- -- 1) Create a view limiting polygon to the ones 
 -- --    in the same test as the faulty polygon
--- CREATE OR REPLACE VIEW geohistory.test_bug AS
--- SELECT * FROM geohistory.test_3
--- WHERE test = (SELECT test FROM geohistory.test_3 WHERE idx = 144);
+-- CREATE OR REPLACE VIEW casfri50_history_test.test_bug AS
+-- SELECT * FROM casfri50_history_test.test_3
+-- WHERE test = (SELECT test FROM casfri50_history_test.test_3 WHERE idx = 144);
 
--- SELECT * FROM geohistory.test_bug;
+-- SELECT * FROM casfri50_history_test.test_bug;
 
 -- -- 2) Modify the WHERE clause of TT_TableGeoHistory() currentPolyQuery to 
 -- --    ' WHERE ' || quote_ident(idColName) || '::text = ''144'' '
@@ -707,20 +707,20 @@ SELECT '1.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_0_without_validity_new" and "test_0_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_without_validity_new'', ''geohistory'' , ''test_0_without_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
-      FROM geohistory.test_0_without_validity_new a 
-      FULL OUTER JOIN geohistory.test_0_without_validity b USING (row_id)) foo
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_without_validity_new'', ''geohistory'' , ''test_0_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
+      FROM casfri50_history_test.test_0_without_validity_new a 
+      FULL OUTER JOIN casfri50_history_test.test_0_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_0_with_validity_new" and "test_0_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_with_validity_new'', ''geohistory'' , ''test_0_with_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
-      FROM geohistory.test_0_without_validity_new a 
-      FULL OUTER JOIN geohistory.test_0_without_validity b USING (row_id)) foo
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_with_validity_new'', ''geohistory'' , ''test_0_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
+      FROM casfri50_history_test.test_0_without_validity_new a 
+      FULL OUTER JOIN casfri50_history_test.test_0_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '2.1'::text number,
@@ -740,59 +740,312 @@ SELECT '3.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_2_without_validity_new" and "test_2_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_without_validity_new'', ''geohistory'' , ''test_2_without_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
-      FROM geohistory.test_2_without_validity_new a 
-      FULL OUTER JOIN geohistory.test_2_without_validity b USING (row_id)) foo
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_without_validity_new'', ''geohistory'' , ''test_2_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
+      FROM casfri50_history_test.test_2_without_validity_new a 
+      FULL OUTER JOIN casfri50_history_test.test_2_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_2_with_validity_new" and "test_2_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_with_validity_new'', ''geohistory'' , ''test_2_with_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
-      FROM geohistory.test_2_without_validity_new a 
-      FULL OUTER JOIN geohistory.test_2_without_validity b USING (row_id)) foo
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_with_validity_new'', ''geohistory'' , ''test_2_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
+      FROM casfri50_history_test.test_2_without_validity_new a 
+      FULL OUTER JOIN casfri50_history_test.test_2_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_3_without_validity_new" and "test_3_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_without_validity_new'', ''geohistory'' , ''test_3_without_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
-      FROM geohistory.test_3_without_validity_new a 
-      FULL OUTER JOIN geohistory.test_3_without_validity b USING (row_id)) foo
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_without_validity_new'', ''geohistory'' , ''test_3_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
+      FROM casfri50_history_test.test_3_without_validity_new a 
+      FULL OUTER JOIN casfri50_history_test.test_3_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '4.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_3_with_validity_new" and "test_3_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_with_validity_new'', ''geohistory'' , ''test_3_with_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
-      FROM geohistory.test_3_without_validity_new a 
-      FULL OUTER JOIN geohistory.test_3_without_validity b USING (row_id)) foo
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_with_validity_new'', ''geohistory'' , ''test_3_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
+      FROM casfri50_history_test.test_3_without_validity_new a 
+      FULL OUTER JOIN casfri50_history_test.test_3_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '5.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_4_without_validity_new" and "test_4_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_without_validity_new'', ''geohistory'' , ''test_4_without_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
-      FROM geohistory.test_4_without_validity_new a 
-      FULL OUTER JOIN geohistory.test_4_without_validity b USING (row_id)) foo
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_without_validity_new'', ''geohistory'' , ''test_4_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
+      FROM casfri50_history_test.test_4_without_validity_new a 
+      FULL OUTER JOIN casfri50_history_test.test_4_without_validity b USING (row_id)) foo
 ---------------------------------------------------------
 UNION ALL
 SELECT '5.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_4_with_validity_new" and "test_4_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_with_validity_new'', ''geohistory'' , ''test_4_with_validity'', ''row_id'', TRUE);' check_query
-FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
-      FROM geohistory.test_4_without_validity_new a 
-      FULL OUTER JOIN geohistory.test_4_without_validity b USING (row_id)) foo
+       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_with_validity_new'', ''geohistory'' , ''test_4_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
+      FROM casfri50_history_test.test_4_without_validity_new a 
+      FULL OUTER JOIN casfri50_history_test.test_4_without_validity b USING (row_id)) foo
+---------------------------------------------------------
+UNION ALL
+SELECT '6.1'::text number,
+       'TT_ValidYearUnion'::text function_tested, 
+       'NULL values' description, 
+       TT_ValidYearUnion(NUll, NULL, NULL) = '{}'::geomlowuppval[] passed,
+       '' check_query
+---------------------------------------------------------
+UNION ALL
+SELECT '6.2'::text number,
+       'TT_ValidYearUnion'::text function_tested, 
+       'Badly ordered values' description, 
+       TT_IsError('SELECT TT_ValidYearUnion(ST_GeomFromText(''POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))''), 2010, 2000)') = 'TT_ValidYearUnion() ERROR: Lower value is higher than higher value...' passed,
+       '' check_query
+---------------------------------------------------------
+UNION ALL
+SELECT '6.3'::text number,
+       'TT_ValidYearUnion'::text function_tested, 
+       'Simple, unique non-NULL values' description, 
+       TT_ValidYearUnion(ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))'), 2000, 2000) = ARRAY[(ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))'), 2000, 2000)]::geomlowuppval[] passed,
+       '' check_query
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2005 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.4'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+       'Mutually exclusive year ranges. Case 333' description, 
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval,
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2005 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2020 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2005 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.5'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Same as previous (6.4) but in reverse order. Case 444.1' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval,
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2005 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2020 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2010 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.6'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Overlapping year ranges. Case 777' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval,
+        --ST_AsText((vyu)[3].geom), (vyu)[3].lowerval, (vyu)[3].upperval
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((0 1,1 1,2 1,2 0,1 0,0 0,0 1))')) AND
+        ST_Equals((vyu)[3].geom, ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2009 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2010 AND
+        (vyu)[3].lowerval = 2011 AND (vyu)[3].upperval = 2020 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2010 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.7'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Same as previous (6.6) but in reverse order. Case 444.2' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval,
+        --ST_AsText((vyu)[3].geom), (vyu)[3].lowerval, (vyu)[3].upperval
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((0 1,1 1,2 1,2 0,1 0,0 0,0 1))')) AND
+        ST_Equals((vyu)[3].geom, ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2009 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2010 AND
+        (vyu)[3].lowerval = 2011 AND (vyu)[3].upperval = 2020 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2020 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.8'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Overlapping year ranges (the second finishing when the first finishes) Case 444.3' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((0 1,1 1,2 1,2 0,1 0,0 0,0 1))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2009 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2020 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2020 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.9'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Same as previous (6.8) but in reverse order. Case 666.2' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((0 1,1 1,2 1,2 0,1 0,0 0,0 1))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2009 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2020 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2030 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.10'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Overlapping year ranges (the second finishing after the first finishes) Case 444.3' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval
+        --ST_AsText((vyu)[3].geom), (vyu)[3].lowerval, (vyu)[3].upperval
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((0 1,1 1,2 1,2 0,1 0,0 0,0 1))')) AND
+        ST_Equals((vyu)[3].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2009 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2020 AND
+        (vyu)[3].lowerval = 2021 AND (vyu)[3].upperval = 2030 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2000 lowerval, 2030 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2020 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.11'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Same as previous (6.10) but in reverse order. Case 666.1' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval
+        --ST_AsText((vyu)[3].geom), (vyu)[3].lowerval, (vyu)[3].upperval
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((0 1,1 1,2 1,2 0,1 0,0 0,0 1))')) AND
+        ST_Equals((vyu)[3].geom, ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))')) AND
+        (vyu)[1].lowerval = 2000 AND (vyu)[1].upperval = 2009 AND
+        (vyu)[2].lowerval = 2010 AND (vyu)[2].upperval = 2020 AND
+        (vyu)[3].lowerval = 2021 AND (vyu)[3].upperval = 2030 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2030 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2010 lowerval, 2020 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.12'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Overlapping year ranges (the new one finishing before the second finishes) Case 555.1' description,
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 1,1 1,2 1,2 0,1 0,0 0,0 1))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))')) AND
+        (vyu)[1].lowerval = 2010 AND (vyu)[1].upperval = 2020 AND
+        (vyu)[2].lowerval = 2021 AND (vyu)[2].upperval = 2030 passed,
+        '' check_query
+ FROM validyearunion
+)
+---------------------------------------------------------
+UNION ALL
+(WITH polys AS (
+   SELECT ST_GeomFromText('POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))') geom, 2010 lowerval, 2020 upperval
+   UNION ALL
+   SELECT ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))') geom, 2010 lowerval, 2030 upperval
+ ), validyearunion AS (
+   SELECT TT_ValidYearUnion(geom, lowerval, upperval) vyu
+   FROM polys
+ )
+ SELECT '6.13'::text number,
+        'TT_ValidYearUnion'::text function_tested, 
+        'Same as previous (6.12) but in reverse order. Case 555.2' description, 
+        --ST_AsText((vyu)[1].geom), (vyu)[1].lowerval, (vyu)[1].upperval,
+        --ST_AsText((vyu)[2].geom), (vyu)[2].lowerval, (vyu)[2].upperval
+        ST_Equals((vyu)[1].geom, ST_GeomFromText('POLYGON((0 1,1 1,2 1,2 0,1 0,0 0,0 1))')) AND
+        ST_Equals((vyu)[2].geom, ST_GeomFromText('POLYGON((1 0, 2 0, 2 1, 1 1, 1 0))')) AND
+        (vyu)[1].lowerval = 2010 AND (vyu)[1].upperval = 2020 AND
+        (vyu)[2].lowerval = 2021 AND (vyu)[2].upperval = 2030 passed,
+        '' check_query
+ FROM validyearunion
+)
 ---------------------------------------------------------
 ) foo WHERE NOT passed;

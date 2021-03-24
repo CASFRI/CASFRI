@@ -1,10 +1,10 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-0,ROW_TRANSLATION_RULE,NA,notNull(dist_type_1),NA,Translate only rows where dis1code is not NULL, TRUE
-1,CAS_ID,text,notEmpty(inventory_id);notNull(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','0','0'}, '-', 'TRUE', 'TRUE')",Concatenates five attributes to create CAS_ID,TRUE
+0,ROW_TRANSLATION_RULE,NA,notEmpty(dist_type_1),NA,Translate only rows where dis1code is not NULL, TRUE
+1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
 2,DIST_TYPE_1,text,"notNull(dist_type_1);notEmpty(dist_type_1);matchList(dist_type_1,{'BT','BU','CC','DT','FL','IK','PO','SL','SN','TH','UK','UN','VT','WI'})","mapText(dist_type_1, {'BT','BU','CC','DT','FL','IK','PO','SL','SN','TH','UK','UN','VT','WI'}, {'OTHER','BURN','CUT','DEAD_UNKNOWN','FLOOD','INSECT','OTHER','OTHER','DEAD_UNKNOWN','SILVICULTURE_TREATMENT','UNKNOWN_VALUE','OTHER','DEAD_UNKNOWN','WINDFALL'})",Maps source value to DIST_TYPE_1 using lists of values,TRUE
-3,DIST_YEAR_1,integer,"notNull(dist_year_1);isInt(dist_year_1);isBetween(dist_year_1,1000,2020)",copyInt(dist_year_1),Copies (line_7b_disturbance_history) to DIST_YEAR_1,TRUE
-4,DIST_EXT_UPPER_1,integer,"notNull(dist_ext_upper_1);isInt(dist_ext_upper_1);isGreaterThan(dist_ext_upper_1,0,'FALSE');matchList(dist_ext_upper_1,{1,2,3,4,5})","mapInt(dist_ext_upper_1, {1,2,3,4,5}, {25,50,75,95,100})",Maps extent range to upper,TRUE
-5,DIST_EXT_LOWER_1,integer,"notNull(dist_ext_lower_1);isInt(dist_ext_lower_1);isGreaterThan(dist_ext_lower_1,0,'FALSE');matchList(dist_ext_lower_1,{1,2,3,4,5})","mapInt(dist_ext_lower_1, {1,2,3,4,5}, {1,26,51,76,96})",Maps extent range to lower,TRUE
+3,DIST_YEAR_1,integer,"notNull(dist_year_1);isInt(dist_year_1);notMatchList(dist_year_1, {0}|-8888);isBetween(dist_year_1,1000,2020)",copyInt(dist_year_1),"Copies year if not null, empty and between 1000-2020. Catch zero values as nulls.",TRUE
+4,DIST_EXT_UPPER_1,integer,"notNull(dist_ext_upper_1);isInt(dist_ext_upper_1);notMatchList(dist_ext_upper_1, {0}|-8888);isBetween(dist_ext_upper_1,1,5)","mapInt(dist_ext_upper_1, {1,2,3,4,5}, {25,50,75,95,100})",Maps extent range to upper. Catch zero values as nulls.,TRUE
+5,DIST_EXT_LOWER_1,integer,"notNull(dist_ext_lower_1);isInt(dist_ext_lower_1);notMatchList(dist_ext_lower_1, {0}|-8888);isBetween(dist_ext_lower_1,1,5)","mapInt(dist_ext_lower_1, {1,2,3,4,5}, {1,26,51,76,96})",Maps extent range to lower. Catch zero values as nulls.,TRUE
 6,DIST_TYPE_2,text,false(),nothingText(),Attribute does not occur,TRUE
 7,DIST_YEAR_2,integer,false(),nothingInt(),Attribute does not occur,TRUE
 8,DIST_EXT_UPPER_2,integer,false(),nothingInt(),Attribute does not occur,TRUE

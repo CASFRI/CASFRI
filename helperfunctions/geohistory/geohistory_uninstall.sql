@@ -19,8 +19,15 @@ DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, int, boolean, geometry,
 DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
 DROP FUNCTION IF EXISTS TT_HasPrecedence(text, text, text, text, boolean, boolean);
 DROP FUNCTION IF EXISTS TT_GeoHistoryOblique(name, name, name, name, name, text, text[], double precision, double precision);
-
 DROP FUNCTION IF EXISTS TT_GeoOblique(geometry, int, double precision, double precision);
+DROP AGGREGATE IF EXISTS TT_ValidYearUnion(geometry, int, int);
+DROP FUNCTION IF EXISTS TT_ValidYearUnionStateFct(geomlowuppval[], geometry, int, int);
+DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean);
+DROP FUNCTION IF EXISTS TT_GeoHistoryOverlaps(geometry, geometry);
+
+DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
+DROP TYPE IF EXISTS geomlowuppval;
+
 --------------------------------------------
 -- DROP test tables
 --------------------------------------------

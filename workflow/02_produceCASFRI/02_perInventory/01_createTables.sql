@@ -55,7 +55,8 @@ CREATE TABLE casfri50.eco_all
     wet_veg_cover text,
     wet_landform_mod text,
     wet_local_mod text,
-    eco_site text
+    eco_site text,
+	layer integer
 );
 
 DROP TABLE IF EXISTS casfri50.lyr_all CASCADE;

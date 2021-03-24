@@ -105,33 +105,25 @@ SELECT TT_Prepare('translation_devel', 'bc08_vri01_geo_devel', '_bc08_geo_devel'
 -- These are set to null in the bc08 workflow because there is no layer 2. In the
 -- bc10 workflow they are mapped to the layer 2 species attributes.
 SELECT TT_CreateMappingView('rawfri', 'bc08', 1, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc08_cas_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_cas_devel');
+SELECT * FROM TT_Translate_bc08_cas_devel('rawfri', 'bc08_l1_to_bc_l1_map_200'); -- 4 s.
 
-SELECT * FROM TT_Translate_bc08_dst_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_dst_devel');
+SELECT * FROM TT_Translate_bc08_dst_devel('rawfri', 'bc08_l1_to_bc_l1_map_200'); -- 4 s.
 
-SELECT * FROM TT_Translate_bc08_eco_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_eco_devel');
+SELECT * FROM TT_Translate_bc08_eco_devel('rawfri', 'bc08_l1_to_bc_l1_map_200'); -- 2 s.
 
-SELECT * FROM TT_Translate_bc08_lyr_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 7 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_lyr_devel');
+SELECT * FROM TT_Translate_bc08_lyr_devel('rawfri', 'bc08_l1_to_bc_l1_map_200'); -- 7 s.
 
 -- NFL needs one translation for each attribute
 SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l2_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_nfl_devel');
+SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l2_to_bc_l1_map_200'); -- 4 s.
 
 SELECT TT_CreateMappingView('rawfri', 'bc08', 3, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l3_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_nfl_devel');
+SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l3_to_bc_l1_map_200'); -- 4 s.
 
 SELECT TT_CreateMappingView('rawfri', 'bc08', 4, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l4_to_bc_l1_map_200', 'ogc_fid'); -- 4 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_nfl_devel');
+SELECT * FROM TT_Translate_bc08_nfl_devel('rawfri', 'bc08_l4_to_bc_l1_map_200'); -- 4 s.
 
-SELECT * FROM TT_Translate_bc08_geo_devel('rawfri', 'bc08_l1_to_bc_l1_map_200', 'ogc_fid'); -- 2 s.
-SELECT * FROM TT_ShowLastLog('translation_devel', 'bc08_vri01_geo_devel');
+SELECT * FROM TT_Translate_bc08_geo_devel('rawfri', 'bc08_l1_to_bc_l1_map_200'); -- 2 s.
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT b.src_filename, b.inventory_id, b.map_id, b.ogc_fid, a.cas_id, 
