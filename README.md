@@ -165,18 +165,18 @@ The function TT_StackTranslationRules() creates a table of all translation and v
 The [summary_statistics](https://github.com/edwardsmarc/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to create summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be downloaded (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpeted values, correct assignment of errors codes etc.
 
 ### Workflow scripts
-The translation of each dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI/02_perInventory](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI/02_perInventory) folder. The workflow scripts combine three elements:
+The translation of each dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI/02_perInventory](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI/02_perInventory) folder. The main translation functions are TT_Prepare() which validates are prepares the translation table, and TT_Translate() which runs the translation. It is important that a single translation table can be used for multiple translations, either for different layers within the same dataset, or for different datasets using the same standard but different attributes names. The workflow scripts accomodate this by combining three elements:
 
-**1. Translation tables.**
-Translation tables helper functions use placeholder arguments which are also listed in the attribute dependencies table. We create VIEWs that map the source data attributes to the placeholder names used in the translation table. We can then run the translation using the VIEW and the translation table.
+**1. Placeholder names in translation table functions.**
+Translation table helper functions use placeholder arguments. Every translation using a common translation table must map the source attributes to these placeholder names so that the translation table can be reused for all translations. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow script we create VIEWs that map the source data attributes to the placeholder names used in the translation table. We can then run the translation using the VIEW and the translation table.
 
 **2. Attribute dependency table.**
 This table defines the mapping of attributes from each source table to the placeholder names used in the translation tables. For a given translation table, the attribute dependencies table contains a row for the translation table placeholder names, and rows for each translation that needs to be completed using a source inventory. If there are multiple layers to be translated for an inventory, it will have multiple rows in the attribute dependencies table. The table has the following columns:
-* inventory_id - either a name representing the translation table (e.g. BC) or a name matching a source inventory dataset (e.g. BC08)
+* inventory_id - either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03)
 * layer - a unique integer value incrementing for LYR layers followed by NFL layers.
 * ttable_exists - indicates if the row represents a translation table.
 
-All other columns represent target attributes in the CASFRI tables. The values in each cell list the attributes to be mapped to the translation table placeholder names. In the case of the translation table rows, these must match the placeholder names used in the translation table. In the case of rows representing source datasets, the values represent source attribute names.
+All other columns represent target attributes in the CASFRI tables. The values in each cell list the attributes to be mapped to the translation table placeholder names. In the case of the translation table rows, the values must match the placeholder names used in the translation table. In the case of rows representing source datasets, the values represent source attribute names.
 
 **3. TT_CreateMappingView().**
 The function TT_CreateMappingView() is used to create the VIEWs used in the workflow by mapping the attributes defined in the attribute dependencies table from the source names to the translation table placeholder names. It has the following arguments:
@@ -188,15 +188,15 @@ The function TT_CreateMappingView() is used to create the VIEWs used in the work
 *	number of rows (optional, default all rows): number of random rows to select
 
 The function creates a view with a name based on the input arguments:
-If only the 'from' table is provided, a VIEW with a minimal set of attributes and no mappings is created. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 200);` creates a view named **bc08_min_200**.
+If only the 'from table name' is provided, a VIEW with a minimal set of attributes and no mappings is created. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 200);` creates a view named **ab03_min_200**.
 
-If both a 'from' and a 'to' table are provided, the 'from' names (i.e. the source data) are mapped to the 'to' names (i.e. the translation table placeholder names), defaulting to use layer 1. For exampe `SELECT TT_CreateMappingView('rawfri', 'bc08', 'bc');` creates a view name **bc08_l1_to_bc_l1_map**.
+If both a 'from' and a 'to' table are provided, the 'from' names (i.e. the source data) are mapped to the 'to' names (i.e. the translation table placeholder names), defaulting to use layer 1. For exampe `SELECT TT_CreateMappingView('rawfri', 'ab03', 'ab');` creates a view name **ab03_l1_to_ab_l1_map**.
 
-If 'layer' integers are provided, the row corresponding to the provided layer number will be used for the mapping. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1);` creates a view name **bc08_l2_to_bc_l1_map**.
+If 'layer' integers are provided, the row corresponding to the provided layer number will be used for the mapping. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab', 1);` creates a view name **ab03_l2_to_bc_l1_map**.
 
-If the number of rows are provided, the view name is ends with the number of randomly selected rows. For example `SELECT TT_CreateMappingView('rawfri', 'bc08', 2, 'bc', 1, 200);` creates a view name **bc08_l2_to_bc_l1_map_200**.
+If the 'number of rows' are provided, the view name ends with the number of randomly selected rows. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab', 1, 200);` creates a view name **ab03_l2_to_ab_l1_map_200**.
 
-The following diagram illustrates the relationship between the translation table, the attribute dependencies table, and TT_CreateMappingView() using a simple attribute - SPECIES_1_PER. The translation rule is a simple copy, but the attribute has a different name for layer 1 and layer 2 in the AB03 source dataset. Each layer is run as a separate translation: for the layer 1 translation the source attribute sp1_per needs to be mapped to the placeholder name (species_per_1), and for the layer 2 translation the understory attribute usp1_per needs to be mapped. Views are used to map from the source attribute names to the placeholder names used in the translation table.
+The following diagram illustrates the relationship between the translation table, the attribute dependencies table, and TT_CreateMappingView() using a simple attribute - SPECIES_1_PER. The translation rule is a simple copy, but the attribute has a different name for layer 1 and layer 2 in the AB03 source dataset. Each layer is run as a separate translation: for the layer 1 translation the source attribute sp1_per needs to be mapped to the placeholder name (species_per_1), and for the layer 2 translation the understory attribute usp1_per needs to be mapped to the placeholder name (species_per_1). Views are used to map from the source attribute names to the placeholder names used in the translation table.
 
 ![Workflow diagram](workflow_diagram.jpg)
 
