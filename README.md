@@ -81,6 +81,9 @@ Historical forestry data is of great value which is why CASFRI accommodates upda
 
 For an update to be incorporated in the database, the date of publication should be at least one year apart from a previous version. When data are available online, this information can be found in the metadata. For data received from a collaborator, information on the last version received should be shared in order to identify if ny new datasets meet the 1-year criteria. 
 
+# Workflow
+A full translation workflow involves loading all data using the conversion scripts, translating all data using the translation tables, then building the historical database using the provided scripts. A full list of steps with references to all scripts can be found in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). Below is a high level overview of the process.  
+
 # Conversion and Loading
 Conversion and loading happen at the same time and are implemented using the GDAL/OGR ogr2ogr tool. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. Some FRIs are accompanied by an extra shapefile that associates each stand with a photo year. These are loaded with a second script. Every loading script adds a new "src_filename" attribute to the target table with the name of the source file, and an "inventory_id" attribute with the dataset name. These are used when constructing the CAS_ID (a unique row identifier tracing each target row back to its original row in the source dataset).
 
@@ -98,59 +101,11 @@ Arc/Info E00 files are not currently supported in GDAL/OGR. Source tables in thi
 ### Projection
 All source tables are transformed to the Canada Albers Equal Area Conic projection during loading.
 
-# Translation
-Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). The translation engine uses a translation table that describes rules to validate each loaded source table and translate each row into a target table. Validation and translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a function named isBetween() validates that the source data is within the expected range of values, and a function named mapText() maps a set of source values to a set of target values. A list of all helper functions is available in the PostgreSQL Table Translation Framework [readMe](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). After the translation engine has run on all loaded source tables, the result is a complete set of target tables, each with matching attributes as defined by the CASFRI standard. 
+### Config file
+A config file (.bat or .sh) is required in the CASFRI root directory to set local paths and preferences. Template files are provided (configSample.bat and configSample.sh) which can be copied and edited.
 
-### CASFRI tables and ROW_TRANSLATION_RULE
-CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications):
-1. Header (HDR) attributes - summarizing reference information for each dataset;  
-2. CAS Base Polygon (CAS) attributes - attributes describing the source polygon and any identifiers;  
-3. Forest-Level (LYR) attributes - attributes describing productive and non-productive forest land;  
-4. Non-Forest Land (NFL) attributes - attributes describing non-forested land;  
-5. Disturbance history (DST) attributes - attributes describing the type, year and extent of disturbances;  
-6. Ecological specific (ECO) attributes - attributes describing wetlands;  
-7. Geometry attributes - polygon geometries.
-
-An important feature of the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) is the use of a ROW_TRANSLATION_RULE in the translation table. This allows the loaded source table to be filtered during translation so that only the relavent rows are returned in the target tables. This ensures that the the LYR table for example, only includes rows that contain forest information.
-
-### Error Codes
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI 5.x, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -8888) whereas text attributes will have errors reported as text (e.g. NULL_VALUE). Different error codes are reported depending on the rule being invalidated. A full description of possible error codes can be found in the [CASFRI 5.x specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
-
-### Validating Translations
-Validation is performed at multiple stages during and after translation:
-#### Validation of source values
-All source values are validated before attempting translation using the validation rules described in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
-#### Validation of translation tables by the engine
-The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) validates the translation rules and foratting in each translation table prior to attempting translation.
-#### Horizontal review of translation tables
-The function TT_StackTranslationRules() creates a table of all translation and validation rules used for all inventories for a given CASFRI table. This allows manual validation of all translation rules and assignment of error codes for a given attribute.
-#### Validation of output using summary statistics
-The [summary_statistics](https://github.com/edwardsmarc/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to create summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be downloaded (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpeted values, correct assignment of errors codes etc.
-
-# Temporalization
-All translated datasets are combined into a single historical database that allows querying for the best available inventory information at any point in time accross the full CASFRI coverage. The historical database is created using the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). The output is a historical database that uses the photo year of each polygon as the reference date to determine its valid start and end time. No polygons overlap in time or space, so for any given location at any time, there is only one valid set of CASFRI records. In cases where source polygons overlap in space and time, the polygon containing the most complete information is prioritized.
-**add description of what "complete" means**.
-
-# Update procedure
-**To be written**
-
-# Parallelization
-The conversion and translation steps are designed to be run in parallel on a single CPU. No work has been done to split the workflow across multiple CPUs because we feel the speed of the full translation process is sufficient for the purposes of CASFRI (i.e. a full translation of the entire database will be rare, and the speed of translation is acceptable under this scenario). The single CPU parallelization of the conversion and translation steps is documented in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md) and allows all source datasets to be loaded at the same time, and all tranlsation tables to be translated at the same time.
-
-# Workflow
-
-### Installation
-
-* Install the PostgreSQL, PostGIS and GDAL versions specified in the requirement section.
-* Install the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) following the instructions provided in the project readme.
-* In a PostgreSQL query window, or using the PSQL client, run the helperFunctionsCASFRI.sql file. This loads CASFRI specific helper functions used for especially complex, inventory specific translations.
-
-### Converting/Loading FRIs
-* Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
-* In an operating system command window, load the necessary inventories by executing the proper conversion scripts located in either the .bat or .sh conversion folder.
-* After running each conversion/loading script, the source FRI tables will be added to the PostgreSQL schema specified in the config file ("rawfri" by default).
-
-Conversion and loading scripts are written so that FRIs to convert and load must be stored in a specific folder hierarchy:
+### Source data folder structure
+Conversion and loading scripts are written so that FRIs to convert and load must be stored in a specific folder hierarchy (using inventory AB06 as an example):
 
 FRI/  
 ├─AB/  
@@ -175,30 +130,53 @@ FRI/
 ├─BC/  
 │ ├─.../  
 
-### Loading Translation Tables
-* Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
-* Open a query window in pgAdmin and run the drop_tables.sql script to remove all existing tables.
-* In an operating system command window, load the translation files by executing the load_tables (.bat or .sh) script located in the translation folder. 
-* The script will load all translation tables and validation tables stored in the "translation/tables" folder and subfolder into the specified schema ("translation" by default).
+# Translation
+Translation of loaded source tables into target tables formatted to the CASFRI specification is done using the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). The translation engine uses a translation table that describes rules to validate each loaded source table and translate each row into a target table. Validation and translation rules are defined using a set of helper functions that both validate the source attributes and translate into the target attributes. For example, a function named isBetween() validates that the source data is within the expected range of values, and a function named mapText() maps a set of source values to a set of target values. A list of all helper functions is available in the PostgreSQL Table Translation Framework [readMe](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). After the translation engine has run on all loaded source tables, the result is a complete set of target tables, each with matching attributes as defined by the CASFRI standard. 
 
-### Translating
-* Validate dependency tables using the loaded validation tables.
-* Run the translation engine for each FRI using the loaded source FRI table and the translation table.
+### Translation tables
+A detailed description of translation table properties is included in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). In short, each translation table lists a set of attribute names, their type in the target table, a set of validation helper functions which any input value has to pass, and a set of translation helper functions to convert the input value to the CASFRI value.
 
-#### Workflow scripts
-* Refer to the files located in the CASFRI/workflow folder for an example of how to run the translation engine. 
-* The workflow scripts combine three elements:
+CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications):
+1. Header (HDR) attributes - summarizing reference information for each dataset;  
+2. CAS Base Polygon (CAS) attributes - attributes describing the source polygon and any identifiers;  
+3. Forest-Level (LYR) attributes - attributes describing productive and non-productive forest land;  
+4. Non-Forest Land (NFL) attributes - attributes describing non-forested land;  
+5. Disturbance history (DST) attributes - attributes describing the type, year and extent of disturbances;  
+6. Ecological specific (ECO) attributes - attributes describing wetlands;  
+7. Geometry attributes - polygon geometries.
 
-**1. Generic translation tables.**
-If multiple datasets using the same standard have similar structures and translation rules, we can use the same generic translation table to translate them. We create VIEWs that map the source data to the attribute names used in the generic translation table. We can then run the translation using the VIEW and the generic translation table.
+In general, each standard for each jurisdiction uses a single set of translation tables. All source datasets using the same standard should use the same set of translation tables. Differences in attribute names can be accomodated using the workflow scripts described below. In some cases minor differences in attributes between datasets using the same standard can be accomodated by designing translation helper functions that can deal with both formats. An example would be two datasets using different values for graminoids (e.g. 'Grm' in one dataset and 'graminoids' in another). These can be combined into a single translation function to deal with both datasets in the translation table (e.g. mapText(source_value, {'Grm', 'graminoids'}, {'GRAMINOID', 'GRAMINOID'})).
+
+### Row translation rule
+An important feature of the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) is the use of a ROW_TRANSLATION_RULE in the translation table. This allows the loaded source table to be filtered during translation so that only the relavent rows are returned in the target tables. This ensures that the the LYR table for example, only includes rows that contain forest information.
+
+### Error Codes
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI 5.x, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -8888) whereas text attributes will have errors reported as text (e.g. NULL_VALUE). Different error codes are reported depending on the rule being invalidated. A full description of possible error codes can be found in the [CASFRI 5.x specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
+
+### Validating Translations
+Validation is performed at multiple stages during and after translation:
+#### Validation of source values
+All source values are validated before attempting translation using the validation rules described in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
+#### Validation of translation tables by the engine
+The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) validates the translation rules and foratting in each translation table prior to attempting translation.
+#### Horizontal review of translation tables
+The function TT_StackTranslationRules() creates a table of all translation and validation rules used for all inventories for a given CASFRI table. This allows manual validation of all translation rules and assignment of error codes for a given attribute.
+#### Validation of output using summary statistics
+The [summary_statistics](https://github.com/edwardsmarc/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to create summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be downloaded (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpeted values, correct assignment of errors codes etc.
+
+### Workflow scripts
+The translation of each dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI) folder. The workflow scripts combine three elements:
+
+**1. Translation tables.**
+Translation tables helper functions use placeholder arguments which are also listed in the attribute dependencies table. We create VIEWs that map the source data attributes to the placeholder names used in the translation table. We can then run the translation using the VIEW and the translation table.
 
 **2. Attribute dependency table.**
-This table defines the mapping of attributes from the source table to the attributes used in the generic translation table. For a given standard, the table will contain a row for the generic translation attribute names, and rows for each translation that needs to be completed using a source inventory. If there are multiple layers to be translated for a dataset, it will have multiple rows for the inventory. The table has the following columns:
+This table defines the mapping of attributes from the source table to the placeholder names used in the translation table. For a given standard, the table will contain a row for the translation attribute names, and rows for each translation that needs to be completed using a source inventory. If there are multiple layers to be translated for a dataset, it will have multiple rows for the inventory. The table has the following columns:
 * inventory_id - either a name representing the generic translation table or a name matching a source inventory dataset
 * layer - a unique integer value within a given inventory used in TT_CreateMappingView().
 * ttable_exists - indicates if the row values represent a translation table.
 
-All other columns represent target attributes in the CASFRI. The values in each cell list the attributes used in the translation to the target attribute. In the case of the generic rows, these must match the attributes used in the generic translation table. In the case of rows representing source datasets, the values represent source attributes.
+All other columns represent target attributes in the CASFRI. The values in each cell list the attributes used in the translation to the target placeholder name. In the case of the translation table rows, these must match the placeholder names used in the translation table. In the case of rows representing source datasets, the values represent source attribute names.
 
 **3. TT_CreateMappingView().**
 The function TT_CreateMappingView() is used to create the VIEWs used in the translation by mapping the attributes defined in the attribute dependencies table from the source names to the generic translation table names. It has the following arguments:
@@ -223,6 +201,38 @@ If the 'row subset' argument is used, the rows with data for the provided subset
 
 The following diagram illustrates the relationship between the generic translation table, the attribute dependencies table, and TT_CreateMappingView() using a simple attribute - SPECIES_1_PER. The translation rule is a simple copy, but the attribute has a different name in BC08 and BC10. Views are used to map from the source attribute names to the name used in the generic BC translation table.
 ![Workflow diagram](workflow_diagram.jpg)
+
+
+# Temporalization
+All translated datasets are combined into a single historical database that allows querying for the best available inventory information at any point in time accross the full CASFRI coverage. The historical database is created using the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). The output is a historical database that uses the photo year of each polygon as the reference date to determine its valid start and end time. No polygons overlap in time or space, so for any given location at any time, there is only one valid set of CASFRI records. In cases where source polygons overlap in space and time, the polygon containing the most complete information is prioritized.
+**add description of what "complete" means**.
+
+# Update procedure
+**To be written**
+
+# Parallelization
+The conversion and translation steps are designed to be run in parallel on a single CPU. No work has been done to split the workflow across multiple CPUs because we feel the speed of the full translation process is sufficient for the purposes of CASFRI (i.e. a full translation of the entire database will be rare, and the speed of translation is acceptable under this scenario). The single CPU parallelization of the conversion and translation steps is documented in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md) and allows all source datasets to be loaded at the same time, and all tranlsation tables to be translated at the same time.
+
+# Workflow
+
+### Installation
+
+* Install the PostgreSQL, PostGIS and GDAL versions specified in the requirement section.
+* Install the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) following the instructions provided in the project readme.
+* In a PostgreSQL query window, or using the PSQL client, run the helperFunctionsCASFRI.sql file. This loads CASFRI specific helper functions used for especially complex, inventory specific translations.
+
+### Loading Translation Tables
+* Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
+* Open a query window in pgAdmin and run the drop_tables.sql script to remove all existing tables.
+* In an operating system command window, load the translation files by executing the load_tables (.bat or .sh) script located in the translation folder. 
+* The script will load all translation tables and validation tables stored in the "translation/tables" folder and subfolder into the specified schema ("translation" by default).
+
+### Translating
+* Validate dependency tables using the loaded validation tables.
+* Run the translation engine for each FRI using the loaded source FRI table and the translation table.
+
+# Non-build folder descriptsions
+* [01_develTranslationTables](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/01_develTranslationTables) folder - used for development purposes and testing only.
 
 # Progress
 * Progress of completed translations can be found in issue [#175](https://github.com/edwardsmarc/CASFRI/issues/175).
