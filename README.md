@@ -152,7 +152,7 @@ CASFRI is split into seven tables as detailed in the [CASFRI specifications](htt
 4. Non-Forest Land (NFL) attributes - attributes describing non-forested land;  
 5. Disturbance history (DST) attributes - attributes describing the type, year and extent of disturbances;  
 6. Ecological specific (ECO) attributes - attributes describing wetlands;  
-7. Geometry attributes - polygon geometries.
+7. Geometry attributes (GEO) - polygon geometries.
 
 In general, each standard for each jurisdiction uses a single set of translation tables. All source datasets using the same standard should use the same set of translation tables. Differences in attribute names can be accomodated using the workflow scripts described below. In some cases minor differences in attributes between datasets using the same standard can be accomodated by designing translation helper functions that can deal with both formats. An example would be two datasets using different values for graminoids (e.g. 'Grm' in one dataset and 'graminoids' in another). These can be combined into a single translation function to deal with both datasets in the translation table (e.g. mapText(source_value, {'Grm', 'graminoids'}, {'GRAMINOID', 'GRAMINOID'})).
 
@@ -223,6 +223,8 @@ The steps to produce a complete build of the CASFRI database are detailed in the
       1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts. Fix any non passing test (by fixing the function tested or the test itself).
       2. Load the CASFRI Helper Functions with the helperFunctionsCASFRI.sql script and test them using the helperFunctionsCASFRITest.sql.
 5. Run the translation by launching the workflow sql script (CASFRI/workflow/02_produceCASFRI/02_perInventory/02_AB03.sql) in pgAdmin (or a psql window).
+
+Translated data is generally added to the six output tables: cas_all, dst_all, eco_all, lyr_all, nfl_all, geo_all. The scripts in the [CASFRI/workflow/03_flatCASFRI/](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/03_flatCASFRI) can be used to create two different denormalized tables, one where all layers for a given polygon are reported on the same row, and one where all layers for a given polygon are reported on different rows.
 
 The steps to add a new inventory to the CASFRI database are detailed in issue [#471](https://github.com/edwardsmarc/CASFRI/issues/471).
 
