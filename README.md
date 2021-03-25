@@ -29,19 +29,31 @@ The current version is 5.2.0 and is available for download at https://github.com
 
 # Directory structure
 <pre>
-./                      Sample files for configuring and running scripts
+./                                      Sample files for configuring and running scripts
 
-./conversion            Scripts for converting and loading FRI datasets using either .bat or .sh. (1st step)
+./conversion                            Scripts for converting and loading FRI datasets using either .bat or .sh
 
-./docs                  Documentation including CASFRI specifications
+./docs/specifications                   CASFRI specifications reference documents
 
-./helperfunctions       CASFRI specific helper functions used for table translation
+./docs/inv_coverage                     .sql script for computing CASFRI coverage polygons
 
-./summary_statistics    R scripts to summarize CASFRI output for validation checks
+./helperfunctions                       CASFRI specific helper functions used for table translation
 
-./translation           Translation tables and associated loading scripts (2nd step)
+./helperfunctions/geohistory            Functions used to build historical database
 
-./workflow              Actual SQL translation workflow (3rd step)
+./summary_statistics                    R scripts to summarize CASFRI output for validation checks
+
+./translation/tables                    Translation tables and associated loading scripts
+
+./translation/test                      Unit tests for CASFRI translations
+
+./workflow/01_develTranslationTables    Translation scripts used for development and testing
+
+./workflow/02_produceCASFRI             Workflow scripts to run all translations
+
+./workflow/03_flatCASFRI                Scripts to build flat (denormalised) version of CASFRI 
+
+./workflow/04_produceHistoricalTable    Scripts to build historical CASFRI database 
 </pre>
 
 # Requirements
@@ -79,10 +91,7 @@ All identifiers are listed in the [FRI inventory list CSV file](https://github.c
 # Handling updates
 Historical forestry data is of great value which is why CASFRI accommodates updates. One type of update we often see in FRIs is re-inventories, i.e., when old photo-interpretation is updated to modern standards. The other types of update are so-called “depletion updates” related to various disturbances. In many jurisdictions, depletion-updates are produced annually to “cut-in” polygons disturbed by harvesting, wildfire or insects. Both types of updates are incorporated in CASFRI 5.x by loading and translationg the updated dataset and labelling the dataset with an incremented Inventory_ID. Any duplicate records will be dealt with in the temporalization procedure.
 
-For an update to be incorporated in the database, the date of publication should be at least one year apart from a previous version. When data are available online, this information can be found in the metadata. For data received from a collaborator, information on the last version received should be shared in order to identify if ny new datasets meet the 1-year criteria. 
-
-# Workflow
-A full translation workflow involves loading all data using the conversion scripts, translating all data using the translation tables, then building the historical database using the provided scripts. A full list of steps with references to all scripts can be found in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). Below is a high level overview of the process.  
+For an update to be incorporated in the database, the date of publication should be at least one year apart from a previous version. When data are available online, this information can be found in the metadata. For data received from a collaborator, information on the last version received should be shared in order to identify if ny new datasets meet the 1-year criteria.   
 
 # Conversion and Loading
 Conversion and loading happen at the same time and are implemented using the GDAL/OGR ogr2ogr tool. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI has multiple files, the conversion/loading scripts append them all into the same target table. Some FRIs are accompanied by an extra shapefile that associates each stand with a photo year. These are loaded with a second script. Every loading script adds a new "src_filename" attribute to the target table with the name of the source file, and an "inventory_id" attribute with the dataset name. These are used when constructing the CAS_ID (a unique row identifier tracing each target row back to its original row in the source dataset).
@@ -223,13 +232,13 @@ All translated datasets are combined into a single historical database that allo
 The following diagram illustrates the temporalization procedure for a single polygon:
 
 ![Temporalization diagram](temporalization_diagram.jpg)
+
 For the green 2010 polygon, the following set of polygons would be computed using the overlapping polygons:
 1. One 2010 polygon - the current polygon being processed minus the area covered by any higher priority overlapping 2010 polygons
 2. One past polygon - the polygon computed at step 1, minus the sum of all older polygons taken into account
 3. One polygon for every more recent polygon - the polygon computed at step 1 minus each of the more recent polygons (cumulatively)
 
 No interpolation or interpretation of attributes is performed. For this reason the historical database can be queried to recreate the 'state of the inventory' for a given year, but not the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require modelling the exact forest attributes for every year based on time since disturbance. This is beyond the scope of this project but the historical database could facilitate such modelling exercises for interested end users.
-**add description of what "complete" means**.
 
 # Update procedure
 **To be written**
@@ -237,33 +246,19 @@ No interpolation or interpretation of attributes is performed. For this reason t
 # Parallelization
 The conversion and translation steps are designed to be run in parallel on a single CPU. No work has been done to split the workflow across multiple CPUs because we feel the speed of the full translation process is sufficient for the purposes of CASFRI (i.e. a full translation of the entire database will be rare, and the speed of translation is acceptable under this scenario). The single CPU parallelization of the conversion and translation steps is documented in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md) and allows all source datasets to be loaded at the same time, and all tranlsation tables to be translated at the same time.
 
-# Workflow
-
-### Installation
-
-* Install the PostgreSQL, PostGIS and GDAL versions specified in the requirement section.
-* Install the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) following the instructions provided in the project readme.
-* In a PostgreSQL query window, or using the PSQL client, run the helperFunctionsCASFRI.sql file. This loads CASFRI specific helper functions used for especially complex, inventory specific translations.
-
-### Loading Translation Tables
-* Edit the configSample (.bat or .sh) file located in the CASFRI root directory to match your system configuration and save it as config.sh or config.bat in the same folder.
-* Open a query window in pgAdmin and run the drop_tables.sql script to remove all existing tables.
-* In an operating system command window, load the translation files by executing the load_tables (.bat or .sh) script located in the translation folder. 
-* The script will load all translation tables and validation tables stored in the "translation/tables" folder and subfolder into the specified schema ("translation" by default).
-
-### Translating
-* Validate dependency tables using the loaded validation tables.
-* Run the translation engine for each FRI using the loaded source FRI table and the translation table.
-
-# Non-build folder descriptsions
-* [01_develTranslationTables](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/01_develTranslationTables) folder - used for development purposes and testing only.
-
-# Progress
-* Progress of completed translations can be found in issue [#175](https://github.com/edwardsmarc/CASFRI/issues/175).
-* The attribute PRODUCTIVE_FOR requires a discussion about how to apply for inventories that do not have a source attribute. Some inventories are therefore complete except for PRODUCTIVE_FOR.
-* The attribute STRUCTURE_RANGE may be added to describe height ranges in complex stands. This attribute was not included in CAS04. [#208](https://github.com/edwardsmarc/CASFRI/issues/208).
-* Any inventory labelled 'Done' or 'Done - attributes missing' can successfully be translated without errors. The resulting tables will just have missing information for some attributes (e.g. PRODUCTIVE_FOR).
-* Inventories labelled 'In progress' are being actively worked on and may produce errors when translated.
+# Translation exceptions to be aware of
+* **Multiple NFL value per row in AB [#526](https://github.com/edwardsmarc/CASFRI/issues/526)** - In general we translate one NFL value per row in CASFRI. If there are multiple NFL values to translate they are reported as different vertical layers. One exception to this is in the AB AVI where the non-forest type _rough pasture_ is always accompanied by a _shrub_ value indicating the height and extent of shrub cover in the _rough pasture_. This combination can also form horizontal structure within a polygon, with a structure percent value indicating how much of the polygon is covered. CASFRI cannot currently represent both horizontal and vertical structure in the same polygon. For this reason we report both the _rough pasture_ (translated to CASFRI value CULTIVATED) and the _shrub_ (translated to CASFRI value TALL_SHRUB or LOW_SHRUB) in the same layer. The workflow is such that this behavior has to applied consistently across the full dataset, meaning that some AB inventories will have cases of multiple NFL values per row.
+* **53 rows in PEI are missing SPECIES_3 [#676](https://github.com/edwardsmarc/CASFRI/issues/676)**
+* **Height calculation in BC [#336](https://github.com/edwardsmarc/CASFRI/issues/336)** - Most inventories simply copy the height value for the layer in question, but in BC we calculate the weighted average height.
+* **Horizontal structure in Parks Canada datasets** - PC01 and PC02 are the only datasets using exclusively horizontal structure. In these cases the CASFRI LAYERs represent different horizontal components. There is no vertical structure captured for these inventories.
+* Document QC03 photo year issue #444
+* Document no layer 2 info in QC prg 3 prg 4
+* Document NFL on multiple rows - e.g. BC, SK SFVI
+* Document non-productive rows in row_translation_rule
+* Document cas_id issues - ON01 not unique when linking back to source
+* Document mixed standards in source tables (QC and MB)
+* SK01 species logic - link to appendix
+* ON01 messy species codes
 
 # Credits
 **Steve Cumming**, Center for forest research, University Laval.
