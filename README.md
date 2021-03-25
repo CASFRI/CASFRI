@@ -227,18 +227,31 @@ The steps to produce a complete build of the CASFRI database are detailed in the
 The steps to add a new inventory to the CASFRI database are detailed in issue [#471](https://github.com/edwardsmarc/CASFRI/issues/471).
 
 # Temporalization
-All translated datasets are combined into a single historical database that allows querying for the best available inventory information at any point in time accross the full CASFRI coverage. The historical database is created using the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). The output is a historical database that uses the photo year of each polygon as the reference date to determine its valid start and end time. Each polyon is intersected with all it's overlapping polygons and the resulting polygon segments are assigned valid start and end times. In the case of overlaps, the polygon with the most complete information is prioritized **HOW??**. This results in a database where no polygons overlap in time or space, so for any given location at any time, there is only one valid set of CASFRI records.
+All translated datasets are combined into a single historical database that allows querying for the best available inventory information at any point in time accross the full CASFRI coverage. The historical database is created using the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). The output is a historical database that uses the photo year of each polygon as the reference date to determine its valid start and end time. Each polyon is intersected with all it's overlapping polygons and the resulting polygon segments are assigned valid start and end times. In the case of overlaps, the polygon with the most complete information is prioritized, as described below. This results in a database where no polygons overlap in time or space, so for any given location at any time, there is only one valid set of CASFRI records. 
 
 The following diagram illustrates the temporalization procedure for a single polygon:
 
 ![Temporalization diagram](temporalization_diagram.jpg)
 
-For the green 2010 polygon, the following set of polygons would be computed using the overlapping polygons:
-1. One 2010 polygon - the current polygon being processed minus the area covered by any higher priority overlapping 2010 polygons
-2. One past polygon - the polygon computed at step 1, minus the sum of all older polygons taken into account
-3. One polygon for every more recent polygon - the polygon computed at step 1 minus each of the more recent polygons (cumulatively)
+Valid start and end dates are assigned using the following rules:
+* Each polygon is attributed a valid_year_begin year and a valid_year_end based on their stand_photo_year. By default, if the polygon does not overlaps with another one in space and time, valid_year_begin = 1930 and valid_year_end = 2030
+* When two polygons overlap:
+  * Younger polygons take precedence over older polygons stating at their valid_year_begin (e.g. a polygon from 2010 take precedence over a 2000 polygon stating in 2010. The 2000 polygon has precedence from 1930 until 2009)
+  * When both polygons have the same stand_photo_year, polygons with valid values take precedence over polygons with invalid values. All significant attributes most be NULL or empty to consider that a polygon has invalid values. This rarely happens. (e.g. if both polygons have a 2010 stand_photo_year but one polygon has all it's significant attributes set to NULL of empty then the other polygon takes precendence)
+  * When both polygons have the same stand_photo_year and valid values but come from different inventories, polygons from higher precedence inventories as established by the TT_HasPrecedence() function and the casfri50_history_test.inv_precedence table takes precedence. (e.g. two 2010 polygons have all their values valid but the first comes from AB10 and the second comes from AB16 then TT_HasPrecedence() states that the AB16 polygon must take precedence)
+  * When both polygons have the same stand_photo_year, valid values and the same TT_HasPrecedence() precedence, then both polygons are sorted by their unique identifier (cas_id) and the first one has precedence over the second one.
 
 No interpolation or interpretation of attributes is performed. For this reason the historical database can be queried to recreate the 'state of the inventory' for a given year, but not the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require modelling the exact forest attributes for every year based on time since disturbance. This is beyond the scope of this project but the historical database could facilitate such modelling exercises for interested end users.
+
+The historical database can be queried using valid_year_begin and valid_year_end. For example, the following query would select the most valid polygon from the historical database for all observation points in a table:
+```
+SELECT p.id, p.year, p.geom, gh.cas_id
+FROM mypointable p, casfri50_history.geo_history gh
+WHERE ST_Intersects(gh.geom, p.geom) AND gh.valid_year_begin <= p.year AND p.year <= gh.valid_year_end;
+```
+The resulting table can then be joined with:
+  a) one of the two flat tables from the casfri50_flat schema or
+  b) one of the CASFRI normalised tables from the casfri50 schema (hdr_all, cas_all, dst_all, eco_all, lyr_all, nfl_all)
 
 # Update procedure
 **To be written**
