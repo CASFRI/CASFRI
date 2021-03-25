@@ -206,7 +206,7 @@ The following diagram illustrates the relationship between the translation table
 The steps to produce a complete build of the CASFRI database are detailed in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). A subset of these steps can be used to translate a single dataset as follows:
 
 1. Set up the config.sh or config.bat file with you system settings
-2. Load the dataset into PostgreSQL (e.g. AB03) by launching either the .bat (conversion/bat/load_ab03.bat) or .sh (conversion/sh/load_ab03.sh) loading script in a Bash or DOS command window.
+2. Load the dataset (e.g. AB03) into PostgreSQL by launching either the .bat (conversion/bat/load_ab03.bat) or .sh (conversion/sh/load_ab03.sh) loading script in a Bash or DOS command window.
 3. Load the translation tables into PostgreSQL by launching the CASFRI/translation/load_tables.sh (or .bat) script.
 4. Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions
     1. Install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produces a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
@@ -218,7 +218,17 @@ The steps to produce a complete build of the CASFRI database are detailed in the
 The steps to add a new inventory to the CASFRI database are detailed in issue [#471](https://github.com/edwardsmarc/CASFRI/issues/471).
 
 # Temporalization
-All translated datasets are combined into a single historical database that allows querying for the best available inventory information at any point in time accross the full CASFRI coverage. The historical database is created using the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). The output is a historical database that uses the photo year of each polygon as the reference date to determine its valid start and end time. No polygons overlap in time or space, so for any given location at any time, there is only one valid set of CASFRI records. In cases where source polygons overlap in space and time, the polygon containing the most complete information is prioritized.
+All translated datasets are combined into a single historical database that allows querying for the best available inventory information at any point in time accross the full CASFRI coverage. The historical database is created using the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). The output is a historical database that uses the photo year of each polygon as the reference date to determine its valid start and end time. Each polyon is intersected with all it's overlapping polygons and the resulting polygon segments are assigned valid start and end times. In the case of overlaps, the polygon with the most complete information is prioritized **HOW??**. This results in a database where no polygons overlap in time or space, so for any given location at any time, there is only one valid set of CASFRI records.
+
+The following diagram illustrates the temporalization procedure for a single polygon:
+
+![Temporalization diagram](temporalization_diagram.jpg)
+For the green 2010 polygon, the following set of polygons would be computed using the overlapping polygons:
+1. One 2010 polygon - the current polygon being processed minus the area covered by any higher priority overlapping 2010 polygons
+2. One past polygon - the polygon computed at step 1, minus the sum of all older polygons taken into account
+3. One polygon for every more recent polygon - the polygon computed at step 1 minus each of the more recent polygons (cumulatively)
+
+No interpolation or interpretation of attributes is performed. For this reason the historical database can be queried to recreate the 'state of the inventory' for a given year, but not the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require modelling the exact forest attributes for every year based on time since disturbance. This is beyond the scope of this project but the historical database could facilitate such modelling exercises for interested end users.
 **add description of what "complete" means**.
 
 # Update procedure
