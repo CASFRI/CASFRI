@@ -19,7 +19,7 @@ Note that only major issues preventing the conversion or the translation process
 
 1. Make sure every fixed issue has been closed.
 
-2. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate all changes done during the release process to it and to prepare the text and the list of fixed issues describing the releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the releases to those issues when commiting, in addition to the issue describing the actual fix.
+2. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate all changes done during the release process to them and to prepare the texts with the list of fixed issues describing both releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all changes made to stabilize the releases to those issues when commiting, in addition to the issue describing the actual fix.
 
 3. In GitKraken (or your favorite git client), create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
