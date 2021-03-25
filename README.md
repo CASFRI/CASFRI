@@ -178,7 +178,7 @@ The translation of each dataset is done using the scripts in the [CASFRI/workflo
 
 It is important that a single translation table can be used for multiple translations, either for different layers within the same dataset, or for different datasets using the same standard but different attributes names. The workflow scripts accomodate this by combining three elements:
 
-**1. Placeholder names in translation table functions.**
+**1. Placeholder names in translation table helper functions.**
 Translation table helper functions use placeholder arguments. Every translation using a common translation table must map the source attributes to these placeholder names so that the translation table can be reused for all translations. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow script we create VIEWs that map the source data attributes to the placeholder names used in the translation table. We can then run the translation using the VIEW and the translation table.
 
 **2. Attribute dependency table.**
