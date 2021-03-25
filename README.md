@@ -147,11 +147,11 @@ A detailed description of translation table properties is included in the [Postg
 
 CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications):
 1. Header (HDR) attributes - summarizing reference information for each dataset;  
-2. CAS Base Polygon (CAS) attributes - attributes describing the source polygon and any identifiers;  
-3. Forest-Level (LYR) attributes - attributes describing productive and non-productive forest land;  
-4. Non-Forest Land (NFL) attributes - attributes describing non-forested land;  
-5. Disturbance history (DST) attributes - attributes describing the type, year and extent of disturbances;  
-6. Ecological specific (ECO) attributes - attributes describing wetlands;  
+2. CAS Base Polygon (CAS) attributes - describing the source polygon and any identifiers;  
+3. Forest-Level (LYR) attributes - describing productive and non-productive forest land;  
+4. Non-Forest Land (NFL) attributes - describing non-forested land;  
+5. Disturbance history (DST) attributes - describing the type, year and extent of disturbances;  
+6. Ecological specific (ECO) attributes - describing wetlands;  
 7. Geometry attributes (GEO) - polygon geometries.
 
 In general, each standard for each jurisdiction uses a single set of translation tables. All source datasets using the same standard should use the same set of translation tables. Differences in attribute names can be accomodated using the workflow scripts described below. In some cases minor differences in attributes between datasets using the same standard can be accomodated by designing translation helper functions that can deal with both formats. An example would be two datasets using different values for graminoids (e.g. 'Grm' in one dataset and 'graminoids' in another). These can be combined into a single translation function to deal with both datasets in the translation table (e.g. mapText(source_value, {'Grm', 'graminoids'}, {'GRAMINOID', 'GRAMINOID'})).
