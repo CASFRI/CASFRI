@@ -165,8 +165,11 @@ Error codes are needed during translation if source values are invalid, null, or
 ### Validating Translations
 Validation is performed at multiple stages during and after translation:
 **Validation of source values** - All source values are validated before attempting translation using the validation rules described in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
+
 **Validation of translation tables by the engine** - The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) validates the translation rules and foratting in each translation table prior to attempting translation.
+
 **Horizontal review of translation tables** - The function TT_StackTranslationRules() creates a table of all translation and validation rules used for all inventories for a given CASFRI table. This allows manual validation of all translation rules and assignment of error codes for a given attribute.
+
 **Validation of output using summary statistics** - The [summary_statistics](https://github.com/edwardsmarc/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to create summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be downloaded (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpeted values, correct assignment of errors codes etc.
 
 ### Workflow scripts
