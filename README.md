@@ -258,6 +258,7 @@ The conversion and translation steps are designed to be run in parallel on a sin
 * Document cas_id issues - ON01 not unique when linking back to source
 * Document mixed standards in source tables (QC and MB)
 * SK01 species logic - link to appendix
+* ON01 messy species codes
 
 # Credits
 **Steve Cumming**, Center for forest research, University Laval.
