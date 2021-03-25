@@ -196,7 +196,7 @@ The function TT_CreateMappingView() is used to create the VIEWs used in the work
 *	from layer (optional, default 1): matches the layer value in the attribute dependencies table
 *	to table: inventory_id of the row containing the translation table plaeholder names
 *	to layer (optional, default 1): matches the layer value in the attribute dependencies table (for our purposes this is always set to 1)
-*	number of rows (optional, default all rows): number of random rows to select
+*	number of rows (optional, default all rows): number of random rows to select. If blank, all rows are selected.
 
 The function creates a view with a name based on the input arguments:
 If only the 'from table name' is provided, a VIEW with a minimal set of attributes and no mappings is created. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 200);` creates a view named **ab03_min_200**.
