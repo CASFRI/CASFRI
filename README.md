@@ -164,6 +164,7 @@ Error codes are needed during translation if source values are invalid, null, or
 
 ### Validating Translations
 Validation is performed at multiple stages during and after translation:
+
 **Validation of source values** - All source values are validated before attempting translation using the validation rules described in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
 
 **Validation of translation tables by the engine** - The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) validates the translation rules and foratting in each translation table prior to attempting translation.
