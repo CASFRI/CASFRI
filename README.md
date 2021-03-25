@@ -33,7 +33,7 @@ The current version is 5.2.0 and is available for download at https://github.com
 
 ./conversion                            Scripts for converting and loading FRI datasets using either .bat or .sh
 
-./docs/specifications                   CASFRI specifications reference documents
+./docs/specifications                   CASFRI specifications document
 
 ./docs/inv_coverage                     .sql script for computing CASFRI coverage polygons
 
