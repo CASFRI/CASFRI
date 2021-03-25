@@ -223,13 +223,13 @@ All translated datasets are combined into a single historical database that allo
 The following diagram illustrates the temporalization procedure for a single polygon:
 
 ![Temporalization diagram](temporalization_diagram.jpg)
+
 For the green 2010 polygon, the following set of polygons would be computed using the overlapping polygons:
 1. One 2010 polygon - the current polygon being processed minus the area covered by any higher priority overlapping 2010 polygons
 2. One past polygon - the polygon computed at step 1, minus the sum of all older polygons taken into account
 3. One polygon for every more recent polygon - the polygon computed at step 1 minus each of the more recent polygons (cumulatively)
 
 No interpolation or interpretation of attributes is performed. For this reason the historical database can be queried to recreate the 'state of the inventory' for a given year, but not the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require modelling the exact forest attributes for every year based on time since disturbance. This is beyond the scope of this project but the historical database could facilitate such modelling exercises for interested end users.
-**add description of what "complete" means**.
 
 # Update procedure
 **To be written**
