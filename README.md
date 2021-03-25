@@ -220,8 +220,8 @@ The steps to produce a complete build of the CASFRI database are detailed in the
 4. Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions
     1. Install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produces a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
     2. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
-      1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts. Fix any non passing test (by fixing the function tested or the test itself).
-      2. Load the CASFRI Helper Functions with the helperFunctionsCASFRI.sql script and test them using the helperFunctionsCASFRITest.sql.
+        1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts. Fix any non passing test (by fixing the function tested or the test itself).
+        2. Load the CASFRI Helper Functions with the helperFunctionsCASFRI.sql script and test them using the helperFunctionsCASFRITest.sql.
 5. Run the translation by launching the workflow sql script (CASFRI/workflow/02_produceCASFRI/02_perInventory/02_AB03.sql) in pgAdmin (or a psql window).
 
 Translated data is generally added to the six output tables: cas_all, dst_all, eco_all, lyr_all, nfl_all, geo_all. The scripts in the [CASFRI/workflow/03_flatCASFRI/](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/03_flatCASFRI) can be used to create two different denormalized tables, one where all layers for a given polygon are reported on the same row, and one where all layers for a given polygon are reported on different rows.
