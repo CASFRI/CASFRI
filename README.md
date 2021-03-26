@@ -275,16 +275,16 @@ The conversion and translation steps are designed to be run in parallel on a sin
 * **ON01 species codes [#678](https://github.com/edwardsmarc/CASFRI/issues/678) [#681](https://github.com/edwardsmarc/CASFRI/issues/681)** Species codes appear to be a combination of multiple formats. Fix in [#678](https://github.com/edwardsmarc/CASFRI/issues/678) deals with most of them, but some species codes have a single letter code that is not included in the manual ([#681](https://github.com/edwardsmarc/CASFRI/issues/681)).
 
 # Credits
-**Steve Cumming**, Center for forest research, University Laval.
+**Steve Cumming**, Center for Forest Research, University Laval.
 
-**Pierre Racine**, Center for forest research, University Laval.
-
-**Pierre Vernier**, database designer.
+**Pierre Racine**, Center for Forest Research, University Laval.
 
 **Marc Edwards**, programmer.
 
-**Mélina Houle**, Center for forest research, University Laval (previous versions of CASFRI).
+**Pierre Vernier**, database designer.
 
-**Bénédicte Kenmei**, Center for forest research, University Laval (previous versions of CASFRI).
+**Mélina Houle**, Center for Forest Research, University Laval (previous versions of CASFRI).
+
+**Bénédicte Kenmei**, Center for Forest Research, University Laval (previous versions of CASFRI).
 
 **John Cosco**, Timberline Forest Inventory Consultants (previous versions of CASFRI).
