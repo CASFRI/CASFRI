@@ -194,7 +194,7 @@ The function TT_CreateMappingView() is used to create the VIEWs used in the work
 * schema name: what schema is the source data in
 *	from table name (optional): inventory_id of source data row in attribute dependencies table
 *	from layer (optional, default 1): matches the layer value in the attribute dependencies table
-*	to table: inventory_id of the row containing the translation table plaeholder names
+*	to table: inventory_id of the row containing the translation table placeholder names
 *	to layer (optional, default 1): matches the layer value in the attribute dependencies table (for our purposes this is always set to 1)
 *	number of rows (optional, default all rows): number of random rows to select. If blank, all rows are selected.
 
