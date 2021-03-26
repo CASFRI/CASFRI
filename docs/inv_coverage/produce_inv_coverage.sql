@@ -209,7 +209,7 @@ RETURNS TABLE (geom geometry, tid int8, x int, y int, tgeom geometry) AS $$
         END LOOP;
     RETURN;
     END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql VOLATILE PARALLEL SAFE;
 ------------------------------------------------------------------------------
 -- TT_SuperUnion
 --
