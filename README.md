@@ -279,9 +279,9 @@ The conversion and translation steps are designed to be run in parallel on a sin
 
 **Pierre Racine**, Center for Forest Research, University Laval.
 
-**Marc Edwards**, programmer.
+**Marc Edwards**, database design, programming.
 
-**Pierre Vernier**, database designer.
+**Pierre Vernier**, FRI translations.
 
 **Mélina Houle**, Center for Forest Research, University Laval (previous versions of CASFRI).
 
