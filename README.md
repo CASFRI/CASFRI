@@ -253,7 +253,7 @@ WHERE ST_Intersects(gh.geom, p.geom) AND gh.valid_year_begin <= p.year AND p.yea
 ```
 The resulting table can then be joined with:
   a) one of the two flat tables from the casfri50_flat schema or
-  b) one of the CASFRI normalised tables from the casfri50 schema (hdr_all, cas_all, dst_all, eco_all, lyr_all, nfl_all).
+  b) one of the CASFRI normalized tables from the casfri50 schema (hdr_all, cas_all, dst_all, eco_all, lyr_all, nfl_all).
 
 # Update procedure
 **To be written**
