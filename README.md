@@ -236,7 +236,7 @@ The following diagram illustrates the temporalization procedure for a single pol
 ![Temporalization diagram](temporalization_diagram.jpg)
 
 Valid start and end dates are assigned using the following rules:
-* Each polygon is attributed a valid_year_begin year and a valid_year_end based on their stand_photo_year. By default, if the polygon does not overlaps with another one in space and time, valid_year_begin = 1930 and valid_year_end = 2030
+* Each polygon is attributed a valid_year_begin year and a valid_year_end based on their stand_photo_year. By default, if the polygon does not overlap with another one in space and time, valid_year_begin = 1930 and valid_year_end = 2030
 * When two polygons overlap:
   * Younger polygons take precedence over older polygons stating at their valid_year_begin (e.g. a polygon from 2010 take precedence over a 2000 polygon stating in 2010. The 2000 polygon has precedence from 1930 until 2009)
   * When both polygons have the same stand_photo_year, polygons with valid values take precedence over polygons with invalid values. All significant attributes most be NULL or empty to consider that a polygon has invalid values. This rarely happens. (e.g. if both polygons have a 2010 stand_photo_year but one polygon has all it's significant attributes set to NULL of empty then the other polygon takes precendence)
