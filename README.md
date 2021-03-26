@@ -183,7 +183,7 @@ Translation table helper functions use placeholder arguments. Every translation 
 
 **2. Attribute dependency table.**
 This table defines the mapping of attributes from each source table to the placeholder names used in the translation tables. For a given translation table, the attribute dependencies table contains a row for the translation table placeholder names, and rows for each translation that needs to be completed using a source inventory. If there are multiple layers to be translated for an inventory, it will have multiple rows in the attribute dependencies table. The table has the following columns:
-* inventory_id - either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03)
+* inventory_id - either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03).
 * layer - a unique integer value incrementing for LYR layers followed by NFL layers.
 * ttable_exists - indicates if the row represents a translation table.
 
