@@ -13,7 +13,7 @@
 ------------------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS casfri50_history;
 -----------------------------------------------
--- Check the completeness of STAND_PHOTO_YEAR for the nex
+-- Check the completeness of STAND_PHOTO_YEAR
 SELECT left(cas_id, 4) inv, stand_photo_year, count(*) nb
 FROM casfri50_flat.cas_flat_all_layers_same_row
 GROUP BY inv, stand_photo_year
