@@ -4993,7 +4993,7 @@ RETURNS text AS $$
     END IF;
     RETURN species;
   END; 
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -5017,7 +5017,7 @@ RETURNS boolean AS $$
     _sp_number = sp_number::int;
     RETURN NOT TT_fim_species_code(sp_string, _sp_number) IS NULL;
   END; 
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 /*
 SELECT TT_fim_species_count_validate('ab 10bb 3c 10 0', '1');
 SELECT TT_fim_species_count_validate('ab 10bb 3c 10 0', '2');
