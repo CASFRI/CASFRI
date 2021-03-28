@@ -273,6 +273,7 @@ The conversion and translation steps are designed to be run in parallel on a sin
 * **Multiple inventories in a single source dataset** - In some cases a source dataset is received which contains data from multiple standards. In these cases the source data is divided into multiple datasets (one for each standard) during loading. This applies to MB05 and MB06; QC03, QC04, QC05; and QC02, QC06, QC07.  
 * **SK01 species percent logic [#275](https://github.com/edwardsmarc/CASFRI/issues/275)** - Assignment of species percent was developed with collaborators based on the species codes present. The logic is included in a document linked to the issue.
 * **ON01 species codes [#678](https://github.com/edwardsmarc/CASFRI/issues/678) [#681](https://github.com/edwardsmarc/CASFRI/issues/681)** - Species codes appear to be a combination of multiple formats. Fix in [#678](https://github.com/edwardsmarc/CASFRI/issues/678) deals with most of them, but some species codes have a single letter code that is not included in the manual ([#681](https://github.com/edwardsmarc/CASFRI/issues/681)).
+* **NB site_index [#578](https://github.com/edwardsmarc/CASFRI/issues/578)** - SiteI attribute could possibly be used to get some site index information.
 
 # List of CASFRI specific helper functions found in [CASFRI/helperfunctions/](https://github.com/edwardsmarc/CASFRI/tree/master/helperfunctions)
 * HasNFLInfo
