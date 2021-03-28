@@ -71,8 +71,6 @@ WITH test_nb AS (
   SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num,  5 nb_test UNION ALL
   SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 23 nb_test UNION ALL
   SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,   21 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,    22 maj_num,  3 nb_test UNION ALL
   SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  7 nb_test UNION ALL
   SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  8 nb_test UNION ALL
   SELECT 'TT_yvi01_nat_non_veg_validation'::text function_tested,          27 maj_num,  4 nb_test UNION ALL
@@ -986,47 +984,6 @@ SELECT '17.4'::text number,
        'TT_vri01_dist_yr_translation'::text function_tested,
        'Test value >10, greater than cutoff'::text description,
        TT_vri01_dist_yr_translation('B17', '16') = 1917::int passed
----------------------------------------------------------
-  -- TT_qc_ipf_not_etage_notnull_validation
----------------------------------------------------------
-UNION ALL
-SELECT '21.1'::text number,
-       'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,
-       'Test not null'::text description,
-       TT_qc_ipf_not_etage_notnull_validation('N', 'val') passed
----------------------------------------------------------
-UNION ALL
-SELECT '21.2'::text number,
-       'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,
-       'Test null'::text description,
-       TT_qc_ipf_not_etage_notnull_validation('N', NULL::text) IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '21.3'::text number,
-       'TT_qc_ipf_not_etage_notnull_validation'::text function_tested,
-       'Test in_etage = O'::text description,
-       TT_qc_ipf_not_etage_notnull_validation('O', NULL::text) passed
---------------------------------------------------------
----------------------------------------------------------
-  -- TT_qc_ipf_not_etage_layer1_validation
----------------------------------------------------------
-UNION ALL
-SELECT '22.1'::text number,
-       'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,
-       'Test layer = 1'::text description,
-       TT_qc_ipf_not_etage_layer1_validation('N', '1') passed
----------------------------------------------------------
-UNION ALL
-SELECT '22.2'::text number,
-       'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,
-       'Test layer = 2'::text description,
-       TT_qc_ipf_not_etage_layer1_validation('N', '2') IS FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '22.3'::text number,
-       'TT_qc_ipf_not_etage_layer1_validation'::text function_tested,
-       'in etage = O'::text description,
-       TT_qc_ipf_not_etage_layer1_validation('O', '2') passed
 ---------------------------------------------------------
   -- TT_fim_species_code
 ---------------------------------------------------------

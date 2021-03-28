@@ -1502,8 +1502,6 @@ RETURNS text AS $$
   BEGIN
     IF targetTypelc = 'integer' OR targetTypelc = 'int' OR targetTypelc = 'double precision' THEN 
       RETURN CASE WHEN rulelc = 'projectrule1' THEN '-9999'
-                  WHEN rulelc = 'qc_ipf_not_etage_notnull_validation' THEN '-8888'
-                  WHEN rulelc = 'qc_ipf_not_etage_layer1_validation' THEN '-8887'
                   WHEN rulelc = 'sk_utm01_species_percent_validation' THEN '-9997'
                   WHEN rulelc = 'ns_nsi01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'vri01_hascountofnotnull' THEN '-8886'
@@ -1544,7 +1542,6 @@ RETURNS text AS $$
                   WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'qc_ipf_wetland_validation' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'nl_nli01_iscommercial' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
@@ -2575,66 +2572,6 @@ RETURNS boolean AS $$
       RETURN FALSE;
 	END IF;
     RETURN TRUE;
-  END;
-$$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
--- TT_qc_ipf_not_etage_notnull_validation()
---
--- in_etage text
--- check_att text (cl_dens or cl_haut)
---
--- When in_etage = 'N', check cl_dens and cl_height are not null
---
--- e.g. TT_qc_ipf_not_etage_notnull_validation(in_etage, check_att)
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_notnull_validation(text,text);
-CREATE OR REPLACE FUNCTION TT_qc_ipf_not_etage_notnull_validation(
-  in_etage text,  
-  check_att text
-)
-RETURNS boolean AS $$		
-  BEGIN
-
-    IF in_etage = 'N' THEN
-      RETURN TT_NotNull(check_att);
-    END IF;
-    
-    RETURN TRUE; -- if row is in_etage = 'O', return true.
-  END;
-$$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
--- TT_qc_ipf_not_etage_layer1_validation()
---
--- in_etage text
--- layer text
---
--- When in_etage = 'N', check layer requested = 1, otherwise return FALSE
---
--- e.g. TT_qc_ipf_not_etage_layer1_validation(in_etage, layer)
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_layer1_validation(text,text);
-CREATE OR REPLACE FUNCTION TT_qc_ipf_not_etage_layer1_validation(
-  in_etage text,  
-  layer text
-)
-RETURNS boolean AS $$		
-  DECLARE
-    _layer int;
-  BEGIN
-    
-    _layer = layer::int;
-    
-    IF in_etage = 'N' THEN
-      IF NOT _layer = 1 THEN
-        RETURN FALSE;
-      END IF;
-    END IF;
-    
-    RETURN TRUE; -- if row is in_etage = 'O', or layer = 1, return true.
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------

@@ -17,8 +17,6 @@ DROP FUNCTION IF EXISTS TT_nb_nbi01_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_veg_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_nat_non_veg_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_vri01_non_for_anth_validation(text, text, text, text);
-DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_notnull_validation(text,text);
-DROP FUNCTION IF EXISTS TT_qc_ipf_not_etage_layer1_validation(text,text);
 DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text,text,text);
 DROP FUNCTION IF EXISTS TT_yvi01_nfl_soil_moisture_validation(text,text,text,text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_validation(text,text,text,text,text);
