@@ -2,7 +2,7 @@
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
-Revised by: The CASFRI Project Team, February 03, 2020
+Revised by: The CASFRI Project Team, March 31, 2021
 
 ## Table of contents
 <a href="#Intro">Introduction</a>
@@ -32,7 +32,7 @@ Canada's vast boreal ecosystem hosts one of the most diverse bird communities in
 
 Current national databases developed from satellite-based products using biophysical variables have limited application at regional levels because many bird species are sensitive to variation in canopy tree species composition, height, and age; vegetation attributes that satellite-based products cannot measure. Because satellite-based land cover maps lack the thematic detail needed to model the processes of stand growth, succession, and regeneration, avian habitat models derived from satellite land cover data cannot be used to link forest management actions to the desired biotic indicators at the scale of forest tenure areas.  
 
-Digital forest inventory data can overcome many of the deficiencies identified with satellitebased land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).  
+Digital forest inventory data can overcome many of the deficiencies identified with satellite based land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).  
 
 
 <a name=CAS></a>
@@ -57,10 +57,6 @@ Attributes for CAS are stored in six attribute files to facilitate conversion an
 6. Ecological specific (ECO) attributes - values representing ecosites and wetlands.  
 7. Geometry attributes - values pertaining to polygon geometry.
 
-The main body of this report (Sections 2.1 through 2.3 and Section 3) defines each of the six attribute categories and tabulates the attributes and their characteristics. A summary of the data structure and data dictionary is presented in Appendix 2.  
-
-Each inventory data base has a unique data structure. A conversion procedure must be documented describing how to load the source inventory into CAS. A sample procedure is presented in Appendix 16.  
-
 <sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.  
 
 
@@ -77,7 +73,7 @@ Table 1. CASFRI schema.
 | <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>STRUCTURE_RANGE</sub>       | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>ECO_SITE</sub>         |                            |
 | <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      |                 <sub>LAYER</sub>            |                            |
 | <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>CROWN_CLOSURE_LOWER</sub> |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_YEAR_2</sub>      |                             |                            |
-| <sub>STANDARD_MANUAL_NAME</sub> | <sub>SRC_INV_AREA</sub>   | <sub>HEIGHT_UPPER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
+| <sub>DOCUMENTATION_TITLES</sub> | <sub>SRC_INV_AREA</sub>   | <sub>HEIGHT_UPPER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
 | <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>HEIGHT_LOWER</sub>        | <sub>NAT_NON_VEG</sub>         | <sub>DIST_EXT_LOWER_2</sub> |                             |                            |
 | <sub>PRODUCTION_YEARS </sub> |                              | <sub>PRODUCTIVITY</sub>        | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_TYPE_3</sub>      |                             |                            |
 | <sub>PUBLICATION_DATE</sub>  |                              | <sub>PRODUCTIVITY_TYPE</sub>   | <sub>NON_FOR_VEG</sub>         | <sub>DIST_YEAR_3</sub>      |                             |                            |
@@ -97,7 +93,7 @@ Table 1. CASFRI schema.
 <a name=Error_codes></a>
 ## CASFRI Error Codes  
 
-Error codes are needed during translation to report invalid or missing source inventory values. Error codes have been designed to match the CASFRI attribute type and to reflect the type of error that was encountered in the source inventory. Integer attributes will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as strings (e.g. 'INVALID_VALUE'). Possible error codes for each CASFRI attribute are listed in the attribute descriptions below.
+Error codes are needed during translation to report invalid or missing source inventory values. Error codes have been designed to match the CASFRI attribute type and to reflect the type of error that was encountered in the source inventory. Integer and double precision attributes will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as strings (e.g. 'INVALID_VALUE'). Possible error codes for each CASFRI attribute are listed in the attribute descriptions below.
 
 Table 2. CASFRI error codes
 
@@ -105,19 +101,17 @@ Table 2. CASFRI error codes
 |:-------------- |:---------:|:------------:|:----------- |
 | Missing&nbsp;values | EMPTY_STRING | -8889 | Missing value that is stored as an empty string (e.g. '' or '&#160;'). |
 |                | NULL_VALUE        | -8888 | Missing value that is a true null value. |
-|                | NOT_APPLICABLE    | -8887 | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute. |
+|                | NOT_APPLICABLE    | -8887 | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute). |
 |                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK) or that the value should exist but can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct value because the source dataset is incomplete). This is different from NOT_APPLICABLE where the values clearly does not exist. |
 | Invalid&nbsp;values | OUT_OF_RANGE | -9999 | Value is outside the expected range of valid values (e.g. a percent value that is greater than 100. |
 |                | NOT_IN_SET        | -9998 | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory). |
 |                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does match expected format). |
 |                | WRONG_TYPE        | -9995 | Value is of the wrong data type (e.g. a string or decimal value when an integer is expected). |
-|                | UNUSED_VALUE      | -9994 | Non-null value that is not used in CASFRI |
-|                | NOT_UNIQUE        | -9993 | Source table values are not unique (e.g. a lookup table that lists a source value twice). |
 | Geometric&nbsp;error | INVALID_GEOMETRY  | -7779 | Invalid geometry in one or more polygons. |
 |                | NO_INTERSECT      | -7778 | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry). |
 | Translation    | TRANSLATION_ERROR | -3333 | Generic translation error (reported for a failed translation). |
 
-Four types of attribute have been identified in CASFRI and only a specific codes are used for each type. They are:
+Four types of attribute have been identified in CASFRI and only specific codes are used for each type. They are:
 
 | Attribute&nbsp;type | Description | Possible&nbsp;error&nbsp;code| 
 |:-------------- |:--------- |:---------:|
@@ -217,7 +211,7 @@ The **STANDARD_VERSION** attribute identifies the version number of the standard
 
 ### STANDARD_ID
 
-The **STANDARD_ID** attribute is the CASFRI unique identifier for the standard used to produce the inventory. If a standard is updated such that a new translation table is required, the **STANDARD_ID** is be incremented. The numeric part of the standard id does not necessarily correspond to the version of the standard nor to a chronological order. It is simply what is is: a unique identifier.
+The **STANDARD_ID** attribute is the CASFRI unique identifier for the standard used to produce the inventory. If a standard is updated such that a new translation table is required, the **STANDARD_ID** is be incremented. The numeric part of the standard id does not necessarily correspond to the version of the standard nor to a chronological order. It is simply a unique identifier.
 
 | Values        | Description   |
 | :------------ | :------------ |
@@ -269,7 +263,7 @@ The **PRODUCTION_YEARS** attribute identifies the year or the year interval (e.g
 
 ### PUBLICATION_DATE
 
-The **PUBLICATION_DATE**  attributeidentifies the date at which the inventory data was published by the producer on the web or internally.
+The **PUBLICATION_DATE**  attribute identifies the date at which the inventory data was published by the producer on the web or internally.
 
 | Values | Description |
 | :----- | :-------------- |
@@ -372,9 +366,9 @@ The **PHOTO_YEAR_SRC** attribute identifies the source data type that is used to
 
 | Values           | Description |
 | :-------------   | :-------------- |
-| SPATIAL_JOIN     | Photo year is stored as polygons in a separate file that have to be spatially joined to the inventory |
+| SPATIAL_JOIN     | Photo year is stored as polygons in a separate file that has to be spatially joined to the inventory |
 | VALUE_PER_STAND  | Photo year is provided as an attribute in the source inventory |
-| RELATIONAL_JOIN  | Photo year is stored in a separate table that have to be joined to the inventory |
+| RELATIONAL_JOIN  | Photo year is stored in a separate table that has to be joined to the inventory |
 | GLOBAL_INVENTORY | Photo year is provided as a single value that applies to the entire inventory |
 | UNKNOWN_VALUE    | Photo year source is unknown |
 
