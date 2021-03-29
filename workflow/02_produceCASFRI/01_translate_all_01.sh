@@ -2,16 +2,18 @@
 
 source ../../config.sh
 
-# Inventories having more than 2000000 rows
-# BC08 4677411
-# BC10 5151772
-# ON02 3629073
-# QC02 2876326
-# QC04 2487519
-# QC05 6768074
-# QC06 4809274
+bashCmd="/c/program files/git/git-bash.exe"
+ 
+declare -n L
 
-for F in BC08 BC10 ON02 QC02 QC04 QC05 QC06
-do
-  "/c/program files/git/git-bash.exe" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -f ./02_perInventory/02_$F.sql" &
+# Iterate over the list of list always making the last command a waiting one (the following ones wait for it to finish before proceeding)
+for L in "${fullList[@]}"; do
+  for F in "${L[@]}"; do
+    if [ $F == ${L[-1]} ]; then
+      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -f ./02_perInventory/02_$F.sql" /dev/null
+    else
+      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -f ./02_perInventory/02_$F.sql" & /dev/null
+    fi
+  done
 done
+

@@ -14,4 +14,6 @@ fi
 echo
 echo CONVERSION OF "$fullTargetTableName" DONE......
 
-/bin/bash
+if [ ${leaveConvShellOpen}x == Truex ]; then
+  /bin/bash
+fi
