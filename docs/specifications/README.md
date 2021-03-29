@@ -47,7 +47,7 @@ Based on the review, detailed tables were produced to summarize each inventory s
 Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is > and the upper bound is <). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta "B" - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a  
 common resolution or set of values.  
 
-Attributes for CAS are stored in six attribute files to facilitate conversion and translation:  
+Attributes for CAS are stored in seven attribute files to facilitate conversion and translation:  
 
 1. Header (HDR) attributes - values assigned to all polygons based on provenance or reference information;  
 2. CAS Base Polygon (CAS) attributes - values that identify a polygon and provide a link between the CAS polygon and the original inventory polygon;  
@@ -122,7 +122,7 @@ Four types of attribute have been identified in CASFRI and only specific codes a
 
 * The main difference between the text and the number type is that empty numbers can only be NULLs (NULL_VALUE) whereas empty text values can be either NULLs (NULL_VALUE) or empty strings (EMPTY_STRING).
 * The main difference between the text and the code type is that wrong codes are not in the set of acceptable values (NOT_IN_SET) instead of being invalid (INVALID_VALUE).
-* The main difference between the number and the range types is that range values can be out of range (OUT_OF_RANGE) and simple number can not as they are not delimited.
+* The main difference between the number and the range type is that range values can be out of range (OUT_OF_RANGE) while simple numbers cannot since they are not delimited.
 
 
 <a name=HDR_attributes></a>
