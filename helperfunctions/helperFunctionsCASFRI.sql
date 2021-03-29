@@ -83,6 +83,31 @@ $$ LANGUAGE sql IMMUTABLE;
 ------------------------------------------------------------
 
 ------------------------------------------------------------
+-- TT_Count
+--
+-- Count the number of rows in a table without failing if the table does not exist
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_Count(name, name);
+CREATE OR REPLACE FUNCTION TT_Count(
+  schemaName name,
+  tableName name
+) RETURNS int AS $$
+  DECLARE
+    queryStr text;
+    returnCnt bigint;
+  BEGIN
+    RAISE NOTICE 'Counting rows in %.%', schemaName, tableName;
+    IF NOT TT_TableExists(schemaName, tableName) THEN
+      RETURN 0;
+    END IF;
+    queryStr = 'SELECT count(*) FROM ' || schemaName || '.' || tableName;
+    EXECUTE queryStr INTO returnCnt;
+    RETURN returnCnt;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
+------------------------------------------------------------
+
+------------------------------------------------------------
 -- TT_TableColumnType
 --
 --   tableSchema name - Name of the schema containing the table.
