@@ -319,5 +319,5 @@ SELECT * FROM casfri50_test.eco_all_new
 -- ORDER BY all columns to ensure that only identical row can be intermixed
 ORDER BY cas_id, wetland_type, wet_veg_cover, wet_landform_mod, wet_local_mod, eco_site;
 ------------------------
-SELECT count(*) FROM casfri50_test.eco_all_new; -- 12428, 1m19s
+SELECT count(*) FROM casfri50_test.eco_all_new; -- 12537, 2m30
 -------------------------------------------------------
