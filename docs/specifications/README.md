@@ -32,7 +32,7 @@ Canada's vast boreal ecosystem hosts one of the most diverse bird communities in
 
 Current national databases developed from satellite-based products using biophysical variables have limited application at regional levels because many bird species are sensitive to variation in canopy tree species composition, height, and age; vegetation attributes that satellite-based products cannot measure. Because satellite-based land cover maps lack the thematic detail needed to model the processes of stand growth, succession, and regeneration, avian habitat models derived from satellite land cover data cannot be used to link forest management actions to the desired biotic indicators at the scale of forest tenure areas.  
 
-Digital forest inventory data can overcome many of the deficiencies identified with satellite based land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).  
+Digital forest inventory data can overcome many of the deficiencies identified with satellite-based land cover data. These data exist for most operational and planned commercial forest tenures in the Canadian boreal forest; however, differences among data formats, attributes, and standards across the various forest inventories make it difficult to develop models that are comparable and can be consistently applied across regions. To do so, it is necessary to address the variation between different forest inventories and bring all available inventories into one explicitly defined database where attributes are consistently defined without loss of precision. The starting point is to review all forest inventory classifications and develop a set of common attributes. This document addresses the inventory review developed for the Boreal Avian Monitoring Project; this review is called the Common Attribute Schema (CAS).  
 
 
 <a name=CAS></a>
@@ -47,7 +47,7 @@ Based on the review, detailed tables were produced to summarize each inventory s
 Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is > and the upper bound is <). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta "B" - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a  
 common resolution or set of values.  
 
-Attributes for CAS are stored in six attribute files to facilitate conversion and translation:  
+Attributes for CAS are stored in seven attribute files to facilitate conversion and translation:  
 
 1. Header (HDR) attributes - values assigned to all polygons based on provenance or reference information;  
 2. CAS Base Polygon (CAS) attributes - values that identify a polygon and provide a link between the CAS polygon and the original inventory polygon;  
@@ -102,7 +102,7 @@ Table 2. CASFRI error codes
 | Missing&nbsp;values | EMPTY_STRING | -8889 | Missing value that is stored as an empty string (e.g. '' or '&#160;'). |
 |                | NULL_VALUE        | -8888 | Missing value that is a true null value. |
 |                | NOT_APPLICABLE    | -8887 | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute). |
-|                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK) or that the value should exist but can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct value because the source dataset is incomplete). This is different from NOT_APPLICABLE where the values clearly does not exist. |
+|                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK) or that the value should exist but can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct value because the source dataset is incomplete). This is different from NOT_APPLICABLE where the value clearly does not exist. |
 | Invalid&nbsp;values | OUT_OF_RANGE | -9999 | Value is outside the expected range of valid values (e.g. a percent value that is greater than 100. |
 |                | NOT_IN_SET        | -9998 | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory). |
 |                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does match expected format). |
@@ -122,7 +122,7 @@ Four types of attribute have been identified in CASFRI and only specific codes a
 
 * The main difference between the text and the number type is that empty numbers can only be NULLs (NULL_VALUE) whereas empty text values can be either NULLs (NULL_VALUE) or empty strings (EMPTY_STRING).
 * The main difference between the text and the code type is that wrong codes are not in the set of acceptable values (NOT_IN_SET) instead of being invalid (INVALID_VALUE).
-* The main difference between the number and the range types is that range values can be out of range (OUT_OF_RANGE) and simple number can not as they are not delimited.
+* The main difference between the number and the range type is that range values can be out of range (OUT_OF_RANGE) while simple numbers cannot since they are not delimited.
 
 
 <a name=HDR_attributes></a>
@@ -135,7 +135,7 @@ Header information is a primary element of CAS. Header information identifies th
 
 The **INVENTORY_ID** attribute is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments with newer inventories within a jurisdiction.
 
-| Values | Desription |
+| Values | Description |
 | :----- | :-------------- |
 | Alphanumeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
@@ -239,7 +239,7 @@ The **DOCUMENTATION_TITLES** attribute identifies titles of documents associated
 
 ### SRC_DATA_FORMAT
 
-The **SRC_DATA_FORMAT** attribute identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file. When many format are used, they are separated by a comma.
+The **SRC_DATA_FORMAT** attribute identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file. When many formats are used, they are separated by a comma.
 
 | Values           | Description      |
 | :--------------- | :--------------- |
@@ -282,12 +282,12 @@ The **ACQUISITION_DATE** attribute identifies the date at which the inventory da
 
 ### ACQUISITION_TYPE
 
-The **ACQUISITION_TYPE** attribute identifies the mean by which the inventory data was acquired. This is mainly to identify inventories that were publicitly available (online or by other means) when they were acquired by the CASFRI project.
+The **ACQUISITION_TYPE** attribute identifies the mean by which the inventory data was acquired. This is mainly to identify inventories that were publicly available (online or by other means) when they were acquired by the CASFRI project.
 
 | Values | Description |
 | :----- | :-------------- |
 | DVD   | Inventory data was acquired on DVD support |
-| FTP   | Inventory data was acquired through a FTP site. Link to the FTP site should be provided in the ACQUISITION_LINKS field |
+| FTP   | Inventory data was acquired through an FTP site. Link to the FTP site should be provided in the ACQUISITION_LINKS field |
 | HTTP   | Inventory data was acquired through a HTTP site. Link to the HTTP site should be provided in the ACQUISITION_LINKS field |
 | TEMPORARY_FTP | Inventory data was acquired through a temporary FTP link that is not available anymore |
 | TEMPORARY_HTTP | Inventory data was acquired through a temporary HTTP link that is not available anymore |
@@ -295,7 +295,7 @@ The **ACQUISITION_TYPE** attribute identifies the mean by which the inventory da
 
 ### ACQUISITION_LINKS
 
-The **ACQUISITION_LINKS** attribute identifies the HTTP or FTP addresses (there can be many) from which the inventory was downloaded. Temporary address are not provided.
+The **ACQUISITION_LINKS** attribute identifies the HTTP or FTP addresses (there can be many) from which the inventory was downloaded. Temporary addresses are not provided.
 
 | Values | Description |
 | :----- | :-------------- |
@@ -310,7 +310,7 @@ The **CONTACT_INFO** attribute identifies the contact information (name, address
 | Values | Description |
 | :----- | :-------------- |
 | Text   | Contact information associated with the inventory data   |
-| NO_INFO | No contact info were provided |
+| NO_INFO | No contact info was provided |
 
 
 ### DATA_AVAILABILITY
@@ -340,7 +340,7 @@ The **REDISTRIBUTION** attribute identifies the conditions under which the inven
 
 ### PERMISSION
 
-The **PERMISSION** attribute identifies the degree of permission to which the data can be used i.e., whether the use of the data is unrestricted, restricted or limited..
+The **PERMISSION** attribute identifies the degree of permission to which the data can be used i.e., whether the use of the data is unrestricted, restricted or limited.
 
 | Values       | Description |
 | :----------- | :-------------- |
@@ -409,7 +409,7 @@ The **CAS_ID** attribute is an alpha-numeric identifier that is unique for each 
 - Secondary id - Polygon ID linking back to the source polygon, often a unique polygon if from the source data (10 characters)
 - Cas id - usually ogd_fid which is added after loading and ensures all rows in the database have a unique identifier (7 characters)
 
-In some inventories the source polygons have a unique identifier with a length of up to 20 characters. In these cases the unique identifier can be split and used as the Primary id and Secondary id to reconstruct a unique identifier linking back to the source polygon. This happens in QC and ON for example.
+In some inventories the source polygons have a unique identifier with a length of up to 20 characters. In these cases, the unique identifier can be split and used as the Primary id and Secondary id to reconstruct a unique identifier linking back to the source polygon. This happens in QC and ON for example.
 
 | Values               | Description |
 | :------------------- | :---------- |
@@ -417,9 +417,9 @@ In some inventories the source polygons have a unique identifier with a length o
 
 ### INVENTORY_ID (FK)
 
-The **INVENTORY_ID** attribute is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments for newly aquired inventories within a jurisdiction. Note that higher integer values do not cenessarily indicate more recent inventories.
+The **INVENTORY_ID** attribute is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments for newly acquired inventories within a jurisdiction. Note that higher integer values do not necessarily indicate more recent inventories.
 
-| Values | Desription |
+| Values | Description |
 | :----- | :-------------- |
 | Alphanumeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
@@ -439,13 +439,13 @@ The **STAND_STRUCTURE** attribute identifies the physical arrangement or vertica
 
 A SINGLE_LAYERED stand has stem heights that do not vary significantly and the vegetation has only one main canopy layer.
 
-A MULTI_LAYERED stand can have several distinct forest layers and each layer is significant, has a distinct height difference, and is evenly distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other. We do not consider NFL layers to part of a MULTI-LAYERED stand structure in CASFRI due to the wide range of potential NFL types. For this reason, any polygon labelled MULTI-LAYERED must have at least 2 LYR layers.
+A MULTI_LAYERED stand can have several distinct forest layers and each layer is significant, has a distinct height difference, and is evenly distributed. Generally, the layers are intermixed and when viewed vertically, one layer is above the other. We do not consider NFL layers to part of a MULTI-LAYERED stand structure in CASFRI due to the wide range of potential NFL types. For this reason, any polygon labelled MULTI-LAYERED must have at least 2 LYR layers.
 
 COMPLEX layered stands exhibit a high variation in tree heights. There is no single definitive forested layer as nearly all height classes (and frequently ages) are represented in the stand. The height is chosen from a stand midpoint usually followed by a height range.
 
 HORIZONTAL structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon, but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi-label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. In Prince Albert National Park, there are 64 polygons with both horizontal and vertical structure. Since the schema cannot support both horizontal and vertical structure in a single polygon, the understory information for these were dropped.  
 
-If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is assigned the same value in CASFRI. SINGLE_LAYERED and MULTI_LAYERED stand structure are assigned based on the number of canopy layers identified in the LYR table. If there is one layer, SINGLE_LAYERED is assigned, otherwise MULTI_LAYERED.
+If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is assigned the same value in CASFRI. SINGLE_LAYERED and MULTI_LAYERED stand structure are assigned values based on the number of canopy layers identified in the LYR table. If there is one layer, SINGLE_LAYERED is assigned, otherwise MULTI_LAYERED.
 
 | Values | Description |
 | :------------------- | :-------------- |
@@ -462,11 +462,11 @@ If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is a
 
 ### NUM_OF_LAYERS  
 
-The **NUM_OF_LAYERS** attribute identifies the number of LYR and NFL layers associated with the stand. Note that NUM_OF_LAYERS is independant from STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. STAND_STRUCTURE could therefore be SINGLE_LAYERED, even when the number of layers is > 1.
+The **NUM_OF_LAYERS** attribute identifies the number of LYR and NFL layers associated with the stand. Note that NUM_OF_LAYERS is independent from STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. STAND_STRUCTURE could therefore be SINGLE_LAYERED, even when the number of layers is > 1.
 
 | Values        | Description |
 | :------------ | :----- |
-| 1&#8209;9     | Number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified |
+| 1&#8209;9     | Number of vegetation or non-vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified |
 | -8886         | Number of layers is unknown (e.g. there is disturbance info, but no reported layers) |
 
 
@@ -538,11 +538,11 @@ Identifies the layer number of the LYR or NFL row within a particular polygon. A
 
 LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by Layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine.
 
-LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exsists, an NFL layer will get a value of 1.
+LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exists, an NFL layer will get a value of 1.
 
 | Values   | Description   |
 | :------- | :------- |
-| 1&#8209;9 | Layer number of a vegetation or non vegetation layer within a particular polygon |
+| 1&#8209;9 | Layer number of a vegetation or non-vegetation layer within a particular polygon |
 
 Notes:
 
@@ -555,7 +555,7 @@ Notes:
 
 Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code. 
 
-Some inventories (AB, NB, NT, ON, SK SKVI, and NS) do not have an explicit rank attribute, but do have attributes repeated for an overstory (or primary) and understory (or secondary) layer. SK SFVI has attributes repeated for three forest layers. In these cases we assign the overstory (primary) values to LAYER_RANK 1, the understory (secondary) values to LAYER_RANK 2 etc. The overstory (or primary) layer is not always the tallest, so LAYER and LAYER_RANK in these inventories are not always the same.
+Some inventories (AB, NB, NT, ON, SK SKVI, and NS) do not have an explicit rank attribute, but do have attributes repeated for an overstory (or primary) and understory (or secondary) layer. SK SFVI has attributes repeated for three forest layers. In these cases, we assign the overstory (primary) values to LAYER_RANK 1, the understory (secondary) values to LAYER_RANK 2 etc. The overstory (or primary) layer is not always the tallest, so LAYER and LAYER_RANK in these inventories are not always the same.
 
 | Values | Description |
 | :----- | :----- |
@@ -611,7 +611,7 @@ The **SOIL_MOIST_REG** attribute identifies the available moisture supply for pl
 | MESIC          | Soils retains moisture for moderately short to short periods following precipitation with moderately well drained substratum |
 | MOIST          | Soil retains abundant to substantial moisture for much of the growing season with slow soil infiltration |
 | WET            | Poorly drained to flooded where the water table is usually at or near the surface, or the land is covered by shallow water |
-| AQUATIC        | Permanent deep water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water |
+| AQUATIC        | Permanent deep-water areas characterized by hydrophytic vegetation (emergent) that grows in or at the surface of water |
 | NULL_VALUE     | Source value is NULL |
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
@@ -660,7 +660,7 @@ The **PRODUCTIVITY** attribute classifies forested lands into either productive 
 
 | Values | Description |
 | :----- | :------------ |
-| NON_PRODUCTIVE_FOREST  | Forested lands that are not capable of producing trees for forest operations.Includes areas that can produce timber, but cannot be harvested for various reasons |
+| NON_PRODUCTIVE_FOREST  | Forested lands that are not capable of producing trees for forest operations. Includes areas that can produce timber, but cannot be harvested for various reasons |
 | PRODUCTIVE_FOREST      | Forested lands capable of producing trees for forest operations |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
 | NOT_APPLICABLE         | Attribute does not apply to this record |
@@ -668,7 +668,7 @@ The **PRODUCTIVITY** attribute classifies forested lands into either productive 
 
 ### PRODUCTIVITY_TYPE
 
-The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. **PRODUCTIVITY_TYPE** is a sub-class of **PRODUCTIVITY**, but both values may not always occur together. For example a forested polygon could be labelled as non-productive but a type might not always be assigned. Generally, if a non-productive type is assigned, **PRODUCTIVITY** is reported as NON_PRODUCTIVE_FOREST. One exception is if there is another source attribute that directly assigns **PRODUCTIVITY** as is the case in BC which has seperate attributes for classifying the harvestable land base, and for labelling non-productive types (note that this can actually lead to confusing assignments where polygons are labelled as non-productive in one attribute, but included in the harvestable land base in another attribute). Generally, HARVESTABLE is assigned along with PRODUCTIVE_FOREST; and PROTECTION_FOREST, TREED_MUSKEG, TREED_ROCK, ALPINE_FOREST, SCRUB_SHRUB and ALDER are assigned along with NON_PRODUCTIVE_FOREST.
+The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. **PRODUCTIVITY_TYPE** is a sub-class of **PRODUCTIVITY**, but both values may not always occur together. For example, a forested polygon could be labelled as non-productive but a type might not always be assigned. Generally, if a non-productive type is assigned, **PRODUCTIVITY** is reported as NON_PRODUCTIVE_FOREST. One exception is if there is another source attribute that directly assigns **PRODUCTIVITY** as is the case in BC which has separate attributes for classifying the harvestable land base, and for labelling non-productive types (note that this can actually lead to confusing assignments where polygons are labelled as non-productive in one attribute, but included in the harvestable land base in another attribute). Generally, HARVESTABLE is assigned along with PRODUCTIVE_FOREST; and PROTECTION_FOREST, TREED_MUSKEG, TREED_ROCK, ALPINE_FOREST, SCRUB_SHRUB and ALDER are assigned along with NON_PRODUCTIVE_FOREST.
 
 This attribute is translated from source information where it exists. Since this attribute only translates information available in the source inventories, there will be unproductive alpine forests identified for BC, but in AB this same forest type will be labelled UNKNOWN_VALUE because the AB source data does not classify it. If any **PRODUCTIVITY** or **PRODUCTIVITY_TYPE** information is available in the source data, unknown rows are assigned UNKNOWN_VALUE. If no information is available in the source data, NOT_APPLICABLE is assigned.
 
@@ -680,7 +680,7 @@ This attribute is translated from source information where it exists. Since this
 | TREED_ROCK             | Treed rock sites |
 | ALPINE_FOREST          | High elevation forest usually above 1800 m |
 | SCRUB_SHRUB            | Various types of scrub and shrub sites |
-| ALDER                  | Sites dominated by alder (or willow, or birch), ususally associated with water or wetlands |
+| ALDER                  | Sites dominated by alder (or willow, or birch), usually associated with water or wetlands |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
 | NOT_APPLICABLE         | Attribute does not apply to this record |
 
@@ -816,15 +816,15 @@ The **NAT_NON_VEG** attribute identifies the type of natural land with no vegeta
 | OCEAN          | Coastal waters |
 | WATERBODY      | Generic waterbody |
 | ROCK_RUBBLE    | Bed rock or talus or boulder field |
-| SAND           | Sand dunes, sand hills, non recent water sediments |
+| SAND           | Sand dunes, sand hills, non-recent water sediments |
 | SNOW_ICE       | Ice fields, glaciers, permanent snow |
 | SLIDE          | Recent slumps or slides with exposed earth |
-| EXPOSED_LAND   | Other non vegetated land |
+| EXPOSED_LAND   | Other non-vegetated land |
 | BEACH          | Sand areas adjacent to water bodies |
 | WATER_SEDIMENT | Recent sand and gravel bars |
 | FLOOD          | Recent flooding including beaver ponds |
-| ISLAND         | Vegetated or non vegetated islands |
-| TIDAL_FLATS    | Non vegetated feature associated with oceans |
+| ISLAND         | Vegetated or non-vegetated islands |
+| TIDAL_FLATS    | Non-vegetated feature associated with oceans |
 | OTHER          | Any other source inventory land type not supported by CASFRI |
 | NULL_VALUE     | Source value is NULL |
 | EMPTY_STRING   | Source value is a non-NULL empty string |
@@ -918,7 +918,7 @@ The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturban
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 Note:
-* In some cases disturbance types can occur without years, and years can occur without disturbance types. Any disturbances with unknown years are reported a the oldest disturbance, and any missing disturbance types are reported as UNKNOWN_VALUE.
+* In some cases disturbance types can occur without years, and years can occur without disturbance types. Any disturbances with unknown years are reported as the oldest disturbance, and any missing disturbance types are reported as UNKNOWN_VALUE.
 
 ### DIST_YEAR_1 - DIST_YEAR_3  
 
@@ -1036,7 +1036,7 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
   
 ### ECOSITE
 
-The **ECOSITE** attribute is a site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data.
+The **ECOSITE** attribute is a site-level description that provide a linkage between vegetation and soil/moisture and nutrient features on the site. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data.
 
 | Values      | Description      |
 | :---------- | :---------- |
