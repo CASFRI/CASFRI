@@ -40,9 +40,9 @@ Digital forest inventory data can overcome many of the deficiencies identified w
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for avian habitat modeling. Its development requires the selection of vegetation cover attributes useful for avian habitat modeling, and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
 
-Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada. Gillis and Leckie<sup>1</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography. A summary of recent or current inventories across Canada are presented in Appendix 1. These inventories are the most likely sources for data that can contribute to the avian bird modeling project.  
+Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada. Gillis and Leckie<sup>1</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography.  
 
-Based on the review, detailed tables were produced to summarize each inventory standard by province and territory. Two national parks, Wood Buffalo and Prince Albert are included. Conversion rule sets were then produced as part of the detailed tables to identify how each province or territory inventory attribute codes translate into CAS attribute codes. Detailed tables and conversion rule sets for each CAS attribute are presented in Appendices noted in the appropriate sections of this document.  
+Based on the review, detailed tables were produced to summarize each inventory standard by province and territory. Two national parks, Wood Buffalo and Prince Albert are included. Conversion rule sets were then produced as part of the detailed tables to identify how each province or territory inventory attribute codes translate into CAS attribute codes. 
 
 Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is > and the upper bound is <). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta "B" - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a  
 common resolution or set of values.  
@@ -807,7 +807,7 @@ Height defined in the NFL table must be a value explicitly assigned to the NFL l
 
 ### NAT_NON_VEG  
 
-The **NAT_NON_VEG** attribute identifies the type of natural land with no vegetation cover. The maximum vegetation cover varies across Canada but is usually less than six or ten percent. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
+The **NAT_NON_VEG** attribute identifies the type of natural land with no vegetation cover. The maximum vegetation cover varies across Canada but is usually less than six or ten percent.
 
 | Values         | Description |
 | :------------- | :----- |
@@ -836,7 +836,7 @@ The **NAT_NON_VEG** attribute identifies the type of natural land with no vegeta
 
 ### NON_FOR_ANTH
 
-The **NON_FOR_ANTH** attribute identifies the type of non-forested anthropogenic areas influenced or created by humans. These sites may or may not be vegetated. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.  
+The **NON_FOR_ANTH** attribute identifies the type of non-forested anthropogenic areas influenced or created by humans. These sites may or may not be vegetated.   
 
 | Values         | Description |
 | :------------- | :----- |
@@ -856,7 +856,7 @@ The **NON_FOR_ANTH** attribute identifies the type of non-forested anthropogenic
 
 ### NON_FOR_VEG  
 
-The **NON_FOR_VEG** attribute identifies the type of non-forested vegetated areas including all natural lands that have vegetation cover with usually less than 10% tree cover. These cover types can be stand alone or used in multi-layer situations. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 12.    
+The **NON_FOR_VEG** attribute identifies the type of non-forested vegetated areas including all natural lands that have vegetation cover with usually less than 10% tree cover. These cover types can be stand alone or used in multi-layer situations.   
 
 | Values         | Description |
 | :------------- | :----- |
@@ -896,7 +896,7 @@ The **LAYER** attribute identifies the specific layer to which the disturbance i
 
 ### DIST_TYPE_1 - DIST_TYPE_3
 
-The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human -caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon. The detailed table, CAS codes, and CAS conversion rule set are presented in Appendix 13.  
+The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human -caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon.  
 
 | Values         | Description |
 | :------------- | :-------------- |
@@ -964,7 +964,7 @@ The wetland classification scheme used for CAS follows the classes developed by 
 
 Five major wetland types are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have strong cross-correlations. Two of the types; FEN and BOG, are peat-forming with greater than 40 cm of accumulated organics. The three non-peat forming wetland types are shallow open water (SHALLOW_WATER), MARSH (fresh or salt water), and SWAMP. A NOT_WETLAND type is also included. The Vegetation Modifier is assigned to a wetland type to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.  
 
-The detailed wetland table, CAS code set, and CAS translation rule set are presented in Appendix 14. Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland types derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. A rule set for each province or territory that identifies a method to derive wetland attributes using forest attributes or ecosite data is presented in Appendix 15. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database. 
+Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland types derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database. 
 
 ### WETLAND_TYPE
 
@@ -1026,7 +1026,7 @@ The detailed wetland table, CAS code set, and CAS translation rule set are prese
   
 ### ECOSITE
 
-The **ECOSITE** attribute is a site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. The detailed ecosite table is presented in Appendix 16. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes:  Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.    
+The **ECOSITE** attribute is a site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes:  Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.    
 
 | Values      | Description      |
 | :---------- | :---------- |
