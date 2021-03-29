@@ -534,7 +534,7 @@ See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 <a name=LAYER></a>
 ### LAYER (PK)
 
-Identifies the layer number of the LYR or NFL row within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon.
+Identifies the layer number of the LYR or NFL row within a particular polygon. A maximum of 9 layers can be identified. No two LYR or NFL layers can have the same value within the same polygon.
 
 LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by Layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine.
 
@@ -547,6 +547,8 @@ LAYER is calculated for CASFRI based on the presence of forest and non-forest in
 Notes:
 
 - LAYER is a CASFRI derived attribute that is computed based on the presence or absence of values for different layers. This is why it cannot be assigned an error code. It does not have any direct relation to any values in the source data.
+- The LYR and NFL tables define layers as described above. The LAYER attribute in the DST is always used to associate a DST record with a LYR or NFL layer. DST layer should never have values that don't match an existing LYR or NFL record.
+- ECO LAYER is only used in Parks Canada datasets with horizontal structure.
 
 <a name=LAYER_RANK></a>
 ### LAYER_RANK
@@ -616,7 +618,7 @@ The **SOIL_MOIST_REG** attribute identifies the available moisture supply for pl
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
-Notes: SOIL_MOIST_REG is usually a polygon level attribute and is therefore the same for any LYR and NFL records. AB and NT however report soil moisture separately for the overstory and understory layers.
+Notes: SOIL_MOIST_REG is usually a polygon level attribute and is therefore the same for any LYR and NFL records. AB and NT however report soil moisture separately for the overstory and understory layers which can lead to layer 1 and 2 having different values.
 
 <a name=CROWN_CLOSURE></a>
 ### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER 
@@ -782,9 +784,6 @@ See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
 
 See <a href="#SOIL_MOIST_REG">SOIL_MOIST_REG</a> in the LYR table.
 
-Notes:
-* When would NFL be different to LYR? https://github.com/edwardsmarc/CASFRI/issues/328
-
 
 ### STRUCTURE_PER
 
@@ -866,7 +865,7 @@ The **NON_FOR_VEG** attribute identifies the type of non-forested vegetated area
 | FORBS          | Herbaceous plants other than graminoids |
 | HERBS          | Undistinguishable family of herbs |
 | BRYOID         | Mosses and lichens |
-| OPEN_MUSKEG    | Wetlands with less than 10% tree cover |
+| OPEN_MUSKEG    | Wetlands with less than 10% tree cover (<25% in NS) |
 | TUNDRA         | Flat treeless plains |
 | OTHER          | Any other source inventory cover type not supported by CASFRI  |
 | NULL_VALUE     | Source value is NULL |
@@ -886,17 +885,17 @@ See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 ### LAYER (PK)
 
-The **LAYER** attribute identifies the specific layer to which the disturbance is linked in the source data. It can be assigned to the corresponding layer in CASFRI (See <a href="#LAYER">LYR table LAYER.</a>). When disturbances are not explicitly linked to a specific layer or when the source inventory arbitrarily assign all disturbances to layer 1, -8886 (UNKNOWN_VALUE) is assigned to LAYER since the correct layer associated with the disturbance is unknown.
+The **LAYER** attribute identifies the specific layer to which the disturbance is linked in the source data. It can be assigned to the corresponding LYR or NFL layer in CASFRI (See <a href="#LAYER">LYR table LAYER.</a>). When disturbances are not explicitly linked to a specific layer or when the source inventory arbitrarily assigns all disturbances to layer 1, -8886 (UNKNOWN_VALUE) is assigned to LAYER since the correct layer associated with the disturbance is unknown.
 
 | Values   | Description |
 | :------- | :------- |
-| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon |
+| 1&#8209;9| Identifies the layer number that the disturbance is associated with |
 | -8886 | Source value should exist but is unknown |
 
 
 ### DIST_TYPE_1 - DIST_TYPE_3
 
-The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human -caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon.  
+The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon.  
 
 | Values         | Description |
 | :------------- | :-------------- |
@@ -910,7 +909,7 @@ The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturban
 | WINDFALL       | Blow down |
 | WEATHER        | Ice, frost, red belt |
 | DEAD_UNKNOWN   | Dead or dying trees, cause unknown |
-| SILVICULTURE_TREATMENT | Planting, Thinning, Seed Tree |
+| SILVICULTURE_TREATMENT | Planting, thinning, seed tree |
 | OTHER          | Other type of damage |
 | NULL_VALUE     | Source value is NULL |
 | EMPTY_STRING   | Source value is a non-NULL empty string |
@@ -918,6 +917,8 @@ The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturban
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
+Note:
+* In some cases disturbance types can occur without years, and years can occur without disturbance types. Any disturbances with unknown years are reported a the oldest disturbance, and any missing disturbance types are reported as UNKNOWN_VALUE.
 
 ### DIST_YEAR_1 - DIST_YEAR_3  
 
@@ -958,11 +959,20 @@ Ecological attributes are generally not included or are incompletely recorded in
 
 See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
+### LAYER (PK)
+
+The **LAYER** attribute identifies the specific layer to which the wetland is linked in the source data. When wetlands are not explicitly linked to a specific layer -8886 (UNKNOWN_VALUE) is assigned. Layer is usually only populated for cases with horizontal structure where multiple wetland sub-components can be included within a single polygon (e.g. PC02). In this case each layer represents a different sub-component of the horizontal structure.
+
+| Values   | Description |
+| :------- | :------- |
+| 1&#8209;9| Identifies the layer number that the wetland is associated with |
+| -8886 | Source value should exist but is unknown |
+
 ### WETLAND CLASSIFICATION
 
 The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>2</sup> and modified by Vitt and Halsey<sup>3,4</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland type (WETLAND_TYPE), wetland vegetation modifier (WET_VEG_COVER), wetland landform modifier (WET_LANDFORM_MOD), and wetland local modifier (WET_LOCAL_MOD).  
 
-Five major wetland types are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have strong cross-correlations. Two of the types; FEN and BOG, are peat-forming with greater than 40 cm of accumulated organics. The three non-peat forming wetland types are shallow open water (SHALLOW_WATER), MARSH (fresh or salt water), and SWAMP. A NOT_WETLAND type is also included. The Vegetation Modifier is assigned to a wetland type to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.  
+Five major wetland types are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have strong cross-correlations. Two of the types; FEN and BOG, are peat-forming with greater than 40 cm of accumulated organics. The three non-peat forming wetland types are SHALLOW_WATER (shallow open water), MARSH (fresh or salt water), and SWAMP. A NOT_WETLAND type is also included. The Vegetation Modifier is assigned to a wetland type to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.  
 
 Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland types derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database. 
 
@@ -972,7 +982,7 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | :----- | :----- |
 | BOG    | > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss |
 | FEN    | > 40 cm peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed |
-| SWAMP  | Woody vegetation with > 30 shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent subsurface water. Various mixtures of mineral sediments and peat |
+| SWAMP  | Woody vegetation with > 30% shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent subsurface water. Various mixtures of mineral sediments and peat |
 | MARSH  | Emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water |
 | SHALLOW_WATER | Freshwater lakes < 2 m depth |
 | TIDAL_FLATS | Ocean areas with exposed flats |
@@ -989,7 +999,7 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | FORESTED | Closed canopy forests > 70% tree cover |
 | WOODED   | Open canopy forests > 6% to 70% tree cover |
 | OPEN_NON_TREED_FRESHWATER | Open canopy forests < 6% tree cover with shrubs |
-| OPEN_NON_TREED_COASTAL | Open canopy coastal forests - < 6% tree cover, with shrubs |
+| OPEN_NON_TREED_COASTAL | Open canopy coastal forests < 6% tree cover, with shrubs |
 | MUD      | No vegetation cover |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
@@ -1001,7 +1011,7 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | PERMAFROST_PRESENT       | Permafrost present |
 | PATTERNING_PRESENT       | Patterning present |
 | NO_PERMAFROST_PATTERNING | No permafrost or patterning present |
-| SALINE_ALKALINE          | Saline or alkaline Present |
+| SALINE_ALKALINE          | Saline or alkaline present |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
@@ -1026,21 +1036,12 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
   
 ### ECOSITE
 
-The **ECOSITE** attribute is a site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data. The original inventory attribute value is captured in CAS. For example some codes:  Quebec = MS25S, Ontario = ES11 or 044 or S147N and Alberta = UFb1.2.    
+The **ECOSITE** attribute is a site-level descriptions that provide a linkage between vegetation and soil/moisture and nutrient features on the site. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data.
 
 | Values      | Description      |
 | :---------- | :---------- |
 | A-Z / 0-199 | Ecosite - an area defined by a specific combination of site, soil, and vegetation characteristics as influenced by                     environmental factors |
 | NOT_APPLICABLE | Attribute does not apply to this record |
-
-### LAYER (PK)
-
-The **LAYER** attribute identifies the specific layer to which the wetland is linked in the source data. When wetlands are not explicitly linked to a specific layer -8886 (UNKNOWN_VALUE) is assigned. Layer is usually only populated for cases with horizontal structure where multiple wetland sub-components can be included within a single polygon (e.g. PC02). In this case each layer represents a different sub-component of the horizontal structure.
-
-| Values   | Description |
-| :------- | :------- |
-| 1&#8209;9, V | Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon |
-| -8886 | Source value should exist but is unknown |
 
 
 <a name=GEO_attributes></a>
