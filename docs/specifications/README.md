@@ -445,8 +445,6 @@ COMPLEX layered stands exhibit a high variation in tree heights. There is no sin
 
 HORIZONTAL structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon, but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi-label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. In Prince Albert National Park, there are 64 polygons with both horizontal and vertical structure. Since the schema cannot support both horizontal and vertical structure in a single polygon, the understory information for these were dropped.  
 
-The detailed table for stand structure is presented in Appendix 3.
-
 If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is assigned the same value in CASFRI. SINGLE_LAYERED and MULTI_LAYERED stand structure are assigned based on the number of canopy layers identified in the LYR table. If there is one layer, SINGLE_LAYERED is assigned, otherwise MULTI_LAYERED.
 
 | Values | Description |
@@ -536,28 +534,26 @@ See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 <a name=LAYER></a>
 ### LAYER (PK)
 
-Identifies the layer number of a vegetation or non vegetation layer within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon.
+Identifies the layer number of the LYR or NFL row within a particular polygon. A maximum of 9 layers can be identified. No two layers can have the same value within the same polygon.
 
-LAYER is related to STAND_STRUCTURE and NUMBER_OF_LAYERS and is recorded for all LYR and NFL records. Layer 1 will always be the tallest (uppermost) layer in the stand sequentially followed by Layer 2 and so on. The maximum number of layers recognized is nine. [The uppermost layer may also be a veteran (V) layer. A veteran layer refers to a treed layer with a crown closure of 1 to 5 percent and must occur with at least one other layer; it typically includes the oldest trees in a stand.]DELETE?
+LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by Layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine.
 
 LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exsists, an NFL layer will get a value of 1.
 
 | Values   | Description   |
 | :------- | :------- |
-| 1&#8209;9, V | Layer number of a vegetation or non vegetation layer within a particular polygon |
+| 1&#8209;9 | Layer number of a vegetation or non vegetation layer within a particular polygon |
 
 Notes:
 
-- LAYER is a CASFRI specific attribute that is compute based on the presence or absence of values for different layers. This is why it cannot be assigned an error code.
-- One exception is the BC08 inventory. Only the rank 1 data is available which could represent any canopy layer from the full source inventory. Layer info is therefore copied directly from the inventory. This prevent mis-representing the source data by assigning layer 1 to a layer that is not actually the top layer - **no longer true, delete**
-
+- LAYER is a CASFRI derived attribute that is computed based on the presence or absence of values for different layers. This is why it cannot be assigned an error code. It does not have any direct relation to any values in the source data.
 
 <a name=LAYER_RANK></a>
 ### LAYER_RANK
 
 Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code. 
 
-Some inventories (AB, NB, NT, ON, SK SKVI, and NS) do not have an explicit rank attribute, but do have attributes repeated for an overstory (or primary) and understory (or secondary) layer. SK SFVI has attributes repeated for three forest layers. In these cases we assign the overstory (primary) values to LAYER_RANK 1, the understory (secondary) values to LAYER_RANK 2 etc. The overstory (primary) layer is not always the tallest, so LAYER and LAYER_RANK in these inventories are not always the same.
+Some inventories (AB, NB, NT, ON, SK SKVI, and NS) do not have an explicit rank attribute, but do have attributes repeated for an overstory (or primary) and understory (or secondary) layer. SK SFVI has attributes repeated for three forest layers. In these cases we assign the overstory (primary) values to LAYER_RANK 1, the understory (secondary) values to LAYER_RANK 2 etc. The overstory (or primary) layer is not always the tallest, so LAYER and LAYER_RANK in these inventories are not always the same.
 
 | Values | Description |
 | :----- | :----- |
@@ -575,7 +571,7 @@ The **STRUCTURE_PER** attribute identifies the percentage of stand area for HORI
 
 | Values                             | Description  |
 | :--------------------------------- | :------ |
-| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10%                                        increments, strata within the polygon. Must add up to 100%. Only two strata represented by each                                        homogeneous descriptions are allowed per polygon |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10%                                        increments, of strata within the polygon. Must add up to 100%. |
 | 100                                | When **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", "COMPLEX", value = 100 i.e., when there is no horizontal                                                structure |
 | -8888 | Source value is NULL |
 | -8887 | Attribute does not apply to this record |
@@ -599,13 +595,13 @@ The **STRUCTURE_RANGE** attribute identifies the height range (m) around stand m
 
 Notes:
 
-- Applies to the following inventories: AB, NB, NT, (Wood Buffalo?)
+- Applies to the following inventories: AB, NT, SK (SFVI), and YT (TVI02).
 
 
 <a name=SOIL_MOIST_REG></a>
 ### SOIL_MOIST_REG  
 
-The **SOIL_MOIST_REG** attribute identifies the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada. *The detailed soil moisture regime table and CAS conversion is presented in Appendix 4*.  
+The **SOIL_MOIST_REG** attribute identifies the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada.
 
 | Value          | Description |
 | :------------- | :----- |
@@ -620,11 +616,12 @@ The **SOIL_MOIST_REG** attribute identifies the available moisture supply for pl
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
+Notes: SOIL_MOIST_REG is usually a polygon level attribute and is therefore the same for any LYR and NFL records. AB and NT however report soil moisture separately for the overstory and understory layers.
 
 <a name=CROWN_CLOSURE></a>
 ### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER 
 
-The **CROWN_CLOSURE_UPPER** and **CROWN_CLOSURE_LOWER** attributes estimate the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CASFRI recognizes an upper and lower percentage bound for each class. The detailed crown closure table is presented in Appendix 5.  
+The **CROWN_CLOSURE_UPPER** and **CROWN_CLOSURE_LOWER** attributes estimate the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CASFRI recognizes an upper and lower percentage bound for each class.
 
 | Values    | Description |
 | :-------- | :-------------- |
@@ -640,7 +637,7 @@ The **CROWN_CLOSURE_UPPER** and **CROWN_CLOSURE_LOWER** attributes estimate the 
 <a name=HEIGHT></a>
 ### HEIGHT_UPPER, HEIGHT_LOWER
 
-The **HEIGHT_UPPER** and **HEIGHT_LOWER** attributes are based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height. The detailed height table is presented in Appendix 6. 
+The **HEIGHT_UPPER** and **HEIGHT_LOWER** attributes are based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height.
 
 | Values    | Description |
 | :-------- | :-------------- |
@@ -657,46 +654,46 @@ Note:
 
 
 ### PRODUCTIVITY
-The **PRODUCTIVITY** attribute classifies forested lands into either productive or unproductive for the purpose of forestry operations. This attribute is translated from source information where it exists, otherwise the value UNKNOWN_VALUE is assigned. Not all inventories classify productivity. Some inventories have a source value that indicates PRODUCTIVE_FOREST, other inventories classify non-productive types in which case NON_PRODUCTIVE_FOREST is assigned and the non-productive code is translated as **PRODUCTIVITY_TYPE**.
+The **PRODUCTIVITY** attribute classifies forested lands into either productive or unproductive for the purpose of forestry operations. This attribute is translated from source information where it exists. Not all inventories classify productivity. Some inventories have a source value that indicates PRODUCTIVE_FOREST, other inventories classify non-productive types in which case NON_PRODUCTIVE_FOREST is assigned and the non-productive code is translated as **PRODUCTIVITY_TYPE**. If any **PRODUCTIVITY** or **PRODUCTIVITY_TYPE** information is available in the source data, unknown rows are assigned UNKNOWN_VALUE. If no information is available in the source data, NOT_APPLICABLE is assigned.
 
 | Values | Description |
 | :----- | :------------ |
 | NON_PRODUCTIVE_FOREST  | Forested lands that are not capable of producing trees for forest operations.Includes areas that can produce timber, but cannot be harvested for various reasons |
 | PRODUCTIVE_FOREST      | Forested lands capable of producing trees for forest operations |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
+| NOT_APPLICABLE         | Attribute does not apply to this record |
 
 
 ### PRODUCTIVITY_TYPE
 
 The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. **PRODUCTIVITY_TYPE** is a sub-class of **PRODUCTIVITY**, but both values may not always occur together. For example a forested polygon could be labelled as non-productive but a type might not always be assigned. Generally, if a non-productive type is assigned, **PRODUCTIVITY** is reported as NON_PRODUCTIVE_FOREST. One exception is if there is another source attribute that directly assigns **PRODUCTIVITY** as is the case in BC which has seperate attributes for classifying the harvestable land base, and for labelling non-productive types (note that this can actually lead to confusing assignments where polygons are labelled as non-productive in one attribute, but included in the harvestable land base in another attribute). Generally, HARVESTABLE is assigned along with PRODUCTIVE_FOREST; and PROTECTION_FOREST, TREED_MUSKEG, TREED_ROCK, ALPINE_FOREST, SCRUB_SHRUB and ALDER are assigned along with NON_PRODUCTIVE_FOREST.
 
-This attribute is translated from source information where it exists, otherwise the value UNKNOWN_VALUE is assigned. Since this attribute only translates information available in the source inventories, there will be unproductive alpine forests identified for BC, but in AB this same forest type will be labelled UNKNOWN_VALUE because the AB source data does not classify it.
+This attribute is translated from source information where it exists. Since this attribute only translates information available in the source inventories, there will be unproductive alpine forests identified for BC, but in AB this same forest type will be labelled UNKNOWN_VALUE because the AB source data does not classify it. If any **PRODUCTIVITY** or **PRODUCTIVITY_TYPE** information is available in the source data, unknown rows are assigned UNKNOWN_VALUE. If no information is available in the source data, NOT_APPLICABLE is assigned.
 
 | Values | Description |
 | :----- | :------------ |
-| HARVESTABLE            | Identified as harvestable by the source jurisdiction (assigned in BC and ON) |
-| PROTECTION_FOREST      | Areas with adequate timber growth that cannot be harvested due to site risk (steep slopes, small islands etc.), or formal protection (recreation sites, shelter belts, small islands, ecological protection) (assigned in ON, SK UTM, MB FRI) |
-| TREED_MUSKEG           | Treed wetland sites (assigned in SK UTM, MB FRI, ON) |
-| TREED_ROCK             | Treed rock sites (assigned in SK UTM, MB FRI) |
-| ALPINE_FOREST          | High elevation forest usually above 1800 m (assigned in BC) |
-| SCRUB_SHRUB            | Various types of scrub and shrub sites (assigned in NL, MB FRI) |
-| ALDER                  | Sites dominated by alder (or willow, or birch), ususally associated with water or wetlands (assigned in MB FRI) |
+| HARVESTABLE            | Identified as harvestable by the source jurisdiction |
+| PROTECTION_FOREST      | Areas with adequate timber growth that cannot be harvested due to site risk (steep slopes, small islands etc.), or formal protection (recreation sites, shelter belts, small islands, ecological protection) |
+| TREED_MUSKEG           | Treed wetland sites |
+| TREED_ROCK             | Treed rock sites |
+| ALPINE_FOREST          | High elevation forest usually above 1800 m |
+| SCRUB_SHRUB            | Various types of scrub and shrub sites |
+| ALDER                  | Sites dominated by alder (or willow, or birch), ususally associated with water or wetlands |
 | UNKNOWN_VALUE          | Source value should exist but is unknown |
+| NOT_APPLICABLE         | Attribute does not apply to this record |
 
 
 ### SPECIES_1 - SPECIES_10
 
 The **SPECIES_1** to **SPECIES_10** attributes identify the species composing a forested stand.
 
-Species composition is the percentage of each tree species represented within a forested polygon by layer. Species are listed in descending order according to their contribution based on crown closure, basal area, or volume depending on the province or territory. A total of ten species can be used in one label. For the first species for example, CASFRI has a SPECIES_1 attribute to record the species name, and a SPECIES_PER_1 attribute to record the percent cover. Species percent will capture percent estimates to the nearest percent; however, most inventories across Canada describe species to the nearest 10% (in actual percent value or multiples of 10). Species composition for each forest stand and layer must sum to 100%.  
+Species composition is the percentage of each tree species represented within a forested polygon by layer. In the source data, species are listed in descending order according to their contribution based on crown closure, basal area, or volume depending on the province or territory. In CASFRI we order species by percent value from largest to smallest. A total of ten species can be used per layer. For the first species for example, CASFRI has a SPECIES_1 attribute to record the species name, and a SPECIES_PER_1 attribute to record the percent cover. Species percent will capture percent estimates to the nearest percent; however, most inventories across Canada describe species to the nearest 10%. Species composition for each forest stand and layer must sum to 100%.  
 
-The detailed table for species composition is presented in Appendix 7. Some inventories (Alberta Phase 3, Saskatchewan UTM, Quebec TIE, and Newfoundland, and National Parks) do not recognize a percentage breakdown of species but rather group species as contributing a major (greater than 26 percent) or minor (less than 26 percent) amount to the composition. Also included in Appendix 7 is a translation table that assigns a species composition percentage breakdown for those inventories that do not have a percentage breakdown.  
-
-CAS species codes are derived from the species' Latin name using the first four letters of the Genus and the first four letters of the Species unless there is a conflict, then the last letter of the species portion of the code is changed. Unique codes are required for generic groups and hybrids. A species list has been developed representing every inventory species identified across Canada including hybrids, exotics and generic groups (Appendix 8). Generic groups represent situations where species were not required to be recognized past the generic name or where photo interpreters could not identify an individual species. A list of species that is represented by the generic groups by province, territory, or Park has also been developed and is presented in Appendix 9.  Error and missing value codes:*  
+CASFRI v5 adopts the National Forest Inventory species codes for Canada (https://nfi.nfis.org/resources/groundplot/4a-GPDataDictionary5.1.7.pdf). A full list of the CASFRI species codes can be seen in the [species_codes_mapping](https://github.com/edwardsmarc/CASFRI/blob/master/translation/tables/species_code_mapping.csv) table.
 
 | Values         | Description |
 | :------------  | :-------------- |
-| Species codes  | **Link to possible values after #211** |
+| Species codes  | See casfri_species_codes in [species_codes_mapping](https://github.com/edwardsmarc/CASFRI/blob/master/translation/tables/species_code_mapping.csv) |
 | NULL_VALUE     | Source value is NULL |
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
@@ -721,11 +718,11 @@ The **SPECIES_PER_1** to **SPECIES_PER_10** attributes identify the percentage o
 
 ### ORIGIN_UPPER, ORIGIN_LOWER
 
-The **SPECIES_PER_1** to **SPECIES_PER_10** attributes identify the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CAS origin. The detailed stand origin table is presented in Appendix 10. 
+The **ORIGIN_UPPER** and **ORIGIN_LOWER** attributes identify the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CASFRI origin. Some inventories include origin explicitly, and in some cases we calculate it using photo year and age.
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 1000&#8209;2020  | Upper and lower bound of an age class |
+| 1000&#8209;2020  | Upper and lower bound of an origin class |
 | -8888 | Source value is NULL |
 | -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
@@ -736,7 +733,7 @@ The **SPECIES_PER_1** to **SPECIES_PER_10** attributes identify the average init
 
 ### SITE_CLASS
 
-The **SITE_CLASS** attribute estimates the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography, climate, elevation, and moisture availability. See Appendix 11 for the detailed site table.  
+The **SITE_CLASS** attribute estimates the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography, climate, elevation, and moisture availability. Site class is copied from the source data when available.
 
 | Values         | Description |
 | :-----         | :-------------- |
@@ -753,7 +750,7 @@ The **SITE_CLASS** attribute estimates the potential productivity of land for tr
 
 ### SITE_INDEX
 
-The **SITE_CLASS** attribute estimates site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada. See Appendix 11 for the detailed site table.  
+The **SITE_CLASS** attribute estimates site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada, it is copied from the source data when available.
 
 | Values    | Description |
 | :-------- | :-------------- |
