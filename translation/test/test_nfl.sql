@@ -415,5 +415,5 @@ SELECT * FROM casfri50_test.nfl_all_new
 ORDER BY cas_id, layer, layer_rank, soil_moist_reg, structure_per, crown_closure_upper, crown_closure_lower, 
          height_upper, height_lower, nat_non_veg, non_for_anth, non_for_veg;
 ------------------------
-SELECT count(*) FROM casfri50_test.nfl_all_new; -- 36372, 2m47
+SELECT count(*) FROM casfri50_test.nfl_all_new; -- 36295, 4m50
 ---------------------------------------------------------

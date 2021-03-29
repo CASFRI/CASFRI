@@ -31,12 +31,12 @@ layer2_tab="porc_mountain_us2"
 layer3_tab="porc_mountain_us3"
 layer4_tab="porc_mountain_us4"
 
-poly_temp=$targetFRISchema.poly_tab
-layer1_temp=$targetFRISchema.layer1_tab
-layer2_temp=$targetFRISchema.layer2_tab
-layer3_temp=$targetFRISchema.layer3_tab
-layer4_temp=$targetFRISchema.layer4_tab
-fullTargetTableName=$targetFRISchema.mb04
+fullTargetTableName=$targetFRISchema.${inventoryID,,}
+poly_temp=${fullTargetTableName}_poly_tab
+layer1_temp=${fullTargetTableName}_layer1_tab
+layer2_temp=${fullTargetTableName}_layer2_tab
+layer3_temp=${fullTargetTableName}_layer3_tab
+layer4_temp=${fullTargetTableName}_layer4_tab
 
 ########################################## Process ######################################
 

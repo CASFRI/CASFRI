@@ -13,25 +13,6 @@
 -------------------------------------------------------------------------------
 SET lc_messages TO 'en_US.UTF-8';
 ------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_Count(name, name);
-CREATE OR REPLACE FUNCTION TT_Count(
-  schemaName name,
-  tableName name
-) RETURNS int AS $$
-  DECLARE
-    queryStr text;
-    returnCnt bigint;
-  BEGIN
-    IF NOT TT_TableExists(schemaName, tableName) THEN
-      RETURN 0;
-    END IF;
-    queryStr = 'SELECT count(*) FROM ' || schemaName || '.' || tableName;
-    EXECUTE queryStr INTO returnCnt;
-    RETURN returnCnt;
-  END
-$$ LANGUAGE plpgsql VOLATILE;
--- Test
---SELECT TT_Count('rawfri', 'ab06')
 ------------------------------------------------------------------------------
 -- Comment out the following line and the last one of the file to display 
 -- only failing tests
@@ -43,18 +24,18 @@ SELECT * FROM (
 -- by returning nothing.
 WITH test_nb AS (
     SELECT 'Check count'::text function_tested,  1 maj_num, 11 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested,  2 maj_num,  2 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested,  2 maj_num,  4 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  3 maj_num,  6 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  4 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  5 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  6 maj_num,  3 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  7 maj_num,  2 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested,  8 maj_num,  1 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested,  8 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  9 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 10 maj_num,  1 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested, 11 maj_num,  6 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested, 11 maj_num,  7 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 12 maj_num,  6 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested, 13 maj_num,  2 nb_test
+    SELECT 'Check count'::text function_tested, 13 maj_num,  3 nb_test
 ), test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
 SELECT function_tested, maj_num::text, nb_test, generate_series(1, nb_test)::text min_num
@@ -146,6 +127,18 @@ SELECT '2.2'::text number,
        'Check count'::text function_tested,
        'BC10'::text description,
        TT_Count('rawfri', 'bc10') = 5151772 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '2.3'::text number,
+       'Check count'::text function_tested,
+       'BC11'::text description,
+       TT_Count('rawfri', 'bc11') = 5419596 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '2.4'::text number,
+       'Check count'::text function_tested,
+       'BC12'::text description,
+       TT_Count('rawfri', 'bc12') = 4861240 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.1'::text number,
@@ -240,6 +233,12 @@ SELECT '7.2'::text number,
 UNION ALL
 SELECT '8.1'::text number,
        'Check count'::text function_tested,
+       'ON01'::text description,
+       TT_Count('rawfri', 'on01') = 4106417 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '8.2'::text number,
+       'Check count'::text function_tested,
        'ON02'::text description,
        TT_Count('rawfri', 'on02') = 3629073 passed
 ---------------------------------------------------------
@@ -265,7 +264,7 @@ UNION ALL
 SELECT '11.1'::text number,
        'Check count'::text function_tested,
        'QC01'::text description,
-       TT_Count('rawfri', 'qc01') = 5886005 passed
+       TT_Count('rawfri', 'qc01') = 5563194 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '11.2'::text number,
@@ -296,6 +295,12 @@ SELECT '11.6'::text number,
        'Check count'::text function_tested,
        'QC06'::text description,
        TT_Count('rawfri', 'qc06') = 4809274 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '11.7'::text number,
+       'Check count'::text function_tested,
+       'QC07'::text description,
+       TT_Count('rawfri', 'qc07') = 85057 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '12.1'::text number,
@@ -344,6 +349,12 @@ SELECT '13.2'::text number,
        'Check count'::text function_tested,
        'YT02'::text description,
        TT_Count('rawfri', 'yt02') = 231137 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '13.3'::text number,
+       'Check count'::text function_tested,
+       'YT03'::text description,
+       TT_Count('rawfri', 'yt03') = 71073 passed
 ---------------------------------------------------------
 ) AS b 
 ON ((regexp_split_to_array(number, '\.'))[1] = maj_num AND (regexp_split_to_array(number, '\.'))[2] = min_num)

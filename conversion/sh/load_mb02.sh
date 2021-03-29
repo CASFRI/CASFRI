@@ -32,13 +32,13 @@ layer3_tab="duck_mountain_us3"
 layer4_tab="duck_mountain_us4"
 layer5_tab="duck_mountain_us5"
 
-poly_temp=$targetFRISchema.poly_tab
-layer1_temp=$targetFRISchema.layer1_tab
-layer2_temp=$targetFRISchema.layer2_tab
-layer3_temp=$targetFRISchema.layer3_tab
-layer4_temp=$targetFRISchema.layer4_tab
-layer5_temp=$targetFRISchema.layer5_tab
-fullTargetTableName=$targetFRISchema.mb02
+fullTargetTableName=$targetFRISchema.${inventoryID,,}
+poly_temp=${fullTargetTableName}_poly_tab
+layer1_temp=${fullTargetTableName}_layer1_tab
+layer2_temp=${fullTargetTableName}_layer2_tab
+layer3_temp=${fullTargetTableName}_layer3_tab
+layer4_temp=${fullTargetTableName}_layer4_tab
+layer5_temp=${fullTargetTableName}_layer5_tab
 
 ########################################## Process ######################################
 

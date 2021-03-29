@@ -26,6 +26,7 @@ pg_connection_string="PG:host=$pghost port=$pgport dbname=${pgdbname} user=${pgu
 
 layer_creation_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry -lco FID=ogc_fid"
 
+# other_options="-t_srs ESRI:102001"
 other_options="-t_srs $prjFile"
 
 #Create schema if it doesn't exist
