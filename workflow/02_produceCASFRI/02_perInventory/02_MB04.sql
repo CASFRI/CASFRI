@@ -113,10 +113,10 @@ SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb04_nfl', 'ab_avi01_nfl');
 -- DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'MB04';
 
 -- Add translated NFL
-SELECT TT_CreateMappingView('rawfri', 'mb04', 5, 'mb_fli', 1);
+SELECT TT_CreateMappingView('rawfri', 'mb04', 6, 'mb_fli', 1);
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_mb04_nfl('rawfri', 'mb04_l5_to_mb_fli_l1_map');
+SELECT * FROM TT_Translate_mb04_nfl('rawfri', 'mb04_l6_to_mb_fli_l1_map');
 
 
 ------------------------
