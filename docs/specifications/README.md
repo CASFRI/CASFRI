@@ -403,11 +403,13 @@ The CAS base polygon data provides polygon specific information and links the or
 
 The **CAS_ID** attribute is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
 
-- Inventory id e.g., AB06
-- Source filename i.e., name of shapefile or geodatabase
-- Map ID or some other within inventory identifier; if available, map sheet id
-- Polygon ID linking back to the source polygon (needs to be checked for uniqueness)
-- Cas id - ogd_fid is added after loading ensuring all inventory rows have a unique identifier
+- Inventory id e.g., AB06 (4 characters)
+- Source filename i.e., name of shapefile or geodatabase (15 characters)
+- Primary id - Polygon ID linking back to the source polygon, often Map Sheet ID or similar (10 characters)
+- Secondary id - Polygon ID linking back to the source polygon, often a unique polygon if from the source data (10 characters)
+- Cas id - usually ogd_fid which is added after loading and ensures all rows in the database have a unique identifier (7 characters)
+
+In some inventories the source polygons have a unique identifier with a length of up to 20 characters. In these cases the unique identifier can be split and used as the Primary id and Secondary id to reconstruct a unique identifier linking back to the source polygon. This happens in QC and ON for example.
 
 | Values               | Description |
 | :------------------- | :---------- |
@@ -415,7 +417,7 @@ The **CAS_ID** attribute is an alpha-numeric identifier that is unique for each 
 
 ### INVENTORY_ID (FK)
 
-The **INVENTORY_ID** attribute is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments with newer inventories within a jurisdiction.
+The **INVENTORY_ID** attribute is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments for newly aquired inventories within a jurisdiction. Note that higher integer values do not cenessarily indicate more recent inventories.
 
 | Values | Desription |
 | :----- | :-------------- |
@@ -437,19 +439,15 @@ The **STAND_STRUCTURE** attribute identifies the physical arrangement or vertica
 
 A SINGLE_LAYERED stand has stem heights that do not vary significantly and the vegetation has only one main canopy layer.
 
-**Original documentation**:
-`A MULTI_LAYERED stand can have several distinct layers and each layer is significant, has a distinct height difference, and is evenly distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other. Layers can be treed or non-treed. Up to 9 layers are allowed; most inventories recognize only one or two layers. The largest number of layers recognized is in the British Columbia VRI with 9 followed by Saskatchewan SFVI with 7 and Manitoba FLI with 5. Each layer is assigned an independent description with the tallest layer described in the upper portion of the label. The number of layers and a ranking of the layers can also be assigned. Some inventories (e.g. Saskatchewan UTM, Quebec TIE, Prince Edward Island, and Nova Scotia) can imply that a second layer exists; however, the second layer is not described or only a species type is indicated.`
-
-**Proposed new documentation**
-A MULTI_LAYERED stand can have several distinct layers and each layer is significant, has a distinct height difference, and is evenly distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other.
+A MULTI_LAYERED stand can have several distinct forest layers and each layer is significant, has a distinct height difference, and is evenly distributed. Generally the layers are intermixed and when viewed vertically, one layer is above the other. We do not consider NFL layers to part of a MULTI-LAYERED stand structure in CASFRI due to the wide range of potential NFL types. For this reason, any polygon labelled MULTI-LAYERED must have at least 2 LYR layers.
 
 COMPLEX layered stands exhibit a high variation in tree heights. There is no single definitive forested layer as nearly all height classes (and frequently ages) are represented in the stand. The height is chosen from a stand midpoint usually followed by a height range.
 
-HORIZONTAL structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi-label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. In Prince Albert National Park, there are 64 polygons with both horizontal and vertical structure. Since the schema cannot support both horizontal and vertical structure in a single polygon, the understory information for these were dropped.  
+HORIZONTAL structure represents vegetated or non-vegetated land with two or more homogeneous strata located within other distinctly different homogeneous strata within the same polygon, but the included strata are too small to map separately based on minimum polygon size rules. This attribute is also used to identify multi-label polygons identified in biophysical inventories such as Wood Buffalo National Park and Prince Albert National Park. In Prince Albert National Park, there are 64 polygons with both horizontal and vertical structure. Since the schema cannot support both horizontal and vertical structure in a single polygon, the understory information for these were dropped.  
 
 The detailed table for stand structure is presented in Appendix 3.
 
-If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is assigned the same value in CASFRI. **SINGLE_LAYERED and MULTI_LAYERED stand structure are assigned based on the number of canopy layers identified in the LYR table. If there is one layer, SINGLE_LAYERED is assigned, otherwise MULTI_LAYERED.**
+If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is assigned the same value in CASFRI. SINGLE_LAYERED and MULTI_LAYERED stand structure are assigned based on the number of canopy layers identified in the LYR table. If there is one layer, SINGLE_LAYERED is assigned, otherwise MULTI_LAYERED.
 
 | Values | Description |
 | :------------------- | :-------------- |
@@ -463,31 +461,20 @@ If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is a
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Attribute does not apply to this record (e.g. polygon does not have canopy information) |
 
-Notes:
-* In BC08 we do not have the complete dataset so different rules are used for LAYER assignment (see below). The documentation for the BC08 Rank 1 data state that all Rank 1 layers identified in the inventory are from multi-layered stands. We therefore assign M in all cases, even though the LYR table will only contain at most one layer for BC08.
-
 
 ### NUM_OF_LAYERS  
 
-**Old definition:**
-`Number of Layers is an attribute related to stand structure and identifies how many layers have been identified for a particular polygon.`
-
-**Proposed new defintion**
-The **NUM_OF_LAYERS** attribute identifies the number of LYR and NFL layers associated with the stand. **Note that NUM_OF_LAYERS is independant from STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. STAND_STRUCTURE could therefore be SINGLE_LAYERED, even when the number of layers is > 1.**
+The **NUM_OF_LAYERS** attribute identifies the number of LYR and NFL layers associated with the stand. Note that NUM_OF_LAYERS is independant from STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. STAND_STRUCTURE could therefore be SINGLE_LAYERED, even when the number of layers is > 1.
 
 | Values        | Description |
 | :------------ | :----- |
 | 1&#8209;9     | Number of vegetation or non vegetation layers assigned to a particular polygon. A maximum of 9 layers can be identified |
 | -8886         | Number of layers is unknown (e.g. there is disturbance info, but no reported layers) |
 
-Notes:
-
-- In BC08 we do not have the complete source data, only the rank 1 layer. NUM_OF_LAYERS in this case is still assigned as a count of the CASFRI layers available, but it does not represent the count of layers from the full source dataset. 
-
 
 ### MAP_SHEET_ID
 
-The **MAP_SHEET_ID** attribute identifies the map sheet to which belong the polygon in the source inventory.
+The **MAP_SHEET_ID** attribute identifies the map sheet to which the polygon in the source inventory belongs.
 
 | Values         | Description        |
 | :------------  | :------------ |
@@ -498,7 +485,7 @@ The **MAP_SHEET_ID** attribute identifies the map sheet to which belong the poly
 
 ### CASFRI_AREA
 
-The **CASFRI_AREA** attribute measures the area of each polygon in hectares (ha). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
+The **CASFRI_AREA** attribute measures the area of each polygon in hectares (ha). It is measured to 2 decimal places by PostGIS.
 
 | Values        | Description |
 | :-----        | :------------ |
@@ -507,7 +494,7 @@ The **CASFRI_AREA** attribute measures the area of each polygon in hectares (ha)
 
 ### CASFRI_PERIMETER
 
-The **CASFRI_PERIMETER** attribute measures the perimeter of each polygon in metres (m). It is calculated by PostgreSQL during the conversion phase. It is measured to 2 decimal places. This attribute is calculated by PostGIS.
+The **CASFRI_PERIMETER** attribute measures the perimeter of each polygon in metres (m). It is measured to 2 decimal places. This attribute is calculated by PostGIS.
 
 | Values | Description |
 | :----- | :-------------- |
@@ -516,7 +503,7 @@ The **CASFRI_PERIMETER** attribute measures the perimeter of each polygon in met
 
 ### SRC_INV_AREA
 
-The **SRC_INV_AREA** attribute measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is measured to 2 decimal places.
+The **SRC_INV_AREA** attribute measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is reported in CASFRI to 2 decimal places.
 
 | Values | Description        |
 | :----- | :------------ |
