@@ -3398,25 +3398,25 @@ UNION ALL
 SELECT '90.1'::text number,
        'TT_qc_countOfNotNull'::text function_tested,
        'Count 1 lyr'::text description,
-       TT_qc_countOfNotNull('JIR', '', '1') = 1 passed
+       TT_qc_countOfNotNull('1', '', '1') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '90.2'::text number,
        'TT_qc_countOfNotNull'::text function_tested,
        'Count 2 lyr'::text description,
-       TT_qc_countOfNotNull('1010', '', '2') = 2 passed
+       TT_qc_countOfNotNull('2', '', '2') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '90.3'::text number,
        'TT_qc_countOfNotNull'::text function_tested,
        'Count 3 lyr'::text description,
-       TT_qc_countOfNotNull('1010', 'AL', '3') = 3 passed
+       TT_qc_countOfNotNull('2', 'AL', '3') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '90.4'::text number,
        'TT_qc_countOfNotNull'::text function_tested,
        'Count 1 lyr, 1 nfl'::text description,
-       TT_qc_countOfNotNull('JIR', 'AL', '3') = 2 passed
+       TT_qc_countOfNotNull('1', 'AL', '3') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '90.5'::text number,
@@ -3430,25 +3430,25 @@ UNION ALL
 SELECT '91.1'::text number,
        'TT_qc_hasCountOfNotNull'::text function_tested,
        'Count 1 lyr'::text description,
-       TT_qc_hasCountOfNotNull('JIR', '', '1', 'TRUE') passed
+       TT_qc_hasCountOfNotNull('1', '', '1', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '91.2'::text number,
        'TT_qc_hasCountOfNotNull'::text function_tested,
        'Count 2 lyr'::text description,
-       TT_qc_hasCountOfNotNull('JIR', 'AL', '2', 'TRUE') passed
+       TT_qc_hasCountOfNotNull('1', 'AL', '2', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '91.3'::text number,
        'TT_qc_hasCountOfNotNull'::text function_tested,
        'Count 2 not exact'::text description,
-       TT_qc_hasCountOfNotNull('JIR', 'AL', '1', 'FALSE') passed
+       TT_qc_hasCountOfNotNull('1', 'AL', '1', 'FALSE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '91.4'::text number,
        'TT_qc_hasCountOfNotNull'::text function_tested,
        'Test fail'::text description,
-       TT_qc_hasCountOfNotNull('JIR', 'AL', '1', 'TRUE') IS FALSE passed
+       TT_qc_hasCountOfNotNull('1', 'AL', '1', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
  -- TT_lyr_layer_translation
 ---------------------------------------------------------
