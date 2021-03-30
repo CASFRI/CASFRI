@@ -595,7 +595,7 @@ The **STRUCTURE_RANGE** attribute identifies the height range (m) around stand m
 
 Notes:
 
-- Applies to the following inventories: AB, NT, SK (SFVI), and YT (TVI02).
+- Applies to the following inventories: AB, NT, SK (SFVI), and YT (YVI02).
 
 
 <a name=SOIL_MOIST_REG></a>
