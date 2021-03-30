@@ -38,7 +38,7 @@ ADD PRIMARY KEY (code);
 -------------------------------------------------------
 SELECT '1.1'::text number,
        'cas_all' target_table,
-       'Issue #623. Some NULL cas_id. Add primary key to CAS_ALL' description, 
+       'Issue #623: Some NULL cas_id. Add primary key to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'PK', 
@@ -136,7 +136,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.13'::text number,
        'cas_all' target_table,
-       'Issue #623. Some NULL cas_id. Ensure CAS table CAS_ID is 50 characters long' description, 
+       'Issue #623: Some NULL cas_id. Ensure CAS table CAS_ID is 50 characters long' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -178,7 +178,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.17'::text number,
        'cas_all' target_table,
-       'Issue #609. Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
+       'Issue #609: Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -203,7 +203,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.18'::text number,
        'cas_all' target_table,
-       'Issue #624. One geom = 0. Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624: One geom = 0. Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -213,7 +213,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.19'::text number,
        'cas_all' target_table,
-       'Issue #624. One geom = 0. Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624: One geom = 0. Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -258,7 +258,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.2'::text number,
        'dst_all' target_table,
-       'Issue #623. Some NULL cas_id. Add foreign key from DST_ALL to CAS_ALL' description, 
+       'Issue #623: Some NULL cas_id. Add foreign key from DST_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'FK', 
@@ -471,7 +471,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.25'::text number,
        'dst_all' target_table,
-       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_1 smaller than or equal to DIST_YEAR_2' description, 
+       'Issue #408: DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_1 smaller than or equal to DIST_YEAR_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -484,7 +484,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.26'::text number,
        'dst_all' target_table,
-       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 smaller than or equal to DIST_YEAR_3' description, 
+       'Issue #408: DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 smaller than or equal to DIST_YEAR_3' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -692,7 +692,7 @@ FROM (SELECT *
                         ARRAY['casfri50_lookup', 
                               'wetland_type'],
                         ARRAY['BOG', 'FEN', 'SWAMP', 'MARSH', 'SHALLOW_WATER', 'TIDAL_FLATS', 'ESTUARY', 'WETLAND', 'NOT_WETLAND',
-                              'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
+                              'NOT_APPLICABLE', 'NULL_VALUE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '3.11'::text number,
