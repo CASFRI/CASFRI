@@ -7,5 +7,5 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 6,MAP_SHEET_ID,text,notNull(map_sheet_id);notEmpty(map_sheet_id),copyText(map_sheet_id),Copies source value,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
-9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE)",copyDouble(src_inv_area),Copies source value to SRC_INV_AREA. Return OUT_OF_RANGE for any zero values.,TRUE
+9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE|-8888)",copyDouble(src_inv_area),Copies source value to SRC_INV_AREA. Return OUT_OF_RANGE for any zero values.,TRUE
 10,STAND_PHOTO_YEAR,integer,true(),copyInt(1990),Year of photo is 1990 for entire inventory,TRUE
