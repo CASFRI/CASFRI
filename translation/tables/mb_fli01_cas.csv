@@ -8,4 +8,4 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
 9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE|-8888)","divideDouble(src_inv_area, 10000)",Converts source area from m2 to ha. Return OUT_OF_RANGE for any zero values.,TRUE
-10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isInt(stand_photo_year);isGreaterThan(stand_photo_year, 0, FALSE|-8888);isBetween(stand_photo_year, 1900, 2020)",copyInt(stand_photo_year),Copy year value.,TRUE
+10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isInt(stand_photo_year);isGreaterThan(stand_photo_year, 0, FALSE|-8888);isBetween(stand_photo_year, 1900, 2020)",copyInt(stand_photo_year),Copies source value,TRUE
