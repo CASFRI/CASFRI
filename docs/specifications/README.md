@@ -111,6 +111,8 @@ Table 2. CASFRI error codes
 |                | NO_INTERSECT      | -7778 | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry). |
 | Translation    | TRANSLATION_ERROR | -3333 | Generic translation error (reported for a failed translation). |
 
+
+
 Four types of attribute have been identified in CASFRI and only specific codes are used for each type. They are:
 
 | Attribute&nbsp;type | Description | Possible&nbsp;error&nbsp;code| 
