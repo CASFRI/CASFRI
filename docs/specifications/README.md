@@ -28,9 +28,11 @@ Revised by: The CASFRI Project Team, March 31, 2021
 <a name=Intro></a>
 ## Introduction  
 
-CASFRI (Common Attribute Schema for Forest Resource Inventory) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resources inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. These attributes include species composition, tree height, crown closure, stand age, stand structure (e.g., as multiple canopy layers), soil moisture regime, site class or site index, non-forested and nonvegetated cover types, and disturbance history. The selection and definition of inventory attributes to be included in CASFRI constitute the data model for the specification (Cosco 2011). The year of aerial photography is also included at the polygon level where available or as an interval at the level of a given source data set. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. 
+CASFRI (Common Attribute Schema for Forest Resource Inventory) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resources inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. These attributes include species composition, tree height, crown closure, stand age, stand structure (e.g., as multiple canopy layers), soil moisture regime, site class or site index, non-forested and nonvegetated cover types, and disturbance history. The selection and definition of inventory attributes to be included in CASFRI constitute the data model for the specification (Cosco 2011)<sup>1</sup>. The year of aerial photography is also included at the polygon level where available or as an interval at the level of a given source data set. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. 
 
 CASFRI incorporates more than eighty distinct source inventory datasets. The original development team conducted an extensive review of previous and current inventory standards to tabulate their attributes and attribute codes. These are represented as code tables and translation rules between each inventory standard and the CASFRI data model (Cosco 2011). The translation of each inventory standard is encapsulated in a set of SQL functions and CSV tables that are processed using the <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL-Table-Translation-Framework</a>. For each inventory, the Framework reads the source data along with the rules specific to each inventory standard and translates it into CASFRI tables. The translation scripts have special rules for dealing with missing or invalid attributes values, or undefined attributes. The translation is otherwise lossless. The current version of CASFRI is stored partially normalized relational database within a spatial data warehouse managed by PostGIS, an open source Geographic Information System. It currently contains xx,xxx,xxx polygons covering a total area of y,yyy,yyy km². 
+
+<sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.  
 
 <a name=CAS></a>
 ## Common Attribute Schema  
@@ -933,11 +935,11 @@ The **DIST_YEAR_1** to **DIST_YEAR_3** attributes identify the year a disturbanc
 
 ### DIST_EXT_UPPER_1 - DIST_EXT_UPPER_3, DIST_EXT_LOWER_1 - DIST_EXT_LOWER_3
 
-The **DIST_EXT_UPPER_1** to **DIST_EXT_UPPER_3** and the **DIST_EXT_LOWER_1** to **DIST_EXT_LOWER_3** attributes provide an estimate of the proportion of the polygon that has been affected by the associated disturbance. Extent codes and classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event.    
+The **DIST_EXT_UPPER_1** to **DIST_EXT_UPPER_3** and the **DIST_EXT_LOWER_1** to **DIST_EXT_LOWER_3** attributes provide an estimate of the proportion of the polygon that has been affected by the associated disturbance. Extent codes and classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event. Usually, extents are reported in increments of 10%, but YT03 uses 5% increments so the lowest possible DIST_EXT_UPPER value is 5%.  
 
 | Values | Description |
 | :--------------------------------------------------------------------------------------------------------------- | :-------------- |
-| 10&#8209;100 | Upper bound of extent class |
+| 5&#8209;100 | Upper bound of extent class |
 | 1&#8209;95 | Lower bound of extent class |
 | -8888 | Source value is NULL |
 | -8887 | Attribute does not apply to this record |
