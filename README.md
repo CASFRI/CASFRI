@@ -275,7 +275,8 @@ The conversion and translation steps are designed to be run in parallel on a sin
 * **ON01 species codes [#678](https://github.com/edwardsmarc/CASFRI/issues/678) [#681](https://github.com/edwardsmarc/CASFRI/issues/681)** - Species codes appear to be a combination of multiple formats. Fix in [#678](https://github.com/edwardsmarc/CASFRI/issues/678) deals with most of them, but some species codes have a single letter code that is not included in the manual ([#681](https://github.com/edwardsmarc/CASFRI/issues/681)).
 * **NB site_index [#578](https://github.com/edwardsmarc/CASFRI/issues/578)** - SiteI attribute could possibly be used to get some site index information.
 
-# List of CASFRI specific helper functions found in [CASFRI/helperfunctions/](https://github.com/edwardsmarc/CASFRI/tree/master/helperfunctions)
+# List of CASFRI specific helper functions 
+**Found in [CASFRI/helperfunctions/](https://github.com/edwardsmarc/CASFRI/tree/master/helperfunctions)**
 * HasNFLInfo
 * ab_avi01_wetland_translation
 * ab_avi01_wetland_validation
