@@ -28,22 +28,21 @@ Revised by: The CASFRI Project Team, March 31, 2021
 <a name=Intro></a>
 ## Introduction  
 
-CASFRI (Common Attribute Schema for Forest Resource Inventory) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resource inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. This document accompanies version 5 of CASFRI and is based on the previous specification document written by Cosco in 2011<sup>1</sup>.
+CASFRI (Common Attribute Schema for Forest Resource Inventory) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resources inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. These attributes include species composition, tree height, crown closure, stand age, stand structure (e.g., as multiple canopy layers), soil moisture regime, site class or site index, non-forested and nonvegetated cover types, and disturbance history. The selection and definition of inventory attributes to be included in CASFRI constitute the data model for the specification (Cosco 2011). The year of aerial photography is also included at the polygon level where available or as an interval at the level of a given source data set. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. 
 
-CASFRI version 5 incorporates 49 distinct source inventory datasets and more will be added as they become available. The original development team conducted an extensive review of previous and current inventory standards to tabulate their attributes and attribute codes. These are represented as translation rules between each inventory standard and the CASFRI data model. The translation of each inventory standard is encapsulated in a set of SQL functions and CSV tables that are processed using the <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL-Table-Translation-Framework</a>. The translation scripts have special rules for dealing with missing or invalid attributes values, or undefined attributes. The translation is otherwise lossless. The current version of CASFRI is stored as a partially normalized relational database within a spatial data warehouse managed by PostGIS, an open source Geographic Information System.
-
-<sup>1</sup> Cosco, J. 2011. Common attribute schema (CAS) for forest inventories across Canada.
+CASFRI incorporates more than eighty distinct source inventory datasets. The original development team conducted an extensive review of previous and current inventory standards to tabulate their attributes and attribute codes. These are represented as code tables and translation rules between each inventory standard and the CASFRI data model (Cosco 2011). The translation of each inventory standard is encapsulated in a set of SQL functions and CSV tables that are processed using the <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL-Table-Translation-Framework</a>. For each inventory, the Framework reads the source data along with the rules specific to each inventory standard and translates it into CASFRI tables. The translation scripts have special rules for dealing with missing or invalid attributes values, or undefined attributes. The translation is otherwise lossless. The current version of CASFRI is stored partially normalized relational database within a spatial data warehouse managed by PostGIS, an open source Geographic Information System. It currently contains xx,xxx,xxx polygons covering a total area of y,yyy,yyy km². 
 
 <a name=CAS></a>
 ## Common Attribute Schema  
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for ecological modelling, forest management planning, and state of the environment reporting. Its development requires the selection of vegetation cover attributes and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
 
-Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada (Cosco 2011 <sup>1</sup>). Gillis and Leckie<sup>2</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography.
+Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada. Gillis and Leckie<sup>1</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography.  
 
 Based on the review, detailed tables were produced to summarize each inventory standard by province and territory. Two national parks, Wood Buffalo and Prince Albert are included. Conversion rule sets were then produced as part of the detailed tables to identify how each province or territory inventory attribute codes translate into CAS attribute codes. 
 
-Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is > and the upper bound is <). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, CASFRI captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta "B" - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a common resolution or set of values.  
+Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is > and the upper bound is <). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta "B" - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a  
+common resolution or set of values.  
 
 Attributes for CAS are stored in seven attribute files to facilitate conversion and translation:  
 
@@ -55,9 +54,7 @@ Attributes for CAS are stored in seven attribute files to facilitate conversion 
 6. Ecological specific (ECO) attributes - values representing ecosites and wetlands.  
 7. Geometry attributes - values pertaining to polygon geometry.
 
-<sup>1</sup> Cosco, J. 2011. Common attribute schema (CAS) for forest inventories across Canada.
-
-<sup>2</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.  
+<sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.  
 
 
 
@@ -970,7 +967,7 @@ The **LAYER** attribute identifies the specific layer to which the wetland is li
 
 ### WETLAND CLASSIFICATION
 
-The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>1</sup> and modified by Vitt and Halsey<sup>2,3</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland type (WETLAND_TYPE), wetland vegetation modifier (WET_VEG_COVER), wetland landform modifier (WET_LANDFORM_MOD), and wetland local modifier (WET_LOCAL_MOD).  
+The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>2</sup> and modified by Vitt and Halsey<sup>3,4</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland type (WETLAND_TYPE), wetland vegetation modifier (WET_VEG_COVER), wetland landform modifier (WET_LANDFORM_MOD), and wetland local modifier (WET_LOCAL_MOD).  
 
 Five major wetland types are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have strong cross-correlations. Two of the types; FEN and BOG, are peat-forming with greater than 40 cm of accumulated organics. The three non-peat forming wetland types are SHALLOW_WATER (shallow open water), MARSH (fresh or salt water), and SWAMP. A NOT_WETLAND type is also included. The Vegetation Modifier is assigned to a wetland type to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.  
 
@@ -1027,11 +1024,11 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | GRAMINOIDS      | Graminoids with shrub cover < 25%      |
 | NOT_APPLICABLE  | Attribute does not apply to this record |
 
-<sup>1</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  
+<sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  
 
-<sup>2</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.  
+<sup>3</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.  
 
-<sup>3</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.  
+<sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.  
 
   
 ### ECOSITE
