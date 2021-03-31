@@ -25,7 +25,7 @@ Note that forest resource inventories are not provided with this project due to 
 
 CASFRI follows the [Semantic Versioning 2.0.0](https://semver.org/) versioning scheme (major.minor.revision) adapted for a dataset. Increments in revision version numbers are for bug fixes. Increments in minor version numbers are for new features, support for new inventories, additions to the schema (new attributes), and bug fixes. Increments in minor versions do not break backward compatibility with previous CASFRI schemas. Increments in major version numbers are for schema changes that break backward compatibility with existing code (e.g. renaming attributes, removing attributes, and inventory support deprecation).
 
-The current version is 5.2.0 and is available for download at https://github.com/edwardsmarc/CASFRI/releases/tag/v5.2.0
+The current version is 5.3.0 and is available for download at https://github.com/edwardsmarc/CASFRI/releases/tag/v5.3.0
 
 # Directory structure
 <pre>
