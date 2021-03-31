@@ -1,14 +1,14 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 0,ROW_TRANSLATION_RULE,NA,"matchList(polytype,{'DAL','UCL','GRS','OMS','ISL','RCK','WAT'})",NA,Translate rows with NFL polytype. Note that none of these rows have species info so each polygon is either LYR or NFL., TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(orig_stand_id_1);notNull(orig_stand_id_2);notNull(ogc_fid),"padConcat({inventory_id, src_filename, orig_stand_id_1, orig_stand_id_2, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)","Concatenates five attributes to create CAS_ID. Note that polyid in ON02 can have up to 19 characters. To trace back to the source polyon, we split this into two strings during loading, polyid_1_10, and polyid_11_20. Concatenating these and dropping any x characters will return the original polyid identifier.",TRUE
-2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur,TRUE
+2,SOIL_MOIST_REG,text,false(|UNKNOWN_VALUE),nothingText(),Attribute does not occur. Returns UNKNOWN_VALUE.,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,LAYER,integer,true(),"on_fim02_countOfNotNull({species_layer1}, {species_layer2}, polytype, layer)","Count layers up to max_layer_number which is set by the createMappingsView() function in the workflow. Note that poly_type = 'FOR' when there is forest info, and when poly_type != 'FOR' ospcomp and uspcomp are always empty. So the max_layer_number for NFL row translations will be set to 3 by createMappingsView(), however it will always return 1. Note that polytype BSH and TMS are non-productive LYR value that are counted as valid layer 1 values.",TRUE
 5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
-6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),No crown closure value for nfl,TRUE
-7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),No crown closure value for nfl,TRUE
-8,HEIGHT_UPPER,double precision,false(),nothingDouble(),No height value for nfl,TRUE
-9,HEIGHT_LOWER,double precision,false(),nothingDouble(),No height value for nfl,TRUE
+6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),Attribute does not occur. No crown closure value for nfl,TRUE
+7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur. No crown closure value for nfl,TRUE
+8,HEIGHT_UPPER,double precision,false(),nothingDouble(),Attribute does not occur. No height value for nfl,TRUE
+9,HEIGHT_LOWER,double precision,false(),nothingDouble(),Attribute does not occur. No height value for nfl,TRUE
 10,NAT_NON_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'ISL','RCK','WAT'}|NOT_APPLICABLE)","mapText(polytype, {'ISL','RCK','WAT'}, {'ISLAND','ROCK_RUBBLE','RIVER'})",Maps source value to NAT_NON_VEG using list of values,TRUE
 11,NON_FOR_ANTH,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'DAL','UCL'}|NOT_APPLICABLE)","mapText(polytype, {'DAL','UCL'}, {'CULTIVATED','OTHER'})",Maps source value to NON_FOR_ANTH using list of values,TRUE
 12,NON_FOR_VEG,text,"notNull(polytype);notEmpty(polytype);matchList(polytype,{'GRS','OMS'}|NOT_APPLICABLE)","mapText(polytype, {'GRS','OMS'}, {'GRAMINOIDS','OPEN_MUSKEG'})",Maps source value to NON_FOR_VEG using list of values.,TRUE
