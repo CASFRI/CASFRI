@@ -51,8 +51,8 @@ Attributes for CAS are stored in seven attribute files to facilitate conversion 
 2. CAS Base Polygon (CAS) attributes - values that identify a polygon and provide a link between the CAS polygon and the original inventory polygon;  
 3. Forest-Level (LYR) attributes - values that pertain to the polygon for productive and non-productive forest land;  
 4. Non-Forest Land (NFL) attributes - values that pertain to naturally non-vegetated, non-forest anthropogenic, and non-forest vegetated land;  
-5. Disturbance history (DST) attributes - values that pertain to any disturbance that has occurred in a polygon including type, year, and extent; and  
-6. Ecological specific (ECO) attributes - values representing ecosites and wetlands.  
+5. Disturbance history (DST) attributes - values that pertain to any disturbance that has occurred in a polygon including type, year, and extent;
+6. Ecological specific (ECO) attributes - values representing ecosites and wetlands; and
 7. Geometry attributes - values pertaining to polygon geometry.
 
 <sup>1</sup> Cosco, J. 2011. Common attribute schema (CAS) for forest inventories across Canada.
@@ -105,7 +105,7 @@ Table 2. CASFRI error codes
 |                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK) or that the value should exist but can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct value because the source dataset is incomplete). This is different from NOT_APPLICABLE where the values clearly does not exist. |
 | Invalid&nbsp;values | OUT_OF_RANGE | -9999 | Value is outside the expected range of valid values (e.g. a percent value that is greater than 100. |
 |                | NOT_IN_SET        | -9998 | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory). |
-|                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does match expected format). |
+|                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does not match expected format). |
 |                | WRONG_TYPE        | -9995 | Value is of the wrong data type (e.g. a string or decimal value when an integer is expected). |
 | Geometric&nbsp;error | INVALID_GEOMETRY  | -7779 | Invalid geometry in one or more polygons. |
 |                | NO_INTERSECT      | -7778 | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry). |
@@ -536,9 +536,7 @@ See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 Identifies the layer number of the LYR or NFL row within a particular polygon. A maximum of 9 layers can be identified. No two LYR or NFL layers can have the same value within the same polygon.
 
-LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by Layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine.
-
-LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exsists, an NFL layer will get a value of 1.
+LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by Layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exists, an NFL layer will get a value of 1. In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine. 
 
 | Values   | Description   |
 | :------- | :------- |
