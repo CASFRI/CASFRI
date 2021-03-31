@@ -12,184 +12,11 @@
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
 -- CAUTION! This test requires the versions of TT_RowIsValid() and 
--- TT_HasPrecedence() from this file to be instanciated in order to work 
--- properly (not the one implemented in geohistory_test.sql)
+-- TT_HasPrecedence() from the workflow 01_PrepareGeoHistory.sql file to be 
+-- instanciated in order to work properly (not the one implemented in geohistory_test.sql)
 ---------------------------------------------
-CREATE SCHEMA IF NOT EXISTS geohistory;
+CREATE SCHEMA IF NOT EXISTS casfri50_history_test;
 ------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
-CREATE OR REPLACE FUNCTION TT_RowIsValid(
-  rowValues text[]
-)
-RETURNS boolean AS $$
-  DECLARE
-    val text;
-  BEGIN
-    FOREACH val IN ARRAY rowValues LOOP
-      IF val IS NOT NULL AND 
-         val != 'NULL_VALUE' AND 
-         val != 'EMPTY_STRING' AND 
-         val != 'NOT_APPLICABLE' AND 
-         val != 'UNKNOWN_VALUE' AND 
-         val != 'INVALID_VALUE' AND 
-         val != 'NOT_IN_SET' AND 
-         val != 'UNUSED_VALUE'  AND 
-         val != '-8888'  AND 
-         val != '-8887'  AND 
-         val != '-8886'  AND 
-         val != '-9997'  AND 
-         val != '-9999'  AND 
-         val != '-9995' THEN
-        RETURN TRUE;
-      END IF;
-    END LOOP;
-    RETURN FALSE;
-  END
-$$ LANGUAGE plpgsql VOLATILE;
-------------------------------------------------------------------------------
--- Create a table of inventory precedence rank. Polygons from inventories with 
--- higher ranks have precedence over polygons from inventories having lower 
--- ranks. 
--- This table is used by TT_HasPrecedence() to establish a precedence when two 
--- overlapping polygons have
---
---   1) the same photo_year and
---   2) all their attributes are meaningful (not NULL or '')
---
--- Inventory precedence rank is hence the third criteria when deciding which 
--- polygon has precedence over the other one when they are overlapping. This 
--- criteria is evidently useful only when two polygons are from two different 
--- overlapping inventories. Otherwise more recent polygons and more meaningful 
--- ones have precedence over older ones and less meaningful ones. The fourth 
--- criteria, if all other are equal or equivalent, is the unique identifier 
--- of the two polygons with polygons having higher ids having precedence over 
--- polygons having lower ones.
-------------------------------------------------------------------------------
-DROP TABLE IF EXISTS casfri50_history_test.inv_precedence;
-CREATE TABLE casfri50_history_test.inv_precedence AS 
-SELECT 'AB03' inv, 3 rank
-UNION ALL
-SELECT 'AB06', 6
-UNION ALL
-SELECT 'AB07', 7
-UNION ALL
-SELECT 'AB08', 8
-UNION ALL
-SELECT 'AB10', 10
-UNION ALL
-SELECT 'AB11', 11
-UNION ALL
-SELECT 'AB16', 16
-UNION ALL
-SELECT 'AB25', 25
-UNION ALL
-SELECT 'AB29', 29
-UNION ALL
-SELECT 'AB30', 30
-UNION ALL
-SELECT 'BC08', 8
-UNION ALL
-SELECT 'BC10', 10
-UNION ALL
-SELECT 'MB01', 1
-UNION ALL
-SELECT 'MB02', 2
-UNION ALL
-SELECT 'MB04', 4
-UNION ALL
-SELECT 'MB05', 5
-UNION ALL
-SELECT 'MB06', 6
-UNION ALL
-SELECT 'MB07', 7
-UNION ALL
-SELECT 'NB01', 1
-UNION ALL
-SELECT 'NB02', 2
-UNION ALL
-SELECT 'NL01', 1
-UNION ALL
-SELECT 'NS01', 1
-UNION ALL
-SELECT 'NS02', 2
-UNION ALL
-SELECT 'NS03', 3
-UNION ALL
-SELECT 'NT01', 1
-UNION ALL
-SELECT 'NT03', 3
-UNION ALL
-SELECT 'ON02', 2
-UNION ALL
-SELECT 'PC01', 1
-UNION ALL
-SELECT 'PC02', 2
-UNION ALL
-SELECT 'PE01', 1
-UNION ALL
-SELECT 'QC02', 2
-UNION ALL
-SELECT 'QC03', 3
-UNION ALL
-SELECT 'QC04', 4
-UNION ALL
-SELECT 'QC05', 5
-UNION ALL
-SELECT 'QC06', 6
-UNION ALL
-SELECT 'QC07', 7
-UNION ALL
-SELECT 'SK01', 1
-UNION ALL
-SELECT 'SK02', 2
-UNION ALL
-SELECT 'SK03', 3
-UNION ALL
-SELECT 'SK04', 5
-UNION ALL
-SELECT 'SK05', 4 -- SK05 has lower precedence than SK04
-UNION ALL
-SELECT 'SK06', 6
-UNION ALL
-SELECT 'YT01', 1
-UNION ALL
-SELECT 'YT02', 2;
-
--- Overwrite development and test TT_HasPrecedence() function to something
--- more simple and efficient taking inventory precedence into account as 
--- numbers and uid as text. Both are never NULLs. numInv and numUid are ignored.
-DROP FUNCTION IF EXISTS TT_HasPrecedence(text, text, text, text, boolean, boolean);
-CREATE OR REPLACE FUNCTION TT_HasPrecedence(
-  inv1 text, 
-  uid1 text,
-  inv2 text,
-  uid2 text,
-  numInv boolean DEFAULT FALSE,
-  numUid boolean DEFAULT FALSE
-)
-RETURNS boolean AS $$
-  DECLARE
-    inv1_num int;
-    inv2_num int;
-  BEGIN
-    IF inv1 != inv2 THEN
-      SELECT rank FROM casfri50_history_test.inv_precedence WHERE inv = inv1 INTO inv1_num;
-      SELECT rank FROM casfri50_history_test.inv_precedence WHERE inv = inv2 INTO inv2_num;
-    END IF;
-    RETURN inv1 > inv2 OR (inv1 = inv2 AND uid1 > uid2);
-  END
-$$ LANGUAGE plpgsql VOLATILE;
-
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
---SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
---SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
---SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
---SELECT TT_HasPrecedence('AB06', '3', 'AB16', '3'); -- false
---SELECT TT_HasPrecedence('AB06', '3', 'AB16', '2'); -- false
---SELECT TT_HasPrecedence('AB16', '3', 'AB06', '3'); -- true
---SELECT TT_HasPrecedence('AB16', '3', 'AB06', '2'); -- true
----------------------------------------------
 -- Create a spatial table of sampling areas having two 
 -- or more inventories with different photo_years
 DROP TABLE IF EXISTS casfri50_history_test.sampling_areas;
@@ -238,7 +65,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_nb1_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_nb1) foo
 ORDER BY id, valid_year_begin;
 
@@ -251,7 +78,7 @@ ORDER BY id, valid_year_begin;
 -- Generate history table taking attribute values validity into account
 SELECT * FROM casfri50_history_test.sampling_area_nb1 LIMIT 100;
 
-SELECT unnest(TT_TableColumnNames('geohistory', 'sampling_area_nb1'));
+SELECT unnest(TT_TableColumnNames('casfri50_history_test', 'sampling_area_nb1'));
 
 -- Check if any rows can be considered not valid (all requested attributes values are NULL or empty)
 SELECT * FROM casfri50_history_test.sampling_area_nb1
@@ -291,7 +118,7 @@ WHERE NOT TT_RowIsValid(ARRAY[lyr1_soil_moist_reg::text,
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_history_with_validity_new;
 CREATE TABLE casfri50_history_test.sampling_area_nb1_history_with_validity_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-FROM TT_TableGeoHistory('geohistory', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id', ARRAY['lyr1_soil_moist_reg', 
+FROM TT_TableGeoHistory('casfri50_history_test', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id', ARRAY['lyr1_soil_moist_reg', 
                                                                                                                      'lyr1_species_1', 
                                                                                                                      'lyr1_species_2', 
                                                                                                                      'lyr1_species_3', 
@@ -367,7 +194,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_nb2_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_nb2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_nb2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_nb2) foo
 ORDER BY id, valid_year_begin;
 
@@ -406,7 +233,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_nt1_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_nt1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_nt1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_nt1) foo
 ORDER BY id, valid_year_begin;
 
@@ -446,7 +273,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_nt2_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_nt2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_nt2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_nt2) foo
 ORDER BY id, valid_year_begin;
 
@@ -485,7 +312,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_bc1_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_bc1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_bc1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_bc1) foo
 ORDER BY id, valid_year_begin;
 
@@ -519,12 +346,12 @@ CREATE INDEX sampling_area_bc2_casid_idx ON casfri50_history_test.sampling_area_
 -- Display
 SELECT * FROM casfri50_history_test.sampling_area_bc2;
 
--- Generate history table - pg11: 2m33, 4395 rows, pg13: 25s, 4372 rows
+-- Generate history table - pg11: xmx, xxxx rows, pg13: 1m41, 8888 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_bc2_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_bc2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_bc2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_bc2) foo
 ORDER BY id, valid_year_begin;
 
@@ -564,7 +391,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_sk1_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_sk1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_sk1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_sk1) foo
 ORDER BY id, valid_year_begin;
 
@@ -604,7 +431,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_sk2_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_sk2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_sk2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_sk2) foo
 ORDER BY id, valid_year_begin;
 
@@ -643,7 +470,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_sk3_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_sk3', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_sk3', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_sk3) foo
 ORDER BY id, valid_year_begin;
 
@@ -682,7 +509,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_sk4_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                             'geohistory', 'sampling_area_sk4', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                             'casfri50_history_test', 'sampling_area_sk4', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_sk4) foo
 ORDER BY id, valid_year_begin;
 
@@ -708,7 +535,7 @@ SELECT '1.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nb1_history_new" and "sampling_area_nb1_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nb1_history_new'', ''geohistory'' , ''sampling_area_nb1_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_nb1_history_new'', ''casfri50_history_test'' , ''sampling_area_nb1_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_nb1_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_nb1_history b USING (id, poly_id)) foo
@@ -718,7 +545,7 @@ SELECT '1.2'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nb2_history_new" and "sampling_area_nb2_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nb2_history_new'', ''geohistory'' , ''sampling_area_nb2_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_nb2_history_new'', ''casfri50_history_test'' , ''sampling_area_nb2_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_nb2_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_nb2_history b USING (id, poly_id)) foo
@@ -728,7 +555,7 @@ SELECT '2.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nt1_history_new" and "sampling_area_nt1_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nt1_history_new'', ''geohistory'' , ''sampling_area_nt1_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_nt1_history_new'', ''casfri50_history_test'' , ''sampling_area_nt1_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_nt1_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_nt1_history b USING (id, poly_id)) foo
@@ -738,7 +565,7 @@ SELECT '2.2'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nt2_history_new" and "sampling_area_nt2_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nt2_history_new'', ''geohistory'' , ''sampling_area_nt2_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_nt2_history_new'', ''casfri50_history_test'' , ''sampling_area_nt2_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_nt2_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_nt2_history b USING (id, poly_id)) foo
@@ -748,7 +575,7 @@ SELECT '3.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_bc1_history_new" and "sampling_area_bc1_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_bc1_history_new'', ''geohistory'' , ''sampling_area_bc1_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_bc1_history_new'', ''casfri50_history_test'' , ''sampling_area_bc1_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_bc1_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_bc1_history b USING (id, poly_id)) foo
@@ -758,7 +585,7 @@ SELECT '3.2'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_bc2_history_new" and "sampling_area_bc2_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_bc2_history_new'', ''geohistory'' , ''sampling_area_bc2_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_bc2_history_new'', ''casfri50_history_test'' , ''sampling_area_bc2_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_bc2_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_bc2_history b USING (id, poly_id)) foo
@@ -768,7 +595,7 @@ SELECT '4.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk1_history_new" and "sampling_area_sk1_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_sk1_history_new'', ''geohistory'' , ''sampling_area_sk1_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_sk1_history_new'', ''casfri50_history_test'' , ''sampling_area_sk1_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_sk1_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk1_history b USING (id, poly_id)) foo
@@ -778,7 +605,7 @@ SELECT '4.2'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk2_history_new" and "sampling_area_sk2_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_sk2_history_new'', ''geohistory'' , ''sampling_area_sk2_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_sk2_history_new'', ''casfri50_history_test'' , ''sampling_area_sk2_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_sk2_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk2_history b USING (id, poly_id)) foo
@@ -788,7 +615,7 @@ SELECT '4.3'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk3_history_new" and "sampling_area_sk3_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_sk3_history_new'', ''geohistory'' , ''sampling_area_sk3_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_sk3_history_new'', ''casfri50_history_test'' , ''sampling_area_sk3_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_sk3_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk3_history b USING (id, poly_id)) foo
@@ -798,7 +625,7 @@ SELECT '4.4'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk4_history_new" and "sampling_area_sk4_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_sk4_history_new'', ''geohistory'' , ''sampling_area_sk4_history'', ''id, poly_id'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_sk4_history_new'', ''casfri50_history_test'' , ''sampling_area_sk4_history'', ''id, poly_id'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_sk4_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk4_history b USING (id, poly_id)) foo
