@@ -62,7 +62,7 @@ The production process of CASFRI 5 requires:
 
 * [GDAL v3.1.x](https://www.gisinternals.com/query.html?content=filelist&file=release-1911-x64-gdal-3-1-4-mapserver-7-6-1.zip) and access to a Bash or a Batch shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.x. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34). Production has also been tested using GDAL 1.11.4.
 
-* PostgreSQL 13 and PostGIS 3.1.1 to store and translate the database (PostgreSQL 9.6/11/12 and PostGIS 2.3.x have also been tested). More recent versions should work as well.
+* PostgreSQL 13 and PostGIS 3.1.1 to store and translate the database (PostgreSQL 11/12 and PostGIS 2.3.x have also been tested). More recent versions should work as well.
 
 * The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) to translate the database.
 
