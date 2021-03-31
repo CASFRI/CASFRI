@@ -119,8 +119,8 @@ Four types of attribute have been identified in CASFRI and only specific codes a
 |:-------------- |:--------- |:---------:|
 | text | Arbitrary text values. e.g. the MAP_SHEET_ID attribute | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
 | code | Codified values. e.g. most text CASFRI attributes: SPECIES_X, DIST_TYPE_X and NFL types | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, NOT_IN_SET |
-| number | Numeric values. e.g. SRC_INV_AREA, PHOTO_YEAR, LAYER, LAYER_RANK | NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
-| range | Bounded numeric values. e.g. all HEIGHT, CROWN_CLOSURE and ORIGIN CASFRI attributes as well as SPECIES_PER_X| NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE, OUT_OF_RANGE |
+| number | Numeric values. e.g. LAYER, LAYER_RANK | NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
+| range | Bounded numeric values. e.g. all HEIGHT, CROWN_CLOSURE and ORIGIN CASFRI attributes as well as SRC_INV_AREA, PHOTO_YEAR and SPECIES_PER_X| NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE, OUT_OF_RANGE |
 
 * The main difference between the text and the number type is that empty numbers can only be NULLs (NULL_VALUE) whereas empty text values can be either NULLs (NULL_VALUE) or empty strings (EMPTY_STRING).
 * The main difference between the text and the code type is that wrong codes are not in the set of acceptable values (NOT_IN_SET) instead of being invalid (INVALID_VALUE).
@@ -512,7 +512,7 @@ The **SRC_INV_AREA** attribute measures the area of each polygon in hectares (ha
 | -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
 | -9997 | Source value is invalid |
-
+| -9999 | Source value is outside expected range |
 
 ### STAND_PHOTO_YEAR
 
@@ -521,7 +521,11 @@ The **STAND_PHOTO_YEAR** attribute identifies the year in which the aerial photo
 | Values      | Description      |
 | :---------- | :---------- |
 | 1900&#8209;2020 | Identifies the year in which the aerial photography program was conducted |
-
+| -8888 | Source value is NULL |
+| -8887 | Attribute does not apply to this record |
+| -8886 | Source value should exist but is unknown |
+| -9997 | Source value is invalid |
+| -9999 | Source value is outside expected range |
 
 <a name=LYR_attributes></a>
 ## LYR Attributes
