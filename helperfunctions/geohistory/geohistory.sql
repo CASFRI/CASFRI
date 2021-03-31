@@ -108,6 +108,335 @@ RETURNS geometry AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
+-- TT_SplitByGrid
+--
+--   geom geometry - Geometry to split.
+--
+--   xgridsize double precision  - Horizontal grid cell size.
+--
+--   ygridsize double precision  - Vertical grid cell size.
+--
+--   xgridoffset double precision  - Horizontal grid offset.
+--
+--   ygridoffset double precision  - Vertical grid offset.
+--
+--   RETURNS TABLE (geom geometry, tid int8, x int, y int, tgeom geometry)
+--
+-- Set function returnings the geometry splitted in multiple parts by a grid of the
+-- specified size and optionnaly shifted by the specified offset. Each part comes
+-- with a unique identifier for each cell of the grid it intersects with, the x and
+-- y coordinate of the cell and a geometry representin the cell itself.
+-- The unique identifier returned remains the same for any subsequent call to the
+-- function so that all geometry parts inside the same cell, from call to call get
+-- the same uid.
+--
+-- This function is usefull to parallelize some queries.
+--
+--
+-- Self contained and typical example:
+--
+-- WITH splittable AS (
+--   SELECT 1 id, ST_GeomFromText('POLYGON((0 1, 3 2, 3 0, 0 1))') geom
+--   UNION ALL
+--   SELECT 2 id, ST_GeomFromText('POLYGON((1 1, 4 2, 4 0, 1 1))')
+--   UNION ALL
+--   SELECT 3 id, ST_GeomFromText('POLYGON((2 1, 5 2, 5 0, 2 1))')
+--   UNION ALL
+--   SELECT 4 id, ST_GeomFromText('POLYGON((3 1, 6 2, 6 0, 3 1))')
+-- )
+-- SELECT (TT_SplitByGrid(geom, 0.5)).* FROM splittable
+--
+-----------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_SplitByGrid(geometry, double precision, double precision, double precision, double precision);
+CREATE OR REPLACE FUNCTION TT_SplitByGrid(
+    ingeom geometry,
+    xgridsize double precision,
+    ygridsize double precision DEFAULT NULL,
+    xgridoffset double precision DEFAULT 0.0,
+    ygridoffset double precision DEFAULT 0.0
+)
+RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
+    DECLARE
+        width int;
+        height int;
+        xminrounded double precision;
+        yminrounded double precision;
+        xmaxrounded double precision;
+        ymaxrounded double precision;
+        xmin double precision := ST_XMin(ingeom);
+        ymin double precision := ST_YMin(ingeom);
+        xmax double precision := ST_XMax(ingeom);
+        ymax double precision := ST_YMax(ingeom);
+        x int;
+        y int;
+        env geometry;
+        xfloor int;
+        yfloor int;
+    BEGIN
+        IF ingeom IS NULL OR ST_IsEmpty(ingeom) THEN
+            RETURN QUERY SELECT ingeom, NULL::int8, NULL::int, NULL::int, NULL::geometry ;
+            RETURN;
+        END IF;
+        IF xgridsize IS NULL OR xgridsize <= 0 THEN
+            RAISE NOTICE 'Defaulting xgridsize to 1...';
+            xgridsize = 1;
+        END IF;
+        IF ygridsize IS NULL OR ygridsize <= 0 THEN
+            ygridsize = xgridsize;
+        END IF;
+        xfloor = floor((xmin - xgridoffset) / xgridsize);
+        xminrounded = xfloor * xgridsize + xgridoffset;
+        xmaxrounded = ceil((xmax - xgridoffset) / xgridsize) * xgridsize + xgridoffset;
+        yfloor = floor((ymin - ygridoffset) / ygridsize);
+        yminrounded = yfloor * ygridsize + ygridoffset;
+        ymaxrounded = ceil((ymax - ygridoffset) / ygridsize) * ygridsize + ygridoffset;
+
+        width = round((xmaxrounded - xminrounded) / xgridsize);
+        height = round((ymaxrounded - yminrounded) / ygridsize);
+
+        FOR x IN 1..width LOOP
+            FOR y IN 1..height LOOP
+                env = ST_MakeEnvelope(xminrounded + (x - 1) * xgridsize, yminrounded + (y - 1) * ygridsize, xminrounded + x * xgridsize, yminrounded + y * ygridsize, ST_SRID(ingeom));
+                IF ST_Intersects(env, ingeom) AND (
+                     ST_Dimension(ST_Intersection(ingeom, env)) = ST_Dimension(ingeom) OR
+                     ST_GeometryType(ST_Intersection(ingeom, env)) = ST_GeometryType(ingeom)
+                   ) 
+                   THEN
+                   geom = ST_Intersection(ingeom, env);
+                   tid = ((xfloor::int8 + x) * 10000000 + (yfloor::int8 + y))::int8;
+                   tx = xfloor + x;
+                   ty = yfloor + y;
+                   tgeom = env;
+                   RETURN NEXT;
+                 END IF;
+            END LOOP;
+        END LOOP;
+    RETURN;
+    END;
+$$ LANGUAGE plpgsql VOLATILE PARALLEL SAFE;
+/*
+SELECT * FROM TT_SplitByGrid(ST_Buffer(ST_MakePoint(0, 0), 100), 100);
+*/
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+-- TT_PrintMessage
+--
+-- Print debug information when executing SQL
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_PrintMessage(text);
+CREATE OR REPLACE FUNCTION TT_PrintMessage(
+  msg text
+)
+RETURNS boolean AS $$
+  DECLARE
+  BEGIN
+    RAISE NOTICE '%', msg;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE 'plpgsql' IMMUTABLE STRICT;
+------------------------------------------------------------------------------
+-- TT_BufferedSmooth
+--
+-- Simplify a polygon by adding and removing a buffer around it
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_BufferedSmooth(geometry, double precision);
+CREATE OR REPLACE FUNCTION TT_BufferedSmooth(
+    geom geometry,
+    bufsize double precision DEFAULT 0
+)
+RETURNS geometry AS $$
+  SELECT ST_Buffer(ST_Buffer($1, $2), -$2)
+$$ LANGUAGE sql IMMUTABLE;
+------------------------------------------------------------------------------
+-- TT_RemoveHoles
+--
+-- Remove all hole from a polygon or a multipolygon
+-- Used by TT_IsSurrounded_FinalFN2()
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision);
+CREATE OR REPLACE FUNCTION TT_RemoveHoles(
+  inGeom geometry,
+  minArea double precision DEFAULT NULL
+)
+RETURNS geometry AS $$
+  DECLARE
+    returnGeom geometry;
+  BEGIN
+    IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
+      RETURN inGeom;
+    END IF;
+--RAISE NOTICE 'inGeom is %', CASE WHEN ST_IsValid(inGeom) THEN 'VALID' ELSE 'INVALID' END;
+    WITH all_geoms AS (
+      SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
+    ), polygons AS (
+      SELECT ST_MakePolygon(ST_ExteriorRing(a.geom),  
+                       ARRAY(SELECT ST_ExteriorRing(b.geom) inner_ring
+                             FROM (SELECT (ST_DumpRings(geom)).*) b 
+                             WHERE b.path[1] > 0 AND
+                                   CASE WHEN minArea IS NULL OR minArea = 0 THEN FALSE ELSE TRUE END AND
+                                   ST_Area(b.geom) >= minArea
+                            )
+                           ) final_geom
+      FROM all_geoms a
+    )
+    SELECT ST_BuildArea(ST_Union(final_geom)) geom
+    FROM polygons INTO returnGeom;
+
+    RETURN returnGeom;
+  END;
+$$ LANGUAGE 'plpgsql' IMMUTABLE;
+------------------------------------------------------------------------------
+-- TT_BiggestSubPolygons
+--
+-- Return only the biggest polygons from a multipolygon
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_BiggestSubPolygons(geometry, double precision);
+CREATE OR REPLACE FUNCTION TT_BiggestSubPolygons(
+  inGeom geometry,
+  minArea double precision DEFAULT NULL
+)
+RETURNS geometry AS $$
+  DECLARE
+    returnGeom geometry;
+  BEGIN
+    IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
+      RETURN inGeom;
+    END IF;
+    WITH all_geoms AS (
+      SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
+    )
+    SELECT ST_Union(geom) geom
+    FROM all_geoms
+    WHERE ST_Area(geom) >= minArea INTO returnGeom;
+
+    RETURN returnGeom;
+  END;
+$$ LANGUAGE 'plpgsql' IMMUTABLE;
+
+------------------------------------------------------------------------------
+-- TT_SuperUnion
+--
+-- ST_Union() all polygons in a two stage process 
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text);
+CREATE OR REPLACE FUNCTION TT_SuperUnion(
+  schemaName name,
+  tableName name,
+  geomColumnName name,
+  filterStr text DEFAULT NULL
+)
+RETURNS geometry AS $$
+  DECLARE
+    queryStr text;
+    returnGeom geometry;
+  BEGIN
+    queryStr = 'WITH gridded AS (' ||
+                  'SELECT TT_SplitByGrid(' || geomColumnName ||', 10000) split ' ||
+                  'FROM ' || TT_FullTableName(schemaName, tableName) ||
+                  CASE WHEN NOT filterStr IS NULL THEN ' WHERE ' || filterStr ELSE '' END ||
+               '), first_level_union AS (' ||
+                  'SELECT ST_Union((split).geom) geom ' ||
+                  'FROM gridded ' ||
+                  'GROUP BY (split).tid' ||
+               ') ' ||
+               'SELECT ST_Union(geom) geom ' ||
+               'FROM first_level_union;';
+    --RAISE NOTICE 'queryStr=%', queryStr;
+    EXECUTE queryStr INTO returnGeom;
+    RETURN returnGeom;
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
+-- Test
+-- SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ProduceDerivedCoverages(text, geometry, double precision, boolean, double precision);
+CREATE OR REPLACE FUNCTION TT_ProduceDerivedCoverages(
+  fromInv text,
+  detailedGeom geometry, 
+  minArea double precision DEFAULT 10000000,
+  sparse boolean DEFAULT FALSE,
+  sparseBuf double precision DEFAULT 5000
+)
+RETURNS boolean AS $$
+  DECLARE
+    tableNameArr text[] = ARRAY['detailed', 'noholes', 'noislands', 'simplified', 'smoothed'];
+    tableName text;
+    queryStr text;
+    outGeom geometry;
+    noHolesGeom geometry;
+    noIslandsGeom geometry;
+    simplifiedGeom geometry;
+    smoothedGeom geometry;
+    cnt int;
+  BEGIN
+    noHolesGeom = TT_RemoveHoles(detailedGeom, minArea);
+    noIslandsGeom = TT_BiggestSubPolygons(noHolesGeom, minArea);
+    simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 100);
+    IF sparse THEN
+      smoothedGeom = TT_BiggestSubPolygons(TT_BufferedSmooth(simplifiedGeom, sparseBuf), minArea);
+    ELSE
+      smoothedGeom = TT_BiggestSubPolygons(TT_BufferedSmooth(simplifiedGeom, 100), minArea);
+    END IF;
+    SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE inv = fromInv INTO cnt;
+    FOREACH tableName IN ARRAY tableNameArr LOOP
+      outGeom = CASE WHEN tableName = 'detailed' THEN detailedGeom
+                     WHEN tableName = 'noholes' THEN noHolesGeom
+                     WHEN tableName = 'noislands' THEN noIslandsGeom
+                     WHEN tableName = 'simplified' THEN simplifiedGeom
+                     WHEN tableName = 'smoothed' THEN smoothedGeom
+                END;
+      queryStr = 'CREATE TABLE IF NOT EXISTS casfri50_coverage.' || tableName || '
+                 (inv text, nb_polys int, nb_points int, geom geometry);
+                 DELETE FROM casfri50_coverage.' || tableName || '
+                 WHERE inv = ''' || upper(fromInv) || ''';
+                 INSERT INTO casfri50_coverage.' || tableName || ' (inv, nb_polys, nb_points, geom) VALUES ($2, $3, $4, $5);';
+      EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
+    END LOOP;
+    RETURN TRUE;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
+
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ProduceInvGeoHistory(text, boolean);
+CREATE OR REPLACE FUNCTION TT_ProduceInvGeoHistory(
+  inv text,
+  individualTables boolean DEFAULT FALSE
+)
+RETURNS boolean AS $$
+  DECLARE
+    queryStr text;
+  BEGIN
+    IF individualTables THEN
+      queryStr = '
+DROP TABLE IF EXISTS casfri50_history.' || lower(inv) || '_history;
+CREATE TABLE casfri50_history.' || lower(inv) || '_history AS';
+    ELSE
+      queryStr = '
+INSERT INTO casfri50_history.geohistory';
+    END IF;
+    queryStr = queryStr || 'WITH geohistory_gridded AS (
+      SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
+                                   ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
+      FROM casfri50_history.casflat_gridded
+      WHERE inventory_id = ''' || inv || '''
+      ORDER BY id, poly_id
+    ), wkb_version AS (
+      SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
+      FROM geohistory_gridded
+      GROUP BY id
+    )
+    SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
+    FROM wkb_version;';
+    EXECUTE queryStr;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-------------------------------------------------------------------------------
 -- TT_GeoHistoryOverlaps()
 ------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_GeoHistoryOverlaps(geometry, geometry);
@@ -429,7 +758,7 @@ CREATE AGGREGATE TT_ValidYearUnion(
 -- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
 -- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, int, boolean, geometry, name, name, name, name, name, name, name[]);
+--DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, int, boolean, geometry, name, name, name, name, name, name, name[]);
 CREATE OR REPLACE FUNCTION TT_PolygonGeoHistory(
   poly_inv text,
   poly_row_id text,
@@ -633,7 +962,7 @@ RETURNS TABLE (id text,
   END
 $$ LANGUAGE plpgsql VOLATILE;
 
-DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, geometry, name, name, name, name, name, name, name[]);
+--DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, geometry, name, name, name, name, name, name, name[]);
 CREATE OR REPLACE FUNCTION TT_PolygonGeoHistory(
   poly_inv text,
   poly_row_id text,
@@ -659,7 +988,7 @@ RETURNS TABLE (id text,
 $$ LANGUAGE sql VOLATILE;
 
 ---------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_TableGeoHistory(name, name, name, name, name, name, name[]);
+--DROP FUNCTION IF EXISTS TT_TableGeoHistory(name, name, name, name, name, name, name[]);
 CREATE OR REPLACE FUNCTION TT_TableGeoHistory(
   schemaName name,
   tableName name,
@@ -742,7 +1071,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------
 -- TT_GeoOblique()
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoOblique(geometry, int, double precision, double precision);
+--DROP FUNCTION IF EXISTS TT_GeoOblique(geometry, int, double precision, double precision);
 CREATE OR REPLACE FUNCTION TT_GeoOblique(
   geom geometry,
   year int,
@@ -756,7 +1085,7 @@ $$ LANGUAGE sql IMMUTABLE;
 ------------------------------------------------------------------
 -- TT_GeoHistoryOblique()
 ------------------------------------------------------------------
-DROP FUNCTION IF EXISTS TT_GeoHistoryOblique(name, name, name, name, name, text, text[], double precision, double precision);
+--DROP FUNCTION IF EXISTS TT_GeoHistoryOblique(name, name, name, name, name, text, text[], double precision, double precision);
 CREATE OR REPLACE FUNCTION TT_GeoHistoryOblique(
   schemaName name,
   tableName name,
