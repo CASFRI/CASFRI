@@ -38,7 +38,7 @@ ADD PRIMARY KEY (code);
 -------------------------------------------------------
 SELECT '1.1'::text number,
        'cas_all' target_table,
-       'Issue #623. Some NULL cas_id. Add primary key to CAS_ALL' description, 
+       'Issue #623: Some NULL cas_id. Add primary key to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'PK', 
@@ -136,7 +136,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.13'::text number,
        'cas_all' target_table,
-       'Issue #623. Some NULL cas_id. Ensure CAS table CAS_ID is 50 characters long' description, 
+       'Issue #623: Some NULL cas_id. Ensure CAS table CAS_ID is 50 characters long' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -154,7 +154,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.15'::text number,
        'cas_all' target_table,
-       'Issue #609. Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table NUM_OF_LAYERS is greater than 0' description, 
+       'Ensure CAS table NUM_OF_LAYERS is greater than 0' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -178,7 +178,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.17'::text number,
        'cas_all' target_table,
-       'Issue #609. Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
+       'Issue #609: Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -203,7 +203,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.18'::text number,
        'cas_all' target_table,
-       'Issue #624. One geom = 0. Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624: One geom = 0. Ensure CAS table CASFRI_AREA is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -213,7 +213,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.19'::text number,
        'cas_all' target_table,
-       'Issue #624. One geom = 0. Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #624: One geom = 0. Ensure CAS table CASFRI_PERIMETER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -258,7 +258,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.2'::text number,
        'dst_all' target_table,
-       'Issue #623. Some NULL cas_id. Add foreign key from DST_ALL to CAS_ALL' description, 
+       'Issue #623: Some NULL cas_id. Add foreign key from DST_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'FK', 
@@ -400,7 +400,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.19'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_TYPE_1 values match the corresponding lookup table. Cannot be NOT_APPLICABLE' description, 
+       'Issue #696: INVALID_VALUE should be NOT_IN_SET. Ensure DST table DIST_TYPE_1 values match the corresponding lookup table. Cannot be NOT_APPLICABLE' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'LOOKUP', 
@@ -435,7 +435,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.22'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_YEAR_1 is greater than 1000 and smaller than 2020' description, 
+       'Issue #697: NOT_IN_SET instead of OUT_OF_RANGE. Ensure DST table DIST_YEAR_1 is greater than 1000 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -447,7 +447,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.23'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_YEAR_2 is greater than 1900 and smaller than 2020' description, 
+       'Issue #697: NOT_IN_SET instead of OUT_OF_RANGE. Ensure DST table DIST_YEAR_2 is greater than 1900 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -459,7 +459,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.24'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_YEAR_3 is greater than 1900 and smaller than 2020' description, 
+       'Issue #697: NOT_IN_SET instead of OUT_OF_RANGE. Ensure DST table DIST_YEAR_3 is greater than 1900 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -471,7 +471,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.25'::text number,
        'dst_all' target_table,
-       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_1 smaller than or equal to DIST_YEAR_2' description, 
+       'Issue #408: DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_1 smaller than or equal to DIST_YEAR_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -484,7 +484,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.26'::text number,
        'dst_all' target_table,
-       'Issue #408. DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 smaller than or equal to DIST_YEAR_3' description, 
+       'Issue #408: DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 smaller than or equal to DIST_YEAR_3' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -533,7 +533,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.30'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10 and smaller than 100' description, 
+       'Issue #698: 5 is not an acceptable value. Ensure DST table DIST_EXT_UPPER_1 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -545,7 +545,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.31'::text number,
        'dst_all' target_table,
-       'Ensure DST table DIST_EXT_UPPER_2 is greater than 10 and smaller than 100' description, 
+       'Issue #698. 5 is not an acceptable value. Ensure DST table DIST_EXT_UPPER_2 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -692,7 +692,7 @@ FROM (SELECT *
                         ARRAY['casfri50_lookup', 
                               'wetland_type'],
                         ARRAY['BOG', 'FEN', 'SWAMP', 'MARSH', 'SHALLOW_WATER', 'TIDAL_FLATS', 'ESTUARY', 'WETLAND', 'NOT_WETLAND',
-                              'NOT_APPLICABLE']) AS (passed boolean, cstr_query text)) foo
+                              'NOT_APPLICABLE', 'NULL_VALUE']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '3.11'::text number,
@@ -709,7 +709,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.12'::text number,
        'eco_all' target_table,
-       'Ensure ECO table WET_LANDFORM_MOD values match the corresponding lookup table. Cannot be TT_IsMissingOrNotInSetCode()' description, 
+       'Issues #699. Extra space in "NO_PERMAFROST_PATTERNING ". Ensure ECO table WET_LANDFORM_MOD values match the corresponding lookup table. Cannot be TT_IsMissingOrNotInSetCode()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
@@ -1108,7 +1108,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.44'::text number,
        'lyr_all' target_table,
-       'Issue #613. TRANSLATION_ERROR. Ensure LYR table HEIGHT_LOWER is greater than or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table HEIGHT_LOWER is greater than or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1120,7 +1120,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.45'::text number,
        'lyr_all' target_table,
-       'Issue #613. TRANSLATION_ERROR. Ensure LYR table HEIGHT_UPPER is greater than 0, smaller than or equal to 100 and greater than HEIGHT_LOWER' description, 
+       'Ensure LYR table HEIGHT_UPPER is greater than 0, smaller than or equal to 100 and greater than HEIGHT_LOWER' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1145,7 +1145,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.47'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table PRODUCTIVITY values match the corresponding lookup table' description, 
+       'Issue #701: PRODUCTIVE instead of PRODUCTIVE_FOREST. Ensure LYR table PRODUCTIVITY values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
@@ -1169,7 +1169,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.49'::text number,
        'lyr_all' target_table,
-       'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
+       'Issue #700. Wrong error code INVALID_VALUE instead of NOT_IN_SET. Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -1178,7 +1178,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.50'::text number,
        'lyr_all' target_table,
-       'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_2 values match the corresponding lookup table' description, 
+       'Ensure LYR table SPECIES_2 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -1187,7 +1187,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.51'::text number,
        'lyr_all' target_table,
-       'Issue #614. Wrong error code -8886. Ensure LYR table SPECIES_3 values match the corresponding lookup table' description, 
+       'Ensure LYR table SPECIES_3 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -1379,7 +1379,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.69'::text number,
        'lyr_all' target_table,
-       'Issue #616. Wrong error code (-9998). Ensure LYR table ORIGIN_LOWER is greater than 1000 and smaller than 2050' description, 
+       'Issue #703. Missing -9999 (OUT_OF_RANGE). Ensure LYR table ORIGIN_LOWER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1391,7 +1391,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.70'::text number,
        'lyr_all' target_table,
-       'Issue #616. Wrong error code (-9998). Ensure LYR table ORIGIN_UPPER is greater than 1000 and smaller than 2050' description, 
+       'Issue #703. Missing -9999 (OUT_OF_RANGE). Ensure LYR table ORIGIN_UPPER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1558,7 +1558,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.15'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table SOIL_MOIST_REG values match the corresponding lookup table' description, 
+       'Issue #702. -8886 instead of UNKNOWN_VALUE. Ensure NFL table SOIL_MOIST_REG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'FK', 
@@ -1675,7 +1675,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.25'::text number,
        'nfl_all' target_table,
-       'Issue #617. TRANSLATION_ERROR. Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
+       'Ensure NFL table NON_FOR_ANTH values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
@@ -1687,7 +1687,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.26'::text number,
        'nfl_all' target_table,
-       'Issue #347: Invalid or undocumented codes. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
+       'Issue #704: TRANSLATION_ERROR. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
@@ -1700,12 +1700,12 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.27'::text number,
        'nfl_all' target_table,
-       'Issue #526 #365: Exactly one NFL record per row, except in AB03, AB10, AB25 and AB29 where multiple attributes per row are needed when structure is horizontal.' description, 
+       'Issue #526: Exactly one NFL record per row, except in AB03, AB25, AB10, AB16 and AB29 where multiple attributes per row are needed when structure is horizontal.' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
                         ARRAY['one_nfl_per_row',
-                              'LEFT(cas_id, 4) IN(''AB03'', ''AB25'', ''AB29'', ''AB10'') OR
+                              'LEFT(cas_id, 4) IN(''AB03'', ''AB10'', ''AB16'', ''AB25'', ''AB29'') OR
 							  (
 							  ((non_for_veg=ANY(TT_IsMissingOrNotInSetCode()))::int + (nat_non_veg=ANY(TT_IsMissingOrNotInSetCode()))::int + (non_for_anth=ANY(TT_IsMissingOrNotInSetCode()))::int)=2
 							  )
