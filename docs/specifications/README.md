@@ -28,23 +28,22 @@ Revised by: The CASFRI Project Team, March 31, 2021
 <a name=Intro></a>
 ## Introduction  
 
-CASFRI (Common Attribute Schema for Forest Resource Inventory) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resources inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. These attributes include species composition, tree height, crown closure, stand age, stand structure (e.g., as multiple canopy layers), soil moisture regime, site class or site index, non-forested and nonvegetated cover types, and disturbance history. The selection and definition of inventory attributes to be included in CASFRI constitute the data model for the specification (Cosco 2011)<sup>1</sup>. The year of aerial photography is also included at the polygon level where available or as an interval at the level of a given source data set. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. 
+CASFRI (Common Attribute Schema for Forest Resource Inventory) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resource inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. This document accompanies version 5 of CASFRI and is based on the previous specification document written by Cosco in 2011<sup>1</sup>.
 
-CASFRI incorporates more than eighty distinct source inventory datasets. The original development team conducted an extensive review of previous and current inventory standards to tabulate their attributes and attribute codes. These are represented as code tables and translation rules between each inventory standard and the CASFRI data model (Cosco 2011). The translation of each inventory standard is encapsulated in a set of SQL functions and CSV tables that are processed using the <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL-Table-Translation-Framework</a>. For each inventory, the Framework reads the source data along with the rules specific to each inventory standard and translates it into CASFRI tables. The translation scripts have special rules for dealing with missing or invalid attributes values, or undefined attributes. The translation is otherwise lossless. The current version of CASFRI is stored partially normalized relational database within a spatial data warehouse managed by PostGIS, an open source Geographic Information System. It currently contains xx,xxx,xxx polygons covering a total area of y,yyy,yyy km². 
+CASFRI version 5 incorporates 49 distinct source inventory datasets and more will be added as they become available. The original development team conducted an extensive review of previous and current inventory standards to tabulate their attributes and attribute codes. These are represented as translation rules between each inventory standard and the CASFRI data model. The translation of each inventory standard is encapsulated in a set of SQL functions and CSV tables that are processed using the <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL-Table-Translation-Framework</a>. The translation scripts have special rules for dealing with missing or invalid attributes values, or undefined attributes. The translation is otherwise lossless. The current version of CASFRI is stored as a partially normalized relational database within a spatial data warehouse managed by PostGIS, an open source Geographic Information System.
 
-<sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.  
+<sup>1</sup> Cosco, J. 2011. Common attribute schema (CAS) for forest inventories across Canada.
 
 <a name=CAS></a>
 ## Common Attribute Schema  
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for ecological modelling, forest management planning, and state of the environment reporting. Its development requires the selection of vegetation cover attributes and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
 
-Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada. Gillis and Leckie<sup>1</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography.  
+Development of the CAS attribute codes and rule sets for inventory attribute code conversion to CAS codes required an extensive review of previous and current inventory standards and specifications across Canada (Cosco 2011 <sup>1</sup>). Gillis and Leckie<sup>2</sup> provided a good starting point for review of previous inventory standards. More current and other inventory standards and documents are listed in the bibliography.
 
 Based on the review, detailed tables were produced to summarize each inventory standard by province and territory. Two national parks, Wood Buffalo and Prince Albert are included. Conversion rule sets were then produced as part of the detailed tables to identify how each province or territory inventory attribute codes translate into CAS attribute codes. 
 
-Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is > and the upper bound is <). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, the CAS captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta "B" - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a  
-common resolution or set of values.  
+Although many CAS attributes have a one-to-one conversion, not all do; some are identified by an interval or class that has an upper and lower bound (lower bound is > and the upper bound is <). Interval coding for height, crown closure, age, and similar quantitative attributes is a unique feature of CAS. Crown closure, height, age, and disturbance extent use bounds to define an attribute class. For example, CASFRI captures crown closure as an interval providing two values, the lower bound and upper bound. In the Alberta Vegetation Inventory, crown closure is captured in four cover classes: A, B, C and D, while the British Columbia Vegetation Resource Inventory captures crown closure as values ranging from 1 to 100 to the nearest 1 percent. In CAS, an Alberta "B" - value would be represented as an interval: 31 for the lower bound and 50 for the upper bound. A British Columbia crown closure value of 36 would be represented as a CAS value of 36 for both the lower and upper bounds. All of the information contained in the original inventories is preserved and the attributes are not converted to a common resolution or set of values.  
 
 Attributes for CAS are stored in seven attribute files to facilitate conversion and translation:  
 
@@ -52,11 +51,13 @@ Attributes for CAS are stored in seven attribute files to facilitate conversion 
 2. CAS Base Polygon (CAS) attributes - values that identify a polygon and provide a link between the CAS polygon and the original inventory polygon;  
 3. Forest-Level (LYR) attributes - values that pertain to the polygon for productive and non-productive forest land;  
 4. Non-Forest Land (NFL) attributes - values that pertain to naturally non-vegetated, non-forest anthropogenic, and non-forest vegetated land;  
-5. Disturbance history (DST) attributes - values that pertain to any disturbance that has occurred in a polygon including type, year, and extent; and  
-6. Ecological specific (ECO) attributes - values representing ecosites and wetlands.  
+5. Disturbance history (DST) attributes - values that pertain to any disturbance that has occurred in a polygon including type, year, and extent;
+6. Ecological specific (ECO) attributes - values representing ecosites and wetlands; and
 7. Geometry attributes - values pertaining to polygon geometry.
 
-<sup>1</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.  
+<sup>1</sup> Cosco, J. 2011. Common attribute schema (CAS) for forest inventories across Canada.
+
+<sup>2</sup> Gillis, M.D.; Leckie, D.G. 1993. Forest Inventory Mapping Procedures Across Canada. Petawawa National Forestry Institute, Information Report PI-X-114.  
 
 
 
@@ -104,11 +105,13 @@ Table 2. CASFRI error codes
 |                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK) or that the value should exist but can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct value because the source dataset is incomplete). This is different from NOT_APPLICABLE where the value clearly does not exist. |
 | Invalid&nbsp;values | OUT_OF_RANGE | -9999 | Value is outside the expected range of valid values (e.g. a percent value that is greater than 100. |
 |                | NOT_IN_SET        | -9998 | Non-null value that is not a member of a set or list of expected values (e.g. a source value does not match a list of expected codes for an inventory). |
-|                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does match expected format). |
+|                | INVALID_VALUE     | -9997 | Non-null invalid value (e.g. input value does not match expected format). |
 |                | WRONG_TYPE        | -9995 | Value is of the wrong data type (e.g. a string or decimal value when an integer is expected). |
 | Geometric&nbsp;error | INVALID_GEOMETRY  | -7779 | Invalid geometry in one or more polygons. |
 |                | NO_INTERSECT      | -7778 | FRI geometry does not intersect any polygons (e.g. when running a spatial join with a photo year geometry). |
 | Translation    | TRANSLATION_ERROR | -3333 | Generic translation error (reported for a failed translation). |
+
+
 
 Four types of attribute have been identified in CASFRI and only specific codes are used for each type. They are:
 
@@ -116,8 +119,8 @@ Four types of attribute have been identified in CASFRI and only specific codes a
 |:-------------- |:--------- |:---------:|
 | text | Arbitrary text values. e.g. the MAP_SHEET_ID attribute | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
 | code | Codified values. e.g. most text CASFRI attributes: SPECIES_X, DIST_TYPE_X and NFL types | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, NOT_IN_SET |
-| number | Numeric values. e.g. SRC_INV_AREA, PHOTO_YEAR, LAYER, LAYER_RANK | NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
-| range | Bounded numeric values. e.g. all HEIGHT, CROWN_CLOSURE and ORIGIN CASFRI attributes as well as SPECIES_PER_X| NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE, OUT_OF_RANGE |
+| number | Numeric values. e.g. LAYER, LAYER_RANK | NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
+| range | Bounded numeric values. e.g. all HEIGHT, CROWN_CLOSURE and ORIGIN CASFRI attributes as well as SRC_INV_AREA, STAND_PHOTO_YEAR and SPECIES_PER_X| NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE, OUT_OF_RANGE |
 
 * The main difference between the text and the number type is that empty numbers can only be NULLs (NULL_VALUE) whereas empty text values can be either NULLs (NULL_VALUE) or empty strings (EMPTY_STRING).
 * The main difference between the text and the code type is that wrong codes are not in the set of acceptable values (NOT_IN_SET) instead of being invalid (INVALID_VALUE).
@@ -509,7 +512,7 @@ The **SRC_INV_AREA** attribute measures the area of each polygon in hectares (ha
 | -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
 | -9997 | Source value is invalid |
-
+| -9999 | Source value is outside expected range |
 
 ### STAND_PHOTO_YEAR
 
@@ -518,7 +521,11 @@ The **STAND_PHOTO_YEAR** attribute identifies the year in which the aerial photo
 | Values      | Description      |
 | :---------- | :---------- |
 | 1900&#8209;2020 | Identifies the year in which the aerial photography program was conducted |
-
+| -8888 | Source value is NULL |
+| -8887 | Attribute does not apply to this record |
+| -8886 | Source value should exist but is unknown |
+| -9997 | Source value is invalid |
+| -9999 | Source value is outside expected range |
 
 <a name=LYR_attributes></a>
 ## LYR Attributes
@@ -535,9 +542,7 @@ See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 Identifies the layer number of the LYR or NFL row within a particular polygon. A maximum of 9 layers can be identified. No two LYR or NFL layers can have the same value within the same polygon.
 
-LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by Layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine.
-
-LAYER is calculated for CASFRI based on the presence of forest and non-forest information in the source data. Layer is assigned sequentially starting at 1 for the tallest overstory layer, followed by lower canopy layers. NFL layers are then assigned, shrub layers are assumed to be above herb layers in cases where both are available (e.g. SFVI in SK). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exists, an NFL layer will get a value of 1.
+LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by Layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exists, an NFL layer will get a value of 1. In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine. 
 
 | Values   | Description   |
 | :------- | :------- |
@@ -596,7 +601,7 @@ The **STRUCTURE_RANGE** attribute identifies the height range (m) around stand m
 
 Notes:
 
-- Applies to the following inventories: AB, NT, SK (SFVI), and YT (TVI02).
+- Applies to the following inventories: AB, NT, SK (SFVI), and YT (YVI02).
 
 
 <a name=SOIL_MOIST_REG></a>
@@ -969,7 +974,7 @@ The **LAYER** attribute identifies the specific layer to which the wetland is li
 
 ### WETLAND CLASSIFICATION
 
-The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>2</sup> and modified by Vitt and Halsey<sup>3,4</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland type (WETLAND_TYPE), wetland vegetation modifier (WET_VEG_COVER), wetland landform modifier (WET_LANDFORM_MOD), and wetland local modifier (WET_LOCAL_MOD).  
+The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>1</sup> and modified by Vitt and Halsey<sup>2,3</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland type (WETLAND_TYPE), wetland vegetation modifier (WET_VEG_COVER), wetland landform modifier (WET_LANDFORM_MOD), and wetland local modifier (WET_LOCAL_MOD).  
 
 Five major wetland types are recognized based on wetland development from hydrologic, chemical, and biotic gradients that commonly have strong cross-correlations. Two of the types; FEN and BOG, are peat-forming with greater than 40 cm of accumulated organics. The three non-peat forming wetland types are SHALLOW_WATER (shallow open water), MARSH (fresh or salt water), and SWAMP. A NOT_WETLAND type is also included. The Vegetation Modifier is assigned to a wetland type to describe the amount of vegetation cover. The Landform Modifier is a modifier label used when permafrost, patterning, or salinity are present. The Local Landform Modifier is a modifier label used to define the presence or absence of permafrost features or if vegetation cover is shrub or graminoid dominated.  
 
@@ -1026,11 +1031,11 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | GRAMINOIDS      | Graminoids with shrub cover < 25%      |
 | NOT_APPLICABLE  | Attribute does not apply to this record |
 
-<sup>2</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  
+<sup>1</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  
 
-<sup>3</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.  
+<sup>2</sup>Alberta Wetland Inventory Standards. Version 1.0. June 1977. L. Halsey and D. Vitt.  
 
-<sup>4</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.  
+<sup>3</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.  
 
   
 ### ECOSITE
