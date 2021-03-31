@@ -196,6 +196,13 @@ $$ LANGUAGE plpgsql VOLATILE;
 --SELECT TT_HasPrecedence('AB06', '3', 'AB16', '2'); -- false
 --SELECT TT_HasPrecedence('AB16', '3', 'AB06', '3'); -- true
 --SELECT TT_HasPrecedence('AB16', '3', 'AB06', '2'); -- true
+------------------------------------------------------------------------------
+-- Create a table of polygon counts for 
+--DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
+CREATE TABLE casfri50_coverage.inv_counts AS
+SELECT left(cas_id, 4) inv, count(*) cnt
+FROM casfri50.cas_all
+GROUP BY left(cas_id, 4);
 -----------------------------------------------
 -- Check the completeness of STAND_PHOTO_YEAR
 /*
@@ -215,7 +222,8 @@ DROP TABLE IF EXISTS casfri50_history.casflat_gridded;
 CREATE TABLE casfri50_history.casflat_gridded AS
 SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
 FROM casfri50_flat.cas_flat_all_layers_same_row
-WHERE CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 THEN TT_PrintMessage(currval('bug_splitbygrid')::text) ELSE TRUE END;
+--WHERE CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 THEN TT_PrintMessage(currval('bug_splitbygrid')::text) ELSE TRUE END
+;
 
 SELECT count(*) FROM casfri50_history.casflat_gridded;
 
@@ -240,11 +248,5 @@ CREATE TABLE casfri50_history.geo_history
   valid_year_begin integer,
   valid_year_end integer
 );
-------------------------------------------------------------------------------
--- Create a table of polygon counts for 
---DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
-CREATE TABLE casfri50_coverage.inv_counts AS
-SELECT left(cas_id, 4) inv, count(*) cnt
-FROM casfri50.geo_all
-GROUP BY left(cas_id, 4);
+
 
