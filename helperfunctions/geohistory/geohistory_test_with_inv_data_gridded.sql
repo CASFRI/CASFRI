@@ -11,9 +11,9 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
--- CAUTION! This test requires the version of TT_HasPrecedence() from the 
--- workflow to be instanciated in order to work properly (not the default
--- one implemented in casfri50_history_test.sql)
+-- CAUTION! This test requires the versions of TT_RowIsValid() and 
+-- TT_HasPrecedence() from the workflow 01_PrepareGeoHistory.sql file to be 
+-- instanciated in order to work properly (not the one implemented in geohistory_test.sql)
 ---------------------------------------------
 CREATE SCHEMA IF NOT EXISTS casfri50_history_test;
 --------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_gridded_history_new
 CREATE TABLE casfri50_history_test.sampling_area_nb1_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_nb1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_nb1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_nb1_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -75,7 +75,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2_gridded_history_new
 CREATE TABLE casfri50_history_test.sampling_area_nb2_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_nb2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_nb2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_nb2_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -114,7 +114,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1_gridded_history_new
 CREATE TABLE casfri50_history_test.sampling_area_nt1_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_nt1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_nt1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_nt1_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -152,7 +152,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2_gridded_history_new
 CREATE TABLE casfri50_history_test.sampling_area_nt2_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_nt2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_nt2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_nt2_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -185,12 +185,12 @@ CREATE INDEX sampling_area_bc1_gridded_casid_idx ON casfri50_history_test.sampli
 -- Display
 SELECT * FROM casfri50_history_test.sampling_area_bc1_gridded;
 
--- Generate history on gridded table - 4607 rows, pg11: 2m49, pg13: 30s 
+-- Generate history on gridded table - 6951 rows, pg13: 2m08
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1_gridded_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_bc1_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_bc1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_bc1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_bc1_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -224,12 +224,12 @@ CREATE INDEX sampling_area_bc2_gridded_casid_idx ON casfri50_history_test.sampli
 -- Display
 SELECT * FROM casfri50_history_test.sampling_area_bc2_gridded;
 
--- Generate history on gridded table - 4453 rows, pg11: 2m24, pg13: 26s 
+-- Generate history on gridded table - 9158 rows, pg13: 1m57
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2_gridded_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_bc2_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_bc2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_bc2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_bc2_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -267,7 +267,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1_gridded_history_new
 CREATE TABLE casfri50_history_test.sampling_area_sk1_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_sk1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_sk1_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_sk1_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -305,7 +305,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2_gridded_history_new
 CREATE TABLE casfri50_history_test.sampling_area_sk2_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_sk2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_sk2_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_sk2_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -344,7 +344,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3_gridded_history_new
 CREATE TABLE casfri50_history_test.sampling_area_sk3_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_sk3_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_sk3_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_sk3_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -382,7 +382,7 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4_gridded_history_new
 CREATE TABLE casfri50_history_test.sampling_area_sk4_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
-                               'geohistory', 'sampling_area_sk4_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
+                               'casfri50_history_test', 'sampling_area_sk4_gridded', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
   FROM casfri50_history_test.sampling_area_sk4_gridded
 ), wkb_version AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
@@ -409,7 +409,7 @@ SELECT '1.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nb1_gridded_history_new" and "sampling_area_nb1_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nb1_gridded_history_new'', ''geohistory'' , ''sampling_area_nb1_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_nb1_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_nb1_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_nb1_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_nb1_gridded_history b USING (id, valid_year_begin)) foo
@@ -419,7 +419,7 @@ SELECT '1.2'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nb2_gridded_history_new" and "sampling_area_nb2_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nb2_gridded_history_new'', ''geohistory'' , ''sampling_area_nb2_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_nb2_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_nb2_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_nb2_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_nb2_gridded_history b USING (id, valid_year_begin)) foo
@@ -429,7 +429,7 @@ SELECT '2.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nt1_gridded_history_new" and "sampling_area_nt1_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nt1_gridded_history_new'', ''geohistory'' , ''sampling_area_nt1_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_nt1_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_nt1_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_nt1_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_nt1_gridded_history b USING (id, valid_year_begin)) foo
@@ -439,7 +439,7 @@ SELECT '2.2'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nt2_gridded_history_new" and "sampling_area_nt2_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_nt2_gridded_history_new'', ''geohistory'' , ''sampling_area_nt2_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_nt2_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_nt2_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_nt2_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_nt2_gridded_history b USING (id, valid_year_begin)) foo
@@ -449,7 +449,7 @@ SELECT '3.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_bc1_gridded_history_new" and "sampling_area_bc1_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_bc1_gridded_history_new'', ''geohistory'' , ''sampling_area_bc1_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_bc1_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_bc1_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_bc1_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_bc1_gridded_history b USING (id, valid_year_begin)) foo
@@ -459,7 +459,7 @@ SELECT '3.2'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_bc2_gridded_history_new" and "sampling_area_bc2_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_bc2_gridded_history_new'', ''geohistory'' , ''sampling_area_bc2_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_bc2_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_bc2_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_bc2_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_bc2_gridded_history b USING (id, valid_year_begin)) foo
@@ -469,7 +469,7 @@ SELECT '4.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk1_gridded_history_new" and "sampling_area_sk1_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_sk1_gridded_history_new'', ''geohistory'' , ''sampling_area_sk1_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_sk1_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_sk1_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_sk1_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk1_gridded_history b USING (id, valid_year_begin)) foo
@@ -479,7 +479,7 @@ SELECT '4.2'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk2_gridded_history_new" and "sampling_area_sk2_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_sk2_gridded_history_new'', ''geohistory'' , ''sampling_area_sk2_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_sk2_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_sk2_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_sk2_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk2_gridded_history b USING (id, valid_year_begin)) foo
@@ -489,7 +489,7 @@ SELECT '4.3'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk3_gridded_history_new" and "sampling_area_sk3_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_sk3_gridded_history_new'', ''geohistory'' , ''sampling_area_sk3_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_sk3_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_sk3_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_sk3_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk3_gridded_history b USING (id, valid_year_begin)) foo
@@ -499,7 +499,7 @@ SELECT '4.4'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk4_gridded_history_new" and "sampling_area_sk4_gridded_history"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''sampling_area_sk4_gridded_history_new'', ''geohistory'' , ''sampling_area_sk4_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''sampling_area_sk4_gridded_history_new'', ''casfri50_history_test'' , ''sampling_area_sk4_gridded_history'', ''id, valid_year_begin'', TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.sampling_area_sk4_gridded_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk4_gridded_history b USING (id, valid_year_begin)) foo

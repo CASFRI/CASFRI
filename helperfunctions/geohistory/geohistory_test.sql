@@ -118,7 +118,7 @@ DROP TABLE IF EXISTS casfri50_history_test.test_0_without_validity_new;
 CREATE TABLE casfri50_history_test.test_0_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-      FROM TT_TableGeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_TableGeoHistory('casfri50_history_test', 'test_0', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE casfri50_history_test.test_0_without_validity_new 
@@ -131,7 +131,7 @@ DROP TABLE IF EXISTS casfri50_history_test.test_0_with_validity_new;
 CREATE TABLE casfri50_history_test.test_0_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-      FROM TT_TableGeoHistory('geohistory', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_TableGeoHistory('casfri50_history_test', 'test_0', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE casfri50_history_test.test_0_with_validity_new 
@@ -208,10 +208,10 @@ SELECT TT_GeoOblique(geom, valid_year),
 FROM casfri50_history_test.test_1;
 
 -- Display flat history
-SELECT * FROM TT_TableGeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
+SELECT * FROM TT_TableGeoHistory('casfri50_history_test', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
 
 -- Display oblique history
-SELECT * FROM TT_GeoHistoryOblique('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
+SELECT * FROM TT_GeoHistoryOblique('casfri50_history_test', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
 
 ---------------------------------------------
 -- test_2 - Pairs of polygons representing 
@@ -270,7 +270,7 @@ DROP TABLE IF EXISTS casfri50_history_test.test_2_without_validity_new;
 CREATE TABLE casfri50_history_test.test_2_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-      FROM TT_TableGeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_TableGeoHistory('casfri50_history_test', 'test_2', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE casfri50_history_test.test_2_without_validity_new 
@@ -283,7 +283,7 @@ DROP TABLE IF EXISTS casfri50_history_test.test_2_with_validity_new;
 CREATE TABLE casfri50_history_test.test_2_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-      FROM TT_TableGeoHistory('geohistory', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_TableGeoHistory('casfri50_history_test', 'test_2', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE casfri50_history_test.test_2_with_validity_new 
@@ -411,7 +411,7 @@ DROP TABLE IF EXISTS casfri50_history_test.test_3_without_validity_new;
 CREATE TABLE casfri50_history_test.test_3_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-      FROM TT_TableGeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_TableGeoHistory('casfri50_history_test', 'test_3', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE casfri50_history_test.test_3_without_validity_new 
@@ -424,7 +424,7 @@ DROP TABLE IF EXISTS casfri50_history_test.test_3_with_validity_new;
 CREATE TABLE casfri50_history_test.test_3_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-      FROM TT_TableGeoHistory('geohistory', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_TableGeoHistory('casfri50_history_test', 'test_3', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE casfri50_history_test.test_3_with_validity_new 
@@ -624,7 +624,7 @@ DROP TABLE IF EXISTS casfri50_history_test.test_4_without_validity_new;
 CREATE TABLE casfri50_history_test.test_4_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-      FROM TT_TableGeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
+      FROM TT_TableGeoHistory('casfri50_history_test', 'test_4', 'idx', 'geom', 'valid_year', 'idx')
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE casfri50_history_test.test_4_without_validity_new 
@@ -637,7 +637,7 @@ DROP TABLE IF EXISTS casfri50_history_test.test_4_with_validity_new;
 CREATE TABLE casfri50_history_test.test_4_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-      FROM TT_TableGeoHistory('geohistory', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
+      FROM TT_TableGeoHistory('casfri50_history_test', 'test_4', 'idx', 'geom', 'valid_year', 'idx', ARRAY['att'])
       ORDER BY id, poly_id) foo;
 
 ALTER TABLE casfri50_history_test.test_4_with_validity_new 
@@ -697,7 +697,7 @@ FROM casfri50_history_test.test_4_with_validity_new;
 
 -- -- 3) Run this query
 -- SELECT *
--- FROM TT_TableGeoHistory('geohistory', 'test_bug', 'idx', 'geom', 'valid_year', 'idx');
+-- FROM TT_TableGeoHistory('casfri50_history_test', 'test_bug', 'idx', 'geom', 'valid_year', 'idx');
 
 ---------------------------------------------
 -- Begin tests
@@ -707,7 +707,7 @@ SELECT '1.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_0_without_validity_new" and "test_0_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_without_validity_new'', ''geohistory'' , ''test_0_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''test_0_without_validity_new'', ''casfri50_history_test'' , ''test_0_without_validity'', ''row_id'', TRUE, TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.test_0_without_validity_new a 
       FULL OUTER JOIN casfri50_history_test.test_0_without_validity b USING (row_id)) foo
@@ -717,7 +717,7 @@ SELECT '1.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_0_with_validity_new" and "test_0_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_0_with_validity_new'', ''geohistory'' , ''test_0_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''test_0_with_validity_new'', ''casfri50_history_test'' , ''test_0_with_validity'', ''row_id'', TRUE, TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.test_0_without_validity_new a 
       FULL OUTER JOIN casfri50_history_test.test_0_without_validity b USING (row_id)) foo
@@ -731,7 +731,7 @@ SELECT '2.1'::text number,
        string_agg(valid_year_begin::text, ', ') = '1930, 1930' AND 
        string_agg(valid_year_end::text, ', ') = '2030, 2030' passed,
         '' check_query
-FROM TT_TableGeoHistory('geohistory', 'test_1', 'idx', 'geom', 'valid_year', 'idx')
+FROM TT_TableGeoHistory('casfri50_history_test', 'test_1', 'idx', 'geom', 'valid_year', 'idx')
 ---------------------------------------------------------
 -- Compare new with old tables
 ---------------------------------------------------------
@@ -740,7 +740,7 @@ SELECT '3.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_2_without_validity_new" and "test_2_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_without_validity_new'', ''geohistory'' , ''test_2_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''test_2_without_validity_new'', ''casfri50_history_test'' , ''test_2_without_validity'', ''row_id'', TRUE, TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.test_2_without_validity_new a 
       FULL OUTER JOIN casfri50_history_test.test_2_without_validity b USING (row_id)) foo
@@ -750,7 +750,7 @@ SELECT '3.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_2_with_validity_new" and "test_2_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_2_with_validity_new'', ''geohistory'' , ''test_2_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''test_2_with_validity_new'', ''casfri50_history_test'' , ''test_2_with_validity'', ''row_id'', TRUE, TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.test_2_without_validity_new a 
       FULL OUTER JOIN casfri50_history_test.test_2_without_validity b USING (row_id)) foo
@@ -760,7 +760,7 @@ SELECT '4.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_3_without_validity_new" and "test_3_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_without_validity_new'', ''geohistory'' , ''test_3_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''test_3_without_validity_new'', ''casfri50_history_test'' , ''test_3_without_validity'', ''row_id'', TRUE, TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.test_3_without_validity_new a 
       FULL OUTER JOIN casfri50_history_test.test_3_without_validity b USING (row_id)) foo
@@ -770,7 +770,7 @@ SELECT '4.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_3_with_validity_new" and "test_3_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_3_with_validity_new'', ''geohistory'' , ''test_3_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''test_3_with_validity_new'', ''casfri50_history_test'' , ''test_3_with_validity'', ''row_id'', TRUE, TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.test_3_without_validity_new a 
       FULL OUTER JOIN casfri50_history_test.test_3_without_validity b USING (row_id)) foo
@@ -780,7 +780,7 @@ SELECT '5.1'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_4_without_validity_new" and "test_4_without_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_without_validity_new'', ''geohistory'' , ''test_4_without_validity'', ''row_id'', TRUE, TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''test_4_without_validity_new'', ''casfri50_history_test'' , ''test_4_without_validity'', ''row_id'', TRUE, TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.test_4_without_validity_new a 
       FULL OUTER JOIN casfri50_history_test.test_4_without_validity b USING (row_id)) foo
@@ -790,7 +790,7 @@ SELECT '5.2'::text number,
        'TT_TableGeoHistory'::text function_tested, 
        'Compare "test_4_with_validity_new" and "test_4_with_validity"' description, 
        count(*) = 0 passed,
-       'SELECT * FROM TT_CompareTables(''geohistory'' , ''test_4_with_validity_new'', ''geohistory'' , ''test_4_with_validity'', ''row_id'', TRUE, TRUE);' check_query
+       'SELECT * FROM TT_CompareTables(''casfri50_history_test'' , ''test_4_with_validity_new'', ''casfri50_history_test'' , ''test_4_with_validity'', ''row_id'', TRUE, TRUE);' check_query
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b), TRUE)).*
       FROM casfri50_history_test.test_4_without_validity_new a 
       FULL OUTER JOIN casfri50_history_test.test_4_without_validity b USING (row_id)) foo

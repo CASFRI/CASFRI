@@ -15,7 +15,7 @@ coltypes="row_id=int,id=int,poly_id=int,isvalid=boolean,wkt_geometry=text,poly_t
 
 # Make schema if it doesn't exist
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" -sql "CREATE SCHEMA IF NOT EXISTS geohistory";
+"$gdalFolder/ogrinfo" "$pg_connection_string" -sql "CREATE SCHEMA IF NOT EXISTS casfri50_history_test";
 
 # Run ogr2ogr
 
