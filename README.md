@@ -9,7 +9,7 @@ A number of CASFRI instances have been produced since 2009. CASFRI 5 is the fift
 
 * Addition of new and more up-to-date inventories.
 * Implementation of a new conversion and loading procedure focused around the open source software GDAL/OGR (in place of ArcGIS).
-* Implementation of an SQL based translation engine abstracting the numerous issues related to this kind of conversion to simple translation files.
+* Implementation of an SQL based translation engine abstracting the numerous issues related to this kind of conversion to simple translation tables.
 * Implementation of a temporalization procedure to create a temporal database of all available inventories.
 * Implementation of a descriptive error code system.
 
