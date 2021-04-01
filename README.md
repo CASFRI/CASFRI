@@ -15,7 +15,7 @@ A number of CASFRI instances have been produced since 2009. CASFRI 5 is the fift
 
 The three steps involved in the production of the CASFRI 5 database are:
 
-1. Conversion (from many different FRI file formats) and loading (into a PostgreSQL database) using Bash files (or Batch files) and ogr2ogr.
+1. Conversion (from many different FRI file formats) and loading (into a PostgreSQL database) using Bash (or Batch) scripts and ogr2ogr.
 2. Translation of the loaded FRIs to the CASFRI schema (inside the PostgreSQL database)
 3. Temporalization of CAS data (inside the PostgreSQL database)
 
