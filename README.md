@@ -194,12 +194,13 @@ All other columns represent target attributes in the CASFRI tables. The values i
 
 **3. TT_CreateMappingView().**
 The function TT_CreateMappingView() is used to create the VIEWs used in the workflow by mapping the attributes defined in the attribute dependencies table from the source names to the translation table placeholder names. It has the following arguments:
-* Schema name: what schema is the source data in
-* From table name (optional): inventory_id of source data row in attribute dependencies table
-* From layer (optional, default 1): matches the layer value in the attribute dependencies table
-* To table: inventory_id of the row containing the translation table placeholder names
-* To layer (optional, default 1): matches the layer value in the attribute dependencies table (for our purposes this is always set to 1)
-* Number of rows (optional, default all rows): number of random rows to select. If blank, all rows are selected.
+
+* **Schema name:** schema the source inventory was loaded to
+* **From table name (optional):** inventory_id of source inventory row in attribute dependencies table
+* **From layer (optional, default to 1):** matches the layer value in the attribute dependencies table
+* **To table:** inventory_id of the row listing the translation table placeholder names
+* **To layer (optional, default to 1):** matches the layer value in the attribute dependencies table (for our purposes this is always set to 1)
+* **Number of rows (optional, default to all rows):** number of random rows to select. If blank, all rows are selected.
 
 The function creates a view with a name based on the input arguments:
 If only the 'from table name' is provided, a VIEW with a minimal set of attributes and no mappings is created. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 200);` creates a view named **ab03_min_200**.
