@@ -39,7 +39,7 @@ The current version is 5.3.0 and is available for download at https://github.com
 
 ./helperfunctions                       CASFRI specific helper functions used in translation tables
 
-./helperfunctions/geohistory            Functions used to build historical database
+./helperfunctions/geohistory            Functions used to build historical version of CASFRI
 
 ./summary_statistics                    R scripts to summarize CASFRI output for validation checks
 
@@ -47,13 +47,13 @@ The current version is 5.3.0 and is available for download at https://github.com
 
 ./translation/test                      Unit tests for CASFRI translations
 
-./workflow/01_develTranslationTables    Translation scripts used for development and testing
+./workflow/01_develTranslationTables    Translation scripts used for development and testing on sample versions of source tables
 
-./workflow/02_produceCASFRI             Workflow scripts to run all translations
+./workflow/02_produceCASFRI             Translation scripts to run all complete translations
 
-./workflow/03_flatCASFRI                Scripts to build flat (denormalized) version of CASFRI 
+./workflow/03_flatCASFRI                Scripts to build a flat (denormalized) version of CASFRI 
 
-./workflow/04_produceHistoricalTable    Scripts to build historical CASFRI database 
+./workflow/04_produceHistoricalTable    Scripts to build a historical version of CASFRI 
 </pre>
 
 # Requirements
