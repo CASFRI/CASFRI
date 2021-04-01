@@ -180,11 +180,9 @@ The translation of each dataset is done using the scripts in the [CASFRI/workflo
 
 It is important that a single translation table can be used for multiple translations, either for different layers within the same dataset, or for different datasets using the same standard but different attributes names. The workflow scripts accommodate this by combining three elements:
 
-**1. Placeholder names in translation table helper functions.**
-Translation table helper functions use placeholder attribute names instead of actual inventory attribute names. Every translation using a common translation table to translate similar inventories must map inventory attribute names to these placeholder column names. That's how a single translation table can be reused to translate many inventories from the same juridiction. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow script VIEWs are created to map the source inventory attribute names to the placeholder attribute names found in the translation table. One can then run the same translation using as many different VIEWs as there are inventories.
+**1. Placeholder names in translation table helper functions -** Translation table helper functions use placeholder attribute names instead of actual inventory attribute names. Every translation using a common translation table to translate similar inventories must map inventory attribute names to these placeholder column names. That's how a single translation table can be reused to translate many inventories from the same juridiction. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow script VIEWs are created to map the source inventory attribute names to the placeholder attribute names found in the translation table. One can then run the same translation using as many different VIEWs as there are inventories.
 
-**2. Attribute dependency table.**
-This table defines the mapping of attributes from each source table to the placeholder names used in the translation tables. For a given translation table, the attribute dependencies table contains a row for the translation table placeholder names, and rows for each translation that needs to be completed using a source inventory. If multiple layers have to be translated for an inventory, multiple rows must be defined in the attribute dependencies table. This table has the following columns:
+**2. Attribute dependency table -** This table defines the mapping of attributes from each source table to the placeholder names used in the translation tables. For a given translation table, the attribute dependencies table contains a row for the translation table placeholder names, and rows for each translation that needs to be completed using a source inventory. If multiple layers have to be translated for an inventory, multiple rows must be defined in the attribute dependencies table. This table has the following columns:
 
 * **inventory_id -** either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03).
 * **layer -** a unique integer value incrementing for LYR layers followed by NFL layers.
@@ -192,8 +190,7 @@ This table defines the mapping of attributes from each source table to the place
 
 All other columns represent target attributes in the CASFRI tables. The values in each cell list the attributes to be mapped to the translation table placeholder names. In the case of the translation table rows, the values must match the placeholder names used in the translation table. In the case of rows representing source datasets, the values represent source attribute names.
 
-**3. TT_CreateMappingView().**
-The function TT_CreateMappingView() is used to create the VIEWs used in the workflow by mapping the attributes defined in the attribute dependencies table from the source names to the translation table placeholder names. It has the following arguments:
+**3. TT_CreateMappingView() -** The function TT_CreateMappingView() is used to create the VIEWs used in the workflow by mapping the attributes defined in the attribute dependencies table from the source names to the translation table placeholder names. It has the following arguments:
 
 * **Schema name:** schema the source inventory was loaded to
 * **From table name (optional):** inventory_id of source inventory row in attribute dependencies table
