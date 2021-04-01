@@ -241,7 +241,6 @@ WHERE left(cas_id, 4) = 'QC06' AND CASE WHEN nextval('bug_splitbygrid') % 10000 
 */
 ------------------------------------------------------------------------------
 -- Create the table that will ingest geohistory polygons
-CREATE SCHEMA IF NOT EXISTS casfri50_history;
 CREATE TABLE casfri50_history.geo_history
 (
   cas_id text,
