@@ -19,7 +19,7 @@ The three steps involved in the production of the CASFRI 5 database are:
 2. Translation of the loaded FRIs to the CASFRI schema (inside the PostgreSQL database)
 3. Temporalization of CAS data (inside the PostgreSQL database)
 
-Note that forest resource inventories are not provided with this project due to the numerous licensing agreements that have to be passed with the different production juridictions.
+Note that forest resource inventories are not provided with this project due to the numerous licensing agreements that have to be passed with the different production juridictions. Many provincial inventories can now be downloaded for free from government web sites. All the inventories supported by this project are documented in [this table](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv).
 
 # Version Number Scheme
 
