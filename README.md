@@ -97,7 +97,7 @@ For an update to be incorporated in the database, the date of publication should
 Conversion and loading happen at the same time and are implemented using GDAL/OGR tools. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI is composed of multiple files, the conversion/loading scripts append them all into the same target flat table. Some FRIs are accompanied by an extra shapefile that associates each stand with a photo year. These are loaded with a second script. Every loading script adds a new "src_filename" attribute to the loaded source table with the name of the source file, and "inventory_id", the inventory unique identifier. These are used when constructing the CAS_ID (a unique identifier tracing each target row back to its original row in the source dataset).
 
 ### Supported File Types
-All conversion/loading scripts are provided as both .sh and .bat files.
+All conversion/loading scripts are provided as .sh (and .bat) files. (Note that as of CASFRI version 5.3.0, only .sh scripts are up to date.)
 
 Currently supported FRI formats are:
 
