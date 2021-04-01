@@ -81,10 +81,6 @@ Note that only major issues preventing the conversion or the translation process
 
 Run the workflow\03_flatCASFRI scripts to produce the two different flat versions of the database.
 
-**Generate the inventories geographical coverages**
-
-Run the docs\inv_coverage\produce_inv_coverage.sql to produce the coverage of each inventory.
-
 **8. Generate the historical version of the database**
 
 In order, run:
@@ -93,7 +89,7 @@ In order, run:
 
 2. the workflow\04_produceHistoricalTable\02_ProduceGeoHistory.sh to produce the historical tables in parallel.
 
-3. the workflow\04_produceHistoricalTable\03_ProduceInventoryCoverages.sh to produce a set of tables containing the spatial coverage for each inventory.
+3. the workflow\04_produceHistoricalTable\03_ProduceInventoryCoverages.sh to produce a set of tables containing the geographical coverage of each inventory.
 
 **9. Merge code modifications to trunk**
 
