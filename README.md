@@ -203,13 +203,13 @@ The function TT_CreateMappingView() is used to create the VIEWs used in the work
 * **Number of rows (optional, default to all rows):** number of random rows to select. If blank, all rows are selected.
 
 The function creates a view with a name based on the input arguments:
-If only the 'from table name' is provided, a VIEW with a minimal set of attributes and no mappings is created. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 200);` creates a view named **ab03_min_200**.
+If only the 'from table name' is provided, a VIEW with a minimal set of attributes and no mappings is created. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 200);` creates a view named **ab03_min_200** in the **rawfri** schema.
 
-If both a 'from' and a 'to' table are provided, the 'from' names (i.e. the source data) are mapped to the 'to' names (i.e. the translation table placeholder names), defaulting to use layer 1. For exampe `SELECT TT_CreateMappingView('rawfri', 'ab03', 'ab');` creates a view name **ab03_l1_to_ab_l1_map**.
+If both a 'from' and a 'to' table are provided, the 'from' names (i.e. the source data) are mapped to the 'to' names (i.e. the translation table placeholder names), defaulting to use layer 1. For exampe `SELECT TT_CreateMappingView('rawfri', 'ab03', 'ab');` creates a view name **ab03_l1_to_ab_l1_map** in the **rawfri** schema..
 
-If 'layer' integers are provided, the row corresponding to the provided layer number will be used for the mapping. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab', 1);` creates a view name **ab03_l2_to_bc_l1_map**.
+If 'layer' integers are provided, the row corresponding to the provided layer number will be used for the mapping. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab', 1);` creates a view name **ab03_l2_to_bc_l1_map** in the **rawfri** schema.
 
-If the 'number of rows' are provided, the view name ends with the number of randomly selected rows. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab', 1, 200);` creates a view name **ab03_l2_to_ab_l1_map_200**.
+If the 'number of rows' are provided, the view name ends with the number of randomly selected rows. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab', 1, 200);` creates a view name **ab03_l2_to_ab_l1_map_200** in the **rawfri** schema.
 
 The following diagram illustrates the relationship between the translation table, the attribute dependencies table, and TT_CreateMappingView() using a simple attribute - SPECIES_1_PER. The translation rule is a simple copy, but the attribute has a different name for layer 1 and layer 2 in the AB03 source dataset. Each layer is run as a separate translation: for the layer 1 translation the source attribute sp1_per needs to be mapped to the placeholder name (species_per_1), and for the layer 2 translation the understory attribute usp1_per needs to be mapped to the placeholder name (species_per_1). Views are used to map from the source attribute names to the placeholder names used in the translation table.
 
