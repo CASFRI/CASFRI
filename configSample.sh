@@ -39,7 +39,7 @@ friDir=E:/FRIs
 gdalFolder="C:/Program Files/GDAL"
 gdal_1_11_4=False
 
-# Set to True if you want conversion and translation command windows to stay open after completion
+# Set to True if you want conversion command windows to stay open after completion
 leaveConvShellOpen=False
 
 # Set to true if you want loaded inventories to overwrite already loaded ones
