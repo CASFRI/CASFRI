@@ -31,9 +31,11 @@ Note that only major issues preventing the conversion or the translation process
 
 **2. Convert the inventories and load the translation tables in the database**
 
-1. Open a Bash (or DOS) command window, CD to the CASFRI conversion/sh (or bat) folder and load all the necessary inventories using the load_all.sh (or .bat) script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
+1. Make sure all the inventories to load are listed in your config.sh invList1-5 variables. All inventories pertaining to the same invList1-5 are executed in parallel. There are five lists to avoid overloading the system.
 
-2. In the same command window, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
+2. Open a Bash (or DOS) command window, CD to the CASFRI conversion/sh (or bat) folder and load all the listed inventories using the load_all.sh (or .bat) script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
+
+3. In the same command window, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
 
 **3. Install and unsintall the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
 
@@ -67,9 +69,7 @@ Note that only major issues preventing the conversion or the translation process
 
 **5. Run the translation**
 
-1. If necessary, edit the workflow/02_produceCASFRI/01_translate_all_0X.sh (or .bat) scripts to translate only the inventories you want to translate. Each script launch a certain number of inventories in order to avoid overloading the system (which might result in system crashes). 01_translate_all_00.sh initialise the database. 01_translate_all_01.sh and 01_translate_all_02.sh are for bigger inventories and 01_translate_all_03.sh and 01_translate_all_04.sh for smaller inventories.
-
-2. In the command window, CD to workflow/02_produceCASFRI and execute the 01_translate_all_0X.sh (or .bat) scripts one AFTER the other.
+1. In the command window, CD to workflow/02_produceCASFRI and execute the 01_translate_all_00.sh and then the 01_translate_all_01.sh scripts one AFTER the other. The first script prepare the target shema and tables and the second actually translate all the inventories listed in the invList1-5 variables.
 
 **6. Validate the translation**
 
@@ -81,13 +81,15 @@ Note that only major issues preventing the conversion or the translation process
 
 Run the workflow\03_flatCASFRI scripts to produce the two different flat versions of the database.
 
-**Generate the inventories geographical coverages**
-
-Run the docs\inv_coverage\produce_inv_coverage.sql to produce the coverage of each inventory.
-
 **8. Generate the historical version of the database**
 
-Run the workflow\04_produceHistoricalTable\produceHistoricalTable.sql to produce a historical version of the database resolving all overlaps in space and time.
+In order, run:
+
+1. the workflow\04_produceHistoricalTable\01_PrepareGeoHistory.sh to prepare the casfri50_history schema, the inv_precedence table where you establish the precedence of the various inventories and some functions.
+
+2. the workflow\04_produceHistoricalTable\02_ProduceGeoHistory.sh to produce the historical tables in parallel.
+
+3. the workflow\04_produceHistoricalTable\03_ProduceInventoryCoverages.sh to produce a set of tables containing the geographical coverage of each inventory.
 
 **9. Merge code modifications to trunk**
 
