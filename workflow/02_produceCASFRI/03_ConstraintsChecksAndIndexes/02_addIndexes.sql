@@ -15,7 +15,10 @@
 CREATE INDEX cas_all_casid_idx
 ON casfri50.cas_all USING btree(cas_id);
 
-CREATE INDEX cas_all_inventory_idx
+CREATE INDEX cas_all_inventoryid_idx
+ON casfri50.cas_all USING btree(inventory_id);
+
+CREATE INDEX cas_all_casidinv_idx
 ON casfri50.cas_all USING btree(left(cas_id, 4));
     
 CREATE INDEX cas_all_province_idx
