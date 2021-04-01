@@ -146,13 +146,13 @@ Translation of loaded source tables into target tables formatted to the CASFRI s
 A detailed description of translation table properties is included in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). In short, each translation table lists a set of attribute names, their type in the target table, a set of validation helper functions which all input values have to pass, and a set of translation helper functions to convert input values to CASFRI values. A set of generic helper functions are included with the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework), these perform standardized validations and translations that are used in many different translation tables. The CASFRI project also has its own more specific set of [helper functions](https://github.com/edwardsmarc/CASFRI/tree/master/helperfunctions) that apply more complex translations specific to individual inventories.
 
 CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications):
-1. Header (HDR) attributes - summarizing reference information for each dataset;  
-2. CAS Base Polygon (CAS) attributes - describing the source polygon and any identifiers;  
-3. Forest-Level (LYR) attributes - describing productive and non-productive forest land;  
-4. Non-Forest Land (NFL) attributes - describing non-forested land;  
-5. Disturbance history (DST) attributes - describing the type, year and extent of disturbances;  
-6. Ecological specific (ECO) attributes - describing wetlands;  
-7. Geometry attributes (GEO) - polygon geometries.
+1. **Header (HDR) attributes -** summarizing reference information for each dataset;  
+2. **CAS Base Polygon (CAS) attributes -** describing the source polygon and any identifiers;  
+3. **Forest-Level (LYR) attributes -** describing productive and non-productive forest land;  
+4. **Non-Forest Land (NFL) attributes -** describing non-forested land;  
+5. **Disturbance history (DST) attributes -** describing the type, year and extent of disturbances;  
+6. **Ecological specific (ECO) attributes -** describing wetlands;  
+7. **Geometry attributes (GEO) -** polygon geometries.
 
 In general, each standard for each jurisdiction uses a single set of translation tables. All source datasets using the same standard should use the same set of translation tables. Differences in attribute names can be accommodated using the workflow scripts described below. In some cases minor differences in attributes between datasets using the same standard can be accommodated by designing translation helper functions that can deal with both formats. An example would be two datasets using the same standard, but different values for graminoids (e.g. 'Grm' in one dataset and 'graminoids' in another). These can be combined into a single translation function to deal with both datasets in the translation table (e.g. mapText(source_value, {'Grm', 'graminoids'}, {'GRAMINOID', 'GRAMINOID'})).
 
@@ -186,9 +186,9 @@ Translation table helper functions use placeholder attribute names instead of ac
 **2. Attribute dependency table.**
 This table defines the mapping of attributes from each source table to the placeholder names used in the translation tables. For a given translation table, the attribute dependencies table contains a row for the translation table placeholder names, and rows for each translation that needs to be completed using a source inventory. If multiple layers have to be translated for an inventory, multiple rows must be defined in the attribute dependencies table. This table has the following columns:
 
-* inventory_id - either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03).
-* layer - a unique integer value incrementing for LYR layers followed by NFL layers.
-* ttable_exists - indicates if the row represents the placeholder names of an existing translation table or only the source inventory attribute names for which no actual translation table exists.
+* **inventory_id -** either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03).
+* **layer -** a unique integer value incrementing for LYR layers followed by NFL layers.
+* **ttable_exists -** indicates if the row represents the placeholder names of an existing translation table or only the source inventory attribute names for which no actual translation table exists.
 
 All other columns represent target attributes in the CASFRI tables. The values in each cell list the attributes to be mapped to the translation table placeholder names. In the case of the translation table rows, the values must match the placeholder names used in the translation table. In the case of rows representing source datasets, the values represent source attribute names.
 
@@ -218,21 +218,21 @@ The following diagram illustrates the relationship between the translation table
 # Translation Procedure
 The steps to produce a complete build of the CASFRI database are detailed in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). A subset of these steps can be used to translate a single dataset as follows:
 
-1. Set up the config.sh or config.bat file with your system settings.
-2. Load the inventory (e.g. AB03) into PostgreSQL by launching the conversion/sh/load_ab03.sh (or the conversion/bat/load_ab03.bat) loading script in a Bash (or DOS) command window. You can load many inventories in parallel by setting the invList1-5 variables in your config.sh file and by executing the conversion/sh/load_all.sh script.
-3. Load the translation tables into PostgreSQL by launching the CASFRI/translation/load_tables.sh (or .bat) script.
-4. Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions
+1. **Configure -** your processing environment in the config.sh (or .bat) file.
+2. **Load the inventory** (e.g. AB03) into PostgreSQL by launching the conversion/sh/load_ab03.sh (or the conversion/bat/load_ab03.bat) loading script in a Bash (or DOS) command window. You can also launch many conversions in parallel. This is described in the Parallelization section.
+3. **Load the translation tables** into PostgreSQL by launching the CASFRI/translation/load_tables.sh (or .bat) script.
+4. **Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
     1. Install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produces a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
     2. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
         1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts.
         2. Load the CASFRI Helper Functions with the helperFunctionsCASFRI.sql script and test them using helperFunctionsCASFRITest.sql.
-5. Run the translation by launching the workflow SQL script (CASFRI/workflow/02_produceCASFRI/02_perInventory/02_AB03.sql) in pgAdmin (or a psql window). You can launch many translation SQL script at the same time by setting the invList1-5 variables in your config.sh file and by executing the workflow/02_produceCASFRI/01_translate_all_00.sh and the workflow/02_produceCASFRI/01_translate_all_01.sh scripts.
+5. **Run the translation** by launching the workflow SQL script (CASFRI/workflow/02_produceCASFRI/02_perInventory/02_AB03.sql) in pgAdmin (or a psql window). You can also launch many translations in parallel. This is described in the Parallelization section.
 
 Translated data is added to the six output tables in the 'casfri50' schema: cas_all, dst_all, eco_all, lyr_all, nfl_all, geo_all. The scripts in the [CASFRI/workflow/03_flatCASFRI/](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/03_flatCASFRI) folder can be used to create two different denormalized tables, one where all layers for a given polygon are reported on the same row, and one where all layers for a given polygon are reported on different rows. The former is necessary since it is the table used to generate the historical version of the CASFRI database.
 
 The steps to add a completey new inventory to the CASFRI database are detailed in issue [#471](https://github.com/edwardsmarc/CASFRI/issues/471).
 
-# Historical Version
+# CASFRI Historical Table
 The six tables found in the 'casfri50' schema as the result of a complete translation gathers stands from many inventories, where polygons sometimes overlapping each other in space and time (e.g. BC08, BC10, BC10 and BC11). That means if you try to match an observation point made at a specific year, you might end up with more than one matching stand. Either because they overlap in space (some inventories have many polygons of the same year overlapping between them), in time (the valid time of one inventory (e.g. 2000-2010) overlaps the valid time of the following inventory (2008-2015)) or both.
 
 The historical version of the CASFRI database is a new geometry table replacing the geo_all table where no two polygons share a same space at a specific time (i.e. no two polygons overlap in space and time). In this table, stand polygons are cut so that only polygons parts from the most up to date inventory at the date of observation can be matches. It allows querying for the best available inventory information at any point in time accross the full CASFRI coverage.
