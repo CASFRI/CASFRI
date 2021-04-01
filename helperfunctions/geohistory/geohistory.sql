@@ -414,12 +414,14 @@ RETURNS boolean AS $$
     IF individualTables THEN
       queryStr = '
 DROP TABLE IF EXISTS casfri50_history.' || lower(inv) || '_history;
-CREATE TABLE casfri50_history.' || lower(inv) || '_history AS';
+CREATE TABLE casfri50_history.' || lower(inv) || '_history AS
+';
     ELSE
       queryStr = '
-INSERT INTO casfri50_history.geohistory';
+INSERT INTO casfri50_history.geo_history
+';
     END IF;
-    queryStr = queryStr || 'WITH geohistory_gridded AS (
+    queryStr = queryStr || '(WITH geohistory_gridded AS (
       SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
                                    ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
       FROM casfri50_history.casflat_gridded
@@ -431,7 +433,7 @@ INSERT INTO casfri50_history.geohistory';
       GROUP BY id
     )
     SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
-    FROM wkb_version;';
+    FROM wkb_version);';
     EXECUTE queryStr;
     RETURN TRUE;
   END;
