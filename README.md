@@ -218,7 +218,7 @@ The following diagram illustrates the relationship between the translation table
 # Translation Procedure
 The steps to produce a complete build of the CASFRI database are detailed in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). A subset of these steps can be used to translate a single dataset as follows:
 
-1. Set up the config.sh or config.bat file with you system settings
+1. Set up the config.sh or config.bat file with your system settings.
 2. Load the dataset (e.g. AB03) into PostgreSQL by launching either the .bat (conversion/bat/load_ab03.bat) or .sh (conversion/sh/load_ab03.sh) loading script in a Bash or DOS command window.
 3. Load the translation tables into PostgreSQL by launching the CASFRI/translation/load_tables.sh (or .bat) script.
 4. Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions
