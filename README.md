@@ -13,11 +13,11 @@ A number of CASFRI instances have been produced since 2009. CASFRI 5 is the fift
 * Implementation of a temporalization procedure to create a temporal database of all available inventories.
 * Implementation of a descriptive error code system.
 
-The three steps involved in the production of the CASFRI 5 database are:
+The three main steps involved in the production of the CASFRI 5 database are:
 
-1. Conversion (from many different FRI file formats) and loading (into a PostgreSQL database) using Bash (or Batch) scripts and ogr2ogr.
-2. Translation of the loaded FRIs to the CASFRI schema (inside the PostgreSQL database)
-3. Temporalization of CAS data (inside the PostgreSQL database)
+1. **Conversion** (from many different FRI file formats) and loading (into a PostgreSQL database) using Bash (or Batch) scripts and ogr2ogr.
+2. **Translation** of the loaded FRIs to the CASFRI schema (inside the PostgreSQL database)
+3. **Temporalization** of CAS data (inside the PostgreSQL database)
 
 Note that forest resource inventories are not provided with this project due to the numerous licensing agreements that have to be passed with the different production juridictions. Many provincial inventories can now be downloaded for free from government web sites. All the inventories supported by this project are documented in [this table](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv).
 
@@ -67,19 +67,19 @@ The production process of CASFRI 5 requires:
 * The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) to translate the database.
 
 # Vocabulary
-*Source data* - Raw FRI data received from jurisdictions.
+**Source data -** Raw FRI data received from jurisdictions.
 
-*Loaded source table* - Raw FRI data converted and loaded into PostgreSQL.
+**Loaded source table -** Raw FRI data converted and loaded into PostgreSQL.
 
-*Target table* - FRI table translated into the CASFRI specifications.
+**Target table -** FRI table translated into the CASFRI specifications.
 
-*Translation table* - User created table detailing the validation and translation rules and converted to SQL queries by the translation framework.
+**Translation table -** User created table detailing the validation and translation rules and converted to SQL queries by the translation framework.
 
-*Lookup table* - User created table used in conjunction with the translation tables; for example, to recode provincial species lists to a standard set of 8-character codes.
+**Lookup table -** User created table used in conjunction with the translation tables; for example, to recode provincial species lists to a standard set of 8-character codes.
 
-*Translation framework* - The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
+**Translation framework -** The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
 
-*Helper function* - A set of PL/pgSQL functions used in the translation table to facilitate validation of source values and their translation to target values.
+**Helper function -** A set of PL/pgSQL functions used in the translation table to facilitate validation of source values and their translation to target values.
 
 # FRI and Inventory Standard Identifiers
 CASFRI 5 uses a four characters unique code named "inventory_id" to identify each FRI. This code is composed of two letters for the province or territory, and two numbers that increment for each new FRI added for that province/territory (e.g. BC01). Note that higher numbers do not necessarily imply more recent inventories.
@@ -89,7 +89,7 @@ Inventory standards are the attribute specifications applied to a given inventor
 All identifiers are listed in the [FRI inventory list CSV file](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv) that lists all the forest inventories used as source datasets in this project.
 
 # Handling Updates
-Historical forestry data is of great value which is why CASFRI accommodates updates. One type of update we often see in FRIs is re-inventories, i.e., when old photo-interpretation is updated to modern standards. The other types of update are so-called "depletion updates" related to various disturbances. In many jurisdictions, depletion-updates are produced annually to "cut-in" polygons disturbed by harvesting, wildfire or insects. Both types of updates are incorporated in CASFRI 5 by loading and translating the updated dataset and labelling the dataset with an incremented identifier (inventory_id). Any duplicate records will be dealt with in the temporalization procedure.
+Historical forestry data is of great value which is why CASFRI accommodates updates. One type of update which is often seen in FRIs is re-inventories, i.e., when old photo-interpretation is updated to modern standards. The other types of update are so-called "depletion updates" related to various disturbances. In many jurisdictions, depletion-updates are produced annually to "cut-in" polygons disturbed by harvesting, wildfire or insects. Both types of updates are incorporated in CASFRI 5 by loading and translating the updated dataset and labelling the dataset with an incremented identifier (inventory_id). Any duplicate records will be dealt with in the temporalization procedure.
 
 For an update to be incorporated in the database, the date of publication should be at least one year apart from a previous version. When data are available online, this information can be found in the metadata. For data received from a collaborator, information on the last version received should be shared in order to identify if any new datasets meet the 1-year criteria.   
 
@@ -146,13 +146,13 @@ Translation of loaded source tables into target tables formatted to the CASFRI s
 A detailed description of translation table properties is included in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). In short, each translation table lists a set of attribute names, their type in the target table, a set of validation helper functions which all input values have to pass, and a set of translation helper functions to convert input values to CASFRI values. A set of generic helper functions are included with the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework), these perform standardized validations and translations that are used in many different translation tables. The CASFRI project also has its own more specific set of [helper functions](https://github.com/edwardsmarc/CASFRI/tree/master/helperfunctions) that apply more complex translations specific to individual inventories.
 
 CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications):
-1. Header (HDR) attributes - summarizing reference information for each dataset;  
-2. CAS Base Polygon (CAS) attributes - describing the source polygon and any identifiers;  
-3. Forest-Level (LYR) attributes - describing productive and non-productive forest land;  
-4. Non-Forest Land (NFL) attributes - describing non-forested land;  
-5. Disturbance history (DST) attributes - describing the type, year and extent of disturbances;  
-6. Ecological specific (ECO) attributes - describing wetlands;  
-7. Geometry attributes (GEO) - polygon geometries.
+1. **Header (HDR) attributes -** summarizing reference information for each dataset;  
+2. **CAS Base Polygon (CAS) attributes -** describing the source polygon and any identifiers;  
+3. **Forest-Level (LYR) attributes -** describing productive and non-productive forest land;  
+4. **Non-Forest Land (NFL) attributes -** describing non-forested land;  
+5. **Disturbance history (DST) attributes -** describing the type, year and extent of disturbances;  
+6. **Ecological specific (ECO) attributes -** describing wetlands;  
+7. **Geometry attributes (GEO) -** polygon geometries.
 
 In general, each standard for each jurisdiction uses a single set of translation tables. All source datasets using the same standard should use the same set of translation tables. Differences in attribute names can be accommodated using the workflow scripts described below. In some cases minor differences in attributes between datasets using the same standard can be accommodated by designing translation helper functions that can deal with both formats. An example would be two datasets using the same standard, but different values for graminoids (e.g. 'Grm' in one dataset and 'graminoids' in another). These can be combined into a single translation function to deal with both datasets in the translation table (e.g. mapText(source_value, {'Grm', 'graminoids'}, {'GRAMINOID', 'GRAMINOID'})).
 
@@ -180,20 +180,17 @@ The translation of each dataset is done using the scripts in the [CASFRI/workflo
 
 It is important that a single translation table can be used for multiple translations, either for different layers within the same dataset, or for different datasets using the same standard but different attributes names. The workflow scripts accommodate this by combining three elements:
 
-**1. Placeholder names in translation table helper functions.**
-Translation table helper functions use placeholder attribute names instead of actual inventory attribute names. Every translation using a common translation table to translate similar inventories must map inventory attribute names to these placeholder column names. That's how a single translation table can be reused to translate many inventories from the same juridiction. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow script VIEWs are created to map the source inventory attribute names to the placeholder attribute names found in the translation table. One can then run the same translation using as many different VIEWs as there are inventories.
+**1. Placeholder names in translation table helper functions -** Translation table helper functions use placeholder attribute names instead of actual inventory attribute names. Every translation using a common translation table to translate similar inventories must map inventory attribute names to these placeholder column names. That's how a single translation table can be reused to translate many inventories from the same juridiction. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow script VIEWs are created to map the source inventory attribute names to the placeholder attribute names found in the translation table. One can then run the same translation using as many different VIEWs as there are inventories.
 
-**2. Attribute dependency table.**
-This table defines the mapping of attributes from each source table to the placeholder names used in the translation tables. For a given translation table, the attribute dependencies table contains a row for the translation table placeholder names, and rows for each translation that needs to be completed using a source inventory. If multiple layers have to be translated for an inventory, multiple rows must be defined in the attribute dependencies table. This table has the following columns:
+**2. Attribute dependency table -** This table defines the mapping of attributes from each source table to the placeholder names used in the translation tables. For a given translation table, the attribute dependencies table contains a row for the translation table placeholder names, and rows for each translation that needs to be completed using a source inventory. If multiple layers have to be translated for an inventory, multiple rows must be defined in the attribute dependencies table. This table has the following columns:
 
-* inventory_id - either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03).
-* layer - a unique integer value incrementing for LYR layers followed by NFL layers.
-* ttable_exists - indicates if the row represents the placeholder names of an existing translation table or only the source inventory attribute names for which no actual translation table exists.
+* **inventory_id -** either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03).
+* **layer -** a unique integer value incrementing for LYR layers followed by NFL layers.
+* **ttable_exists -** indicates if the row represents the placeholder names of an existing translation table or only the source inventory attribute names for which no actual translation table exists.
 
 All other columns represent target attributes in the CASFRI tables. The values in each cell list the attributes to be mapped to the translation table placeholder names. In the case of the translation table rows, the values must match the placeholder names used in the translation table. In the case of rows representing source datasets, the values represent source attribute names.
 
-**3. TT_CreateMappingView().**
-The function TT_CreateMappingView() is used to create the VIEWs used in the workflow by mapping the attributes defined in the attribute dependencies table from the source names to the translation table placeholder names. It has the following arguments:
+**3. TT_CreateMappingView() -** The function TT_CreateMappingView() is used to create the VIEWs used in the workflow by mapping the attributes defined in the attribute dependencies table from the source names to the translation table placeholder names. It has the following arguments:
 
 * **Schema name:** schema the source inventory was loaded to
 * **From table name (optional):** inventory_id of source inventory row in attribute dependencies table
@@ -218,21 +215,21 @@ The following diagram illustrates the relationship between the translation table
 # Translation Procedure
 The steps to produce a complete build of the CASFRI database are detailed in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). A subset of these steps can be used to translate a single dataset as follows:
 
-1. Set up the config.sh or config.bat file with your system settings.
-2. Load the inventory (e.g. AB03) into PostgreSQL by launching the conversion/sh/load_ab03.sh (or the conversion/bat/load_ab03.bat) loading script in a Bash (or DOS) command window. You can load many inventories in parallel by setting the invList1-5 variables in your config.sh file and by executing the conversion/sh/load_all.sh script.
-3. Load the translation tables into PostgreSQL by launching the CASFRI/translation/load_tables.sh (or .bat) script.
-4. Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions
+1. **Configure** your processing environment in the config.sh (or .bat) file.
+2. **Load the inventory** (e.g. AB03) into PostgreSQL by launching the conversion/sh/load_ab03.sh (or the conversion/bat/load_ab03.bat) loading script in a Bash (or DOS) command window. You can also launch many conversions in parallel. This is described in the Parallelization section.
+3. **Load the translation tables** into PostgreSQL by launching the CASFRI/translation/load_tables.sh (or .bat) script.
+4. **Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
     1. Install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produces a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
     2. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
         1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts.
         2. Load the CASFRI Helper Functions with the helperFunctionsCASFRI.sql script and test them using helperFunctionsCASFRITest.sql.
-5. Run the translation by launching the workflow SQL script (CASFRI/workflow/02_produceCASFRI/02_perInventory/02_AB03.sql) in pgAdmin (or a psql window). You can launch many translation SQL script at the same time by setting the invList1-5 variables in your config.sh file and by executing the workflow/02_produceCASFRI/01_translate_all_00.sh and the workflow/02_produceCASFRI/01_translate_all_01.sh scripts.
+5. **Run the translation** by launching the workflow SQL script (CASFRI/workflow/02_produceCASFRI/02_perInventory/02_AB03.sql) in pgAdmin (or a psql window). You can also launch many translations in parallel. This is described in the Parallelization section.
 
 Translated data is added to the six output tables in the 'casfri50' schema: cas_all, dst_all, eco_all, lyr_all, nfl_all, geo_all. The scripts in the [CASFRI/workflow/03_flatCASFRI/](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/03_flatCASFRI) folder can be used to create two different denormalized tables, one where all layers for a given polygon are reported on the same row, and one where all layers for a given polygon are reported on different rows. The former is necessary since it is the table used to generate the historical version of the CASFRI database.
 
 The steps to add a completey new inventory to the CASFRI database are detailed in issue [#471](https://github.com/edwardsmarc/CASFRI/issues/471).
 
-# Historical Version
+# CASFRI Historical Table
 The six tables found in the 'casfri50' schema as the result of a complete translation gathers stands from many inventories, where polygons sometimes overlapping each other in space and time (e.g. BC08, BC10, BC10 and BC11). That means if you try to match an observation point made at a specific year, you might end up with more than one matching stand. Either because they overlap in space (some inventories have many polygons of the same year overlapping between them), in time (the valid time of one inventory (e.g. 2000-2010) overlaps the valid time of the following inventory (2008-2015)) or both.
 
 The historical version of the CASFRI database is a new geometry table replacing the geo_all table where no two polygons share a same space at a specific time (i.e. no two polygons overlap in space and time). In this table, stand polygons are cut so that only polygons parts from the most up to date inventory at the date of observation can be matches. It allows querying for the best available inventory information at any point in time accross the full CASFRI coverage.
@@ -266,7 +263,33 @@ The resulting table can then be joined, using the CAS_id attribute, with:
   b) one of the CASFRI normalized tables from the casfri50 schema (cas_all, dst_all, eco_all, lyr_all, nfl_all).
 
 # Parallelization
-The conversion and translation steps are designed to be run in parallel on a single CPU. No work has been done to split the workflow across multiple CPUs because the speed of the full translation process is sufficient for the purposes of CASFRI (i.e. a full translation of the entire database will be rare, and the speed of translation is acceptable under this scenario). The single CPU parallelization of the conversion and translation steps is documented in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md) and allows all source datasets to be loaded at the same time, and all translation tables to be translated at the same time.
+Conversion, translation, production of the historical table and production of the inventory coverages are all very long processes when translating many inventories. In it's current state, with about 50 inventories supported, the final cas_all table gathers more than 66 million rows. If you add the other CASFRI tables (eco_all, dst_all, lyr_all, nfl_all and geo_all) that's more than 225 million rows translated. If you multiply this by the number of attributes composing each CASFRI table you get more than 3 billion values to translate. Even for a powerful database management system like PostgreSQL, that's a lot of information to process. 
+
+Much effort have been deployed during the developement of CASFRI 5 to make this process as quick and efficient as possible. Moving from PostgreSQL 11 to PostgreSQL 13 and from PostGIS 2.5 to PostGIS 3.1 has been a good step in this regard. PostgreSQL provides much better support for PARALLEL SAFE functions and PostGIS 3.1 uses the new faster GEOS 3.9 geometry library.
+
+On the CASFRI side, all steps involving long processes have been designed so they don't block each other as it is often the case in a DBMS. You can run each process as SQL scripts to have better monitoring and debugging control, or you can batch run them all in parallel using Bash shell scripts. (Note that even though some DOS Batch scripts are provided, only the Bash scripts are up to date. DOS Batch scripts may be updated in future releases.)
+
+The first step to implement batch processing is to define the list of inventories to translate with the invList1 to invList5 variables in your config.sh configuration script. Each invListX variable lists a subset of the complete list of inventories to process. Inventories listed in one invListX variable are processed in parallel. invListX variables are processed sequentially. Once the last inventory of one invListX variable is finished, the script processes the inventories listed in the next invListX variable. This is a way to balance between processing as many inventories in parallel as possible, and overloading (and possibly crashing) PostgreSQL with too much processing at the same time. Finding the right balance can be difficult and a frustrating exercise. You can also edit the invListX variables to process a limited list of inventories.
+
+Once the invListX variables have been defined, you can launch the different processing scripts in the proper order. Here is a description of those scripts:
+
+1. ./conversion/sh/**load_all.sh** loads all the source inventories listed in the invListX variables into the PostgreSQL schema defined by the targetFRISchema variable in the configuration script (config.sh).
+
+2. ./translation/test/**testTranslation.sh** runs translation tables on subsets of source inventories. The resulting tables are compared with archived tables for desired or undesired differences. This quick check is to make sure everything works as expected before launching the main, long translation process. This is also used to make sure nothing is broken while developping new features or fixing issues. The resulting tables are written to the casfri50_test schema.
+
+4. ./workflow/02_produceCASFRI/**01_translate_all_00.sh** prepares the database before launching the main translation process.
+
+5. ./workflow/02_produceCASFRI/**01_translate_all_01.sh** is the main translation script. It will translate all the source inventories listed in the invListX variables to the CASFRI schema. The resulting tables are written to the casfri50 schema.
+
+6. The next step is to produce the flat, denormalized tables. This process is not parallelizable and is not managed by .sh scripts. You must simply run the two .sql scripts. The resulting tables are written to the casfri50_flat schema.
+
+7. ./workflow/04_produceHistoricalTable/**01_PrepareGeoHistory.sh** prepares the database before launching the historical table production process. It will create the target table and split the whole geometric coverage into a grid for faster processing.
+
+8. ./workflow/04_produceHistoricalTable/**02_ProduceGeoHistory.sh** generates the historical table based on the invListX variables. The resulting tables are written to the casfri50_history schema.
+
+9. ./workflow/04_produceHistoricalTable/**03_ProduceInventoryCoverages.sh** generates a set of tables with the inventories geographic coverage polygons simplified at different levels. The resulting tables are written to the casfri50_coverage schema.
+
+There is still much work to do to optimize the speed of many helper functions and to make them PARALLEL SAFE so that not only different inventories are processed on different CPUs (on the same machine) but individual inventory processing is also split across many CPU (still on the same machine). No work has been done to split those processes across multiple machines.
 
 # Update Procedure
 The update procedure is the method for incorporating new datasets into an existing historical database. New datasets could be an entirely new inventory, or a partial inventory or depletion update. The original intent of the update procedure was to be able to rerun the temporalization process just for the polygons intersecting the new data. This would prevent rerunning the entire temporalization procedure which in the past has taken many weeks of processing. The temporalization procedure is now fast enough that is no need for a dedicated update script. The update procedure is therefore as follows:
@@ -278,14 +301,14 @@ The update procedure is the method for incorporating new datasets into an existi
 An alternative method would be to rerun the full translation from scratch using the steps in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md).
 
 # Translation Exceptions
-* **Multiple NFL value per row in AB [#526](https://github.com/edwardsmarc/CASFRI/issues/526)** - In general we translate one NFL value per row in CASFRI. If there are multiple NFL values to translate they are reported as different vertical layers. One exception to this is in the AB AVI where the non-forest type _rough pasture_ is always accompanied by a _shrub_ value indicating the height and extent of shrub cover in the _rough pasture_. This combination can also form horizontal structure within a polygon, with a structure percent value indicating how much of the polygon is covered. CASFRI cannot currently represent both horizontal and vertical structure in the same polygon. For this reason we report both the _rough pasture_ (translated to CASFRI value CULTIVATED) and the _shrub_ (translated to CASFRI value TALL_SHRUB or LOW_SHRUB) in the same layer. The workflow is such that this behavior has to applied consistently across the full dataset, meaning that some AB inventories will have cases of multiple NFL values per row, beyond the _rough pasture_ _shrub_ combination already mentioned.
+* **Multiple NFL value per row in AB [#526](https://github.com/edwardsmarc/CASFRI/issues/526)** - In general CASFRI accepts only one NFL value per row. If there are multiple NFL values to translate they are reported as different vertical layers. One exception to this is in the AB AVI where the non-forest type _rough pasture_ is always accompanied by a _shrub_ value indicating the height and extent of shrub cover in the _rough pasture_. This combination can also form horizontal structure within a polygon, with a structure percent value indicating how much of the polygon is covered. CASFRI cannot currently represent both horizontal and vertical structure in the same polygon. For this reason both the _rough pasture_ (translated to CASFRI value CULTIVATED) and the _shrub_ (translated to CASFRI value TALL_SHRUB or LOW_SHRUB) values are reported in the same layer. The workflow is such that this behavior has to applied consistently across the full dataset, meaning that some AB inventories will have cases of multiple NFL values per row, beyond the _rough pasture_ _shrub_ combination already mentioned.
 * **53 rows in PEI are missing SPECIES_3 [#676](https://github.com/edwardsmarc/CASFRI/issues/676)** - species need to be ordered by non-null values, so if SPECIES_3 is missing, SPECIES_4 becomes SPECIES_3. This will be completed but the bug was not found in time for the March 31st release. 
-* **Height calculation in BC [#336](https://github.com/edwardsmarc/CASFRI/issues/336)** - Most inventories simply copy the height value for the layer in question, but in BC we calculate the weighted average height because there are multiple height values for different canopy components.
+* **Height calculation in BC [#336](https://github.com/edwardsmarc/CASFRI/issues/336)** - Most inventories simply copy the height value for the layer in question, but in BC the weighted average height is calculated instead because there are multiple height values for different canopy components.
 * **Horizontal structure in Parks Canada datasets** - PC01 and PC02 are the only datasets using exclusively horizontal structure. In these cases the CASFRI LAYERs represent different horizontal components. There is no vertical structure captured for these inventories.
 * **QC03 photo year issue [#444](https://github.com/edwardsmarc/CASFRI/issues/444)** - Photo year in the QC 3rd inventory standard is not precise.
-* **QC 3rd and 4th inventory standards do not include layer 2 info [#287](https://github.com/edwardsmarc/CASFRI/issues/287)** - We know there are 2 LYR layers in many polygons, but there is only forest information for the top layer. This results in many LYR rows in QC01, QC02, QC03, QC04 and QC06 where LAYER is 2 and all attributes are UNKNOWN_VALUE. Note that this was discussed in issue [#694](https://github.com/edwardsmarc/CASFRI/issues/694) and some changes have been proposed that will be incorporated into the next release. 
-* **Non-productive rows in LYR tables [#632](https://github.com/edwardsmarc/CASFRI/issues/632)** - Usually we determine the presence of a LYR row using notEmpty() to test if species info is present. This is used for the ROW_TRANSLATION_RULE and for counting layers in LYR LAYER, NFL LAYER, and CAS NUM_OF_LAYERS. Some inventories (MB01, MB05, NB01, NB02, NL01, NS01, NS02, NS03, ON01, ON02, SK01, SK02, SK03, SK04, SK05) can have non-productive forested types (e.g. treed muskeg, alder) that do not include any species info, but still need to be reported as a LYR row using the PRODUCTIVITY_TYPE attribute. In these cases we need to catch the productivity type value in the ROW_TRANSLATION_RULE, and we need custom functions to make sure the row is counted in any layer functions.
-* **CAS_ID issues** - In most inventories we are able to build the unique CAS_ID identifier using identifiers from the source data that allow the cas_id to be linked back to the source polygon. In some inventories (e.g. ON [#536](https://github.com/edwardsmarc/CASFRI/issues/536) and QC [#645](https://github.com/edwardsmarc/CASFRI/issues/645)), the unique source identifier is too long to fit in a single CAS_ID slot, so it is split across multiple slots. Additionally, ON01 has 6 cases where the unique identifier does not link back to a single source polygon ([#644](https://github.com/edwardsmarc/CASFRI/issues/644)).
+* **QC 3rd and 4th inventory standards do not include layer 2 info [#287](https://github.com/edwardsmarc/CASFRI/issues/287)** - Even if there are two LYR layers in many polygons, there is only forest information for the top layer. This results in many LYR rows in QC01, QC02, QC03, QC04 and QC06 where LAYER is 2 and all attributes are UNKNOWN_VALUE. Note that this was discussed in issue [#694](https://github.com/edwardsmarc/CASFRI/issues/694) and some changes have been proposed that will be incorporated into the next release. 
+* **Non-productive rows in LYR tables [#632](https://github.com/edwardsmarc/CASFRI/issues/632)** - Usually the presence of a LYR row is determined using notEmpty() to test if species info is present. This is used for the ROW_TRANSLATION_RULE and for counting layers in LYR LAYER, NFL LAYER, and CAS NUM_OF_LAYERS. Some inventories (MB01, MB05, NB01, NB02, NL01, NS01, NS02, NS03, ON01, ON02, SK01, SK02, SK03, SK04, SK05) can have non-productive forested types (e.g. treed muskeg, alder) that do not include any species info, but still need to be reported as a LYR row using the PRODUCTIVITY_TYPE attribute. In these cases the translation table catch the productivity type value in the ROW_TRANSLATION_RULE, and a custom functions make sure the row is counted in any layer functions.
+* **CAS_ID issues** - In most inventories the translation rule is able to build the unique CAS_ID identifier using identifiers from the source data that allow the cas_id to be linked back to the source polygon. In some inventories (e.g. ON [#536](https://github.com/edwardsmarc/CASFRI/issues/536) and QC [#645](https://github.com/edwardsmarc/CASFRI/issues/645)), the unique source identifier is too long to fit in a single CAS_ID slot, so it is split across multiple slots. Additionally, ON01 has 6 cases where the unique identifier does not link back to a single source polygon ([#644](https://github.com/edwardsmarc/CASFRI/issues/644)).
 * **Multiple inventories in a single source dataset** - In some cases a source dataset is received which contains data from multiple standards. In these cases the source data is divided into multiple datasets (one for each standard) during loading. This applies to MB05 and MB06; QC03, QC04, QC05; and QC02, QC06, QC07.  
 * **SK01 species percent logic [#275](https://github.com/edwardsmarc/CASFRI/issues/275)** - Assignment of species percent was developed with collaborators based on the species codes present. The logic is included in a document linked to the issue.
 * **ON01 species codes [#678](https://github.com/edwardsmarc/CASFRI/issues/678) [#681](https://github.com/edwardsmarc/CASFRI/issues/681)** - Species codes appear to be a combination of multiple formats. Fix in [#678](https://github.com/edwardsmarc/CASFRI/issues/678) deals with most of them, but some species codes have a single letter code that is not included in the manual ([#681](https://github.com/edwardsmarc/CASFRI/issues/681)).
