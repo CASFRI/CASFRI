@@ -252,23 +252,25 @@ Valid start and end dates are assigned using the following rules:
   * When both polygons have the same stand_photo_year and valid values but come from different inventories, polygons from higher precedence inventories as established by the TT_HasPrecedence() function and the casfri50_history_test.inv_precedence table takes precedence. For example, if two overlapping 2010 polygons both have all valid values but the first comes from AB10 and the second comes from AB16, then TT_HasPrecedence() states that the AB16 polygon must take precedence.
   * When both polygons have the same stand_photo_year, valid values and the same TT_HasPrecedence() precedence, then both polygons are sorted by their unique identifier (cas_id) and the first one has precedence over the second one.
 
-No interpolation or interpretation of attributes is performed. For this reason the historical database can be queried to recreate the 'state of the inventory' for a given year, but not the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require modelling the exact forest attributes for every year based on time since disturbance. This is beyond the scope of this project but the historical database could facilitate such modelling exercises for interested end users.
+No interpolation or interpretation of attributes is performed. For this reason the historical table can be queried to recreate the 'state of the inventory' for a given year, but not necessary the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require modelling the exact forest attributes for every year based on time since disturbance. This is beyond the scope of this project but the historical database could facilitate such modelling exercises for interested end users.
 
-The historical database can be queried using valid_year_begin and valid_year_end. For example, the following query would select the most valid polygon from the historical database for all observation points in a table:
+The historical table can be queried using valid_year_begin and valid_year_end. For example, the following query would select the most valid polygon from the historical database for all observation points in a table:
 ```
 SELECT p.id, p.year, p.geom, gh.cas_id
 FROM mypointable p, casfri50_history.geo_history gh
 WHERE ST_Intersects(gh.geom, p.geom) AND gh.valid_year_begin <= p.year AND p.year <= gh.valid_year_end;
 ```
-The resulting table can then be joined with:
+The resulting table can then be joined, using the CAS_id attribute, with:
+
   a) one of the two flat tables from the casfri50_flat schema or
-  b) one of the CASFRI normalized tables from the casfri50 schema (hdr_all, cas_all, dst_all, eco_all, lyr_all, nfl_all).
+  b) one of the CASFRI normalized tables from the casfri50 schema (cas_all, dst_all, eco_all, lyr_all, nfl_all).
 
 # Parallelization
-The conversion and translation steps are designed to be run in parallel on a single CPU. No work has been done to split the workflow across multiple CPUs because we feel the speed of the full translation process is sufficient for the purposes of CASFRI (i.e. a full translation of the entire database will be rare, and the speed of translation is acceptable under this scenario). The single CPU parallelization of the conversion and translation steps is documented in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md) and allows all source datasets to be loaded at the same time, and all tranlsation tables to be translated at the same time.
+The conversion and translation steps are designed to be run in parallel on a single CPU. No work has been done to split the workflow across multiple CPUs because the speed of the full translation process is sufficient for the purposes of CASFRI (i.e. a full translation of the entire database will be rare, and the speed of translation is acceptable under this scenario). The single CPU parallelization of the conversion and translation steps is documented in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md) and allows all source datasets to be loaded at the same time, and all translation tables to be translated at the same time.
 
 # Update Procedure
-The update procedure is the method for incorporating new datasets into an existing historical database. New datasets could be an entirely new inventory, or a partial inventory or depletion update. The original intent of the update procedure was to be able to rerun the temporalization process just for the polygons intersecting the new data. This would prevent rerunning the entire temporalization procedure which in the past has taken many weeks of processing. The temporalization procedure is now fast enough that we do not see a need for a dedicated update script. The update procedure is therefore as follows:
+The update procedure is the method for incorporating new datasets into an existing historical database. New datasets could be an entirely new inventory, or a partial inventory or depletion update. The original intent of the update procedure was to be able to rerun the temporalization process just for the polygons intersecting the new data. This would prevent rerunning the entire temporalization procedure which in the past has taken many weeks of processing. The temporalization procedure is now fast enough that is no need for a dedicated update script. The update procedure is therefore as follows:
+
 1. Load the new dataset into PostgreSQL using a conversion script.
 2. Translate the new dataset into the 7 CASFRI tables (e.g. cas_all, lyr_all etc.) using an existing or new translation table. This will add the new data as additional rows into the existing CASFRI tables containing all previously translated data.
 3. Rerun the [produceHistoricalTable.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script to build the historical database using the 7 CASFRI tables.
