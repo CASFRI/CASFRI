@@ -266,7 +266,34 @@ The resulting table can then be joined, using the CAS_id attribute, with:
   b) one of the CASFRI normalized tables from the casfri50 schema (cas_all, dst_all, eco_all, lyr_all, nfl_all).
 
 # Parallelization
-The conversion and translation steps are designed to be run in parallel on a single CPU. No work has been done to split the workflow across multiple CPUs because the speed of the full translation process is sufficient for the purposes of CASFRI (i.e. a full translation of the entire database will be rare, and the speed of translation is acceptable under this scenario). The single CPU parallelization of the conversion and translation steps is documented in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md) and allows all source datasets to be loaded at the same time, and all translation tables to be translated at the same time.
+Conversion, translation, production of the historical table and production of the inventory coverages are all very long processes when involving many inventories. In it's current state, with about 50 inventories supported, the final cas_all table gathers more than 66 million rows. If you add the other CASFRI tables (eco_all, dst_all, lyr_all, nfl_all and geo_all) that's more than 250 million rows translated. If you multiply this by the number of attribute for each CASFRI table you get more than 3 billions values to translate. Even for a powerful database management system like PostgreSQL, that's a lot of information to process. 
+
+That's why much effort have been deployed during the developement of CASFRI 5 to make this process as quick and efficient as possible. Moving from PostgreSQL 11 to PostgreSQL 13 and from PostGIS 2.5 to PostGIS 3.1 has been a pretty good step in that direction. PostgreSQL provides much better support for PARALLEL SAFE functions and PostGIS 3.1 uses the new faster GEOS 3.9 geometry library.
+
+On the CASFRI side, all steps involving long processes have been designed so they don't block each other as it is often the case in a DBMS. You can run each process as SQL scripts to have better monitoring and debugging control or you can batch run them all in parallel using Bash shell scripts. (Note that even though some DOS Batch scripts are provided, only the Bash scripts are up to date. DOS Batch scripts may be updated in future releases.)
+
+The first step to implement batch processing is to define the list of inventory to translate with the invList1 to invList5 variables in your config.sh configuration script. Each invListX variable list a subset of the complete list of inventories to process. Inventories listed in one invListX variable are processed in parallel. invListX variables are processed sequentially. Once the last inventory of one invListX variable is finished, the script processes the inventories listed in the next invListX variable. This is a way to balance between processing as many inventories in parallel as possible and overloading (and possibly crashing) PostgreSQL with too much processing at the same time. Finding the right balance can be difficult and a frustrating exercise. You can also play with the invListX variables to process a limited list of inventory.
+
+Once the invListX variables have been defined, you can launch the different processing scripts in the proper order. Here is a description of those scripts:
+
+1. ./conversion/sh/**load_all.sh** loads all the source inventories listed in the invListX variables into the PostgreSQL schema defined by the targetFRISchema variable in the configuration script (config.sh).
+
+2. ./translation/test/**testTranslation.sh** runs translation tables on subsets of source inventories. The resulting tables are compared with archived tables for desired or undesired differences. This quick check is to make sure everything works as expected before launching the main, long translation process. This is also used to make sure nothing is broken while developping new features or fixing issues. The resulting tables are written to the casfri50_test schema.
+
+4. ./workflow/02_produceCASFRI/**01_translate_all_00.sh** prepares the database before launching the main translation process.
+
+5. ./workflow/02_produceCASFRI/**01_translate_all_01.sh** is the main translation script. It will translate all the source inventories listed in the invListX variables to the CASFRI schema. The resulting tables are written to the casfri50 schema.
+
+6. The next step is to produce the flat, denormalized tables. This process is not parallelizable and is not managed by scripts. You must simply run the two .sql scripts. The resulting tables are written to the casfri50_flat schema.
+
+7. ./workflow/04_produceHistoricalTable/**01_PrepareGeoHistory.sh** prepares the database before launching the historical table production process. It will create the target table and split the whole geometric coverage into a grid for faster processing.
+
+8. ./workflow/04_produceHistoricalTable/**02_ProduceGeoHistory.sh** generates the historical table based on the invListX variables. The resulting tables are written to the casfri50_history schema.
+
+9. ./workflow/04_produceHistoricalTable/**03_ProduceInventoryCoverages.sh** generates a set of tables with inventories geographic coverages polygons simplified at different levels. The resulting tables are written to the casfri50_coverage schema.
+
+
+There is still much work to do to optimize the speed of many helper functions and to make them PARALLEL SAFE so that not only different inventories are processed on different CPUs (on the same machine) but individual inventory process is also splitted on many CPU (still on the same machine). No work has been done to split those processes across multiple machines.
 
 # Update Procedure
 The update procedure is the method for incorporating new datasets into an existing historical database. New datasets could be an entirely new inventory, or a partial inventory or depletion update. The original intent of the update procedure was to be able to rerun the temporalization process just for the polygons intersecting the new data. This would prevent rerunning the entire temporalization procedure which in the past has taken many weeks of processing. The temporalization procedure is now fast enough that is no need for a dedicated update script. The update procedure is therefore as follows:
