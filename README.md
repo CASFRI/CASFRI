@@ -108,7 +108,7 @@ Currently supported FRI formats are:
 Arc/Info E00 files are not currently well supported by GDAL/OGR. Source tables in this format should be converted into a supported format using another software package before loading (e.g. to a file geodatabase).
 
 ### Projection
-All source tables are transformed to the Canada Albers Equal Area Conic projection during loading.
+All source tables are transformed to the Canada Albers Equal Area Conic projection by GDAL/OGR during loading.
 
 ### Configuration File
 A config file (.bat or .sh) is required in the CASFRI root directory to set local paths and preferences. Template files are provided (configSample.bat and configSample.sh) which can be copied and edited.
