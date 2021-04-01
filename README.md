@@ -67,19 +67,19 @@ The production process of CASFRI 5 requires:
 * The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) to translate the database.
 
 # Vocabulary
-*Source data* - Raw FRI data received from jurisdictions.
+**Source data -** Raw FRI data received from jurisdictions.
 
-*Loaded source table* - Raw FRI data converted and loaded into PostgreSQL.
+**Loaded source table -** Raw FRI data converted and loaded into PostgreSQL.
 
-*Target table* - FRI table translated into the CASFRI specifications.
+**Target table -** FRI table translated into the CASFRI specifications.
 
-*Translation table* - User created table detailing the validation and translation rules and converted to SQL queries by the translation framework.
+**Translation table -** User created table detailing the validation and translation rules and converted to SQL queries by the translation framework.
 
-*Lookup table* - User created table used in conjunction with the translation tables; for example, to recode provincial species lists to a standard set of 8-character codes.
+**Lookup table -** User created table used in conjunction with the translation tables; for example, to recode provincial species lists to a standard set of 8-character codes.
 
-*Translation framework* - The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
+**Translation framework -** The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework).
 
-*Helper function* - A set of PL/pgSQL functions used in the translation table to facilitate validation of source values and their translation to target values.
+**Helper function -** A set of PL/pgSQL functions used in the translation table to facilitate validation of source values and their translation to target values.
 
 # FRI and Inventory Standard Identifiers
 CASFRI 5 uses a four characters unique code named "inventory_id" to identify each FRI. This code is composed of two letters for the province or territory, and two numbers that increment for each new FRI added for that province/territory (e.g. BC01). Note that higher numbers do not necessarily imply more recent inventories.
