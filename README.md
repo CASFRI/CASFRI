@@ -71,7 +71,7 @@ The production process of CASFRI 5 requires:
 
 *Loaded source table* - Raw FRI data converted and loaded into PostgreSQL.
 
-*Target table* - Translated FRI table into the CASFRI specifications.
+*Target table* - FRI table translated into the CASFRI specifications.
 
 *Translation table* - User created table detailing the validation and translation rules and interpreted by the translation engine.
 
