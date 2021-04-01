@@ -11,7 +11,7 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
--- cas_all counts
+-- cas_all counts 1m05
 ---------------------------------------------
 SELECT * FROM (
 (WITH expected AS (
@@ -75,7 +75,14 @@ SELECT 'cas_all' AS cas_table,
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
-FROM expected exp NATURAL FULL JOIN counts cnt)
+FROM expected exp NATURAL FULL JOIN counts cnt
+UNION ALL
+SELECT 'cas_all' AS cas_table, 
+       'TOTAL' inv,
+       (SELECT sum(cnt) FROM expected) expected,
+       (SELECT sum(nb) FROM counts) counted,
+       ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
+)
 ---------------------------------------------
 -- dst_all counts
 ---------------------------------------------
@@ -141,7 +148,14 @@ SELECT 'dst_all' AS cas_table,
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
-FROM expected exp NATURAL FULL JOIN counts cnt)
+FROM expected exp NATURAL FULL JOIN counts cnt
+UNION ALL
+SELECT 'dst_all' AS cas_table, 
+       'TOTAL' inv,
+       (SELECT sum(cnt) FROM expected) expected,
+       (SELECT sum(nb) FROM counts) counted,
+       ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
+)
 ---------------------------------------------
 -- eco_all counts
 ---------------------------------------------
@@ -207,7 +221,14 @@ SELECT 'eco_all' AS cas_table,
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
-FROM expected exp NATURAL FULL JOIN counts cnt)
+FROM expected exp NATURAL FULL JOIN counts cnt
+UNION ALL
+SELECT 'eco_all' AS cas_table, 
+       'TOTAL' inv,
+       (SELECT sum(cnt) FROM expected) expected,
+       (SELECT sum(nb) FROM counts) counted,
+       ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
+)
 ---------------------------------------------
 -- lyr_all counts
 ---------------------------------------------
@@ -273,7 +294,14 @@ SELECT 'lyr_all' AS cas_table,
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
-FROM expected exp NATURAL FULL JOIN counts cnt)
+FROM expected exp NATURAL FULL JOIN counts cnt
+UNION ALL
+SELECT 'lyr_all' AS cas_table, 
+       'TOTAL' inv,
+       (SELECT sum(cnt) FROM expected) expected,
+       (SELECT sum(nb) FROM counts) counted,
+       ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
+)
 ---------------------------------------------
 -- nfl_all counts
 ---------------------------------------------
@@ -339,7 +367,14 @@ SELECT 'nfl_all' AS cas_table,
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
-FROM expected exp NATURAL FULL JOIN counts cnt)
+FROM expected exp NATURAL FULL JOIN counts cnt
+UNION ALL
+SELECT 'nfl_all' AS cas_table, 
+       'TOTAL' inv,
+       (SELECT sum(cnt) FROM expected) expected,
+       (SELECT sum(nb) FROM counts) counted,
+       ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
+)
 ---------------------------------------------
 -- geo_all counts
 ---------------------------------------------
@@ -405,7 +440,14 @@ SELECT 'geo_all' AS cas_table,
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
-FROM expected exp NATURAL FULL JOIN counts cnt)
+FROM expected exp NATURAL FULL JOIN counts cnt
+UNION ALL
+SELECT 'geo_all' AS cas_table, 
+       'TOTAL' inv,
+       (SELECT sum(cnt) FROM expected) expected,
+       (SELECT sum(nb) FROM counts) counted,
+       ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
+)
 ) foo 
 --WHERE passed
 ORDER BY inv, cas_table
