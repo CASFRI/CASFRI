@@ -217,7 +217,8 @@ DROP SEQUENCE IF EXISTS bug_splitbygrid;
 CREATE SEQUENCE bug_splitbygrid START 1;
 SELECT nextval('bug_splitbygrid');
 
--- Create a gridded version of the flat version of CASFRI 13h00, 85M polygons
+-- Create a gridded version of the flat version of CASFRI 
+-- 139M polygons, 6h15
 DROP TABLE IF EXISTS casfri50_history.casflat_gridded;
 CREATE TABLE casfri50_history.casflat_gridded AS
 SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
@@ -227,9 +228,9 @@ FROM casfri50_flat.cas_flat_all_layers_same_row
 
 SELECT count(*) FROM casfri50_history.casflat_gridded;
 
-CREATE INDEX ON casfri50_history.casflat_gridded USING btree(inventory_id);
-CREATE INDEX ON casfri50_history.casflat_gridded USING btree(cas_id);
-CREATE INDEX ON casfri50_history.casflat_gridded USING gist(geom);
+CREATE INDEX ON casfri50_history.casflat_gridded USING btree(inventory_id); -- 30m
+CREATE INDEX ON casfri50_history.casflat_gridded USING btree(cas_id); -- 40m
+CREATE INDEX ON casfri50_history.casflat_gridded USING gist(geom); --1h40
 
 -- Add an inventory to the gridded table
 /*
