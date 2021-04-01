@@ -178,7 +178,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.17'::text number,
        'cas_all' target_table,
-       'Issue #609: Five rows still produce NUM_OF_LAYERS = 0. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
+       'Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -229,7 +229,7 @@ FROM (SELECT *
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
                         ARRAY['src_inv_area_greater_than_zero', 
                               'src_inv_area >= 0 OR 
-                               src_inv_area = ANY(TT_IsMissingOrInvalidNumber())
+                               src_inv_area = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 UNION ALL
