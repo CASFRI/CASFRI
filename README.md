@@ -188,7 +188,7 @@ This table defines the mapping of attributes from each source table to the place
 
 * inventory_id - either a name representing the translation table (e.g. AB) or a name matching a source inventory dataset (e.g. AB03).
 * layer - a unique integer value incrementing for LYR layers followed by NFL layers.
-* ttable_exists - indicates if the row represents a translation table.
+* ttable_exists - indicates if the row represents the placeholder names of an existing translation table or only the source inventory attribute names for which no actual translation table exists.
 
 All other columns represent target attributes in the CASFRI tables. The values in each cell list the attributes to be mapped to the translation table placeholder names. In the case of the translation table rows, the values must match the placeholder names used in the translation table. In the case of rows representing source datasets, the values represent source attribute names.
 
