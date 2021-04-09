@@ -83,7 +83,9 @@ Run the workflow\03_flatCASFRI scripts to produce the two different flat version
 
 **8. Generate the historical version of the database**
 
-In order, run:
+Load the required function by running geoHistory.sql.
+
+Then, in order, run:
 
 1. the workflow\04_produceHistoricalTable\01_PrepareGeoHistory.sh to prepare the casfri50_history schema, the inv_precedence table where you establish the precedence of the various inventories and some functions.
 
