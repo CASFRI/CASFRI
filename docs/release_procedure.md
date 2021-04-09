@@ -83,7 +83,7 @@ Run the workflow\03_flatCASFRI scripts to produce the two different flat version
 
 **8. Generate the historical version of the database**
 
-Load the required function by running geoHistory.sql.
+Load the required functions by running geoHistory.sql.
 
 Then, in order, run:
 
