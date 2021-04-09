@@ -283,7 +283,7 @@ Once the invListX variables have been defined, you can launch the different proc
 
 6. The next step is to produce the flat, denormalized tables. This process is not parallelizable and is not managed by .sh scripts. You must simply run the two .sql scripts. The resulting tables are written to the casfri50_flat schema.
 
-7. ./workflow/04_produceHistoricalTable/**01_PrepareGeoHistory.sh** prepares the database before launching the historical table production process. It will create the target table and split the whole geometric coverage into a grid for faster processing.
+7. ./workflow/04_produceHistoricalTable/**01_PrepareGeoHistory.sh** prepares the database before launching the historical table production process. It will create the target table and split the whole geometric coverage into a grid for faster processing. The required functions need to loaded by calling geoHistory.sql before running 01_PrepareGeoHistory.sh.
 
 8. ./workflow/04_produceHistoricalTable/**02_ProduceGeoHistory.sh** generates the historical table based on the invListX variables. The resulting tables are written to the casfri50_history schema.
 
