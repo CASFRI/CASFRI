@@ -174,7 +174,12 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
         yfloor int;
     BEGIN
         IF ingeom IS NULL OR ST_IsEmpty(ingeom) THEN
-            RETURN QUERY SELECT ingeom, NULL::int8, NULL::int, NULL::int, NULL::geometry ;
+            geom = ingeom;
+            tid = NULL;
+            tx = NULL;
+            ty = NULL;
+            tgeom = NULL;
+            RETURN NEXT;
             RETURN;
         END IF;
         IF xgridsize IS NULL OR xgridsize <= 0 THEN
@@ -216,6 +221,7 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
 $$ LANGUAGE plpgsql VOLATILE PARALLEL SAFE;
 /*
 SELECT * FROM TT_SplitByGrid(ST_Buffer(ST_MakePoint(0, 0), 100), 100);
+SELECT * FROM TT_SplitByGrid(NULL::geometry, 10);
 */
 ------------------------------------------------------------------------------
 
