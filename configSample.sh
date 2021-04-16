@@ -52,3 +52,11 @@ if [ ${pgversion}x == x ]; then
 pgversion=11
 fi
 pgFolder="/c/PROGRA~1/PostgreSQL/$pgversion"
+
+# Set bashCmd if your bash command is different from the standard Linux bash command
+# bashCmd="/c/program files/git/git-bash.exe"
+
+if [ ${bashCmd}x == x ]; then
+bashCmd="/bin/bash"
+fi
+

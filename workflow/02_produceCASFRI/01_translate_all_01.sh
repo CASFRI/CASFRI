@@ -2,8 +2,6 @@
 
 source ../../config.sh
 
-bashCmd="/c/program files/git/git-bash.exe"
- 
 declare -n L
 
 # Iterate over the list of list always making the last command a waiting one (the following ones wait for it to finish before proceeding)
