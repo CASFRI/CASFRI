@@ -33,13 +33,13 @@ Note that only major issues preventing the conversion or the translation process
 
 1. Make sure all the inventories to load are listed in your config.sh invList1-5 variables. All inventories pertaining to the same invList1-5 are executed in parallel. There are five lists to avoid overloading the system.
 
-2. Open a Bash (or DOS) command window, CD to the CASFRI conversion/sh (or bat) folder and load all the listed inventories using the load_all.sh (or .bat) script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
+2. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all the listed inventories using the load_all.sh script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
 
-3. In the same command window, load the translation tables using the CASFRI/translation/load_tables.sh (or .bat) script.
+3. In the same command window, load the translation tables using the CASFRI/translation/load_tables.sh script.
 
 **3. Install and unsintall the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
 
-1. In the same command window, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produce a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
+1. In the same command window, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh script. This step produce a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
 
 2. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
 
@@ -63,9 +63,9 @@ Note that only major issues preventing the conversion or the translation process
 
 **4. Test the translation**
 
-1. Execute the CASFRI/translation/test/testTranslation.sh (or .bat) script. You can also run each test_cas.sql, test_dst.sql, test_eco.sql, test_lyr.sql and test_nfl.sql in pgAdmin. This will produce a series of table in the CASFRI50_test schema.
+1. Execute the CASFRI/translation/test/testTranslation.sh script. You can also run each test_cas.sql, test_dst.sql, test_eco.sql, test_lyr.sql and test_nfl.sql in pgAdmin. This will produce a series of table in the CASFRI50_test schema.
 
-2. Dump the produced test tables using the CASFRI/translation/test/dump_test_tables.sh (or .bat) script. You should easily see the differences between the result of the test and the archived reference tables in GitKraken (or any git client able to show differences between the local and the GitHub repositories). Fix any issue in the production of the test tables if they are wrong or commit the new tables if they are right. Update the counts of produced row and the processing time for each group of test at the end of each script.
+2. Dump the produced test tables using the CASFRI/translation/test/dump_test_tables.sh script. You should easily see the differences between the result of the test and the archived reference tables in GitKraken (or any git client able to show differences between the local and the GitHub repositories). Fix any issue in the production of the test tables if they are wrong or commit the new tables if they are right. Update the counts of produced row and the processing time for each group of test at the end of each script.
 
 **5. Run the translation**
 
