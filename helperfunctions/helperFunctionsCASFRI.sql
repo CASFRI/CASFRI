@@ -1587,7 +1587,7 @@ RETURNS text AS $$
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -5590,7 +5590,7 @@ RETURNS text AS $$
     sp_to_lookup = sp_array[_sp_number];
     RETURN sp_to_lookup;
   END;
-$$ LANGUAGE plpgsql STABLE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------

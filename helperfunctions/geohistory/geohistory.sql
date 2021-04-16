@@ -33,7 +33,7 @@ RETURNS boolean AS $$
     END LOOP;
     RETURN FALSE;
   END
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 --SELECT * FROM test_geohistory;
 --SELECT ARRAY[id::text, att] FROM test_geohistory;
@@ -218,7 +218,7 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
         END LOOP;
     RETURN;
     END;
-$$ LANGUAGE plpgsql VOLATILE PARALLEL SAFE;
+$$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE;
 /*
 SELECT * FROM TT_SplitByGrid(ST_Buffer(ST_MakePoint(0, 0), 100), 100);
 SELECT * FROM TT_SplitByGrid(NULL::geometry, 10);
@@ -1122,4 +1122,4 @@ RETURNS TABLE (id text,
            valid_year_end,
            valid_time
     FROM TT_TableGeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
-$$ LANGUAGE sql VOLATILE;
+$$ LANGUAGE sql IMMUTABLE;

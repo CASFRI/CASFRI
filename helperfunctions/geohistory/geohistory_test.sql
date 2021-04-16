@@ -91,7 +91,7 @@ END IF;
       RETURN ((numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)) OR 
            (inv1 = inv2 AND ((numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)));
   END
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 --SELECT TT_HasPrecedence(NULL, NULL, NULL, NULL); -- false
 --SELECT TT_HasPrecedence('AB06', NULL, NULL, NULL); -- true
