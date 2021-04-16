@@ -1,18 +1,31 @@
 # Sample configuration file for conversion batch files
 # Copy this file as config.bat and edit it according to your setup.
 
+#################################################################
+# Path to base folder of all source inventories
+#################################################################
+friDir=E:/FRIs
+
+#################################################################
+# PostgreSQL configuration
+#################################################################
 pgport=5432
 pghost=localhost
-pgdbname=cas
 pguser=postgres
 pgpassword=postgres
-pgversion=11
 
-# Target schema where raw csource inventories should be loaded
+# Target PostgreSQL database
+pgdbname=cas
+
+# Target schema where raw source inventories should be loaded
 targetFRISchema=rawfri
 
 # Target schema where translation tables should be loaded
 targetTranslationFileSchema=translation
+
+#################################################################
+# List of source tables to load and translate
+#################################################################
 
 # Extra, non inventory tables to load (not translate)
 photoYearList=(ab_photoyear nl_photoyear)
@@ -35,24 +48,39 @@ invList5=(AB03 AB06 AB07 AB08 AB10 AB11 AB16 AB30 MB01 MB02 MB04 MB06 PC01 PC02 
 # Merge all inventory lists into a list of list
 fullList=(invList1 invList2 invList3 invList4 invList5)
 
-friDir=E:/FRIs
+#################################################################
+# GDAL installation folder
+#################################################################
 gdalFolder="C:/Program Files/GDAL"
+
+# Set this to true if using GDAL version 1.11.4
 gdal_1_11_4=False
 
+#################################################################
 # Set to True if you want conversion and translation command windows to stay open after completion
 leaveConvShellOpen=False
 
+#################################################################
 # Set to true if you want loaded inventories to overwrite already loaded ones
 overwriteFRI=True
 
 # Set to true if you want loaded translation tables to overwrite already loaded ones
 overwriteTTables=True
 
+#################################################################
+# Set some default values
+#################################################################
+
+##############################
+# Set pgversion if your version of PostgreSQL is different than 13
+# pgversion=11
+
 if [ ${pgversion}x == x ]; then
-pgversion=11
+pgversion=13
 fi
 pgFolder="/c/PROGRA~1/PostgreSQL/$pgversion"
 
+##############################
 # Set bashCmd if your bash command is different from the standard Linux bash command
 # bashCmd="/c/program files/git/git-bash.exe"
 
