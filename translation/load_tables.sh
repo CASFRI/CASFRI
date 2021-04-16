@@ -13,6 +13,8 @@
 
 source ../conversion/sh/common.sh
 
+tables_to_load=$@
+
 # Folder containing translation files to be loaded:
 load_folders='tables/ tables/lookup ../docs/'
 
@@ -21,22 +23,38 @@ load_folders='tables/ tables/lookup ../docs/'
 # make schema if it doesn't exist
 "$gdalFolder/ogrinfo" "$pg_connection_string" -sql "CREATE SCHEMA IF NOT EXISTS $targetTranslationFileSchema";
 
-# load all files in the folder
-for t in $load_folders
-do
-  echo $t
-  if [ -d "$t" ]; then 
-    for i in $t/*.csv
-    do
-      x=${i##*/} # gets file name with .csv
-      tab_name=${x%%.csv} # removes .csv
-    
-      # load using ogr
-      echo "loading..."$tab_name
-      "$gdalFolder/ogr2ogr" \
-      -f "PostgreSQL" "$pg_connection_string" $i \
-      -nln $targetTranslationFileSchema.$tab_name \
-      $overwrite_tab
+if [ ${tables_to_load}x == x ]; then
+  # load all files in the folder
+  for t in $load_folders
+  do
+    echo $t
+    if [ -d "$t" ]; then 
+      for i in $t/*.csv
+      do
+        x=${i##*/} # gets file name with .csv
+        tab_name=${x%%.csv} # removes .csv
+
+        # load using ogr
+        echo "loading..."$tab_name
+        "$gdalFolder/ogr2ogr" \
+        -f "PostgreSQL" "$pg_connection_string" $i \
+        -nln $targetTranslationFileSchema.$tab_name \
+        $overwrite_tab
       done
-  fi
-done
+    fi
+  done
+else
+  # load files passed as parameter
+  for g in $tables_to_load
+  do
+    echo
+    echo Loading ${g}.....
+    
+    tab_name=${g%%.csv} # removes .csv
+
+    "$gdalFolder/ogr2ogr" \
+    -f "PostgreSQL" "$pg_connection_string" tables/$g \
+    -nln $targetTranslationFileSchema.$tab_name \
+    $overwrite_tab
+  done
+fi
