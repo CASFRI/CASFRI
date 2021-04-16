@@ -35,8 +35,6 @@ The current version is 5.3.0 and is available for download at https://github.com
 
 ./docs/specifications                   CASFRI specifications document
 
-./docs/inv_coverage                     .sql script for computing CASFRI coverage polygons
-
 ./helperfunctions                       CASFRI specific helper functions used in translation tables
 
 ./helperfunctions/geohistory            Functions used to build historical version of CASFRI
@@ -53,7 +51,7 @@ The current version is 5.3.0 and is available for download at https://github.com
 
 ./workflow/03_flatCASFRI                Scripts to build a flat (denormalized) version of CASFRI 
 
-./workflow/04_produceHistoricalTable    Scripts to build a historical version of CASFRI 
+./workflow/04_produceHistoricalTable    Scripts to build a historical version of CASFRI and for computing inventories coverage polygons
 </pre>
 
 # Requirements
