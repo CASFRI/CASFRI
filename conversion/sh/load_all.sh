@@ -7,9 +7,9 @@ source ../../config.sh
 for F in "${photoYearList[@]}"
 do
   if [ $F == ${photoYearList} ] || [ $F == ${photoYearList[-1]} ]; then
-    "$bashCmd" load_${F,,}.sh /dev/null
+    "$bashCmd" load_${F,,}.sh
   else
-    "$bashCmd" load_${F,,}.sh & /dev/null
+    "$bashCmd" load_${F,,}.sh &
   fi
 done
 
@@ -19,9 +19,9 @@ declare -n L
 for L in "${fullList[@]}"; do
   for F in "${L[@]}"; do
     if [ $F == ${L[-1]} ]; then
-      "$bashCmd" load_${F,,}.sh /dev/null
+      "$bashCmd" load_${F,,}.sh
     else
-      "$bashCmd" load_${F,,}.sh & /dev/null
+      "$bashCmd" load_${F,,}.sh &
     fi
   done
 done

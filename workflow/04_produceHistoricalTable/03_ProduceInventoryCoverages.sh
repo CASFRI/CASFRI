@@ -8,9 +8,9 @@ declare -n L
 for L in "${fullList[@]}"; do
   for F in "${L[@]}"; do
     if [ $F == ${L[-1]} ]; then
-      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceDerivedCoverages('${F}', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''${F}'''));\"" /dev/null
+      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceDerivedCoverages('${F}', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''${F}'''));\""
     else
-      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceDerivedCoverages('${F}', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''${F}'''));\"" & /dev/null
+      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceDerivedCoverages('${F}', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''${F}'''));\"" &
     fi
   done
 done
