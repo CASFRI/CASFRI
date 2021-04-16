@@ -33,7 +33,7 @@ Note that only major issues preventing the conversion or the translation process
 
 1. Make sure all the inventories to load are listed in your config.sh invList1-5 variables. All inventories pertaining to the same invList1-5 are executed in parallel. There are five lists to avoid overloading the system.
 
-2. Open a Bash (or DOS) command window, CD to the CASFRI conversion/sh folder and load all the listed inventories using the load_all.sh script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
+2. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all the listed inventories using the load_all.sh script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
 
 3. In the same command window, load the translation tables using the CASFRI/translation/load_tables.sh script.
 
