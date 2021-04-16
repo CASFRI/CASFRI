@@ -3,7 +3,7 @@
 # This script loads the random test tables to test translation against.
 
 # When test tables rightfully differ from original tables they have to be 
-# dumped with the dump_test_tables.bat script and pushed back in the source tree.
+# dumped with the dump_test_tables.sh script and pushed back in the source tree.
 
 # #################################### Set variables ######################################
 
