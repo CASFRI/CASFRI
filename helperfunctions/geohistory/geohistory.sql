@@ -453,8 +453,10 @@ CREATE OR REPLACE FUNCTION TT_GeoHistoryOverlaps(
   geom2 geometry
 )
 RETURNS boolean AS $$
-  SELECT (ST_Overlaps(geom1, geom2) OR ST_Contains(geom2, geom1) OR ST_Contains(geom1, geom2))
-         AND ST_Area(ST_Intersection(geom1, geom2)) > 0.00001
+  SELECT ST_Area(geom1) > 0.00000001 AND 
+         ST_Area(geom1) > 0.00000001 AND
+         ST_Intersects(geom1, geom2) AND 
+         ST_Area(ST_Intersection(geom1, geom2)) > 0.00000001
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- New TYPE for TT_ValidYearUnionStateFct()
@@ -826,12 +828,8 @@ RETURNS TABLE (id text,
                                  CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, '::text,') || '::text])' END || ' gh_is_valid ' ||
                     'FROM ' || TT_FullTableName(schemaName, tableName) || 
                    ' WHERE ' || quote_ident(idColName) || '::text != $1 AND ' ||
-                          '(' ||
-                           'ST_Overlaps(' || quote_ident(geoColName) || ', $2) OR ' ||
-                           'ST_Contains($2, ' || quote_ident(geoColName) || ') OR ' ||
-                           'ST_Contains(' || quote_ident(geoColName) || ', $2)) AND ' ||
-                           'ST_Area(ST_Intersection(' || quote_ident(geoColName) || ', $2)) > 0.01 ' ||
-                           'ORDER BY gh_photo_year;';
+                           'TT_GeoHistoryOverlaps(' || quote_ident(geoColName) || ', $2) ' ||
+                    'ORDER BY gh_photo_year;';
     IF debug_l2 THEN RAISE NOTICE '222 ovlpPolyQuery = %', ovlpPolyQuery;END IF;
     
     time = clock_timestamp();
@@ -900,8 +898,9 @@ RETURNS TABLE (id text,
           -- CASE D - A RefYB -> BY - 1 and (A - B) BY -> RefYE (see logic table above)
           ELSIF ovlpRow.gh_photo_year > poly_photo_year AND poly_is_valid AND ovlpRow.gh_is_valid THEN
             IF debug_l2 THEN RAISE NOTICE '888 CASE 3: Return postPoly and set the next one by removing ovlpPoly. year = %', ovlpRow.gh_photo_year;END IF;
+            
             -- Make sure the last computed polygon still intersect with ovlpPoly
-
+            IF TT_GeoHistoryOverlaps(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
             IF ST_Intersects(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
               IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year AND postValidYearPoly IS NOT NULL THEN
                 poly_id = poly_id + 1;
@@ -928,11 +927,11 @@ RETURNS TABLE (id text,
         IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 2...';END IF;
         diffAttempts = 2;
       EXCEPTION WHEN OTHERS THEN
-        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting safeDiff to TRUE...';END IF;
-        safeDiff = TRUE;
         IF diffAttempts = 1 THEN RAISE EXCEPTION 'TT_PolygonGeoHistory() ERROR: TT_SafeDifference() failed on %...', poly_row_id;END IF;
         IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 1...';END IF;
         diffAttempts = 1;
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting safeDiff to TRUE...';END IF;
+        safeDiff = TRUE;
       END;
     END LOOP; -- WHILE
     
