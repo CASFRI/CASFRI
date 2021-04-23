@@ -4342,10 +4342,10 @@ RETURNS boolean AS $$
     -- assign source values to variables depending on the inventory id
     IF inventory_id IN('SK02','SK03','SK04','SK05','SK06') THEN
       _shrub_herb = _source_vals[1];
-      _nvsl_aquatic_class = trim(_source_vals[2]) || trim(_source_vals[3]); -- concatenate nvsl and aquatic class for use in matchList
-      _luc_transp_class = trim(_source_vals[4]) || trim(_source_vals[5]) || trim(_source_vals[3]); -- concatenate luc, transp_class and aquatic class for use in matchList
+      _nvsl_aquatic_class = CONCAT(trim(_source_vals[2]), trim(_source_vals[3])); -- concatenate nvsl and aquatic class for use in matchList
+      _luc_transp_class = CONCAT(trim(_source_vals[4]), trim(_source_vals[5]), trim(_source_vals[3])); -- concatenate luc, transp_class and aquatic class for use in matchList
     END IF;
-  
+
     -- run validations
     IF inventory_id IN('SK02', 'SK03', 'SK04', 'SK05', 'SK06') THEN
       IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
