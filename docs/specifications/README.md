@@ -464,7 +464,7 @@ If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is a
 
 ### NUM_OF_LAYERS  
 
-The **NUM_OF_LAYERS** attribute identifies the number of LYR and NFL layers associated with the stand. Note that NUM_OF_LAYERS is independent from STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. STAND_STRUCTURE could therefore be SINGLE_LAYERED, even when the number of layers is > 1.
+The **NUM_OF_LAYERS** attribute identifies the number of LYR and NFL layers associated with the stand. Note that NUM_OF_LAYERS is independent from STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. STAND_STRUCTURE could therefore be SINGLE_LAYERED, even when NUM_OF_LAYERS is > 1.
 
 | Values        | Description |
 | :------------ | :----- |
