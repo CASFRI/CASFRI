@@ -5406,7 +5406,7 @@ RETURNS int AS $$
     --IF inventory_id = 'BC08' THEN
       --RETURN TT_countOfNotNull(vals1, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, 'FALSE');
     --ELSE
-    RETURN TT_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, 'FALSE');
+    RETURN TT_countOfNotNull(vals1, vals2, is_nfl3, is_nfl1, is_nfl2, max_rank_to_consider, 'FALSE');
     --END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
