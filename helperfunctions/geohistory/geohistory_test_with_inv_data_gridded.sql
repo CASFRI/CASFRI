@@ -23,7 +23,8 @@ CREATE SCHEMA IF NOT EXISTS casfri50_history_test;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_nb1_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_nb1;
+FROM casfri50_history_test.sampling_area_nb1
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_nb1_gridded_geom_idx ON casfri50_history_test.sampling_area_nb1_gridded USING gist(geometry);
 CREATE INDEX sampling_area_nb1_gridded_casid_idx ON casfri50_history_test.sampling_area_nb1_gridded USING btree(cas_id);
@@ -62,7 +63,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_nb2_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_nb2;
+FROM casfri50_history_test.sampling_area_nb2
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_nb2_gridded_geom_idx ON casfri50_history_test.sampling_area_nb2_gridded USING gist(geometry);
 CREATE INDEX sampling_area_nb2_gridded_casid_idx ON casfri50_history_test.sampling_area_nb2_gridded USING btree(cas_id);
@@ -101,7 +103,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_nt1_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_nt1;
+FROM casfri50_history_test.sampling_area_nt1
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_nt1_gridded_geom_idx ON casfri50_history_test.sampling_area_nt1_gridded USING gist(geometry);
 CREATE INDEX sampling_area_nt1_gridded_casid_idx ON casfri50_history_test.sampling_area_nt1_gridded USING btree(cas_id);
@@ -139,7 +142,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_nt2_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_nt2;
+FROM casfri50_history_test.sampling_area_nt2
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_nt2_gridded_geom_idx ON casfri50_history_test.sampling_area_nt2_gridded USING gist(geometry);
 CREATE INDEX sampling_area_nt2_gridded_casid_idx ON casfri50_history_test.sampling_area_nt2_gridded USING btree(cas_id);
@@ -177,7 +181,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_bc1_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_bc1;
+FROM casfri50_history_test.sampling_area_bc1
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_bc1_gridded_geom_idx ON casfri50_history_test.sampling_area_bc1_gridded USING gist(geometry);
 CREATE INDEX sampling_area_bc1_gridded_casid_idx ON casfri50_history_test.sampling_area_bc1_gridded USING btree(cas_id);
@@ -216,7 +221,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_bc2_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_bc2;
+FROM casfri50_history_test.sampling_area_bc2
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_bc2_gridded_geom_idx ON casfri50_history_test.sampling_area_bc2_gridded USING gist(geometry);
 CREATE INDEX sampling_area_bc2_gridded_casid_idx ON casfri50_history_test.sampling_area_bc2_gridded USING btree(cas_id);
@@ -254,7 +260,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_sk1_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_sk1;
+FROM casfri50_history_test.sampling_area_sk1
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_sk1_gridded_geom_idx ON casfri50_history_test.sampling_area_sk1_gridded USING gist(geometry);
 CREATE INDEX sampling_area_sk1_gridded_casid_idx ON casfri50_history_test.sampling_area_sk1_gridded USING btree(cas_id);
@@ -292,7 +299,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_sk2_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_sk2;
+FROM casfri50_history_test.sampling_area_sk2
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_sk2_gridded_geom_idx ON casfri50_history_test.sampling_area_sk2_gridded USING gist(geometry);
 CREATE INDEX sampling_area_sk2_gridded_casid_idx ON casfri50_history_test.sampling_area_sk2_gridded USING btree(cas_id);
@@ -331,7 +339,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_sk3_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_sk3;
+FROM casfri50_history_test.sampling_area_sk3
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_sk3_gridded_geom_idx ON casfri50_history_test.sampling_area_sk3_gridded USING gist(geometry);
 CREATE INDEX sampling_area_sk3_gridded_casid_idx ON casfri50_history_test.sampling_area_sk3_gridded USING btree(cas_id);
@@ -369,7 +378,8 @@ ORDER BY id, valid_year_begin;
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4_gridded;
 CREATE TABLE casfri50_history_test.sampling_area_sk4_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
-FROM casfri50_history_test.sampling_area_sk4;
+FROM casfri50_history_test.sampling_area_sk4
+ORDER BY inventory_id, cas_id, photo_year, geometry;
 
 CREATE INDEX sampling_area_sk4_gridded_geom_idx ON casfri50_history_test.sampling_area_sk4_gridded USING gist(geometry);
 CREATE INDEX sampling_area_sk4_gridded_casid_idx ON casfri50_history_test.sampling_area_sk4_gridded USING btree(cas_id);

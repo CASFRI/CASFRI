@@ -52,7 +52,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1;
 CREATE TABLE casfri50_history_test.sampling_area_nb1 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE s.id = 'NB1' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE s.id = 'NB1' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_nb1_geom_idx ON casfri50_history_test.sampling_area_nb1 USING gist(geometry);
 CREATE INDEX sampling_area_nb1_casid_idx ON casfri50_history_test.sampling_area_nb1 USING btree(cas_id);
@@ -82,74 +83,26 @@ SELECT unnest(TT_TableColumnNames('casfri50_history_test', 'sampling_area_nb1'))
 
 -- Check if any rows can be considered not valid (all requested attributes values are NULL or empty)
 SELECT * FROM casfri50_history_test.sampling_area_nb1
-WHERE NOT TT_RowIsValid(ARRAY[lyr1_soil_moist_reg::text, 
-                              lyr1_species_1::text, 
-                              lyr1_species_2::text, 
-                              lyr1_species_3::text, 
-                              lyr1_species_4::text, 
-                              lyr1_species_5::text, 
-                              lyr1_species_6::text, 
-                              lyr1_site_class::text, 
-                              lyr1_site_index::text, 
-                              lyr2_soil_moist_reg::text, 
-                              lyr2_species_1::text, 
-                              lyr2_species_2::text, 
-                              lyr2_species_3::text, 
-                              lyr2_species_4::text, 
-                              lyr2_species_5::text, 
-                              lyr2_species_6::text, 
-                              lyr2_site_class::text, 
-                              lyr2_site_index::text, 
-                              nfl1_soil_moist_reg::text, 
-                              nfl1_nat_non_veg::text, 
-                              nfl1_non_for_anth::text, 
-                              nfl1_non_for_veg::text, 
-                              nfl2_soil_moist_reg::text, 
-                              nfl2_nat_non_veg::text, 
-                              nfl2_non_for_anth::text, 
-                              nfl2_non_for_veg::text, 
-                              dist_type_1::text, 
-                              dist_year_1::text, 
-                              dist_type_2::text, 
-                              dist_year_2::text, 
-                              dist_type_3::text, 
-                              dist_year_3::text]);
+WHERE NOT TT_RowIsValid(ARRAY[lyr1_soil_moist_reg::text, lyr1_species_1::text, lyr1_species_2::text, lyr1_species_3::text, lyr1_species_4::text, lyr1_species_5::text, lyr1_species_6::text, 
+                              lyr1_site_class::text, lyr1_site_index::text, 
+                              lyr2_soil_moist_reg::text, lyr2_species_1::text, lyr2_species_2::text, lyr2_species_3::text, lyr2_species_4::text, lyr2_species_5::text, lyr2_species_6::text, 
+                              lyr2_site_class::text, lyr2_site_index::text, 
+                              nfl1_soil_moist_reg::text, nfl1_nat_non_veg::text, nfl1_non_for_anth::text, nfl1_non_for_veg::text, 
+                              nfl2_soil_moist_reg::text, nfl2_nat_non_veg::text, nfl2_non_for_anth::text, nfl2_non_for_veg::text, 
+                              dist_type_1::text, dist_year_1::text, dist_type_2::text, dist_year_2::text, dist_type_3::text, dist_year_3::text]);
 
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_history_with_validity_new;
 CREATE TABLE casfri50_history_test.sampling_area_nb1_history_with_validity_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
-FROM TT_TableGeoHistory('casfri50_history_test', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id', ARRAY['lyr1_soil_moist_reg', 
-                                                                                                                     'lyr1_species_1', 
-                                                                                                                     'lyr1_species_2', 
-                                                                                                                     'lyr1_species_3', 
-                                                                                                                     'lyr1_species_4', 
-                                                                                                                     'lyr1_species_5', 
-                                                                                                                     'lyr1_species_6', 
-                                                                                                                     'lyr1_site_class', 
-                                                                                                                     'lyr1_site_index',
-                                                                                                                     'lyr2_soil_moist_reg', 
-                                                                                                                     'lyr2_species_1', 
-                                                                                                                     'lyr2_species_2', 
-                                                                                                                     'lyr2_species_3', 
-                                                                                                                     'lyr2_species_4', 
-                                                                                                                     'lyr2_species_5', 
-                                                                                                                     'lyr2_species_6', 
-                                                                                                                     'lyr2_site_class', 
-                                                                                                                     'lyr2_site_index', 
-                                                                                                                     'nfl1_soil_moist_reg',
-                                                                                                                     'nfl1_nat_non_veg',
-                                                                                                                     'nfl1_non_for_anth', 
-                                                                                                                     'nfl1_non_for_veg', 
-                                                                                                                     'nfl2_soil_moist_reg',
-                                                                                                                     'nfl2_nat_non_veg',
-                                                                                                                     'nfl2_non_for_anth', 
-                                                                                                                     'nfl2_non_for_veg', 
-                                                                                                                     'dist_type_1',
-                                                                                                                     'dist_year_1', 
-                                                                                                                     'dist_type_2',
-                                                                                                                     'dist_year_2', 
-                                                                                                                     'dist_type_3',
-                                                                                                                     'dist_year_3'])
+FROM TT_TableGeoHistory('casfri50_history_test', 'sampling_area_nb1', 'cas_id', 'geometry', 
+                        'photo_year', 'inventory_id', 
+                        ARRAY['lyr1_soil_moist_reg', 'lyr1_species_1', 'lyr1_species_2', 'lyr1_species_3', 'lyr1_species_4', 'lyr1_species_5', 'lyr1_species_6', 
+                        'lyr1_site_class', 'lyr1_site_index',
+                        'lyr2_soil_moist_reg', 'lyr2_species_1', 'lyr2_species_2', 'lyr2_species_3', 'lyr2_species_4', 'lyr2_species_5', 'lyr2_species_6', 
+                        'lyr2_site_class', 'lyr2_site_index', 
+                        'nfl1_soil_moist_reg', 'nfl1_nat_non_veg', 'nfl1_non_for_anth', 'nfl1_non_for_veg', 
+                        'nfl2_soil_moist_reg', 'nfl2_nat_non_veg', 'nfl2_non_for_anth', 'nfl2_non_for_veg', 
+                        'dist_type_1', 'dist_year_1', 'dist_type_2', 'dist_year_2', 'dist_type_3', 'dist_year_3'])
 ORDER BY id, poly_id;
 
 -- Display
@@ -181,7 +134,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2;
 CREATE TABLE casfri50_history_test.sampling_area_nb2 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE s.id = 'NB2' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE s.id = 'NB2' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_nb2_geom_idx ON casfri50_history_test.sampling_area_nb2 USING gist(geometry);
 CREATE INDEX sampling_area_nb2_casid_idx ON casfri50_history_test.sampling_area_nb2 USING btree(cas_id);
@@ -199,7 +153,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_nb2_history_new
 ORDER BY id, valid_year_begin;
 
@@ -220,7 +174,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1;
 CREATE TABLE casfri50_history_test.sampling_area_nt1 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE s.id = 'NT1' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE s.id = 'NT1' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_nt1_geom_idx ON casfri50_history_test.sampling_area_nt1 USING gist(geometry);
 CREATE INDEX sampling_area_nt1_casid_idx ON casfri50_history_test.sampling_area_nt1 USING btree(cas_id);
@@ -238,7 +193,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_nt1_history_new
 ORDER BY id, valid_year_begin;
 
@@ -260,7 +215,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2;
 CREATE TABLE casfri50_history_test.sampling_area_nt2 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE s.id = 'NT2' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE s.id = 'NT2' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_nt2_geom_idx ON casfri50_history_test.sampling_area_nt2 USING gist(geometry);
 CREATE INDEX sampling_area_nt2_casid_idx ON casfri50_history_test.sampling_area_nt2 USING btree(cas_id);
@@ -278,7 +234,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_nt2_history_new
 ORDER BY id, valid_year_begin;
 
@@ -299,7 +255,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1;
 CREATE TABLE casfri50_history_test.sampling_area_bc1 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE s.id = 'BC1' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE s.id = 'BC1' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_bc1_geom_idx ON casfri50_history_test.sampling_area_bc1 USING gist(geometry);
 CREATE INDEX sampling_area_bc1_casid_idx ON casfri50_history_test.sampling_area_bc1 USING btree(cas_id);
@@ -317,7 +274,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_bc1_history_new
 ORDER BY id, valid_year_begin;
 
@@ -338,7 +295,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2;
 CREATE TABLE casfri50_history_test.sampling_area_bc2 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE s.id = 'BC2' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE s.id = 'BC2' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_bc2_geom_idx ON casfri50_history_test.sampling_area_bc2 USING gist(geometry);
 CREATE INDEX sampling_area_bc2_casid_idx ON casfri50_history_test.sampling_area_bc2 USING btree(cas_id);
@@ -356,7 +314,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_bc2_history_new
 ORDER BY id, valid_year_begin;
 
@@ -378,7 +336,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1;
 CREATE TABLE casfri50_history_test.sampling_area_sk1 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE lower(s.id) = 'sk1' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE lower(s.id) = 'sk1' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_sk1_geom_idx ON casfri50_history_test.sampling_area_sk1 USING gist(geometry);
 CREATE INDEX sampling_area_sk1_casid_idx ON casfri50_history_test.sampling_area_sk1 USING btree(cas_id);
@@ -396,7 +355,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_sk1_history_new
 ORDER BY id, valid_year_begin;
 
@@ -418,7 +377,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2;
 CREATE TABLE casfri50_history_test.sampling_area_sk2 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE lower(s.id) = 'sk2' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE lower(s.id) = 'sk2' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_sk2_geom_idx ON casfri50_history_test.sampling_area_sk2 USING gist(geometry);
 CREATE INDEX sampling_area_sk2_casid_idx ON casfri50_history_test.sampling_area_sk2 USING btree(cas_id);
@@ -436,7 +396,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_sk2_history_new
 ORDER BY id, valid_year_begin;
 
@@ -457,7 +417,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3;
 CREATE TABLE casfri50_history_test.sampling_area_sk3 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE lower(s.id) = 'sk3' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE lower(s.id) = 'sk3' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_sk3_geom_idx ON casfri50_history_test.sampling_area_sk3 USING gist(geometry);
 CREATE INDEX sampling_area_sk3_casid_idx ON casfri50_history_test.sampling_area_sk3 USING btree(cas_id);
@@ -475,7 +436,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_sk3_history_new
 ORDER BY id, valid_year_begin;
 
@@ -496,7 +457,8 @@ DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4;
 CREATE TABLE casfri50_history_test.sampling_area_sk4 AS
 SELECT CASE WHEN stand_photo_year < 1900 THEN NULL ELSE stand_photo_year END photo_year, cas.* 
 FROM casfri50_flat.cas_flat_all_layers_same_row cas, casfri50_history_test.sampling_areas s
-WHERE lower(s.id) = 'sk4' AND ST_Intersects(cas.geometry, s.geometry);
+WHERE lower(s.id) = 'sk4' AND ST_Intersects(cas.geometry, s.geometry)
+ORDER BY cas_id;
 
 CREATE INDEX sampling_area_sk4_geom_idx ON casfri50_history_test.sampling_area_sk4 USING gist(geometry);
 CREATE INDEX sampling_area_sk4_casid_idx ON casfri50_history_test.sampling_area_sk4 USING btree(cas_id);
@@ -514,7 +476,7 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
-SELECT id, valid_year_begin, valid_year_end, ST_GeomFromText(wkt_geometry) geom
+SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_sk4_history_new
 ORDER BY id, valid_year_begin;
 
