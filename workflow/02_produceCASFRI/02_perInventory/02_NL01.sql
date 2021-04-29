@@ -96,14 +96,14 @@ COMMIT;
 BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl01_nfl', 'ab_avi01_nfl');
 
-SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1);
+SELECT TT_CreateMappingView('rawfri', 'nl01', 2, 'nl_nli', 1);
 
 -- Delete existing entries
 -- DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NL01';
 
 -- Add translated ones
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_nl01_nfl('rawfri', 'nl01_l1_to_nl_nli_l1_map');
+SELECT * FROM TT_Translate_nl01_nfl('rawfri', 'nl01_l2_to_nl_nli_l1_map');
 COMMIT;
 
 

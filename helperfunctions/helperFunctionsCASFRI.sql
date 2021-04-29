@@ -4342,10 +4342,10 @@ RETURNS boolean AS $$
     -- assign source values to variables depending on the inventory id
     IF inventory_id IN('SK02','SK03','SK04','SK05','SK06') THEN
       _shrub_herb = _source_vals[1];
-      _nvsl_aquatic_class = trim(_source_vals[2]) || trim(_source_vals[3]); -- concatenate nvsl and aquatic class for use in matchList
-      _luc_transp_class = trim(_source_vals[4]) || trim(_source_vals[5]) || trim(_source_vals[5]); -- concatenate luc, transp_class and aquatic class for use in matchList
+      _nvsl_aquatic_class = CONCAT(trim(_source_vals[2]), trim(_source_vals[3])); -- concatenate nvsl and aquatic class for use in matchList
+      _luc_transp_class = CONCAT(trim(_source_vals[4]), trim(_source_vals[5]), trim(_source_vals[3])); -- concatenate luc, transp_class and aquatic class for use in matchList
     END IF;
-  
+
     -- run validations
     IF inventory_id IN('SK02', 'SK03', 'SK04', 'SK05', 'SK06') THEN
       IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
@@ -5054,6 +5054,7 @@ RETURNS text AS $$
            WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TSc' THEN 'TALL_SHRUB'
            WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'LS' THEN 'LOW_SHRUB'
            WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = '' THEN 'TALL_SHRUB' -- assign generic shrub to TALL_SHRUB
+		   WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod IS NULL THEN 'TALL_SHRUB' -- assign generic shrub to TALL_SHRUB
            WHEN type_lnd = 'VN' AND class_ = 'C' THEN 'BRYOID'
            WHEN type_lnd = 'VN' AND class_ = 'H' THEN 'HERBS'
            WHEN type_lnd = 'VN' AND class_ = 'M' THEN 'HERBS'
@@ -5405,7 +5406,7 @@ RETURNS int AS $$
     --IF inventory_id = 'BC08' THEN
       --RETURN TT_countOfNotNull(vals1, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, 'FALSE');
     --ELSE
-    RETURN TT_countOfNotNull(vals1, vals2, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, 'FALSE');
+    RETURN TT_countOfNotNull(vals1, vals2, is_nfl3, is_nfl1, is_nfl2, max_rank_to_consider, 'FALSE');
     --END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
