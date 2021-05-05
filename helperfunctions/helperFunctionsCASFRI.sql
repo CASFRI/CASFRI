@@ -4435,7 +4435,7 @@ CREATE OR REPLACE FUNCTION TT_row_translation_rule_nt_lyr(
 )
 RETURNS boolean AS $$
   BEGIN
-    IF typeclas NOT IN('BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST')
+    IF typeclas IN('TC', 'TB', 'TM')
       AND (TT_notEmpty(sp1) OR TT_notEmpty(sp2) OR TT_notEmpty(sp3) OR TT_notEmpty(sp4)) THEN
       RETURN TRUE;
     ELSE
