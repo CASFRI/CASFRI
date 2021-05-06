@@ -1,4 +1,4 @@
-# COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA  
+# Common Attribute Schema (CAS) for Forest Resource Inventories across Canada  
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
@@ -28,7 +28,7 @@ Revised by: The CASFRI Project Team, March 31, 2021
 <a name=Intro></a>
 ## Introduction  
 
-CASFRI (Common Attribute Schema for Forest Resource Inventory) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resource inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. This document accompanies version 5 of CASFRI and is based on the previous specification document written by Cosco in 2011<sup>1</sup>.
+CASFRI (Common Attribute Schema for Forest Resource Inventories) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resource inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. This document accompanies version 5 of CASFRI and is based on the previous specification document written by Cosco in 2011<sup>1</sup>.
 
 CASFRI version 5 incorporates 49 distinct source inventory datasets and more will be added as they become available. The original development team conducted an extensive review of previous and current inventory standards to tabulate their attributes and attribute codes. These are represented as translation rules between each inventory standard and the CASFRI data model. The translation of each inventory standard is encapsulated in a set of SQL functions and CSV tables that are processed using the <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL-Table-Translation-Framework</a>. The translation scripts have special rules for dealing with missing or invalid attributes values, or undefined attributes. The translation is otherwise lossless. The current version of CASFRI is stored as a partially normalized relational database within a spatial data warehouse managed by PostGIS, an open source Geographic Information System.
 
