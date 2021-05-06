@@ -7,5 +7,5 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 6,MAP_SHEET_ID,text,notNull(map_sheet_id);notEmpty(map_sheet_id),copyText(map_sheet_id),Copies source value,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
-9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE|-8888)",copyDouble(src_inv_area),Copies source attribute to SRC_INV_AREA. Return OUT_OF_RANGE for any zero values.,TRUE
+9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE|-9999)",copyDouble(src_inv_area),Copies source attribute to SRC_INV_AREA. Return OUT_OF_RANGE for any zero values.,TRUE
 10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isIntSubstring(stand_photo_year, 1, 4, TRUE);isBetweenSubstring(stand_photo_year, 1, 4, 1900, 2020, TRUE, TRUE, TRUE)","substringInt(stand_photo_year, 1, 4, TRUE)",Copies first 4 characters of source value to STAND_PHOTO_YEAR. removeSpaces is set to true in all substring functions.,TRUE
