@@ -1531,21 +1531,22 @@ RETURNS text AS $$
                   WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN '-9998'
                   WHEN rulelc = 'sk_utm_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'sfv01_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'ns_nsi01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'nl_nli01_origin_lower_validation' THEN '-8886'
+				  WHEN rulelc = 'nl_nli01_origin_newfoundland_validation' THEN '-8886'
                   WHEN rulelc = 'nl_nli01_iscommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isforest' THEN '-8887'
                   WHEN rulelc = 'qc_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
                   WHEN rulelc = 'pc02_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'bc_height_validation' THEN '-9997'
                   WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN '-9998'
                   WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN '-8888'
                   WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN '-8887'
                   WHEN rulelc = 'row_translation_rule_nt_lyr' THEN '-9997'
+				  WHEN rulelc = 'mb_fri_hasCountOfNotNull' THEN '-8886'
+				  WHEN rulelc = 'nl_nli01_crown_closure_validation' THEN '-8886'
+				  WHEN rulelc = 'nl_nli01_height_validation' THEN '-8886'
+				  WHEN rulelc = 'nb_hasCountOfNotNull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1584,6 +1585,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN 'NULL_VALUE'
                   WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'row_translation_rule_nt_lyr' THEN 'INVALID_VALUE'
+				  WHEN rulelc = 'hasnflinfo' THEN 'INVALID_VALUE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
