@@ -1,4 +1,4 @@
-# COMMON ATTRIBUTE SCHEMA (CAS) FOR FOREST INVENTORIES ACROSS CANADA  
+# Common Attribute Schema (CAS) for Forest Resource Inventories across Canada  
 
 Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 
