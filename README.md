@@ -15,7 +15,7 @@ A number of CASFRI instances have been produced since 2009. CASFRI 5 is the fift
 
 The three main steps involved in the production of the CASFRI 5 database are:
 
-1. **Conversion** (from many different FRI file formats) and loading (into a PostgreSQL database) using Bash (or Batch) scripts and ogr2ogr.
+1. **Conversion** (from many different FRI file formats) and loading (into a PostgreSQL database) using Bash scripts and ogr2ogr.
 2. **Translation** of the loaded FRIs to the CASFRI schema (inside the PostgreSQL database)
 3. **Temporalization** of CAS data (inside the PostgreSQL database)
 
@@ -31,11 +31,9 @@ The current version is 5.3.0 and is available for download at https://github.com
 <pre>
 ./                                      Sample files for configuring and running scripts
 
-./conversion                            Scripts for converting and loading FRI datasets using either .bat or .sh
+./conversion                            Bash scripts for converting and loading FRI datasets
 
 ./docs/specifications                   CASFRI specifications document
-
-./docs/inv_coverage                     .sql script for computing CASFRI coverage polygons
 
 ./helperfunctions                       CASFRI specific helper functions used in translation tables
 
@@ -53,14 +51,14 @@ The current version is 5.3.0 and is available for download at https://github.com
 
 ./workflow/03_flatCASFRI                Scripts to build a flat (denormalized) version of CASFRI 
 
-./workflow/04_produceHistoricalTable    Scripts to build a historical version of CASFRI 
+./workflow/04_produceHistoricalTable    Scripts to build a historical version of CASFRI and for computing inventories coverage polygons
 </pre>
 
 # Requirements
 
 The production process of CASFRI 5 requires:
 
-* [GDAL v3.1.x](https://www.gisinternals.com/query.html?content=filelist&file=release-1911-x64-gdal-3-1-4-mapserver-7-6-1.zip) and access to a Bash (or a Batch) shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.x. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34). Production has also been tested using GDAL 1.11.4.
+* [GDAL v3.1.x](https://www.gisinternals.com/query.html?content=filelist&file=release-1911-x64-gdal-3-1-4-mapserver-7-6-1.zip) and access to a Bash shell to convert and load FRIs into PostgreSQL. IMPORTANT: Some FRIs will not load with GDAL v2.x. This is documented as [issue #34](https://github.com/edwardsmarc/CASFRI/issues/34). Production has also been tested using GDAL 1.11.4.
 
 * PostgreSQL 13.1+ and PostGIS 3.1+ to store and translate the database (PostgreSQL 11/12 and PostGIS 2.3.x have also been tested). More recent versions should work as well.
 
@@ -97,7 +95,7 @@ For an update to be incorporated in the database, the date of publication should
 Conversion and loading happen at the same time and are implemented using GDAL/OGR tools. Every source FRI has a single loading script that creates a single target table in PostgreSQL. If a source FRI is composed of multiple files, the conversion/loading scripts append them all into the same target flat table. Some FRIs are accompanied by an extra shapefile that associates each stand with a photo year. These are loaded with a second script. Every loading script adds a new "src_filename" attribute to the loaded source table with the name of the source file, and "inventory_id", the inventory unique identifier. These are used when constructing the CAS_ID (a unique identifier tracing each target row back to its original row in the source dataset).
 
 ### Supported File Types
-All conversion/loading scripts are provided as .sh (and .bat) files. (Note that as of CASFRI version 5.3.0, only .sh scripts are up to date.)
+All conversion/loading scripts are provided as .sh files.
 
 Currently supported FRI formats are:
 
@@ -111,7 +109,7 @@ Arc/Info E00 files are not currently well supported by GDAL/OGR. Source tables i
 All source tables are transformed to the Canada Albers Equal Area Conic projection by GDAL/OGR during loading.
 
 ### Configuration File
-A config file (.bat or .sh) is required in the CASFRI root directory to set local paths and preferences. Template files are provided (configSample.bat and configSample.sh) which can be copied and edited.
+A config.sh file is required in the CASFRI root directory to set local paths and preferences. A template files is provided (configSample.sh) which can be copied and edited to match your configuration.
 
 ### Source Data Folder Structure
 Conversion and loading scripts are written so that FRIs to convert and load must be stored in a specific folder hierarchy (using inventory AB06 as an example):
@@ -215,11 +213,11 @@ The following diagram illustrates the relationship between the translation table
 # Translation Procedure
 The steps to produce a complete build of the CASFRI database are detailed in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). A subset of these steps can be used to translate a single dataset as follows:
 
-1. **Configure** your processing environment in the config.sh (or .bat) file.
-2. **Load the inventory** (e.g. AB03) into PostgreSQL by launching the conversion/sh/load_ab03.sh (or the conversion/bat/load_ab03.bat) loading script in a Bash (or DOS) command window. You can also launch many conversions in parallel. This is described in the Parallelization section.
-3. **Load the translation tables** into PostgreSQL by launching the CASFRI/translation/load_tables.sh (or .bat) script.
+1. **Configure** your processing environment in the config.sh file.
+2. **Load the inventory** (e.g. AB03) into PostgreSQL by launching the conversion/sh/load_ab03.sh loading script in a Bash (or DOS) command window. You can also launch many conversions in parallel. This is described in the Parallelization section.
+3. **Load the translation tables** into PostgreSQL by launching the CASFRI/translation/load_tables.sh script.
 4. **Install the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
-    1. Install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh (or .bat) script. This step produces a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
+    1. Install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh script. This step produces a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
     2. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
         1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts.
         2. Load the CASFRI Helper Functions with the helperFunctionsCASFRI.sql script and test them using helperFunctionsCASFRITest.sql.
@@ -267,7 +265,7 @@ Conversion, translation, production of the historical table and production of th
 
 Much effort have been deployed during the developement of CASFRI 5 to make this process as quick and efficient as possible. Moving from PostgreSQL 11 to PostgreSQL 13 and from PostGIS 2.5 to PostGIS 3.1 has been a good step in this regard. PostgreSQL provides much better support for PARALLEL SAFE functions and PostGIS 3.1 uses the new faster GEOS 3.9 geometry library.
 
-On the CASFRI side, all steps involving long processes have been designed so they don't block each other as it is often the case in a DBMS. You can run each process as SQL scripts to have better monitoring and debugging control, or you can batch run them all in parallel using Bash shell scripts. (Note that even though some DOS Batch scripts are provided, only the Bash scripts are up to date. DOS Batch scripts may be updated in future releases.)
+On the CASFRI side, all steps involving long processes have been designed so they don't block each other as it is often the case in a DBMS. You can run each process as SQL scripts to have better monitoring and debugging control, or you can batch run them all in parallel using Bash shell scripts.
 
 The first step to implement batch processing is to define the list of inventories to translate with the invList1 to invList5 variables in your config.sh configuration script. Each invListX variable lists a subset of the complete list of inventories to process. Inventories listed in one invListX variable are processed in parallel. invListX variables are processed sequentially. Once the last inventory of one invListX variable is finished, the script processes the inventories listed in the next invListX variable. This is a way to balance between processing as many inventories in parallel as possible, and overloading (and possibly crashing) PostgreSQL with too much processing at the same time. Finding the right balance can be difficult and a frustrating exercise. You can also edit the invListX variables to process a limited list of inventories.
 
@@ -283,7 +281,7 @@ Once the invListX variables have been defined, you can launch the different proc
 
 6. The next step is to produce the flat, denormalized tables. This process is not parallelizable and is not managed by .sh scripts. You must simply run the two .sql scripts. The resulting tables are written to the casfri50_flat schema.
 
-7. ./workflow/04_produceHistoricalTable/**01_PrepareGeoHistory.sh** prepares the database before launching the historical table production process. It will create the target table and split the whole geometric coverage into a grid for faster processing.
+7. ./workflow/04_produceHistoricalTable/**01_PrepareGeoHistory.sh** prepares the database before launching the historical table production process. It will create the target table and split the whole geometric coverage into a grid for faster processing. The required functions need to be loaded by calling geoHistory.sql before running 01_PrepareGeoHistory.sh.
 
 8. ./workflow/04_produceHistoricalTable/**02_ProduceGeoHistory.sh** generates the historical table based on the invListX variables. The resulting tables are written to the casfri50_history schema.
 

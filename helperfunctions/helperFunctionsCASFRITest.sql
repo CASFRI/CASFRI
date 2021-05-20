@@ -181,7 +181,8 @@ WITH test_nb AS (
 	SELECT 'TT_yt_yvi02_disturbance_matchList'::text function_tested,        134 maj_num,  1 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_disturbance_notNull'::text function_tested,          135 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,          136 maj_num,  1 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested, 137 maj_num,  4 nb_test
+	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested, 137 maj_num,  4 nb_test UNION ALL
+	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,              138 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -4589,6 +4590,34 @@ SELECT '137.4'::text number,
        'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,
        'test null'::text description,
        TT_yt_yvi02_disturbance_hasCountOfLayers('{''Entire polygon disturbed'', ''Layer 2 disturbance'', NULL}', '2', '2', 'TRUE') passed
+---------------------------------------------------------
+ -- TT_nt_lyr_layer_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '138.1'::text number,
+       'TT_nt_lyr_layer_translation'::text function_tested,
+       'test 1'::text description,
+       TT_nt_lyr_layer_translation('TC', 'TC', '{''5'',''10''}', '{''A''}', '{''B''}', '1') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '138.2'::text number,
+       'TT_nt_lyr_layer_translation'::text function_tested,
+       'test 2'::text description,
+       TT_nt_lyr_layer_translation('TC', 'TC', '{''5'',''10''}', '{''A''}', '{''B''}', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '138.3'::text number,
+       'TT_nt_lyr_layer_translation'::text function_tested,
+       'test 3 - drop the non-forest layer'::text description,
+       TT_nt_lyr_layer_translation('TC', 'T', '{''5'',''10''}', '{''A''}', '{''B''}', '1') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '138.4'::text number,
+       'TT_nt_lyr_layer_translation'::text function_tested,
+       'If getIdex layer is non forest, returns null. This should never occur during translation.'::text description,
+       TT_nt_lyr_layer_translation('TC', 'T', '{''5'',''10''}', '{''A''}', '{''B''}', '2') = 1 passed
+
+	
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

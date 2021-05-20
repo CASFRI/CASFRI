@@ -13,11 +13,11 @@
 -------------------------------------------------------------------------------
 -- Usage
 --
--- 1) Load the test tables from a command window with load_test_tables.bat.
+-- 1) Load the test tables from a command window with load_test_tables.sh.
 -- 2) Execute "test_translation.sql" in PostgreSQL (this file)
 -- 3) If undesirable changes show up in a file diff, fix your translation tables.
 --    If desirable changes occurs, dump them as new test tables with 
---    dump_test_tables.bat and commit.
+--    dump_test_tables.sh and commit.
 --
 -- Whole test takes about 30 minutes. You can execute only part of it depending 
 -- on which translation tables were modified.
@@ -25,7 +25,7 @@
 -- You can get a detailed summary of the differences between new translated tables
 -- and test tables by copying and executing the content of the "check_query" column
 -- (it's a query!) from the final result table. A better, faster way is to dump the 
--- tables with the dump_test_tables.bat and make a diff with the archived tables.
+-- tables with the dump_test_tables.sh and make a diff with the archived tables.
 --
 -- Some rules of thumb for the number of rows to test for DST, LYR and NFL
 -- depending on the number of total source rows:
