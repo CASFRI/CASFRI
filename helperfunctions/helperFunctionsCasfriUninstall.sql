@@ -152,6 +152,7 @@ DROP FUNCTION IF EXISTS TT_yt_yvi02_stand_structure_translation(text, text, text
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyText(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyInt(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_matchList(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nt_lyr_layer_translation(text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

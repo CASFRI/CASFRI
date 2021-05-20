@@ -1531,21 +1531,22 @@ RETURNS text AS $$
                   WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN '-9998'
                   WHEN rulelc = 'sk_utm_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'sfv01_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'ns_nsi01_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'nl_nli01_origin_lower_validation' THEN '-8886'
+				  WHEN rulelc = 'nl_nli01_origin_newfoundland_validation' THEN '-8886'
                   WHEN rulelc = 'nl_nli01_iscommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isforest' THEN '-8887'
                   WHEN rulelc = 'qc_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
                   WHEN rulelc = 'pc02_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'bc_height_validation' THEN '-9997'
                   WHEN rulelc = 'yt_yvi02_disturbance_matchlist' THEN '-9998'
                   WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN '-8888'
                   WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN '-8887'
                   WHEN rulelc = 'row_translation_rule_nt_lyr' THEN '-9997'
+				  WHEN rulelc = 'mb_fri_hasCountOfNotNull' THEN '-8886'
+				  WHEN rulelc = 'nl_nli01_crown_closure_validation' THEN '-8886'
+				  WHEN rulelc = 'nl_nli01_height_validation' THEN '-8886'
+				  WHEN rulelc = 'nb_hasCountOfNotNull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
@@ -1584,6 +1585,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN 'NULL_VALUE'
                   WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'row_translation_rule_nt_lyr' THEN 'INVALID_VALUE'
+				  WHEN rulelc = 'hasnflinfo' THEN 'INVALID_VALUE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -4435,7 +4437,7 @@ CREATE OR REPLACE FUNCTION TT_row_translation_rule_nt_lyr(
 )
 RETURNS boolean AS $$
   BEGIN
-    IF typeclas NOT IN('BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST')
+    IF typeclas IN('TC', 'TB', 'TM')
       AND (TT_notEmpty(sp1) OR TT_notEmpty(sp2) OR TT_notEmpty(sp3) OR TT_notEmpty(sp4)) THEN
       RETURN TRUE;
     ELSE
@@ -4444,6 +4446,7 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql;
 
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Translation Function Definitions...
@@ -5305,39 +5308,50 @@ CREATE OR REPLACE FUNCTION TT_fvi01_countOfNotNull(
   vals1 text,
   vals2 text,
   typeclas text,
-  min_typeclas text,
+  mintypeclas text,
   max_rank_to_consider text
 )
 RETURNS int AS $$
   DECLARE
-    lyr_string_list text;
-    nfl_string_list text;
+    lyr_string_list text[];
+    nfl_string_list text[];
     _lyr1 text;
     _lyr2 text;
     _is_nfl1 text;
     _is_nfl2 text;
   BEGIN
     -- set up nfl_string_list
-    nfl_string_list = '{''BE'',''BR'',''BU'',''CB'',''ES'',''LA'',''LL'',''LS'',''MO'',''MU'',''PO'',''RE'',''RI'',''RO'',''RS'',''RT'',''SW'',''AP'',''BP'',''EL'',''GP'',''TS'',''RD'',''SH'',''SU'',''PM'',''BL'',''BM'',''BY'',''HE'',''HF'',''HG'',''SL'',''ST''}';
-  
-    -- if NFL 1 present, give _is_nfl1 a string and set _ly1 to null.
-    IF TT_matchList(typeclas, nfl_string_list) THEN
+    nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
+    lyr_string_list = ARRAY['TC','TB','TM'];
+	
+    -- if NFL 1 present, give _is_nfl1 a string.
+    IF typeclas = ANY(nfl_string_list) THEN
       _is_nfl1 = 'a_value';
-      _lyr1 = NULL::text;
     ELSE
       _is_nfl1 = NULL::text;
-      _lyr1 = vals1;
     END IF;
   
-    -- if NFL 2 present, give _is_nfl2 a string and set _ly2 to null.
-    IF TT_matchList(min_typeclas, nfl_string_list) THEN
+    -- if NFL 2 present, give _is_nfl2 a string.
+    IF mintypeclas = ANY(nfl_string_list) THEN
       _is_nfl2 = 'a_value';
-      _lyr2 = NULL::text;
     ELSE
       _is_nfl2 = NULL::text;
-      _lyr2 = vals2;
     END IF;
-  
+	
+	-- if overstory is forest type assign species, otherwise set to null
+	IF typeclas = ANY(lyr_string_list) THEN
+	  _lyr1 = vals1;
+	ELSE
+	  _lyr1 = NULL::text;
+	END IF;
+
+	-- if understory is forest type assign species, otherwise set to null
+	IF mintypeclas = ANY(lyr_string_list) THEN
+	  _lyr2 = vals2;
+	ELSE
+	  _lyr2 = NULL::text;
+	END IF;
+
     -- call countOfNotNull
     RETURN TT_countOfNotNull(_lyr1, _lyr2, _is_nfl1, _is_nfl2, max_rank_to_consider, 'FALSE');
   END;
@@ -5679,7 +5693,7 @@ RETURNS int AS $$
   BEGIN
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF fornon IN('71','76','77','78','84','85','94', '5','86','87','91','92','3','95','96','97','98','99', '70','72','74','75','83','88','89') THEN
+    IF fornon IN('71','76','77','78','84','85','94', '5','86','87','91','92','93','95','96','97','98','99', '70','72','74','75','83','88','89') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
@@ -6832,6 +6846,53 @@ RETURNS int AS $$
     END IF;
 	
     RETURN TT_lyr_layer_translation(heights, l1_species, l2_species, l3_species, getIndex);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nt_lyr_layer_translation
+--
+-- typeclas
+-- mintypeclas
+-- heights
+-- l1_species
+-- l2_species
+-- getIndex
+--
+-- If typeclas is not TC, TM, TB (forest types), set l1_species to NULL.
+-- If mintypeclas is not TC, TM, TB (forest types), set l2_species to NULL.
+-- NULL species lists get dropped in lyr_layer_translation().
+-- This prevents the situation where LYR layers are ordered incorectly because some
+-- non-forest rows have species and height info (e.g. shrub rows that are reported as NFL layers)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nt_lyr_layer_translation(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nt_lyr_layer_translation(
+  typeclas text,
+  mintypeclas text,
+  heights text,
+  l1_species text,
+  l2_species text,
+  getIndex text
+)
+RETURNS int AS $$
+  BEGIN
+    -- if 2 lyr layers order by height
+    IF typeclas IN('TC', 'TB', 'TM') AND mintypeclas IN('TC', 'TB', 'TM') THEN
+      RETURN TT_lyr_layer_translation(heights, l1_species, l2_species, getIndex);
+    END IF;
+    
+	-- otherwise the layer present has to be layer 1 
+    IF typeclas IN ('TC', 'TB', 'TM') THEN
+      RETURN 1;
+    END IF;
+	
+	IF mintypeclas IN ('TC', 'TB', 'TM') THEN
+      RETURN 1;
+    END IF;
+	
+	RETURN NULL;
+    
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
