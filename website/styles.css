@@ -6,6 +6,10 @@ body {
   color: #404040;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 html, body, .footerPushDown {
   height: 100%;
 }
@@ -69,10 +73,10 @@ p {
 
 .band .imageTwo {
   position: absolute;
-  top: 0px;
-  right: 10px;
-  width: 800px;
-  height: auto;
+  top: 20px;
+  right: 400px;
+  width: auto;
+  height: 100%;
   
   z-index: 5;
 }
@@ -270,158 +274,6 @@ p {
   padding: 80px 5%;
 }
 
-#pageContent .pageTitle {
-  font-size: 40px;
-  font-weight: 300;
-}
-
-#pageContent .pageIntro {
-  font-size: 20px;
-  font-weight: 300;
-  margin-bottom: 30px;
-}
-
-#pageContent .columns {
-  display: flex;
-  justify-content: space-between;
-
-  display: -ms-flexbox;
-  -ms-flex-pack: justify;
-}
-
-#pageContent .columns .column2 {
-  max-width: 46%;
-}
-
-#pageContent .linkSection {
-  line-height: 20px;
-  margin-bottom: 20px;
-}
-
-#pageContent .linkSection .linkSectionTitle {
-  font-size: 1.4em;
-  margin-bottom: 12px;
-}
-
-#pageContent .links a {
-  display: block;
-  line-height: 24px;
-  max-width: 500px;
-  padding: 0 0 0 16px;
-  background-repeat: no-repeat;
-  background-position: left 8px;
-  background-size: 8px 8px;
-  background-image: url(../images/link-icon.png);
-}
-
-#pageContent .linkSection .articleBlurb {
-  padding-left: 16px;
-  line-height: 20px;
-  margin-bottom: 10px;
-  display: none;
-}
-
-.gallerySection, .formatSection {
-  margin-bottom: 2em;
-}
-
-.gallerySection .gallerySectionTitle, .formatSection .formatSectionTitle {
-  font-size: 25px;
-  font-weight: 300;
-}
-
-.formatSection .formatSectionTitle {
-  margin-bottom: 10px;
-}
-
-.gallerySection .galleryIntro {
-  margin-bottom: 10px;
-}
-
-.gallerySection .galleryItems {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.gallerySection .galleryItems .galleryItem {
-  width: 24%;
-
-  border: 1px solid #f0f0f0;
-  margin-bottom: 20px;
-}
-
-.gallerySection .galleryItems .galleryItem:hover {
-
-}
-
-.gallerySection .galleryItems .galleryItem .galleryItemLabel {
-  display: block;
-  cursor: pointer;
-  border-top: 1px solid #f0f0f0;
-  padding: 10px 10px 5px 10px;
-}
-
-.gallerySection .galleryItems .galleryItem .galleryItemImage {
-  width: 100%;
-  height: auto;
-}
-
-.gallerySection .galleryItems .galleryItem .galleryItemDescription {
-  font-size: 12px;
-  padding: 0px 10px 10px 10px;
-}
-
-.formatSection a.doc, .formatSection a.pres, .formatSection a.more {
-  display: inline-block;
-  margin: 0 15px 15px 0;
-
-  color: #fff;
-  font-size: 24px;
-  line-height: 28px;
-  text-align: center;
-
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: center;
-
-  vertical-align: top;
-
-  background-color: #f0f0f0;
-}
-
-.formatTable {
-  display: table;
-  width: 100%;
-}
-
-.formatTable .formatTableRow {
-  display: table-row;
-  text-decoration: none;
-}
-
-.formatTable .formatTableRow:hover {
-  background-color: #f8f8f8;
-}
-
-.formatTable .formatName {
-  display: table-cell;
-  padding: 5px;
-  width: 200px;
-}
-
-.formatTable .formatDescription {
-  display: table-cell;
-  line-height: 15px;
-  padding-bottom: 5px;
-}
-
-.formatTable a.formatTableRow .formatDescription {
-  color: #404040;
-}
-
-
 #homeContent .tagline {
   padding-top: 100px;
   font-size: 40px;
@@ -585,3 +437,142 @@ p {
   background-image: url(./images/GitHub-Mark-64px.png);
 }
 
+.projectSection .projectSectionTitle{
+  font-size: 25px;
+  font-weight: 300;
+}
+
+.projectSection .projectIntro {
+  margin-bottom: 10px;
+}
+
+.projectSection .projectItems {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+.projectSection .projectItems .projectItem {
+  width: 24%;
+
+  border: 1px solid #f0f0f0;
+  margin-bottom: 20px;
+  margin: 10px;
+}
+
+.projectSection .projectItems .projectItem:hover {
+
+}
+
+.projectSection .projectItems .projectItem .projectItemLabel {
+  display: block;
+  cursor: pointer;
+  border-top: 1px solid #f0f0f0;
+  padding: 10px 10px 5px 10px;
+}
+
+.projectSection .projectItems .projectItem .projectItemImage {
+  width: 100%;
+  height: auto;
+}
+
+.projectSection .projectItems .projectItem .projectItemDescription {
+  font-size: 12px;
+  padding: 0px 10px 10px 10px;
+}
+
+
+
+/* adjustments for smaller screens */
+@media screen and (max-width: 1800px){
+  
+  .band .imageTwo {
+  position: absolute;
+  top: 20px;
+  right: 300px;
+  width: auto;
+  height: 100%;
+  
+  z-index: 5;
+  }
+  
+}
+
+@media screen and (max-width: 1500px){
+  
+  .band .imageTwo {
+  position: absolute;
+  top: 20px;
+  right: 200px;
+  width: auto;
+  height: 100%;
+  
+  z-index: 5;
+  }
+  
+}
+
+@media screen and (max-width: 1300px){
+  
+  .band .imageTwo {
+  position: absolute;
+  top: 20px;
+  right: 50px;
+  width: auto;
+  height: 100%;
+  
+  z-index: 5;
+  }
+  
+}
+
+
+@media screen and (max-width: 1050px){
+
+  #homeContent {
+    overflow-x: hidden;
+  }
+
+  .band.full.first, .band.full.second, .band.full.third {
+      height: auto;
+  }
+
+  .vCenter {
+    position: relative;
+    height: auto;
+    min-height: 0;
+    display: block;
+    padding: 100px 0px;
+  }
+
+  .third .vCenter {
+    padding-top: 10px;
+  }
+
+  #homeContent .band.rightText, #homeContent .band.leftText {
+    text-align: center;
+  }
+
+  #homeContent .band .blurb {
+    text-align: center;
+  }
+  
+  .band .imageTwo {
+    position: relative;
+    top: 0;
+    right: 0;
+    height: 400px;
+    margin-bottom: 50px;
+    width: auto;
+  }
+
+  .band .imageThree {
+    position: relative;
+    left: auto;
+    margin-bottom: 50px;
+    height: 400px;
+    width: auto;
+  }
+}
