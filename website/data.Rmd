@@ -15,10 +15,17 @@ Current and historical version of the BC Vegetation Resource Inventory are avail
 ### Manitoba
 Data from the Manitoba Land Initiative is available from their [web portal](https://mli2.gov.mb.ca/forestry/index.html).
 
+### Prince Edwards Island
+Some older inventory datasets are available through the PEI [GIS Data catalogue](http://www.gov.pe.ca/gis/index.php3?number=77555&lang=E).
+
+### New Brunswick
+The latest inventory data is available through the [GeoNB Data Catalogue](http://www.snb.ca/geonb1/e/DC/catalogue-E.asp).
+
 ### Nova Scotia
 The current forest inventory is available from [government website](https://novascotia.ca/natr/forestry/gis/forest-inventory.asp) along with older versions of the inventory.
 
 ### Quebec
+The most up-to-date inventory files are available for download from the [government website](https://www.donneesquebec.ca/recherche/dataset/carte-ecoforestiere-avec-perturbations).
 
 ### Yukon
 Yukon's older 5k data as well as their newer 40k data can be downloaded from the GeoYukon [Data Exporer](https://mapservices.gov.yk.ca/geoyukon/?&LayerTheme=Forestry).
