@@ -11,7 +11,7 @@
 
 
 
-<title>CASFRI demonstrations</title>
+<title>demo.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -269,7 +269,7 @@ $(document).ready(function () {
       <div id="menuToggler"></div>
       <div id="menuItems">
         <a class="menuItem" href="about.html">About</a>
-        <a class="menuItem" href="examples.html">Examples</a>
+        <a class="menuItem" href="demo.html">Demo</a>
         <a class="menuItem" href="projects.html">Projects</a>
         <a class="menuItem" href="data.html">Data</a>
         <a class="menuItem gitHub" href="https://github.com/edwardsmarc/CASFRI"></a>
@@ -298,12 +298,30 @@ $(".main-container").removeClass("main-container").removeClass("container-fluid"
 
 
 
-<h1 class="title toc-ignore">CASFRI demonstrations</h1>
 
 </div>
 
 
-<p>More about this website.</p>
+<div id="demo" class="section level1">
+<h1>Demo</h1>
+<p>The following two examples demonstrate questions that CASFRI can help answer.</p>
+<div id="question-1-what-is-the-most-current-information-on-the-distribution-of-lodgepole-pine-in-canada" class="section level2">
+<h2>Question 1: What is the most current information on the distribution of lodgepole pine in Canada?</h2>
+<ul>
+<li><p>To answer this question we want to query the CASFRI database to get the most recent forest species information from all jurisdictions.</p></li>
+<li><p>We only want to extract CASFRI polygons where the leading species is lodgepole pine.</p></li>
+<li><p>This equates to all polygons where the valid year is 2020, the LAYER attribute is 1, and the SPECIES_1 attribute is one of PINU_CON_CON, PINU_CON_LAT, or PINU_CON_###.</p></li>
+</ul>
+</div>
+<div id="question-2-what-was-the-age-of-all-forest-stands-in-canada-in-1990" class="section level2">
+<h2>Question 2: What was the age of all forest stands in Canada in 1990?</h2>
+<ul>
+<li><p>To answer this question we want to query the CASFRI database to get the most valid information that is available for the year 1990. Since all jurisdictions produce inventories on different schedules, the most valid information could be from before or after 1990.</p></li>
+<li><p>We will query the database using the year 1990, and only return the LYR rows where LAYER is 1.</p></li>
+<li><p>We can then calculate age as a new attribute using the formula <code>1990 - ((ORIGIN_UPPER-ORIGIN_LOWER)/2)</code>.</p></li>
+</ul>
+</div>
+</div>
 
 </div> <!-- articleBandContent -->
 </div> <!-- pageContent -->
