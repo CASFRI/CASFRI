@@ -42,8 +42,9 @@ UNION ALL
 SELECT 'SK4' id, 'SK01 (1971-2001) and SK06 (1994-2005)', ST_MakeEnvelope(-840000, 1800000, -830000, 1810000, 900914) geometry
 ;
 
--- Display
+/* Display
 SELECT * FROM casfri50_history_test.sampling_areas;
+*/
 --------------------------------------------------------------------------------------
 -- Sampling area NB1
 --------------------------------------------------------------------------------------
@@ -58,22 +59,26 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_nb1_geom_idx ON casfri50_history_test.sampling_area_nb1 USING gist(geometry);
 CREATE INDEX sampling_area_nb1_casid_idx ON casfri50_history_test.sampling_area_nb1 USING btree(cas_id);
 
--- Display
+/* Display
 SELECT * FROM casfri50_history_test.sampling_area_nb1;
+*/
 
 -- Generate history table not taking attribute values validity into account - pg11: 1m51, 794 rows. pg13: 11s, 783 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_history_new;
 CREATE TABLE casfri50_history_test.sampling_area_nb1_history_new AS
 SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
+--SELECT id, poly_id, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, wkb_geometry
 FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
                              'casfri50_history_test', 'sampling_area_nb1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_nb1) foo
 ORDER BY id, valid_year_begin;
 
 -- Display
+/*
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_nb1_history_new
 ORDER BY id, valid_year_begin;
+*/
 -----------------------------------------
 /*
 -- Generate history table taking attribute values validity into account
@@ -140,8 +145,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_nb2_geom_idx ON casfri50_history_test.sampling_area_nb2 USING gist(geometry);
 CREATE INDEX sampling_area_nb2_casid_idx ON casfri50_history_test.sampling_area_nb2 USING btree(cas_id);
 
--- Display
+/* Display
 SELECT * FROM casfri50_history_test.sampling_area_nb2;
+*/
 
 -- Generate history table - pg11: 17m07, 6670 rows, pg13: 1m26, 6594 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2_history_new;
@@ -152,10 +158,11 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
       FROM casfri50_history_test.sampling_area_nb2) foo
 ORDER BY id, valid_year_begin;
 
--- Display
+/* Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_nb2_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, very long time
@@ -180,8 +187,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_nt1_geom_idx ON casfri50_history_test.sampling_area_nt1 USING gist(geometry);
 CREATE INDEX sampling_area_nt1_casid_idx ON casfri50_history_test.sampling_area_nt1 USING btree(cas_id);
 
--- Display
+/*  Display
 SELECT * FROM casfri50_history_test.sampling_area_nt1;
+*/
 
 -- Generate history table - pg11: 6m14, 1183 rows, pg13: 22s, 1130 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1_history_new;
@@ -193,9 +201,11 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
+/*
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_nt1_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, 9m46
@@ -221,8 +231,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_nt2_geom_idx ON casfri50_history_test.sampling_area_nt2 USING gist(geometry);
 CREATE INDEX sampling_area_nt2_casid_idx ON casfri50_history_test.sampling_area_nt2 USING btree(cas_id);
 
--- Display
+/*  Display
 SELECT * FROM casfri50_history_test.sampling_area_nt2;
+*/
 
 -- Generate history table - pg11: 4m50, 1028 rows, pg13: 13s, 520 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2_history_new;
@@ -233,10 +244,11 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
       FROM casfri50_history_test.sampling_area_nt2) foo
 ORDER BY id, valid_year_begin;
 
--- Display
+/* Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_nt2_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, 13m38
@@ -261,8 +273,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_bc1_geom_idx ON casfri50_history_test.sampling_area_bc1 USING gist(geometry);
 CREATE INDEX sampling_area_bc1_casid_idx ON casfri50_history_test.sampling_area_bc1 USING btree(cas_id);
 
--- Display
+/*  Display
 SELECT * FROM casfri50_history_test.sampling_area_bc1;
+*/
 
 -- Generate history table - pg11: 3m11, 4430 rows, pg13: 30s, 4409 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1_history_new;
@@ -272,11 +285,12 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
                              'casfri50_history_test', 'sampling_area_bc1', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_bc1) foo
 ORDER BY id, valid_year_begin;
-
--- Display
+ 
+/* Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_bc1_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, 3m37
@@ -301,8 +315,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_bc2_geom_idx ON casfri50_history_test.sampling_area_bc2 USING gist(geometry);
 CREATE INDEX sampling_area_bc2_casid_idx ON casfri50_history_test.sampling_area_bc2 USING btree(cas_id);
 
--- Display
+/* Display
 SELECT * FROM casfri50_history_test.sampling_area_bc2;
+*/
 
 -- Generate history table - pg11: xmx, xxxx rows, pg13: 1m41, 8888 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2_history_new;
@@ -312,11 +327,12 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
                              'casfri50_history_test', 'sampling_area_bc2', 'cas_id', 'geometry', 'photo_year', 'inventory_id')).*
       FROM casfri50_history_test.sampling_area_bc2) foo
 ORDER BY id, valid_year_begin;
-
--- Display
+ 
+/* Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_bc2_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, 2m40
@@ -342,8 +358,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_sk1_geom_idx ON casfri50_history_test.sampling_area_sk1 USING gist(geometry);
 CREATE INDEX sampling_area_sk1_casid_idx ON casfri50_history_test.sampling_area_sk1 USING btree(cas_id);
 
--- Display
+/* Display
 SELECT * FROM casfri50_history_test.sampling_area_sk1;
+*/
 
 -- Generate history table - pg11: 2m19, 3662 rows, pg13: 17s, 3653 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1_history_new;
@@ -354,10 +371,11 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
       FROM casfri50_history_test.sampling_area_sk1) foo
 ORDER BY id, valid_year_begin;
 
--- Display
+/* Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_sk1_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, 2m34
@@ -383,8 +401,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_sk2_geom_idx ON casfri50_history_test.sampling_area_sk2 USING gist(geometry);
 CREATE INDEX sampling_area_sk2_casid_idx ON casfri50_history_test.sampling_area_sk2 USING btree(cas_id);
 
--- Display
+/* Display
 SELECT * FROM casfri50_history_test.sampling_area_sk2;
+*/
 
 -- Generate history table - pg11: 5m19, 4506 rows, pg13: 2m54, 4122 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2_history_new;
@@ -396,9 +415,11 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
 ORDER BY id, valid_year_begin;
 
 -- Display
+/*
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_sk2_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, 7m20
@@ -423,8 +444,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_sk3_geom_idx ON casfri50_history_test.sampling_area_sk3 USING gist(geometry);
 CREATE INDEX sampling_area_sk3_casid_idx ON casfri50_history_test.sampling_area_sk3 USING btree(cas_id);
 
--- Display
+/* Display
 SELECT * FROM casfri50_history_test.sampling_area_sk3;
+*/
 
 -- Generate history table - pg11: 3m21, 3407 rows, pg13: 29s, 3390 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3_history_new;
@@ -435,10 +457,11 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
       FROM casfri50_history_test.sampling_area_sk3) foo
 ORDER BY id, valid_year_begin;
 
--- Display
+/* Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_sk3_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, 4m08
@@ -463,8 +486,9 @@ ORDER BY cas_id;
 CREATE INDEX sampling_area_sk4_geom_idx ON casfri50_history_test.sampling_area_sk4 USING gist(geometry);
 CREATE INDEX sampling_area_sk4_casid_idx ON casfri50_history_test.sampling_area_sk4 USING btree(cas_id);
 
--- Display
+/* Display
 SELECT * FROM casfri50_history_test.sampling_area_sk4;
+*/
 
 -- Generate history table - pg11: 3m05, 4718 rows, pg13: 30s, 4670 rows
 DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4_history_new;
@@ -475,10 +499,11 @@ FROM (SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geome
       FROM casfri50_history_test.sampling_area_sk4) foo
 ORDER BY id, valid_year_begin;
 
--- Display
+/* Display
 SELECT id, valid_year_begin, valid_year_end, ST_Area(wkt_geometry) area, wkt_geometry, ST_GeomFromText(wkt_geometry) geom
 FROM casfri50_history_test.sampling_area_sk4_history_new
 ORDER BY id, valid_year_begin;
+*/
 
 /*
 -- Compare performance when searching in the whole flat table, 4m24
@@ -504,6 +529,14 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
 ---------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_nb1_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('nb1') check_query
+FROM TT_AreasForSignificantYears('nb1')
+---------------------------------------------------------
+UNION ALL
+SELECT '2.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nb2_history_new" and "sampling_area_nb2_history"' description, 
        count(*) = 0 passed,
@@ -513,7 +546,15 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FULL OUTER JOIN casfri50_history_test.sampling_area_nb2_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '2.1'::text number,
+SELECT '2.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_nb2_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('nb2') check_query
+FROM TT_AreasForSignificantYears('nb2')
+---------------------------------------------------------
+UNION ALL
+SELECT '3.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nt1_history_new" and "sampling_area_nt1_history"' description, 
        count(*) = 0 passed,
@@ -523,7 +564,15 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FULL OUTER JOIN casfri50_history_test.sampling_area_nt1_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '2.2'::text number,
+SELECT '3.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_nt1_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('nt1') check_query
+FROM TT_AreasForSignificantYears('nt1')
+---------------------------------------------------------
+UNION ALL
+SELECT '4.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nt2_history_new" and "sampling_area_nt2_history"' description, 
        count(*) = 0 passed,
@@ -533,7 +582,15 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FULL OUTER JOIN casfri50_history_test.sampling_area_nt2_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '3.1'::text number,
+SELECT '4.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_nt2_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('nt2') check_query
+FROM TT_AreasForSignificantYears('nt2')
+---------------------------------------------------------
+UNION ALL
+SELECT '5.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_bc1_history_new" and "sampling_area_bc1_history"' description, 
        count(*) = 0 passed,
@@ -543,7 +600,15 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FULL OUTER JOIN casfri50_history_test.sampling_area_bc1_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '3.2'::text number,
+SELECT '5.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_bc1_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('bc1') check_query
+FROM TT_AreasForSignificantYears('bc1')
+---------------------------------------------------------
+UNION ALL
+SELECT '6.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_bc2_history_new" and "sampling_area_bc2_history"' description, 
        count(*) = 0 passed,
@@ -553,7 +618,15 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FULL OUTER JOIN casfri50_history_test.sampling_area_bc2_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '4.1'::text number,
+SELECT '6.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_bc2_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('bc2') check_query
+FROM TT_AreasForSignificantYears('bc2')
+---------------------------------------------------------
+UNION ALL
+SELECT '7.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk1_history_new" and "sampling_area_sk1_history"' description, 
        count(*) = 0 passed,
@@ -563,7 +636,15 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk1_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '4.2'::text number,
+SELECT '7.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_sk1_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('sk1') check_query
+FROM TT_AreasForSignificantYears('sk1')
+---------------------------------------------------------
+UNION ALL
+SELECT '8.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk2_history_new" and "sampling_area_sk2_history"' description, 
        count(*) = 0 passed,
@@ -573,7 +654,15 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk2_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '4.3'::text number,
+SELECT '8.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_sk2_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('sk2') check_query
+FROM TT_AreasForSignificantYears('sk2')
+---------------------------------------------------------
+UNION ALL
+SELECT '9.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk3_history_new" and "sampling_area_sk3_history"' description, 
        count(*) = 0 passed,
@@ -583,7 +672,15 @@ FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk3_history b USING (id, poly_id)) foo
 ---------------------------------------------------------
 UNION ALL
-SELECT '4.4'::text number,
+SELECT '9.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_sk3_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('sk3') check_query
+FROM TT_AreasForSignificantYears('sk3')
+---------------------------------------------------------
+UNION ALL
+SELECT '10.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_sk4_history_new" and "sampling_area_sk4_history"' description, 
        count(*) = 0 passed,
@@ -591,5 +688,13 @@ SELECT '4.4'::text number,
 FROM (SELECT (TT_CompareRows(to_jsonb(a), to_jsonb(b))).*
       FROM casfri50_history_test.sampling_area_sk4_history_new a 
       FULL OUTER JOIN casfri50_history_test.sampling_area_sk4_history b USING (id, poly_id)) foo
+---------------------------------------------------------
+UNION ALL
+SELECT '10.2'::text number,
+       'TT_GeoHistory'::text function_tested,
+       'Test for overlaps for significant years of sampling_area_sk4_gridded_history_new' description, 
+       count(*) = 0 passed,
+       TT_AreasForSignificantYearsDebugQuery('sk4') check_query
+FROM TT_AreasForSignificantYears('sk4')
 ---------------------------------------------------------
 ) foo WHERE NOT passed;
