@@ -42,7 +42,7 @@ RETURNS boolean AS $$
     END LOOP;
     RETURN FALSE;
   END
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------------------------
 -- Create a table of inventory precedence rank. Polygons from inventories with 
 -- higher ranks have precedence over polygons from inventories having lower 
@@ -185,7 +185,7 @@ RETURNS boolean AS $$
     END IF;
     RETURN inv1_num > inv2_num OR (inv1_num = inv2_num AND uid1 > uid2);
   END
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 --SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
 --SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
@@ -213,14 +213,14 @@ ORDER BY inv, stand_photo_year;
 */
 
 -- Create a sequence to be able to show the progress of the flat grid creation
-DROP SEQUENCE IF EXISTS bug_splitbygrid;
-CREATE SEQUENCE bug_splitbygrid START 1;
-SELECT nextval('bug_splitbygrid');
+--DROP SEQUENCE IF EXISTS bug_splitbygrid;
+--CREATE SEQUENCE bug_splitbygrid START 1;
+--SELECT nextval('bug_splitbygrid');
 
 -- Create a gridded version of the flat version of CASFRI 13h00, 85M polygons
 DROP TABLE IF EXISTS casfri50_history.casflat_gridded;
 CREATE TABLE casfri50_history.casflat_gridded AS
-SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
+SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).*
 FROM casfri50_flat.cas_flat_all_layers_same_row
 --WHERE CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 THEN TT_PrintMessage(currval('bug_splitbygrid')::text) ELSE TRUE END
 ;
