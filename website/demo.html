@@ -324,10 +324,7 @@ FROM valid_polygons
 LEFT JOIN casfri50.lyr_all lyr ON valid_polygons.cas_id_valid = lyr.cas_id
 LEFT JOIN (SELECT cas_id AS geo_cas_id, geometry FROM casfri50.geo_all) geo ON valid_polygons.cas_id_valid = geo.geo_cas_id
 WHERE LEFT(cas_id, 2) IN(&#39;BC&#39;,&#39;YT&#39;) AND LAYER = 1 AND SPECIES_1 IN(&#39;PINU_CON_CON&#39;, &#39;PINU_CON_LAT&#39;, &#39;PINU_CON_###&#39;);</code></pre>
-<div class="figure">
-<img src="images/demo1.png" alt="demo_1_figure" style="width:50.0%" />
-<p class="caption">demo_1_figure</p>
-</div>
+<p><img src="images/demo_fig.png" style="width:75.0%" /></p>
 </div>
 <div id="question-2-what-was-the-age-of-all-forest-stands-in-canada-in-1990" class="section level2">
 <h2>Question 2: What was the age of all forest stands in Canada in 1990?</h2>
