@@ -34,7 +34,7 @@ LEFT JOIN (SELECT cas_id AS geo_cas_id, geometry FROM casfri50.geo_all) geo ON v
 WHERE LEFT(cas_id, 2) IN('BC','YT') AND LAYER = 1 AND SPECIES_1 IN('PINU_CON_CON', 'PINU_CON_LAT', 'PINU_CON_###');
 ```
 
-![demo_1_figure](./images/demo1.png){width=50%}
+![](./images/demo1.png){width=75%}
 
 ## Question 2: What was the age of all forest stands in Canada in 1990?
 
