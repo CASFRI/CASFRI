@@ -2,6 +2,14 @@
 
 source ../../conversion/sh/common.sh
 
+bashCmd="/c/program files/git/git-bash.exe"
+
+leaveOpenCmd=
+if [ ${leaveConvShellOpen}x == Truex ]; then
+  leaveOpenCmd="/bin/bash"
+fi
+
+ 
 declare -n L
 
 # Iterate over the list of list always making the last command a waiting one (the following ones wait for it to finish before proceeding)
@@ -10,7 +18,7 @@ for L in "${fullList[@]}"; do
     if [ $F == ${L[-1]} ]; then
       "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\""
     else
-      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\"" &
+      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\";$leaveOpenCmd" &
     fi
   done
 done
