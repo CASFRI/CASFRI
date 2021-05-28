@@ -2,7 +2,7 @@ output_dir: '.'
 output:
   html_document:
     self_contained: false
-    theme: flatly
+    theme: cosmo
     highlight: textmate
     mathjax: null
     lib_dir: libs

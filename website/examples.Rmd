@@ -1,5 +1,0 @@
----
-title: "CASFRI demonstrations"
----
-
-More about this website.

@@ -2,3 +2,7 @@
 config.bat
 config.sh
 summary_statistics/Rgui.lnk
+website/.Rproj.user
+website/.Rhistory
+website/images/*.svg
+.Rproj.user

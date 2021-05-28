@@ -28,7 +28,7 @@ $("#pageContent").removeClass("standardPadding");
         <div>CASFRI includes data on forests, wetlands, non-forested elements such as shrubs, anthropogenic use and lakes/rivers, and disturbances such as fire and insects.</div>
       </div>
     </div>
-    <img class="imageTwo" src="images/casfri_icons.png"/>
+    <img class="imageTwo" src="images/casfri_icons_crop.png"/>
   </div>
 
   <div class="band full third rightText">
@@ -47,7 +47,7 @@ $("#pageContent").removeClass("standardPadding");
       <div class="blurbCenter">
         <hr>
         <div>
-        CASFRI is an open source project using PostgreSQL, PostGIS, GDAL and R. The project is stored on <a href="https://github.com/edwardsmarc/CASFRI">github</a>.
+        CASFRI is an open source project using PostgreSQL, PostGIS, GDAL and R.<br>The project is stored on <a href="https://github.com/edwardsmarc/CASFRI">github<br></a>.
         </div>
       </div>
       <div>
