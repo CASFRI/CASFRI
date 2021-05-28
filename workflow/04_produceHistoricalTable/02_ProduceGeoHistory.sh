@@ -3,6 +3,12 @@
 source ../../conversion/sh/common.sh
 
 bashCmd="/c/program files/git/git-bash.exe"
+
+leaveOpenCmd=
+if [ ${leaveConvShellOpen}x == Truex ]; then
+  leaveOpenCmd="/bin/bash"
+fi
+
  
 declare -n L
 
@@ -10,9 +16,9 @@ declare -n L
 for L in "${fullList[@]}"; do
   for F in "${L[@]}"; do
     if [ $F == ${L[-1]} ]; then
-      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\"" /dev/null
+      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\";$leaveOpenCmd" /dev/null
     else
-      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\"" & /dev/null
+      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\";$leaveOpenCmd" & /dev/null
     fi
   done
 done
