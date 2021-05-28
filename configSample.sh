@@ -30,16 +30,16 @@ targetTranslationFileSchema=translation
 # Extra, non inventory tables to load (not translate)
 photoYearList=(ab_photoyear nl_photoyear)
 
-# First series of inventories having more than 2000000 rows. Longest one should be the last one.
-invList1=(BC08 BC10 ON01 QC01 QC04 QC05)
+# First series of inventories having more than 2000000 rows. Longest one should be last.
+invList1=(BC08 BC10 ON01 QC04 QC05 QC01)
 
-# Second series of inventories having more than 2000000 rows. Longest one should be the last one.
+# Second series of inventories having more than 2000000 rows. Longest one should be last.
 invList2=(BC11 BC12 QC02 QC06 ON02)
 
-# Inventories having between 500000 and 2000000 rows. Longest one should be the last one.
-invList3=(AB25 AB29 NB01 NB02 NS01 NS02 NS03 SK01 SK04 MB05 NL01)
+# Inventories having between 500000 and 2000000 rows. Longest one should be last.
+invList3=(AB25 AB29 NB01 NB02 NS01 NS02 NS03 SK01 SK04 NL01 MB05)
 
-# Inventories having between 200000 and 500000 rows. Longest one should be the last one.
+# Inventories having between 200000 and 500000 rows. Longest one should be last.
 invList4=(MB07 NT01 NT03 QC03 YT01 YT02 SK06 SK05)
 
 # Inventories having less than 200000 rows
