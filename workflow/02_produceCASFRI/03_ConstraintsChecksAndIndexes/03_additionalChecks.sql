@@ -11,7 +11,6 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
-
 SELECT '1.1'::text number,
        'Issue #625. Check that all cas_all rows have at least one matching row in LYR, NFL, DST or ECO' description, 
        passed, 
@@ -39,84 +38,114 @@ FROM (SELECT count(*) = 0 passed
 -------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
-       'Check that that CAS number_of_layers matches the actual layers and that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
+       'Issue #723. Check that CAS number_of_layers matches the actual number of LYR and NFL layers' description, 
        passed, 
-       'WITH cas_only AS ( 
-  SELECT cas_id, 
-         num_of_layers, ''lyr'' || lyr.layer lyr_layer, ''nfl'' || nfl.layer nfl_layer
-  FROM casfri50.cas_all 
-  LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
-  LEFT JOIN casfri50.nfl_all nfl USING (cas_id)
-), cas_lyr_nfl AS (
-  SELECT cas_id, 
-         num_of_layers, lyr_layer layers
-  FROM cas_only
-  WHERE nfl_layer IS NULL
+       'WITH all_layers AS (
+  SELECT cas_id FROM casfri50.lyr_all
   UNION ALL
-  SELECT cas_id, num_of_layers, nfl_layer layers
-  FROM cas_only
-  WHERE nfl_layer IS NOT NULL
-), final AS (
-  SELECT cas_id,
-         max(num_of_layers) max_num_of_layers,
-         string_agg(layers, ''_'' ORDER BY layers) layers
-  FROM cas_lyr_nfl
+  SELECT cas_id FROM casfri50.nfl_all
+), all_layers_counts AS (
+  SELECT cas_id, count(*) cnt
+  FROM all_layers
   GROUP BY cas_id
 )
-SELECT *
-FROM final
-WHERE NOT ((max_num_of_layers = 0 AND layers IS NULL) OR
-           (max_num_of_layers = 1 AND layers = ''nfl1'') OR 
-           (max_num_of_layers = 2 AND layers = ''nfl1_nfl2'') OR 
-           (max_num_of_layers = 3 AND layers = ''nfl1_nfl2_nfl3'') OR 
-           (max_num_of_layers = 1 AND layers = ''lyr1'') OR 
-           (max_num_of_layers = 2 AND layers = ''lyr1_lyr2'') OR 
-           (max_num_of_layers = 3 AND layers = ''lyr1_lyr2_lyr3'') OR 
-           (max_num_of_layers = 2 AND layers = ''lyr1_nfl2'') OR 
-           (max_num_of_layers = 3 AND layers = ''lyr1_nfl2_nfl3'') OR 
-           (max_num_of_layers = 4 AND layers = ''lyr1_nfl2_nfl3_nfl4'') OR 
-           (max_num_of_layers = 3 AND layers = ''lyr1_lyr2_nfl3'') OR 
-           (max_num_of_layers = 4 AND layers = ''lyr1_lyr2_lyr3_nfl4'') OR 
-           (max_num_of_layers = 5 AND layers = ''lyr1_lyr2_lyr3_nfl4_nfl5'') OR 
-           (max_num_of_layers = 6 AND layers = ''lyr1_lyr2_lyr3_nfl4_nfl5_nfl6''));' list_query
-FROM (WITH cas_only AS ( 
-  SELECT cas_id, 
-         num_of_layers, 'lyr' || lyr.layer lyr_layer, 'nfl' || nfl.layer nfl_layer
-  FROM casfri50.cas_all 
-  LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
-  LEFT JOIN casfri50.nfl_all nfl USING (cas_id)
-), cas_lyr_nfl AS (
-  SELECT cas_id, 
-         num_of_layers, lyr_layer layers
-  FROM cas_only
-  WHERE nfl_layer IS NULL
+SELECT c.cas_id, c.num_of_layers, a.cnt
+FROM casfri50.cas_all c
+NATURAL LEFT JOIN all_layers_counts a 
+WHERE NOT ((c.num_of_layers = -8886 AND a.cnt IS NULL) OR (c.num_of_layers = a.cnt))
+ORDER BY c.num_of_layers, a.cnt' list_query
+FROM (
+WITH all_layers AS (
+  SELECT cas_id FROM casfri50.lyr_all
   UNION ALL
-  SELECT cas_id, num_of_layers, nfl_layer layers
-  FROM cas_only
-  WHERE nfl_layer IS NOT NULL
-), final AS (
-  SELECT cas_id,
-         max(num_of_layers) max_num_of_layers,
-         string_agg(layers, '_' ORDER BY layers) layers
-  FROM cas_lyr_nfl
+  SELECT cas_id FROM casfri50.nfl_all
+), all_layers_counts AS (
+  SELECT cas_id, count(*) cnt
+  FROM all_layers
   GROUP BY cas_id
 )
 SELECT count(*) = 0 passed
-FROM final
-WHERE NOT ((max_num_of_layers = 0 AND layers IS NULL) OR
-           (max_num_of_layers = 1 AND layers = 'nfl1') OR 
-           (max_num_of_layers = 2 AND layers = 'nfl1_nfl2') OR 
-           (max_num_of_layers = 3 AND layers = 'nfl1_nfl2_nfl3') OR 
-           (max_num_of_layers = 1 AND layers = 'lyr1') OR 
-           (max_num_of_layers = 2 AND layers = 'lyr1_lyr2') OR 
-           (max_num_of_layers = 3 AND layers = 'lyr1_lyr2_lyr3') OR 
-           (max_num_of_layers = 2 AND layers = 'lyr1_nfl2') OR 
-           (max_num_of_layers = 3 AND layers = 'lyr1_nfl2_nfl3') OR 
-           (max_num_of_layers = 4 AND layers = 'lyr1_nfl2_nfl3_nfl4') OR 
-           (max_num_of_layers = 3 AND layers = 'lyr1_lyr2_nfl3') OR 
-           (max_num_of_layers = 4 AND layers = 'lyr1_lyr2_lyr3_nfl4') OR 
-           (max_num_of_layers = 5 AND layers = 'lyr1_lyr2_lyr3_nfl4_nfl5') OR 
-           (max_num_of_layers = 6 AND layers = 'lyr1_lyr2_lyr3_nfl4_nfl5_nfl6'))) foo
+FROM casfri50.cas_all c
+NATURAL LEFT JOIN all_layers_counts a 
+WHERE NOT ((c.num_of_layers = -8886 AND a.cnt IS NULL) OR (c.num_of_layers = a.cnt))
+) foo
+-------------------------------------------------------
+UNION ALL
+SELECT '1.3'::text number,
+       'Issue #723. Check that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
+       passed, 
+       'WITH all_layers_numbers AS (
+  SELECT cas_id, ''lyr'' || layer::text layer  FROM casfri50.lyr_all
+  UNION ALL
+  SELECT cas_id, ''nfl'' || layer::text layer  FROM casfri50.nfl_all
+), all_layers_orders AS (
+  SELECT cas_id, string_agg(layer::text, ''_'' ORDER BY layer) layers_order
+  FROM all_layers_numbers
+  GROUP BY cas_id
+)
+SELECT cas_id, layers_order
+FROM all_layers_orders
+WHERE layers_order != ''lyr1'' AND
+      layers_order != ''lyr1_lyr2'' AND
+      layers_order != ''lyr1_lyr2_lyr3'' AND
+      layers_order != ''lyr1_lyr2_lyr3_lyr4'' AND
+      layers_order != ''lyr1_lyr2_lyr3_lyr4_lyr5'' AND
+      layers_order != ''lyr1_lyr2_lyr3_lyr4_nfl5'' AND
+      layers_order != ''lyr1_lyr2_lyr3_lyr4_nfl5_nfl6'' AND
+      layers_order != ''lyr1_lyr2_lyr3_lyr4_nfl5_nfl6_nfl7'' AND
+      layers_order != ''lyr1_lyr2_lyr3_nfl4'' AND
+      layers_order != ''lyr1_lyr2_lyr3_nfl4_nfl5'' AND
+      layers_order != ''lyr1_lyr2_lyr3_nfl4_nfl5_nfl6'' AND
+      layers_order != ''lyr1_lyr2_lyr3_nfl4_nfl5_nfl6_nfl7'' AND
+      layers_order != ''lyr1_lyr2_nfl3'' AND
+      layers_order != ''lyr1_lyr2_nfl3_nfl4'' AND
+      layers_order != ''lyr1_lyr2_nfl3_nfl4_nfl5'' AND
+      layers_order != ''lyr1_lyr2_nfl3_nfl4_nfl5_nfl6'' AND
+      layers_order != ''lyr1_nfl2'' AND
+      layers_order != ''lyr1_nfl2_nfl3'' AND
+      layers_order != ''lyr1_nfl2_nfl3_nfl4'' AND
+      layers_order != ''lyr1_nfl2_nfl3_nfl4_nfl5'' AND
+      layers_order != ''nfl1'' AND
+      layers_order != ''nfl1_nfl2'' AND
+      layers_order != ''nfl1_nfl2_nfl3'' AND
+      layers_order != ''nfl1_nfl2_nfl3_nfl4''' list_query
+FROM (
+WITH all_layers_numbers AS (
+  SELECT cas_id, 'lyr' || layer::text layer  FROM casfri50.lyr_all
+  UNION ALL
+  SELECT cas_id, 'nfl' || layer::text layer  FROM casfri50.nfl_all
+), all_layers_orders AS (
+  SELECT cas_id, string_agg(layer::text, '_' ORDER BY layer) layers_order
+  FROM all_layers_numbers
+  GROUP BY cas_id
+)
+SELECT count(*) = 0 passed
+FROM all_layers_orders
+WHERE layers_order != 'lyr1' AND
+      layers_order != 'lyr1_lyr2' AND
+      layers_order != 'lyr1_lyr2_lyr3' AND
+      layers_order != 'lyr1_lyr2_lyr3_lyr4' AND
+      layers_order != 'lyr1_lyr2_lyr3_lyr4_lyr5' AND
+      layers_order != 'lyr1_lyr2_lyr3_lyr4_nfl5' AND
+      layers_order != 'lyr1_lyr2_lyr3_lyr4_nfl5_nfl6' AND
+      layers_order != 'lyr1_lyr2_lyr3_lyr4_nfl5_nfl6_nfl7' AND
+      layers_order != 'lyr1_lyr2_lyr3_nfl4' AND
+      layers_order != 'lyr1_lyr2_lyr3_nfl4_nfl5' AND
+      layers_order != 'lyr1_lyr2_lyr3_nfl4_nfl5_nfl6' AND
+      layers_order != 'lyr1_lyr2_lyr3_nfl4_nfl5_nfl6_nfl7' AND
+      layers_order != 'lyr1_lyr2_nfl3' AND
+      layers_order != 'lyr1_lyr2_nfl3_nfl4' AND
+      layers_order != 'lyr1_lyr2_nfl3_nfl4_nfl5' AND
+      layers_order != 'lyr1_lyr2_nfl3_nfl4_nfl5_nfl6' AND
+      layers_order != 'lyr1_nfl2' AND
+      layers_order != 'lyr1_nfl2_nfl3' AND
+      layers_order != 'lyr1_nfl2_nfl3_nfl4' AND
+      layers_order != 'lyr1_nfl2_nfl3_nfl4_nfl5' AND
+      layers_order != 'nfl1' AND
+      layers_order != 'nfl1_nfl2' AND
+      layers_order != 'nfl1_nfl2_nfl3' AND
+      layers_order != 'nfl1_nfl2_nfl3_nfl4'
+) foo
 -------------------------------------------------------
 --) foo WHERE NOT passed;
 

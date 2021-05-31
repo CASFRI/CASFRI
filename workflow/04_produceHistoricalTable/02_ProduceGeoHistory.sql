@@ -65,53 +65,182 @@ SELECT TT_ProduceInvGeoHistory('YT03'); --   71073, pg11: , pg13: 22m35
 -- Check counts
 SELECT left(cas_id, 4) inv, count(*) cnt
 FROM casfri50_history.geo_history
-GROUP BY left(cas_id, 4);
+GROUP BY left(cas_id, 4)
+ORDER BY inv;
 
--- AB03 62387
--- AB06 11730
--- AB07 23350
--- AB08 35727
--- AB10 199788
--- AB11 119597
--- AB16 121865
--- AB25 555261
--- AB29 680556
--- AB30 5771
--- BC08 no polygons retained
--- BC10 2321009
--- BC11 7414767
--- BC12 7396987
--- MB01 129146
--- MB02 53238
--- MB04 24606
--- MB05 1750651
--- MB06 167290
--- MB07 362612
--- NB01 1511925
--- NB02 1781853
--- NL01 1866027
--- NS01 404950
--- NS02 1578368
--- NS03 1598055
--- NT01 392327
--- NT03 506328
--- ON01 7172675
--- ON02 5874657
--- PC01 9168
--- PC02 1123
--- PE01 107220
--- QC01 TBD
--- QC02 7465256
--- QC03 775261
--- QC04 3580706
--- QC05 8696597
--- QC06 10695008
--- QC07 155130
--- SK02 44871
--- SK03 14731
--- SK04 1050281
--- SK05 604611
--- SK06 344279
--- YT01 262130
--- YT02 244944
--- YT03 79560
+--      new   old
+-- AB03 62411 62387
+-- AB06 62411 11730
+-- AB07 23399 23350
+-- AB08 35904 35727
+-- AB10 195544 199788
+-- AB11 119187 119597
+-- AB16 121438 121865
+-- AB25 108814 555261 x
+-- AB29 665823 680556
+-- AB30 4578 5771
+-- BC08 718161 none x
+-- BC10 251926 2321009 x
+-- BC11 4161067 7414767 x
+-- BC12 7728795 7396987
+-- MB01 12246 129146 x
+-- MB02 1291 53238 x
+-- MB04 1798 24606 x
+-- MB05 1653948 1750651
+-- MB06 165438 167290
+-- MB07 220548 362612 x
+-- NB01 925337 1511925 x
+-- NB02 1343646 1781853 x
+-- NL01 1866227 1866027 
+-- NS01 209986 404950 x
+-- NS02 871378 1578368 x
+-- NS03 1049044 1598055 x
+-- NT01 216519 392327 x
+-- NT03 332209 506328 x
+-- ON01 4931335 7172675 x
+-- ON02 3787142 5874657 x
+-- PC01 9153 9168
+-- PC02 1122 1123
+-- PE01 107220 107220
+-- QC01 8028744 8028744
+-- QC02 2664318 7465256 x
+-- QC03 495795 775261 x
+-- QC04 388340 3580706 x
+-- QC05 6690961 8696597 x
+-- QC06 4906274 10695008 x
+-- QC07 86018 155130 x
+-- SK01 1577892 1577892
+-- SK02 30105 44871 x
+-- SK03 9365 14731 x
+-- SK04 674385 1050281 x
+-- SK05 21437 604611 x
+-- SK06 219239 344279 x
+-- YT01 6135 262130 x
+-- YT02 248539 244944
+-- YT03 71173 79560
+
+-- Create some indexes - 13m
+CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 4));
+
+/* Display
+SELECT *
+FROM casfri50_history.geo_history
+WHERE left(cas_id, 4) = 'BC08';
+*/
+
+----------------------------------------------------------------
+-- Check for overlaps for random buffers in each inventory
+----------------------------------------------------------------
+
+-- Create randoms buffers
+DROP TABLE IF EXISTS casfri50_history_test.geo_history_test_buffers;
+CREATE TABLE casfri50_history_test.geo_history_test_buffers AS
+WITH provinces AS (
+  SELECT left(inv, 2) prov, 
+         ST_Union(geom) geom
+  FROM casfri50_coverage.smoothed
+  GROUP BY left(inv, 2)
+), buffer_nb_params AS (
+  SELECT max(ST_Area(geom)) max_area, min(ST_Area(geom)) min_area
+  FROM provinces
+), buffers AS (
+  SELECT prov, 
+         -- the number of buffer per province is proportional to the province area. min is 10, max is 100
+         ST_Buffer(ST_RandomPoints(geom, round(10 + (ST_Area(geom) - min_area) * (100 - 10) / (max_area - min_area))::int, 1), 1000) geom
+  FROM provinces, buffer_nb_params
+)
+SELECT prov, (row_number() OVER(PARTITION BY prov)) buffer_id, geom
+FROM buffers
+ORDER BY prov, buffer_id;
+
+-- Display
+SELECT * FROM casfri50_history_test.geo_history_test_buffers;
+
+-- Create index for faster extraction of buffer samples from the geo_history table
+CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 2));
+
+CREATE INDEX ON casfri50_history.geo_history USING gist(geom);
+
+-- Extract buffer samples into a new table
+DROP TABLE IF EXISTS casfri50_history_test.geo_history_test;
+CREATE TABLE casfri50_history_test.geo_history_test AS
+SELECT prov, buffer_id, cas_id, valid_year_begin, valid_year_end, 
+       ST_Intersection(gh.geom, bufs.geom) geom,
+       ST_Area(ST_Intersection(gh.geom, bufs.geom)) area
+FROM casfri50_history_test.geo_history_test_buffers bufs, 
+     casfri50_history.geo_history gh
+WHERE left(cas_id, 2) = prov AND ST_Intersects(gh.geom, bufs.geom)
+ORDER BY prov, buffer_id, valid_year_begin;
+
+-- Display
+SELECT * FROM casfri50_history_test.geo_history_test;
+
+-- Extract CASFRI polygons for buffer samples into a new table
+DROP TABLE IF EXISTS casfri50_history_test.geo_history_test_raw;
+CREATE TABLE casfri50_history_test.geo_history_test_raw AS
+SELECT prov, buffer_id, cas_id, stand_photo_year, 
+       ST_Intersection(c.geometry, bufs.geom) geom,
+       ST_Area(ST_Intersection(c.geometry, bufs.geom)) area
+FROM casfri50_history_test.geo_history_test_buffers bufs, 
+     casfri50_flat.cas_flat_all_layers_same_row c
+WHERE left(cas_id, 2) = prov AND ST_Intersects(c.geometry, bufs.geom)
+ORDER BY prov, buffer_id, stand_photo_year;
+
+-- Display
+SELECT * FROM casfri50_history_test.geo_history_test_raw;
+
+-- Check sum of areas vs areas of unions
+WITH all_significant_years AS (
+  SELECT DISTINCT prov, buffer_id, syear
+  FROM (
+    SELECT DISTINCT prov, buffer_id, valid_year_begin syear
+    FROM casfri50_history_test.geo_history_test
+    UNION ALL
+    SELECT DISTINCT prov, buffer_id, valid_year_end syear
+    FROM casfri50_history_test.geo_history_test
+  ) foo
+  ORDER BY prov, buffer_id, syear
+), sum_of_areas AS (
+  SELECT h.prov, h.buffer_id, syear, 
+         sum(area) sum_area
+  FROM casfri50_history_test.geo_history_test h, all_significant_years sy
+  WHERE h.prov = sy.prov AND h.buffer_id = sy.buffer_id AND 
+        valid_year_begin <= syear AND syear <= valid_year_end
+  GROUP BY h.prov, h.buffer_id, syear
+  ORDER BY h.prov, h.buffer_id, syear
+), area_of_union AS (
+  SELECT h.prov, h.buffer_id, syear, 
+         ST_Area(ST_Union(geom)) union_area
+  FROM casfri50_history_test.geo_history_test h, all_significant_years sy
+  WHERE h.prov = sy.prov AND h.buffer_id = sy.buffer_id AND 
+        valid_year_begin <= syear AND syear <= valid_year_end
+  GROUP BY h.prov, h.buffer_id, syear
+  ORDER BY h.prov, h.buffer_id, syear
+)
+SELECT sa.prov, sa.buffer_id, sa.syear, sum_area, 
+       union_area, 
+       sum_area - union_area area_diff_in_sq_meters, 
+       10000 * (sum_area - union_area) area_diff_in_sq_centimeters
+FROM sum_of_areas sa, area_of_union au
+WHERE sa.prov = au.prov AND 
+      sa.buffer_id = au.buffer_id AND 
+      sa.syear = au.syear AND 
+      abs(sum_area - union_area) > 0.001
+ORDER BY abs(sum_area - union_area) DESC, syear DESC;
+
+-- Check coverage for one buffer for one year
+SELECT * 
+FROM casfri50_history_test.geo_history_test
+WHERE prov = 'NS' AND buffer_id = 4 AND 
+      valid_year_begin <= 2003 AND 2003 <= valid_year_end;
+
+-- Compare with the ST_Union() (to check if some polygons were not included by ST_Union)
+SELECT ST_Union(geom) geom
+FROM casfri50_history_test.geo_history_test
+WHERE prov = 'NS' AND buffer_id = 4 AND 
+      valid_year_begin <= 2003 AND 2003 <= valid_year_end;
+
+-- Compare with the raw polygons
+SELECT * 
+FROM casfri50_history_test.geo_history_test_raw
+WHERE prov = 'NS' AND buffer_id = 4;
