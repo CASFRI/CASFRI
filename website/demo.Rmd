@@ -67,3 +67,7 @@ LEFT JOIN (SELECT cas_id AS geo_cas_id, geometry FROM casfri50.geo_all) geo ON v
 WHERE LEFT(cas_id, 2) IN('QC','NB') AND LAYER = 1 AND ORIGIN_UPPER > 0 AND ORIGIN_UPPER <= 2015;
 ```
 
+<center>
+![](./images/demo2_fig.png){width=70%}
+</center>
+
