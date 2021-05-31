@@ -9,6 +9,9 @@ output:
 
 The following two examples demonstrate questions that CASFRI can help answer. Since CASFRI is stored in a PostgreSQL database, we use SQL queries to extract the required data. The queries below reference the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications) and use the valid_year_begin and valid_year_end attributes which are explained in the [CASFRI readMe](https://github.com/edwardsmarc/CASFRI) on Github. 
 
+<br>
+<br>
+
 ## Question 1: What is the most current information on the distribution of lodgepole pine in BC and Yukon?
 
 * To answer this question we want to query the CASFRI database to get the most recent forest species information from BC and Yukon.
@@ -34,12 +37,33 @@ LEFT JOIN (SELECT cas_id AS geo_cas_id, geometry FROM casfri50.geo_all) geo ON v
 WHERE LEFT(cas_id, 2) IN('BC','YT') AND LAYER = 1 AND SPECIES_1 IN('PINU_CON_CON', 'PINU_CON_LAT', 'PINU_CON_###');
 ```
 
-![](./images/demo_fig.png){width=75%}
+<center>
+![](./images/demo_fig.png){width=70%}
+</center>
 
-## Question 2: What was the age of all forest stands in Canada in 1990?
+<br>
+<br>
 
-* To answer this question we want to query the CASFRI database to get the most valid information that is available for the year 1990. Since all jurisdictions produce inventories on different schedules, the most valid information could be from before or after 1990.
+## Question 2: What was the age of all forest stands acsross Quebec and New Brunswick in 2015?
 
-* We will query the database using the year 1990, and only return the LYR rows where LAYER is 1.
+* To answer this question we want to query the CASFRI database to get the most valid information that is available for the year 1990. Since all jurisdictions produce inventories on different schedules, the most valid information could be from before or after 2015.
 
-* We can then calculate age as a new attribute using the formula `1990 - ((ORIGIN_UPPER-ORIGIN_LOWER)/2)`.
+* We will query the database using the year 2015, and only return the LYR rows where LAYER is 1.
+
+* We can then calculate age as a new attribute using the formula `2015 - ((ORIGIN_UPPER-ORIGIN_LOWER)/2)`.
+
+With the following query, we select the most valid polygons in 2015 and join them to the LYR and GEO tables. We then calculate age for all stands originating in 2015 or earlier as the average origin value subtracted from 2015. We discard any polygons where the origin is >1990 (These polygons might be the most valid information we have for 2015, but since they originate after 2015 we cannot calculate an age for them).
+```
+CREATE TABLE casfri50_test.demo_2 AS
+WITH valid_polygons AS(
+	SELECT cas_id cas_id_valid
+	FROM casfri50_history.geo_history gh
+	WHERE gh.valid_year_begin <= 2015 AND 2015 <= gh.valid_year_end
+)
+SELECT *, 2015-((ORIGIN_UPPER+ORIGIN_LOWER)/2) age
+FROM valid_polygons
+LEFT JOIN casfri50.lyr_all lyr ON valid_polygons.cas_id_valid = lyr.cas_id
+LEFT JOIN (SELECT cas_id AS geo_cas_id, geometry FROM casfri50.geo_all) geo ON valid_polygons.cas_id_valid = geo.geo_cas_id
+WHERE LEFT(cas_id, 2) IN('QC','NB') AND LAYER = 1 AND ORIGIN_UPPER > 0 AND ORIGIN_UPPER <= 2015;
+```
+
