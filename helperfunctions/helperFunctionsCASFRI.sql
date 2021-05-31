@@ -25,7 +25,8 @@ SELECT
     CASE WHEN NOT act.wait_event_type IS NULL THEN TT_PrettyDuration(EXTRACT(EPOCH FROM now()::time - act.state_change::time)::int) ELSE NULL END AS waiting_time,
     lockact.query AS locking_query,
     lockact.pid AS locking_pid,
-    t.schemaname || '.' || t.relname AS locked_table
+    t.schemaname || '.' || t.relname AS locked_table,
+    'SELECT pg_terminate_backend(' || act.pid || ');' kill_query
  FROM (((pg_stat_activity act
       LEFT JOIN pg_locks l1 ON act.pid = l1.pid AND NOT l1.granted)
       LEFT JOIN pg_locks l2 ON l1.relation = l2.relation AND l2.granted)
