@@ -87,19 +87,10 @@ FROM casfri50_coverage.smoothed
 ORDER BY nb_polys;
 
 -- Create a table of all intersection in the coverages
-CREATE OR REPLACE FUNCTION sig_digits(n anyelement, digits int) 
-RETURNS numeric
-AS $$
-    SELECT round(n::numeric, digits - 1 - floor(log(abs(n)))::int)
-$$ LANGUAGE sql IMMUTABLE STRICT;
-
---SELECT sig_digits(0.0000372537::double precision, 3)
---SELECT sig_digits(12353263256525, 5)
-
 DROP TABLE IF EXISTS casfri50_coverage.intersections;
 CREATE TABLE casfri50_coverage.intersections AS
 WITH unnested AS (
-  SELECT a.inv, unnest(ST_SplitAgg(a.geom, b.geom, 0.00001)) geom
+  SELECT a.inv, unnest(TT_SplitAgg(a.geom, b.geom, 0.00001)) geom
   FROM casfri50_coverage.simplified a,
        casfri50_coverage.simplified b
   WHERE ST_Equals(a.geom, b.geom) OR
@@ -110,10 +101,10 @@ WITH unnested AS (
 )
 SELECT string_agg(inv, '-') invs, 
        count(*) nb, 
-       sig_digits(ST_Area(geom), 8) area,
+       TT_SigDigits(ST_Area(geom), 8) area,
        min(geom)::geometry geom
 FROM unnested
-GROUP BY sig_digits(ST_Area(geom), 8)
+GROUP BY TT_SigDigits(ST_Area(geom), 8)
 HAVING count(*) > 1
 ORDER BY area DESC;
 

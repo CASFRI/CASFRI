@@ -462,16 +462,112 @@ RETURNS geometry AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 -- Test
 -- SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
-------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------
+-- TT_SigDigits()
+--
+-- Return the number with only a certain  umber of significant digits
+------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_SigDigits(
+  n anyelement, 
+  digits int
+) 
+RETURNS numeric
+AS $$
+    SELECT round(n::numeric, digits - 1 - floor(log(abs(n)))::int)
+$$ LANGUAGE sql IMMUTABLE STRICT;
+
+--SELECT TT_SigDigits(0.0000372537::double precision, 3)
+--SELECT TT_SigDigits(12353263256525, 5)
+
+-----------------------------------------------------------
+-- TT_SplitAgg aggregate state function
+--
+-- Split a geometry with all aggregated geometries
+-----------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_SplitAgg_StateFN(
+    geomarray geometry[],
+    geom1 geometry,
+    geom2 geometry,
+    tolerance double precision
+)
+RETURNS geometry[] AS $$
+    DECLARE
+        newgeomarray geometry[];
+        geom3 geometry;
+        newgeom geometry;
+        geomunion geometry;
+    BEGIN
+        -- First pass: geomarray is NULL
+       IF geomarray IS NULL THEN
+            geomarray = array_append(newgeomarray, geom1);
+        END IF;
+
+        IF NOT geom2 IS NULL THEN
+            -- 2) Each geometry in the array - geom2
+            FOREACH geom3 IN ARRAY geomarray LOOP
+                newgeom = ST_Difference(geom3, geom2);
+                IF tolerance > 0 THEN
+                    newgeom = TT_TrimSubPolygons(newgeom, tolerance);
+                END IF;
+                IF NOT newgeom IS NULL AND NOT ST_IsEmpty(newgeom) THEN
+                    newgeomarray = array_append(newgeomarray, newgeom);
+                END IF;
+            END LOOP;
+
+        -- 3) gv1 intersecting each geometry in the array
+            FOREACH geom3 IN ARRAY geomarray LOOP
+                newgeom = ST_Intersection(geom3, geom2);
+                IF tolerance > 0 THEN
+                    newgeom = TT_TrimSubPolygons(newgeom, tolerance);
+                END IF;
+                IF NOT newgeom IS NULL AND NOT ST_IsEmpty(newgeom) THEN
+                    newgeomarray = array_append(newgeomarray, newgeom);
+                END IF;
+            END LOOP;
+        ELSE
+            newgeomarray = geomarray;
+        END IF;
+        RETURN newgeomarray;
+    END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+---------------------------------------
+-- ST_SplitAgg aggregate variant state function defaulting tolerance to 0.0
+CREATE OR REPLACE FUNCTION _ST_SplitAgg_StateFN(
+    geomarray geometry[],
+    geom1 geometry,
+    geom2 geometry
+)
+RETURNS geometry[] AS $$
+    SELECT _ST_SplitAgg_StateFN($1, $2, $3, 0.0);
+$$ LANGUAGE sql VOLATILE;
+
+---------------------------------------
+-- ST_SplitAgg aggregate
+CREATE AGGREGATE ST_SplitAgg(geometry, geometry, double precision) (
+    SFUNC=_ST_SplitAgg_StateFN,
+    STYPE=geometry[]
+);
+
+---------------------------------------
+-- ST_SplitAgg aggregate defaulting tolerance to 0.0
+CREATE AGGREGATE ST_SplitAgg(geometry, geometry) (
+    SFUNC=_ST_SplitAgg_StateFN,
+    STYPE=geometry[]
+);
+------------------------------------------------------------------------------
+-- TT_ProduceDerivedCoverages()
+--
+-- Produce different simplified versions of coverage geometries
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_ProduceDerivedCoverages(text, geometry, double precision, boolean, double precision);
 CREATE OR REPLACE FUNCTION TT_ProduceDerivedCoverages(
-  fromInv text,
-  detailedGeom geometry, 
-  minArea double precision DEFAULT 10000000,
-  sparse boolean DEFAULT FALSE,
-  sparseBuf double precision DEFAULT 5000
+  fromInv text, -- inventoryID
+  detailedGeom geometry, -- non simplified version of the coverage geometry
+  minArea double precision DEFAULT 10000000, -- minimum area of holes and island to keep
+  sparse boolean DEFAULT FALSE, -- apply a special treatment for sparce geometries
+  sparseBuf double precision DEFAULT 5000 -- buufer to apply for sparse geometries
 )
 RETURNS boolean AS $$
   DECLARE
@@ -488,11 +584,7 @@ RETURNS boolean AS $$
     noHolesGeom = TT_RemoveHoles(detailedGeom, minArea);
     noIslandsGeom = TT_TrimSubPolygons(noHolesGeom, minArea);
     simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 100);
-    IF sparse THEN
-      smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, sparseBuf), minArea);
-    ELSE
-      smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, 100), minArea);
-    END IF;
+    smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), minArea);
     SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE inv = fromInv INTO cnt;
     FOREACH tableName IN ARRAY tableNameArr LOOP
       outGeom = CASE WHEN tableName = 'detailed' THEN detailedGeom
