@@ -13,7 +13,7 @@ $("#pageContent").removeClass("standardPadding");
 <!--html_preserve-->
 
 <div id="homeContent">
-  <div class="band full blue first rightText">
+  <div class="band full green first rightText">
     <div class="bandContent vCenter">
       <div class="blurb">
         <div class="tagline">CASFRI takes the forest resource inventory datasets from all jurisdictions in Canada, and combines them into a single standardized dataset.</div>

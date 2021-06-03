@@ -107,12 +107,6 @@ p {
   height: auto;
   z-index: 100;
   padding: 0 5%;
-/*
-  color: #fff;
-}
-#casfriHeader.shrunk, #casfriHeader.alwaysShrunk {
-  color: inherit;
-*/
   background-color: rgba(255, 255, 255, .98);
 
   -webkit-box-shadow: 0px 3px 15px 0px rgba(0,0,0,0.1);
@@ -139,34 +133,6 @@ p {
 
 #casfriHeader.shrunk .innards, #casfriHeader.alwaysShrunk .innards {
   padding: 9px 0;
-}
-
-#casfriHeader .productName {
-  font-family: "Courier New", Courier, monospace;
-  font-weight: normal;
-  font-size: 60px;
-  color: inherit;
-
-  white-space: nowrap;
-
-  -webkit-transition-property: font-size;
-  -moz-transition-property: font-size;
-  -o-transition-property: font-size;
-  transition-property: font-size;
-
-  -webkit-transition-duration: 0.25s;
-  -moz-transition-duration: 0.25s;
-  -o-transition-duration: 0.25s;
-  transition-duration: 0.25s;
-}
-
-#casfriHeader .productName:hover {
-  text-decoration: none;
-}
-
-#casfriHeader.shrunk .productName, #casfriHeader.alwaysShrunk .productName {
-  display: inline-block;
-  font-size: 30px;
 }
 
 #casfriHeader .casfri {
@@ -252,11 +218,6 @@ p {
   vertical-align: bottom;
 }
 
-#casfriHeader #menu .menuItem.gitHubText {
-  display: none;
-}
-
-
 #homeContent, #pageContent {
   position: relative;
   z-index: 1;
@@ -286,11 +247,6 @@ p {
   color: #2780e3;
 }
 
-#homeContent .blue a {
-  color: #fcbf49;
-  font-weight: normal;
-}
-
 #homeContent a:hover {
   text-decoration: underline;
 }
@@ -307,7 +263,7 @@ p {
   background-color: #f0f0f0;
 }
 
-#homeContent .band.blue {
+#homeContent .band.green {
   background-color: #b9cca5;
   color: #fff;
 }
@@ -346,34 +302,6 @@ p {
   min-height: 160px;
   font-size: 25px;
   margin-top: 50px;
-}
-
-#homeContent .band .actions {
-  margin-top: 20px;
-}
-
-#homeContent .band .actions div {
-  display: inline-block;
-}
-
-#homeContent .bigButton {
-  padding: 20px 40px;
-  font-size: 20px;
-  border: none;
-
-  border-radius: 5px;
-
-  margin: 5px;
-}
-
-#homeContent .bigButton.gallery {
-  color: #fff;
-  background-color: #8cb06c;
-}
-
-#homeContent .bigButton.getStarted {
-  color: #fff;
-  background-color: #75aadb;
 }
 
 #casfriFooter {
@@ -460,10 +388,6 @@ p {
   border: 1px solid #f0f0f0;
   margin-bottom: 20px;
   margin: 10px;
-}
-
-.projectSection .projectItems .projectItem:hover {
-
 }
 
 .projectSection .projectItems .projectItem .projectItemLabel {
