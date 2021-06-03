@@ -324,7 +324,7 @@ $(".main-container").removeClass("main-container").removeClass("container-fluid"
 <center>
 <img src="images/workflow.png" title="fig:" alt="Workflow figure" style="width:75.0%" />
 </center>
-<p><img src="images/conversion.png" height="50" /><br> CASFRI uses an Extract, Load, Transform (ELT) workflow where source data is first loaded into the PostgreSQL database, then translated inside the database. The first step in building CASFRI is therefore to load the source FRI data into the PostgreSQL database using a loading script. Each source FRI dataset has its own <a href="https://github.com/edwardsmarc/CASFRI/tree/master/conversion/sh">loading script</a>. Loading is done using GDAL and supported formats are ESRI geodatabases, shapefiles and Arc/Info Binary Coverages.</p>
+<p><img src="images/conversion.png" height="50" /><br> CASFRI uses an Extract, Load, Transform (ELT) workflow where source data is first loaded into the PostgreSQL database, then translated inside the database. The first step in building CASFRI is therefore to load the source FRI data into the PostgreSQL database using a loading script. Each source FRI dataset has its own <a href="https://github.com/edwardsmarc/CASFRI/tree/master/conversion/sh">loading script</a>. Loading is done using GDAL, supported formats are ESRI geodatabases, shapefiles and Arc/Info Binary Coverages.</p>
 <p><img src="images/translation.png" height="50" /><br> After the conversion step, the source inventories are stored inside the PostgreSQL database, but they are still formatted to their original specifications. The next step is to translate them into the CASFRI specifications. For this we use the <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL table translation framework</a>. This translation engine allows the source data to be translated into the CASFRI attributes satisfying the CASFRI specifications. The translation rules are defined in a simple table (one for each CASFRI table) using a set of helper functions to validate and translate the source values into the CASFRI values. Multiple source datasets can be translated using the same translation table if they conform to the same standard. At the end of the translation step, the PostgreSQL database contains every valid source polygon, translated into the CASFRI specifications.</p>
 <p><img src="images/temporalization.png" height="50" /><br> The final step is to use the translated data to build the historical database. This process is described in detail on the <a href="https://github.com/edwardsmarc/CASFRI">CASFRI github page</a> and involves intersecting all overlapping polygons, selecting the best data when polygons overlap in time, and assigning a valid date range for all resulting polygons. The final historical database can then be queried to find the most relavent FRI attributes for any given time, at any requested location. The historical database does not project or interpolate forest attributes through time, it simply returns the best available FRI information for a given year. It is up to the user to do any interpolation or modelling on the output data. <br> <br> <br></p>
 </div>
@@ -344,7 +344,7 @@ $(".main-container").removeClass("main-container").removeClass("container-fluid"
       </div>
     </div>
     <div id="logos">
-      <a href="https://github.com/rstudio" class="footerLogo gitHub"></a>
+      <a href="https://github.com/edwardsmarc/CASFRI" class="footerLogo gitHub"></a>
     </div>
   </div>
   
