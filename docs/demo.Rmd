@@ -1,4 +1,5 @@
 ---
+title: "CASFRI"
 output:
   html_document:
     toc: false
@@ -7,7 +8,7 @@ output:
 
 # Demo
 
-The following two examples demonstrate questions that CASFRI can help answer. Since CASFRI is stored in a PostgreSQL database, we use SQL queries to extract the required data. The queries below reference the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications) and use the valid_year_begin and valid_year_end attributes which are explained in the CASFRI [readMe](https://github.com/edwardsmarc/CASFRI) on Github. 
+The following two examples demonstrate questions that CASFRI can help answer. Since CASFRI is stored in a PostgreSQL database, we use SQL queries to extract the required data. The queries below reference the <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications">CASFRI specifications</a> and use the valid_year_begin and valid_year_end attributes which are explained in the CASFRI <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI">readMe</a> on Github. 
 
 <br>
 <br>
@@ -44,7 +45,7 @@ WHERE LEFT(cas_id, 2) IN('BC','YT') AND LAYER = 1 AND SPECIES_1 IN('PINU_CON_CON
 <br>
 <br>
 
-## Question 2: What was the age of all forest stands acsross Quebec and New Brunswick in 2015?
+## Question 2: What was the age of all forest stands across Quebec and New Brunswick in 2015?
 
 * To answer this question we want to query the CASFRI database to get the most valid information that is available for the year 2015. Since all jurisdictions produce inventories on different schedules, the most valid information could be from before or after 2015.
 

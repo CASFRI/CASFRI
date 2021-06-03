@@ -11,7 +11,7 @@
 
 
 
-<title>demo.utf8</title>
+<title>CASFRI</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -272,7 +272,7 @@ $(document).ready(function () {
         <a class="menuItem" href="demo.html">Demo</a>
         <a class="menuItem" href="projects.html">Projects</a>
         <a class="menuItem" href="data.html">Data</a>
-        <a class="menuItem gitHub" target="_blank" href="https://github.com/edwardsmarc/CASFRI"></a>
+        <a class="menuItem gitHub" target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI"></a>
       </div>
     </div>
   </div>
@@ -290,13 +290,14 @@ $(".main-container").removeClass("main-container").removeClass("container-fluid"
 
 
 
+<h1 class="title toc-ignore">CASFRI</h1>
 
 </div>
 
 
 <div id="demo" class="section level1">
 <h1>Demo</h1>
-<p>The following two examples demonstrate questions that CASFRI can help answer. Since CASFRI is stored in a PostgreSQL database, we use SQL queries to extract the required data. The queries below reference the <a href="https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications">CASFRI specifications</a> and use the valid_year_begin and valid_year_end attributes which are explained in the CASFRI <a href="https://github.com/edwardsmarc/CASFRI">readMe</a> on Github.</p>
+<p>The following two examples demonstrate questions that CASFRI can help answer. Since CASFRI is stored in a PostgreSQL database, we use SQL queries to extract the required data. The queries below reference the <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications">CASFRI specifications</a> and use the valid_year_begin and valid_year_end attributes which are explained in the CASFRI <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI">readMe</a> on Github.</p>
 <p><br> <br></p>
 <div id="question-1-what-is-the-most-current-information-on-the-distribution-of-lodgepole-pine-in-bc-and-yukon" class="section level2">
 <h2>Question 1: What is the most current information on the distribution of lodgepole pine in BC and Yukon?</h2>
@@ -322,8 +323,8 @@ WHERE LEFT(cas_id, 2) IN(&#39;BC&#39;,&#39;YT&#39;) AND LAYER = 1 AND SPECIES_1 
 </center>
 <p><br> <br></p>
 </div>
-<div id="question-2-what-was-the-age-of-all-forest-stands-acsross-quebec-and-new-brunswick-in-2015" class="section level2">
-<h2>Question 2: What was the age of all forest stands acsross Quebec and New Brunswick in 2015?</h2>
+<div id="question-2-what-was-the-age-of-all-forest-stands-across-quebec-and-new-brunswick-in-2015" class="section level2">
+<h2>Question 2: What was the age of all forest stands across Quebec and New Brunswick in 2015?</h2>
 <ul>
 <li><p>To answer this question we want to query the CASFRI database to get the most valid information that is available for the year 2015. Since all jurisdictions produce inventories on different schedules, the most valid information could be from before or after 2015.</p></li>
 <li><p>We will query the database using the year 2015, and only return the LYR rows where LAYER is 1.</p></li>
@@ -355,11 +356,11 @@ WHERE LEFT(cas_id, 2) IN(&#39;QC&#39;,&#39;NB&#39;) AND LAYER = 1 AND ORIGIN_UPP
     <div id="developedBy" style="font-size:18px;">Developed by Pierre Racine, Marc Edwards,<br>Melina Houle, Pierre Vernier and Steve Cumming.
       <br>
       <br>
-      <div style="font-size:12px">Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+      <div style="font-size:12px">Icons made by <a target="_blank" rel="noopener noreferrer" href="https://www.freepik.com" title="Freepik">Freepik</a> from <a target="_blank" rel="noopener noreferrer" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
       </div>
     </div>
     <div id="logos">
-      <a href="https://github.com/edwardsmarc/CASFRI" target="_blank" class="footerLogo gitHub"></a>
+      <a href="https://github.com/edwardsmarc/CASFRI" target="_blank" rel="noopener noreferrer" class="footerLogo gitHub"></a>
     </div>
   </div>
   

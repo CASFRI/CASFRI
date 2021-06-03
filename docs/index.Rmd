@@ -1,4 +1,5 @@
 ---
+title: "CASFRI"
 output:
   html_document:
     toc: false
@@ -47,14 +48,14 @@ $("#pageContent").removeClass("standardPadding");
       <div class="blurbCenter">
         <hr>
         <div>
-        CASFRI is an open source project using PostgreSQL, PostGIS, GDAL and R.<br>The project is stored on <a href="https://github.com/edwardsmarc/CASFRI">github<br></a>.
+        CASFRI is an open source project using PostgreSQL, PostGIS, GDAL and R.<br>The project is stored on <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI">github<br></a>.
         </div>
       </div>
       <div>
-        <a href="https://www.postgresql.org/"><img class="imageLogo" src="images/postgresql_logo.png"/></a>
-        <a href="https://postgis.net/"><img class="imageLogo" src="images/postgis_logo2.png"/></a>
-        <a href="https://gdal.org/"><img class="imageLogo" src="images/gdal_logo.png"/></a>
-        <a href="https://www.r-project.org/"><img class="imageLogo" src="images/Rlogo.png"/></a>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.postgresql.org/"><img class="imageLogo" src="images/postgresql_logo.png"/></a>
+        <a target="_blank" rel="noopener noreferrer" href="https://postgis.net/"><img class="imageLogo" src="images/postgis_logo2.png"/></a>
+        <a target="_blank" rel="noopener noreferrer" href="https://gdal.org/"><img class="imageLogo" src="images/gdal_logo.png"/></a>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.r-project.org/"><img class="imageLogo" src="images/Rlogo.png"/></a>
       </div>
     </div>
   </div>

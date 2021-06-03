@@ -1,3 +1,7 @@
+.title{
+    display: none;
+  }
+  
 body {
   font-family: "Source Sans Pro", "Helvetica Neue", Helvetica Neue, Helvetica, Arial, sans-serif;
   background-color:#fff;

@@ -11,7 +11,7 @@
 
 
 
-<title>about.utf8</title>
+<title>CASFRI</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -272,7 +272,7 @@ $(document).ready(function () {
         <a class="menuItem" href="demo.html">Demo</a>
         <a class="menuItem" href="projects.html">Projects</a>
         <a class="menuItem" href="data.html">Data</a>
-        <a class="menuItem gitHub" target="_blank" href="https://github.com/edwardsmarc/CASFRI"></a>
+        <a class="menuItem gitHub" target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI"></a>
       </div>
     </div>
   </div>
@@ -290,6 +290,7 @@ $(".main-container").removeClass("main-container").removeClass("container-fluid"
 
 
 
+<h1 class="title toc-ignore">CASFRI</h1>
 
 </div>
 
@@ -297,18 +298,22 @@ $(".main-container").removeClass("main-container").removeClass("container-fluid"
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>Digital Forest Resource Inventories (FRIs) are compiled by provincial and territorial governments and are key inputs into forest management planning. FRI datasets consist of stand maps interpreted from aerial photography at scales ranging from 1:10,000 to 1:40,000. The stand maps estimate the location, extent, condition, composition, and structure of the forest resource. Many FRIs also include information on disturbances such as fire, windthrow and insects, non-forest components such as understory vegetation, non-vegetated land and anthropogenic land use, and in some cases wetland categorizations. Each jurisdiction has developed its own procedures and standards for forest inventories making it difficult to assemble datasets across multiple jurisdictions.</p>
-<p>The goal of the CASFRI project is to pass each FRI dataset from the various jurisdictions across Canada through a <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">translation engine</a>. The translation engine converts each dataset into the CASFRI specifications and merges the datasets together to create a continuous map of FRI polygons. For example, the image below represents a white spruce forest and a fire crossing between two jurisdictions on either side of a river. Each jurisdiction records the species content of the forest and the year and type of disturbance using different formats. The job of CASFRI is to translate each of these into a common format.</p>
+<p>The goal of the CASFRI project is to pass each FRI dataset from the various jurisdictions across Canada through a <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">translation engine</a>. The translation engine converts each dataset into the CASFRI specifications and merges the datasets together to create a continuous map of FRI polygons. For example, the image below represents a white spruce forest and a fire crossing between two jurisdictions on either side of a river. Each jurisdiction records the species content of the forest and the year and type of disturbance using different formats. The job of CASFRI is to translate each of these into a common format.</p>
 <center>
 <img src="images/specs_example.png" title="fig:" alt="Specs figure" style="width:75.0%" />
 </center>
+<p><br></p>
+<p>All CASFRI data are inherantly spatial, because all attributes are directly associated with a specific polygon. No sample plots or point data are processed by CASFRI. CASFRI therefore produces continuous maps of FRI polygons matching the extent of the input data. CASFRI does not model or interpolate data, the CASFRI philosophy is to translate the source data into the CASFRI standard as directly and transparently as possible. Users interested in modelling, projecting or interpolating data can use the CASFRI database as a starting point for their analysis, or they can modify the CASFRI workflow to create their own standardized forest inventory conforming to their own specifications.</p>
+<p>CASFRI ensures reliable and robust data by applying validation procedures at multiple stages in the workflow. Input data are validated before any translation is attempted. The translation rules themselves are then validated prior to data translation. The final CASFRI database is validated to ensure all data conform to the CASFRI specifications. Any invalid data is reported using the CASFRI <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications#Error_codes">error code syntax</a> which informs users on the type of invalidation that occurred.</p>
+<p><br></p>
 </div>
 <div id="casfri-specifications" class="section level1">
 <h1>CASFRI specifications</h1>
-<p>The <a href="https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications">CASFRI specifications</a> define the format of the data stored in CASFRI. These specifications need to represent all the various data formats from jurisdictions across Canada. CASFRI stores data in seven different tables:</p>
+<p>The <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications">CASFRI specifications</a> define the format of the data stored in CASFRI. The goal of these specifications is to represent all the various data formats from jurisdictions across Canada. CASFRI stores data in seven different tables:</p>
 <center>
 <img src="images/casfri_tables.png" style="width:100.0%" />
 </center>
-<p>Each table is described in detail in the <a href="https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications">specifications document</a>. <br> <br> <br></p>
+<p>Each table is described in detail in the <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications">CASFRI specifications</a>. <br> <br> <br></p>
 </div>
 <div id="building-casfri" class="section level1">
 <h1>Building CASFRI</h1>
@@ -316,9 +321,9 @@ $(".main-container").removeClass("main-container").removeClass("container-fluid"
 <center>
 <img src="images/workflow.png" title="fig:" alt="Workflow figure" style="width:75.0%" />
 </center>
-<p><img src="images/conversion.png" height="50" /><br> CASFRI uses an Extract, Load, Transform (ELT) workflow where source data is first loaded into the PostgreSQL database, then translated inside the database. The first step in building CASFRI is therefore to load the source FRI data into the PostgreSQL database using a loading script. Each source FRI dataset has its own <a href="https://github.com/edwardsmarc/CASFRI/tree/master/conversion/sh">loading script</a>. Loading is done using GDAL, supported formats are ESRI geodatabases, shapefiles and Arc/Info Binary Coverages.</p>
-<p><img src="images/translation.png" height="50" /><br> After the conversion step, the source inventories are stored inside the PostgreSQL database, but they are still formatted to their original specifications. The next step is to translate them into the CASFRI specifications. For this we use the <a href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL table translation framework</a>. This translation engine allows the source data to be translated into the CASFRI attributes satisfying the CASFRI specifications. The translation rules are defined in a simple table (one for each CASFRI table) using a set of helper functions to validate and translate the source values into the CASFRI values. Multiple source datasets can be translated using the same translation table if they conform to the same standard. At the end of the translation step, the PostgreSQL database contains every valid source polygon, translated into the CASFRI specifications.</p>
-<p><img src="images/temporalization.png" height="50" /><br> The final step is to use the translated data to build the historical database. This process is described in detail on the <a href="https://github.com/edwardsmarc/CASFRI">CASFRI github page</a> and involves intersecting all overlapping polygons, selecting the best data when polygons overlap in time, and assigning a valid date range for all resulting polygons. The final historical database can then be queried to find the most relavent FRI attributes for any given time, at any requested location. The historical database does not project or interpolate forest attributes through time, it simply returns the best available FRI information for a given year. It is up to the user to do any interpolation or modelling on the output data. <br> <br> <br></p>
+<p><img src="images/conversion.png" height="50" /><br> CASFRI uses an Extract, Load, Transform (ELT) workflow where source data is first loaded into the PostgreSQL database, then translated inside the database. The first step in building CASFRI is therefore to load the source FRI data into the PostgreSQL database using a loading script. Each source FRI dataset has its own <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI/tree/master/conversion/sh">loading script</a>. Loading is done using GDAL, supported formats are ESRI geodatabases, shapefiles and Arc/Info Binary Coverages.</p>
+<p><img src="images/translation.png" height="50" /><br> After the conversion step, the source inventories are stored inside the PostgreSQL database, but they are still formatted to their original specifications. The next step is to translate them into the CASFRI specifications. For this we use the <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework">PostgreSQL table translation framework</a>. This translation engine allows the source data to be translated into the CASFRI attributes satisfying the CASFRI specifications. The translation rules are defined in a simple csv table (one for each CASFRI table) using a set of helper functions to validate and translate the source values into the CASFRI values. The csv <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI/tree/master/translation/tables">translation tables</a> form an important piece of documentation because in addition to providing the translation engine with the rules and parameters for each translation, they also serve to document and describe the translation from source value to CASFRI value for every CASFRI attribute and every source dataset. The translation tables also define the specification of the final CASFRI database and are themselves validated by the translation engine before any translations are attempted. Multiple source datasets can be translated using the same translation table if they conform to the same standard. At the end of the translation step, the PostgreSQL database contains every valid source polygon, translated into the CASFRI specifications.</p>
+<p><img src="images/temporalization.png" height="50" /><br> The final step is to use the translated data to build the historical database. This process is described in detail on the <a target="_blank" rel="noopener noreferrer" href="https://github.com/edwardsmarc/CASFRI">CASFRI github page</a> and involves intersecting all overlapping polygons, selecting the best data when polygons overlap in time, and assigning a valid date range for all resulting polygons. The final historical database can then be queried to find the most relavent FRI attributes for any given time, at any requested location. The historical database does not project or interpolate forest attributes through time, it simply returns the best available FRI information for a given year. It is up to the user to do any interpolation or modelling on the output data. <br> <br> <br></p>
 </div>
 <div id="how-to-cite-the-project" class="section level1">
 <h1>How to cite the project</h1>
@@ -332,11 +337,11 @@ $(".main-container").removeClass("main-container").removeClass("container-fluid"
     <div id="developedBy" style="font-size:18px;">Developed by Pierre Racine, Marc Edwards,<br>Melina Houle, Pierre Vernier and Steve Cumming.
       <br>
       <br>
-      <div style="font-size:12px">Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+      <div style="font-size:12px">Icons made by <a target="_blank" rel="noopener noreferrer" href="https://www.freepik.com" title="Freepik">Freepik</a> from <a target="_blank" rel="noopener noreferrer" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
       </div>
     </div>
     <div id="logos">
-      <a href="https://github.com/edwardsmarc/CASFRI" target="_blank" class="footerLogo gitHub"></a>
+      <a href="https://github.com/edwardsmarc/CASFRI" target="_blank" rel="noopener noreferrer" class="footerLogo gitHub"></a>
     </div>
   </div>
   
