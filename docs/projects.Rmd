@@ -63,10 +63,12 @@ The following projects and publications are examples of CASFRI in action!
 </div>
 
 
+<br>
 <div class="bandContent projectSection">
     <div class="projectSectionTitle">Ongoing projects</div>
 </div>
 <!--/html_preserve-->
+<br>
 
 * Estimating the Historical Range of Variation in forest songbird abundances within managed forests of Alberta, Ontario and Quebec. PhD thesis project. Ana Raymundo Sanchez, supervised by Cumming.
 
