@@ -67,7 +67,7 @@ p {
 
 .band .imageOne {
   position: absolute;
-  left: 200px;
+  left: 20%;
   bottom: 75px;
   width: 400px;
   height: auto;
@@ -149,9 +149,9 @@ p {
 
 #casfriHeader .casfri .logo {
   display: inline-block;
-  width: 150px;
-  height: 50px;
-  background-image:url(./images/Logo.png);
+  width: 250px;
+  height: 85px;
+  background-image:url(./images/casfri_texte_couleur.png);
   background-size: 100% auto;
   background-repeat: no-repeat;
   vertical-align: middle;
@@ -444,6 +444,16 @@ p {
 
 @media screen and (max-width: 1300px){
   
+  .band .imageOne {
+  position: absolute;
+  left: 10%;
+  bottom: 75px;
+  width: 400px;
+  height: auto;
+
+  z-index: 1;
+}
+  
   .band .imageTwo {
   position: absolute;
   top: 20px;
@@ -457,7 +467,7 @@ p {
 }
 
 
-@media screen and (max-width: 1050px){
+@media screen and (max-width: 1100px){
 
   #homeContent {
     overflow-x: hidden;
@@ -485,6 +495,10 @@ p {
 
   #homeContent .band .blurb {
     text-align: center;
+  }
+  
+  .band .imageOne {
+    display: none;
   }
   
   .band .imageTwo {
