@@ -21,6 +21,9 @@ The three main steps involved in the production of the CASFRI 5 database are:
 
 Note that forest resource inventories are not provided with this project due to the numerous licensing agreements that have to be passed with the different production juridictions. Many provincial inventories can now be downloaded for free from government web sites. All the inventories supported by this project are documented in [this table](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv).
 
+# Citation
+CASFRI Project Team (2021). Common Attribute Schema for Forest Resource Inventories. Université Laval, QC, Canada. URL https://casfri.github.io/CASFRI/. DOI: 
+
 # Version Number Scheme
 
 CASFRI follows the [Semantic Versioning 2.0.0](https://semver.org/) versioning scheme (major.minor.revision) adapted for a dataset. Increments in revision version numbers are for bug fixes. Increments in minor version numbers are for new features, support for new inventories, additions to the schema (new attributes), and bug fixes. Increments in minor versions do not break backward compatibility with previous CASFRI schemas. Increments in major version numbers are for schema changes that break backward compatibility with existing code (e.g. renaming attributes, removing attributes, and inventory support deprecation).
