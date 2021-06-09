@@ -268,7 +268,8 @@ p {
 }
 
 #homeContent .band.green {
-  background-color: #b9cca5;
+  background-color: #667c1c;
+  background-color: rgba(102, 124, 28, 0.8);
   color: #fff;
 }
 
@@ -318,7 +319,8 @@ p {
 
 #casfriFooter.band {
 
-  background-color: #b9cca5;
+  background-color: #667c1c;
+  background-color: rgba(102, 124, 28, 0.8);
   padding: 30px 5%;
 
   color: #fff;
