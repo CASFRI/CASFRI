@@ -8,3 +8,4 @@ website/images/*.svg
 *.Rproj.user
 *.Rproj
 *.Rhistory
+.Rproj.user

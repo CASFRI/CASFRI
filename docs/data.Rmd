@@ -16,7 +16,7 @@ Current and historical version of the BC Vegetation Resource Inventory are avail
 ### Manitoba
 Data from the Manitoba Land Initiative is available from their <a target="_blank" rel="noopener noreferrer" href="https://mli2.gov.mb.ca/forestry/index.html">web portal</a>.
 
-### Prince Edwards Island
+### Prince Edward Island
 Some older inventory datasets are available through the PEI <a target="_blank" rel="noopener noreferrer" href="http://www.gov.pe.ca/gis/index.php3?number=77555&lang=E">GIS Data catalogue</a>.
 
 ### New Brunswick
