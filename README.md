@@ -36,7 +36,9 @@ The current version is 5.3.0 and is available for download at https://github.com
 
 ./conversion                            Bash scripts for converting and loading FRI datasets
 
-./documentation/specifications                   CASFRI specifications document
+./docs                                  GitHub enabled website
+
+./documentation/specifications          CASFRI specifications document
 
 ./helperfunctions                       CASFRI specific helper functions used in translation tables
 
