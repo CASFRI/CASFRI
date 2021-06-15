@@ -32,27 +32,30 @@ This procedure assume that all the functions necessary to produce CASFRI have be
     DELETE FROM casfri50_history.casflat_gridded WHERE inventory_id = 'SK03';
     DELETE FROM casfri50_history.casflat_gridded WHERE inventory_id = 'SK02';
 
-2. List the inventories you want to load using the invList1 variable in your config.sh script. Make sure to comment out the other unused invList2-5 variables.
+**2. List the inventories you want to load using the invList1 variable in your config.sh script. Make sure to comment out the other unused invList2-5 variables.**
 
-3. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all inventories to update using the load_all.sh script. Check that the count of rows in the newly created tables matches the number of rows in the source table.
+**3. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all inventories to update using the load_all.sh script.**
+    Check that the count of rows in the newly created tables matches the number of rows in the source table.
 
-4. If the corresponding translation tables have changed, load them using the CASFRI/translation/load_tables.sh script. By default, load_tables.sh reload all translation tables. You can reload specific tables by appending their names separated by spaces as parameters to the script. e.g. "./load_tables.sh mb_fli01_cas.csv mb_fli01_dst.csv mb_fli01_eco.csv mb_fli01_lyr.csv mb_fli01_nfl.csv mb_fli01_geo.csv"
+**4. If the corresponding translation tables have changed, load them using the CASFRI/translation/load_tables.sh script.**
+    By default, load_tables.sh reload all translation tables. You can reload specific tables by appending their names separated by spaces as parameters to the script. e.g. "./load_tables.sh mb_fli01_cas.csv mb_fli01_dst.csv mb_fli01_eco.csv mb_fli01_lyr.csv mb_fli01_nfl.csv mb_fli01_geo.csv"
 
-5. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts. Copy and adjust an existing script if none exists for the new inventories. Check that the count of translated rows in the casfri50.cas_all tables matches the number of rows in the rawfri tables.
+**5. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts.**
+    Copy and adjust an existing script if none exists for the new inventories. Check that the count of translated rows in the casfri50.cas_all tables matches the number of rows in the rawfri tables.
 
-6. Regenerate the flat tables like this:
+**6. Regenerate the flat tables like this:**
 
     REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
     REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row;
 
-7. Generate the gridded version of the flat table for the new inventories with queries like this:
+**7. Generate the gridded version of the flat table for the new inventories with queries like this:**
 
     INSERT INTO casfri50_history.casflat_gridded 
     SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
     FROM casfri50_flat.cas_flat_all_layers_same_row
     WHERE inventory_id = 'QC06';
 
-8. Regenerate the table containing the count of row per inventory (this code is in 01_PrepareGeoHistory.sql):
+**8. Regenerate the table containing the count of row per inventory (this code is in 01_PrepareGeoHistory.sql):**
 
     DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
     CREATE TABLE casfri50_coverage.inv_counts AS
@@ -60,11 +63,12 @@ This procedure assume that all the functions necessary to produce CASFRI have be
     FROM casfri50.cas_all
     GROUP BY left(cas_id, 4);
 
-9. Compute the geometries representing the coverage of the new inventories using the proper lines in the workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sql. Add lines if they don't already exist.
+**9. Compute the geometries representing the coverage of the new inventories using the proper lines in the workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sql.**
+    Add lines if they don't already exist.
 
     SELECT TT_ProduceDerivedCoverages('AB03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB03'''));
 
-10. Determine the inventories affected by the addition of new inventories in the historical database using a query like this:
+**10. Determine the inventories affected by the addition of new inventories in the historical database using a query like this:**
 
     SELECT DISTINCT left(cas_id, 4) inv
     FROM casfri50_history.geo_history h, 
@@ -72,7 +76,7 @@ This procedure assume that all the functions necessary to produce CASFRI have be
     WHERE c.inv = 'SK03' AND ST_Intersects(h.geom, c.geom)
     ORDER BY inv;
 
-10. Delete all the rows in the historical table for the inventories affected by the addition of new inventories with queries like this:
+**11. Delete all the rows in the historical table for the inventories affected by the addition of new inventories with queries like this:**
 
     DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK01';
     DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK03';
@@ -80,9 +84,9 @@ This procedure assume that all the functions necessary to produce CASFRI have be
     DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB25';
     DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB29';
 
-11. Set a precedence for the new inventories in the casfri50_history.inv_precedence table defined in workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql if it is missing.
+**12. Set a precedence for the new inventories in the casfri50_history.inv_precedence table defined in workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql if it is missing.**
 
-12. Recompute the history for all affected historical database inventories using lines from the workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sql
+**13. Recompute the history for all affected historical database inventories using lines from the workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sql**
 
     SELECT TT_ProduceInvGeoHistory('SK01');
     SELECT TT_ProduceInvGeoHistory('SK03');
