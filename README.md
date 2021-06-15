@@ -3,7 +3,7 @@ Digital Forest Resource Inventories (FRIs) are compiled by provincial and territ
 
 The Common Attribute Schema for Forest Resource Inventories (CASFRI) standardizes FRI data from each jurisdiction in Canada, allowing a national FRI relational database to be created with continuous coverage. A major challenge in assembling a national coverage of FRI data is reconciling the many differences in variable formats, attributes, and standards among disparate inventories. Standardization is necessary so that models can be developed using data from multiple jurisdictions or inventory versions.
 
-The [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications) document the CAS database schema. It focuses on the most common attributes that are consistently recorded in forest inventories across Canada and which are relevant to habitat modeling and state of forest reporting. These attributes include crown closure, species composition, height, mean canopy or stand origin age, stand structure, moisture regime, site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history.
+The [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications) document the CAS database schema. It focuses on the most common attributes that are consistently recorded in forest inventories across Canada and which are relevant to habitat modeling and state of forest reporting. These attributes include crown closure, species composition, height, mean canopy or stand origin age, stand structure, moisture regime, site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history.
 
 A number of CASFRI instances have been produced since 2009. CASFRI 5 is the fifth version of CASFRI. It makes a number of significant updates to previous versions:
 
@@ -19,7 +19,7 @@ The three main steps involved in the production of the CASFRI 5 database are:
 2. **Translation** of the loaded FRIs to the CASFRI schema (inside the PostgreSQL database)
 3. **Temporalization** of CAS data (inside the PostgreSQL database)
 
-Note that forest resource inventories are not provided with this project due to the numerous licensing agreements that have to be passed with the different production juridictions. Many provincial inventories can now be downloaded for free from government web sites. All the inventories supported by this project are documented in [this table](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv).
+Note that forest resource inventories are not provided with this project due to the numerous licensing agreements that have to be passed with the different production juridictions. Many provincial inventories can now be downloaded for free from government web sites. All the inventories supported by this project are documented in [this table](https://github.com/edwardsmarc/CASFRI/blob/master/documentation/inventory_list_cas05.csv).
 
 # Citation
 CASFRI Project Team (2021). Common Attribute Schema for Forest Resource Inventories. Université Laval, QC, Canada. URL https://casfri.github.io/CASFRI/. DOI: 
@@ -36,7 +36,7 @@ The current version is 5.3.0 and is available for download at https://github.com
 
 ./conversion                            Bash scripts for converting and loading FRI datasets
 
-./docs/specifications                   CASFRI specifications document
+./documentation/specifications                   CASFRI specifications document
 
 ./helperfunctions                       CASFRI specific helper functions used in translation tables
 
@@ -87,7 +87,7 @@ CASFRI 5 uses a four characters unique code named "inventory_id" to identify eac
 
 Inventory standards are the attribute specifications applied to a given inventory. Multiple FRIs from a province/territory can use the same standard, however jurisdictions will occasionally update their standards, and each jurisdiction has their own unique inventory standards. The CASFRI specifications need to apply different sets of translation rules for different standards. Each standard is assigned a code made of three letters representing the standard, and two numbers representing the version of the standard (e.g. VRI01). 
 
-All identifiers are listed in the [FRI inventory list CSV file](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_list_cas05.csv) that lists all the forest inventories used as source datasets in this project.
+All identifiers are listed in the [FRI inventory list CSV file](https://github.com/edwardsmarc/CASFRI/blob/master/documentation/inventory_list_cas05.csv) that lists all the forest inventories used as source datasets in this project.
 
 # Handling Updates
 Historical forestry data is of great value which is why CASFRI accommodates updates. One type of update which is often seen in FRIs is re-inventories, i.e., when old photo-interpretation is updated to modern standards. The other types of update are so-called "depletion updates" related to various disturbances. In many jurisdictions, depletion-updates are produced annually to "cut-in" polygons disturbed by harvesting, wildfire or insects. Both types of updates are incorporated in CASFRI 5 by loading and translating the updated dataset and labelling the dataset with an incremented identifier (inventory_id). Any duplicate records will be dealt with in the temporalization procedure.
@@ -146,7 +146,7 @@ Translation of loaded source tables into target tables formatted to the CASFRI s
 ### Translation Tables
 A detailed description of translation table properties is included in the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework). In short, each translation table lists a set of attribute names, their type in the target table, a set of validation helper functions which all input values have to pass, and a set of translation helper functions to convert input values to CASFRI values. A set of generic helper functions are included with the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework), these perform standardized validations and translations that are used in many different translation tables. The CASFRI project also has its own more specific set of [helper functions](https://github.com/edwardsmarc/CASFRI/tree/master/helperfunctions) that apply more complex translations specific to individual inventories.
 
-CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications):
+CASFRI is split into seven tables as detailed in the [CASFRI specifications](https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications):
 1. **Header (HDR) attributes -** summarizing reference information for each dataset;  
 2. **CAS Base Polygon (CAS) attributes -** describing the source polygon and any identifiers;  
 3. **Forest-Level (LYR) attributes -** describing productive and non-productive forest land;  
@@ -161,7 +161,7 @@ In general, each standard for each jurisdiction uses a single set of translation
 An important feature of the [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) is the use of a ROW_TRANSLATION_RULE in the translation table. This allows the loaded source table to be filtered during translation so that only relevent rows are translated to the target table. This ensures that the LYR table for example, only includes rows that contain forest information.
 
 ### Error Codes
-Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI 5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -8888) whereas text attributes will have errors reported as text (e.g. NULL_VALUE). Different error codes are reported depending on the rule being invalidated. A full description of possible error codes can be found in the [CASFRI 5 specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
+Error codes are needed during translation if source values are invalid, null, or missing. In CASFRI 5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -8888) whereas text attributes will have errors reported as text (e.g. NULL_VALUE). Different error codes are reported depending on the rule being invalidated. A full description of possible error codes can be found in the [CASFRI 5 specification document](https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications).
 
 ### Validating Translations
 Validation is performed at multiple stages during and after translation:
@@ -170,7 +170,7 @@ Validation is performed at multiple stages during and after translation:
 
 * **Validation of translation tables by the translation framework** - The [PostgreSQL Table Translation Framework](https://github.com/edwardsmarc/PostgreSQL-Table-Translation-Framework) validates the translation rules and formatting in each translation table prior to attempting translation.
 
-* **Validation of the translated CASFRI** - The [constraints](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes) scripts adds a set of database constraints to the translated tables. These constraints ensure that the translated data conform to the CASFRI standard as outlined in the [CASFRI 5 specification document](https://github.com/edwardsmarc/CASFRI/tree/master/docs/specifications).
+* **Validation of the translated CASFRI** - The [constraints](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes) scripts adds a set of database constraints to the translated tables. These constraints ensure that the translated data conform to the CASFRI standard as outlined in the [CASFRI 5 specification document](https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications).
 
 * **Horizontal review of translation tables** - The function TT_StackTranslationRules() creates a table of all translation and validation rules used for all inventories for a given CASFRI table. This allows manual validation of all translation rules and assignment of error codes for a given attribute.
 
@@ -214,7 +214,7 @@ The following diagram illustrates the relationship between the translation table
 ![Workflow diagram](workflow_diagram.jpg)
 
 # Translation Procedure
-The steps to produce a complete build of the CASFRI database are detailed in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). A subset of these steps can be used to translate a single dataset as follows:
+The steps to produce a complete build of the CASFRI database are detailed in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/documentation/release_procedure.md). A subset of these steps can be used to translate a single dataset as follows:
 
 1. **Configure** your processing environment in the config.sh file.
 2. **Load the inventory** (e.g. AB03) into PostgreSQL by launching the conversion/sh/load_ab03.sh loading script in a Bash (or DOS) command window. You can also launch many conversions in parallel. This is described in the Parallelization section.
@@ -235,7 +235,7 @@ The six tables found in the 'casfri50' schema as the result of a complete transl
 
 The historical version of the CASFRI database is a new geometry table replacing the geo_all table where no two polygons share a same space at a specific time (i.e. no two polygons overlap in space and time). In this table, stand polygons are cut so that only polygons parts from the most up to date inventory at the date of observation can be matches. It allows querying for the best available inventory information at any point in time accross the full CASFRI coverage.
 
-The historical table is created using the [02_ProduceGeoHistory.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md). It uses the stand_photo_year of each polygon as the reference date to determine its valid start and end time. Each polyon is intersected with all other overlapping polygons and the resulting polygon parts are assigned a valid_year_begin and a valid_year_end value. In the case of overlaps, the polygon with the most complete information is prioritized as described below.
+The historical table is created using the [02_ProduceGeoHistory.sql](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/04_produceHistoricalTable) script as described in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/documentation/release_procedure.md). It uses the stand_photo_year of each polygon as the reference date to determine its valid start and end time. Each polyon is intersected with all other overlapping polygons and the resulting polygon parts are assigned a valid_year_begin and a valid_year_end value. In the case of overlaps, the polygon with the most complete information is prioritized as described below.
 
 The following diagram illustrates the temporalization procedure for a single polygon:
 
@@ -293,9 +293,9 @@ Once the invListX variables have been defined, you can launch the different proc
 There is still much work to do to optimize the speed of many helper functions and to make them PARALLEL SAFE so that not only different inventories are processed on different CPUs (on the same machine) but individual inventory processing is also split across many CPU (still on the same machine). No work has been done to split those processes across multiple machines.
 
 # Update Procedure
-The [update procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/inventory_update_procedure.md) is the method for incorporating new datasets without having to regenerate the whole CASFRI database. New datasets could be an entirely new inventory, or a partial inventory or depletion update.
+The [update procedure](https://github.com/edwardsmarc/CASFRI/blob/master/documentation/inventory_update_procedure.md) is the method for incorporating new datasets without having to regenerate the whole CASFRI database. New datasets could be an entirely new inventory, or a partial inventory or depletion update.
 
-An alternative method would be to rerun the full translation from scratch using the steps documented in this document or in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/docs/release_procedure.md).
+An alternative method would be to rerun the full translation from scratch using the steps documented in this document or in the [release procedure](https://github.com/edwardsmarc/CASFRI/blob/master/documentation/release_procedure.md).
 
 # Translation Exceptions
 * **Multiple NFL value per row in AB [#526](https://github.com/edwardsmarc/CASFRI/issues/526)** - In general CASFRI accepts only one NFL value per row. If there are multiple NFL values to translate they are reported as different vertical layers. One exception to this is in the AB AVI where the non-forest type _rough pasture_ is always accompanied by a _shrub_ value indicating the height and extent of shrub cover in the _rough pasture_. This combination can also form horizontal structure within a polygon, with a structure percent value indicating how much of the polygon is covered. CASFRI cannot currently represent both horizontal and vertical structure in the same polygon. For this reason both the _rough pasture_ (translated to CASFRI value CULTIVATED) and the _shrub_ (translated to CASFRI value TALL_SHRUB or LOW_SHRUB) values are reported in the same layer. The workflow is such that this behavior has to applied consistently across the full dataset, meaning that some AB inventories will have cases of multiple NFL values per row, beyond the _rough pasture_ _shrub_ combination already mentioned.
