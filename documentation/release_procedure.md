@@ -7,7 +7,7 @@ A whole release process includes:
 - a validation of the final completed database,
 - the generation of two flat (denormalized) versions of the database,
 - the generation of the inventories geographical coverages,
-- the generation of a historical version of the translated database
+- the generation of a historical version of the translated database,
 - the documentation of remaining issues discovered while completing the complete, actual translation,
 - the documentation of the release itself.
 
