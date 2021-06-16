@@ -2,7 +2,7 @@
 
 This procedure explains how to add or replace one or more inventories after you have completed a full translation of the CASFRI database and you do not want to reload/retranslate all the inventories already processed.
 
-This procedure assume that all the functions necessary to produce CASFRI have been installed in the database. This includes the PostgreSQL Table Translation Framework and the CASFRI Helper Functions.
+This procedure assume that all the functions necessary to produce CASFRI are already installed in the database. This includes the PostgreSQL Table Translation Framework and the CASFRI Helper Functions.
 
 **1. If, and only if, you are replacing an inventory with another one, you must clean the database from every trace of the inventory to be replaced.**
 
