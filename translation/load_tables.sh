@@ -16,7 +16,7 @@ source ../conversion/sh/common.sh
 tables_to_load=$@
 
 # Folder containing translation files to be loaded:
-load_folders='tables/ tables/lookup ../docs/'
+load_folders='tables/ tables/lookup ../documentation/'
 
 #####################################################################################################################################################################
 
