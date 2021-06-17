@@ -1177,7 +1177,7 @@ UNION ALL
 SELECT '30.2'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test non_for_veg fail'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', NULL::text, '') IS FALSE passed
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', NULL::text, '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '30.3'::text number,
