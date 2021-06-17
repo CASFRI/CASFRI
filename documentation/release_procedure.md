@@ -31,17 +31,21 @@ Note that only major issues preventing the conversion or the translation process
 
 **2. Convert the inventories and load the translation tables in the database**
 
-1. Make sure all the inventories to load are listed in your config.sh invList1-5 variables. All inventories pertaining to the same invList1-5 variable are executed in parallel. Different invList1-5 variables are executed sequentially. There are five lists to avoid overloading the system.
+1. Copy the configSample.sh script to config.sh and edit it to adjust the shell variables to your configuration.
 
-2. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all the listed inventories using the load_all.sh script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
+3. Make sure all the inventories to load are listed in your config.sh invList1-5 variables. All inventories pertaining to the same invList1-5 variable are executed in parallel. Different invList1-5 variables are executed sequentially. There are five lists to avoid overloading the system.
 
-3. In the same command window, load the translation tables using the CASFRI/translation/load_tables.sh script.
+3. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all the listed inventories using the load_all.sh script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
+
+4. In the same command window, load the translation tables using the CASFRI/translation/load_tables.sh script.
 
 **3. Install and unsintall the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
 
-1. In the same command window, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh script. This step produce a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
+1. Copy the configSample.sh (or .bat) script to config.sh (or .bat) and edit it to make the pghome variable point to your PostgreSQL installation directory. 
 
-2. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
+2. In the same command window, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh script. This step produce a file named table_translation_framework--x.y.z.sql in the Postgresql/XX/share/extension folder.
+
+3. In pgAdmin, load the Table Translation Framework and the CASFRI Helper Functions:
 
     1. CREATE the table_translation_framework extension and test it using the engineTest.sql, helperFunctionsTest.sql and helperFunctionsGISTest.sql scripts. Fix any non passing test (by fixing the function tested or the test itself).
 
@@ -49,7 +53,7 @@ Note that only major issues preventing the conversion or the translation process
 
     3. Check the count of loaded inventory with the checkCounts.sql script. Fix inventories not reporting the right number of rows and add any missing test.
 
-3. In pgAdmin, make sure the uninstall scripts uninstall everything and leave no Table Translation Framework and CASFRI Helper function in the database:
+4. In pgAdmin, make sure the uninstall scripts uninstall everything and leave no Table Translation Framework and CASFRI Helper function in the database:
 
     1. DROP all TT_Translate() functions with "SELECT TT_DropAllTranslateFct();"
 
@@ -59,7 +63,7 @@ Note that only major issues preventing the conversion or the translation process
 
     4. Make sure all table_translation_framework and all CASFRI Helper Functions were dropped properly by looking for any remaining TT_ functions in the public.function item in the pgAdmin browser. If not, add the undroped ones to the proper uninstall.sql script.
 
-4. Reinstall all the functions as in step 7.
+5. Reinstall all the functions as in step 7.
 
 **4. Test the translation**
 
