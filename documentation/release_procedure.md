@@ -31,7 +31,7 @@ Note that only major issues preventing the conversion or the translation process
 
 **2. Convert the inventories and load the translation tables in the database**
 
-1. Copy the configSample.sh script to config.sh and edit it to adjust the shell variables to your configuration.
+1. Copy the configSample.sh script to config.sh and edit it so the listed shell variables reflect your configuration.
 
 3. Make sure all the inventories to load are listed in your config.sh invList1-5 variables. All inventories pertaining to the same invList1-5 variable are executed in parallel. Different invList1-5 variables are executed sequentially. There are five lists to avoid overloading the system.
 
