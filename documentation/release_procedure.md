@@ -41,7 +41,7 @@ Note that only major issues preventing the conversion or the translation process
 
 **3. Install and unsintall the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
 
-1. Copy the configSample.sh (or .bat) script to config.sh (or .bat) and edit it to make the pghome variable point to your PostgreSQL installation directory. 
+1. Copy the configSample.sh (or .bat) script to config.sh (or .bat) and edit it to make the pghome variable point to your PostgreSQL installation directory and the tt_version variable to reflect the proper Framework version number. 
 
 2. In the same command window, install the last version of the PostgreSQL Table Translation Framework extension file using the install.sh script. This step produce a file named table_translation_framework--x.y.z.sql in the PostgreSQL/XX/share/extension folder.
 
