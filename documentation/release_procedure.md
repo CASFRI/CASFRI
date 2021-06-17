@@ -51,8 +51,6 @@ Note that only major issues preventing the conversion or the translation process
 
     2. Load the CASFRI Helper Functions with the helperFunctionsCASFRI.sql script and test them using the helperFunctionsCASFRITest.sql. Fix any non passing test.
 
-    3. Check the count of loaded inventory with the conversion/checkCounts.sql script. Fix inventories not reporting the right number of rows and add any missing test.
-
 4. In pgAdmin, make sure the uninstall scripts uninstall everything and leave no Table Translation Framework and CASFRI Helper function in the database:
 
     1. DROP all TT_Translate() functions with "SELECT TT_DropAllTranslateFct();"
@@ -64,6 +62,8 @@ Note that only major issues preventing the conversion or the translation process
     4. Make sure all table_translation_framework and all CASFRI Helper Functions were dropped properly by looking for any remaining TT_ functions in the public.function item in the pgAdmin browser. If not, add the undroped ones to the proper uninstall.sql script.
 
 5. Reinstall all the functions as in step 7.
+
+6. Check the count of loaded inventory with the conversion/checkCounts.sql script. Fix inventories not reporting the right number of rows and add any missing test.
 
 **4. Test the translation**
 
