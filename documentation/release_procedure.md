@@ -61,7 +61,7 @@ Note that only major issues preventing the conversion or the translation process
 
     4. Make sure all table_translation_framework and all CASFRI Helper Functions were dropped properly by looking for any remaining TT_ functions in the public.function item in the pgAdmin browser. If not, add the undroped ones to the proper uninstall.sql script.
 
-5. Reinstall all the functions as in step 7.
+5. Reinstall all the functions as in step 3.
 
 6. Check the count of loaded inventory with the conversion/checkCounts.sql script. Fix inventories not reporting the right number of rows and add any missing test.
 
@@ -69,7 +69,9 @@ Note that only major issues preventing the conversion or the translation process
 
 1. In the command window, load the translation test tables using the CASFRI/translation/test/load_test_tables.sh script.
 
-2. Dump the produced test tables using the CASFRI/translation/test/dump_test_tables.sh script. You should easily see the differences between the result of the test and the archived reference tables in GitKraken (or any git client able to show differences between the local and the GitHub repositories). Fix any issue in the production of the test tables if they are wrong or commit the new tables if they are right. Update the counts of produced row and the processing time for each group of test at the end of each script.
+2. Execute the CASFRI/translation/test/testTranslation.sh script. You can also run each test_cas.sql, test_dst.sql, test_eco.sql, test_lyr.sql and test_nfl.sql in pgAdmin. This will produce a series of table in the CASFRI50_test schema.
+
+3. Dump the produced test tables using the CASFRI/translation/test/dump_test_tables.sh script. You should easily see the differences between the result of the test and the archived reference tables in GitKraken (or any git client able to show differences between the local and the GitHub repositories). Fix any issue in the production of the test tables if they are wrong or commit the new tables if they are right. Update the counts of produced row and the processing time for each group of test at the end of each script.
 
 **5. Run the translation**
 
