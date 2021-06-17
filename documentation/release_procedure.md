@@ -63,7 +63,7 @@ Note that only major issues preventing the conversion or the translation process
 
     4. Make sure all table_translation_framework and all CASFRI Helper Functions were dropped properly by looking for any remaining TT_ functions in the public.function item in the pgAdmin browser. If not, add the undroped ones to the proper uninstall.sql script.
 
-5. Reinstall all the functions as in step 7.
+5. Reinstall all the functions as in step 3.
 
 **4. Test the translation**
 
