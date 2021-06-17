@@ -67,7 +67,7 @@ Note that only major issues preventing the conversion or the translation process
 
 **4. Test the translation**
 
-1. In the shell, load the translation test tables using the translation/test/load_test_tables.sh script.
+1. In the command window, load the translation test tables using the translation/test/load_test_tables.sh script.
 
 2. Execute the CASFRI/translation/test/testTranslation.sh script. You can also run each test_cas.sql, test_dst.sql, test_eco.sql, test_lyr.sql and test_nfl.sql in pgAdmin. This will produce a series of table in the CASFRI50_test schema.
 
@@ -75,7 +75,7 @@ Note that only major issues preventing the conversion or the translation process
 
 **5. Run the translation**
 
-1. In the command window, CD to workflow/02_produceCASFRI and execute the 01_translate_all_00.sh and then the 01_translate_all_01.sh scripts one AFTER the other. The first script prepare the target shema and tables and the second actually translate all the inventories listed in the invList1-5 variables.
+In the command window, CD to workflow/02_produceCASFRI and execute the 01_translate_all_00.sh and then the 01_translate_all_01.sh scripts one AFTER the other. The first script prepare the target shema and tables and the second actually translate all the inventories listed in the invList1-5 variables.
 
 **6. Validate the translation**
 
