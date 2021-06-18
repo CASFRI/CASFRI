@@ -71,14 +71,14 @@ ON casfri50.nfl_all USING btree(left(cas_id, 2));
 --------------------------------------------------------------------------
 -- Add indexes to GEO_ALL
 CREATE INDEX geo_all_casid_idx
-  ON casfri50.geo_all USING btree(cas_id);
+ON casfri50.geo_all USING btree(cas_id);
 
 CREATE INDEX geo_all_inventory_idx
-  ON casfri50.geo_all USING btree(left(cas_id, 4));
+ON casfri50.geo_all USING btree(left(cas_id, 4));
     
 CREATE INDEX geo_all_province_idx
-  ON casfri50.geo_all USING btree(left(cas_id, 2));
+ON casfri50.geo_all USING btree(left(cas_id, 2));
 
 CREATE INDEX geo_all_geom_idx
-  ON casfri50.geo_all USING gist(geometry);
+ON casfri50.geo_all USING gist(geometry);
 --------------------------------------------------------------------------
