@@ -73,7 +73,11 @@ SELECT * FROM (
 SELECT 'cas_all' AS cas_table, 
        coalesce(exp.inv, cnt.inv) inv, 
        exp.cnt expected, 
-       coalesce(cnt.nb, 0) counted, 
+       coalesce(cnt.nb, 0) counted,
+       CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
+            WHEN coalesce(cnt.nb, 0) != exp.cnt THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
@@ -81,6 +85,10 @@ SELECT 'cas_all' AS cas_table,
        'TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
+       CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
+            WHEN (SELECT sum(nb) FROM counts) != (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
 )
 ---------------------------------------------
@@ -147,6 +155,10 @@ SELECT 'dst_all' AS cas_table,
        coalesce(exp.inv, cnt.inv) inv, 
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
+       CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
+            WHEN coalesce(cnt.nb, 0) != exp.cnt THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
@@ -154,6 +166,10 @@ SELECT 'dst_all' AS cas_table,
        'TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
+       CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
+            WHEN (SELECT sum(nb) FROM counts) != (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
 )
 ---------------------------------------------
@@ -220,6 +236,10 @@ SELECT 'eco_all' AS cas_table,
        coalesce(exp.inv, cnt.inv) inv, 
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
+       CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
+            WHEN coalesce(cnt.nb, 0) != exp.cnt THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
@@ -227,6 +247,10 @@ SELECT 'eco_all' AS cas_table,
        'TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
+       CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
+            WHEN (SELECT sum(nb) FROM counts) != (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
 )
 ---------------------------------------------
@@ -293,6 +317,10 @@ SELECT 'lyr_all' AS cas_table,
        coalesce(exp.inv, cnt.inv) inv, 
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
+       CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
+            WHEN coalesce(cnt.nb, 0) != exp.cnt THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
@@ -300,6 +328,10 @@ SELECT 'lyr_all' AS cas_table,
        'TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
+       CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
+            WHEN (SELECT sum(nb) FROM counts) != (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
 )
 ---------------------------------------------
@@ -366,6 +398,10 @@ SELECT 'nfl_all' AS cas_table,
        coalesce(exp.inv, cnt.inv) inv, 
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
+       CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
+            WHEN coalesce(cnt.nb, 0) != exp.cnt THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
@@ -373,6 +409,10 @@ SELECT 'nfl_all' AS cas_table,
        'TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
+       CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
+            WHEN (SELECT sum(nb) FROM counts) != (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
 )
 ---------------------------------------------
@@ -439,6 +479,10 @@ SELECT 'geo_all' AS cas_table,
        coalesce(exp.inv, cnt.inv) inv, 
        exp.cnt expected, 
        coalesce(cnt.nb, 0) counted, 
+       CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
+            WHEN coalesce(cnt.nb, 0) != exp.cnt THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
@@ -446,11 +490,44 @@ SELECT 'geo_all' AS cas_table,
        'TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
+       CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
+            WHEN (SELECT sum(nb) FROM counts) != (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            ELSE 'OK'
+       END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
 )
 ) foo 
 --WHERE passed
 ORDER BY inv, cas_table
 --WHERE NOT passed;
+
+/*
+-- Queries to clean casfri50 tables from partially translated inventories
+CREATE INDEX cas_all_casidinv_idx
+ON casfri50.cas_all USING btree(left(cas_id, 4));
+
+CREATE INDEX dst_all_inventory_idx
+ON casfri50.dst_all USING btree(left(cas_id, 4));
+
+CREATE INDEX eco_all_inventory_idx
+ON casfri50.eco_all USING btree(left(cas_id, 4));
+
+CREATE INDEX lyr_all_inventory_idx
+ON casfri50.lyr_all USING btree(left(cas_id, 4));
+
+CREATE INDEX nfl_all_inventory_idx
+ON casfri50.nfl_all USING btree(left(cas_id, 4));
+
+CREATE INDEX geo_all_inventory_idx
+ON casfri50.geo_all USING btree(left(cas_id, 4));
+
+DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'QC06';
+DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'QC06';
+DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'QC06';
+DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'QC06';
+DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'QC06';
+DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'QC06';
+
+*/
 
 
