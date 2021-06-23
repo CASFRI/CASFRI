@@ -1379,7 +1379,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.69'::text number,
        'lyr_all' target_table,
-       'Issue #703. Missing -9999 (OUT_OF_RANGE). Ensure LYR table ORIGIN_LOWER is greater than 1000 and smaller than 2050' description, 
+       'Ensure LYR table ORIGIN_LOWER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1391,7 +1391,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.70'::text number,
        'lyr_all' target_table,
-       'Issue #703. Missing -9999 (OUT_OF_RANGE). Ensure LYR table ORIGIN_UPPER is greater than 1000 and smaller than 2050' description, 
+       'Ensure LYR table ORIGIN_UPPER is greater than 1000 and smaller than 2050' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
