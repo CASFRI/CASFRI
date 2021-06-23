@@ -118,12 +118,12 @@ Four types of attribute have been identified in CASFRI and only specific codes a
 | Attribute&nbsp;type | Description | Possible&nbsp;error&nbsp;code| 
 |:-------------- |:--------- |:---------:|
 | text | Arbitrary text values. e.g. the MAP_SHEET_ID attribute | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
-| code | Codified values. e.g. most text CASFRI attributes: SPECIES_X, DIST_TYPE_X and NFL types | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, NOT_IN_SET |
+| code | Codified values. e.g. most text CASFRI attributes: SPECIES_X, DIST_TYPE_X and NFL types | NULL_VALUE, EMPTY_STRING, NOT_APPLICABLE, UNKNOWN_VALUE, NOT_IN_SET, INVALID_VALUE |
 | number | Numeric values. e.g. LAYER, LAYER_RANK | NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE |
 | range | Bounded numeric values. e.g. all HEIGHT, CROWN_CLOSURE and ORIGIN CASFRI attributes as well as SRC_INV_AREA, STAND_PHOTO_YEAR and SPECIES_PER_X| NULL_VALUE, NOT_APPLICABLE, UNKNOWN_VALUE, INVALID_VALUE, OUT_OF_RANGE |
 
 * The main difference between the text and the number type is that empty numbers can only be NULLs (NULL_VALUE) whereas empty text values can be either NULLs (NULL_VALUE) or empty strings (EMPTY_STRING).
-* The main difference between the text and the code type is that wrong codes are not in the set of acceptable values (NOT_IN_SET) instead of being invalid (INVALID_VALUE).
+* The main difference between the text and the code type is that wrong codes are not in the set of acceptable values (NOT_IN_SET). In some cases, some codes, not fulfilling the source specification, might also translate to invalid (INVALID_VALUE).
 * The main difference between the number and the range type is that range values can be out of range (OUT_OF_RANGE) while simple numbers cannot since they are not delimited.
 
 
@@ -920,6 +920,7 @@ The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturban
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
 | NOT_APPLICABLE | Attribute does not apply to this record |
+| INVALID_VALUE  | Source value is not in an acceptable format |
 
 Note:
 * In some cases disturbance types can occur without years, and years can occur without disturbance types. Any disturbances with unknown years are reported as the oldest disturbance, and any missing disturbance types are reported as UNKNOWN_VALUE.
