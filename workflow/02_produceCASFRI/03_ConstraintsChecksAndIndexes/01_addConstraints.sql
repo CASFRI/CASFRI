@@ -1700,15 +1700,14 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.27'::text number,
        'nfl_all' target_table,
-       'Issue #526: Exactly one NFL record per row, except in AB03, AB25, AB10, AB16 and AB29 where multiple attributes per row are needed when structure is horizontal.' description, 
+       'Ensure there is exactly one NFL record per row, except in AB03, AB25, AB10, AB16 and AB29 where multiple attributes per row are needed when structure is horizontal.' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
                         ARRAY['one_nfl_per_row',
                               'LEFT(cas_id, 4) IN(''AB03'', ''AB10'', ''AB16'', ''AB25'', ''AB29'') OR
-							  (
-							  ((non_for_veg=ANY(TT_IsMissingOrNotInSetCode()))::int + (nat_non_veg=ANY(TT_IsMissingOrNotInSetCode()))::int + (non_for_anth=ANY(TT_IsMissingOrNotInSetCode()))::int)=2
-							  )
+							                 (((non_for_veg = ANY(TT_IsMissingOrNotInSetCode()))::int + (nat_non_veg = ANY(TT_IsMissingOrNotInSetCode()))::int + (non_for_anth = ANY(TT_IsMissingOrNotInSetCode()))::int) = 2) OR
+                               (((non_for_veg = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int + (nat_non_veg = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int + (non_for_anth = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int) = 3)
                               ']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 --) foo WHERE NOT passed;
