@@ -1145,7 +1145,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.47'::text number,
        'lyr_all' target_table,
-       'Issue #701: PRODUCTIVE instead of PRODUCTIVE_FOREST. Ensure LYR table PRODUCTIVITY values match the corresponding lookup table' description, 
+       'Ensure LYR table PRODUCTIVITY values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'LOOKUP', 
