@@ -249,7 +249,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.1'::text number,
        'dst_all' target_table,
-       'Add primary key to DST_ALL' description, 
+       'Issue #737. Duplicate value. Add primary key to DST_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'PK', 
