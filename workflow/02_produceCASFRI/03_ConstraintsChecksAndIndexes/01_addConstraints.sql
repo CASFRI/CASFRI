@@ -533,24 +533,24 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.30'::text number,
        'dst_all' target_table,
-       'Issue #698: 5 is not an acceptable value. Ensure DST table DIST_EXT_UPPER_1 is greater than 10 and smaller than 100' description, 
+       'Ensure DST table DIST_EXT_UPPER_1 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_ext_upper_1_betweeen_10_and_100', 
-                              '(10 <= dist_ext_upper_1 AND dist_ext_upper_1 <= 100) OR
+                              '((10 <= dist_ext_upper_1 OR (5 <= dist_ext_upper_1 AND left(cas_id, 4) = ''YT03'')) AND dist_ext_upper_1 <= 100) OR
                                 dist_ext_upper_1 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '2.31'::text number,
        'dst_all' target_table,
-       'Issue #698. 5 is not an acceptable value. Ensure DST table DIST_EXT_UPPER_2 is greater than 10 and smaller than 100' description, 
+       'Ensure DST table DIST_EXT_UPPER_2 is greater than 10 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
                         ARRAY['dist_ext_upper_2_betweeen_10_and_100', 
-                              '(10 <= dist_ext_upper_2 AND dist_ext_upper_2 <= 100) OR
+                              '((10 <= dist_ext_upper_2 OR (5 <= dist_ext_upper_2 AND left(cas_id, 4) = ''YT03'')) AND dist_ext_upper_2 <= 100) OR
                                 dist_ext_upper_2 = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
