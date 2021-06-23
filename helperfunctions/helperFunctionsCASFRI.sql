@@ -59,7 +59,8 @@ RETURNS text[] AS $$
                'NOT_APPLICABLE',
                'UNKNOWN_VALUE',
                'NOT_IN_SET',
-               'UNUSED_VALUE'];
+               'UNUSED_VALUE',
+               'INVALID_VALUE'];
 $$ LANGUAGE sql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidNumber();
