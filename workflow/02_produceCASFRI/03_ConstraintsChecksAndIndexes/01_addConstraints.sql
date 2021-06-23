@@ -471,7 +471,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.25'::text number,
        'dst_all' target_table,
-       'Issue #408: DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_1 smaller than or equal to DIST_YEAR_2' description, 
+       'Ensure DST table DIST_YEAR_1 smaller than or equal to DIST_YEAR_2' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -484,7 +484,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.26'::text number,
        'dst_all' target_table,
-       'Issue #408: DIST_YEAR_1 is sometimes not well ordered in time. Ensure DST table DIST_YEAR_2 smaller than or equal to DIST_YEAR_3' description, 
+       'Ensure DST table DIST_YEAR_2 smaller than or equal to DIST_YEAR_3' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
