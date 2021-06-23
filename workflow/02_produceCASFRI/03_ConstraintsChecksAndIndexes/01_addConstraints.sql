@@ -435,7 +435,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.22'::text number,
        'dst_all' target_table,
-       'Issue #697: NOT_IN_SET instead of OUT_OF_RANGE. Ensure DST table DIST_YEAR_1 is greater than 1000 and smaller than 2020' description, 
+       'Ensure DST table DIST_YEAR_1 is greater than 1000 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -447,7 +447,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.23'::text number,
        'dst_all' target_table,
-       'Issue #697: NOT_IN_SET instead of OUT_OF_RANGE. Ensure DST table DIST_YEAR_2 is greater than 1900 and smaller than 2020' description, 
+       'Ensure DST table DIST_YEAR_2 is greater than 1900 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
@@ -459,7 +459,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.24'::text number,
        'dst_all' target_table,
-       'Issue #697: NOT_IN_SET instead of OUT_OF_RANGE. Ensure DST table DIST_YEAR_3 is greater than 1900 and smaller than 2020' description, 
+       'Ensure DST table DIST_YEAR_3 is greater than 1900 and smaller than 2020' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'CHECK', 
