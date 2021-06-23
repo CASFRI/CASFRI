@@ -1687,7 +1687,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.26'::text number,
        'nfl_all' target_table,
-       'Issue #704: TRANSLATION_ERROR. Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
+       'Ensure NFL table NON_FOR_VEG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'LOOKUP', 
