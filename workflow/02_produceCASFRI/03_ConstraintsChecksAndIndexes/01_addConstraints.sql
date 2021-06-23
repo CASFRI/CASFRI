@@ -38,7 +38,7 @@ ADD PRIMARY KEY (code);
 -------------------------------------------------------
 SELECT '1.1'::text number,
        'cas_all' target_table,
-       'Issue #623: Some NULL cas_id. Add primary key to CAS_ALL' description, 
+       'Add primary key to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'PK', 
@@ -136,7 +136,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.13'::text number,
        'cas_all' target_table,
-       'Issue #623: Some NULL cas_id. Ensure CAS table CAS_ID is 50 characters long' description, 
+       'Ensure CAS table CAS_ID is 50 characters long' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
@@ -258,7 +258,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '2.2'::text number,
        'dst_all' target_table,
-       'Issue #623: Some NULL cas_id. Add foreign key from DST_ALL to CAS_ALL' description, 
+       'Add foreign key from DST_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'dst_all', 'FK', 
@@ -619,7 +619,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.2'::text number,
        'eco_all' target_table,
-       'Issue #623. Some NULL cas_id. Add foreign key from ECO_ALL to CAS_ALL' description, 
+       'Add foreign key from ECO_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'FK', 
@@ -744,7 +744,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.2'::text number,
        'lyr_all' target_table,
-       'Issue #623. Some NULL cas_id. Add foreign key from LYR_ALL to CAS_ALL' description, 
+       'Add foreign key from LYR_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
@@ -1452,7 +1452,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.2'::text number,
        'nfl_all' target_table,
-       'Issue #623. Some NULL cas_id. Add foreign key from NFL_ALL to CAS_ALL' description, 
+       'Add foreign key from NFL_ALL to CAS_ALL' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'FK', 
