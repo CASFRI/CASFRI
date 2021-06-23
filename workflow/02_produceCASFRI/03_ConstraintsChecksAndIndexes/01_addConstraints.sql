@@ -178,7 +178,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '1.17'::text number,
        'cas_all' target_table,
-       'Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
+       'Issue #736. Wrong STAND_STRUCTURE or NUM_OF_LAYERS. Ensure CAS table STAND_STRUCTURE fits with NUM_OF_LAYERS' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'cas_all', 'CHECK', 
