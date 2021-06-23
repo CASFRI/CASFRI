@@ -31,22 +31,28 @@ targetTranslationFileSchema=translation
 photoYearList=(ab_photoyear nl_photoyear)
 
 # First series of inventories having more than 2000000 rows. Longest one should be last.
-invList1=(BC08 BC10 ON01 QC04 QC05 QC01)
+invList1=(BC11 QC05 QC01)
 
 # Second series of inventories having more than 2000000 rows. Longest one should be last.
-invList2=(BC11 BC12 QC02 QC06 ON02)
+invList2=(BC08 QC06 BC12 BC10)
 
-# Inventories having between 500000 and 2000000 rows. Longest one should be last.
-invList3=(AB25 AB29 NB01 NB02 NS01 NS02 NS03 SK01 SK04 NL01 MB05)
+# Third series of inventories having more than 2000000 rows. Longest one should be last.
+invList3=(QC04 QC02 ON01 ON02)
 
-# Inventories having between 200000 and 500000 rows. Longest one should be last.
-invList4=(MB07 NT01 NT03 QC03 YT01 YT02 SK06 SK05)
+# Inventories having between 800000 and 2000000 rows. Longest one should be last.
+invList4=(NB01 NB02 NS01 NS02 NS03 SK01 NL01 MB05)
+
+# Inventories having between 240000 and 800000 rows. Longest one should be last.
+invList5=(AB25 AB29 SK04 NT01 NT03 QC03 YT01 SK05)
 
 # Inventories having less than 200000 rows
-invList5=(AB03 AB06 AB07 AB08 AB10 AB11 AB16 AB30 MB01 MB02 MB04 MB06 PC01 PC02 PE01 QC07 SK02 SK03 YT03)
+invList6=(MB06 MB07 PC01 PC02 PE01 QC07 SK02 SK03 SK06 YT02 YT03)
+
+# Inventories having less than 200000 rows
+invList7=(AB03 AB06 AB07 AB08 AB10 AB11 AB16 AB30 MB01 MB02 MB04)
 
 # Merge all inventory lists into a list of list
-fullList=(invList1 invList2 invList3 invList4 invList5)
+fullList=(invList1 invList2 invList3 invList4 invList5 invList6 invList7)
 
 #################################################################
 # GDAL installation folder
