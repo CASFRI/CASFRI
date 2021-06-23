@@ -1169,7 +1169,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.49'::text number,
        'lyr_all' target_table,
-       'Issue #700. Wrong error code INVALID_VALUE instead of NOT_IN_SET. Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
+       'Ensure LYR table SPECIES_1 values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'FK', 
