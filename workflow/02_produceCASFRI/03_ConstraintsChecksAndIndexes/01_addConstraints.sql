@@ -709,7 +709,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '3.12'::text number,
        'eco_all' target_table,
-       'Issues #699. Extra space in "NO_PERMAFROST_PATTERNING ". Ensure ECO table WET_LANDFORM_MOD values match the corresponding lookup table. Cannot be TT_IsMissingOrNotInSetCode()' description, 
+       'Ensure ECO table WET_LANDFORM_MOD values match the corresponding lookup table. Cannot be TT_IsMissingOrNotInSetCode()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'eco_all', 'LOOKUP', 
