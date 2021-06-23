@@ -1558,7 +1558,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.15'::text number,
        'nfl_all' target_table,
-       'Issue #702. -8886 instead of UNKNOWN_VALUE. Ensure NFL table SOIL_MOIST_REG values match the corresponding lookup table' description, 
+       'Ensure NFL table SOIL_MOIST_REG values match the corresponding lookup table' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'FK', 
