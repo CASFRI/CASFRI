@@ -4608,8 +4608,8 @@ SELECT '138.2'::text number,
 UNION ALL
 SELECT '138.3'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
-       'test 3 - drop the non-forest layer'::text description,
-       TT_nt_lyr_layer_translation('TC', 'T', '{''5'',''10''}', '{''A''}', '{''B''}', '1') = 1 passed
+       'test 3 - missing mintypeclas but still species present'::text description,
+       TT_nt_lyr_layer_translation('TC', '', '{''5'',''10''}', '{''A''}', '{''B''}', '1') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '138.4'::text number,

@@ -4438,8 +4438,14 @@ CREATE OR REPLACE FUNCTION TT_row_translation_rule_nt_lyr(
   sp4 text
 )
 RETURNS boolean AS $$
+  DECLARE
+    nfl_string_list text[];
   BEGIN
-    IF typeclas IN('TC', 'TB', 'TM')
+    -- set up nfl_string_list
+    nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
+	
+    -- if NFL 1 present, give _is_nfl1 a string.
+    IF NOT typeclas = ANY(nfl_string_list)
       AND (TT_notEmpty(sp1) OR TT_notEmpty(sp2) OR TT_notEmpty(sp3) OR TT_notEmpty(sp4)) THEN
       RETURN TRUE;
     ELSE
@@ -5324,35 +5330,24 @@ RETURNS int AS $$
   BEGIN
     -- set up nfl_string_list
     nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
-    lyr_string_list = ARRAY['TC','TB','TM'];
 	
     -- if NFL 1 present, give _is_nfl1 a string.
     IF typeclas = ANY(nfl_string_list) THEN
       _is_nfl1 = 'a_value';
+	  _lyr1 = NULL::text;
     ELSE
       _is_nfl1 = NULL::text;
+	  _lyr1 = vals1;
     END IF;
   
     -- if NFL 2 present, give _is_nfl2 a string.
     IF mintypeclas = ANY(nfl_string_list) THEN
       _is_nfl2 = 'a_value';
+	  _lyr2 = NULL::text;
     ELSE
       _is_nfl2 = NULL::text;
-    END IF;
-	
-	-- if overstory is forest type assign species, otherwise set to null
-	IF typeclas = ANY(lyr_string_list) THEN
-	  _lyr1 = vals1;
-	ELSE
-	  _lyr1 = NULL::text;
-	END IF;
-
-	-- if understory is forest type assign species, otherwise set to null
-	IF mintypeclas = ANY(lyr_string_list) THEN
 	  _lyr2 = vals2;
-	ELSE
-	  _lyr2 = NULL::text;
-	END IF;
+    END IF;
 
     -- call countOfNotNull
     RETURN TT_countOfNotNull(_lyr1, _lyr2, _is_nfl1, _is_nfl2, max_rank_to_consider, 'FALSE');
@@ -6862,9 +6857,9 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- l2_species
 -- getIndex
 --
--- If typeclas is not TC, TM, TB (forest types), set l1_species to NULL.
--- If mintypeclas is not TC, TM, TB (forest types), set l2_species to NULL.
--- NULL species lists get dropped in lyr_layer_translation().
+-- Test if layer 1 and 2 contain species (i.e. not NFL and have speies values)
+-- If yes, order by height.
+-- If no, whichever layer has species gets reported as layer 1.
 -- This prevents the situation where LYR layers are ordered incorectly because some
 -- non-forest rows have species and height info (e.g. shrub rows that are reported as NFL layers)
 ------------------------------------------------------------
@@ -6878,18 +6873,38 @@ CREATE OR REPLACE FUNCTION TT_nt_lyr_layer_translation(
   getIndex text
 )
 RETURNS int AS $$
+  DECLARE
+    nfl_string_list text[];
+	lyr1 boolean;
+	lyr2 boolean;
   BEGIN
+  
+    nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
+	
+	-- are lyr1 and 2 present?
+	IF NOT typeclas = ANY(nfl_string_list) AND TT_notEmpty(l1_species, 'TRUE') THEN
+	  lyr1 = TRUE;
+	ELSE
+	  lyr1 = FALSE;
+	END IF;
+	
+	IF NOT mintypeclas = ANY(nfl_string_list) AND TT_notEmpty(l2_species, 'TRUE') THEN
+	  lyr2 = TRUE;
+	ELSE
+	  lyr2 = FALSE;
+	END IF;
+	  
     -- if 2 lyr layers order by height
-    IF typeclas IN('TC', 'TB', 'TM') AND mintypeclas IN('TC', 'TB', 'TM') THEN
+    IF lyr1 AND lyr2 THEN
       RETURN TT_lyr_layer_translation(heights, l1_species, l2_species, getIndex);
     END IF;
     
 	-- otherwise the layer present has to be layer 1 
-    IF typeclas IN ('TC', 'TB', 'TM') THEN
+    IF lyr1 THEN
       RETURN 1;
     END IF;
 	
-	IF mintypeclas IN ('TC', 'TB', 'TM') THEN
+	IF lyr2 THEN
       RETURN 1;
     END IF;
 	
