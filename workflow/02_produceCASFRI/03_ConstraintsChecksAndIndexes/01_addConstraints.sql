@@ -1711,3 +1711,12 @@ FROM (SELECT *
                               ']) AS (passed boolean, cstr_query text)) foo
 ---------------------------------------------------------
 --) foo WHERE NOT passed;
+
+/*
+SELECT TT_DropAllConstraints('casfri50', 'cas_all');
+SELECT TT_DropAllConstraints('casfri50', 'dst_all');
+SELECT TT_DropAllConstraints('casfri50', 'eco_all');
+SELECT TT_DropAllConstraints('casfri50', 'lyr_all');
+SELECT TT_DropAllConstraints('casfri50', 'nfl_all');
+SELECT TT_DropAllConstraints('casfri50', 'geo_all');
+*/
