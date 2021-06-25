@@ -99,7 +99,7 @@ Table 2. CASFRI error codes
 
 | Class          | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;text | Code&nbsp;for&nbsp;attributes of&nbsp;type&nbsp;int&nbsp;and&nbsp;double | Description |
 |:-------------- |:---------:|:------------:|:----------- |
-| Missing&nbsp;values | EMPTY_STRING | -8889 | Missing value that is stored as an empty string (e.g. '' or '&#160;'). |
+| Missing&nbsp;values | EMPTY_STRING | -8888 | Missing value that is stored as an empty string (e.g. '' or '&#160;'). Source empty strings translated to int or double get assigned -8888 (NULL_VALUE) |
 |                | NULL_VALUE        | -8888 | Missing value that is a true null value. |
 |                | NOT_APPLICABLE    | -8887 | Target attribute not found in source inventory or attribute does not apply to this record (e.g. the source inventory does not record information for this attribute). |
 |                | UNKNOWN_VALUE     | -8886 | Non-null source value indicating that the correct attribute value is not known (e.g. UK) or that the value should exist but can not be determined by the CASFRI translator (e.g. it is not possible to determine the correct value because the source dataset is incomplete). This is different from NOT_APPLICABLE where the value clearly does not exist. |
