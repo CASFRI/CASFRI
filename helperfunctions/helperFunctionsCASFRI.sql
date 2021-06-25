@@ -1507,6 +1507,37 @@ RETURNS RECORD AS $$
     END;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+
+-------------------------------------------------------
+-- Drop all constraint on a table
+-------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_DropAllConstraints(name, name);
+CREATE OR REPLACE FUNCTION TT_DropAllConstraints(
+  schemaName name,
+  tableName name
+)
+RETURNS boolean AS $$
+  DECLARE
+    consList RECORD;
+    queryStr text;
+  BEGIN
+    BEGIN
+      FOR consList IN SELECT conname
+                      FROM pg_catalog.pg_constraint con
+                      INNER JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid
+                      INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
+                      WHERE nsp.nspname = schemaName AND rel.relname = tableName
+      LOOP
+        queryStr = 'ALTER TABLE ' || schemaName || '.' || tableName || ' DROP CONSTRAINT IF EXISTS ' || consList.conname ||' CASCADE;';
+        RAISE NOTICE 'TT_DropAllConstraint(): Dropping contraint ''%'' (%)...', consList.conname, queryStr;
+        EXECUTE queryStr;
+      END LOOP;
+    EXCEPTION WHEN OTHERS THEN
+      RETURN FALSE;
+    END;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- Overwrite the TT_DefaultProjectErrorCode() function to define default error
 -- codes for these helper functions...
