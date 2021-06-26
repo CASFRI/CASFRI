@@ -1259,7 +1259,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.59'::text number,
        'lyr_all' target_table,
-       'Issue #738. Unacceptable -8889 value. Ensure LYR table SPECIES_PER_1 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_1 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1271,7 +1271,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.60'::text number,
        'lyr_all' target_table,
-       'Issue #738. Unacceptable -8889 value. Ensure LYR table SPECIES_PER_2 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_2 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
@@ -1283,7 +1283,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.61'::text number,
        'lyr_all' target_table,
-       'Issue #738. Unacceptable -8889 value. Ensure LYR table SPECIES_PER_3 are greater or equal to 0 and smaller than or equal to 100' description, 
+       'Ensure LYR table SPECIES_PER_3 are greater or equal to 0 and smaller than or equal to 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
