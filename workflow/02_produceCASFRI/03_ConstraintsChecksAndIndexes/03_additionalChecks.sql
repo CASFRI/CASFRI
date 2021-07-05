@@ -38,7 +38,7 @@ FROM (SELECT count(*) = 0 passed
 -------------------------------------------------------
 UNION ALL
 SELECT '1.2'::text number,
-       'Issue #723. Check that CAS number_of_layers matches the actual number of LYR and NFL layers' description, 
+       'Issue #739. Check that CAS number_of_layers matches the actual number of LYR and NFL layers' description, 
        passed, 
        'WITH all_layers AS (
   SELECT cas_id FROM casfri50.lyr_all
@@ -72,7 +72,7 @@ WHERE NOT ((c.num_of_layers = -8886 AND a.cnt IS NULL) OR (c.num_of_layers = a.c
 -------------------------------------------------------
 UNION ALL
 SELECT '1.3'::text number,
-       'Issue #723. Check that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
+       'Issue #740. Check that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
        passed, 
        'WITH all_layers_numbers AS (
   SELECT cas_id, ''lyr'' || layer::text layer  FROM casfri50.lyr_all
