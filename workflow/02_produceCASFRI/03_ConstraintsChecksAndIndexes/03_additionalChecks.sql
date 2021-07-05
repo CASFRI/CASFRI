@@ -179,6 +179,27 @@ WHERE layers_order != 'lyr1' AND
       layers_order != 'nfl1_nfl2_nfl3_nfl4'
 ) foo
 -------------------------------------------------------
+UNION ALL
+SELECT '1.5'::text number,
+       'Issue #475. Check that LYR table layers are in height order (layer 1  = highest)' description, 
+       passed, 
+       'SELECT cas_id, 
+       string_agg(layer::text, ''_'' ORDER BY height_upper DESC, layer ASC) lyr_ordering,
+       string_agg(height_upper::text, ''_'' ORDER BY height_upper DESC, layer ASC) heights
+FROM casfri50.lyr_all
+GROUP BY cas_id
+HAVING NOT (string_agg(layer::text, ''_'' ORDER BY height_upper DESC, layer ASC) = ANY(ARRAY[''1'', ''1_2'', ''1_2_3'', ''1_2_3_4'', ''1_2_3_4_5'']));
+' list_query
+FROM (
+WITH orderings AS (
+  SELECT DISTINCT string_agg(layer::text, '_' ORDER BY height_upper DESC, layer ASC) lyr_ordering
+  FROM casfri50.lyr_all
+  GROUP BY cas_id
+) 
+SELECT array_agg(lyr_ordering) = ARRAY['1', '1_2', '1_2_3', '1_2_3_4', '1_2_3_4_5'] passed
+FROM orderings
+) foo
+-------------------------------------------------------
 --) foo WHERE NOT passed;
 
 
