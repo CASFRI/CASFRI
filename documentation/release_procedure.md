@@ -81,11 +81,11 @@ In the command window, CD to CASFRI/workflow/02_produceCASFRI and execute the 01
 
 1. In pgAdmin, once all translation scripts are finished, run the CASFRI/workflow/02_produceCASFRI/00_checkCounts.sql script to check if the count of translated rows matches what is expected. You should be able to explain every differences.
 
-2. In pgAdmin, run the CASFRI/workflow/02_produceCASFRI/01_addConstraints.sql script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues.
+2. In pgAdmin, run the CASFRI/workflow/02_produceCASFRI/01_addConstraints.sql script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues. Do the same for the remaining checking scripts in the same folder. 
 
 **7. Generate the flat (denormalized) tables**
 
-Run the scripts found in the CASFRI/workflow/03_flatCASFRI/ floder to produce the two different flat versions of the database.
+Run the scripts found in the CASFRI/workflow/03_flatCASFRI/ folder to produce the two different flat versions of the database.
 
 **8. Generate the historical version of the database**
 
@@ -105,8 +105,10 @@ Commit all changes you made to stabilize the release and get the complete transl
 
 **10. Document and create the release**
 
-1. List all the issues still in the [Project](https://github.com/edwardsmarc/CASFRI/projects) column created at the beginning of the release process in the issue named after the release. Group them by main feature added or "Other bug fixes". Look at previous releases for reference on how to describe the release.
+1. Change the version number in the main readme.md file.
 
-2. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
+2. List all the issues still in the [Project](https://github.com/edwardsmarc/CASFRI/projects) column created at the beginning of the release process in the issue named after the release. Group them by main feature added or "Other bug fixes". Look at previous releases for reference on how to describe the release.
+
+32. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
 
 Congratulation! You're done!
