@@ -12,6 +12,38 @@
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
 SELECT '1.1'::text number,
+       'Issue #592. Check that STAND_STRUCTURE is correct based on the number of LYR layers' description, 
+       passed, 
+       'WITH lyr_structure AS (
+  SELECT cas_id, min(stand_structure) stand_structure, count(*) nb_lyrlayers
+  FROM casfri50.cas_all cas 
+  LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
+  GROUP BY cas.cas_id
+)
+SELECT cas_id, stand_structure, nb_lyrlayers
+FROM lyr_structure
+WHERE NOT (((stand_structure = ''SINGLE_LAYERED'' OR stand_structure = ''COMPLEX'') AND nb_lyrlayers = 1) OR
+           (stand_structure = ''MULTI_LAYERED'' AND nb_lyrlayers > 1) OR 
+           (stand_structure != ''SINGLE_LAYERED'' AND stand_structure != ''MULTI_LAYERED'' AND stand_structure != ''COMPLEX''));
+' list_query
+FROM (
+WITH lyr_structure AS (
+  SELECT DISTINCT stand_structure, count(*) nb_lyrlayers
+  FROM casfri50.cas_all cas 
+  LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
+  GROUP BY cas.cas_id
+)
+SELECT count(*) = 0 passed
+FROM lyr_structure
+WHERE NOT (((stand_structure = 'SINGLE_LAYERED' OR stand_structure = 'COMPLEX') AND nb_lyrlayers = 1) OR
+           (stand_structure = 'MULTI_LAYERED' AND nb_lyrlayers > 1) OR 
+           (stand_structure != 'SINGLE_LAYERED' AND stand_structure != 'MULTI_LAYERED' AND stand_structure != 'COMPLEX'))
+           
+) foo
+-------------------------------------------------------
+UNION ALL
+-- Have a look at https://github.com/CASFRI/CASFRI/issues/625 for more details about this test.
+SELECT '1.2'::text number,
        'Issue #625. Check that all cas_all rows have at least one matching row in LYR, NFL, DST or ECO' description, 
        passed, 
        'SELECT inventory_id, count(*) nb
@@ -37,7 +69,7 @@ FROM (SELECT count(*) = 0 passed
             eco.cas_id IS NULL) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '1.2'::text number,
+SELECT '1.3'::text number,
        'Issue #739. Check that CAS number_of_layers matches the actual number of LYR and NFL layers' description, 
        passed, 
        'WITH all_layers AS (
@@ -71,7 +103,7 @@ WHERE NOT ((c.num_of_layers = -8886 AND a.cnt IS NULL) OR (c.num_of_layers = a.c
 ) foo
 -------------------------------------------------------
 UNION ALL
-SELECT '1.3'::text number,
+SELECT '1.4'::text number,
        'Issue #740. Check that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
        passed, 
        'WITH all_layers_numbers AS (
