@@ -56,7 +56,8 @@ WHERE lyr.cas_id IS NULL AND
       nfl.cas_id IS NULL AND
       dst.cas_id IS NULL AND
       eco.cas_id IS NULL
-GROUP BY inventory_id;' list_query
+GROUP BY inventory_id;
+' list_query
 FROM (SELECT count(*) = 0 passed
       FROM casfri50.cas_all cas
       LEFT JOIN casfri50.lyr_all lyr USING (cas_id)
@@ -85,7 +86,7 @@ SELECT c.cas_id, c.num_of_layers, a.cnt
 FROM casfri50.cas_all c
 NATURAL LEFT JOIN all_layers_counts a 
 WHERE NOT ((c.num_of_layers = -8886 AND a.cnt IS NULL) OR (c.num_of_layers = a.cnt))
-ORDER BY c.num_of_layers, a.cnt' list_query
+ORDER BY c.num_of_layers, a.cnt;' list_query
 FROM (
 WITH all_layers AS (
   SELECT cas_id FROM casfri50.lyr_all
@@ -140,7 +141,8 @@ WHERE layers_order != ''lyr1'' AND
       layers_order != ''nfl1'' AND
       layers_order != ''nfl1_nfl2'' AND
       layers_order != ''nfl1_nfl2_nfl3'' AND
-      layers_order != ''nfl1_nfl2_nfl3_nfl4''' list_query
+      layers_order != ''nfl1_nfl2_nfl3_nfl4'';
+' list_query
 FROM (
 WITH all_layers_numbers AS (
   SELECT cas_id, 'lyr' || layer::text layer  FROM casfri50.lyr_all
