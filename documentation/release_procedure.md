@@ -105,8 +105,10 @@ Commit all changes you made to stabilize the release and get the complete transl
 
 **10. Document and create the release**
 
-1. List all the issues still in the [Project](https://github.com/edwardsmarc/CASFRI/projects) column created at the beginning of the release process in the issue named after the release. Group them by main feature added or "Other bug fixes". Look at previous releases for reference on how to describe the release.
+1. Cahnge the version number in the main readme.md file.
 
-2. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
+2. List all the issues still in the [Project](https://github.com/edwardsmarc/CASFRI/projects) column created at the beginning of the release process in the issue named after the release. Group them by main feature added or "Other bug fixes". Look at previous releases for reference on how to describe the release.
+
+32. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
 
 Congratulation! You're done!
