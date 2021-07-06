@@ -81,7 +81,7 @@ In the command window, CD to CASFRI/workflow/02_produceCASFRI and execute the 01
 
 1. In pgAdmin, once all translation scripts are finished, run the CASFRI/workflow/02_produceCASFRI/00_checkCounts.sql script to check if the count of translated rows matches what is expected. You should be able to explain every differences.
 
-2. In pgAdmin, run the CASFRI/workflow/02_produceCASFRI/01_addConstraints.sql script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues. Do the same for the remaining checking scripts in the same folder. 
+2. In pgAdmin, run the CASFRI/workflow/02_produceCASFRI/01_addConstraints.sql script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues. Do the same for the remaining validation scripts located in the same folder (01_addGeoConstraints.sql, 02_addIndexes.sql and 03_additionalChecks.sql). 
 
 **7. Generate the flat (denormalized) tables**
 
