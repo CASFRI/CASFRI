@@ -184,46 +184,5 @@ FROM cas_lyr_nfl_dst_eco
 LEFT JOIN casfri50.geo_all geo 
 USING (cas_id);
 
--- Make sure cas_flat_one_layer_per_row has the right count (5806, 30199600) 
-SELECT count(*) 
-FROM casfri50_flat.cas_flat_one_layer_per_row;
 
---------------------------------------------------------------------------
--- Add some indexes
-CREATE INDEX cas_flat_one_layer_per_row_casid_idx
-ON casfri50_flat.cas_flat_one_layer_per_row USING btree(cas_id);
-
--- Add a unique index 
-CREATE UNIQUE INDEX ON casfri50_flat.cas_flat_one_layer_per_row (cas_id, layer);
-
--- bug
---SELECT * FROM casfri50_flat.cas_flat_one_layer_per_row
---WHERE cas_id = 'YT02-xYTVEGINVENTORY-xxxxxxxxxx-0000014069-0014069'
-
-CREATE INDEX cas_flat_one_layer_per_row_inventory_idx
-ON casfri50_flat.cas_flat_one_layer_per_row USING btree(left(cas_id, 4));
-    
-CREATE INDEX cas_flat_one_layer_per_row_province_idx
-ON casfri50_flat.cas_flat_one_layer_per_row USING btree(left(cas_id, 2));
-
-CREATE INDEX cas_flat_one_layer_per_row_geom_idx
-ON casfri50_flat.cas_flat_one_layer_per_row USING gist(geometry);
---------------------------------------------------------------------------
--- Make sure no two row per cas_id have the same layer number
-SELECT DISTINCT string_agg(layer::text, '_' ORDER BY layer) layers
-FROM casfri50_flat.cas_flat_one_layer_per_row
-GROUP BY cas_id;
-
-SELECT *, max(layer) OVER (PARTITION BY cas_id) max_lyr
-FROM casfri50_flat.cas_flat_one_layer_per_row;
---------------------------------------------------------------------------
--- Make sure the number of layer matches cas.num_of_layers
-SELECT DISTINCT max(layer) layer, max(num_of_layers) num_of_layers
-FROM casfri50_flat.cas_flat_one_layer_per_row
-GROUP BY cas_id;
-
-SELECT cas_id, max(layer) layer, max(num_of_layers) num_of_layers
-FROM casfri50_flat.cas_flat_one_layer_per_row
-GROUP BY cas_id
-HAVING max(layer) != max(num_of_layers);
 
