@@ -85,7 +85,7 @@ In the command window, CD to CASFRI/workflow/02_produceCASFRI and execute the 01
 
 **7. Generate the flat (denormalized) tables**
 
-Run the scripts found in the CASFRI/workflow/03_flatCASFRI/ folder to produce the two different flat versions of the database.
+Run the flatCASFRI_all_layers_same_row.sql and the flatCASFRI_one_layer_per_row.sql scripts found in the CASFRI/workflow/03_flatCASFRI/ folder to produce the two different flat versions of the database. Run the addIndexes.sql script to make sure unique indexes are not corrupted by duplicate sets of unique identifier attribute values. You can also optionally run the tests scripts.
 
 **8. Generate the historical version of the database**
 
