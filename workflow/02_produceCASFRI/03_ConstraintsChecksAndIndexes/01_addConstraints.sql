@@ -1567,11 +1567,11 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.16'::text number,
        'nfl_all' target_table,
-       'Ensure NFL table LAYER is greater than or equal to 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Issue #740. Some values = 0. Ensure NFL table LAYER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
-                        ARRAY['layer_greater_than_zero', 'layer >= 0']) AS (passed boolean, cstr_query text)) foo
+                        ARRAY['layer_greater_than_zero', 'layer > 0']) AS (passed boolean, cstr_query text)) foo
 -------------------------------------------------------
 UNION ALL
 SELECT '5.17'::text number,
