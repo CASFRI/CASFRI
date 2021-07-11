@@ -468,6 +468,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Return the number with only a certain  umber of significant digits
 ------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_SigDigits(anyelement, int);
 CREATE OR REPLACE FUNCTION TT_SigDigits(
   n anyelement, 
   digits int
@@ -485,6 +486,7 @@ $$ LANGUAGE sql IMMUTABLE STRICT;
 --
 -- Split a geometry with all aggregated geometries
 -----------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_SplitAgg_StateFN(geometry[], geometry, geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_SplitAgg_StateFN(
     geomarray geometry[],
     geom1 geometry,
@@ -534,26 +536,29 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 
 ---------------------------------------
 -- ST_SplitAgg aggregate variant state function defaulting tolerance to 0.0
-CREATE OR REPLACE FUNCTION _ST_SplitAgg_StateFN(
+--DROP FUNCTION IF EXISTS TT_SplitAgg_StateFN(geometry[], geometry, geometry);
+CREATE OR REPLACE FUNCTION TT_SplitAgg_StateFN(
     geomarray geometry[],
     geom1 geometry,
     geom2 geometry
 )
 RETURNS geometry[] AS $$
-    SELECT _ST_SplitAgg_StateFN($1, $2, $3, 0.0);
+    SELECT TT_SplitAgg_StateFN($1, $2, $3, 0.0);
 $$ LANGUAGE sql VOLATILE;
 
 ---------------------------------------
 -- ST_SplitAgg aggregate
-CREATE AGGREGATE ST_SplitAgg(geometry, geometry, double precision) (
-    SFUNC=_ST_SplitAgg_StateFN,
+-- DROP AGGREGATE IF EXISTS TT_SplitAgg(geometry, geometry, double precision);
+CREATE AGGREGATE TT_SplitAgg(geometry, geometry, double precision) (
+    SFUNC=TT_SplitAgg_StateFN,
     STYPE=geometry[]
 );
 
 ---------------------------------------
 -- ST_SplitAgg aggregate defaulting tolerance to 0.0
-CREATE AGGREGATE ST_SplitAgg(geometry, geometry) (
-    SFUNC=_ST_SplitAgg_StateFN,
+-- DROP AGGREGATE IF EXISTS TT_SplitAgg(geometry, geometry);
+CREATE AGGREGATE TT_SplitAgg(geometry, geometry) (
+    SFUNC=TT_SplitAgg_StateFN,
     STYPE=geometry[]
 );
 ------------------------------------------------------------------------------
@@ -712,7 +717,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_IntersectingArea()
 ------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_IntersectingArea(geometry, geometry);
+--DROP FUNCTION IF EXISTS TT_IntersectingArea(geometry, geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_IntersectingArea(
   geom1 geometry, 
   geom2 geometry,
