@@ -11,7 +11,7 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
--- Make sure cas_flat_one_layer_per_row has the right count (5806, 30199600) 
+-- Make sure cas_flat_one_layer_per_row has the right count (76534476) 
 SELECT count(*) 
 FROM casfri50_flat.cas_flat_one_layer_per_row;
 
