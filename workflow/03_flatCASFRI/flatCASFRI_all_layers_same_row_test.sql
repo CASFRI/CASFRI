@@ -18,7 +18,7 @@ TABLESAMPLE SYSTEM ((100 * 100) / (SELECT count(*) FROM casfri50_flat.cas_flat_a
 REPEATABLE (1.2)
 ORDER BY cas_id;
 
--- Make sure cas_flat_all_layers_same_row has the right count (41091682, 41093124)
+-- Make sure cas_flat_all_layers_same_row has the right count (66007533, 66008963)
 SELECT count(*) 
 FROM casfri50.cas_all;
 
