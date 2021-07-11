@@ -91,7 +91,7 @@ Run the flatCASFRI_all_layers_same_row.sql and the flatCASFRI_one_layer_per_row.
 
 1. Execute the CASFRI/helperfunctions/geohistory/geoHistory.sql script to load the required geohistory functions.
 
-3. Test tables the geohistory functions by first loading the test tables with CASFRI/helperfunctions/geohistory/load_test_tables.sh and CASFRI/helperfunctions/geohistory/load_test_tables_with_inv_data.sh scripts and then executing CASFRI/helperfunctions/geohistory_test.sql, CASFRI/helperfunctions/geohistory_test_with_inv_data.sql and CASFRI/helperfunctions/geohistory_test_with_inv_data_gridded.sql.
+3. Test the geohistory functions by first loading the test tables with CASFRI/helperfunctions/geohistory/load_test_tables.sh and CASFRI/helperfunctions/geohistory/load_test_tables_with_inv_data.sh scripts and then executing CASFRI/helperfunctions/geohistory_test.sql, CASFRI/helperfunctions/geohistory_test_with_inv_data.sql and CASFRI/helperfunctions/geohistory_test_with_inv_data_gridded.sql.
 
 4. In the command window, execute CASFRI/workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sh to prepare the casfri50_history schema, the inv_precedence table where you establish the precedence of the various inventories and some other functions.
 
