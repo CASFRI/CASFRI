@@ -23,7 +23,7 @@ DROP FUNCTION IF EXISTS TT_GeoOblique(geometry, int, double precision, double pr
 DROP AGGREGATE IF EXISTS TT_ValidYearUnion(geometry, int, int);
 DROP FUNCTION IF EXISTS TT_ValidYearUnionStateFct(geomlowuppval[], geometry, int, int);
 DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean);
-DROP FUNCTION IF EXISTS TT_GeoHistoryOverlaps(geometry, geometry);
+DROP FUNCTION IF EXISTS TT_GeoHistoryOverlaps(geometry, geometry, boolean, double precision);
 DROP FUNCTION IF EXISTS TT_SplitByGrid(geometry, double precision, double precision, double precision, double precision);
 DROP FUNCTION IF EXISTS TT_PrintMessage(text);
 DROP FUNCTION IF EXISTS TT_BufferedSmooth(geometry, double precision);
@@ -31,7 +31,16 @@ DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision);
 DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision);
 DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text);
 DROP FUNCTION IF EXISTS TT_ProduceDerivedCoverages(text, geometry, double precision, boolean, double precision);
-DROP FUNCTION IF EXISTS TT_ProduceInvGeoHistory(text, boolean);
+DROP FUNCTION IF EXISTS TT_ProduceInvGeoHistory(text, boolean, boolean);
+DROP FUNCTION IF EXISTS TT_AreasForSignificantYearsDebugQuery(name, boolean);
+DROP FUNCTION IF EXISTS TT_AreasForSignificantYears(name, boolean, double precision);
+DROP FUNCTION IF EXISTS TT_SigDigits(anyelement, int);
+DROP AGGREGATE IF EXISTS TT_SplitAgg(geometry, geometry, double precision);
+DROP AGGREGATE IF EXISTS TT_SplitAgg(geometry, geometry);
+DROP FUNCTION IF EXISTS TT_SplitAgg_StateFN(geometry[], geometry, geometry);
+DROP FUNCTION IF EXISTS TT_SplitAgg_StateFN(geometry[], geometry, geometry, double precision);
+DROP FUNCTION IF EXISTS TT_ProgressMsg(bigint, int, timestamptz);
+DROP FUNCTION IF EXISTS TT_IntersectingArea(geometry, geometry, double precision);
 
 DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
 DROP TYPE IF EXISTS geomlowuppval;
