@@ -434,7 +434,7 @@ ORDER BY id, valid_year_begin;
 ---------------------------------------------
 -- Begin tests
 ---------------------------------------------
-SELECT * FROM (
+--SELECT * FROM (
 SELECT '1.1'::text number,
        'TT_GeoHistory'::text function_tested, 
        'Compare "sampling_area_nb1_gridded_history_new" and "sampling_area_nb1_gridded_history"' description, 
@@ -614,4 +614,4 @@ SELECT '10.2'::text number,
        TT_AreasForSignificantYearsDebugQuery('sk4', TRUE) check_query
 FROM TT_AreasForSignificantYears('sk4', TRUE)
 ---------------------------------------------------------
-) foo WHERE NOT passed;
+--) foo WHERE NOT passed;
