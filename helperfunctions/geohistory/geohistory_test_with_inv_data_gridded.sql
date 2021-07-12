@@ -11,11 +11,160 @@
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
--- CAUTION! This test requires the versions of TT_RowIsValid() and 
--- TT_HasPrecedence() from the workflow 01_PrepareGeoHistory.sql file to be 
--- instanciated in order to work properly (not the one implemented in geohistory_test.sql)
----------------------------------------------
 CREATE SCHEMA IF NOT EXISTS casfri50_history_test;
+------------------------------------------------------------------------------
+-- Create a table of inventory precedence rank. Polygons from inventories with 
+-- higher ranks have precedence over polygons from inventories having lower 
+-- ranks. 
+-- This table is used by TT_HasPrecedence() to establish a precedence when two 
+-- overlapping polygons have
+--
+--   1) the same photo_year and
+--   2) all their attributes are meaningful (not NULL or '')
+--
+-- Inventory precedence rank is hence the third criteria when deciding which 
+-- polygon has precedence over the other one when they are overlapping. This 
+-- criteria is evidently useful only when two polygons are from two different 
+-- overlapping inventories. Otherwise more recent polygons and more meaningful 
+-- ones have precedence over older ones and less meaningful ones. The fourth 
+-- criteria, if all other are equal or equivalent, is the unique identifier 
+-- of the two polygons with polygons having higher ids having precedence over 
+-- polygons having lower ones.
+------------------------------------------------------------------------------
+DROP TABLE IF EXISTS casfri50_history.inv_precedence;
+CREATE TABLE casfri50_history.inv_precedence AS 
+SELECT 'AB03' inv, 3 rank
+UNION ALL
+SELECT 'AB06', 6
+UNION ALL
+SELECT 'AB07', 7
+UNION ALL
+SELECT 'AB08', 8
+UNION ALL
+SELECT 'AB10', 10
+UNION ALL
+SELECT 'AB11', 11
+UNION ALL
+SELECT 'AB16', 16
+UNION ALL
+SELECT 'AB25', 25
+UNION ALL
+SELECT 'AB29', 29
+UNION ALL
+SELECT 'AB30', 30
+UNION ALL
+SELECT 'BC08', 8
+UNION ALL
+SELECT 'BC10', 10
+UNION ALL
+SELECT 'BC11', 11
+UNION ALL
+SELECT 'BC12', 12
+UNION ALL
+SELECT 'MB01', 1
+UNION ALL
+SELECT 'MB02', 2
+UNION ALL
+SELECT 'MB04', 4
+UNION ALL
+SELECT 'MB05', 5
+UNION ALL
+SELECT 'MB06', 6
+UNION ALL
+SELECT 'MB07', 7
+UNION ALL
+SELECT 'NB01', 1
+UNION ALL
+SELECT 'NB02', 2
+UNION ALL
+SELECT 'NL01', 1
+UNION ALL
+SELECT 'NS01', 1
+UNION ALL
+SELECT 'NS02', 2
+UNION ALL
+SELECT 'NS03', 3
+UNION ALL
+SELECT 'NT01', 1
+UNION ALL
+SELECT 'NT03', 3
+UNION ALL
+SELECT 'ON01', 1
+UNION ALL
+SELECT 'ON02', 2
+UNION ALL
+SELECT 'PC01', 1
+UNION ALL
+SELECT 'PC02', 2
+UNION ALL
+SELECT 'PE01', 1
+UNION ALL
+SELECT 'QC01', 1
+UNION ALL
+SELECT 'QC02', 2
+UNION ALL
+SELECT 'QC03', 3
+UNION ALL
+SELECT 'QC04', 4
+UNION ALL
+SELECT 'QC05', 5
+UNION ALL
+SELECT 'QC06', 6
+UNION ALL
+SELECT 'QC07', 7
+UNION ALL
+SELECT 'SK01', 1
+UNION ALL
+SELECT 'SK02', 2
+UNION ALL
+SELECT 'SK03', 3
+UNION ALL
+SELECT 'SK04', 5
+UNION ALL
+SELECT 'SK05', 4 -- SK05 has lower precedence than SK04
+UNION ALL
+SELECT 'SK06', 6
+UNION ALL
+SELECT 'YT01', 1
+UNION ALL
+SELECT 'YT02', 2
+UNION ALL
+SELECT 'YT03', 3;
+
+-- Overwrite development and test TT_HasPrecedence() function to something
+-- more simple and efficient taking inventory precedence into account as 
+-- numbers and uid as text. Both are never NULLs. numInv and numUid are ignored.
+DROP FUNCTION IF EXISTS TT_HasPrecedence(text, text, text, text, boolean, boolean);
+CREATE OR REPLACE FUNCTION TT_HasPrecedence(
+  inv1 text, 
+  uid1 text,
+  inv2 text,
+  uid2 text,
+  numInv boolean DEFAULT FALSE,
+  numUid boolean DEFAULT FALSE
+)
+RETURNS boolean AS $$
+  DECLARE
+    inv1_num int = 0;
+    inv2_num int = 0;
+  BEGIN
+    IF inv1 != inv2 THEN
+      SELECT rank FROM casfri50_history.inv_precedence WHERE inv = inv1 INTO inv1_num;
+      SELECT rank FROM casfri50_history.inv_precedence WHERE inv = inv2 INTO inv2_num;
+    END IF;
+    RETURN inv1_num > inv2_num OR (inv1_num = inv2_num AND uid1 > uid2);
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+--SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
+--SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
+--SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
+--SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
+--SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
+--SELECT TT_HasPrecedence('AB06', '3', 'AB16', '3'); -- false
+--SELECT TT_HasPrecedence('AB06', '3', 'AB16', '2'); -- false
+--SELECT TT_HasPrecedence('AB16', '3', 'AB06', '3'); -- true
+--SELECT TT_HasPrecedence('AB16', '3', 'AB06', '2'); -- true
 --------------------------------------------------------------------------------------
 -- Sampling area NB1
 --------------------------------------------------------------------------------------
