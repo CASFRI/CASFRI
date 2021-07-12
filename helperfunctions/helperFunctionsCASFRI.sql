@@ -5822,7 +5822,7 @@ RETURNS int AS $$
   BEGIN
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF polytype IN ('ISL','WAT','RCK','DAL','UCL','GRS','OMS') THEN
+    IF polytype IN ('ISL','WAT','RCK','DAL','UCL','GRS','OMS', 'RRW') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
