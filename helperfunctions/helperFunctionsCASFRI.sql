@@ -4475,9 +4475,15 @@ RETURNS boolean AS $$
     -- set up nfl_string_list
     nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
 	
-    -- if NFL 1 present, give _is_nfl1 a string.
-    IF NOT typeclas = ANY(nfl_string_list)
-      AND (TT_notEmpty(sp1) OR TT_notEmpty(sp2) OR TT_notEmpty(sp3) OR TT_notEmpty(sp4)) THEN
+	-- catch any NFL rows and return FALSE
+    IF typeclas IS NOT NULL THEN
+      IF typeclas = ANY(nfl_string_list) THEN
+        RETURN FALSE;
+	  END IF;
+	END IF;
+	
+	-- Check for any species
+	IF (TT_notEmpty(sp1) OR TT_notEmpty(sp2) OR TT_notEmpty(sp3) OR TT_notEmpty(sp4)) THEN
       RETURN TRUE;
     ELSE
       RETURN FALSE;
