@@ -7544,7 +7544,7 @@ RETURNS int AS $$
       layer1_sp = 'a string';
     END IF;
   
-    IF CONCAT(slu, water_code) IN('BL','RF','RO', 'LK', 'RV', 'ON', 'PN', 'SL', 'WA', '4', '6', '7', '8', '9', '100', '416', 'AI','AR','BA','CB','CG','CH','CL','CO','CS','CT','EA','FD','FP','GC','GP','IP','IZ','LE','LF','MI','PA','PB','PP','PR','QU','RD','RR','RU','RY','SG','SK','TM','TR','UR','WR','AQ','415', 'BO') THEN
+    IF CONCAT(slu, water_code) IN('BL','RF','RO', 'LK', 'RV', 'ON', 'PN', 'SL', 'WA', '4', '6', '7', '8', '9', '100', '416', 'AI','AR','BA','CB','CG','CH','CL','CO','CS','CT','EA','FD','FP','GC','GP','IP','IZ','LE','LF','MI','PA','PB','PP','PR','QU','RD','RR','RU','RY','SG','SK','TM','TR','UR','WR','AQ','415', 'BR','BW','DM','GR','P1','P2','WF', 'BO') THEN
       _nfl = 'a_string';
     ELSE
       _nfl = NULL;
