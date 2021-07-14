@@ -4475,9 +4475,15 @@ RETURNS boolean AS $$
     -- set up nfl_string_list
     nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
 	
-    -- if NFL 1 present, give _is_nfl1 a string.
-    IF NOT typeclas = ANY(nfl_string_list)
-      AND (TT_notEmpty(sp1) OR TT_notEmpty(sp2) OR TT_notEmpty(sp3) OR TT_notEmpty(sp4)) THEN
+	-- catch any NFL rows and return FALSE
+    IF typeclas IS NOT NULL THEN
+      IF typeclas = ANY(nfl_string_list) THEN
+        RETURN FALSE;
+	  END IF;
+	END IF;
+	
+	-- Check for any species
+	IF (TT_notEmpty(sp1) OR TT_notEmpty(sp2) OR TT_notEmpty(sp3) OR TT_notEmpty(sp4)) THEN
       RETURN TRUE;
     ELSE
       RETURN FALSE;
@@ -5822,7 +5828,7 @@ RETURNS int AS $$
   BEGIN
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF polytype IN ('ISL','WAT','RCK','DAL','UCL','GRS','OMS') THEN
+    IF polytype IN ('ISL','WAT','RCK','DAL','UCL','GRS','OMS', 'RRW') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
@@ -5913,7 +5919,7 @@ RETURNS int AS $$
 	
 	  -- if val is a non-productive type, we know there is a LYR record. It's the same attribute as nfl
     -- set species to be a valid string.
-    IF TT_matchList(nfl,'{''701'', ''702'', ''703'', ''704'', ''711'', ''712'', ''713'', ''721'', ''722'', ''723'', ''724'', ''725'', ''731'', ''732'', ''733'', ''734''}') THEN
+    IF TT_matchList(nfl,'{''700'', ''701'', ''702'', ''703'', ''704'', ''710'', ''711'', ''712'', ''713'', ''720'', ''721'', ''722'', ''723'', ''724'', ''725'', ''730'', ''731'', ''732'', ''733'', ''734''}') THEN
       species = 'a_value';
     END IF;
   
@@ -7544,7 +7550,7 @@ RETURNS int AS $$
       layer1_sp = 'a string';
     END IF;
   
-    IF CONCAT(slu, water_code) IN('BL','RF','RO', 'LK', 'RV', 'ON', 'PN', 'SL', 'WA', '4', '6', '7', '8', '9', '100', '416', 'AI','AR','BA','CB','CG','CH','CL','CO','CS','CT','EA','FD','FP','GC','GP','IP','IZ','LE','LF','MI','PA','PB','PP','PR','QU','RD','RR','RU','RY','SG','SK','TM','TR','UR','WR','AQ','415', 'BO') THEN
+    IF CONCAT(slu, water_code) IN('BL','RF','RO', 'LK', 'RV', 'ON', 'PN', 'SL', 'WA', '4', '6', '7', '8', '9', '100', '416', 'AI','AR','BA','CB','CG','CH','CL','CO','CS','CT','EA','FD','FP','GC','GP','IP','IZ','LE','LF','MI','PA','PB','PP','PR','QU','RD','RR','RU','RY','SG','SK','TM','TR','UR','WR','AQ','415', 'BR','BW','DM','GR','P1','P2','WF', 'BO') THEN
       _nfl = 'a_string';
     ELSE
       _nfl = NULL;
