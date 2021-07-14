@@ -679,7 +679,7 @@ DROP TABLE IF EXISTS casfri50_history.' || lower(inv) || '_history;
 CREATE TABLE casfri50_history.' || lower(inv) || '_history AS
 ';
     ELSE
-      queryStr = '
+      queryStr = queryStr || '
 INSERT INTO casfri50_history.geo_history
 ';
     END IF;
@@ -708,7 +708,7 @@ INSERT INTO casfri50_history.geo_history
       GROUP BY id
     )
     SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
-    FROM wkb_version;';
+    FROM wkb_version);';
     RAISE NOTICE 'queryStr = %', queryStr;
     EXECUTE queryStr USING expectedRowNb, startTime;
     RETURN TRUE;
