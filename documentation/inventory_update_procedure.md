@@ -112,7 +112,7 @@ DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB25';
 DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB29';
 ```    
 
-**14. Set a precedence for the new inventories in the casfri50_history.inv_precedence table defined in workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql if it is missing.**
+**14. Set precedences for the new inventories in the casfri50_history.inv_precedence table defined in workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql if they are missing.**
 
 **15. Recompute the history for all affected historical database inventories using lines from the workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sql**
 
