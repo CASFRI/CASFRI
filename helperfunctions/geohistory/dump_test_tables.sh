@@ -13,7 +13,7 @@ source ../../conversion/sh/common.sh
 
 # Run ogr2ogr
 
-rm ./testtables/*.csv
+rm ./testtables/test*.csv
 
 "$gdalFolder/ogr2ogr" -f "CSV" ".\testtables\test_0_without_validity.csv" "$pg_connection_string" -lco STRING_QUOTING=IF_NEEDED "casfri50_history_test.test_0_without_validity_new"
 
