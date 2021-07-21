@@ -1,6 +1,6 @@
 **CASFRI Inventory Update Procedure**
 
-This procedure explains how to add or replace one or more inventories after you have completed a full translation of the CASFRI database and you do not want to reload/retranslate all the inventories already processed.
+This procedure details the steps necessary to add or replace one or more inventories after you have completed a full translation of the CASFRI database and you do not want to reload/retranslate all the inventories and the historical table already processed.
 
 This procedure assume that all the functions necessary to produce CASFRI are already installed in the database. This includes the PostgreSQL Table Translation Framework and the CASFRI Helper Functions.
 
