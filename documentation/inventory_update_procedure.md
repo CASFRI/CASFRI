@@ -61,68 +61,69 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
 
 **7. Regenerate the flat tables like this:**
 
-    ```
-    REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
-    REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row;
-    ```
+```
+REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
+REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row;
+```
 
 **8. Generate the gridded version of the flat table for the new inventories with queries like this:**
 
-    ```
-    INSERT INTO casfri50_history.casflat_gridded 
-    SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
-    FROM casfri50_flat.cas_flat_all_layers_same_row
-    WHERE inventory_id = 'QC06';
-    ```
+```
+INSERT INTO casfri50_history.casflat_gridded 
+SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
+FROM casfri50_flat.cas_flat_all_layers_same_row
+WHERE inventory_id = 'QC06';
+```
 
 **9. Regenerate the table containing the count of row per inventory (this code is in 01_PrepareGeoHistory.sql):**
 
-    ```
-    DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
-    CREATE TABLE casfri50_coverage.inv_counts AS
-    SELECT left(cas_id, 4) inv, count(*) cnt
-    FROM casfri50.cas_all
-    GROUP BY left(cas_id, 4);
-    ```
+```
+DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
+CREATE TABLE casfri50_coverage.inv_counts AS
+SELECT left(cas_id, 4) inv, count(*) cnt
+FROM casfri50.cas_all
+GROUP BY left(cas_id, 4);
+```
 
 **10. Compute the geometries representing the coverage of the new inventories using the proper lines in the workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sql.**
     Add lines if they don't already exist.
 
-    ```
-    SELECT TT_ProduceDerivedCoverages('AB03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB03'''));
-    ```
+```
+SELECT TT_ProduceDerivedCoverages('AB03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB03'''));
+```
 
 **11. Determine the inventories affected by the addition of new inventories in the historical database using a query like this:**
 
-    ```
-    SELECT DISTINCT left(cas_id, 4) inv
-    FROM casfri50_history.geo_history h, 
-         casfri50_coverage.detailed c
-    WHERE c.inv = 'SK03' AND ST_Intersects(h.geom, c.geom)
-    ORDER BY inv;
-    ```
+```
+SELECT DISTINCT left(cas_id, 4) inv
+FROM casfri50_history.geo_history h, 
+     casfri50_coverage.detailed c
+WHERE c.inv = 'SK03' AND ST_Intersects(h.geom, c.geom)
+ORDER BY inv;
+```
 
 **12. Delete all the rows in the historical table for the inventories affected by the addition of new inventories with queries like this:**
 
-    ```
-    DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK01';
-    DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK03';
-    DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK06';
-    DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB25';
-    DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB29';
-    ```    
+```
+DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK01';
+DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK03';
+DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK06';
+DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB25';
+DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB29';
+```    
 
 **14. Set precedences for the new inventories in the casfri50_history.inv_precedence table defined in workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql if they are missing.**
 
 **14. Recompute the history for all affected historical database inventories using lines from the workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sql**
 
-    ```
-    SELECT TT_ProduceInvGeoHistory('SK01');
-    SELECT TT_ProduceInvGeoHistory('SK03');
-    SELECT TT_ProduceInvGeoHistory('SK06');
-    SELECT TT_ProduceInvGeoHistory('AB25');
-    SELECT TT_ProduceInvGeoHistory('AB29');
-    ```
+
+```
+SELECT TT_ProduceInvGeoHistory('SK01');
+SELECT TT_ProduceInvGeoHistory('SK03');
+SELECT TT_ProduceInvGeoHistory('SK06');
+SELECT TT_ProduceInvGeoHistory('AB25');
+SELECT TT_ProduceInvGeoHistory('AB29');
+```
 
 
 
