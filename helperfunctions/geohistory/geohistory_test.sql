@@ -31,6 +31,32 @@ SELECT 5 idx, 1998 valid_year, '6' att, ST_GeomFromText('POLYGON((26 15, 26 19, 
 UNION ALL
 SELECT 6 idx, 1998 valid_year, '7' att, ST_GeomFromText('POLYGON((25 14, 25 21, 32 21, 32 14, 25 14))') geom
 ;
+-------------------------------------------------------------------------------
+-- TT_RowIsValid()
+--
+-- Returns TRUE if any value in the provided text array is NOT NULL AND NOT = '' 
+------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
+CREATE OR REPLACE FUNCTION TT_RowIsValid(
+  rowValues text[]
+)
+RETURNS boolean AS $$
+  DECLARE
+    val text;
+  BEGIN
+    FOREACH val IN ARRAY rowValues LOOP
+      IF val IS NOT NULL AND val != '' THEN
+        RETURN TRUE;
+      END IF;
+    END LOOP;
+    RETURN FALSE;
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+--SELECT * FROM test_geohistory;
+--SELECT ARRAY[id::text, att] FROM test_geohistory;
+--SELECT TT_RowIsValid(ARRAY[id::text, att]) FROM test_geohistory;
+--SELECT TT_RowIsValid(ARRAY[att]) FROM test_geohistory;
 ------------------------------------------------------------------
 -- TT_HasPrecedence()
 --
