@@ -54,7 +54,7 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
 
 **5. If some CASFRI helper function changed, uninstall and reinstall them using the helperFunctionsCasfriUninstall.sql and the helperFunctionsCASFRI.sql scripts.**
 
-**6. Make sure changes in translation tables and helper functions did not have unwanted side effect on other translation by running the translation tests and compare the results with the archived test tables.** 
+**6. Make sure changes in translation tables and helper functions did not have unwanted side effect on other translations by running the translation tests and compare the results with the archived test tables.** 
 
 **7. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts.**
     Copy and adjust an existing script if none exists for the new inventories. Check that the count of translated rows in the casfri50.cas_all tables matches the number of rows in the rawfri tables.
