@@ -170,6 +170,7 @@ ADD PRIMARY KEY (id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_0_with_validity_new;
 
 ---------------------------------------------
+/*
 -- Display test table flat
 SELECT idx, att, valid_year, 
        geom, ST_AsText(geom),
@@ -185,10 +186,16 @@ FROM casfri50_history_test.test_0;
 -- Display geohistory flat 
 
 -- Without taking validity into account
-SELECT * FROM casfri50_history_test.test_0_without_validity_new;
+SELECT row_id, id, poly_id, isvalid, 
+       ST_GeomFromText(wkt_geometry) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM casfri50_history_test.test_0_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM casfri50_history_test.test_0_with_validity_new;
+SELECT row_id, id, poly_id, isvalid, 
+       ST_GeomFromText(wkt_geometry) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM casfri50_history_test.test_0_with_validity_new;
 
 -- Display geohistory oblique 
 
@@ -203,7 +210,7 @@ SELECT row_id, id, poly_id, isvalid,
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
 FROM casfri50_history_test.test_0_with_validity_new;
-
+*/
 ---------------------------------------------
 -- test_1 - Only one polygon
 ---------------------------------------------
@@ -227,6 +234,7 @@ SELECT all_test_nb test, idx1 idx, a1 att, y1 valid_year,
 FROM numbered_tests
 ORDER BY test;
 
+/*
 -- Display flat
 SELECT *,
        idx || '_' || CASE WHEN att = '' THEN 'I' ELSE 'V' END || '_' || valid_year lbl
@@ -242,7 +250,7 @@ SELECT * FROM TT_TableGeoHistory('casfri50_history_test', 'test_1', 'idx', 'geom
 
 -- Display oblique history
 SELECT * FROM TT_GeoHistoryOblique('casfri50_history_test', 'test_1', 'idx', 'geom', 'valid_year', 'idx');
-
+*/
 ---------------------------------------------
 -- test_2 - Pairs of polygons representing 
 -- all permutations of valid/invalid attributes, years and ids
@@ -322,6 +330,7 @@ ADD PRIMARY KEY (id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_2_with_validity_new;
 
 ---------------------------------------------
+/*
 -- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
@@ -337,10 +346,16 @@ FROM casfri50_history_test.test_2;
 -- Display geohistory flat 
 
 -- Without taking validity into account
-SELECT * FROM casfri50_history_test.test_2_without_validity_new;
+SELECT row_id, id, poly_id, isvalid, 
+       ST_GeomFromText(wkt_geometry) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM casfri50_history_test.test_2_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM casfri50_history_test.test_2_with_validity_new;
+SELECT row_id, id, poly_id, isvalid, 
+       ST_GeomFromText(wkt_geometry) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM casfri50_history_test.test_2_with_validity_new;
 
 -- Display geohistory oblique 
 
@@ -355,7 +370,7 @@ SELECT row_id, id, poly_id, isvalid,
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
 FROM casfri50_history_test.test_2_with_validity_new;
-
+*/
 ---------------------------------------------
 -- test_3 - Triplet of polygons representing
 -- all permutations of valid/invalid attributes, years and ids
@@ -463,6 +478,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_3_with_validity_new;
 
 ---------------------------------------------
+/*
 -- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
@@ -478,10 +494,16 @@ FROM casfri50_history_test.test_3;
 -- Display geohistory flat 
 
 -- Without taking validity into account
-SELECT * FROM casfri50_history_test.test_3_without_validity_new;
+SELECT row_id, id, poly_id, isvalid, 
+       ST_GeomFromText(wkt_geometry) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM casfri50_history_test.test_3_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM casfri50_history_test.test_3_with_validity_new;
+SELECT row_id, id, poly_id, isvalid, 
+       ST_GeomFromText(wkt_geometry) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM casfri50_history_test.test_3_with_validity_new;
 
 -- Display geohistory oblique 
 
@@ -496,7 +518,7 @@ SELECT row_id, id, poly_id, isvalid,
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.2, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
 FROM casfri50_history_test.test_3_with_validity_new;
-
+*/
 ---------------------------------------------
 -- test_4 - Quatriplet of polygons representing
 -- all permutations of valid/invalid attributes, years and ids
@@ -676,6 +698,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_4_with_validity_new;
 
 ---------------------------------------------
+/*
 -- Display test table flat
 SELECT test, idx, att, valid_year, 
        geom, ST_AsText(geom),
@@ -691,10 +714,16 @@ FROM casfri50_history_test.test_4;
 -- Display geohistory flat 
 
 -- Without taking validity into account
-SELECT * FROM casfri50_history_test.test_4_without_validity_new;
+SELECT row_id, id, poly_id, isvalid, 
+       ST_GeomFromText(wkt_geometry) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM casfri50_history_test.test_4_without_validity_new;
 
 -- Taking validity into account
-SELECT * FROM casfri50_history_test.test_4_with_validity_new;
+SELECT row_id, id, poly_id, isvalid, 
+       ST_GeomFromText(wkt_geometry) wkb_geometry, 
+       poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
+FROM casfri50_history_test.test_4_with_validity_new;
 
 -- Display geohistory oblique 
 
@@ -709,7 +738,7 @@ SELECT row_id, id, poly_id, isvalid,
        TT_GeoOblique(ST_GeomFromText(wkt_geometry), valid_year_begin, 0.4, 0.4) wkb_geometry, 
        poly_type, ref_year, valid_year_begin, valid_year_end, valid_time
 FROM casfri50_history_test.test_4_with_validity_new;
-
+*/
 ---------------------------------------------
 -- Debug procedure
 ---------------------------------------------
