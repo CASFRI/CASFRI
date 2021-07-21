@@ -46,7 +46,7 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
     Check that the count of rows in the newly created tables matches the number of rows in the source table.
 
 **4. If the corresponding translation tables have changed, load them using the CASFRI/translation/load_tables.sh script.**
-    By default, load_tables.sh reload all translation tables. You can reload specific tables by appending their names separated by spaces as parameters to the script. e.g. "./load_tables.sh mb_fli01_cas.csv mb_fli01_dst.csv mb_fli01_eco.csv mb_fli01_lyr.csv mb_fli01_nfl.csv mb_fli01_geo.csv"
+    By default, load_tables.sh reload all translation tables. You can reload specific tables by appending their names separated by spaces as parameters to the load_tables.sh script. e.g. "./load_tables.sh mb_fli01_cas.csv mb_fli01_dst.csv mb_fli01_eco.csv mb_fli01_lyr.csv mb_fli01_nfl.csv mb_fli01_geo.csv"
 
 **5. If some CASFRI helper function changed, uninstall and reinstall them using the helperFunctionsCasfriUninstall.sql and the helperFunctionsCASFRI.sql scripts.**
 
