@@ -14,31 +14,6 @@
 -- Debug configuration variable. Set tt.debug to TRUE to display all RAISE NOTICE
 SET tt.debug_l1 TO FALSE;
 SET tt.debug_l2 TO FALSE;
--------------------------------------------------------------------------------
--- TT_RowIsValid()
--- Returns TRUE if any value in the provided text array is NOT NULL AND NOT = '' 
-------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_RowIsValid(text[]);
-CREATE OR REPLACE FUNCTION TT_RowIsValid(
-  rowValues text[]
-)
-RETURNS boolean AS $$
-  DECLARE
-    val text;
-  BEGIN
-    FOREACH val IN ARRAY rowValues LOOP
-      IF val IS NOT NULL AND val != '' THEN
-        RETURN TRUE;
-      END IF;
-    END LOOP;
-    RETURN FALSE;
-  END
-$$ LANGUAGE plpgsql IMMUTABLE;
-
---SELECT * FROM test_geohistory;
---SELECT ARRAY[id::text, att] FROM test_geohistory;
---SELECT TT_RowIsValid(ARRAY[id::text, att]) FROM test_geohistory;
---SELECT TT_RowIsValid(ARRAY[att]) FROM test_geohistory;
 
 -------------------------------------------------------------------------------
 -- TT_AreasForSignificantYearsDebugQuery()
