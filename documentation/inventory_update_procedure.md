@@ -4,7 +4,7 @@ This procedure details the steps necessary to add or replace one or more invento
 
 This procedure assume that all the functions necessary to produce CASFRI are already installed in the database. This includes the PostgreSQL Table Translation Framework and the CASFRI Helper Functions.
 
-**1. If, and only if, you are replacing an inventory with another one, you must clean the database from every trace of the inventory to be replaced.**
+**1. If, and only if, you are replacing a source inventory with another one, you must clean the database from every trace of the inventory to be replaced.**
 
  1. DROP or rename each source inventories that have to be replaced from the rawfri schema in the database. If you just rename them, make sure to rename the associated indexes as well. If you DROP them, make sure to DROP CASCADE them as some VIEWs might depend on them.
 
