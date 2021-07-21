@@ -26,7 +26,7 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
     DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'NT03';
     DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NT03';
     DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NT03';
-    DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NT03';;
+    DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NT03';
     ```
 
  3. Delete all the rows in the casfri50_history schema gridded version of the geo table for these inventories with queries like this:
