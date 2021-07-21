@@ -54,17 +54,19 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
 
 **5. If some CASFRI helper function changed, uninstall and reinstall them using the helperFunctionsCasfriUninstall.sql and the helperFunctionsCASFRI.sql scripts.**
 
-**6. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts.**
+**6. Make sure changes in translation tables and helper functions did not have unwanted side effect on other translation by running the translation tests and compare the results with the archived test tables.** 
+
+**7. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts.**
     Copy and adjust an existing script if none exists for the new inventories. Check that the count of translated rows in the casfri50.cas_all tables matches the number of rows in the rawfri tables.
 
-**7. Regenerate the flat tables like this:**
+**8. Regenerate the flat tables like this:**
 
 ```
 REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
 REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row;
 ```
 
-**8. Generate the gridded version of the flat table for the new inventories with queries like this:**
+**9. Generate the gridded version of the flat table for the new inventories with queries like this:**
 
 ```
 INSERT INTO casfri50_history.casflat_gridded 
@@ -73,7 +75,7 @@ FROM casfri50_flat.cas_flat_all_layers_same_row
 WHERE inventory_id = 'QC06';
 ```
 
-**9. Regenerate the table containing the count of row per inventory (this code is in 01_PrepareGeoHistory.sql):**
+**10. Regenerate the table containing the count of row per inventory (this code is in 01_PrepareGeoHistory.sql):**
 
 ```
 DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
@@ -83,14 +85,14 @@ FROM casfri50.cas_all
 GROUP BY left(cas_id, 4);
 ```
 
-**10. Compute the geometries representing the coverage of the new inventories using the proper lines in the workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sql.**
+**11. Compute the geometries representing the coverage of the new inventories using the proper lines in the workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sql.**
     Add lines if they don't already exist.
 
 ```
 SELECT TT_ProduceDerivedCoverages('AB03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB03'''));
 ```
 
-**11. Determine the inventories affected by the addition of new inventories in the historical database using a query like this:**
+**12. Determine the inventories affected by the addition of new inventories in the historical database using a query like this:**
 
 ```
 SELECT DISTINCT left(cas_id, 4) inv
@@ -100,7 +102,7 @@ WHERE c.inv = 'SK03' AND ST_Intersects(h.geom, c.geom)
 ORDER BY inv;
 ```
 
-**12. Delete all the rows in the historical table for the inventories affected by the addition of new inventories with queries like this:**
+**13. Delete all the rows in the historical table for the inventories affected by the addition of new inventories with queries like this:**
 
 ```
 DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK01';
@@ -110,9 +112,9 @@ DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB25';
 DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'AB29';
 ```    
 
-**13. Set a precedence for the new inventories in the casfri50_history.inv_precedence table defined in workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql if it is missing.**
+**14. Set a precedence for the new inventories in the casfri50_history.inv_precedence table defined in workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql if it is missing.**
 
-**14. Recompute the history for all affected historical database inventories using lines from the workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sql**
+**15. Recompute the history for all affected historical database inventories using lines from the workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sql**
 
 
 ```
