@@ -40,7 +40,11 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
     Check that the count of rows in the newly created tables matches the number of rows in the source table.
 
 **4. If the corresponding translation tables have changed, load them using the CASFRI/translation/load_tables.sh script.**
-    By default, load_tables.sh reload all translation tables. You can reload specific tables by appending their names separated by spaces as parameters to the script. e.g. "./load_tables.sh mb_fli01_cas.csv mb_fli01_dst.csv mb_fli01_eco.csv mb_fli01_lyr.csv mb_fli01_nfl.csv mb_fli01_geo.csv"
+    By default, load_tables.sh reload all translation tables. You can reload specific tables by appending their names separated by spaces as parameters to the load_tables.sh script. e.g.:
+    
+```
+./load_tables.sh mb_fli01_cas.csv mb_fli01_dst.csv mb_fli01_eco.csv mb_fli01_lyr.csv mb_fli01_nfl.csv mb_fli01_geo.csv
+```
 
 **5. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts.**
     Copy and adjust an existing script if none exists for the new inventories. Check that the count of translated rows in the casfri50.cas_all tables matches the number of rows in the rawfri tables.
