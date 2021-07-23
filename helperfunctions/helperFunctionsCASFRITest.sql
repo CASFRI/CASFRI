@@ -182,7 +182,7 @@ WITH test_nb AS (
 	SELECT 'TT_yt_yvi02_disturbance_notNull'::text function_tested,          135 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,          136 maj_num,  1 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested, 137 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,              138 maj_num,  4 nb_test
+	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,              138 maj_num,  6 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -4616,6 +4616,18 @@ SELECT '138.4'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
        'If getIdex layer is non forest, returns null. This should never occur during translation.'::text description,
        TT_nt_lyr_layer_translation('TC', 'T', '{''5'',''10''}', '{''A''}', '{''B''}', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '138.5'::text number,
+       'TT_nt_lyr_layer_translation'::text function_tested,
+       'Test layer 1 null typeclas and species'::text description,
+       TT_nt_lyr_layer_translation(NULL::text, NULL::text, NULL::text, 'sp', NULL::text, '1') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '138.6'::text number,
+       'TT_nt_lyr_layer_translation'::text function_tested,
+       'Test layer 2 null mintypeclas and species'::text description,
+       TT_nt_lyr_layer_translation('TC', NULL::text, '{''10'',''5''}', '{''A''}', '{''B''}', '2') = 2 passed
 
 	
 ) AS b 
