@@ -4,9 +4,9 @@ This procedure details the steps necessary to add or replace one or more invento
 
 This procedure assume that all the functions necessary to produce CASFRI are already installed in the database. This includes the PostgreSQL Table Translation Framework and the CASFRI Helper Functions.
 
-**1. If, and only if, you are replacing a source inventory with another one, you must clean the database from every trace of the inventory to be replaced.**
+**1. If, and only if, you are replacing a source inventory with another one, you must drop it from the "rawfri" schema.**
 
- 1. DROP or rename each source inventories that have to be replaced from the rawfri schema in the database. If you just rename them, make sure to rename the associated indexes as well. If you DROP them, make sure to DROP CASCADE them as some VIEWs might depend on them.
+ DROP or rename each source inventories that have to be replaced from the "rawfri" schema in the database. If you just rename them, make sure to rename the associated indexes as well. If you DROP them, make sure to DROP CASCADE them as some VIEWs might depend on them.
 
     To drop an inventory (just replace "ab06" with the proper inventory_id):
 
@@ -22,7 +22,20 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
     ALTER INDEX ab06_wkb_geometry_geom_idx RENAME TO ab06_old_wkb_geometry_geom_idx;
     ```
 
-2. Delete inventories to be replaced from the tables in the casfri50 schema:
+**2. If you are replacing a source inventory or have modified a helper function or a translation table affecting the translation of some inventories, you must drop the associated translated rows.**
+
+ 1. Drop all the constraints (including prmiry and foreign keys) on the tables of the "casfri50" schema
+
+    ```
+    SELECT TT_DropAllConstraints('casfri50', 'cas_all');
+    SELECT TT_DropAllConstraints('casfri50', 'dst_all');
+    SELECT TT_DropAllConstraints('casfri50', 'eco_all');
+    SELECT TT_DropAllConstraints('casfri50', 'lyr_all');
+    SELECT TT_DropAllConstraints('casfri50', 'nfl_all');
+    SELECT TT_DropAllConstraints('casfri50', 'geo_all');
+    ```
+
+ 2. Delete inventories to be replaced from the tables in the "casfri50" schema:
 
     ```
     DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'NT03';
@@ -33,7 +46,7 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
     DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'NT03';
     ```
 
- 3. Delete all the rows in the casfri50_history schema gridded version of the geo table for these inventories with queries like this:
+ 3. Delete all the rows in the "casfri50_history" schema gridded version of the geo table for these inventories with queries like this:
 
     ```
     DELETE FROM casfri50_history.casflat_gridded WHERE inventory_id = 'SK03';
@@ -57,7 +70,12 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
 **6. Make sure changes in translation tables and helper functions did not have unwanted side effect on other translations by running the translation tests and compare the results with the archived test tables.** 
 
 **7. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts.**
-    Copy and adjust an existing script if none exists for the new inventories. Check that the count of translated rows in the casfri50.cas_all tables matches the number of rows in the rawfri tables. Adjust and run all the scripts in the CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/ folder
+
+ 1. Copy and adjust an existing script if none exists for the new inventories.
+
+ 2. Check that the count of translated rows in the "casfri50.cas_all" tables matches the number of rows in the rawfri tables using or adjusting the workflow\02_produceCASFRI\03_ConstraintsChecksAndIndexes/00_checkCounts.sql script.
+ 
+ 3. Adjust and run all the scripts in the CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/ folder.
 
 **8. Regenerate the flat tables like this:**
 
