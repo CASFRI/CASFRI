@@ -22,9 +22,9 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
     ALTER INDEX ab06_wkb_geometry_geom_idx RENAME TO ab06_old_wkb_geometry_geom_idx;
     ```
     
- 2. List the inventories you want to load using the invList1 variable in your config.sh script. Make sure to comment out the other unused invList2-5 variables.**
+ 2. List the inventories you want to load using the invList1 variable in your config.sh script. Make sure to comment out the other unused invList2-5 variables.
 
- 3. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all inventories to update using the load_all.sh script.**
+ 3. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all inventories to update using the load_all.sh script.
     Check that the count of rows in the newly created tables matches the number of rows in the source table.
 
 
