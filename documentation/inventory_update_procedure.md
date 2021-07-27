@@ -74,10 +74,12 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
 **6. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts.**
 
  1. Copy and adjust an existing script if none exists for the new inventories.
-
- 2. Check that the count of translated rows in the "casfri50.cas_all" tables matches the number of rows in the rawfri tables using or adjusting the workflow\02_produceCASFRI\03_ConstraintsChecksAndIndexes/00_checkCounts.sql script.
  
- 3. Adjust and run all the scripts in the CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/ folder.
+ 2. Launch the script
+
+ 3. Check that the count of translated rows in the "casfri50.cas_all" tables matches the number of rows in the rawfri tables using or adjusting the workflow\02_produceCASFRI\03_ConstraintsChecksAndIndexes/00_checkCounts.sql script.
+ 
+ 4. Adjust and run all the scripts in the CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/ folder.
 
 **7. Regenerate the flat tables like this:**
 
