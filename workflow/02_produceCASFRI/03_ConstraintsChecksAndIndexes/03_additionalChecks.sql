@@ -71,7 +71,7 @@ FROM (SELECT count(*) = 0 passed
 -------------------------------------------------------
 UNION ALL
 SELECT '1.3'::text number,
-       'Issue #739. Check that CAS number_of_layers matches the actual number of LYR and NFL layers' description, 
+       'Check that CAS number_of_layers matches the actual number of LYR and NFL layers' description, 
        passed, 
        'WITH all_layers AS (
   SELECT cas_id FROM casfri50.lyr_all
