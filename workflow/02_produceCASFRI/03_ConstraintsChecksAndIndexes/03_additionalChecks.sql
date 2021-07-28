@@ -12,7 +12,7 @@
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
 SELECT '1.1'::text number,
-       'Issue #592. Check that STAND_STRUCTURE is correct based on the number of LYR layers' description, 
+       'Check that STAND_STRUCTURE is correct based on the number of LYR layers' description, 
        passed, 
        'WITH lyr_structure AS (
   SELECT cas_id, min(stand_structure) stand_structure, count(*) nb_lyrlayers
@@ -22,7 +22,8 @@ SELECT '1.1'::text number,
 )
 SELECT cas_id, stand_structure, nb_lyrlayers
 FROM lyr_structure
-WHERE NOT (((stand_structure = ''SINGLE_LAYERED'' OR stand_structure = ''COMPLEX'') AND nb_lyrlayers = 1) OR
+WHERE NOT ((stand_structure = ''SINGLE_LAYERED'' AND nb_lyrlayers = 1) OR
+           (stand_structure = ''COMPLEX'' AND (nb_lyrlayers = 1 OR nb_lyrlayers = 2)) OR
            (stand_structure = ''MULTI_LAYERED'' AND nb_lyrlayers > 1) OR 
            (stand_structure != ''SINGLE_LAYERED'' AND stand_structure != ''MULTI_LAYERED'' AND stand_structure != ''COMPLEX''));
 ' list_query
@@ -35,7 +36,8 @@ WITH lyr_structure AS (
 )
 SELECT count(*) = 0 passed
 FROM lyr_structure
-WHERE NOT (((stand_structure = 'SINGLE_LAYERED' OR stand_structure = 'COMPLEX') AND nb_lyrlayers = 1) OR
+WHERE NOT ((stand_structure = 'SINGLE_LAYERED' AND nb_lyrlayers = 1) OR
+           (stand_structure = 'COMPLEX' AND (nb_lyrlayers = 1 OR nb_lyrlayers = 2)) OR
            (stand_structure = 'MULTI_LAYERED' AND nb_lyrlayers > 1) OR 
            (stand_structure != 'SINGLE_LAYERED' AND stand_structure != 'MULTI_LAYERED' AND stand_structure != 'COMPLEX'))
            
