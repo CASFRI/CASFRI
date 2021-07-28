@@ -1567,7 +1567,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '5.16'::text number,
        'nfl_all' target_table,
-       'Issue #740. Some values = 0. Ensure NFL table LAYER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
+       'Ensure NFL table LAYER is greater than 0. Cannot be TT_IsMissingOrInvalidNumber()' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
