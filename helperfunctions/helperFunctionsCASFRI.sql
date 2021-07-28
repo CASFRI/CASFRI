@@ -6918,17 +6918,30 @@ RETURNS int AS $$
   
     nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
 	
-	-- are lyr1 and 2 present?
-	IF NOT typeclas = ANY(nfl_string_list) AND TT_notEmpty(l1_species, 'TRUE') THEN
-	  lyr1 = TRUE;
+	-- layer 1 present if species have values and typeclas is either null, or a non-nfl value
+	IF TT_notEmpty(l1_species, 'TRUE') THEN
+	  IF typeclas IS NULL THEN
+	    lyr1 = TRUE; -- species present, typeclas null
+	  ELSIF NOT typeclas = ANY(nfl_string_list) THEN
+        lyr1 = TRUE; -- species present, typeclas not NFL
+	  ELSE
+	    lyr1 = FALSE; -- species present, typeclas is NFL
+	  END IF;
 	ELSE
-	  lyr1 = FALSE;
+	  lyr1 = FALSE; -- species not present
 	END IF;
 	
-	IF NOT mintypeclas = ANY(nfl_string_list) AND TT_notEmpty(l2_species, 'TRUE') THEN
-	  lyr2 = TRUE;
+	-- repeat for species 2
+	IF TT_notEmpty(l2_species, 'TRUE') THEN
+	  IF mintypeclas IS NULL THEN
+	    lyr2 = TRUE; -- species present, mintypeclas null
+	  ELSIF NOT mintypeclas = ANY(nfl_string_list) THEN
+        lyr2 = TRUE; -- species present, mintypeclas not NFL
+	  ELSE
+	    lyr2 = FALSE; -- species present, mintypeclas is NFL
+	  END IF;
 	ELSE
-	  lyr2 = FALSE;
+	  lyr2 = FALSE; -- species not present
 	END IF;
 	  
     -- if 2 lyr layers order by height
