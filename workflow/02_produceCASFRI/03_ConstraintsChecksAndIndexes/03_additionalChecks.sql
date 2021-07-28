@@ -105,7 +105,7 @@ WHERE NOT ((c.num_of_layers = -8886 AND a.cnt IS NULL) OR (c.num_of_layers = a.c
 -------------------------------------------------------
 UNION ALL
 SELECT '1.4'::text number,
-       'Issue #740. Check that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
+       'Check that all layer numbers for a same cas_id are different and have no gap in their order (no missing 2 when there is 1 and 3)' description, 
        passed, 
        'WITH all_layers_numbers AS (
   SELECT cas_id, ''lyr'' || layer::text layer  FROM casfri50.lyr_all
