@@ -218,31 +218,32 @@ SELECT '1.6'::text number,
   species_9,
   species_10
 FROM casfri50.lyr_all
-WHERE NOT (CASE WHEN species_1 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''01'' END || 
-    CASE WHEN species_2 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''_02'' END || 
-    CASE WHEN species_3 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''_03'' END || 
-    CASE WHEN species_4 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''_04'' END || 
-    CASE WHEN species_5 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''_05'' END || 
-    CASE WHEN species_6 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''_06'' END || 
-    CASE WHEN species_7 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''_07'' END || 
-    CASE WHEN species_8 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''_08'' END || 
-    CASE WHEN species_9 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''_09'' END || 
-    CASE WHEN species_10 = ANY(TT_IsMissingOrNotInSetCode()) THEN '''' ELSE ''10'' END) = 
-    ANY(ARRAY['''', ''01'', ''01_02'', ''01_02_03'', ''01_02_03_04'', ''01_02_03_04_05'', ''01_02_03_04_05_06'', ''01_02_03_04_05_06_07'', ''01_02_03_04_05_06_07_08'', ''01_02_03_04_05_06_07_08_09'', ''01_02_03_04_05_06_07_08_09_10'']);
+WHERE NOT (CASE WHEN species_1 = ANY(TT_IsMissingOrNotInSetCode()) AND species_1 != ''NOT_IN_SET'' THEN '''' ELSE ''01'' END || 
+    CASE WHEN species_2 = ANY(TT_IsMissingOrNotInSetCode()) AND species_2 != ''NOT_IN_SET'' THEN '''' ELSE ''_02'' END || 
+    CASE WHEN species_3 = ANY(TT_IsMissingOrNotInSetCode()) AND species_3 != ''NOT_IN_SET'' THEN '''' ELSE ''_03'' END || 
+    CASE WHEN species_4 = ANY(TT_IsMissingOrNotInSetCode()) AND species_4 != ''NOT_IN_SET'' THEN '''' ELSE ''_04'' END || 
+    CASE WHEN species_5 = ANY(TT_IsMissingOrNotInSetCode()) AND species_5 != ''NOT_IN_SET'' THEN '''' ELSE ''_05'' END || 
+    CASE WHEN species_6 = ANY(TT_IsMissingOrNotInSetCode()) AND species_6 != ''NOT_IN_SET'' THEN '''' ELSE ''_06'' END || 
+    CASE WHEN species_7 = ANY(TT_IsMissingOrNotInSetCode()) AND species_7 != ''NOT_IN_SET'' THEN '''' ELSE ''_07'' END || 
+    CASE WHEN species_8 = ANY(TT_IsMissingOrNotInSetCode()) AND species_8 != ''NOT_IN_SET'' THEN '''' ELSE ''_08'' END || 
+    CASE WHEN species_9 = ANY(TT_IsMissingOrNotInSetCode()) AND species_9 != ''NOT_IN_SET'' THEN '''' ELSE ''_09'' END || 
+    CASE WHEN species_10 =ANY(TT_IsMissingOrNotInSetCode()) AND species_10 != ''NOT_IN_SET'' THEN '''' ELSE ''10'' END) = 
+    ANY(ARRAY['''', ''01'', ''01_02'', ''01_02_03'', ''01_02_03_04'', ''01_02_03_04_05'', ''01_02_03_04_05_06'', ''01_02_03_04_05_06_07'', ''01_02_03_04_05_06_07_08'', ''01_02_03_04_05_06_07_08_09'', ''01_02_03_04_05_06_07_08_09_10''])
+    ORDER BY cas_id;
 ' list_query
 FROM (
 WITH species_orderings AS (
   SELECT DISTINCT 
-    CASE WHEN species_1 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '01' END || 
-    CASE WHEN species_2 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '_02' END || 
-    CASE WHEN species_3 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '_03' END || 
-    CASE WHEN species_4 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '_04' END || 
-    CASE WHEN species_5 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '_05' END || 
-    CASE WHEN species_6 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '_06' END || 
-    CASE WHEN species_7 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '_07' END || 
-    CASE WHEN species_8 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '_08' END || 
-    CASE WHEN species_9 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '_09' END || 
-    CASE WHEN species_10 = ANY(TT_IsMissingOrNotInSetCode()) THEN '' ELSE '10' END  lyr_ordering
+    CASE WHEN species_1 = ANY(TT_IsMissingOrNotInSetCode()) AND species_1 != 'NOT_IN_SET' THEN '' ELSE '01' END || 
+    CASE WHEN species_2 = ANY(TT_IsMissingOrNotInSetCode()) AND species_2 != 'NOT_IN_SET' THEN '' ELSE '_02' END || 
+    CASE WHEN species_3 = ANY(TT_IsMissingOrNotInSetCode()) AND species_3 != 'NOT_IN_SET' THEN '' ELSE '_03' END || 
+    CASE WHEN species_4 = ANY(TT_IsMissingOrNotInSetCode()) AND species_4 != 'NOT_IN_SET' THEN '' ELSE '_04' END || 
+    CASE WHEN species_5 = ANY(TT_IsMissingOrNotInSetCode()) AND species_5 != 'NOT_IN_SET' THEN '' ELSE '_05' END || 
+    CASE WHEN species_6 = ANY(TT_IsMissingOrNotInSetCode()) AND species_6 != 'NOT_IN_SET' THEN '' ELSE '_06' END || 
+    CASE WHEN species_7 = ANY(TT_IsMissingOrNotInSetCode()) AND species_7 != 'NOT_IN_SET' THEN '' ELSE '_07' END || 
+    CASE WHEN species_8 = ANY(TT_IsMissingOrNotInSetCode()) AND species_8 != 'NOT_IN_SET' THEN '' ELSE '_08' END || 
+    CASE WHEN species_9 = ANY(TT_IsMissingOrNotInSetCode()) AND species_9 != 'NOT_IN_SET' THEN '' ELSE '_09' END || 
+    CASE WHEN species_10 = ANY(TT_IsMissingOrNotInSetCode()) AND species_10 != 'NOT_IN_SET' THEN '' ELSE '10' END  lyr_ordering
   FROM casfri50.lyr_all
 ) 
 SELECT array_agg(lyr_ordering) = ARRAY['', '01', '01_02', '01_02_03', '01_02_03_04', '01_02_03_04_05', '01_02_03_04_05_06', '01_02_03_04_05_06_07', '01_02_03_04_05_06_07_08', '01_02_03_04_05_06_07_08_09', '01_02_03_04_05_06_07_08_09_10'] passed
