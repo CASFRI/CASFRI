@@ -94,7 +94,7 @@ REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row;
 INSERT INTO casfri50_history.casflat_gridded 
 SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
 FROM casfri50_flat.cas_flat_all_layers_same_row
-WHERE inventory_id = 'QC06';
+WHERE inventory_id = 'QC05' OR inventory_id = 'QC06';
 ```
 
 **9. Regenerate the table containing the count of row per inventory (this code is in 01_PrepareGeoHistory.sql):**
