@@ -198,7 +198,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --SELECT TT_HasPrecedence('AB16', '3', 'AB06', '2'); -- true
 ------------------------------------------------------------------------------
 -- Create a table of polygon counts for 
---DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
+DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
 CREATE TABLE casfri50_coverage.inv_counts AS
 SELECT left(cas_id, 4) inv, count(*) cnt
 FROM casfri50.cas_all
