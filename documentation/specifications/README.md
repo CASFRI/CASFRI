@@ -181,14 +181,11 @@ The **OWNER_TYPE** attribute identifies who owns the inventory data. Ownership o
 
 ### OWNER_NAME
 
-The **OWNER_NAME** attribute identifies who owns the land that the inventory covers, and degree of permission to which the data can be used. Ownership of the land is identified as being crown, private, military, or First Nation.
+The **OWNER_NAME** attribute identifies who owns the land covered by the inventory.
 
 | Values   | Description   |
 | :------- | :-------------- |
-| CROWN    | Crown |
-| PRIVATE  | Private |
-| MILITARY | Military |
-| FN       | First Nation |
+| Text     | Name of the owner |
 | UNKNOWN_VALUE | Owner name is unknown |
 
 
@@ -198,8 +195,8 @@ The **STANDARD_TYPE** attribute identifies the kind of inventory that was produc
 
 | Values         | Description        |
 | :------------- | :-------------- |
-|  Alphanumeric | Inventory name or type of inventory |
-| UNKNOWN_VALUE | Inventory name or type of inventory is unknown |
+| Alphanumeric   | Inventory name or type of inventory |
+| UNKNOWN_VALUE  | Inventory name or type of inventory is unknown |
 
 
 ### STANDARD_VERSION
@@ -209,11 +206,12 @@ The **STANDARD_VERSION** attribute identifies the version number of the standard
 | Values         | Description        |
 | :------------- | :-------------- |
 |  Alphanumeric | The standard and version of the standard used to produce the inventory |
+| UNKNOWN_VALUE  | Inventory name or type of inventory is unknown |
 
 
 ### STANDARD_ID
 
-The **STANDARD_ID** attribute is the CASFRI unique identifier for the standard used to produce the inventory. If a standard is updated such that a new translation table is required, the **STANDARD_ID** is be incremented. The numeric part of the standard id does not necessarily correspond to the version of the standard nor to a chronological order. It is simply a unique identifier.
+The **STANDARD_ID** attribute is the CASFRI unique identifier for the standard used to produce the inventory. If a standard is updated such that a new translation table is required, the **STANDARD_ID** is incremented. The numeric part of the standard id does not necessarily correspond to the version of the standard nor to a chronological order. It is simply a unique identifier.
 
 | Values        | Description   |
 | :------------ | :------------ |
@@ -293,6 +291,7 @@ The **ACQUISITION_TYPE** attribute identifies the mean by which the inventory da
 | HTTP   | Inventory data was acquired through a HTTP site. Link to the HTTP site should be provided in the ACQUISITION_LINKS field |
 | TEMPORARY_FTP | Inventory data was acquired through a temporary FTP link that is not available anymore |
 | TEMPORARY_HTTP | Inventory data was acquired through a temporary HTTP link that is not available anymore |
+| EMAIL | Inventory data was acquired through an email exchange with the producer |
 | UNKNOWN_VALUE   | Acquisition type is unknown |
 
 ### ACQUISITION_LINKS
@@ -312,7 +311,7 @@ The **CONTACT_INFO** attribute identifies the contact information (name, address
 | Values | Description |
 | :----- | :-------------- |
 | Text   | Contact information associated with the inventory data   |
-| NO_INFO | No contact info was provided |
+| UNKNOWN_VALUE | No contact info was provided |
 
 
 ### DATA_AVAILABILITY
