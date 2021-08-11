@@ -450,12 +450,28 @@ CREATE OR REPLACE FUNCTION TT_SigDigits(
 ) 
 RETURNS numeric
 AS $$
-    SELECT round(n::numeric, digits - 1 - floor(log(abs(n)))::int)
+    SELECT round(n::numeric, digits - 1 - floor(CASE WHEN n = 0 THEN 0 ELSE log(abs(n)) END)::int)
 $$ LANGUAGE sql IMMUTABLE STRICT;
 
 --SELECT TT_SigDigits(0.0000372537::double precision, 3)
 --SELECT TT_SigDigits(12353263256525, 5)
+--SELECT TT_SigDigits(123, 2)
+--SELECT TT_SigDigits(0, 5)
+--SELECT TT_SigDigits(0.01, 5)
+WITH series AS (
+  SELECT 111111111111 n, generate_series(1, 10) d
+)
+SELECT n, d, round(n, d - 1 - floor(log(abs(n)))::int), log(n), floor(log(n)), d - 1 - floor(log(n)), d - 1 - floor(log(abs(n)))::int
+FROM series;
 
+WITH series AS (
+  SELECT generate_series(1, 10) - 5 n
+)
+SELECT n, log(abs(n))
+FROM series
+WHERE n != 0;
+
+SELECT round(123, -2)
 -----------------------------------------------------------
 -- TT_SplitAgg aggregate state function
 --
