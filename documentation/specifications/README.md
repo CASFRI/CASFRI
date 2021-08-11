@@ -66,12 +66,12 @@ Table 1. CASFRI schema.
 | <sub>HDR</sub>               | <sub>CAS</sub>               | <sub>LYR</sub>                 | <sub>NFL</sub>                 | <sub>DST</sub>              | <sub>ECO</sub>              | <sub>GEO</sub>             |
 | ---------------------------- | ---------------------------- | ------------------------------ | ------------------------------ | --------------------------- | --------------------------- | -------------------------- |
 | <sub>INVENTORY_ID (PK)</sub> | <sub>CAS_ID (PK, FK)</sub>   | <sub>CAS_ID (PK, FK)</sub>     | <sub>CAS_ID (PK, FK)</sub>     | <sub>CAS_ID (PK, FK)</sub>  | <sub>CAS_ID (PK, FK)</sub>  | <sub>CAS_ID (PK, FK)</sub> |
-| <sub>JURISDICTION</sub>      | <sub>INVENTORY_ID (FK)</sub> | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>       | <sub>WETLAND_TYPE</sub>     | <sub>GEOMETRY</sub>        |
-| <sub>OWNER_TYPE</sub>        | <sub>ORIG_STAND_ID</sub>     | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_TYPE_1</sub>      | <sub>WET_VEG_COVER</sub>    |                            |
-| <sub>OWNER_NAME</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_YEAR_1</sub>      | <sub>WET_LANDFORM_MOD</sub> |                            |
-| <sub>STANDARD_TYPE</sub>     | <sub>NUM_OF_LAYERS</sub>     | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                            |
-| <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>STRUCTURE_RANGE</sub>       | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>ECO_SITE</sub>         |                            |
-| <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      |                 <sub>LAYER</sub>            |                            |
+| <sub>JURISDICTION</sub>      | <sub>INVENTORY_ID (FK)</sub> | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>       | <sub>LAYER</sub>            | <sub>GEOMETRY</sub>        |
+| <sub>OWNER_TYPE</sub>        | <sub>ORIG_STAND_ID</sub>     | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_TYPE_1</sub>      | <sub>WETLAND_TYPE</sub>     |                            |
+| <sub>OWNER_NAME</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_YEAR_1</sub>      | <sub>WET_VEG_COVER</sub>    |                            |
+| <sub>STANDARD_TYPE</sub>     | <sub>NUM_OF_LAYERS</sub>     | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LANDFORM_MOD</sub> |                            |
+| <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>STRUCTURE_RANGE</sub>     | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                            |
+| <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      | <sub>ECO_SITE</sub>         |                            |
 | <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>CROWN_CLOSURE_LOWER</sub> |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_YEAR_2</sub>      |                             |                            |
 | <sub>DOCUMENTATION_TITLES</sub> | <sub>SRC_INV_AREA</sub>   | <sub>HEIGHT_UPPER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
 | <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>HEIGHT_LOWER</sub>        | <sub>NAT_NON_VEG</sub>         | <sub>DIST_EXT_LOWER_2</sub> |                             |                            |
@@ -515,6 +515,7 @@ The **SRC_INV_AREA** attribute measures the area of each polygon in hectares (ha
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
+
 ### STAND_PHOTO_YEAR
 
 The **STAND_PHOTO_YEAR** attribute identifies the year in which the aerial photography program was conducted for a particular polygon. This is in contrast to photo_year_start and photo_year_end which identify the interval for when the inventory was completed.
@@ -538,6 +539,7 @@ Forest layer attributes.
 ### CAS_ID (PK, FK)
 
 See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
+
 
 <a name=LAYER></a>
 ### LAYER (PK)
@@ -631,6 +633,7 @@ The **SOIL_MOIST_REG** attribute identifies the available moisture supply for pl
 
 Notes: SOIL_MOIST_REG is usually a polygon level attribute and is therefore the same for any LYR and NFL records. AB and NT however report soil moisture separately for the overstory and understory layers which can lead to layer 1 and 2 having different values.
 
+
 <a name=CROWN_CLOSURE></a>
 ### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER 
 
@@ -645,7 +648,6 @@ The **CROWN_CLOSURE_UPPER** and **CROWN_CLOSURE_LOWER** attributes estimate the 
 | -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
-
 
 
 <a name=HEIGHT></a>
@@ -732,7 +734,6 @@ The **SPECIES_PER_1** to **SPECIES_PER_10** attributes identify the percentage o
 | -9999 | Source value is outside expected range |
 
 
-
 ### ORIGIN_UPPER, ORIGIN_LOWER
 
 The **ORIGIN_UPPER** and **ORIGIN_LOWER** attributes identify the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CASFRI origin. Some inventories include origin explicitly, and in some cases we calculate it using photo year and age.
@@ -746,7 +747,6 @@ The **ORIGIN_UPPER** and **ORIGIN_LOWER** attributes identify the average initia
 | -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
-
 
 
 ### SITE_CLASS
@@ -787,16 +787,20 @@ The **SITE_CLASS** attribute estimates site productivity for tree growth. It is 
 
 Non-forested attributes.
 
+
 ### CAS_ID (PK, FK)
 
 See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
+
 
 ### LAYER (PK)
 
 See <a href="#LAYER">LAYER</a> in the LYR table.
 
+
 ### LAYER_RANK  
 See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
+
 
 ### SOIL_MOIST_REG
 
@@ -829,25 +833,26 @@ The **NAT_NON_VEG** attribute identifies the type of natural land with no vegeta
 | Values         | Description |
 | :------------- | :----- |
 | ALPINE         | High elevation exposed land |
-| LAKE           | Ponds, lakes or reservoirs |
-| RIVER          | Double-lined watercourse |
-| OCEAN          | Coastal waters |
-| WATERBODY      | Generic waterbody |
-| ROCK_RUBBLE    | Bed rock or talus or boulder field |
-| SAND           | Sand dunes, sand hills, non-recent water sediments |
-| SNOW_ICE       | Ice fields, glaciers, permanent snow |
-| SLIDE          | Recent slumps or slides with exposed earth |
-| EXPOSED_LAND   | Other non-vegetated land |
 | BEACH          | Sand areas adjacent to water bodies |
-| WATER_SEDIMENT | Recent sand and gravel bars |
+| EXPOSED_LAND   | Other non-vegetated land |
 | FLOOD          | Recent flooding including beaver ponds |
 | ISLAND         | Vegetated or non-vegetated islands |
+| LAKE           | Ponds, lakes or reservoirs |
+| OCEAN          | Coastal waters |
+| RIVER          | Double-lined watercourse |
+| ROCK_RUBBLE    | Bed rock or talus or boulder field |
+| SAND           | Sand dunes, sand hills, non-recent water sediments |
+| SLIDE          | Recent slumps or slides with exposed earth |
+| SNOW_ICE       | Ice fields, glaciers, permanent snow |
 | TIDAL_FLATS    | Non-vegetated feature associated with oceans |
+| WATER_SEDIMENT | Recent sand and gravel bars |
+| WATERBODY      | Generic waterbody |
 | OTHER          | Any other source inventory land type not supported by CASFRI |
 | NULL_VALUE     | Source value is NULL |
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| INVALID_VALUE  | Source value is clearly invalid |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
@@ -857,17 +862,18 @@ The **NON_FOR_ANTH** attribute identifies the type of non-forested anthropogenic
 
 | Values         | Description |
 | :------------- | :----- |
-| INDUSTRIAL     | Industrial sites |
-| FACILITY_INFRASTRUCTURE | Transportation, transmission, pipeline |
-| CULTIVATED     | Pasture, crops, orchards, plantations |
-| SETTLEMENT     | Cities, towns, ribbon development |
-| LAGOON         | Water filled, includes treatment sites |
 | BORROW_PIT     | Associated with facility/infrastructure |
+| CULTIVATED     | Pasture, crops, orchards, plantations |
+| FACILITY_INFRASTRUCTURE | Transportation, transmission, pipeline |
+| INDUSTRIAL     | Industrial sites |
+| LAGOON         | Water filled, includes treatment sites |
+| SETTLEMENT     | Cities, towns, ribbon development |
 | OTHER          | Any other source inventory site type not supported by CASFRI |
 | NULL_VALUE     | Source value is NULL |
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| INVALID_VALUE  | Source value is clearly invalid |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
@@ -877,19 +883,21 @@ The **NON_FOR_VEG** attribute identifies the type of non-forested vegetated area
 
 | Values         | Description |
 | :------------- | :----- |
-| TALL_SHRUB     | Shrub lands with shrubs > 2 meters tall |
-| LOW_SHRUB      | Shrub lands with shrubs < 2 meters tall |
-| GRAMINOIDS     | Grasses, sedges, rushes, and reeds |
-| FORBS          | Herbaceous plants other than graminoids |
-| HERBS          | Undistinguishable family of herbs |
+| ALPINE_FOREST  | Non productive, high altitude forest |
 | BRYOID         | Mosses and lichens |
+| FORBS          | Herbaceous plants other than graminoids |
+| GRAMINOIDS     | Grasses, sedges, rushes, and reeds |
+| HERBS          | Undistinguishable family of herbs |
+| LOW_SHRUB      | Shrub lands with shrubs < 2 meters tall |
 | OPEN_MUSKEG    | Wetlands with less than 10% tree cover (<25% in NS) |
+| TALL_SHRUB     | Shrub lands with shrubs > 2 meters tall |
 | TUNDRA         | Flat treeless plains |
 | OTHER          | Any other source inventory cover type not supported by CASFRI  |
 | NULL_VALUE     | Source value is NULL |
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| INVALID_VALUE  | Source value is clearly invalid |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
@@ -919,25 +927,26 @@ The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturban
 | :------------- | :-------------- |
 | BURN           | Wildfires or escape fires |
 | CUT            | Logging with known extent |
+| DEAD_UNKNOWN   | Dead or dying trees, cause unknown |
 | DISEASE        | Root, stem or branch diseases |
 | FLOOD          | Permanent flooding from blockage or damming |
 | INSECT         | Root, bark, leader or defoliation insects |
 | PARTIAL_CUT    | Portion of forest has been removed, extent known or unknown |
-| SLIDE          | Damage from avalanche, slump, earth or rock slides |
-| WINDFALL       | Blow down |
-| WEATHER        | Ice, frost, red belt |
-| DEAD_UNKNOWN   | Dead or dying trees, cause unknown |
 | SILVICULTURE_TREATMENT | Planting, thinning, seed tree |
+| SLIDE          | Damage from avalanche, slump, earth or rock slides |
+| WEATHER        | Ice, frost, red belt |
+| WINDFALL       | Blow down |
 | OTHER          | Other type of damage |
 | NULL_VALUE     | Source value is NULL |
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
-| NOT_APPLICABLE | Attribute does not apply to this record |
 | INVALID_VALUE  | Source value is not in an acceptable format |
+| NOT_APPLICABLE | Attribute does not apply to this record |
 
 Note:
 * In some cases disturbance types can occur without years, and years can occur without disturbance types. Any disturbances with unknown years are reported as the oldest disturbance, and any missing disturbance types are reported as UNKNOWN_VALUE.
+
 
 ### DIST_YEAR_1 - DIST_YEAR_3  
 
@@ -949,6 +958,7 @@ The **DIST_YEAR_1** to **DIST_YEAR_3** attributes identify the year a disturbanc
 | -8888 | Source value is NULL |
 | -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -961,9 +971,10 @@ The **DIST_EXT_UPPER_1** to **DIST_EXT_UPPER_3** and the **DIST_EXT_LOWER_1** to
 | :--------------------------------------------------------------------------------------------------------------- | :-------------- |
 | 5&#8209;100 | Upper bound of extent class |
 | 1&#8209;95 | Lower bound of extent class |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -978,6 +989,7 @@ Ecological attributes are generally not included or are incompletely recorded in
 
 See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
+
 ### LAYER (PK)
 
 The **LAYER** attribute identifies the specific layer to which the wetland is linked in the source data. When wetlands are not explicitly linked to a specific layer -8886 (UNKNOWN_VALUE) is assigned. Layer is usually only populated for cases with horizontal structure where multiple wetland sub-components can be included within a single polygon (e.g. PC02). In this case each layer represents a different sub-component of the horizontal structure.
@@ -987,6 +999,7 @@ The **LAYER** attribute identifies the specific layer to which the wetland is li
 | 1&#8209;9| Identifies the layer number that the wetland is associated with |
 | -8886 | Source value should exist but is unknown |
 
+
 ### WETLAND CLASSIFICATION
 
 The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>1</sup> and modified by Vitt and Halsey<sup>2,3</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland type (WETLAND_TYPE), wetland vegetation modifier (WET_VEG_COVER), wetland landform modifier (WET_LANDFORM_MOD), and wetland local modifier (WET_LOCAL_MOD).  
@@ -995,19 +1008,21 @@ Five major wetland types are recognized based on wetland development from hydrol
 
 Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland types derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database. 
 
+
 ### WETLAND_TYPE
 
 | Values | Description |
 | :----- | :----- |
 | BOG    | > 40 cm peat, receive water from precipitation only, low in nutrients and acid, open or wooded with sphagnum moss |
+| ESTUARY | Mixed freshwater/saltwater marsh areas |
 | FEN    | > 40 cm peat, groundwater and runoff flow, mineral rich with mostly brown mosses, open, wooded or treed |
 | SWAMP  | Woody vegetation with > 30% shrub cover or 6% tree cover. Mineral rich with periodic flooding and near permanent subsurface water. Various mixtures of mineral sediments and peat |
 | MARSH  | Emergent vegetation with < 30% shrub cover, permanent or seasonally inundated with nutrient rich water |
 | SHALLOW_WATER | Freshwater lakes < 2 m depth |
 | TIDAL_FLATS | Ocean areas with exposed flats |
-| ESTUARY | Mixed freshwater/saltwater marsh areas |
 | WETLAND | Wetland without distinction of type |
 | NOT_WETLAND | Upland areas |
+| NULL_VALUE     | Source value is NULL |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
@@ -1016,10 +1031,10 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | Values | Description |
 | :----- | :----- |
 | FORESTED | Closed canopy forests > 70% tree cover |
-| WOODED   | Open canopy forests > 6% to 70% tree cover |
+| MUD      | No vegetation cover |
 | OPEN_NON_TREED_FRESHWATER | Open canopy forests < 6% tree cover with shrubs |
 | OPEN_NON_TREED_COASTAL | Open canopy coastal forests < 6% tree cover, with shrubs |
-| MUD      | No vegetation cover |
+| WOODED   | Open canopy forests > 6% to 70% tree cover |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
@@ -1027,9 +1042,9 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 
 | Values | Description |
 | :----- | :---------- |
-| PERMAFROST_PRESENT       | Permafrost present |
-| PATTERNING_PRESENT       | Patterning present |
 | NO_PERMAFROST_PATTERNING | No permafrost or patterning present |
+| PATTERNING_PRESENT       | Patterning present |
+| PERMAFROST_PRESENT       | Permafrost present |
 | SALINE_ALKALINE          | Saline or alkaline present |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
@@ -1038,12 +1053,12 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 
 | Values | Description |
 | :----- | :----- |
-| INT_LAWN_SCAR   | Collapse scar present in permafrost area |
+| GRAMINOIDS      | Graminoids with shrub cover < 25%      |
 | INT_LAWN_ISLAND | Internal lawn with islands of forested peat plateau |
+| INT_LAWN_SCAR   | Collapse scar present in permafrost area |
 | INT_LAWN        | Internal lawns present (permafrost was once present) |
 | NO_LAWN         | Internal lawns not present |
 | SHRUB_COVER     | Shrub cover > 25% |
-| GRAMINOIDS      | Graminoids with shrub cover < 25%      |
 | NOT_APPLICABLE  | Attribute does not apply to this record |
 
 <sup>1</sup>National Wetlands Working Group 1988. Wetlands of Canada. Ecological Land Classification Series No. 24.  
@@ -1053,13 +1068,13 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 <sup>3</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.  
 
   
-### ECOSITE
+### ECO_SITE
 
-The **ECOSITE** attribute is a site-level description that provide a linkage between vegetation and soil/moisture and nutrient features on the site. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. An ecosite field is included in CAS to accommodate inventories that do include ecosite data.
+The **ECO_SITE** attribute is a site-level description that provide a linkage between vegetation and soil/moisture and nutrient features on the site. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. The **ECO_SITE** attribute is included in CAS to accommodate inventories that do include ecosite data.
 
 | Values      | Description      |
 | :---------- | :---------- |
-| A-Z / 0-199 | Ecosite - an area defined by a specific combination of site, soil, and vegetation characteristics as influenced by                     environmental factors |
+| Alphanumeric | Combination of site, soil, and vegetation characteristics as influenced by environmental factors |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
