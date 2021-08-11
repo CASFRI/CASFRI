@@ -110,8 +110,8 @@ DROP TABLE IF EXISTS casfri50_coverage.intersections;
 CREATE TABLE casfri50_coverage.intersections AS
 WITH unnested AS (
   SELECT a.inv, unnest(TT_SplitAgg(a.geom, b.geom, 0.001)) geom
-  FROM casfri50_coverage.smoothed a,
-       casfri50_coverage.smoothed b
+  FROM casfri50_coverage.simplified a,
+       casfri50_coverage.simplified b
   WHERE ST_Equals(a.geom, b.geom) OR
         ST_Contains(a.geom, b.geom) OR
         ST_Contains(b.geom, a.geom) OR
