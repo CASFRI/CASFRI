@@ -583,6 +583,7 @@ RETURNS boolean AS $$
     smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), minArea);
     SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE inv = fromInv INTO cnt;
     FOREACH tableName IN ARRAY tableNameArr LOOP
+      RAISE NOTICE 'Processing % %...', fromInv, tableName;
       outGeom = CASE WHEN tableName = 'detailed' THEN detailedGeom
                      WHEN tableName = 'noholes' THEN noHolesGeom
                      WHEN tableName = 'noislands' THEN noIslandsGeom
@@ -595,7 +596,23 @@ RETURNS boolean AS $$
                  WHERE inv = ''' || upper(fromInv) || ''';
                  INSERT INTO casfri50_coverage.' || tableName || ' (inv, nb_polys, nb_points, geom) VALUES ($2, $3, $4, $5);';
       EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
+
+      -- Create a gridded version for each
+      RAISE NOTICE 'Processing % %...', fromInv, tableName || '_gridded';
+      queryStr = 'CREATE TABLE IF NOT EXISTS casfri50_coverage.' || tableName || '_gridded
+                 (inv text, nb_polys int, nb_points int, geom geometry);
+                 CREATE INDEX IF NOT EXISTS ' || tableName || '_geom_idx ON casfri50_coverage.' || tableName || '_gridded USING gist(geom);
+                 DELETE FROM casfri50_coverage.' || tableName || '_gridded
+                 WHERE inv = ''' || upper(fromInv) || ''';
+                 INSERT INTO casfri50_coverage.' || tableName || '_gridded (inv, nb_polys, nb_points, geom) 
+                 SELECT inv, nb_polys, ST_NPoints((geom).geom) nb_points, (geom).geom geom
+                 FROM (SELECT inv, nb_polys, TT_SplitByGrid(geom, 10000) geom
+                       FROM casfri50_coverage.' || tableName || '
+                       WHERE inv = ''' || upper(fromInv) || ''') foo;';
+      EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
+      RAISE NOTICE 'Processing of % finished...', fromInv;
     END LOOP;
+    
     RETURN TRUE;
   END
 $$ LANGUAGE plpgsql VOLATILE;
