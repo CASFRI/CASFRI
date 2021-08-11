@@ -12,12 +12,10 @@
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 -------------------------------------------------------------------------------
 -- Add a unique index on cas_flat_all_layers_same_row
-CREATE UNIQUE INDEX ON casfri50_flat.cas_flat_one_layer_per_row (cas_id, layer);
-
--- Add more indexes
 CREATE INDEX cas_flat_all_layers_same_row_casid_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING btree(cas_id);
 
+-- Add more indexes
 CREATE INDEX cas_flat_all_layers_same_row_inventory_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 4));
     
