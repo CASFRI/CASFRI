@@ -62,6 +62,20 @@ SELECT TT_ProduceDerivedCoverages('YT01', TT_SuperUnion('casfri50', 'geo_all', '
 SELECT TT_ProduceDerivedCoverages('YT02', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''YT02''')); --  231137,  9m07
 SELECT TT_ProduceDerivedCoverages('YT03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''YT03''')); --   71073,  xhxx
 
+-- Display the difference in terms of number of points
+SELECT a.inv, 
+       a.nb_points nb_pts_detailed, 
+       b.nb_points nb_pts_noholes, 
+       c.nb_points nb_pts_noislands, 
+       d.nb_points nb_pts_simplified, 
+       e.nb_points nb_pts_smoothed
+FROM casfri50_coverage.detailed a
+LEFT JOIN casfri50_coverage.noholes b USING (inv)
+LEFT JOIN casfri50_coverage.noislands c USING (inv)
+LEFT JOIN casfri50_coverage.simplified d USING (inv)
+LEFT JOIN casfri50_coverage.smoothed e USING (inv)
+ORDER BY inv;
+
 -- Make sure every coverage was build succesfully (49 polygons)
 SELECT inv, nb_polys, nb_points, ST_IsValid(geom) isvalid
 FROM casfri50_coverage.smoothed 
