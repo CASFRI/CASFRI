@@ -458,6 +458,7 @@ If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is a
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| INVALID_VALUE  | Source value is clearly invalid |
 | NOT_APPLICABLE | Attribute does not apply to this record (e.g. polygon does not have canopy information) |
 
 
@@ -507,9 +508,10 @@ The **SRC_INV_AREA** attribute measures the area of each polygon in hectares (ha
 | Values | Description        |
 | :----- | :------------ |
 | >=0.01 | Polygon (stand) area in hectares (ha) |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -520,9 +522,10 @@ The **STAND_PHOTO_YEAR** attribute identifies the year in which the aerial photo
 | Values      | Description      |
 | :---------- | :---------- |
 | 1900&#8209;2020 | Identifies the year in which the aerial photography program was conducted |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -541,7 +544,7 @@ See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
 
 Identifies the layer number of the LYR or NFL row within a particular polygon. A maximum of 9 layers can be identified. No two LYR or NFL layers can have the same value within the same polygon.
 
-LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by Layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exists, an NFL layer will get a value of 1. In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine. 
+LAYER is related to STAND_STRUCTURE and NUM_OF_LAYERS and is recorded for all LYR and NFL records. In stands with SINGLE_LAYERED, MULTI_LAYERED or COMPLEX structure, Layer 1 will always be the tallest (uppermost) LYR layer in the stand sequentially followed by layer 2 and so on. All NFL layers are reported below the LYR layers, shrub layers are assumed to be above herb layers in cases where both are available. Any non-vegetated NFL layers are reported last (i.e. highest layer value). Lower layers are assigned the appropriate value based on the presence of higher layers, so if no canopy information exists, an NFL layer will get a value of 1. In stands with HORIZONTAL structure, the LAYER values represent the different horizontal sub-components of the polygon. The maximum number of layers recognized is nine. 
 
 | Values   | Description   |
 | :------- | :------- |
@@ -562,11 +565,13 @@ Some inventories (AB, NB, NT, ON, SK SKVI, and NS) do not have an explicit rank 
 
 | Values | Description |
 | :----- | :----- |
-| 1&#8209;9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2,                etc.  |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record |
+| 1&#8209;9  | Layer Rank - value assigned sequentially to layer of importance. Rank 1 is the most important layer followed by Rank 2, etc. |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
+| -9999 | Source value is outside expected range |
 
 
 <a name=STRUCTURE_PER></a>
@@ -576,11 +581,12 @@ The **STRUCTURE_PER** attribute identifies the percentage of stand area for HORI
 
 | Values                             | Description  |
 | :--------------------------------- | :------ |
-| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10%                                        increments, of strata within the polygon. Must add up to 100%. |
-| 100                                | When **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", "COMPLEX", value = 100 i.e., when there is no horizontal                                                structure |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record |
+| 10, 20, 30, 40, 50, 60, 70, 80, 90 | When **STAND_STRUCTURE** = "HORIZONTAL", used with horizontal stands to identify the percentage, in 10% increments, of strata within the polygon. Must add up to 100%. |
+| 100                                | When **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", "COMPLEX", value = 100 i.e., when there is no horizontal structure |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -592,9 +598,10 @@ The **STRUCTURE_RANGE** attribute identifies the height range (m) around stand m
 | Values | Description |
 | :----- | :----- |
 | 1&#8209;99 | When **STAND_STRUCTURE** = "COMPLEX", measures the height range (m) around the midpoint height of the stand. It is calculated as the difference between the mean or median heights of the upper and lower layers within the complex stand |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record  (e.g. when **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", or "HORIZONTAL") |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record  (e.g. when **STAND_STRUCTURE** = "SINGLE_LAYERED", "MULTI_LAYERED", or "HORIZONTAL") |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -619,6 +626,7 @@ The **SOIL_MOIST_REG** attribute identifies the available moisture supply for pl
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| INVALID_VALUE  | Source value is clearly invalid |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 Notes: SOIL_MOIST_REG is usually a polygon level attribute and is therefore the same for any LYR and NFL records. AB and NT however report soil moisture separately for the overstory and understory layers which can lead to layer 1 and 2 having different values.
@@ -631,9 +639,10 @@ The **CROWN_CLOSURE_UPPER** and **CROWN_CLOSURE_LOWER** attributes estimate the 
 | Values    | Description |
 | :-------- | :-------------- |
 | 0&#8209;100   | Upper and lower bound of a crown closure class |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record (e.g. not a forested polygon) |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record (e.g. not a forested polygon) |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -647,9 +656,10 @@ The **HEIGHT_UPPER** and **HEIGHT_LOWER** attributes are based on an average hei
 | Values    | Description |
 | :-------- | :-------------- |
 | &gt;0, &#8804;100   | Upper and lower bound of a height class |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record (e.g. not a forested polygon) |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record (e.g. not a forested polygon) |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -703,6 +713,7 @@ CASFRI v5 adopts the National Forest Inventory species codes for Canada (https:/
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| INVALID_VALUE  | Source value is clearly invalid |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
@@ -712,10 +723,11 @@ The **SPECIES_PER_1** to **SPECIES_PER_10** attributes identify the percentage o
 
 | Values    | Description |
 | :-------- | :-------------- |
-| 1&#8209;100   | Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add                up to 100% |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record |
+| 1&#8209;100   | Percentage of a species or generic group of species that contributes to the species composition of a polygon. Must add up to 100% |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -728,9 +740,10 @@ The **ORIGIN_UPPER** and **ORIGIN_LOWER** attributes identify the average initia
 | Values    | Description |
 | :-------- | :-------------- |
 | 1000&#8209;2020  | Upper and lower bound of an origin class |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
@@ -750,6 +763,7 @@ The **SITE_CLASS** attribute estimates the potential productivity of land for tr
 | EMPTY_STRING   | Source value is a non-NULL empty string |
 | UNKNOWN_VALUE  | Source value should exist but is unknown |
 | NOT_IN_SET     | Source value is not in the set of expected values for the source inventory |
+| INVALID_VALUE  | Source value is clearly invalid |
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
@@ -760,9 +774,10 @@ The **SITE_CLASS** attribute estimates site productivity for tree growth. It is 
 | Values    | Description |
 | :-------- | :-------------- |
 | 0&#8209;99    | Estimate of site productivity for tree growth based on a specified reference age |
-| -8888 | Source value is NULL |
-| -8887 | Attribute does not apply to this record |
 | -8886 | Source value should exist but is unknown |
+| -8887 | Attribute does not apply to this record |
+| -8888 | Source value is NULL |
+| -9995 | Source value is in a wrong type |
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
