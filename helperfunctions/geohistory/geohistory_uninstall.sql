@@ -41,6 +41,7 @@ DROP FUNCTION IF EXISTS TT_SplitAgg_StateFN(geometry[], geometry, geometry);
 DROP FUNCTION IF EXISTS TT_SplitAgg_StateFN(geometry[], geometry, geometry, double precision);
 DROP FUNCTION IF EXISTS TT_ProgressMsg(bigint, int, timestamptz);
 DROP FUNCTION IF EXISTS TT_IntersectingArea(geometry, geometry, double precision);
+DROP FUNCTION IF EXISTS TT_RandomPoints(geometry, integer, numeric);
 
 DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
 DROP TYPE IF EXISTS geomlowuppval;

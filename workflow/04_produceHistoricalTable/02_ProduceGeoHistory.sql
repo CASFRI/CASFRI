@@ -147,7 +147,7 @@ WITH provinces AS (
 ), buffers AS (
   SELECT prov, 
          -- the number of buffer per province is proportional to the province area. min is 10, max is 100
-         ST_Buffer(ST_RandomPoints(geom, round(10 + (ST_Area(geom) - min_area) * (100 - 10) / (max_area - min_area))::int, 1), 1000) geom
+         ST_Buffer(TT_RandomPoints(geom, round(10 + (ST_Area(geom) - min_area) * (100 - 10) / (max_area - min_area))::int, 1), 1000) geom
   FROM provinces, buffer_nb_params
 )
 SELECT prov, (row_number() OVER(PARTITION BY prov)) buffer_id, geom
