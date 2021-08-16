@@ -1074,7 +1074,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '4.40'::text number,
        'lyr_all' target_table,
-       'Ensure LYR table STRUCTURE_RANGE is greater than 0 and smaller than 100' description, 
+       'Issue #753. Some rows produce -3333. Ensure LYR table STRUCTURE_RANGE is greater than 0 and smaller than 100' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
