@@ -159,11 +159,6 @@ ORDER BY prov, buffer_id;
 -- Display
 SELECT * FROM casfri50_history_test.geo_history_test_buffers;
 
--- Create index for faster extraction of buffer samples from the geo_history table
-CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 2));
-
-CREATE INDEX ON casfri50_history.geo_history USING gist(geom);
-
 -- Extract buffer samples into a new table
 DROP TABLE IF EXISTS casfri50_history_test.geo_history_test;
 CREATE TABLE casfri50_history_test.geo_history_test AS
