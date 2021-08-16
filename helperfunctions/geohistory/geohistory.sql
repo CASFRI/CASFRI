@@ -302,6 +302,83 @@ $$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE;
 SELECT * FROM TT_SplitByGrid(ST_Buffer(ST_MakePoint(0, 0), 100), 100);
 SELECT * FROM TT_SplitByGrid(NULL::geometry, 10);
 */
+-------------------------------------------------------------------------------
+-- TT_RandomPoints
+--
+--   geom geometry - Geometry in which to create the random points. Should be a
+--                   polygon or a multipolygon.
+--   nb int        - Number of random points to create.
+--   seed numeric  - Value between -1.0 and 1.0, inclusive, setting the seek if
+--                   repeatable results are desired. Default to NULL.
+--
+--   RETURNS SET OF geometry(point)
+--
+-- Generates points located randomly inside a geometry.
+-----------------------------------------------------------
+-- Self contained example creating 100 points:
+--
+-- SELECT TT_RandomPoints(ST_GeomFromText('POLYGON((-73 48,-72 49,-71 48,-69 49,-69 48,-71 47,-73 48))'), 1000, 0.5) geom;
+--
+-- Typical example creating a table of 1000 points inside the union of all the
+-- geometries of a table:
+--
+-- CREATE TABLE random_points AS
+-- SELECT TT_RandomPoints(ST_Union(geom), 1000) geom FROM geomtable;
+-----------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_RandomPoints(geometry, integer, numeric);
+CREATE OR REPLACE FUNCTION TT_RandomPoints(
+    geom geometry,
+    nb integer,
+    seed numeric DEFAULT NULL
+)
+RETURNS SETOF geometry AS $$
+    DECLARE
+        pt geometry;
+        xmin float8;
+        xmax float8;
+        ymin float8;
+        ymax float8;
+        xrange float8;
+        yrange float8;
+        srid int;
+        count integer := 0;
+        gtype text;
+    BEGIN
+        SELECT ST_GeometryType(geom) INTO gtype;
+
+        -- Make sure the geometry is some kind of polygon
+        IF (gtype IS NULL OR (gtype != 'ST_Polygon') AND (gtype != 'ST_MultiPolygon')) THEN
+            RAISE NOTICE 'Attempting to get random points in a non polygon geometry';
+            RETURN NEXT NULL;
+            RETURN;
+        END IF;
+
+        -- Compute the extent
+        SELECT ST_XMin(geom), ST_XMax(geom), ST_YMin(geom), ST_YMax(geom), ST_SRID(geom)
+        INTO xmin, xmax, ymin, ymax, srid;
+
+        -- and the range of the extent
+        SELECT xmax - xmin, ymax - ymin
+        INTO xrange, yrange;
+
+        -- Set the seed if provided
+        IF seed IS NOT NULL THEN
+            PERFORM setseed(seed);
+        END IF;
+
+        -- Find valid points one after the other checking if they are inside the polygon
+        WHILE count < nb LOOP
+            SELECT ST_SetSRID(ST_MakePoint(xmin + xrange * random(), ymin + yrange * random()), srid)
+            INTO pt;
+
+            IF ST_Contains(geom, pt) THEN
+                count := count + 1;
+                RETURN NEXT pt;
+            END IF;
+        END LOOP;
+        RETURN;
+    END;
+$$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
