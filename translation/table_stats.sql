@@ -1,3 +1,17 @@
+------------------------------------------------------------------------------
+-- CASFRI - Translation tables statistics script for CASFRI v5
+-- For use with PostgreSQL Table Tranlation Framework v2.0.1 for PostgreSQL 13.x
+-- https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework
+-- https://github.com/CASFRI/CASFRI
+--
+-- This is free software; you can redistribute and/or modify it under
+-- the terms of the GNU General Public Licence. See the COPYING file.
+--
+-- Copyright (C) 2018-2021 Pierre Racine <pierre.racine@sbf.ulaval.ca>, 
+--                         Marc Edwards <medwards219@gmail.com>,
+--                         Pierre Vernier <pierre.vernier@gmail.com>
+--                         Melina Houle <melina.houle@sbf.ulaval.ca>
+-------------------------------------------------------------------------------
 -- The goal of these statistics is to verify how LYR, NFL, DST and ECO info are structured in raw inventories.
 -- They should help us determine how rows must be selected for translation now that we filter some of them out 
 -- with TT_CreateMappingview() allegedly because they have no info.

@@ -1,15 +1,16 @@
 ------------------------------------------------------------------------------
--- CASFRI Inventory coverage production script for CASFRI v5 beta
--- For use with PostgreSQL Table Tranlation Engine v0.1 for PostgreSQL 9.x
--- https://github.com/edwardsmarc/postTranslationEngine
--- https://github.com/edwardsmarc/casfri
+-- CASFRI - Inventory coverage production script for CASFRI v5
+-- For use with PostgreSQL Table Tranlation Framework v2.0.1 for PostgreSQL 13.x
+-- https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework
+-- https://github.com/CASFRI/CASFRI
 --
 -- This is free software; you can redistribute and/or modify it under
 -- the terms of the GNU General Public Licence. See the COPYING file.
 --
--- Copyright (C) 2018-2020 Pierre Racine <pierre.racine@sbf.ulaval.ca>, 
+-- Copyright (C) 2018-2021 Pierre Racine <pierre.racine@sbf.ulaval.ca>, 
 --                         Marc Edwards <medwards219@gmail.com>,
 --                         Pierre Vernier <pierre.vernier@gmail.com>
+--                         Melina Houle <melina.houle@sbf.ulaval.ca>
 ------------------------------------------------------------------------------
 -- Union by grid with a single query - 49s
 SELECT TT_ProduceDerivedCoverages('AB03', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''AB03''')); --   61633,   28s
