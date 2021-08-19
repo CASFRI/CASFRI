@@ -64,6 +64,6 @@ The final step is to use the translated data to build the historical database. T
 
 Please use the following citations when referencing the CASFRI project and the PostgreSQL-Table-Translation-Framework:
 
-CASFRI Project Team (2021). Common Attribute Schema for Forest Resource Inventories. Université Laval, QC, Canada. URL https://casfri.github.io/CASFRI/. DOI: 10.5281/zenodo.5224971
+CASFRI Project Team (2021). Common Attribute Schema for Forest Resource Inventories. Université Laval, QC, Canada. URL https://casfri.github.io/CASFRI/. DOI: 10.5281/zenodo.5212880
 
-CASFRI Project Team (2021). PostgreSQL Table Translation Framework. Université Laval, QC, Canada. URL https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework. DOI: 10.5281/zenodo.5225058
+CASFRI Project Team (2021). PostgreSQL Table Translation Framework. Université Laval, QC, Canada. URL https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework. DOI: 10.5281/zenodo.5212132
