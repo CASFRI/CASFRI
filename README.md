@@ -248,11 +248,11 @@ The following diagram illustrates the temporalization procedure for a single pol
 ![Temporalization diagram](temporalization_diagram.jpg)
 
 Valid start and end dates are assigned using the following rules:
-* Each polygon is attributed a valid_year_begin year and a valid_year_end based on their stand_photo_year. By default, if the polygon does not overlap with another one in space and time, valid_year_begin = 1930 and valid_year_end = 2030
+* Each polygon is attributed a valid_year_begin year and a valid_year_end based on their CAS table stand_photo_year attribute value. By default, if a polygon does not overlap with another one in space and time, valid_year_begin is assigned 1930 and valid_year_end is assigned 2030
 * When two polygons overlap:
 
-  * Younger polygons take precedence over older polygons starting at their valid_year_begin (e.g. a polygon from 2010 take precedence over a 2000 polygon starting in year 2010. The 2000 polygon has precedence from 1930 until 2009)
-  * When both polygons have the same stand_photo_year, polygons with valid values take precedence over polygons with invalid values. Invalid values are defined as all significant CASFRI attributes being NULL or empty. This rarely happens, but if if does, the polygon with the valid values would take precedence.
+  * More recent polygons areas take precedence over older polygons areas starting at their valid_year_begin (e.g. a polygon from 2010 take precedence over a 2000 polygon starting in year 2010. The 2000 polygon has precedence from 1930 until 2009)
+  * When both polygons have the same stand_photo_year, the polygon with valid values take precedence over polygons with invalid values. Invalid values are defined as all significant CASFRI attributes being NULL or empty. This rarely happens, but if it does, the polygon with valid values takes precedence.
   * When both polygons have the same stand_photo_year and valid values but come from different inventories, polygons from higher precedence inventories as established by the TT_HasPrecedence() function and the casfri50_history_test.inv_precedence table takes precedence. For example, if two overlapping 2010 polygons both have all valid values but the first comes from AB10 and the second comes from AB16, then TT_HasPrecedence() states that the AB16 polygon must take precedence.
   * When both polygons have the same stand_photo_year, valid values and the same TT_HasPrecedence() precedence, then both polygons are sorted by their unique identifier (cas_id) and the first one has precedence over the second one.
 
