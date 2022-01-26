@@ -43,7 +43,7 @@ SELECT inventory_id, jurisdiction, owner_type, owner_name, standard_type, standa
        data_availability, redistribution, permission, license_agreement, 
        photo_year_start, photo_year_end, photo_year_src
 FROM translation.inventory_list_cas05
-WHERE inventory_id IN ('AB03', 'AB06', 'AB07', 'AB08', 'AB10', 'AB11', 'AB16', 'AB25', 'AB29', 'AB30', 
+WHERE inventory_id IN ('AB03', 'AB06', 'AB07', 'AB08', 'AB10', 'AB11', 'AB14', 'AB16', 'AB25', 'AB29', 'AB30', 
                        'BC08', 'BC10', 'BC11', 'BC12',
                        'MB01', 'MB02', 'MB04', 'MB05', 'MB06', 'MB07', 
                        'NB01', 'NB02', 'NL01', 'NS01', 'NS02', 'NS03', 'NT01', 'NT03', 
