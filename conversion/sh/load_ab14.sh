@@ -56,7 +56,7 @@ do
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F" \
     -nln $fullTargetTableName \
-    -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $srcFileName" \
+    -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $srcFileName" \
     $layer_creation_options $other_options \
     $overwrite_option
 
