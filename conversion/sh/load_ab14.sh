@@ -29,10 +29,14 @@
 source ./common.sh
 
 inventoryID=AB14
-srcFullPath=$friDir/AB/$inventoryID/data/inventory
-#srcFullPath=D:/Melina/FRIs/AB/AB14data
+#srcFullPath=$friDir/AB/$inventoryID/data/inventory
+srcFullPath=D:/Melina/FRIs/AB/AB14data
 
 fullTargetTableName=$targetFRISchema.ab14
+
+alpacFileName=Alpac_aviPhotoYear
+alpacFullPath=$friDir/AB/$inventoryID/data/photoyear/$photoFileName.shp
+alpacTableName=$targetFRISchema.ab_alpac_photoYear
 
 overwrite_option="$overwrite_tab"
 
@@ -66,6 +70,25 @@ do
     echo '***********************************************************************'
   fi
 done
-  
+
+# Run ogr2ogr to load Alpac photoyear
+"$gdalFolder/ogr2ogr" \
+-f PostgreSQL "$pg_connection_string" "$alpacFullPath" \
+-nln $alpacTableName $layer_creation_options $other_options \
+-nlt PROMOTE_TO_MULTI \
+-progress $overwrite_tab
+
+# Fix it
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "
+DROP TABLE IF EXISTS ${targetFRISchema}.new_alpac_photoyear;
+CREATE TABLE ${targetFRISchema}.new_alpac_photoyear AS
+SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, avi_year::int, ogc_fid
+FROM ${alpacTableName}
+WHERE avi_year ~ '^^[0-9]{4}$';
+DROP TABLE IF EXISTS ${alpacTableName};
+ALTER TABLE ${targetFRISchema}.new_alpac_photoyear RENAME TO ab_alpac_photoyear;
+"
+createSQLSpatialIndex=True  
 
 source ./common_postprocessing.sh
