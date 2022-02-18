@@ -29,13 +29,12 @@
 source ./common.sh
 
 inventoryID=AB14
-#srcFullPath=$friDir/AB/$inventoryID/data/inventory
-srcFullPath=D:/Melina/FRIs/AB/AB14data
+srcFullPath=$friDir/AB/$inventoryID/data/inventory
 
 fullTargetTableName=$targetFRISchema.ab14
 
 alpacFileName=Alpac_aviPhotoYear
-alpacFullPath=$friDir/AB/$inventoryID/data/photoyear/$photoFileName.shp
+alpacFullPath=$friDir/AB/$inventoryID/data/photoyear/$alpacFileName.shp
 alpacTableName=$targetFRISchema.ab_alpac_photoYear
 
 overwrite_option="$overwrite_tab"
@@ -84,8 +83,7 @@ done
 DROP TABLE IF EXISTS ${targetFRISchema}.new_alpac_photoyear;
 CREATE TABLE ${targetFRISchema}.new_alpac_photoyear AS
 SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, avi_year::int, ogc_fid
-FROM ${alpacTableName}
-WHERE avi_year ~ '^^[0-9]{4}$';
+FROM ${alpacTableName};
 DROP TABLE IF EXISTS ${alpacTableName};
 ALTER TABLE ${targetFRISchema}.new_alpac_photoyear RENAME TO ab_alpac_photoyear;
 "
