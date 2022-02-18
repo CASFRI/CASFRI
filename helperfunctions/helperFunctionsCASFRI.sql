@@ -4095,11 +4095,11 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TT_ab_photo_year_validation
 --
 -- AB inventories pre AB25 need to intersect with the photo year table to get photo year.
--- Post AB25 inventories have a phot year column so just need to check the value is valid.
+-- Post AB25 inventories have a photo year column so just need to check the value is valid.
 --
 -- All failed validations will return -9997 (INVALID_VALUE)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ab_photo_year_validation(text, text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_ab_photo_year_validation(text, text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_ab_photo_year_validation(
   inventoryID text,
   wkbGeometry text,
@@ -4108,12 +4108,13 @@ CREATE OR REPLACE FUNCTION TT_ab_photo_year_validation(
   lookupCol text,
   photoYear text,
   lowerBound text,
-  upperBound text
+  upperBound text,
+  data_yr text
 )
 RETURNS boolean AS $$
   BEGIN
-    -- for inventories prior to AB25, run the geoIsValid and geoIntersects validations
-    IF RIGHT(inventoryID, 2)::int < 25 THEN
+    -- for inventories without any data acquisition information, run the geoIsValid and geoIntersects validations
+    IF TT_notNull(photoYear) IS FALSE AND data_yr = '0' THEN
       IF TT_geoIsValid(wkbGeometry, 'TRUE') IS FALSE THEN
 	      RETURN FALSE;
       ELSIF TT_geoIntersects(wkbGeometry, lookupSchema, lookupTable, lookupCol) IS FALSE THEN
@@ -4121,8 +4122,16 @@ RETURNS boolean AS $$
       ELSE
         RETURN TRUE;
       END IF;
-  
-	-- for inventories post AB25, run notNull, isInt and isBetween on photo year value
+ 	-- for inventories with data acquisition information, run notNull and isInt on photo year value 
+    ELSIF TT_notNull(photoYear) IS FALSE AND data_yr != '0' THEN
+	  IF TT_notNull(data_yr) IS FALSE THEN
+        RETURN FALSE;
+      ELSIF TT_isInt(data_yr) IS FALSE THEN
+        RETURN FALSE;
+      ELSE
+        RETURN TRUE;
+	  END IF;
+	-- for inventories with photoyear information, run notNull, isInt and isBetween on photo year value
     ELSE
       IF TT_notNull(photoYear) IS FALSE THEN
         RETURN FALSE;
@@ -7268,7 +7277,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- AB inventories pre AB25 need to intersect with the photo year table to get photo year.
 -- Post AB25 inventories have a photo year column so just return it.
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ab_photo_year_translation(text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_ab_photo_year_translation(text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_ab_photo_year_translation(
   inventoryID text,
   wkbGeometry text,
@@ -7276,15 +7285,18 @@ CREATE OR REPLACE FUNCTION TT_ab_photo_year_translation(
   lookupTable text,
   lookupCol text,
   returnCol text,
-  photoYear text
+  photoYear text,
+  data_yr text
 )
 RETURNS int AS $$
   BEGIN
-    -- for inventories prior to AB25, run geoIntersection
-    IF RIGHT(inventoryID, 2)::int < 25 THEN
+    -- for inventories without photoyear information, run geoIntersection
+    IF TT_notNull(photoYear) IS FALSE AND data_yr = '0' THEN
       RETURN TT_geoIntersectionInt(wkbGeometry, lookupSchema, lookupTable, lookupCol, returnCol, 'GREATEST_AREA');
-  
-	  -- for inventories post AB25, run copyInt
+    -- for inventories with data acquisition information, run copyInt()
+    ELSIF TT_notNull(photoYear) IS FALSE AND data_yr != '0' THEN
+	  RETURN TT_copyInt(data_yr);
+   -- for inventories with photoyear information, run copyInt
     ELSE
       RETURN TT_copyInt(photoYear);
     END IF;
