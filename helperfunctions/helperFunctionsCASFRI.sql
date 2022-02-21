@@ -4123,10 +4123,18 @@ RETURNS boolean AS $$
         RETURN TRUE;
       END IF;
  	-- for inventories with data acquisition information, run notNull and isInt on photo year value 
-    ELSIF TT_notNull(photoYear) IS FALSE AND data_yr != '0' THEN
-	  IF TT_notNull(data_yr) IS FALSE THEN
+    ELSIF TT_notNull(photoYear) IS FALSE AND TT_notNull(data_yr) IS FALSE THEN
+      IF TT_geoIsValid(wkbGeometry, 'TRUE') IS FALSE THEN
+	      RETURN FALSE;
+      ELSIF TT_geoIntersects(wkbGeometry, lookupSchema, lookupTable, lookupCol) IS FALSE THEN
         RETURN FALSE;
-      ELSIF TT_isInt(data_yr) IS FALSE THEN
+      ELSE
+        RETURN TRUE;
+	  END IF;
+    ELSIF TT_notNull(photoYear) IS FALSE AND data_yr != '0' THEN
+	  IF TT_isInt(data_yr) IS FALSE THEN
+        RETURN FALSE;
+      ELSIF TT_isBetween(data_yr, lowerBound, upperBound) IS FALSE THEN
         RETURN FALSE;
       ELSE
         RETURN TRUE;
