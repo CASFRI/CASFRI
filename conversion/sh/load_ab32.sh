@@ -54,7 +54,7 @@ overwrite_option="$overwrite_tab"
 -sql "
 DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_alpac_updated_photoYear;
 CREATE TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear AS
-SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, avi_year::int, ogc_fid
+SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, photo_year::int, ogc_fid
 FROM ${alpacTableName};
 DROP TABLE IF EXISTS ${alpacTableName};
 ALTER TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear RENAME TO ab_alpac_updated_photoYear;

@@ -6,7 +6,7 @@
 
 # The year of photography is included as a shapefile. Photo year will be joined to the 
 # loaded table in PostgreSQL. 
-# Photo year will be joined to the loaded table in PostgreSQL
+# poly_id is the unique identifier.
 
 # Load into the ab31 target table in the schema defined in the config file.
 
