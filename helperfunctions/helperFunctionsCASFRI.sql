@@ -1721,20 +1721,20 @@ CREATE OR REPLACE FUNCTION TT_ab_avi01_wetland_code(
 )
 RETURNS text AS $$
   SELECT CASE
-           WHEN moisture='w' AND nonfor_veg IN('SO','SC') THEN 'SONS'
-           WHEN moisture='w' AND nonfor_veg IN('HG','HF') THEN 'MONG'
-           WHEN moisture='w' AND nonfor_veg='BR' THEN 'FONG'
-           WHEN moisture='w' AND nat_nonveg='NWB' THEN 'SONS'
-           WHEN moisture IN('a','d','m') AND (sp1='LT' OR sp2='LT') AND crownclose IN('A','B') THEN 'FTNN'
-           WHEN moisture IN('a','d','m') AND (sp1='LT' OR sp2='LT') AND crownclose='C' THEN 'STNN'
-           WHEN moisture IN('a','d','m') AND (sp1='LT' OR sp2='LT') AND crownclose='D' THEN 'SFNN'
-           WHEN moisture IN('a','d','m') AND (sp1='SB' AND sp1_percnt='10') AND crownclose IN('A','B') THEN 'BTNN'
-           WHEN moisture IN('a','d','m') AND (sp1='SB' AND sp1_percnt='10') AND crownclose='C' THEN 'STNN'
-           WHEN moisture IN('a','d','m') AND (sp1='SB' AND sp1_percnt='10') AND crownclose='D' THEN 'SFNN'
-           WHEN moisture IN('a','d','m') AND ((sp1='SB' OR sp1='FB') AND (sp2 IS NULL OR sp2!='LT')) AND crownclose IN('A','B','C') THEN 'STNN'
-           WHEN moisture IN('a','d','m') AND ((sp1='SB' OR sp1='FB') AND (sp2 IS NULL OR sp2!='LT')) AND crownclose='D' THEN 'SFNN'
-           WHEN moisture IN('a','d','m') AND sp1 IN('BW','PB') AND crownclose IN('A','B','C') THEN 'STNN'
-           WHEN moisture IN('a','d','m') AND sp1 IN('BW','PB') AND crownclose='D' THEN 'SFNN'
+           WHEN UPPER(moisture)='W' AND nonfor_veg IN('SO','SC') THEN 'SONS'
+           WHEN UPPER(moisture)='W' AND nonfor_veg IN('HG','HF') THEN 'MONG'
+           WHEN UPPER(moisture)='W' AND nonfor_veg='BR' THEN 'FONG'
+           WHEN UPPER(moisture)='W' AND nat_nonveg='NWB' THEN 'SONS'
+           WHEN UPPER(moisture) IN('A','D','M') AND (sp1='LT' OR sp2='LT') AND crownclose IN('A','B') THEN 'FTNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND (sp1='LT' OR sp2='LT') AND crownclose='C' THEN 'STNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND (sp1='LT' OR sp2='LT') AND crownclose='D' THEN 'SFNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND (sp1='SB' AND sp1_percnt='10') AND crownclose IN('A','B') THEN 'BTNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND (sp1='SB' AND sp1_percnt='10') AND crownclose='C' THEN 'STNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND (sp1='SB' AND sp1_percnt='10') AND crownclose='D' THEN 'SFNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND ((sp1='SB' OR sp1='FB') AND (sp2 IS NULL OR sp2!='LT')) AND crownclose IN('A','B','C') THEN 'STNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND ((sp1='SB' OR sp1='FB') AND (sp2 IS NULL OR sp2!='LT')) AND crownclose='D' THEN 'SFNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND sp1 IN('BW','PB') AND crownclose IN('A','B','C') THEN 'STNN'
+           WHEN UPPER(moisture) IN('A','D','M') AND sp1 IN('BW','PB') AND crownclose='D' THEN 'SFNN'
            ELSE NULL
          END;
 $$ LANGUAGE sql IMMUTABLE;
