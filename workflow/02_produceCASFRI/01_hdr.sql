@@ -46,7 +46,7 @@ FROM translation.inventory_list_cas05
 WHERE inventory_id IN ('AB03', 'AB06', 'AB07', 'AB08', 'AB10', 'AB11', 'AB16', 'AB25', 'AB27','AB29', 'AB30', 
                        'AB31', 'AB32', 'AB33', 'BC08', 'BC10', 'BC11', 'BC12',
                        'MB01', 'MB02', 'MB04', 'MB05', 'MB06', 'MB07', 
-                       'NB01', 'NB02', 'NL01', 'NS01', 'NS02', 'NS03', 'NT01', 'NT03', 
+                       'NB01', 'NB02', 'NL01', 'NS01', 'NS02', 'NS03', 'NT01', 'NT03', 'NT04',
                        'ON01', 'ON02', 'PC01', 'PC02', 'PE01', 
                        'QC01', 'QC02', 'QC03', 'QC04', 'QC05', 'QC06', 'QC07', 
                        'SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06', 
