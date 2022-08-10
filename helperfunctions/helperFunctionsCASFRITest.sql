@@ -91,12 +91,13 @@ WITH test_nb AS (
   SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  6 nb_test UNION ALL
   SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num, 13 nb_test UNION ALL
   SELECT 'TT_pe_pei01_countOfNotNull'::text function_tested,               43 maj_num,  8 nb_test UNION ALL
+  SELECT 'TT_pe_pei02_countOfNotNull'::text function_tested,               43 maj_num,  8 nb_test UNION ALL
   SELECT 'TT_vri01_hasCountOfNotNull'::text function_tested,               44 maj_num,  6 nb_test UNION ALL
   SELECT 'TT_ns_nsi01_hasCountOfNotNull'::text function_tested,            45 maj_num,  6 nb_test UNION ALL
   SELECT 'TT_fvi01_hasCountOfNotNull'::text function_tested,               46 maj_num,  5 nb_test UNION ALL
   SELECT 'TT_on_fim02_countOfNotNull'::text function_tested,               47 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_on_fim02_hasCountOfNotNull'::text function_tested,            48 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_pe_pei01_hasCountOfNotNull'::text function_tested,            49 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_pe_pei_hasCountOfNotNull'::text function_tested,            49 maj_num,  3 nb_test UNION ALL
   SELECT 'TT_sfv01_hasCountOfNotNull'::text function_tested,               50 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_sk_utm_countOfNotNull'::text function_tested,                 51 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test UNION ALL
@@ -1810,7 +1811,62 @@ SELECT '43.9'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test all spec and nfl'::text description,
        TT_pe_pei01_countOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '2') = 2 passed
-
+---------------------------------------------------------
+  -- TT_pe_pei02_countOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '43.1'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test spec1'::text description,
+       TT_pe_pei02_countOfNotNull('BS', '', '', '', '', '', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.2'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test spec2'::text description,
+       TT_pe_pei02_countOfNotNull('', 'BS', '', '', '', '', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.3'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test spec3'::text description,
+       TT_pe_pei02_countOfNotNull('', '', 'BS', '', '', '', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.4'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test spec4'::text description,
+       TT_pe_pei02_countOfNotNull('', '', '', 'BS', '', '', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.5'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test spec5'::text description,
+       TT_pe_pei02_countOfNotNull('', '', '', '', 'BS', '', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.6'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test spec1 and nfl'::text description,
+       TT_pe_pei02_countOfNotNull('BS', '', '', '', '', 'FM', '2') = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.7'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test nfl only'::text description,
+       TT_pe_pei02_countOfNotNull('', '', '', '', '', 'FM', '2') = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.8'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test 0 layers'::text description,
+       TT_pe_pei02_countOfNotNull('', '', '', '', '', '', '2') = 0 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '43.9'::text number,
+       'TT_pe_pei02_countOfNotNull'::text function_tested,
+       'Test all spec and nfl'::text description,
+       TT_pe_pei02_countOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '2') = 2 passed
 ---------------------------------------------------------
  -- TT_vri01_hasCountOfNotNull
 ---------------------------------------------------------
@@ -1984,26 +2040,61 @@ SELECT '48.5'::text number,
        'Test two layers exact true'::text description,
        TT_on_fim02_hasCountOfNotNull('bf', '', 'RCK', '1', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
- -- TT_pe_pei01_hasCountOfNotNull
+-- TT_pe_pei_hasCountOfNotNull
 ---------------------------------------------------------
 UNION ALL
 SELECT '49.1'::text number,
-       'TT_pe_pei01_hasCountOfNotNull'::text function_tested,
+       'TT_pe_pei_hasCountOfNotNull'::text function_tested,
        'Test spec and nfl'::text description,
-       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '2', 'TRUE')  passed
+       TT_pe_pei_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '2', 'TRUE','PE01')  passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '49.2'::text number,
-       'TT_pe_pei01_hasCountOfNotNull'::text function_tested,
+       'TT_pe_pei_hasCountOfNotNull'::text function_tested,
        'Test exact FALSE'::text description,
-       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '1', 'FALSE')  passed  
+       TT_pe_pei_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'FM', '2', 'TRUE','PE02')  passed
+---------------------------------------------------------
+ -- TT_pe_pei_hasCountOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '49.1'::text number,
+       'TT_pe_pei_hasCountOfNotNull'::text function_tested,
+       'Test spec and nfl'::text description,
+       TT_pe_pei_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '2', 'TRUE','PE01')  passed
+---------------------------------------------------------
+UNION ALL
+SELECT '49.2'::text number,
+       'TT_pe_pei_hasCountOfNotNull'::text function_tested,
+       'Test exact FALSE'::text description,
+       TT_pe_pei_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '1', 'FALSE','PE01')  passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '49.3'::text number,
-       'TT_pe_pei01_hasCountOfNotNull'::text function_tested,
+       'TT_pe_pei_hasCountOfNotNull'::text function_tested,
        'Test exact TRUE fail'::text description,
-       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '1', 'TRUE') IS FALSE passed  
+       TT_pe_pei_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '1', 'TRUE','PE01') IS FALSE passed
 ---------------------------------------------------------
+UNION ALL
+SELECT '49.1'::text number,
+       'TT_pe_pei_hasCountOfNotNull'::text function_tested,
+       'Test spec and nfl'::text description,
+       TT_pe_pei_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'FM', '2', 'TRUE','PE02')  passed
+---------------------------------------------------------
+UNION ALL
+SELECT '49.2'::text number,
+       'TT_pe_pei_hasCountOfNotNull'::text function_tested,
+       'Test exact FALSE'::text description,
+       TT_pe_pei_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'FM', '1', 'FALSE','PE02')  passed
+---------------------------------------------------------
+UNION ALL
+SELECT '49.3'::text number,
+       'TT_pe_pei_hasCountOfNotNull'::text function_tested,
+       'Test exact TRUE fail'::text description,
+       TT_pe_pei_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '1', 'TRUE','PE02') IS FALSE passed
+---------------------------------------------------------
+
+---------------------------------------------------------
+
  -- TT_sfv01_hasCountOfNotNull  
 ---------------------------------------------------------
 UNION ALL
