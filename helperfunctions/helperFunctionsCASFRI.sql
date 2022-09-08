@@ -3196,7 +3196,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- hasCountOfNotNull using pei02 custom countOfNotNull
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei02_hasCountOfNotNull(text, text, text, text, text, text, text,text, text);
+--DROP FUNCTION IF EXISTS TT_pe_pei02_hasCountOfNotNull(text, text, text, text, text, text, text,text, text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei02_hasCountOfNotNull(
   spec1 text,
   spec2 text,
@@ -3204,6 +3204,7 @@ CREATE OR REPLACE FUNCTION TT_pe_pei02_hasCountOfNotNull(
   spec4 text,
   spec5 text,
   landtype text,
+  class1 text,
   count text,
   exact text
 )
@@ -3217,7 +3218,7 @@ RETURNS boolean AS $$
     _exact = exact::boolean;
 
     -- process
-    _counted_nulls = TT_pe_pei02_countOfNotNull(spec1, spec2, spec3, spec4, spec5, landtype, '2');
+    _counted_nulls = TT_pe_pei02_countOfNotNull(spec1, spec2, spec3, spec4, spec5, landtype, class1, '2');
 
     IF _exact THEN
       RETURN _counted_nulls = _count;
@@ -4654,7 +4655,7 @@ RETURNS boolean AS $$
 
    	-- run validations
    	IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
-         IF TT_matchList(_class1, '{''BAR'',''BSB'',''SDW'',''WWW'',''WAT'',''BOW''}') THEN
+         IF TT_matchList(_class1, '{''BAR'',''BSB'',''SDW'',''WWW'',''WAT''}') THEN
            _nat_non_veg_boolean = TRUE;
          END IF;
        END IF;
@@ -4666,7 +4667,7 @@ RETURNS boolean AS $$
        END IF;
 
    	IF 'non_for_veg' = ANY (_fiter_attributes) THEN
-         IF TT_matchList(_subuse, '{''BAR'',''BSB'',''WWW'',''WAT'',''BOW''}') OR TT_matchList(_class1, '{''BAR'',''BSB'',''WWW'',''WAT'',''BOW''}') THEN
+         IF TT_matchList(_subuse, '{''BAR'',''BSB'',''WWW'',''WAT''}') OR TT_matchList(_class1, '{''BAR'',''BSB'',''WWW'',''WAT''}') THEN
            _non_for_veg_boolean = TRUE;
          END IF;
        END IF;
@@ -6075,7 +6076,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Pass species and nfl variables to countOfNotNull().
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei02_countOfNotNull(text, text, text, text, text, text,text);
+--DROP FUNCTION IF EXISTS TT_pe_pei02_countOfNotNull(text, text, text, text, text, text,text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei02_countOfNotNull(
   spec1 text,
   spec2 text,
@@ -6083,12 +6084,13 @@ CREATE OR REPLACE FUNCTION TT_pe_pei02_countOfNotNull(
   spec4 text,
   spec5 text,
   landtype text,
+  class1 text,
   max_rank_to_consider text
 )
 RETURNS int AS $$
   DECLARE
     species_codes text[] := '{AL,MA,AS,AP,BF,BE,BI,BA,BS,BN,CE,CP,DT,DF,LA,EM,EB,EL,GB,HE,HP,HS,IH,JP,JL,LX,LI,LP,NS,PC,PP,PO,RM,RO,RP,RS,SP,SI,SF,TH,WA,WB,WP,WS,WI,YB,YP}'; --codes copied from PEI CORPORATE LAND USE INVENTORY 2000
-    nfl_codes text[] := '{FM,FL,FR,MS,NU,OR,AC,FD,MV,RT,CO,MH,MT,SG,AS,EP,FT,FP,LF,TF,LY,ABN,COS,CG,GF,PF,RK,SK,AR,CT,LH,PL,RR,RD,WF,RE,SE,CH,CY,HC,HO,SC}';
+    nfl_codes text[] := '{FM,FL,FR,MS,NU,OR,AC,FD,MV,RT,CO,MH,MT,SG,AS,EP,FT,FP,LF,TF,LY,ABN,COS,CG,GF,PF,RK,SK,AR,CT,LH,PL,RR,RD,WF,RE,SE,CH,CY,HC,HO,SC,BOW,BKW,DMW,MDW,OWW,SAW,SDW,SFW,SMW,SSW,BAR,BSB,BLD,WWW,GRS,PAV,SHR,TRE,WAT,COR,HAY,BLB,CRN,GRN,PAS,POT,OTH,SOY,CC}';
     is_lyr text;
     is_nfl text;
   BEGIN
@@ -6099,9 +6101,10 @@ RETURNS int AS $$
       is_lyr = NULL::text;
     END IF;
 
-    -- if landtype matches any of the nfl values, we know there is an NFL record.
-    -- set is_nfl to be a valid string.
-    IF landtype = ANY(nfl_codes) THEN
+
+    -- if landtype matches any of the nfl values, we know there is an NFL record., set is_nfl to be a valid string.
+    -- species/covertype var contains some nfl codes as well
+    IF landtype = ANY(nfl_codes) OR spec1 = ANY(nfl_codes) OR spec2 = ANY(nfl_codes) OR spec3 = ANY(nfl_codes) OR spec4 = ANY(nfl_codes) OR spec5 = ANY(nfl_codes) OR class1 = ANY(nfl_codes)  THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;

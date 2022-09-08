@@ -16,7 +16,7 @@
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 --------------------------------------------------------------------------
--- Translate all PE02. XXhXXm
+-- Translate all PE02. XXh10m
 --------------------------------------------------------------------------
 -- CAS
 ------------------------
@@ -26,7 +26,7 @@ SELECT TT_Prepare('translation', 'pe_pei02_cas', '_pe02_cas', 'ab_avi01_cas');
 SELECT TT_CreateMappingView('rawfri', 'pe02', 'pe_cli');
 
 -- Delete existing entries
-DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PE02';
+--DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PE02';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all --
@@ -41,12 +41,12 @@ SELECT TT_Prepare('translation', 'pe_pei02_dst', '_pe02_dst', 'ab_avi01_dst');
 SELECT TT_CreateMappingView('rawfri', 'pe02', 'pe_cli');
 
 -- Delete existing entries
-DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PE02';
+--DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PE02';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all --
 SELECT * FROM TT_Translate_pe02_dst('rawfri', 'pe02_l1_to_pe_cli_l1_map');
-
+--
 
 ------------------------
 -- ECO
@@ -56,7 +56,7 @@ SELECT TT_Prepare('translation', 'pe_pei02_eco', '_pe02_eco', 'ab_avi01_eco');
 SELECT TT_CreateMappingView('rawfri', 'pe02', 'pe_cli');
 
 -- Delete existing entries
-DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PE02';
+--DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PE02';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all --
@@ -75,7 +75,7 @@ WHERE TT_NotEmpty(pe_species_codes);
 SELECT TT_Prepare('translation', 'pe_pei02_lyr', '_pe02_lyr', 'ab_avi01_lyr');
 
 -- Delete existing entries
-DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'PE02';
+--DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'PE02';
 
 -- Add translated ones
 -- Layer 1
@@ -91,7 +91,7 @@ BEGIN;
 SELECT TT_Prepare('translation', 'pe_pei02_nfl', '_pe02_nfl', 'ab_avi01_nfl');
 
 -- Delete existing entries
-DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'PE02';
+--DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'PE02';
 
 -- Add translated NFL
 SELECT TT_CreateMappingView('rawfri', 'pe02', 2, 'pe_cli', 1);
@@ -119,7 +119,7 @@ SELECT TT_Prepare('translation', 'pe_pei02_geo', '_pe02_geo', 'ab_avi01_geo');
 SELECT TT_CreateMappingView('rawfri', 'pe02', 'pe_cli');
 
 -- Delete existing entries
-DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PE02';
+--DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PE02';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all --
