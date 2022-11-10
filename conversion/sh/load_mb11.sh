@@ -32,6 +32,7 @@ MB_subFolder=MB/$inventoryID/data/inventory/
 -f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI -nlt CONVERT_TO_LINEAR \
+-emptyStrAsNull \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$destInventoryID' AS inventory_id, mu_id AS poly_id,
       yearphoto as fri_yr, mu_id as tile, shape_area as area, cc_frifli as crown10,
       productivity as subtype, ht_sum as height, spp_sum as species, origin_sum as year_org
