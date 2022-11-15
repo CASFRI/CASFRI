@@ -38,3 +38,6 @@ MB_subFolder=MB/$inventoryID/data/inventory/
       productivity as subtype, ht_sum as height, spp_sum as species, origin_sum as year_org
       FROM $gdbTableName WHERE fri_fli = 'FRI'" \
 -progress $overwrite_tab
+
+# ~200 features have a period in their species string, remove it
+"$gdalFolder/ogrinfo" "$pg_connection_string" -sql "UPDATE $fullTargetTableName SET species = REPLACE(species, '.', '') where species like '%.%'";
