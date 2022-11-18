@@ -4654,23 +4654,11 @@ RETURNS boolean AS $$
        END IF;
 
    	-- run validations
-   	IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
-         IF TT_matchList(_class1, '{''BAR'',''BSB'',''SDW'',''WWW'',''WAT''}') THEN
-           _nat_non_veg_boolean = TRUE;
-         END IF;
+    IF 'all_nfl' = ANY (_fiter_attributes) THEN
+       IF TT_matchList(_class1, '{''BAR'',''BSB'',''SDW'',''WWW'',''WAT''}') OR TT_matchList(_subuse, '{''BAR'',''BSB'',''WWW'',''WAT''}') OR TT_matchList(_class1, '{''BAR'',''BSB'',''WWW'',''WAT''}') OR TT_matchList(_landuse, '{''AGR'',''COM'',''RES'',''IND'',''NON'',''REC'',''TRN'',''URB'',''INT''}') OR TT_matchList(_subuse, '{''BAR'',''BSB'',''WWW'',''WAT'',''BOW''}') THEN
+         _non_for_veg_boolean = TRUE;
        END IF;
-
-   	IF 'non_for_anth' = ANY (_fiter_attributes) THEN
-         IF TT_matchList(_landuse, '{''AGR'',''COM'',''RES'',''IND'',''NON'',''REC'',''TRN'',''URB'',''INT''}') OR TT_matchList(_subuse, '{''BAR'',''BSB'',''WWW'',''WAT'',''BOW''}') THEN
-           _non_for_anth_boolean = TRUE;
-         END IF;
-       END IF;
-
-   	IF 'non_for_veg' = ANY (_fiter_attributes) THEN
-         IF TT_matchList(_subuse, '{''BAR'',''BSB'',''WWW'',''WAT''}') OR TT_matchList(_class1, '{''BAR'',''BSB'',''WWW'',''WAT''}') THEN
-           _non_for_veg_boolean = TRUE;
-         END IF;
-       END IF;
+     END IF;
 	
 	-------------------------------------------------------------
     -- return TRUE if any of the nfl attribute validations passed

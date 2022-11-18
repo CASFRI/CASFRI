@@ -95,16 +95,6 @@ SELECT TT_CreateMappingView('rawfri', 'pe03', 2, 'pe_cli', 1);
 INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_pe03_nfl('rawfri', 'pe03_l2_to_pe_cli_l1_map');
 
-SELECT TT_CreateMappingView('rawfri', 'pe03', 3, 'pe_cli', 1);
-
-INSERT INTO casfri50.nfl_all --
-SELECT * FROM TT_Translate_pe03_nfl('rawfri', 'pe03_l3_to_pe_cli_l1_map');
-
-SELECT TT_CreateMappingView('rawfri', 'pe03', 4, 'pe_cli', 1);
-
-INSERT INTO casfri50.nfl_all --
-SELECT * FROM TT_Translate_pe03_nfl('rawfri', 'pe03_l4_to_pe_cli_l1_map');
-
 COMMIT;
 ------------------------
 -- GEO
