@@ -28,7 +28,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab24', 'ab');
 -- DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'AB24';
 
 -- Add translated ones
-INSERT INTO casfri50.cas_all  -- 1h17m43s
+INSERT INTO casfri50.cas_all  -- 6m43s
 SELECT * FROM TT_Translate_ab24_cas('rawfri', 'ab24_l1_to_ab_l1_map');
 
 
@@ -80,7 +80,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_lyr', '_ab24_lyr'); -- used for both 
 
 SELECT TT_CreateMappingView('rawfri', 'ab24', 1, 'ab', 1);
 
-INSERT INTO casfri50.lyr_all -- 20m13s 
+INSERT INTO casfri50.lyr_all -- 6m13s 
 SELECT * FROM TT_Translate_ab24_lyr('rawfri', 'ab24_l1_to_ab_l1_map');
 
 
@@ -88,7 +88,7 @@ SELECT * FROM TT_Translate_ab24_lyr('rawfri', 'ab24_l1_to_ab_l1_map');
 
 SELECT TT_CreateMappingView('rawfri', 'ab24', 2, 'ab', 1);
 
-INSERT INTO casfri50.lyr_all -- 4m3s 
+INSERT INTO casfri50.lyr_all -- 1m3s 
 SELECT * FROM TT_Translate_ab24_lyr('rawfri', 'ab24_l2_to_ab_l1_map');
 
 
@@ -106,7 +106,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab24', 3, 'ab', 1);
 -- Add translated ones
 -- Layer 1
 
-INSERT INTO casfri50.nfl_all -- 3m5s 
+INSERT INTO casfri50.nfl_all -- 1m5s 
 SELECT * FROM TT_Translate_ab24_nfl('rawfri', 'ab24_l3_to_ab_l1_map');
 
 
@@ -114,7 +114,7 @@ SELECT * FROM TT_Translate_ab24_nfl('rawfri', 'ab24_l3_to_ab_l1_map');
 
 SELECT TT_CreateMappingView('rawfri', 'ab24', 4, 'ab', 1);
 
-INSERT INTO casfri50.nfl_all -- 2m42s 
+INSERT INTO casfri50.nfl_all -- 32s 
 SELECT * FROM TT_Translate_ab24_nfl('rawfri', 'ab24_l4_to_ab_l1_map');
 
 
@@ -129,7 +129,7 @@ SELECT TT_CreateMappingView('rawfri', 'ab24', 1, 'ab', 1);
 -- DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'AB24';
 
 -- Add translated ones
-INSERT INTO casfri50.geo_all -- 10m42s 840448
+INSERT INTO casfri50.geo_all -- 1m42s 840448
 SELECT * FROM TT_Translate_ab24_geo('rawfri', 'ab24_l1_to_ab_l1_map'); 
 
 --------------------------------------------------------------------------
