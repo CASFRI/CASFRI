@@ -1583,11 +1583,12 @@ RETURNS text AS $$
                   WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN '-8887'
                   WHEN rulelc = 'row_translation_rule_nt_lyr' THEN '-9997'
 				  WHEN rulelc = 'mb_fri_hasCountOfNotNull' THEN '-8886'
-				  WHEN rulelc = 'mb_mb03_disturbance_hascountofnotnull' THEN '-8886'
+				  WHEN rulelc = 'mb_mb03_disturbance_hascountofnotnull' THEN '-8888'
 				  WHEN rulelc = 'nl_nli01_crown_closure_validation' THEN '-8886'
 				  WHEN rulelc = 'nl_nli01_height_validation' THEN '-8886'
 				  WHEN rulelc = 'nb_hasCountOfNotNull' THEN '-8886'
-                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
+                  ELSE
+                   TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
@@ -1625,7 +1626,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'mb_fli01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'mb_fri01_wetland_validation' THEN 'NOT_APPLICABLE'
-                  WHEN rulelc = 'mb_mb03_disturbance_hascountofnotnull' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'mb_mb03_disturbance_hascountofnotnull' THEN 'NULL_VALUE'
                   WHEN rulelc = 'pc02_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'yt_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'yt04_wetland_validation' THEN 'NOT_APPLICABLE'
@@ -8550,25 +8551,23 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_mb_mb03_disturbance_notNull
 --
--- dst_type_list - contain year values for fire_yr, blowdown_yr, cut_yr, regen_yr, and ftg_sp_yr
+-- dst_type1 to dst_type5 - contain year values for fire_yr, blowdown_yr, cut_yr, regen_yr, and ftg_sp_yr
 -- dist_num - number of the CASFRI disturbanc feature, 1 - 3
 -- Check any of the disturbance fields are not null for a certain count
 --    first dist_type requires 1 value to not be null, 2nd requires 2, 3rd requires 3
 ------------------------------------------------------------
--- DROP FUNCTION IF EXISTS TT_mb_mb03_disturbance_notNull(text, text, text, text, text);
+-- DROP FUNCTION IF EXISTS TT_mb_mb03_disturbance_notNull(text, text, text, text, text,text);
 CREATE OR REPLACE FUNCTION TT_mb_mb03_disturbance_hasCountOfNotNull(
-  dst_type_list text
+  dst_type1 text,
+  dst_type2 text,
+  dst_type3 text,
+  dst_type4 text,
+  dst_type5 text,
+  dist_num text
 )
 RETURNS boolean AS $$
-  DECLARE
-    _count_not_null int;
   BEGIN
-    _count_not_null = TT_countOfNotNull(dst_type_list::text, 1::text, TRUE::text);
-    IF _count_not_null = 0 THEN
-      RETURN FALSE;
-    ELSE
-      RETURN TRUE;
-    END IF;
+    RETURN TT_hasCountOfNotNullOrZero(dst_type1, dst_type2, dst_type3, dst_type4, dst_type5, dist_num, TRUE::text);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
@@ -8581,18 +8580,19 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- dst_type list will contain year values for fire_yr, blowdown_yr, cut_yr, regen_yr, and ftg_sp_yr
 -- dst_pos - which dist var is being mapped, valid values 1-3
--- year_or_type - what to return the disturbance type or year
+-- isType - what to return the disturbance type or year
 -- uses coalesece text to find first non-zero & non-null value and slices array based on dst_pos variable in order
 --    to extract dist_type 1 - 3,
 ------------------------------------------------------------
 -- DROP FUNCTION IF EXISTS TT_mb_mb03_map_disturbance_(text, text, text, text, text);
-CREATE OR REPLACE FUNCTION translation.TT_mb_mb03_map_disturbance(
+CREATE OR REPLACE FUNCTION TT_mb_mb03_map_disturbance(
   dst_type_list text,
   dst_pos text,
-  year_or_type text
+  isType text
 )
 RETURNS text AS $$
   DECLARE
+    _isType boolean := isType::boolean;
     _dst_list text[];
     _coalesced_val1 text;
     _index1 int;
@@ -8608,7 +8608,7 @@ RETURNS text AS $$
     _coalesced_val1 = TT_CoalesceText(dst_type_list::text, TRUE::text);
     _index1 = array_position(_dst_list, _coalesced_val1);
     IF dst_pos::int = 1 THEN
-      IF year_or_type = 'type' THEN
+      IF isType THEN
         IF _index1 = 1 THEN
           return 'BURN';
         ELSEIF _index1 = 2 THEN
@@ -8632,8 +8632,13 @@ RETURNS text AS $$
     _dst_list2 = _dst_list[_index1+1:];
     _coalesced_val2 = TT_CoalesceText(_dst_list2::text, TRUE::text);
     _index2 = array_position(_dst_list2, _coalesced_val2);
+    -- no more non-zero/non-null values, return
+    IF _coalesced_val2 is NULL OR _index2 IS NULL THEN
+      RETURN NULL;
+    END IF;
+
     IF dst_pos::int = 2 THEN
-      IF year_or_type = 'type' THEN
+      IF isType THEN
         IF _index1 + _index2 = 2 THEN
           return 'WINDFALL';
         ELSEIF _index1 + _index2 = 3 THEN
@@ -8653,8 +8658,12 @@ RETURNS text AS $$
     _dst_list3 = _dst_list[_index1 + _index2 + 1:];
     _coalesced_val3 = TT_CoalesceText(_dst_list3::text, TRUE::text);
     _index3 = array_position(_dst_list3, _coalesced_val3);
+    IF _coalesced_val3 IS NULL OR _index3 IS NULL THEN
+      RETURN NULL;
+    END IF;
+
     IF dst_pos::int = 3 THEN
-      IF year_or_type = 'type' THEN
+      IF isType THEN
         IF _index1 + _index2 + _index3 = 3 THEN
           RETURN 'CUT';
         ELSIF _index1 + _index2 + _index3 = 4 THEN
