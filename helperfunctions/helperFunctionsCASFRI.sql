@@ -4646,7 +4646,7 @@ RETURNS boolean AS $$
    	-- PE02
    	---------
    	-- assign source values to variables depending on the inventory id
-       IF inventory_id IN('PE02') THEN
+       IF inventory_id IN('PE02', 'PE03','PE04') THEN
          _class1 = _source_vals[1];
          _landuse = _source_vals[2];
          _subuse = _source_vals[3];
@@ -6126,8 +6126,12 @@ RETURNS text AS $$
     -- eg. PN-92, year is 1992
     partial_year = TT_SubstringText(dist_type, '4'::text, '2'::text);
 
+    IF partial_year is NULL THEN
+      RETURN NULL;
+    END IF;
+
     -- if between 50 - 99, year is in 1900's
-    IF TT_IsBetween(partial_year, '50'::text, '99'::text, TRUE, TRUE) THEN
+    IF TT_IsBetween(partial_year, '30'::text, '99'::text, TRUE::text, TRUE::text ) THEN
       RETURN TT_Concat('{''19'', ' || partial_year || '}'::text, ''::text);
     ELSE -- 2000's
       RETURN TT_Concat('{''20'', ' || partial_year || '}'::text, ''::text);
