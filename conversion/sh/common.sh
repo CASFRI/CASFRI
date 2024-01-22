@@ -19,6 +19,7 @@ else
 fi
 
 export PG_USE_COPY=YES
+export PROJ_LIB="$gdalFolder\projlib"
 
 prjFile="$scriptDir/../canadaAlbersEqualAreaConic.prj"
 
