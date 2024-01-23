@@ -4359,7 +4359,7 @@ RETURNS boolean AS $$
     -- BC
     -----------
     -- assign source values to variables depending on the inventory id
-    IF inventory_id IN('BC08','BC10', 'BC11', 'BC12') THEN
+    IF inventory_id IN('BC08','BC10', 'BC11', 'BC12','BC04','BC13') THEN
       _inventory_standard_cd = _source_vals[1];
       _land_cover_class_cd_1 = _source_vals[2];
       _bclcs_level_4 = _source_vals[3];
@@ -7803,3 +7803,26 @@ RETURNS boolean AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- TT_vri01_src_inv_area_translation
+--
+-- If inventory_id is BC04, use copyDouble(src_inv_area) 
+-- Else, use divideDouble(src_inv_area, 10000)
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_vri01_src_inv_area_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_vri01_src_inv_area_translation(
+  inventory_id text,
+  src_inv_area text
+)
+RETURNS double precision AS $$
+  BEGIN
+    IF inventory_id IN ('BC04', 'BC13') THEN
+	  RETURN src_inv_area::double precision; 
+	ELSE
+	  RETURN TT_divideDouble(src_inv_area, '10000');
+	END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
