@@ -2901,7 +2901,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_hasCountOfNotNull(
-  inventory_id text
+  inventory_id text,
   vals1 text,
   vals2 text,
   inventory_standard_cd text,
