@@ -2477,10 +2477,15 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_veg_validation(
 )
 RETURNS boolean AS $$
   BEGIN
+    inventory_standard_cd = trim(inventory_standard_cd);
+    land_cover_class_cd_1 = trim(land_cover_class_cd_1);
+    bclcs_level_4 = trim(bclcs_level_4);
+    non_productive_descriptor_cd = trim(non_productive_descriptor_cd);
+
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
-      IF land_cover_class_cd_1 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST') THEN
-        RETURN TRUE;
+      IF land_cover_class_cd_1 IN ('BL', 'BM', 'BY', 'HE', 'HF', 'HG', 'SL', 'ST', 'sT') THEN
+        RETURN TRUE; 
       END IF;
     END IF;
   
@@ -2491,7 +2496,7 @@ RETURNS boolean AS $$
     END IF;
   
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd IN ('AF', 'M', 'NPBR', 'OR') THEN
+      IF non_productive_descriptor_cd IN ('AF', 'M', 'NPBR', 'OR', 'S') THEN
         RETURN TRUE;
       END IF;
     END IF;
@@ -2522,33 +2527,38 @@ CREATE OR REPLACE FUNCTION TT_vri01_nat_non_veg_validation(
 )
 RETURNS boolean AS $$
   BEGIN
+    inventory_standard_cd = trim(inventory_standard_cd);
+    land_cover_class_cd_1 = trim(land_cover_class_cd_1);
+    bclcs_level_4 = trim(bclcs_level_4);
+    non_productive_descriptor_cd = trim(non_productive_descriptor_cd);
+	non_veg_cover_type_1 = trim(non_veg_cover_type_1);
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'DW', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RS', 'TA') THEN
         RETURN TRUE;
       END IF;
     END IF;
-
+ 																						 											
     IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
-      IF land_cover_class_cd_1 IN ('BE', 'BI', 'BR', 'BU', 'CB', 'EL', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RO', 'RS', 'SI', 'TA') THEN
+      IF land_cover_class_cd_1 IN ('BE', 'BI', 'bR','BR', 'BU', 'CB', 'EL', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MO', 'MS', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RO', 'RS', 'RT', 'SC', 'SI', 'SW','TA') THEN
         RETURN TRUE;
       END IF;
     END IF;
   
     IF inventory_standard_cd IN ('V', 'I') AND bclcs_level_4 IS NOT NULL THEN
-      IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
+      IF bclcs_level_4 IN ('EL', 'LA', 'RI', 'RO', 'SI') THEN
         RETURN TRUE;
       END IF;
     END IF;
   
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
-      IF non_productive_descriptor_cd IN ('A', 'CL', 'G', 'ICE', 'L', 'MUD', 'R', 'RIV', 'S', 'SAND', 'TIDE') THEN
+      IF non_productive_descriptor_cd IN ('A', 'CL', 'G', 'ICE', 'L', 'MUD', 'R', 'RIV', 'SAND', 'TIDE', 'Lake') THEN
         RETURN TRUE;
       END IF;
     END IF;
 
-    IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL THEN
-      IF bclcs_level_4 IN ('EL', 'RO', 'SI') THEN
+	IF inventory_standard_cd='F' AND bclcs_level_4 IS NOT NULL THEN
+      IF bclcs_level_4 IN ('EL', 'LA', 'RI', 'RO', 'SI') THEN
         RETURN TRUE;
       END IF;
     END IF;
@@ -2569,15 +2579,20 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_anth_validation(
 )
 RETURNS boolean AS $$
   BEGIN
+    inventory_standard_cd = trim(inventory_standard_cd);
+    land_cover_class_cd_1 = trim(land_cover_class_cd_1);
+    non_productive_descriptor_cd = trim(non_productive_descriptor_cd);
+	non_veg_cover_type_1 = trim(non_veg_cover_type_1);
+
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 IN ('AP', 'GP', 'MI', 'MZ', 'OT', 'RN', 'RZ', 'TZ', 'UR') THEN
         RETURN TRUE;
       END IF;
     END IF;
-      
-    IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
-      IF land_cover_class_cd_1 IN ('AP', 'GP', 'MI', 'MZ', 'OT', 'RN', 'RZ', 'TZ', 'UR') THEN
+
+	IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
+      IF land_cover_class_cd_1 IN ('AP', 'GP', 'MI', 'MS', 'MZ', 'OT', 'RN', 'RP', 'RR', 'RZ', 'TS', 'TZ', 'UR') THEN
         RETURN TRUE;
       END IF;
     END IF;
@@ -4579,10 +4594,15 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_veg_translation(
 RETURNS text AS $$
   DECLARE
     result text = NULL;
-	  src_cover_types text[] = '{BL, BM, BY, HE, HF, HG, SL, ST}';
-	  tgt_cover_types text[] = '{BRYOID, BRYOID, BRYOID, HERBS, FORBS, GRAMINOIDS, LOW_SHRUB, TALL_SHRUB}';
-    src_non_prod_desc text[] = '{AF, M, NPBR, OR}';
+	  src_cover_types text[] = '{BL, BM, BY, HE, HF, HG, SL, ST, sT}';
+	  tgt_cover_types text[] = '{BRYOID, BRYOID, BRYOID, HERBS, FORBS, GRAMINOIDS, LOW_SHRUB, TALL_SHRUB, TALL_SHRUB}';
+    src_non_prod_desc text[] = '{AF, M, NPBR, OR, S}';
   BEGIN
+    inventory_standard_cd = trim(inventory_standard_cd);
+    land_cover_class_cd_1 = trim(land_cover_class_cd_1);
+    bclcs_level_4 = trim(bclcs_level_4);
+    non_productive_descriptor_cd = trim(non_productive_descriptor_cd);
+	
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
       IF land_cover_class_cd_1 = ANY(src_cover_types) THEN
@@ -4598,7 +4618,7 @@ RETURNS text AS $$
   
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd = ANY(src_non_prod_desc) THEN
-        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::Text, '{''ALPINE_FOREST'', ''GRAMINOIDS'', ''LOW_SHRUB'', ''GRAMINOIDS''}');
+        result = TT_MapText(non_productive_descriptor_cd, src_non_prod_desc::Text, '{''ALPINE_FOREST'', ''GRAMINOIDS'', ''LOW_SHRUB'', ''GRAMINOIDS'', ''OPEN_MUSKEG''}');
       END IF;
     END IF;
 
@@ -4626,11 +4646,17 @@ CREATE OR REPLACE FUNCTION TT_vri01_nat_non_veg_translation(
 RETURNS text AS $$
   DECLARE
     result text = NULL;
-    src_cover_types text[] = '{BE, BI, BR, BU, CB, ES, GL, LA, LB, LL, LS, MN, MU, OC, PN, RE, RI, RM, RS, TA}';
-    tgt_cover_types text[] = '{BEACH, ROCK_RUBBLE, ROCK_RUBBLE, EXPOSED_LAND, EXPOSED_LAND, EXPOSED_LAND, SNOW_ICE, LAKE, ROCK_RUBBLE, EXPOSED_LAND, WATER_SEDIMENT, EXPOSED_LAND, WATER_SEDIMENT, OCEAN, SNOW_ICE, LAKE, RIVER, EXPOSED_LAND, WATER_SEDIMENT, ROCK_RUBBLE}';
-    src_non_productive_descriptor_cd text[] = '{A, CL, G, ICE, L, MUD, R, RIV, S, SAND, TIDE}';
+    src_cover_types text[] = '{BE, BI, BR, bR, BU, CB, EL, ES, GL, LA, LB, LL, LS, MN, MO, MU, OC, PN, RE, RI, RM, RS, RT, SC, SW, TA}';
+    tgt_cover_types text[] = '{BEACH, ROCK_RUBBLE, ROCK_RUBBLE, ROCK_RUBBLE, EXPOSED_LAND, EXPOSED_LAND, EXPOSED_LAND, EXPOSED_LAND, SNOW_ICE, LAKE, ROCK_RUBBLE, EXPOSED_LAND, WATER_SEDIMENT, EXPOSED_LAND, EXPOSED_LAND, WATER_SEDIMENT, OCEAN, SNOW_ICE, LAKE, RIVER, EXPOSED_LAND, WATER_SEDIMENT, ROCK_RUBBLE, SNOW_ICE, OCEAN, ROCK_RUBBLE}';
+    src_non_productive_descriptor_cd text[] = '{A, CL, G, ICE, L, MUD, R, RIV, SAND, TIDE, Lake}';
     src_bclcs_level_4 text[] = '{EL, RO, SI}';
   BEGIN
+    inventory_standard_cd = trim(inventory_standard_cd);
+    land_cover_class_cd_1 = trim(land_cover_class_cd_1);
+    bclcs_level_4 = trim(bclcs_level_4);
+    non_productive_descriptor_cd = trim(non_productive_descriptor_cd);
+	non_veg_cover_type_1 = trim(non_veg_cover_type_1);
+	
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 = ANY(src_cover_types || ARRAY['DW']) THEN
@@ -4652,7 +4678,7 @@ RETURNS text AS $$
   
     IF inventory_standard_cd='F' AND non_productive_descriptor_cd IS NOT NULL THEN
       IF non_productive_descriptor_cd = ANY(src_non_productive_descriptor_cd) THEN
-        result = TT_MapText(non_productive_descriptor_cd, src_non_productive_descriptor_cd::text, '{''ALPINE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''SNOW_ICE'', ''LAKE'', ''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''RIVER'', ''SLIDE'', ''SAND'', ''TIDAL_FLATS''}');
+        result = TT_MapText(non_productive_descriptor_cd, src_non_productive_descriptor_cd::text, '{''ALPINE'', ''EXPOSED_LAND'', ''WATER_SEDIMENT'', ''SNOW_ICE'', ''LAKE'', ''EXPOSED_LAND'', ''ROCK_RUBBLE'', ''RIVER'', ''SAND'', ''TIDAL_FLATS'', ''LAKE''}');
       END IF;
     END IF;
 
@@ -4679,10 +4705,14 @@ CREATE OR REPLACE FUNCTION TT_vri01_non_for_anth_translation(
 RETURNS text AS $$
   DECLARE
     result text = NULL;
-    src_cover_types text[] = '{AP, GP, MI, MZ, OT, RN, RZ, TZ, UR}';
-    tgt_cover_types text[] = '{FACILITY_INFRASTRUCTURE, INDUSTRIAL, INDUSTRIAL, INDUSTRIAL, OTHER, FACILITY_INFRASTRUCTURE, FACILITY_INFRASTRUCTURE, INDUSTRIAL, FACILITY_INFRASTRUCTURE}';
+    src_cover_types text[] = '{AP, GP, MI, MS, MZ, OT, RN, RP, RR, RZ, TS, TZ, UR}';
+    tgt_cover_types text[] = '{FACILITY_INFRASTRUCTURE, INDUSTRIAL, INDUSTRIAL, INDUSTRIAL, INDUSTRIAL, OTHER, FACILITY_INFRASTRUCTURE, FACILITY_INFRASTRUCTURE, FACILITY_INFRASTRUCTURE, FACILITY_INFRASTRUCTURE, INDUSTRIAL, INDUSTRIAL, FACILITY_INFRASTRUCTURE}';
     src_non_prod_desc text[] = '{C, GR, P, U}';
   BEGIN
+    inventory_standard_cd = trim(inventory_standard_cd);
+    land_cover_class_cd_1 = trim(land_cover_class_cd_1);
+    non_productive_descriptor_cd = trim(non_productive_descriptor_cd);
+	
     -- run if statements
     IF inventory_standard_cd IN ('V', 'I') AND non_veg_cover_type_1 IS NOT NULL THEN
       IF non_veg_cover_type_1 = ANY(src_cover_types) THEN
