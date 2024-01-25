@@ -2899,8 +2899,9 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- hasCountOfNotNull using custom vri countOfNotNull
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_hasCountOfNotNull(
+  inventory_id text
   vals1 text,
   vals2 text,
   inventory_standard_cd text,
@@ -2921,7 +2922,7 @@ RETURNS boolean AS $$
     _exact = exact::boolean;
 
     -- process
-    _counted_nulls = TT_vri01_countOfNotNull(vals1, vals2, inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1, '5');
+    _counted_nulls = TT_vri01_countOfNotNull(inventory_id, vals1, vals2, inventory_standard_cd, land_cover_class_cd_1, bclcs_level_4, non_productive_descriptor_cd, non_veg_cover_type_1, '5');
 
     IF _exact THEN
       RETURN _counted_nulls = _count;
@@ -5442,7 +5443,8 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 
 -------------------------------------------------------------------------------
 -- TT_vri01_countOfNotNull
---
+-- 
+-- inventory_id text
 -- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
 -- vals2 text - string list of layer 2 attribtues. This is carried through to couneOfNotNull
 -- inventory_standard_cd text
@@ -5457,7 +5459,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Pass vals1, vals2 and the string/NULLs to countOfNotNull().
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
   inventory_id text,
   vals1 text,
