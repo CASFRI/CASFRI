@@ -2540,7 +2540,7 @@ RETURNS boolean AS $$
     END IF;
  																						 											
     IF inventory_standard_cd IN ('V', 'I') AND land_cover_class_cd_1 IS NOT NULL THEN
-      IF land_cover_class_cd_1 IN ('BE', 'BI', 'bR','BR', 'BU', 'CB', 'EL', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MO', 'MS', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RO', 'RS', 'RT', 'SC', 'SI', 'SW','TA') THEN
+      IF land_cover_class_cd_1 IN ('BE', 'BI', 'bR','BR', 'BU', 'CB', 'EL', 'ES', 'GL', 'LA', 'LB', 'LL', 'LS', 'MN', 'MO', 'MU', 'OC', 'PN', 'RE', 'RI', 'RM', 'RO', 'RS', 'RT', 'SC', 'SI', 'SW','TA') THEN
         RETURN TRUE;
       END IF;
     END IF;
@@ -5459,6 +5459,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_vri01_countOfNotNull(text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_vri01_countOfNotNull(
+  inventory_id text,
   vals1 text,
   vals2 text,
   inventory_standard_cd text,
@@ -5499,11 +5500,11 @@ RETURNS int AS $$
     -- call countOfNotNull
     -- WE HAVE UPDATED BC08 TO INCLUDE ALL LAYER TABLES. IF WE TRANSLATE ANY OF THE OLD RANK1 LAYER1 DATASETS FROM BC WE WILL NEED TO UNCOMMENT THE FOLLOWING LINES
     -- if BC08 there is only 1 forest layer so remove the second forest layer from the count
-    --IF inventory_id = 'BC08' THEN
-      --RETURN TT_countOfNotNull(vals1, is_nfl1, is_nfl2, is_nfl3, max_rank_to_consider, 'FALSE');
-    --ELSE
-    RETURN TT_countOfNotNull(vals1, vals2, is_nfl3, is_nfl1, is_nfl2, max_rank_to_consider, 'FALSE');
-    --END IF;
+    IF inventory_id IN ('BC04', 'BC13')  THEN
+    	RETURN TT_countOfNotNull(vals1, is_nfl3, is_nfl1, is_nfl2, max_rank_to_consider, 'FALSE');
+    ELSE
+    	RETURN TT_countOfNotNull(vals1, vals2, is_nfl3, is_nfl1, is_nfl2, max_rank_to_consider, 'FALSE');
+    END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
