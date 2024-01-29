@@ -248,6 +248,7 @@ The **SRC_DATA_FORMAT** attribute identifies the format of the inventory data e.
 | ESRI_E00         | ESRI E00 transfer files     |
 | ESRI_COVERAGE    | ESRI Coverage files         |
 | ACCESS_DATABASE  | Microsoft Access database   |
+| RASTER_TIFF      | TIFF raster file            |
 | UNKNOWN_VALUE    | Format of the inventory is unknown |
 
 
