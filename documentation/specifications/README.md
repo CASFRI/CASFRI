@@ -248,6 +248,7 @@ The **SRC_DATA_FORMAT** attribute identifies the format of the inventory data e.
 | ESRI_E00         | ESRI E00 transfer files     |
 | ESRI_COVERAGE    | ESRI Coverage files         |
 | ACCESS_DATABASE  | Microsoft Access database   |
+| RASTER_TIFF      | TIFF raster file            |
 | UNKNOWN_VALUE    | Format of the inventory is unknown |
 
 
@@ -408,7 +409,7 @@ The **CAS_ID** attribute is an alpha-numeric identifier that is unique for each 
 - Source filename i.e., name of shapefile or geodatabase (15 characters)
 - Primary id - Polygon ID linking back to the source polygon, often Map Sheet ID or similar (10 characters)
 - Secondary id - Polygon ID linking back to the source polygon, often a unique polygon if from the source data (10 characters)
-- Cas id - usually ogd_fid which is added after loading and ensures all rows in the database have a unique identifier (7 characters)
+- Cas id - usually ogc_fid which is added after loading and ensures all rows in the database have a unique identifier (7 characters)
 
 In some inventories the source polygons have a unique identifier with a length of up to 20 characters. In these cases, the unique identifier can be split and used as the Primary id and Secondary id to reconstruct a unique identifier linking back to the source polygon. This happens in QC and ON for example.
 
