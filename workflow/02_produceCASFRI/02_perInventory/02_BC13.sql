@@ -29,27 +29,27 @@ SELECT TT_CreateMappingView('rawfri', 'bc13', 'bc');
 -- DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'BC13';
 
 -- Add translated ones
-INSERT INTO casfri50.cas_all -- 2h26m
+INSERT INTO casfri50.cas_all -- 1h26m
 SELECT * FROM TT_Translate_bc13_cas('rawfri', 'bc13_l1_to_bc_l1_map');
 
 COMMIT;
 
 ------------------------
--- DST
+-- DST - No dst layer in BC13. dst history is not part of the old data
 ------------------------
-BEGIN;
-SELECT TT_Prepare('translation', 'bc_vri01_dst', '_bc13_dst', 'ab_avi01_dst');
+--BEGIN;
+--SELECT TT_Prepare('translation', 'bc_vri01_dst', '_bc13_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'bc13', 1, 'bc', 1);
+--SELECT TT_CreateMappingView('rawfri', 'bc13', 1, 'bc', 1);
 
 -- Delete existing entries
 -- DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'BC13';
 
 -- Add translated ones
-INSERT INTO casfri50.dst_all -- 0h15m
-SELECT * FROM TT_Translate_bc13_dst('rawfri', 'bc13_l1_to_bc_l1_map');
+--INSERT INTO casfri50.dst_all -- 0h15m
+--SELECT * FROM TT_Translate_bc13_dst('rawfri', 'bc13_l1_to_bc_l1_map');
 
-COMMIT;
+--COMMIT;
 
 ------------------------
 -- ECO
@@ -85,7 +85,7 @@ SELECT TT_Prepare('translation', 'bc_vri01_lyr', '_bc13_lyr', 'ab_avi01_lyr');
 -- Add translated ones
 SELECT TT_CreateMappingView('rawfri', 'bc13', 1, 'bc', 1);
 
-INSERT INTO casfri50.lyr_all -- 3h33m
+INSERT INTO casfri50.lyr_all -- 2h12m
 SELECT * FROM TT_Translate_bc13_lyr('rawfri', 'bc13_l1_to_bc_l1_map');
 
 COMMIT;
@@ -119,7 +119,7 @@ SELECT * FROM TT_Translate_bc13_nfl('rawfri', 'bc13_l3_to_bc_l1_map');
 SELECT TT_CreateMappingView('rawfri', 'bc13', 4, 'bc', 1);
 
 -- Add translated ones
-INSERT INTO casfri50.nfl_all -- **h**m
+INSERT INTO casfri50.nfl_all -- **h22m
 SELECT * FROM TT_Translate_bc13_nfl('rawfri', 'bc13_l4_to_bc_l1_map');
 
 COMMIT;
