@@ -3954,37 +3954,37 @@ UNION ALL
 SELECT '109.1'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - no overlap'::text description,
-       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text) IS FALSE passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.2'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - one overlap'::text description,
-       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text) passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.3'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - three overlap'::text description,
-       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text) passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.4'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test post AB25 inventories - null'::text description,
-       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, '1900', '2020') IS FALSE passed
+       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, '1900', '2020', '0') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.5'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test post AB25 inventories - passes'::text description,
-       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', '2000', '1900', '2020') passed
+       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', '2000', '1900', '2020', NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.6'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test post AB25 inventories - not between'::text description,
-       TT_ab_photo_year_validation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, '2021', '1900', '2020') IS FALSE passed
+       TT_ab_photo_year_validation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, '2021', '1900', '2020', NULL::text) IS FALSE passed
 ---------------------------------------------------------
  -- TT_ab_photo_year_translation
 ---------------------------------------------------------
@@ -3992,31 +3992,31 @@ UNION ALL
 SELECT '110.1'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - no overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text) IS NULL passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.2'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text) = 1990 passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) = 1990 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.3'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - multiple overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text) = 2000 passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) = 2000 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.4'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test post AB25 inventories'::text description,
-       TT_ab_photo_year_translation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', '2001') = 2001 passed
+       TT_ab_photo_year_translation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', '2001', NULL::text) = 2001 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.5'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test post AB25 inventories check nulls'::text description,
-       TT_ab_photo_year_translation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '2001') = 2001 passed
+       TT_ab_photo_year_translation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '2001', NULL::text) = 2001 passed
 ---------------------------------------------------------
  -- TT_sk_sfv01_wetland_translation
 ---------------------------------------------------------
