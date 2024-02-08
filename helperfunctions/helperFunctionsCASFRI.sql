@@ -16,7 +16,7 @@
 -------------------------------------------------------------------------------
 CREATE OR REPLACE VIEW TT_Queries AS
 SELECT
-    act.query AS query,
+    trim(act.query) AS query,
     act.pid AS pid,
     act.datname AS database,
     act.xact_start::timestamp(0) AS start_time,
