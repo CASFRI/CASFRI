@@ -1365,103 +1365,103 @@ UNION ALL
 SELECT '35.1'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 5, all 3 nfl layers present'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '5') = 5 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '5') = 5 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.2'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 4, 2 nfl layer present'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', '', '5') = 4 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', '', '5') = 4 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.3'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, 1 nfl layer'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', '', '', 'OR', '', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', '', '', 'OR', '', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.4'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, non_for_veg 4'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', '', 'ST', '', '', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', '', 'ST', '', '', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.5'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'non_for_veg fail'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', '', '5') = 2 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', '', '5') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.6'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 1'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', 'MU', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', 'MU', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.7'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 2'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'LL', 'XX', 'XX', 'XX', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'LL', 'XX', 'XX', 'XX', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.8'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 3'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'I', 'XX', 'SI', 'XX', 'XX', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'I', 'XX', 'SI', 'XX', 'XX', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.9'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 4'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', 'LL', 'XX', 'ICE', '', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', 'LL', 'XX', 'ICE', '', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.10'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 5'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', NULL::text, 'RO', NULL::text, NULL::text, '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', NULL::text, 'RO', NULL::text, NULL::text, '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.11'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'nat_non_veg fail'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'XX', 'XX', 'XX', 'XX', '5') = 2 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'XX', 'XX', 'XX', 'XX', '5') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.12'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, non_for_anth 1'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', 'AP', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', 'AP', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.13'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, non_for_anth 2'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'AP', 'XX', 'XX', 'XX', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'AP', 'XX', 'XX', 'XX', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.14'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, non_for_anth 3'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', 'XX', 'XX', 'C', 'XX', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', 'XX', 'XX', 'C', 'XX', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.15'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 1'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '5') = 1 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '5') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.16'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 0'::text description,
-       TT_vri01_countOfNotNull('{'''',''''}', '{'''',''''}', '', '', '', '', '', '5') = 0 passed
+       TT_vri01_countOfNotNull(NULL, '{'''',''''}', '{'''',''''}', '', '', '', '', '', '5') = 0 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.17'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Test BC08 option'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{'''',''''}', 'V', '', '', '', 'AP', '5') = 2 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{'''',''''}', 'V', '', '', '', 'AP', '5') = 2 passed
 ---------------------------------------------------------
  -- TT_sk_utm01_species_percent_validation
 ---------------------------------------------------------
@@ -1818,37 +1818,37 @@ UNION ALL
 SELECT '44.1'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Test exact'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '5', 'TRUE') passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '5', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.2'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Test exact'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '4', 'TRUE') IS FALSE passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '4', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.3'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Test exact false'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '4', 'FALSE') passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '4', 'FALSE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.4'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Count of 1'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '1', 'FALSE') passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '1', 'FALSE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.5'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Count of 0'::text description,
-       TT_vri01_hasCountOfNotNull('{'''',''''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '1', 'FALSE') IS FALSE passed
+       TT_vri01_hasCountOfNotNull(NULL, '{'''',''''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '1', 'FALSE') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.6'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Test BC08 option'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{'''',''''}', 'V', '', '', '', 'AP', '1', 'FALSE') passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{'''',''''}', 'V', '', '', '', 'AP', '1', 'FALSE') passed
 ---------------------------------------------------------
  -- TT_ns_nsi01_hasCountOfNotNull
 ---------------------------------------------------------
