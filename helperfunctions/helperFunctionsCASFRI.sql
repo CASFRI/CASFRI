@@ -4128,40 +4128,24 @@ CREATE OR REPLACE FUNCTION TT_ab_photo_year_validation(
   data_yr text
 )
 RETURNS boolean AS $$
+  DECLARE
+    _provided_year text = photoYear;
   BEGIN
-    -- for inventories without any data acquisition information, run the geoIsValid and geoIntersects validations
-    IF TT_notNull(photoYear) IS FALSE AND data_yr = '0' THEN
-      IF TT_geoIsValid(wkbGeometry, 'TRUE') IS FALSE THEN
-	      RETURN FALSE;
-      ELSIF TT_geoIntersects(wkbGeometry, lookupSchema, lookupTable, lookupCol) IS FALSE THEN
-        RETURN FALSE;
-      ELSE
-        RETURN TRUE;
-      END IF;
- 	-- for inventories with data acquisition information, run notNull and isInt on photo year value 
-    ELSIF TT_notNull(photoYear) IS FALSE AND TT_notNull(data_yr) IS FALSE THEN
-      IF TT_geoIsValid(wkbGeometry, 'TRUE') IS FALSE THEN
-	      RETURN FALSE;
-      ELSIF TT_geoIntersects(wkbGeometry, lookupSchema, lookupTable, lookupCol) IS FALSE THEN
+    IF TT_notNull(data_yr) AND data_yr != '0' THEN
+	  _provided_year = data_yr;
+	END IF;
+    -- photoyear is provided in the data (by photo_year or data_yr)
+	IF TT_notNull(_provided_year) AND _provided_year != '0' THEN
+	  IF TT_isInt(_provided_year) IS FALSE OR TT_isBetween(_provided_year, lowerBound, upperBound) IS FALSE THEN
         RETURN FALSE;
       ELSE
         RETURN TRUE;
 	  END IF;
-    ELSIF TT_notNull(photoYear) IS FALSE AND data_yr != '0' THEN
-	  IF TT_isInt(data_yr) IS FALSE THEN
-        RETURN FALSE;
-      ELSIF TT_isBetween(data_yr, lowerBound, upperBound) IS FALSE THEN
-        RETURN FALSE;
-      ELSE
-        RETURN TRUE;
-	  END IF;
-	-- for inventories with photoyear information, run notNull, isInt and isBetween on photo year value
-    ELSE
-      IF TT_notNull(photoYear) IS FALSE THEN
-        RETURN FALSE;
-      ELSIF TT_isInt(photoYear) IS FALSE THEN
-        RETURN FALSE;
-      ELSIF TT_isBetween(photoYear, lowerBound, upperBound) IS FALSE THEN
+	ELSE 
+    -- photoyear is NOT provided in the data (by photo_year or data_yr)
+	  IF TT_geoIsValid(wkbGeometry, 'TRUE') IS FALSE THEN
+	      RETURN FALSE;
+      ELSIF TT_geoIntersects(wkbGeometry, lookupSchema, lookupTable, lookupCol) IS FALSE THEN
         RETURN FALSE;
       ELSE
         RETURN TRUE;
@@ -7330,16 +7314,17 @@ CREATE OR REPLACE FUNCTION TT_ab_photo_year_translation(
   data_yr text
 )
 RETURNS int AS $$
+  DECLARE
+    _provided_year text = photoYear;
   BEGIN
-    -- for inventories without photoyear information, run geoIntersection
-    IF TT_notNull(photoYear) IS FALSE AND data_yr = '0' THEN
-      RETURN TT_geoIntersectionInt(wkbGeometry, lookupSchema, lookupTable, lookupCol, returnCol, 'GREATEST_AREA');
-    -- for inventories with data acquisition information, run copyInt()
-    ELSIF TT_notNull(photoYear) IS FALSE AND data_yr != '0' THEN
-	  RETURN TT_copyInt(data_yr);
-   -- for inventories with photoyear information, run copyInt
+    IF TT_notNull(data_yr) AND data_yr != '0' THEN
+	  _provided_year = data_yr;
+	END IF;
+    -- photoyear is provided in the data (by photo_year or data_yr)
+	IF TT_notNull(_provided_year) AND _provided_year != '0' THEN
+	  RETURN TT_copyInt(_provided_year);
     ELSE
-      RETURN TT_copyInt(photoYear);
+      RETURN TT_geoIntersectionInt(wkbGeometry, lookupSchema, lookupTable, lookupCol, returnCol, 'GREATEST_AREA');
     END IF;
   END;
 $$ LANGUAGE plpgsql STABLE;
