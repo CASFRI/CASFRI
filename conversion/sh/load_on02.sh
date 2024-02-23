@@ -80,7 +80,7 @@ SELECT wkb_geometry, ogc_fid, inventory_id, src_filename, area, perimeter, fmfob
        oyrorg, ospcomp, oleadspc, oage, oht, occlo, osi, osc, uyrorg, uspcomp, uleadspc, uage, uht, ucclo, usi, usc,
        incidspc, vert, horiz, pri_eco, sec_eco, access1, access2, mgmtcon1, mgmtcon2, mgmtcon3, verdate, sensitiv, bed
 FROM $temp_table
-WHERE polyid IS NOT NULL;
+WHERE polyid IS NOT NULL AND ST_Area(wkb_geometry) > 0;
 
 DROP TABLE IF EXISTS $temp_table;
 "
