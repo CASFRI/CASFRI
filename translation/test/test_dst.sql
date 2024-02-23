@@ -64,6 +64,8 @@ SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc_ini04_dst_test', 'ab_avi01
 SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc_ipf05_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc_wbnp01_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'yt_yvi02_dst', '_yt_yvi02_dst_test', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'ds_cfs01_dst', '_ds_cfs_dst_test', 'ab_avi01_dst');
+
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.dst_all_new CASCADE;
 ------------------------
@@ -262,6 +264,22 @@ SELECT * FROM TT_Translate_qc_ipf05_dst_test('rawfri', 'qc07_l1_to_qc_ipf_l1_map
 SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 500, NULL, 'dst'); -- Generates about 200 (235) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_pc_wbnp01_dst_test('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_500_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds01', 'ds', 200, NULL, 'dst');
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_ds_cfs_dst_test('rawfri', 'ds01_l1_to_ds_l1_map_200_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds02', 'ds', 950, NULL, 'dst');
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_ds_cfs_dst_test('rawfri', 'ds02_l1_to_ds_l1_map_950_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds03', 'ds', 1000, NULL, 'dst');
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_ds_cfs_dst_test('rawfri', 'ds03_l1_to_ds_l1_map_1000_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds04', 'ds', 400, NULL, 'dst');
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_ds_cfs_dst_test('rawfri', 'ds04_l1_to_ds_l1_map_400_dst'); -- return only about 400 rows because there is a ROW_TRANSATION_RULE for Cutblock
 ------------------------
 -- Create an ordered VIEW on the DST table
 CREATE OR REPLACE VIEW casfri50_test.dst_all_new_ordered AS

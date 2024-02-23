@@ -36,7 +36,8 @@ WITH test_nb AS (
     SELECT 'Check count'::text function_tested, 10 maj_num,  1 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 11 maj_num,  7 nb_test UNION ALL
     SELECT 'Check count'::text function_tested, 12 maj_num,  6 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested, 13 maj_num,  3 nb_test
+    SELECT 'Check count'::text function_tested, 13 maj_num,  3 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested, 14 maj_num,  4 nb_test
 ), test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
 SELECT function_tested, maj_num::text, nb_test, generate_series(1, nb_test)::text min_num
@@ -356,6 +357,30 @@ SELECT '13.3'::text number,
        'Check count'::text function_tested,
        'YT03'::text description,
        TT_Count('rawfri', 'yt03') = 71073 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '14.1'::text number,
+       'Check count'::text function_tested,
+       'DS01'::text description,
+       TT_Count('rawfri', 'ds01') = 59539 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '14.2'::text number,
+       'Check count'::text function_tested,
+       'DS02'::text description,
+       TT_Count('rawfri', 'ds02') = 15358919 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '14.3'::text number,
+       'Check count'::text function_tested,
+       'DS03'::text description,
+       TT_Count('rawfri', 'ds03') = 27593270 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '14.4'::text number,
+       'Check count'::text function_tested,
+       'DS04'::text description,
+       TT_Count('rawfri', 'ds04') = 206849 passed
 ---------------------------------------------------------
 ) AS b 
 ON ((regexp_split_to_array(number, '\.'))[1] = maj_num AND (regexp_split_to_array(number, '\.'))[2] = min_num)

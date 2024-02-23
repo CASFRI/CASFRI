@@ -65,7 +65,8 @@ SELECT TT_Prepare('translation', 'qc_ini04_cas', '_qc_ini04_cas_test', 'ab_avi01
 SELECT TT_Prepare('translation', 'qc_ipf05_cas', '_qc_ipf05_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'pc_panp01_cas', '_pc_panp_cas_test', 'ab_avi01_cas');
 SELECT TT_Prepare('translation', 'pc_wbnp01_cas', '_pc_wbnp_cas_test', 'ab_avi01_cas');
-SELECT TT_Prepare('translation', 'yt_yvi02_cas', '_yt_yvi02_cas_test', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'ds_cfs01_cas', '_ds_cfs_cas_test', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'ds_bea01_cas', '_ds_bea_cas_test', 'ab_avi01_cas');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.cas_all_new CASCADE;
 ------------------------
@@ -264,6 +265,22 @@ SELECT * FROM TT_Translate_pc_panp_cas_test('rawfri', 'pc01_l1_to_pc_panp_l1_map
 SELECT TT_CreateMappingView('rawfri', 'pc02', 'pc_wbnp', 200, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_pc_wbnp_cas_test('rawfri', 'pc02_l1_to_pc_wbnp_l1_map_200_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds01', 'ds', 200, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_ds_cfs_cas_test('rawfri', 'ds01_l1_to_ds_l1_map_200_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds02', 'ds', 950, NULL, 'cas'); -- Generate about 900 rows
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_ds_cfs_cas_test('rawfri', 'ds02_l1_to_ds_l1_map_950_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds03', 'ds', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_ds_cfs_cas_test('rawfri', 'ds03_l1_to_ds_l1_map_1000_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds04', 'ds', 400, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_ds_bea_cas_test('rawfri', 'ds04_l1_to_ds_l1_map_400_cas');
 ------------------------
 -- Create an ordered VIEW on the CAS table
 CREATE OR REPLACE VIEW casfri50_test.cas_all_new_ordered AS

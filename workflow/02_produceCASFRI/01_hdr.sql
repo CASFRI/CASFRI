@@ -50,7 +50,8 @@ WHERE inventory_id IN ('AB03', 'AB06', 'AB07', 'AB08', 'AB10', 'AB11', 'AB16', '
                        'ON01', 'ON02', 'PC01', 'PC02', 'PE01', 
                        'QC01', 'QC02', 'QC03', 'QC04', 'QC05', 'QC06', 'QC07', 
                        'SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06', 
-                       'YT01', 'YT02', 'YT03');
+                       'YT01', 'YT02', 'YT03',
+                       'DS01', 'DS02', 'DS03', 'DS04');
 ------------------------
 SELECT count(*) FROM casfri50.hdr_all; -- 5
 

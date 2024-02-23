@@ -63,6 +63,11 @@ gdalFolder="C:/Program Files/GDAL"
 gdal_1_11_4=False
 
 #################################################################
+# Python installation folder (for gdal_polygonize.py)
+#################################################################
+pythonPath="C:/Python311"
+
+#################################################################
 # Set to True if you want conversion and translation command windows to stay open after completion
 leaveConvShellOpen=False
 

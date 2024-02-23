@@ -66,6 +66,8 @@ SELECT TT_Prepare('translation', 'qc_ipf05_nfl', '_qc_ipf05_nfl_test', 'ab_avi01
 SELECT TT_Prepare('translation', 'pc_panp01_nfl', '_pc_panp_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pc_wbnp01_nfl', '_pc_wbnp_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'yt_yvi02_nfl', '_yt_yvi02_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'ds_bea01_nfl', '_ds_bea01_nfl_test', 'ab_avi01_nfl');
+
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.nfl_all_new CASCADE;
 ------------------------
@@ -432,6 +434,10 @@ SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l14_to_pc_wbnp_l1_ma
 SELECT TT_CreateMappingView('rawfri', 'pc02', 15, 'pc_wbnp', 1, NULL, NULL, 'nfl'); -- Generates 200 (164) LYR rows
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_pc_wbnp_nfl_test('rawfri', 'pc02_l15_to_pc_wbnp_l1_map_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ds04', 1, 'ds', 1, 700, NULL, 'nfl'); -- Generates 400 (416) LYR rows
+INSERT INTO casfri50_test.nfl_all_new
+SELECT * FROM TT_Translate_ds_bea01_nfl_test('rawfri', 'ds04_l1_to_ds_l1_map_700_nfl');
 ------------------------
 -- Create an ordered VIEW on the NFL table
 CREATE OR REPLACE VIEW casfri50_test.nfl_all_new_ordered AS

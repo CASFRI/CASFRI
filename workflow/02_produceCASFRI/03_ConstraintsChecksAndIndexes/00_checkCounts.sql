@@ -65,6 +65,10 @@ SELECT * FROM (
   SELECT 'YT01' inv, 249636 cnt UNION ALL 
   SELECT 'YT02' inv, 231137 cnt UNION ALL 
   SELECT 'YT03' inv, 71073 cnt
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 206849 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.cas_all
@@ -148,6 +152,10 @@ UNION ALL
   SELECT 'YT01' inv, 20704 cnt UNION ALL 
   SELECT 'YT02' inv, 19173 cnt UNION ALL 
   SELECT 'YT03' inv, 23285 cnt
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 80096 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.dst_all
@@ -231,6 +239,10 @@ UNION ALL
   SELECT 'YT01' inv, 11150 cnt UNION ALL 
   SELECT 'YT02' inv, 10313 cnt UNION ALL 
   SELECT 'YT03' inv, 11096 cnt
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 0 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.eco_all
@@ -314,6 +326,10 @@ UNION ALL
   SELECT 'YT01' inv, 114733 cnt UNION ALL
   SELECT 'YT02' inv, 105102 cnt UNION ALL
   SELECT 'YT03' inv, 65548
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 0 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.lyr_all
@@ -397,6 +413,10 @@ UNION ALL
   SELECT 'YT01' inv, 82302 cnt UNION ALL 
   SELECT 'YT02' inv, 76018 cnt UNION ALL 
   SELECT 'YT03' inv, 97712 cnt
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 126753 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.nfl_all
@@ -480,6 +500,10 @@ UNION ALL
   SELECT 'YT01' inv, 249636 cnt UNION ALL 
   SELECT 'YT02' inv, 231137 cnt UNION ALL 
   SELECT 'YT03' inv, 71073 cnt
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 206849 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.geo_all
