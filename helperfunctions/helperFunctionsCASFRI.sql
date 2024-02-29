@@ -2266,11 +2266,10 @@ CREATE OR REPLACE FUNCTION TT_sk_sfv01_wetland_code(
 RETURNS text AS $$
   DECLARE
     _species_per_1 int;
-	_crown_closure int;
-	_height int;
-	_shrubs_crown_closure int;
+    _crown_closure int;
+    _height int;
+    _shrubs_crown_closure int;
   BEGIN
-  
     -- cast values
     _species_per_1 = species_per_1::int*10;
       _crown_closure = crown_closure::int;
@@ -2327,10 +2326,10 @@ RETURNS text AS $$
 	  _cc int;
 	  _ht int;
   BEGIN
-    _sp1per = sp1per::int;
-	  _cc = cc::int;
-	  _ht = ht::int;
-	
+    _sp1per = NULLIF(trim(sp1per), '')::int;
+	  _cc = NULLIF(trim(cc), '')::int;
+	  _ht = NULLIF(trim(ht), '')::int;
+
     RETURN CASE
              -- General Wetlands: uncomment if only a general wetland class is desired
              WHEN landmod IN ('O','W') THEN 'W---'
@@ -2347,7 +2346,7 @@ RETURNS text AS $$
              WHEN sp1 IN ('WB','MM','EC','BA') THEN 'STNN'
              WHEN sp1 IN ('BS','TL') AND sp2 IN ('TL','BS') AND _cc<50 THEN 'FTNN'
              WHEN sp1='TL' AND _sp1per=100 AND _cc>0 AND _ht<12 THEN 'FTNN'
-             ELSE NULL
+             ELSE NULL::text
            END;
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
