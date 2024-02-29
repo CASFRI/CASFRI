@@ -213,5 +213,5 @@ USING (cas_id);
 
 --------------------------------------------------------------------------
 -- Refresh the materalized view
---REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
+--REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row; 8h
 --------------------------------------------------------------------------
