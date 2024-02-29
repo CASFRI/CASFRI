@@ -24,8 +24,8 @@ SELECT * FROM (
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'Check count'::text function_tested,  1 maj_num, 11 nb_test UNION ALL
-    SELECT 'Check count'::text function_tested,  2 maj_num,  4 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested,  1 maj_num, 16 nb_test UNION ALL
+    SELECT 'Check count'::text function_tested,  2 maj_num,  6 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  3 maj_num,  6 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  4 maj_num,  2 nb_test UNION ALL
     SELECT 'Check count'::text function_tested,  5 maj_num,  2 nb_test UNION ALL
@@ -103,44 +103,86 @@ SELECT '1.8'::text number,
 UNION ALL
 SELECT '1.9'::text number,
        'Check count'::text function_tested,
+       'AB21'::text description,
+       TT_Count('rawfri', 'ab21') = 338501 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.10'::text number,
+       'Check count'::text function_tested,
+       'AB24'::text description,
+       TT_Count('rawfri', 'ab24') = 144881 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.11'::text number,
+       'Check count'::text function_tested,
        'AB25'::text description,
        TT_Count('rawfri', 'ab25') = 527038 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '1.10'::text number,
+SELECT '1.12'::text number,
+       'Check count'::text function_tested,
+       'AB27'::text description,
+       TT_Count('rawfri', 'ab27') = 32070 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.13'::text number,
        'Check count'::text function_tested,
        'AB29'::text description,
        TT_Count('rawfri', 'ab29') = 620944 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '1.11'::text number,
+SELECT '1.14'::text number,
        'Check count'::text function_tested,
        'AB30'::text description,
        TT_Count('rawfri', 'ab30') = 4555 passed
 ---------------------------------------------------------
 UNION ALL
+SELECT '1.15'::text number,
+       'Check count'::text function_tested,
+       'AB31'::text description,
+       TT_Count('rawfri', 'ab31') = 802933 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '1.16'::text number,
+       'Check count'::text function_tested,
+       'AB32'::text description,
+       TT_Count('rawfri', 'ab32') = 834245 passed
+---------------------------------------------------------
+UNION ALL
 SELECT '2.1'::text number,
+       'Check count'::text function_tested,
+       'BC04'::text description,
+       TT_Count('rawfri', 'bc04') = 4431314 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '2.2'::text number,
        'Check count'::text function_tested,
        'BC08'::text description,
        TT_Count('rawfri', 'bc08') = 4677411 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '2.2'::text number,
+SELECT '2.3'::text number,
        'Check count'::text function_tested,
        'BC10'::text description,
        TT_Count('rawfri', 'bc10') = 5151772 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '2.3'::text number,
+SELECT '2.4'::text number,
        'Check count'::text function_tested,
        'BC11'::text description,
        TT_Count('rawfri', 'bc11') = 5419596 passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '2.4'::text number,
+SELECT '2.5'::text number,
        'Check count'::text function_tested,
        'BC12'::text description,
        TT_Count('rawfri', 'bc12') = 4861240 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '2.6'::text number,
+       'Check count'::text function_tested,
+       'BC13'::text description,
+       TT_Count('rawfri', 'bc13') = 3343257 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '3.1'::text number,

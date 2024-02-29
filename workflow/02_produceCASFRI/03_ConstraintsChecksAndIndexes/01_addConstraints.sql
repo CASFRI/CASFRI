@@ -1754,7 +1754,7 @@ SELECT '5.27'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
                         ARRAY['one_nfl_per_row',
-                              'LEFT(cas_id, 4) IN(''AB03'', ''AB10'', ''AB16'', ''AB25'', ''AB29'') OR
+                              'LEFT(cas_id, 4) IN(''AB03'', ''AB10'', ''AB16'', ''AB21'', ''AB24'', ''AB25'', ''AB29'', ''AB31'', ''AB32'') OR
 							                 (((non_for_veg = ANY(TT_IsMissingOrNotInSetCode()))::int + (nat_non_veg = ANY(TT_IsMissingOrNotInSetCode()))::int + (non_for_anth = ANY(TT_IsMissingOrNotInSetCode()))::int) = 2) OR
                                (((non_for_veg = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int + (nat_non_veg = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int + (non_for_anth = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int) = 3)
                               ']) AS (passed boolean, cstr_query text)) foo
