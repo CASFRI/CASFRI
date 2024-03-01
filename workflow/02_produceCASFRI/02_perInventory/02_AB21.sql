@@ -40,7 +40,7 @@ SELECT TT_Prepare('translation', 'ab_avi01_dst', '_ab21_dst'); -- used for both 
 SELECT TT_CreateMappingView('rawfri', 'ab21', 1, 'ab', 1);
 
 -- Delete existing entries
--- DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB24';
+-- DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'AB21';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all -- 1m43s 
