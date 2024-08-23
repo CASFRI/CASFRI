@@ -1587,6 +1587,7 @@ RETURNS text AS $$
 				  WHEN rulelc = 'nl_nli01_crown_closure_validation' THEN '-8886'
 				  WHEN rulelc = 'nl_nli01_height_validation' THEN '-8886'
 				  WHEN rulelc = 'nb_hasCountOfNotNull' THEN '-8886'
+				  WHEN rulelc = 'mb_fri03_getSpeciesPer1' THEN '-8888'
                   ELSE
                    TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
@@ -1638,6 +1639,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'yvi03_hasnfl' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'row_translation_rule_nt_lyr' THEN 'INVALID_VALUE'
 				  WHEN rulelc = 'hasnflinfo' THEN 'INVALID_VALUE'
+				  WHEN rulelc = 'mb_fri03_species_validation' THEN 'NULL_VALUE'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     END IF;
   END;
@@ -8678,3 +8680,64 @@ RETURNS text AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_mb_fri03_getSpeciesPer1
+--
+-- Given a string composition of species in a polygon, get the percentage of species_1
+-- If the string only contains one species, must be 100%
+-- If there are two or more species, parse the integer in the 3rd position
+-- 
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_mb_fri03_getSpeciesPer1(text);
+CREATE OR REPLACE FUNCTION TT_mb_fri03_getSpeciesPer1(
+  species TEXT
+)
+RETURNS INTEGER AS $$
+  BEGIN
+     IF (length(species) = 2 AND species ~ '^[A-Za-z]+$') OR 
+     	(length(species) = 4 AND substring(species, 1, 2) ~ '^[A-Za-z]+$' AND substring(species, 3, 2) = '10')
+	THEN 
+		RETURN 100;
+	ELSIF length(species) > 2 AND substring(species, 1, 2) ~ '^[A-Za-z]+$' AND substring(species, 3, 1) ~ '^[0-9]+$'
+	THEN
+		RETURN substring(species, 3, 1)::INT*10;    
+	END IF;
+	RETURN NULL;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_mb_fri03_species_validation
+--
+-- Given a string composition of species in a polygon and the specific species index to look for, return true if the string contains correct information for that entry
+-- If the string only contains one species, must be 100%
+-- Returns true if both a two letter species code and a percentage exists in the string at the correct index
+-- 
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_mb_fri03_species_validation(text, integer);
+CREATE OR REPLACE FUNCTION TT_mb_fri03_species_validation(
+  species TEXT,
+  species_count INTEGER
+)
+RETURNS boolean AS $$
+  BEGIN
+	  
+    IF (species_count = 1 AND length(species) = 2 AND species ~ '^[A-Za-z]+$')                                                                -- JP
+    OR (species_count = 1 AND length(species) = 4 AND substring(species, 1, 2) ~ '^[A-Za-z]+$' AND substring(species, 3, 2) = '10')           -- JP10
+    OR (species_count = 1 AND length(species) >= 6 AND substring(species, 1, 2) ~ '^[A-Za-z]+$' AND substring(species, 3, 1) ~ '^[0-9]+$')    -- JP8TR2
+    OR (species_count = 2 AND length(species) >= 6 AND substring(species, 4, 2) ~ '^[A-Za-z]+$' AND substring(species, 6, 1) ~ '^[0-9]+$')    -- JP8TR2
+    OR (species_count = 3 AND length(species) >= 9 AND substring(species, 7, 2) ~ '^[A-Za-z]+$' AND substring(species, 9, 1) ~ '^[0-9]+$')    -- JP7TR2TL1
+    OR (species_count = 4 AND length(species) >= 12 AND substring(species, 10, 2) ~ '^[A-Za-z]+$' AND substring(species, 12, 1) ~ '^[0-9]+$') -- JP6TR2TL1PL1
+    OR (species_count = 5 AND length(species) >= 15 AND substring(species, 13, 2) ~ '^[A-Za-z]+$' AND substring(species, 15, 1) ~ '^[0-9]+$') -- JP5TR2TL1PL1TS1
+    OR (species_count = 6 AND length(species) >= 18 AND substring(species, 16, 2) ~ '^[A-Za-z]+$' AND substring(species, 18, 1) ~ '^[0-9]+$') -- JP4TR2TL1PL1TS1WS1
+	THEN 
+		RETURN TRUE;
+	ELSE
+		RETURN FALSE;
+	END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
