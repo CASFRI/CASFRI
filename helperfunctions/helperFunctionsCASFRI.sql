@@ -8720,19 +8720,19 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --DROP FUNCTION IF EXISTS TT_mb_fri03_species_validation(text, integer);
 CREATE OR REPLACE FUNCTION TT_mb_fri03_species_validation(
   species TEXT,
-  species_count INTEGER
+  species_count TEXT
 )
 RETURNS boolean AS $$
   BEGIN
 	  
-    IF (species_count = 1 AND length(species) = 2 AND species ~ '^[A-Za-z]+$')                                                                -- JP
-    OR (species_count = 1 AND length(species) = 4 AND substring(species, 1, 2) ~ '^[A-Za-z]+$' AND substring(species, 3, 2) = '10')           -- JP10
-    OR (species_count = 1 AND length(species) >= 6 AND substring(species, 1, 2) ~ '^[A-Za-z]+$' AND substring(species, 3, 1) ~ '^[0-9]+$')    -- JP8TR2
-    OR (species_count = 2 AND length(species) >= 6 AND substring(species, 4, 2) ~ '^[A-Za-z]+$' AND substring(species, 6, 1) ~ '^[0-9]+$')    -- JP8TR2
-    OR (species_count = 3 AND length(species) >= 9 AND substring(species, 7, 2) ~ '^[A-Za-z]+$' AND substring(species, 9, 1) ~ '^[0-9]+$')    -- JP7TR2TL1
-    OR (species_count = 4 AND length(species) >= 12 AND substring(species, 10, 2) ~ '^[A-Za-z]+$' AND substring(species, 12, 1) ~ '^[0-9]+$') -- JP6TR2TL1PL1
-    OR (species_count = 5 AND length(species) >= 15 AND substring(species, 13, 2) ~ '^[A-Za-z]+$' AND substring(species, 15, 1) ~ '^[0-9]+$') -- JP5TR2TL1PL1TS1
-    OR (species_count = 6 AND length(species) >= 18 AND substring(species, 16, 2) ~ '^[A-Za-z]+$' AND substring(species, 18, 1) ~ '^[0-9]+$') -- JP4TR2TL1PL1TS1WS1
+    IF (species_count::integer = 1 AND length(species) = 2 AND species ~ '^[A-Za-z]+$')                                                                -- JP
+    OR (species_count::integer = 1 AND length(species) = 4 AND substring(species, 1, 2) ~ '^[A-Za-z]+$' AND substring(species, 3, 2) = '10')           -- JP10
+    OR (species_count::integer = 1 AND length(species) >= 6 AND substring(species, 1, 2) ~ '^[A-Za-z]+$' AND substring(species, 3, 1) ~ '^[0-9]+$')    -- JP8TR2
+    OR (species_count::integer = 2 AND length(species) >= 6 AND substring(species, 4, 2) ~ '^[A-Za-z]+$' AND substring(species, 6, 1) ~ '^[0-9]+$')    -- JP8TR2
+    OR (species_count::integer = 3 AND length(species) >= 9 AND substring(species, 7, 2) ~ '^[A-Za-z]+$' AND substring(species, 9, 1) ~ '^[0-9]+$')    -- JP7TR2TL1
+    OR (species_count::integer = 4 AND length(species) >= 12 AND substring(species, 10, 2) ~ '^[A-Za-z]+$' AND substring(species, 12, 1) ~ '^[0-9]+$') -- JP6TR2TL1PL1
+    OR (species_count::integer = 5 AND length(species) >= 15 AND substring(species, 13, 2) ~ '^[A-Za-z]+$' AND substring(species, 15, 1) ~ '^[0-9]+$') -- JP5TR2TL1PL1TS1
+    OR (species_count::integer = 6 AND length(species) >= 18 AND substring(species, 16, 2) ~ '^[A-Za-z]+$' AND substring(species, 18, 1) ~ '^[0-9]+$') -- JP4TR2TL1PL1TS1WS1
 	THEN 
 		RETURN TRUE;
 	ELSE

@@ -74,6 +74,8 @@ DROP FUNCTION IF EXISTS TT_yvi03_nfl_soil_moisture_validation(text,text,text,tex
 DROP FUNCTION IF EXISTS TT_fim_species_count_validate(text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_dist_type_length_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_mb03_disturbance_hasCountOfNotNull(text, text);
+DROP FUNCTION IF EXISTS TT_mb_fri03_getSpeciesPer1(text);
+DROP FUNCTION IF EXISTS TT_mb_fri03_species_validation(text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
