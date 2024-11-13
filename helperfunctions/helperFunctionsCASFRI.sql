@@ -3136,6 +3136,53 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_vri01_hasCountOfNotNull
+--
+-- species_layer_1 text,
+-- species_layer_2 text,
+-- species_layer_3 text,
+-- species_layer_4 text,
+-- species_layer_5 text,
+-- nnf_anth text,
+-- count text
+-- zero_is_null
+--
+-- hasCountOfNotNull using custom fli01 countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_mb_fli01_hasCountOfNotNull(text, text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_mb_fli01_hasCountOfNotNull(
+  species_layer_1 text,
+  species_layer_2 text,
+  species_layer_3 text,
+  species_layer_4 text,
+  species_layer_5 text,
+  nnf_anth text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = TT_mb_fli01_countOfNotNull(species_layer_1, species_layer_2, species_layer_3, species_layer_4, species_layer_5, nnf_anth, '6');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;
+                                  
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_ns_nsi01_hasCountOfNotNull
 --
 -- vals1 text - string list of layer 1 attributes. This is carried through to couneOfNotNull
@@ -6218,6 +6265,49 @@ RETURNS int AS $$
 		-- call countOfNotNull
 		RETURN TT_countOfNotNull(vals1, vals2, vals3, vals4, vals5, is_nfl, max_rank_to_consider, 'FALSE');
 	END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_mb_fli01_countOfNotNull
+--
+-- species_layer_1 text,
+-- species_layer_2 text,
+-- species_layer_3 text,
+-- species_layer_4 text,
+-- species_layer_5 text,
+-- nnf_anth text,
+-- max_rank_to_consider text
+--
+-- Determine if the row contains an NFL record. If it does assign a string
+-- so it can be counted as a non-null layer.
+--
+-- Pass species and the string/NULLs to countOfNotNull().
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_mb_fli01_countOfNotNull(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_mb_fli01_countOfNotNull(
+  species_layer_1 text,
+  species_layer_2 text,
+  species_layer_3 text,
+  species_layer_4 text,
+  species_layer_5 text,
+  nnf_anth text,
+  max_rank_to_consider text
+)
+RETURNS int AS $$
+  DECLARE
+    is_nfl text;
+  BEGIN
+    -- set is_nfl to be a valid string.
+    IF nnf_anth IN('NMB','NMC','NMR','NMS','NMG','NWL','NWR','NWW','NMM','NMO','NWE','NWA','NSL','NMF', 'CP', 'CA', 'CPR', 'ASB', 'AFL', 'ADD', 'CIP','CIW','CIU','ASC','ASR','ASP','ASN','AIH','AIR', 'AAR', 'AIG','AII','AIW','AIA','AIF','AIU', 'SO','SO1','SO2','SO3','SO4','SO5','SO6','SO7','SO8','SO9','AL','SC','SC1','SC2','SC3','SC4','SC5','SC6','SC7','SC8','SC9','CC','HG','CS','HF','AS','HU','VI','BR','RA','CL','DL','AU') THEN
+      is_nfl = 'a_value';
+    ELSE
+      is_nfl = NULL::text;
+    END IF;
+  
+    -- call countOfNotNull
+    RETURN TT_countOfNotNull(species_layer_1, species_layer_2, species_layer_3, species_layer_4, species_layer_5, is_nfl, max_rank_to_consider, 'FALSE');
+  END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
