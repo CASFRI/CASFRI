@@ -17,46 +17,46 @@ SET tt.debug TO FALSE;
 -- CAS
 ------------------------
 
-SELECT TT_Prepare('translation', 'pe_pei02_cas', '_pe03_cas', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'pe_pei01_cas', '_pe03_cas', 'ab_avi01_cas');
 
-SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_cli');
+SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_pei');
 
 -- Delete existing entries
 --DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'PE03';
 
 -- Add translated ones
 INSERT INTO casfri50.cas_all --
-SELECT * FROM TT_Translate_pe02_cas('rawfri', 'pe03_l1_to_pe_cli_l1_map');
+SELECT * FROM TT_Translate_pe02_cas('rawfri', 'pe03_l1_to_pe_pei_l1_map');
 
 
 ------------------------
 -- DST
 ------------------------
-SELECT TT_Prepare('translation', 'pe_pei02_dst', '_pe03_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'pe_pei01_dst', '_pe03_dst', 'ab_avi01_dst');
 
-SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_cli');
+SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_pei');
 
 -- Delete existing entries
 --DELETE FROM casfri50.dst_all WHERE left(cas_id, 4) = 'PE03';
 
 -- Add translated ones
 INSERT INTO casfri50.dst_all --
-SELECT * FROM TT_Translate_pe03_dst('rawfri', 'pe03_l1_to_pe_cli_l1_map');
+SELECT * FROM TT_Translate_pe03_dst('rawfri', 'pe03_l1_to_pe_pei_l1_map');
 --
 
 ------------------------
 -- ECO
 ------------------------
-SELECT TT_Prepare('translation', 'pe_pei02_eco', '_pe03_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'pe_pei01_eco', '_pe03_eco', 'ab_avi01_eco');
 
-SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_cli');
+SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_pei');
 
 -- Delete existing entries
 --DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'PE03';
 
 -- Add translated ones
 INSERT INTO casfri50.eco_all --
-SELECT * FROM TT_Translate_pe03_eco('rawfri', 'pe03_l1_to_pe_cli_l1_map');
+SELECT * FROM TT_Translate_pe03_eco('rawfri', 'pe03_l1_to_pe_pei_l1_map');
 
 ------------------------
 -- LYR
@@ -68,48 +68,48 @@ ON translation.species_code_mapping (pe_species_codes)
 WHERE TT_NotEmpty(pe_species_codes);
 
 -- Prepare the translation function
-SELECT TT_Prepare('translation', 'pe_pei02_lyr', '_pe03_lyr', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'pe_pei01_lyr', '_pe03_lyr', 'ab_avi01_lyr');
 
 -- Delete existing entries
 --DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'PE03';
 
 -- Add translated ones
 -- Layer 1
-SELECT TT_CreateMappingView('rawfri', 'pe03', 1, 'pe_cli', 1);
+SELECT TT_CreateMappingView('rawfri', 'pe03', 1, 'pe_pei', 1);
 
 INSERT INTO casfri50.lyr_all --
-SELECT * FROM TT_Translate_pe03_lyr('rawfri', 'pe03_l1_to_pe_cli_l1_map');
+SELECT * FROM TT_Translate_pe03_lyr('rawfri', 'pe03_l1_to_pe_pei_l1_map');
 
 ------------------------
 -- NFL
 ------------------------
 BEGIN;
-SELECT TT_Prepare('translation', 'pe_pei02_nfl', '_pe03_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe03_nfl', 'ab_avi01_nfl');
 
 -- Delete existing entries
 --DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'PE03';
 
 -- Add translated NFL
-SELECT TT_CreateMappingView('rawfri', 'pe03', 2, 'pe_cli', 1);
+SELECT TT_CreateMappingView('rawfri', 'pe03', 2, 'pe_pei', 1);
 
 INSERT INTO casfri50.nfl_all --
-SELECT * FROM TT_Translate_pe03_nfl('rawfri', 'pe03_l2_to_pe_cli_l1_map');
+SELECT * FROM TT_Translate_pe03_nfl('rawfri', 'pe03_l2_to_pe_pei_l1_map');
 
 COMMIT;
 ------------------------
 -- GEO
 ------------------------
 
-SELECT TT_Prepare('translation', 'pe_pei02_geo', '_pe03_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'pe_pei01_geo', '_pe03_geo', 'ab_avi01_geo');
 
-SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_cli');
+SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_pei');
 
 -- Delete existing entries
 --DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'PE03';
 
 -- Add translated ones
 INSERT INTO casfri50.geo_all --
-SELECT * FROM TT_Translate_pe03_geo('rawfri', 'pe03_l1_to_pe_cli_l1_map');
+SELECT * FROM TT_Translate_pe03_geo('rawfri', 'pe03_l1_to_pe_pei_l1_map');
 
 --------------------------------------------------------------------------
 -- Check
