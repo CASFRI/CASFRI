@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
 3,ORIG_STAND_ID,text,notNull(orig_stand_id),copyText(orig_stand_id),Copies source value,TRUE
 4,STAND_STRUCTURE,text,"notEmpty({species_1, species_2, species_3, species_4}, TRUE|NOT_APPLICABLE)",copyText('SINGLE_LAYERED'),Stand structure is always SINGLE_LAYERED for forested polygons. Validation applies NOT_APPLICABLE unless polygon is forested.,TRUE
-5,NUM_OF_LAYERS,integer,true(),copyInt(1),Always 1,TRUE
+5,NUM_OF_LAYERS,integer,"yvi03_hasCountOfNotNull(species_1, type_lnd, cover_type, cl_mod, landpos, 1, FALSE|-8886)","yvi03_countOfNotNull(species_1, type_lnd, cover_type, cl_mod, landpos, 2)",Always 1,TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Attribute does not occur,TRUE
 7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
 8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE

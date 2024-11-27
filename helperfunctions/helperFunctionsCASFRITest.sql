@@ -188,7 +188,9 @@ WITH test_nb AS (
   SELECT 'TT_mb_fri03_getSpeciesPer1'::text function_tested,               140 maj_num,  5 nb_test UNION ALL
   SELECT 'TT_mb_fri03_species_validation'::text function_tested,           141 maj_num,  9 nb_test UNION ALL
   SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,            142 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test
+  SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi03_hascountofnotnull'::text function_tested,               144 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi03_countofnotnull'::text function_tested,                  145 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -4803,8 +4805,61 @@ SELECT '143.4'::text number,
        'Test 2 not null'::text description,
        TT_mb_fli01_countOfNotNull('{SP1}', '{SP2}', '{NULL}', '{NULL}', '{NULL}', 'NULL', 3::TEXT) = 2 passed
 ---------------------------------------------------------
-     
-) AS b 
+
+---------------------------------------------------------
+ -- TT_yvi03_hasCountOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '144.1'::text number,
+       'TT_yvi03_hascountofnotnull'::text function_tested,
+       'Test species and null NFL'::text description,
+       TT_yvi03_hascountofnotnull('SP', NULL, NULL, NULL, NULL, 1::TEXT, TRUE::TEXT) = TRUE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '144.2'::text number,
+       'TT_yvi03_hascountofnotnull'::text function_tested,
+       'Test species and NFL'::text description,
+       TT_yvi03_hascountofnotnull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 1::TEXT, FALSE::TEXT) = TRUE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '144.3'::text number,
+       'TT_yvi03_hascountofnotnull'::text function_tested,
+       'Test species and non NFL'::text description,
+       TT_yvi03_hascountofnotnull('SP', 'Vegetated, Forested', NULL, NULL, 'Upland', 2::TEXT, FALSE::TEXT) = FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '144.4'::text number,
+       'TT_yvi03_hascountofnotnull'::text function_tested,
+       'Test null species and null NFL'::text description,
+       TT_yvi03_hascountofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT, FALSE::TEXT) = FALSE passed
+---------------------------------------------------------
+ -- TT_yvi03_countofnotnull
+---------------------------------------------------------
+UNION ALL
+SELECT '145.1'::text number,
+       'TT_yvi03_countofnotnull'::text function_tested,
+       'Test species and null NFL'::text description,
+       TT_yvi03_countofnotnull('SP', NULL, NULL, NULL, NULL, 1::TEXT) = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '145.2'::text number,
+       'TT_yvi03_countofnotnull'::text function_tested,
+       'Test species and NFL'::text description,
+       TT_yvi03_countofnotnull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 2::TEXT) = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '145.3'::text number,
+       'TT_yvi03_countofnotnull'::text function_tested,
+       'Test species and non NFL'::text description,
+       TT_yvi03_countofnotnull('SP', 'Vegetated, Forested', NULL, NULL, 'Upland', 2::TEXT) = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '145.4'::text number,
+       'TT_yvi03_countofnotnull'::text function_tested,
+       'Test null species and null NFL'::text description,
+       TT_yvi03_countofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT) = 0 passed
+---------------------------------------------------------
+) AS b
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
 -- This last line has to be commented out, with the line at the beginning,

@@ -1582,12 +1582,13 @@ RETURNS text AS $$
                   WHEN rulelc = 'yt_yvi02_disturbance_notnull' THEN '-8888'
                   WHEN rulelc = 'yt_yvi02_disturbance_hascountoflayers' THEN '-8887'
                   WHEN rulelc = 'row_translation_rule_nt_lyr' THEN '-9997'
-				  WHEN rulelc = 'mb_fri_hasCountOfNotNull' THEN '-8886'
+				  WHEN rulelc = 'mb_fri_hascountofnotnull' THEN '-8886'
 				  WHEN rulelc = 'mb_mb03_disturbance_hascountofnotnull' THEN '-8888'
 				  WHEN rulelc = 'nl_nli01_crown_closure_validation' THEN '-8886'
 				  WHEN rulelc = 'nl_nli01_height_validation' THEN '-8886'
 				  WHEN rulelc = 'nb_hasCountOfNotNull' THEN '-8886'
 				  WHEN rulelc = 'mb_fri03_getSpeciesPer1' THEN '-8888'
+				  WHEN rulelc = 'yvi03_hascountofnotnull' THEN '-8886'
                   ELSE
                    TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
@@ -3481,6 +3482,50 @@ RETURNS boolean AS $$
     ELSE
       RETURN _counted_nulls >= _count;
     END IF;  
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_yvi03_hasCountOfNotNull
+--
+-- species_1 text,
+-- type_lnd text, 
+-- cover_type text, 
+-- cl_mod text, 
+-- landpos text,
+-- count text,
+-- exact text
+--
+-- hasCountOfNotNull using yvi03 custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi03_hasCountOfNotNull(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yvi03_hasCountOfNotNull(
+  species_1 text,
+  type_lnd text, 
+  cover_type text, 
+  cl_mod text, 
+  landpos text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = TT_yvi03_countOfNotNull(species_1, type_lnd, cover_type, cl_mod, landpos, '2');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -6600,6 +6645,40 @@ RETURNS int AS $$
   
     -- call countOfNotNull
     RETURN TT_countOfNotNull(species, is_nfl, max_rank_to_consider, 'FALSE');
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_yvi03_countofnotnull
+--
+-- Identify any NFL layers. Identify any non-productve LYR layers and set species_1 to a string.
+-- Pass strings and species to countofnotnull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi03_countofnotnull(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yvi03_countofnotnull(
+  species_1 text,
+  type_lnd text, 
+  cover_type text, 
+  cl_mod text, 
+  landpos text,
+  maxRankToConsider text
+)
+RETURNS int AS $$
+  DECLARE
+	_nfl text;
+  BEGIN
+    IF tt_notEmpty(species_1) THEN
+      species_1 = 'a string';
+    END IF;
+  
+    IF tt_yvi03_hasNFL(type_lnd, cover_type, cl_mod, landpos) THEN
+      _nfl = 'a_string';
+    ELSE
+      _nfl = NULL;
+    END IF;
+    		
+    RETURN TT_countOfNotNull(species_1, _nfl, maxRankToConsider, 'FALSE');
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
