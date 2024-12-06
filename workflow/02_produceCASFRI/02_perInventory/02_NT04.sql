@@ -13,11 +13,11 @@
 SET tt.debug TO TRUE;
 SET tt.debug TO FALSE;
 --------------------------------------------------------------------------
--- Translate all NT03. 3h35m
+-- Translate all NT04. 3h35m
 --------------------------------------------------------------------------
 -- CAS
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi02_cas', '_nt04_cas', 'ab_avi01_cas');
+SELECT TT_Prepare('translation', 'nt_fvi01_cas', '_nt04_cas', 'ab_avi01_cas');
 
 SELECT TT_CreateMappingView('rawfri', 'nt04', 'nt');
 
@@ -32,7 +32,7 @@ SELECT * FROM TT_Translate_nt04_cas('rawfri', 'nt04_l1_to_nt_l1_map');
 ------------------------
 -- DST
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi02_dst', '_nt04_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'nt_fvi01_dst', '_nt04_dst', 'ab_avi01_dst');
 
 SELECT TT_CreateMappingView('rawfri', 'nt04', 1, 'nt', 1);
 
@@ -47,7 +47,7 @@ SELECT * FROM TT_Translate_nt04_dst('rawfri', 'nt04_l1_to_nt_l1_map');
 ------------------------
 -- ECO
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi02_eco', '_nt04_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'nt_fvi01_eco', '_nt04_eco', 'ab_avi01_eco');
 
 SELECT TT_CreateMappingView('rawfri', 'nt04', 'nt');
 
@@ -68,7 +68,7 @@ ON translation.species_code_mapping (nt_species_codes)
 WHERE TT_NotEmpty(nt_species_codes);
 
 -- Prepare the translation function
-SELECT TT_Prepare('translation', 'nt_fvi02_lyr', '_nt04_lyr', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'nt_fvi01_lyr', '_nt04_lyr', 'ab_avi01_lyr');
 
 -- Delete existing entries
 -- DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'NT04';
@@ -92,7 +92,7 @@ SELECT * FROM TT_Translate_nt04_lyr('rawfri', 'nt04_l2_to_nt_l1_map');
 ------------------------
 -- NFL
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi02_nfl', '_nt04_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'nt_fvi01_nfl', '_nt04_nfl', 'ab_avi01_nfl');
 
 -- Delete existing entries
 -- DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'NT04';
@@ -106,17 +106,10 @@ INSERT INTO casfri50.nfl_all --
 SELECT * FROM TT_Translate_nt04_nfl('rawfri', 'nt04_l3_to_nt_l1_map');
 
 
--- Layer 2 reusing NT01 layer 1 translation table
-SELECT TT_CreateMappingView('rawfri', 'nt04', 4, 'nt', 1);
-
-INSERT INTO casfri50.nfl_all --
-SELECT * FROM TT_Translate_nt04_nfl('rawfri', 'nt04_l4_to_nt_l1_map');
-
-
 ------------------------
 -- GEO
 ------------------------
-SELECT TT_Prepare('translation', 'nt_fvi02_geo', '_nt04_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'nt_fvi01_geo', '_nt04_geo', 'ab_avi01_geo');
 
 SELECT TT_CreateMappingView('rawfri', 'nt04', 1, 'nt', 1);
 

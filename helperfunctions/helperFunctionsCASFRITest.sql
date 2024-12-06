@@ -190,7 +190,8 @@ WITH test_nb AS (
   SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,            142 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_yvi03_hascountofnotnull'::text function_tested,               144 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi03_countofnotnull'::text function_tested,                  145 maj_num,  4 nb_test
+  SELECT 'TT_yvi03_countofnotnull'::text function_tested,                  145 maj_num,  4 nb_test UNION ALL
+  SELECT TT_nt_fvi01_species_per_range_validation::text function_tested,   146 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1326,43 +1327,43 @@ UNION ALL
 SELECT '34.1'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 2 NFL'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'SL', 'ST', '4') = 2 passed
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', '', '', 'SL', 'ST', '4') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.2'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 1'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{'''',''''}', 'SL', 'TC', '4') = 1 passed
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{'''',''''}', '', '', 'SL', 'TC', '4') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.3'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 2 LYR'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'TC', 'TM', '4') = 2 passed
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', '', '', 'TC', 'TM', '4') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.4'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 1 LYR'::text description,
-       TT_fvi01_countOfNotNull('{'''',''''}', '{''val'',''val''}', '', 'TC', '4') = 1 passed
+       TT_fvi01_countOfNotNull('{'''',''''}', '{''val'',''val''}', '', '', '', 'TC', '4') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.5'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 0'::text description,
-       TT_fvi01_countOfNotNull('{'''',''''}', '{'''',''''}', '', NULL::text, '4') = 0 passed
+       TT_fvi01_countOfNotNull('{'''',''''}', '{'''',''''}', '', '', '', NULL::text, '4') = 0 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.6'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 1 LYR 1 NFL'::text description,
-       TT_fvi01_countOfNotNull('{''val'',''val''}', '{'''',''''}', 'TB', 'SL', '4') = 2 passed
+       TT_fvi01_countOfNotNull('{''val'',''val''}', '{'''',''''}', '', '', 'TB', 'SL', '4') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '34.7'::text number,
        'TT_fvi01_countOfNotNull'::text function_tested,
        'Count of 1 LYR but no values'::text description,
-       TT_fvi01_countOfNotNull('{'''',''''}', '{'''',''''}', 'TB', '', '4') = 0 passed
+       TT_fvi01_countOfNotNull('{'''',''''}', '{'''',''''}', '', '', 'TB', '', '4') = 0 passed
 
 ---------------------------------------------------------
 ---------------------------------------------------------
@@ -1900,37 +1901,37 @@ UNION ALL
 SELECT '46.1'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
        'Test 2 NFL layers'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'SL', 'ST', '2', 'TRUE') passed
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', '', 'SL', 'ST', '2', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.2'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
        'Test 1 NFL layers'::text description,
-       TT_fvi01_hasCountOfNotNull('', 'bf', '', 'ST', '1', 'TRUE') passed
+       TT_fvi01_hasCountOfNotNull('', 'bf', '', '', '', 'ST', '1', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.3'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
        'Test 0 layers'::text description,
-       TT_fvi01_hasCountOfNotNull('', '', '', '', '0', 'TRUE') passed
+       TT_fvi01_hasCountOfNotNull('', '', '', '', '', '', '0', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.4'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
        'Test two LYR layers'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'TM', 'TM', '2', 'TRUE') passed
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', '', 'TM', 'TM', '2', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.5'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
        'Test two layers exact false'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'TM', 'TM', '1', 'FALSE') passed
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', '', 'TM', 'TM', '1', 'FALSE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '46.6'::text number,
        'TT_fvi01_hasCountOfNotNull'::text function_tested,
        'Test two layers exact true'::text description,
-       TT_fvi01_hasCountOfNotNull('bf', 'bf', 'TM', 'TM', '1', 'TRUE') IS FALSE passed
+       TT_fvi01_hasCountOfNotNull('bf', 'bf', '', '', 'TM', 'TM', '1', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
   -- TT_on_fim02_countOfNotNull
 ---------------------------------------------------------
@@ -2300,25 +2301,25 @@ UNION ALL
 SELECT '59.1'::text number,
        'TT_row_translation_rule_nt_lyr'::text function_tested,
        'Test sp1 true'::text description,
-       TT_row_translation_rule_nt_lyr('TC', 'bf', '', '', '') passed
+       TT_row_translation_rule_nt_lyr('', '', 'TC', 'bf', '', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '59.2'::text number,
        'TT_row_translation_rule_nt_lyr'::text function_tested,
        'Test sp2 true'::text description,
-       TT_row_translation_rule_nt_lyr('TC', '', 'bf', '', '') passed
+       TT_row_translation_rule_nt_lyr('', '', 'TC', '', 'bf', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '59.3'::text number,
        'TT_row_translation_rule_nt_lyr'::text function_tested,
        'Test sp1 but not typeclas'::text description,
-       TT_row_translation_rule_nt_lyr('SL', '', 'bf', '', '') IS FALSE passed
+       TT_row_translation_rule_nt_lyr('', '', 'SL', '', 'bf', '', '') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '59.4'::text number,
        'TT_row_translation_rule_nt_lyr'::text function_tested,
        'Test typeclas but no sp'::text description,
-       TT_row_translation_rule_nt_lyr('TM', '', '', '', '') IS FALSE passed
+       TT_row_translation_rule_nt_lyr('', '', 'TM', '', '', '', '') IS FALSE passed
 ---------------------------------------------------------
  -- tt_qc_prg4_species
 ---------------------------------------------------------
@@ -4604,37 +4605,37 @@ UNION ALL
 SELECT '138.1'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
        'test 1'::text description,
-       TT_nt_lyr_layer_translation('TC', 'TC', '{''5'',''10''}', '{''A''}', '{''B''}', '1') = 2 passed
+       TT_nt_lyr_layer_translation('', '', 'TC', 'TC', '{''5'',''10''}', '{''A''}', '{''B''}', '1') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '138.2'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
        'test 2'::text description,
-       TT_nt_lyr_layer_translation('TC', 'TC', '{''5'',''10''}', '{''A''}', '{''B''}', '2') = 1 passed
+       TT_nt_lyr_layer_translation('', '', 'TC', 'TC', '{''5'',''10''}', '{''A''}', '{''B''}', '2') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '138.3'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
        'test 3 - missing mintypeclas but still species present'::text description,
-       TT_nt_lyr_layer_translation('TC', '', '{''5'',''10''}', '{''A''}', '{''B''}', '1') = 2 passed
+       TT_nt_lyr_layer_translation('', '', 'TC', '', '{''5'',''10''}', '{''A''}', '{''B''}', '1') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '138.4'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
        'If getIdex layer is non forest, returns null. This should never occur during translation.'::text description,
-       TT_nt_lyr_layer_translation('TC', 'T', '{''5'',''10''}', '{''A''}', '{''B''}', '2') = 1 passed
+       TT_nt_lyr_layer_translation('', '', 'TC', 'T', '{''5'',''10''}', '{''A''}', '{''B''}', '2') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '138.5'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
        'Test layer 1 null typeclas and species'::text description,
-       TT_nt_lyr_layer_translation(NULL::text, NULL::text, NULL::text, 'sp', NULL::text, '1') = 1 passed
+       TT_nt_lyr_layer_translation(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, 'sp', NULL::text, '1') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '138.6'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
        'Test layer 2 null mintypeclas and species'::text description,
-       TT_nt_lyr_layer_translation('TC', NULL::text, '{''10'',''5''}', '{''A''}', '{''B''}', '2') = 2 passed
+       TT_nt_lyr_layer_translation(NULL::text, NULL::text, 'TC', NULL::text, '{''10'',''5''}', '{''A''}', '{''B''}', '2') = 1 passed
 ---------------------------------------------------------
  -- TT_pe_pei_dist_type_length_validation
 ---------------------------------------------------------
@@ -4859,7 +4860,33 @@ SELECT '145.4'::text number,
        'Test null species and null NFL'::text description,
        TT_yvi03_countofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT) = 0 passed
 ---------------------------------------------------------
-) AS b
+ -- TT_nt_fvi01_species_per_range_validation
+---------------------------------------------------------
+UNION ALL
+SELECT '146.1'::text number,
+       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
+       'Test valid small range'::text description,
+       TT_nt_fvi01_species_per_range_validation('NT03', '2') = TRUE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '146.2'::text number,
+       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
+       'Test valid large range'::text description,
+       TT_nt_fvi01_species_per_range_validation('NT04', '60') = TRUE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '146.3'::text number,
+       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
+       'Test invalid small range'::text description,
+       TT_nt_fvi01_species_per_range_validation('NT03', '12') = FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '146.4'::text number,
+       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
+       'Test invalid large range'::text description,
+       TT_nt_fvi01_species_per_range_validation('NT04', '105') = FALSE passed
+---------------------------------------------------------
+) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int
 -- This last line has to be commented out, with the line at the beginning,
