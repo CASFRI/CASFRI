@@ -7813,10 +7813,8 @@ RETURNS int AS $$
 	
 	-- layer 1 present if species have values and typeclas is either null, or a non-nfl value
 	IF TT_notEmpty(l1_species, 'TRUE') THEN
-	  IF typeclas IS NULL AND typeclas_nonveg IS NULL AND typeclas_anth IS NULL THEN
-	    lyr1 = TRUE; -- species present, typeclas null
-	  ELSIF NOT typeclas = ANY(nfl_string_list) AND NOT typeclas_nonveg = ANY(nfl_string_list) AND NOT typeclas_anth = ANY(nfl_string_list) THEN
-        lyr1 = TRUE; -- species present, typeclas not NFL
+	  IF NOT COALESCE(typeclas,'NULL') = ANY(nfl_string_list) AND NOT COALESCE(typeclas_nonveg,'NULL') = ANY(nfl_string_list) AND NOT COALESCE(typeclas_anth,'NULL') = ANY(nfl_string_list) THEN
+        lyr1 = TRUE; -- species present, typeclas NULL or not NFL
 	  ELSE
 	    lyr1 = FALSE; -- species present, typeclas is NFL
 	  END IF;
@@ -7826,10 +7824,8 @@ RETURNS int AS $$
 	
 	-- repeat for species 2
 	IF TT_notEmpty(l2_species, 'TRUE') THEN
-	  IF mintypeclas IS NULL AND typeclas_nonveg IS NULL AND typeclas_anth IS NULL THEN
-	    lyr2 = TRUE; -- species present, mintypeclas null
-	  ELSIF NOT mintypeclas = ANY(nfl_string_list) AND NOT typeclas_nonveg = ANY(nfl_string_list) AND NOT typeclas_anth = ANY(nfl_string_list) THEN
-        lyr2 = TRUE; -- species present, mintypeclas not NFL
+	  IF NOT COALESCE(mintypeclas,'NULL') = ANY(nfl_string_list) AND NOT COALESCE(typeclas_nonveg,'NULL') = ANY(nfl_string_list) AND NOT COALESCE(typeclas_anth,'NULL') = ANY(nfl_string_list) THEN
+        lyr2 = TRUE; -- species present, mintypeclas NULL or not NFL
 	  ELSE
 	    lyr2 = FALSE; -- species present, mintypeclas is NFL
 	  END IF;

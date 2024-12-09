@@ -4635,7 +4635,7 @@ UNION ALL
 SELECT '138.6'::text number,
        'TT_nt_lyr_layer_translation'::text function_tested,
        'Test layer 2 null mintypeclas and species'::text description,
-       TT_nt_lyr_layer_translation(NULL::text, NULL::text, 'TC', NULL::text, '{''10'',''5''}', '{''A''}', '{''B''}', '2') = 1 passed
+       TT_nt_lyr_layer_translation(NULL::text, NULL::text, 'TC', NULL::text, '{''10'',''5''}', '{''A''}', '{''B''}', '2') = 2 passed
 ---------------------------------------------------------
  -- TT_pe_pei_dist_type_length_validation
 ---------------------------------------------------------
