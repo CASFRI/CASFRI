@@ -3,7 +3,7 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Create cas_id using the unique identifier poly_id added during loading.,TRUE
 2,SOIL_MOIST_REG,text,"notNull(soil_moist_reg);notEmpty(soil_moist_reg);notMatchList(soil_moist_reg, 0|NULL_VALUE);matchList(soil_moist_reg,{1,2,3,4})","mapText(soil_moist_reg, {1,2,3,4}, {'DRY','DRY','MOIST','WET'})",Maps source value to SOIL_MOIST_REG using lists of values. Catch zero as a null value.,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
-4,LAYER,integer,true(),copyInt(1),"Every polygon is either LYR, NFL, or DST. So NFL layer is always 1.",TRUE
+4,LAYER,integer,true(),"ifElseCountofNotNullInt({species}, 1, 0, 1, 2)","NFL layer is always 1, unless a species exists, then it must be layer 2",TRUE
 5,LAYER_RANK,integer,false(),nothingInt(),Attribute does not occur,TRUE
 6,CROWN_CLOSURE_UPPER,integer,false(),nothingInt(),Attribute does not occur,TRUE
 7,CROWN_CLOSURE_LOWER,integer,false(),nothingInt(),Attribute does not occur,TRUE
