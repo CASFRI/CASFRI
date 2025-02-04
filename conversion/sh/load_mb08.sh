@@ -19,11 +19,11 @@ source ./common.sh
 
 inventoryID=MB08
 
-srcFileName=LCV_MB_FLI_NELSONRIVER._20112013_PY_FINAL
+srcFileName=LCV_MB_FLI_NELSONRIVER_20112013_PY_FINAL
 gdbTableName=LCV_MB_FLI_NELSONRIVER_20112013_PY_v3
 srcFullPath="$friDir/MB/$inventoryID/data/inventory/$srcFileName.gdb"
 fullTargetTableName=$targetFRISchema.mb08
-MB_subFolder=MB/$inventoryID/data/inventory/
+MB_subFolder=MB/$inventoryID/data/inventory
 
 ########################################## Process ######################################
 
