@@ -265,3 +265,4 @@ DS01,1,'DST',no,"inventory_id, src_filename, src_agency, cfs_ref_id,  ogc_fid",c
 DS02,1,'DST',no,"inventory_id, src_filename, map_sheet_id, ogc_fid, ogc_fid",ogc_fid,,,,,,,,NULL,dist_year,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,dist_type,,,,,,,,,,,,,,,,,wkb_geometry,,
 DS03,1,'DST',no,"inventory_id, src_filename, '', ogc_fid, ogc_fid",ogc_fid,,,,,,,,NULL,dist_year,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,dist_type,,,,,,,,,,,,,,,,,wkb_geometry,,
 DS04,1,'DST',no,"inventory_id, src_filename, '', ogc_fid, ogc_fid",ogc_fid,,,,,,,,shape_area,2010,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,class,,,,class,,,,,,,,,,,,,,,,,wkb_geometry,,
+DS05,1,'DST',no,"inventory_id, src_filename, '', ogc_fid, ogc_fid",ogc_fid,,,,,,,,NULL,dist_year,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,dist_type,,,,,,,,,,,,,,,,,wkb_geometry,,
