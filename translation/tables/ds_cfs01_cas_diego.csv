@@ -1,0 +1,11 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+1,CAS_ID,text,"notEmpty(inventory_id);notEmpty(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid)	","padConcat({inventory_id, src_filename, '',  ogc_fid, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
+3,ORIG_STAND_ID,text,"notNull(orig_stand_id)	",copyText(ogc_fid),Copies source value,TRUE
+4,STAND_STRUCTURE,text,false(),nothingText(),Dataset has no stand structure.,TRUE
+5,NUM_OF_LAYERS,integer,false(|-8886),nothingText(),Dataset has no number of layers.,TRUE
+6,MAP_SHEET_ID,text,false(),nothingText(),Copies source value,TRUE
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
+9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE|-9999)","mapDouble(inventory_id, {'DS01', 'DS04'}, {copyDouble(src_inv_area), multiply(src_inv_area, 100)})",Copy source values when is already in ha. Multiply by 100 when in km2. Return OUT_OF_RANGE for any zero values.,TRUE
+10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isInt(stand_photo_year);isBetween(stand_photo_year, 1917, 2020|-8886)",copyInt(stand_photo_year),Copy fire year value,TRUE
