@@ -25,14 +25,14 @@ WHERE TT_NotEmpty(mb_species_codes);
 
 -- CAS ATTRIBUTES
 SELECT * FROM translation.mb_fli01_cas;
-DROP TABLE IF EXISTS translation_devel.mb07_fli01_cas_devel;
-CREATE TABLE translation_devel.mb07_fli01_cas_devel AS
+DROP TABLE IF EXISTS translation_devel.mb08_fli01_cas_devel;
+CREATE TABLE translation_devel.mb08_fli01_cas_devel AS
 SELECT * FROM translation.mb_fli01_cas;
---WHERE rule_id::int <> 5;
-SELECT * FROM translation_devel.mb07_fli01_cas_devel;
-SELECT TT_Prepare('translation_devel', 'mb07_fli01_cas_devel', '_mb07_cas_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb07', 'mb_fli', 200);
-SELECT * FROM TT_Translate_mb07_cas_devel('rawfri', 'mb07_l1_to_mb_fli_l1_map_200');
+-- WHERE rule_id::int = 4;
+SELECT * FROM translation_devel.mb08_fli01_cas_devel;
+SELECT TT_Prepare('translation_devel', 'mb08_fli01_cas_devel', '_mb08_cas_devel');
+SELECT TT_CreateMappingView('rawfri', 'mb08', 'mb_fli', 200);
+SELECT * FROM TT_Translate_mb08_cas_devel('rawfri', 'mb08_l1_to_mb_fli_l1_map_200');
 
 -- LYR1 ATTRIBUTES
 SELECT * FROM translation.mb_fli01_lyr;
@@ -76,8 +76,8 @@ SELECT * FROM translation.mb_fli01_nfl;
 --WHERE rule_id::int != 4; --IN (0,1,2,3);
 SELECT * FROM translation_devel.mb07_fli01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'mb07_fli01_nfl_devel', '_mb07_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb07', 6, 'mb_fli', 1, 200);
-SELECT * FROM TT_Translate_mb07_nfl_devel('rawfri', 'mb07_l6_to_mb_fli_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'mb07', 4, 'mb_fli', 1, 200);
+SELECT * FROM TT_Translate_mb07_nfl_devel('rawfri', 'mb07_l4_to_mb_fli_l1_map_200');
 
 -- ECO ATTRIBUTES
 SELECT * FROM translation.mb_fli01_eco;
@@ -97,7 +97,7 @@ SELECT * FROM translation.mb_fli01_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.mb08_fli01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'mb08_fli01_geo_devel', '_mb08_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'mb08', 1, 'mb_fli', 1, 200);
-SELECT * FROM TT_Translate_mb07_geo_devel('rawfri', 'mb08_l1_to_mb_fli_l1_map_200'); -- 4 s.
+SELECT * FROM TT_Translate_mb08_geo_devel('rawfri', 'mb08_l1_to_mb_fli_l1_map_200'); -- 4 s.
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
