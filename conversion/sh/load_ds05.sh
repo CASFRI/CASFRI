@@ -126,13 +126,12 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 rasterOptions="-I -C -M -t 2048x2048"
 connectionParams="-d $pgdbname -U $pguser -h $pghost -p $pgport"
 
-# delete last created tables in server - used development stage
+# delete last created tables in server / temp tables after translation
 # "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_year;"
 # "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_type;"
 # "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_3978;"
 # "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_102001;"
 # "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_102001_poly;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05;"
 
 # Create a temporary folder for the temporary crs-adjusted raster
 tempDstPath=${srcPath}/temp
@@ -143,7 +142,7 @@ if [ ! -d "${tempDstPath}" ]; then
   mkdir "${tempDstPath}"
 fi
 
-### create temp new files, which restate/reproject of file1 to 3978 ###
+### create temp new files, which restate/reproject of files to 3978 ###
 if [ ! -f "$tempRasterFullPathType" ]; then
 	echo "Creating ${tempRasterFullPathType}..."
   "$gdalFolder/gdalwarp" -t_srs EPSG:3978 -dstnodata -32768 $srcFullPath1 $tempRasterFullPathType
@@ -153,47 +152,43 @@ else
 	echo "${tempRasterFullPathType} already exists. Skipping creation..."
 fi
 
-# ### restate crs of the source file1 - no use any more ###
-# "$pythonPath/Scripts/gdal_edit.py" -a_srs "EPSG:3978" "E:/FRIs/DS/DS05/data/inventory/PEI_canlad_1965_1984_disturbanceYear.tif"
-# "$pythonPath/Scripts/gdal_edit.py" -a_srs "EPSG:3978" "E:/FRIs/DS/DS05/data/inventory/PEI_canlad_1965_1984_disturbanceType.tif"
+# ### upload file1 ###
+"$pgFolder/bin/raster2pgsql" -s 3978 $rasterOptions $tempRasterFullPathType $fullTargetTableName1 | $pgFolder/bin/psql $connectionParams
 
-# # ### upload file1 ###
-# "$pgFolder/bin/raster2pgsql" -s 3978 $rasterOptions $tempRasterFullPathType $fullTargetTableName1 | $pgFolder/bin/psql $connectionParams
+# # ### upload file2 ### 
+"$pgFolder/bin/raster2pgsql" -s 3978 $rasterOptions $tempRasterFullPathYear $fullTargetTableName2 | $pgFolder/bin/psql $connectionParams
 
-# # # ### upload file2 ### 
-# "$pgFolder/bin/raster2pgsql" -s 3978 $rasterOptions $tempRasterFullPathYear $fullTargetTableName2 | $pgFolder/bin/psql $connectionParams
+## combine both rasters into a single one "DS05_3978" ###
+"$pgFolder/bin/psql" $connectionParams -c "
+CREATE TABLE $targetFRISchema.${inventoryID,,}_3978 AS
+SELECT 
+    ST_MapAlgebra(
+        r1.rast, 1,  -- First raster (band 1)
+        r2.rast, 1,  -- Second raster (band 1)
+        '[rast1] * 10000 + [rast2]',  -- Corrected expression format
+        '32BF'  -- Output raster type (32-bit float)
+    ) AS rast
+FROM $fullTargetTableName1 r1
+JOIN $fullTargetTableName2 r2
+ON ST_Intersects(r1.rast, r2.rast);  -- Ensure they overlap
+"
 
-### combine both rasters into a single one "DS05_3978" ###
-# "$pgFolder/bin/psql" $connectionParams -c "
-# CREATE TABLE $targetFRISchema.${inventoryID,,}_3978 AS
-# SELECT 
-#     ST_MapAlgebra(
-#         r1.rast, 1,  -- First raster (band 1)
-#         r2.rast, 1,  -- Second raster (band 1)
-#         '[rast1] * 10000 + [rast2]',  -- Corrected expression format
-#         '32BF'  -- Output raster type (32-bit float)
-#     ) AS rast
-# FROM $fullTargetTableName1 r1
-# JOIN $fullTargetTableName2 r2
-# ON ST_Intersects(r1.rast, r2.rast);  -- Ensure they overlap
-# "
+### reproject/resample combined rasters to 102001 via PostGIS ###
+"$pgFolder/bin/psql" $connectionParams -c "
+DELETE FROM rawfri.DS05_3978 WHERE ST_NumBands(rast) = 0;
+CREATE TABLE rawfri.DS05_102001 AS
+SELECT ST_Transform(rast, 102001) AS rast FROM rawfri.DS05_3978;
+UPDATE rawfri.DS05_102001 
+SET rast = ST_Resample(rast, ST_Transform((SELECT rast FROM rawfri.DS05_3978 LIMIT 1), 102001));
+"
 
-# ### reproject/resample combined rasters to 102001 via PostGIS###
-# "$pgFolder/bin/psql" $connectionParams -c "
-# DELETE FROM rawfri.DS05_3978 WHERE ST_NumBands(rast) = 0;
-# CREATE TABLE rawfri.DS05_102001 AS
-# SELECT ST_Transform(rast, 102001) AS rast FROM rawfri.DS05_3978;
-# UPDATE rawfri.DS05_102001 
-# SET rast = ST_Resample(rast, ST_Transform((SELECT rast FROM rawfri.DS05_3978 LIMIT 1), 102001));
-# "
-
-# ### Polyonise in PostGIS"###
-# "$pgFolder/bin/psql" $connectionParams -c "
-# CREATE TABLE rawfri.DS05_102001_poly AS
-# SELECT (ST_DumpAsPolygons(rast)).*
-# FROM rawfri.DS05_102001;
-# CREATE INDEX idx_DS05_102001_poly_geom ON rawfri.DS05_102001_poly USING GIST (geom);
-# "
+### Polyonisation inside PostGIS###
+"$pgFolder/bin/psql" $connectionParams -c "
+CREATE TABLE rawfri.DS05_102001_poly AS
+SELECT (ST_DumpAsPolygons(rast)).*
+FROM rawfri.DS05_102001;
+CREATE INDEX idx_DS05_102001_poly_geom ON rawfri.DS05_102001_poly USING GIST (geom);
+"
 
 # Reproject the geometry and parse the combined field into type and year
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
