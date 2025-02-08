@@ -20,41 +20,41 @@ CREATE SCHEMA IF NOT EXISTS translation_devel;
 --SELECT TT_DeleteAllViews('rawfri');
 
 -- CAS ATTRIBUTES
-SELECT * FROM translation.ds_cfs01_cas;
+SELECT * FROM translation.ds_cfs02_cas;
 
-DROP TABLE IF EXISTS translation_devel.ds_cfs01_cas_devel;
-CREATE TABLE translation_devel.ds_cfs01_cas_devel AS
-SELECT * FROM translation.ds_cfs01_cas; --WHERE rule_id::int <> 5;
+DROP TABLE IF EXISTS translation_devel.ds_cfs02_cas_devel;
+CREATE TABLE translation_devel.ds_cfs02_cas_devel AS
+SELECT * FROM translation.ds_cfs02_cas; --WHERE rule_id::int <> 5;
 
-SELECT * FROM translation_devel.ds_cfs01_cas_devel;
-SELECT TT_Prepare('translation_devel', 'ds_cfs01_cas_devel', '_ds05_cas_devel');
+SELECT * FROM translation_devel.ds_cfs02_cas_devel;
+SELECT TT_Prepare('translation_devel', 'ds_cfs02_cas_devel', '_ds05_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'ds05', 'ds', 200);
 SELECT * FROM TT_Translate_ds05_cas_devel('rawfri', 'ds05_l1_to_ds_l1_map_200');
 
 
 -- DST ATTRIBUTES
-SELECT * FROM translation.ds_cfs01_dst;
+SELECT * FROM translation.ds_cfs02_dst;
 
-DROP TABLE IF EXISTS translation_devel.ds_cfs01_dst_devel;
-CREATE TABLE translation_devel.ds_cfs01_dst_devel AS
-SELECT * FROM translation.ds_cfs01_dst; --WHERE rule_id::int = 1;
+DROP TABLE IF EXISTS translation_devel.ds_cfs02_dst_devel;
+CREATE TABLE translation_devel.ds_cfs02_dst_devel AS
+SELECT * FROM translation.ds_cfs02_dst; --WHERE rule_id::int = 1;
 
-SELECT * FROM translation_devel.ds_cfs01_dst_devel;
-SELECT TT_Prepare('translation_devel', 'ds_cfs01_dst_devel', '_ds05_dst_devel');
+SELECT * FROM translation_devel.ds_cfs02_dst_devel;
+SELECT TT_Prepare('translation_devel', 'ds_cfs02_dst_devel', '_ds05_dst_devel');
 SELECT TT_CreateMappingView('rawfri', 'ds05', 'ds', 200);
-SELECT * FROM TT_Translate_ds05_dst_devel('rawfri', 'ds05_l1_to_ds_l1_map_200'); -- 4 s.
+SELECT * FROM TT_Translate_ds05_dst_devel('rawfri', 'ds05_l1_to_ds_l1_map_200'); 
 
 
 -- GEO ATTRIBUTES
-SELECT * FROM translation.ds_cfs01_geo;
-DROP TABLE IF EXISTS translation_devel.ds_cfs01_geo_devel;
-CREATE TABLE translation_devel.ds_cfs01_geo_devel AS
-SELECT * FROM translation.ds_cfs01_geo; --WHERE rule_id::int = 1
+SELECT * FROM translation.ds_cfs02_geo;
+DROP TABLE IF EXISTS translation_devel.ds_cfs02_geo_devel;
+CREATE TABLE translation_devel.ds_cfs02_geo_devel AS
+SELECT * FROM translation.ds_cfs02_geo; --WHERE rule_id::int = 1
 
-SELECT * FROM translation_devel.ds_cfs01_geo_devel;
-SELECT TT_Prepare('translation_devel', 'ds_cfs01_geo_devel', '_ds05_geo_devel');
+SELECT * FROM translation_devel.ds_cfs02_geo_devel;
+SELECT TT_Prepare('translation_devel', 'ds_cfs02_geo_devel', '_ds05_geo_devel');
 SELECT TT_CreateMappingView('rawfri', 'ds05', 'ds', 200);
-SELECT * FROM TT_Translate_ds05_geo_devel('rawfri', 'ds05_l1_to_ds_l1_map_200'); -- 4 s.
+SELECT * FROM TT_Translate_ds05_geo_devel('rawfri', 'ds05_l1_to_ds_l1_map_200'); 
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table

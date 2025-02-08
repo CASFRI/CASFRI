@@ -1,7 +1,7 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
-1,CAS_ID,text,"notEmpty(inventory_id);notEmpty(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid)	","padConcat({inventory_id, src_filename, '',  ogc_fid, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
+1,CAS_ID,text,"notEmpty(inventory_id);notEmpty(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid)	","padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
 2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
-3,ORIG_STAND_ID,text,"notNull(orig_stand_id)	",copyText(ogc_fid),Copies source value,TRUE
+3,ORIG_STAND_ID,text,"notNull(orig_stand_id)	",copyText(orig_stand_id),Copies source value,TRUE
 4,STAND_STRUCTURE,text,false(),nothingText(),Dataset has no stand structure.,TRUE
 5,NUM_OF_LAYERS,integer,false(|-8886),nothingText(),Dataset has no number of layers.,TRUE
 6,MAP_SHEET_ID,text,false(),nothingText(),Copies source value,TRUE
