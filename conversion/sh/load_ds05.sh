@@ -24,6 +24,12 @@
 # The first method is used by default in this script. If you can NOT get
 # gdal_polygonize.py to work properly, comment the section using the first
 # method and uncomment the section using raster2pgsql.
+
+######################################## extra care for DS05 than DS03 #######################################
+# There exist 'INSECT'(4) disturbance in DS05_type raster, those 'INSECT' type does not contain 'YEAR'.
+# Therefore, all these 'INSECT'(4) disturbance is neglected in this tranlation.
+
+# Also, correction mask raster in the source data is not combined.
 ######################################## Set variables #######################################
 
 source ./common.sh
