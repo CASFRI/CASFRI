@@ -100,13 +100,13 @@ SELECT * FROM TT_Translate_mb08_geo_devel('rawfri', 'mb08_l1_to_mb_fli_l1_map_20
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id, 
-       b.l1cc, a.crown_closure_lower, a.crown_closure_upper, 
-       b.l1ht, a.height_upper, a.height_lower, 
-       b.l1s1, a.species_1,
-       b.l1pr1, a.species_per_1
+SELECT b.src_filename, b.inventory_id, b.orig_stand_id, b.ogc_fid, a.cas_id, 
+       b.cc, a.crown_closure_lower, a.crown_closure_upper, 
+       b.ht, a.height_upper, a.height_lower, 
+       b.species_1, a.species_1,
+       b.species_per_1, a.species_per_1
 FROM TT_Translate_mb08_lyr_devel('rawfri', 'mb08_l1_to_mb_fli_l1_map_200') a, rawfri.mb08_l1_to_mb_fli_l1_map_200 b
-WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
+WHERE b.ogc_fid::int = right(a.cas_id, 4)::int;
 
 --------------------------------------------------------------------------
 SELECT TT_DeleteAllLogs('translation_devel');
