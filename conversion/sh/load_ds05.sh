@@ -210,6 +210,16 @@ SELECT row_number() OVER ()::INTEGER AS ogc_fid,
 FROM rawfri.DS05_102001_poly;
 "
 
+# extra step to reproject the crs 102001 to crs 900914
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "
+UPDATE rawfri.ds05 
+SET wkb_geometry = ST_Transform(wkb_geometry, 900914);
+ALTER TABLE rawfri.ds05 
+ALTER COLUMN wkb_geometry TYPE geometry(MULTIPOLYGON, 900914) 
+USING ST_SetSRID(wkb_geometry, 900914);
+"
+
 ############## Process - Finish processing for both methods ########################
 
 source ./common_postprocessing.sh
