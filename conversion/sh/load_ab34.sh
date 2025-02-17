@@ -48,7 +48,7 @@ fi
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableName" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id, 2022 AS acquisition_year FROM $gdbTableName" \
 -progress $overwrite_tab
 
 source ./common_postprocessing.sh
