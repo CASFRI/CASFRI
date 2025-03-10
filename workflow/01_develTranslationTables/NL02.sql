@@ -50,18 +50,20 @@ SELECT TT_Prepare('translation_devel', 'nl02_nli02_cas_devel', '_nl02_cas_devel'
 SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli', 2, 200);
 SELECT * FROM TT_Translate_nl02_cas_devel('rawfri', 'nl02_l1_to_nl_nli_l2_map_200'); -- 5 s.
 
--- LYR ATTRIBUTES
-SELECT * FROM translation.nl_nli01_lyr;
-DROP TABLE IF EXISTS translation_devel.nl01_nli01_lyr_devel;
-CREATE TABLE translation_devel.nl01_nli01_lyr_devel AS SELECT * FROM translation.nl_nli01_lyr; --WHERE rule_id::int = 1
-SELECT * FROM translation_devel.nl01_nli01_lyr_devel;
-SELECT TT_Prepare('translation_devel', 'nl01_nli01_lyr_devel', '_nl01_lyr_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 200);
-SELECT * FROM TT_Translate_nl01_lyr_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200'); -- 7 s.
+
+-- GEO ATTRIBUTES
+SELECT * FROM translation.nl_nli02_geo;
+DROP TABLE IF EXISTS translation_devel.nl02_nli02_geo_devel;
+CREATE TABLE translation_devel.nl02_nli02_geo_devel AS
+SELECT * FROM translation.nl_nli02_geo; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.nl02_nli02_geo_devel;
+SELECT TT_Prepare('translation_devel', 'nl02_nli02_geo_devel', '_nl02_geo_devel');
+SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli', 200);
+SELECT * FROM TT_Translate_nl02_geo_devel('rawfri', 'nl02_l1_to_nl_nli_l2_map_200'); -- 2 s.
 
 
 -- ECO ATTRIBUTES
-SELECT * FROM translation.nl_nli01_eco;
+SELECT * FROM translation.nl_nli02_eco;
 DROP TABLE IF EXISTS translation_devel.nl01_nli01_eco_devel;
 CREATE TABLE translation_devel.nl01_nli01_eco_devel AS
 SELECT * FROM translation.nl_nli01_eco; --WHERE rule_id::int = 1
@@ -71,15 +73,14 @@ SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', 200);
 SELECT * FROM TT_Translate_nl01_eco_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200');
 
 
--- GEO ATTRIBUTES
-SELECT * FROM translation.nl_nli01_geo;
-DROP TABLE IF EXISTS translation_devel.nl01_nli01_geo_devel;
-CREATE TABLE translation_devel.nl01_nli01_geo_devel AS
-SELECT * FROM translation.nl_nli01_geo; --WHERE rule_id::int = 1
-SELECT * FROM translation_devel.nl01_nli01_geo_devel;
-SELECT TT_Prepare('translation_devel', 'nl01_nli01_geo_devel', '_nl01_geo_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', 200);
-SELECT * FROM TT_Translate_nl01_geo_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200'); -- 2 s.
+-- LYR ATTRIBUTES
+SELECT * FROM translation.nl_nli01_lyr;
+DROP TABLE IF EXISTS translation_devel.nl01_nli01_lyr_devel;
+CREATE TABLE translation_devel.nl01_nli01_lyr_devel AS SELECT * FROM translation.nl_nli01_lyr; --WHERE rule_id::int = 1
+SELECT * FROM translation_devel.nl01_nli01_lyr_devel;
+SELECT TT_Prepare('translation_devel', 'nl01_nli01_lyr_devel', '_nl01_lyr_devel');
+SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 200);
+SELECT * FROM TT_Translate_nl01_lyr_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200'); -- 7 s.
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
