@@ -27,8 +27,8 @@ DROP TABLE IF EXISTS translation_devel.nl02_nli02_dst_devel;
 CREATE TABLE translation_devel.nl02_nli02_dst_devel AS SELECT * FROM translation.nl_nli02_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.nl02_nli02_dst_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_dst_devel', '_nl02_dst_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli', 2, 20000);
-SELECT * FROM TT_Translate_nl02_dst_devel('rawfri', 'nl02_l1_to_nl_nli_l2_map_20000'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 20000);
+SELECT * FROM TT_Translate_nl02_dst_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_20000'); -- 4 s.
 
 -- NFL ATTRIBUTES
 SELECT * FROM translation.nl_nli02_nfl;
@@ -37,8 +37,8 @@ CREATE TABLE translation_devel.nl02_nli02_nfl_devel AS
 SELECT * FROM translation.nl_nli02_nfl; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.nl02_nli02_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_nfl_devel', '_nl02_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl02', 2, 'nl_nli', 2);
-SELECT * FROM TT_Translate_nl02_nfl_devel('rawfri', 'nl02_l2_to_nl_nli_l2_map'); -- 3 s.
+SELECT TT_CreateMappingView('rawfri', 'nl02', 2, 'nl_nli2', 1);
+SELECT * FROM TT_Translate_nl02_nfl_devel('rawfri', 'nl02_l2_to_nl_nli2_l1_map'); -- 3 s.
 
 
 -- CAS ATTRIBUTES
@@ -47,8 +47,11 @@ DROP TABLE IF EXISTS translation_devel.nl02_nli02_cas_devel;
 CREATE TABLE translation_devel.nl02_nli02_cas_devel AS SELECT * FROM translation.nl_nli02_cas WHERE rule_id::int < 10;
 SELECT * FROM translation_devel.nl02_nli02_cas_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_cas_devel', '_nl02_cas_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli', 2, 200);
-SELECT * FROM TT_Translate_nl02_cas_devel('rawfri', 'nl02_l1_to_nl_nli_l2_map_200'); -- 5 s.
+SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 200);
+SELECT * FROM TT_Translate_nl02_cas_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_200'); -- 5 s.
+--SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1);
+--DROP TABLE IF EXISTS public.trans_nl02_temp;
+--CREATE table public.trans_nl02_temp as SELECT * FROM TT_Translate_nl02_cas_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map'); -- 5 s.
 
 
 -- GEO ATTRIBUTES
@@ -58,8 +61,8 @@ CREATE TABLE translation_devel.nl02_nli02_geo_devel AS
 SELECT * FROM translation.nl_nli02_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.nl02_nli02_geo_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_geo_devel', '_nl02_geo_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli', 200);
-SELECT * FROM TT_Translate_nl02_geo_devel('rawfri', 'nl02_l1_to_nl_nli_l2_map_200'); -- 2 s.
+SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli2', 200);
+SELECT * FROM TT_Translate_nl02_geo_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_200'); -- 2 s.
 
 
 -- ECO ATTRIBUTES
@@ -69,8 +72,8 @@ CREATE TABLE translation_devel.nl02_nli02_eco_devel AS
 SELECT * FROM translation.nl_nli02_eco WHERE rule_id::int = 1;
 SELECT * FROM translation_devel.nl02_nli02_eco_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_eco_devel', '_nl02_eco_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli', 200);
-SELECT * FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli_l2_map_200');
+SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli2', 200);
+SELECT * FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_200');
 
 
 -- LYR ATTRIBUTES
