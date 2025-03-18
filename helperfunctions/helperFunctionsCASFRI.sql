@@ -1691,8 +1691,8 @@ CREATE OR REPLACE FUNCTION TT_nl_nli01_wetland_code(
 RETURNS text AS $$
 	SELECT CASE
            WHEN stand_id='920' THEN 'BONS'
-           WHEN stand_id='925' THEN 'BTNN'
-           WHEN stand_id='930' THEN 'MONG'
+           WHEN stand_id='925' THEN 'MONG'
+           WHEN stand_id='930' THEN 'BTNN'
            WHEN stand_id='900' AND site='W' THEN 'STNN'
            WHEN stand_id='910' AND site='W' THEN 'STNN'
            WHEN species_comp IN('BSTL', 'BSTLBF', 'BSTLWB' ) THEN 'STNN'
