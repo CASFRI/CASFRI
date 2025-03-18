@@ -69,7 +69,7 @@ SELECT * FROM TT_Translate_nl02_geo_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_2
 SELECT * FROM translation.nl_nli02_eco;
 DROP TABLE IF EXISTS translation_devel.nl02_nli02_eco_devel;
 CREATE TABLE translation_devel.nl02_nli02_eco_devel AS
-SELECT * FROM translation.nl_nli02_eco WHERE rule_id::int = 1;
+SELECT * FROM translation.nl_nli02_eco; -- WHERE rule_id::int < 2;
 SELECT * FROM translation_devel.nl02_nli02_eco_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_eco_devel', '_nl02_eco_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli2', 200);
