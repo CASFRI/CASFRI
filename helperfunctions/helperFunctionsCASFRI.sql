@@ -1352,6 +1352,7 @@ RETURNS TABLE (ttable text,
                        'mb_fri02_' || lower(schemaName) || ', ' ||
                        'nb_nbi01_' || lower(schemaName) || ', ' ||
                        'nl_nli01_' || lower(schemaName) || ', ' ||
+					   'nl_nli02_' || lower(schemaName) || ', ' ||
                        'ns_nsi01_' || lower(schemaName) || ', ' ||
                        'nt_fvi01_' || lower(schemaName) || ', ' ||
                        'on_fim02_' || lower(schemaName) || ', ' ||
@@ -1570,6 +1571,11 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_iscommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isforest' THEN '-8887'
+				  WHEN rulelc = 'nl_nli02_origin_lower_validation' THEN '-8886'
+				  WHEN rulelc = 'nl_nli02_origin_newfoundland_validation' THEN '-8886'
+                  WHEN rulelc = 'nl_nli02_iscommercial' THEN '-8887'
+                  WHEN rulelc = 'nl_nli02_isnoncommercial' THEN '-8887'
+                  WHEN rulelc = 'nl_nli02_isforest' THEN '-8887'
                   WHEN rulelc = 'qc_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'ab_photo_year_validation' THEN '-9997'
                   WHEN rulelc = 'pc02_hascountofnotnull' THEN '-8886'
@@ -1580,6 +1586,8 @@ RETURNS text AS $$
 				  WHEN rulelc = 'mb_fri_hasCountOfNotNull' THEN '-8886'
 				  WHEN rulelc = 'nl_nli01_crown_closure_validation' THEN '-8886'
 				  WHEN rulelc = 'nl_nli01_height_validation' THEN '-8886'
+				  WHEN rulelc = 'nl_nli02_crown_closure_validation' THEN '-8886'
+				  WHEN rulelc = 'nl_nli02_height_validation' THEN '-8886'
 				  WHEN rulelc = 'nb_hasCountOfNotNull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
@@ -1598,11 +1606,15 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_iscommercial' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'nl_nli02_isforest' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli02_iscommercial' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'nl_nli02_isnoncommercial' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg3_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg5_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'ab_avi01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_wetland_validation' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'nl_nli02_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
@@ -1703,6 +1715,29 @@ RETURNS text AS $$
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
+-- TT_nl_nli02_wetland_code(text, text, text)
+--
+-- Run logic to generate 4 letter code
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli02_wetland_code(text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli02_wetland_code(
+  nfcode text,
+  sitecode text,
+  species_comp text
+)
+RETURNS text AS $$
+	SELECT CASE
+           WHEN nfcode='BOG' THEN 'BONS'
+           WHEN nfcode='WBOG' THEN 'MONG'
+           WHEN nfcode='TBOG' THEN 'BTNN'
+           WHEN species_comp IN('BSTL', 'BSTLBF', 'BSTLWB' ) THEN 'STNN'
+           WHEN species_comp IN('TL', 'TLBF','TLWB', 'TLBS', 'TLBSBF', 'TLBSWB') THEN 'STNN'
+           WHEN species_comp IN('WBTL', 'WBTLBS', 'WBBSTL') THEN 'STNN'
+           ELSE NULL
+         END;
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- TT_ab_avi01_wetland_code(text, text, text)
 --
@@ -3795,6 +3830,34 @@ RETURNS boolean AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
+-- TT_nl_nli02_wetland_validation
+--
+-- Check for valid 4 letter code.
+--
+-- e.g. TT_nl_nli02_wetland_validation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli02_wetland_validation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli02_wetland_validation(
+  nfcode text,
+  sitecode text,
+  species_comp text,
+  retCharPos text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _wetland_code text;
+    _wetland_char text;
+  BEGIN
+    _wetland_code = TT_nl_nli02_wetland_code(nfcode, sitecode, species_comp);
+    _wetland_char = substring(_wetland_code from retCharPos::int for 1);
+    IF _wetland_char IS NULL OR _wetland_char = '-' THEN
+      RETURN FALSE;
+    END IF;
+    RETURN TRUE;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- TT_bc_vri01_wetland_validation
 --
@@ -7093,6 +7156,33 @@ RETURNS text AS $$
     _wetland_code text;
   BEGIN
     _wetland_code = TT_nl_nli01_wetland_code(stand_id, site, species_comp);
+    IF _wetland_code IS NULL THEN
+      RETURN NULL;
+    END IF;
+    RETURN TT_wetland_code_translation(_wetland_code, ret_char);
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nl_nli02_wetland_translation
+--
+-- Assign 4 letter wetland character code, then return the requested character (1-4)
+--
+-- e.g. TT_nl_nli02_wetland_translation(landtype, per1, '1')
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli02_wetland_translation(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli02_wetland_translation(
+  nfcode text,
+  sitecode text,
+  species_comp text,
+  ret_char text
+)
+RETURNS text AS $$
+  DECLARE
+    _wetland_code text;
+  BEGIN
+    _wetland_code = TT_nl_nli02_wetland_code(nfcode, sitecode, species_comp);
     IF _wetland_code IS NULL THEN
       RETURN NULL;
     END IF;
