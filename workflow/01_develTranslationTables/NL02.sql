@@ -44,7 +44,7 @@ SELECT * FROM TT_Translate_nl02_nfl_devel('rawfri', 'nl02_l2_to_nl_nli2_l1_map')
 -- CAS ATTRIBUTES
 SELECT * FROM translation.nl_nli02_cas;
 DROP TABLE IF EXISTS translation_devel.nl02_nli02_cas_devel;
-CREATE TABLE translation_devel.nl02_nli02_cas_devel AS SELECT * FROM translation.nl_nli02_cas WHERE rule_id::int < 10;
+CREATE TABLE translation_devel.nl02_nli02_cas_devel AS SELECT * FROM translation.nl_nli02_cas;
 SELECT * FROM translation_devel.nl02_nli02_cas_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_cas_devel', '_nl02_cas_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 200);
@@ -72,18 +72,19 @@ CREATE TABLE translation_devel.nl02_nli02_eco_devel AS
 SELECT * FROM translation.nl_nli02_eco; -- WHERE rule_id::int < 2;
 SELECT * FROM translation_devel.nl02_nli02_eco_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_eco_devel', '_nl02_eco_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli2', 200);
-SELECT * FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli2');
+SELECT * FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map');
 
 
 -- LYR ATTRIBUTES
-SELECT * FROM translation.nl_nli01_lyr;
-DROP TABLE IF EXISTS translation_devel.nl01_nli01_lyr_devel;
-CREATE TABLE translation_devel.nl01_nli01_lyr_devel AS SELECT * FROM translation.nl_nli01_lyr; --WHERE rule_id::int = 1
-SELECT * FROM translation_devel.nl01_nli01_lyr_devel;
-SELECT TT_Prepare('translation_devel', 'nl01_nli01_lyr_devel', '_nl01_lyr_devel');
-SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 200);
-SELECT * FROM TT_Translate_nl01_lyr_devel('rawfri', 'nl01_l1_to_nl_nli_l1_map_200'); -- 7 s.
+SELECT * FROM translation.nl_nli02_lyr;
+DROP TABLE IF EXISTS translation_devel.nl02_nli02_lyr_devel;
+CREATE TABLE translation_devel.nl02_nli02_lyr_devel 
+AS SELECT * FROM translation.nl_nli02_lyr WHERE rule_id::int BETWEEN 13 and 32;
+SELECT * FROM translation_devel.nl02_nli02_lyr_devel;
+SELECT TT_Prepare('translation_devel', 'nl02_nli02_lyr_devel', '_nl02_lyr_devel');
+SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 200);
+SELECT * FROM TT_Translate_nl02_lyr_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_200'); -- 7 s.
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
