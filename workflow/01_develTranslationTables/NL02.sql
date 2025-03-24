@@ -80,7 +80,7 @@ SELECT * FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map')
 SELECT * FROM translation.nl_nli02_lyr;
 DROP TABLE IF EXISTS translation_devel.nl02_nli02_lyr_devel;
 CREATE TABLE translation_devel.nl02_nli02_lyr_devel 
-AS SELECT * FROM translation.nl_nli02_lyr WHERE rule_id::int BETWEEN 33 and 34;
+AS SELECT * FROM translation.nl_nli02_lyr WHERE rule_id::int = 0;
 SELECT * FROM translation_devel.nl02_nli02_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_lyr_devel', '_nl02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 200);
