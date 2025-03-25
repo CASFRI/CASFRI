@@ -80,7 +80,7 @@ SELECT * FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map')
 SELECT * FROM translation.nl_nli02_lyr;
 DROP TABLE IF EXISTS translation_devel.nl02_nli02_lyr_devel;
 CREATE TABLE translation_devel.nl02_nli02_lyr_devel 
-AS SELECT * FROM translation.nl_nli02_lyr WHERE rule_id::int = 0;
+AS SELECT * FROM translation.nl_nli02_lyr WHERE rule_id::int BETWEEN 1 and 36;
 SELECT * FROM translation_devel.nl02_nli02_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_lyr_devel', '_nl02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 200);
@@ -88,13 +88,19 @@ SELECT * FROM TT_Translate_nl02_lyr_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_2
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT b.src_filename, b.inventory_id,  b.ogc_fid, a.cas_id, 
-       b.height_lower height, a.height_lower, a.height_upper, p.year photoyear, b.origin_upper age_class, a.origin_lower, a.origin_upper 
+SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id, 
+       a.crown_closure_lower, a.crown_closure_upper, 
+       b.height_lower height, a.height_upper, a.height_lower,
+	   p.year photoyear, b.origin_upper age_class, a.origin_lower, a.origin_upper
+       --b.sp1, a.species_1,
+       --b.sp1_per, a.species_per_1
 FROM TT_Translate_nl02_lyr_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_200') a --, rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
---WHERE b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT);
-JOIN rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
-    ON b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT)
-JOIN rawfri.nl02_photoyear p
-    ON ST_Intersects(b.wkb_geometry, p.wkb_geometry);
+--WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
+JOIN rawfri.nl02_l1_to_nl_nli2_l1_map_200 b 
+ON b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT)
+JOIN rawfri.nl02_photoyear p 
+ON ST_Intersects(b.wkb_geometry, p.wkb_geometry);
+
+
 --------------------------------------------------------------------------
 SELECT TT_DeleteAllLogs('translation_devel');
