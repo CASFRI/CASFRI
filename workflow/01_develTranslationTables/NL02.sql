@@ -88,13 +88,13 @@ SELECT * FROM TT_Translate_nl02_lyr_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_2
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT b.src_filename, b.inventory_id, b.poly_no, b.ogc_fid, a.cas_id, 
-       b.cc, a.crown_closure_lower, a.crown_closure_upper, 
-       b.avg_ht, a.height_upper, a.height_lower, 
-       b.sp1, a.species_1,
-       b.sp1_per, a.species_per_1
-FROM TT_Translate_yt02_lyr_devel('rawfri', 'yt02_l1_to_yt_l1_map_200') a, rawfri.yt02_l1_to_yt_l1_map_200 b
-WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
-
+SELECT b.src_filename, b.inventory_id,  b.ogc_fid, a.cas_id, 
+       b.height_lower height, a.height_lower, a.height_upper, p.year photoyear, b.origin_upper age_class, a.origin_lower, a.origin_upper 
+FROM TT_Translate_nl02_lyr_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_200') a --, rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
+--WHERE b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT);
+JOIN rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
+    ON b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT)
+JOIN rawfri.nl02_photoyear p
+    ON ST_Intersects(b.wkb_geometry, p.wkb_geometry);
 --------------------------------------------------------------------------
 SELECT TT_DeleteAllLogs('translation_devel');
