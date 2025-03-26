@@ -1571,6 +1571,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_iscommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN '-8887'
                   WHEN rulelc = 'nl_nli01_isforest' THEN '-8887'
+				  WHEN rulelc = 'nl_nli02_isforest' THEN '-8887'
 				  WHEN rulelc = 'nl_nli02_origin_lower_validation' THEN '-8886'
 				  WHEN rulelc = 'nl_nli02_origin_newfoundland_validation' THEN '-8886'
                   WHEN rulelc = 'qc_hascountofnotnull' THEN '-8886'
@@ -1599,6 +1600,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN 'NOT_IN_SET'
                   WHEN rulelc = 'nl_nli01_isforest' THEN 'NOT_APPLICABLE'
+				  WHEN rulelc = 'nl_nli02_isforest' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_iscommercial' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nl_nli01_isnoncommercial' THEN 'NOT_APPLICABLE'
 				  WHEN rulelc = 'nl_nli02_isforest' THEN 'NOT_APPLICABLE'
@@ -3577,6 +3579,29 @@ CREATE OR REPLACE FUNCTION TT_nl_nli01_isForest(
 RETURNS boolean AS $$
   BEGIN
     IF TT_nl_nli01_isCommercial(stand_id, working_group) OR TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nl_nli02_isForest
+--
+-- stand_id text,
+-- working_group text
+--
+-- Is row either commercial or non-commercial forest?
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli02_isForest(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli02_isForest(
+  foresttype text
+)
+RETURNS boolean AS $$
+  BEGIN
+    IF foresttype IS NOT NULL AND foresttype <> '' THEN
       RETURN TRUE;
     ELSE
       RETURN FALSE;
@@ -6590,6 +6615,34 @@ RETURNS text AS $$
     ELSIF TT_nl_nli01_isCommercial(stand_id, working_group) THEN
       RETURN 'HARVESTABLE';
     ELSIF TT_nl_nli01_isNonCommercial(stand_id, working_group) THEN
+      RETURN 'SCRUB_SHRUB';
+    ELSE
+      RETURN NULL;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_nl_nli02_productivity_type_translation
+--
+-- stand_id text,
+-- working_group text
+--
+-- If commercial, return HARVESTABLE, if non-commercial return SCRUB_SHRUB, if treed bog return TREED_MUSKEG.
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nl_nli02_productivity_type_translation(text, text);
+CREATE OR REPLACE FUNCTION TT_nl_nli02_productivity_type_translation(
+  stand_id text,
+  foresttype text
+)
+RETURNS text AS $$
+  BEGIN
+    IF stand_id = 'TBOG' THEN
+      RETURN 'TREED_MUSKEG';
+    ELSIF foresttype = '1' THEN
+      RETURN 'HARVESTABLE';
+    ELSIF foresttype = '2' THEN
       RETURN 'SCRUB_SHRUB';
     ELSE
       RETURN NULL;
