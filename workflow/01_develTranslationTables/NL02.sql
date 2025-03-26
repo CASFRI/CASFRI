@@ -80,11 +80,15 @@ SELECT * FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map')
 SELECT * FROM translation.nl_nli02_lyr;
 DROP TABLE IF EXISTS translation_devel.nl02_nli02_lyr_devel;
 CREATE TABLE translation_devel.nl02_nli02_lyr_devel 
-AS SELECT * FROM translation.nl_nli02_lyr WHERE rule_id::int BETWEEN 1 and 36;
+AS SELECT * FROM translation.nl_nli02_lyr; -- WHERE rule_id::int = 0;
 SELECT * FROM translation_devel.nl02_nli02_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'nl02_nli02_lyr_devel', '_nl02_lyr_devel');
 SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 200);
 SELECT * FROM TT_Translate_nl02_lyr_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_200'); -- 7 s.
+
+--SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1);
+--DROP TABLE IF EXISTS public.trans_nl02_temp_lyr;
+--CREATE table public.trans_nl02_temp_lyr as SELECT * FROM TT_Translate_nl02_lyr_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map'); -- 5 s.
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
