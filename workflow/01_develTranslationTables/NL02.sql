@@ -92,7 +92,7 @@ SELECT * FROM TT_Translate_nl02_lyr_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_2
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
-SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id, b.soil_moisture_regime, a.soil_moist_reg,
+SELECT b.src_filename, b.inventory_id, b.orig_stand_id, b.ogc_fid, a.cas_id, b.soil_moisture_regime, a.soil_moist_reg,
        b.crown_closure_lower cc_class, a.crown_closure_lower, a.crown_closure_upper, 
        b.height_lower height, a.height_upper, a.height_lower, b.foresttype, a.productivity, b.site_class, a.site_class,
 	   p.year photoyear, b.origin_upper age_class, a.origin_lower, a.origin_upper
@@ -106,32 +106,28 @@ JOIN rawfri.nl02_photoyear p
 ON ST_Intersects(b.wkb_geometry, p.wkb_geometry);
 
 --NFL
-SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id, b.stand_id nfcode, a.nat_non_veg, 
+SELECT b.src_filename, b.inventory_id, b.orig_stand_id, b.ogc_fid, a.cas_id, b.stand_id nfcode, a.nat_non_veg, 
        a.non_for_veg, a.non_for_anth
 FROM TT_Translate_nl02_nfl_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map') a --, rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
 JOIN rawfri.nl02_l1_to_nl_nli2_l1_map b 
 ON b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT)
+--AND b.orig_stand_id::int = CAST(NULLIF(REGEXP_REPLACE(SUBSTRING(a.cas_id FROM 33 FOR 10), '[^0-9]', '', 'g'), '') AS INT);
 
 --ECO
-SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id, b.stand_id nfcode, 
+SELECT b.src_filename, b.inventory_id, b.orig_stand_id, b.ogc_fid, a.cas_id, b.stand_id nfcode, 
        a.wetland_type, a.wet_veg_cover, a.wet_landform_mod, a.wet_local_mod
 FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map') a --, rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
-JOIN rawfri.nl02_l1_to_nl_nli2_l1_map b 
-ON b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT) LIMIT 1000
-
---ECO
-SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id, b.stand_id nfcode, 
-       a.wetland_type, a.wet_veg_cover, a.wet_landform_mod, a.wet_local_mod
-FROM TT_Translate_nl02_eco_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map') a --, rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
-JOIN rawfri.nl02_l1_to_nl_nli2_l1_map b 
-ON b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT) LIMIT 1000
-
---DST
-SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id, b.type_dist dist,	
-       a.dist_type_1, b.year_dist, a.dist_year_1
-FROM TT_Translate_nl02_dst_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map') a --, rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
 JOIN rawfri.nl02_l1_to_nl_nli2_l1_map b 
 ON b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT) 
+--AND b.orig_stand_id::int = CAST(NULLIF(REGEXP_REPLACE(SUBSTRING(a.cas_id FROM 33 FOR 10), '[^0-9]', '', 'g'), '') AS INT);
+
+--DST
+SELECT b.src_filename, b.inventory_id, b.orig_stand_id, b.ogc_fid, a.cas_id, b.type_dist dist,	
+       a.dist_type_1, b.year_dist, a.dist_year_1
+FROM TT_Translate_nl02_dst_devel('rawfri', 'nl02_l1_to_nl_nli2_l1_map_20000') a --, rawfri.nl02_l1_to_nl_nli2_l1_map_200 b
+JOIN rawfri.nl02_l1_to_nl_nli2_l1_map_20000 b 
+ON b.ogc_fid::int = CAST(RIGHT(REGEXP_REPLACE(a.cas_id, '[^0-9]', '', 'g'), 7) AS INT)  
+AND b.orig_stand_id::int = CAST(NULLIF(REGEXP_REPLACE(SUBSTRING(a.cas_id FROM 33 FOR 10), '[^0-9]', '', 'g'), '') AS INT);
 
 --------------------------------------------------------------------------
 SELECT TT_DeleteAllLogs('translation_devel');
