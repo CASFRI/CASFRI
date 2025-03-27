@@ -1,7 +1,7 @@
 rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
 0,ROW_TRANSLATION_RULE,NA,"matchList(stand_id, {'TBOG'});nl_nli02_isForest(foresttype)",NA,"Translate all forest, plus any treed bog polygons that will be recorded in PRODUCTIVITY_TYPE. isForest selects all commercial and non-commercial rows.",TRUE
 1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(ogc_fid),"padConcat({inventory_id, src_filename, '', orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Concatenates five attributes to create CAS_ID,TRUE
-2,SOIL_MOIST_REG,text,"notNull(soil_moisture_regime);notEmpty(soil_moisture_regime);matchList(soil_moisture_regime,{'D','R','W','H','G','M','P'}|NOT_APPLICABLE)","mapText(soil_moisture_regime, {'D','R','W','H','G','M','P'}, {'DRY','DRY','WET','DRY','MESIC','MOIST','WET'})",Maps source value to SOIL_MOIST_REG using lists of values. Soil moisture only valid for non commercial stands,TRUE
+2,SOIL_MOIST_REG,text,"notNull(soil_moisture_regime);notEmpty(soil_moisture_regime);matchList(soil_moisture_regime,{'D','R','W','H','G','M','P'}|NOT_APPLICABLE)","mapText(soil_moisture_regime, {'d','D','r','R','w','W'}, {'DRY','DRY','DRY','DRY','WET','WET'})",Maps source value to SOIL_MOIST_REG using lists of values. Soil moisture only valid for non commercial stands,TRUE
 3,STRUCTURE_PER,integer,true(),copyInt(100),No horizontal structure so structure percent is 100,TRUE
 4,STRUCTURE_RANGE,double precision,false(),nothingDouble(),No complex structure,TRUE
 5,LAYER,integer,true(),copyInt(1),Only 1 layer possible in NL. Every polygon is either LYR or NFL.,TRUE
