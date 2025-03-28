@@ -47,7 +47,7 @@ SELECT * FROM TT_Translate_mb08_lyr_devel('rawfri', 'mb08_l1_to_mb_fli_l1_map_20
 
 -- LYR2
 SELECT TT_CreateMappingView('rawfri', 'mb08', 2, 'mb_fli', 1, 200);
-SELECT * FROM TT_Translate_mb07_lyr_devel('rawfri', 'mb07_l2_to_mb_fli_l1_map_200');
+SELECT * FROM TT_Translate_mb08_lyr_devel('rawfri', 'mb08_l2_to_mb_fli_l1_map_200');
 
 --LYR3
 SELECT TT_CreateMappingView('rawfri', 'mb08', 3, 'mb_fli', 1, 200);
@@ -69,14 +69,14 @@ WHERE b.ogc_fid::int = right(a.cas_id, 4)::int;
 
 -- NFL ATTRIBUTES
 SELECT * FROM translation.mb_fli01_nfl;
-DROP TABLE IF EXISTS translation_devel.mb087_fli01_nfl_devel;
+DROP TABLE IF EXISTS translation_devel.mb08_fli01_nfl_devel;
 CREATE TABLE translation_devel.mb08_fli01_nfl_devel AS
 SELECT * FROM translation.mb_fli01_nfl;
 --WHERE rule_id::int != 4; --IN (0,1,2,3);
 SELECT * FROM translation_devel.mb08_fli01_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'mb08_fli01_nfl_devel', '_mb08_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb08', 4, 'mb_fli', 1, 200);
-SELECT * FROM TT_Translate_mb08_nfl_devel('rawfri', 'mb08_l4_to_mb_fli_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'mb08', 6, 'mb_fli', 1, 200);
+SELECT * FROM TT_Translate_mb08_nfl_devel('rawfri', 'mb08_l6_to_mb_fli_l1_map_200');
 
 -- ECO ATTRIBUTES
 SELECT * FROM translation.mb_fli01_eco;

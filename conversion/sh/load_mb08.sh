@@ -49,6 +49,22 @@ fi
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableName" \
 -progress $overwrite_tab
 
+# Alter the geometry column to ensure it is 2D (MultiPolygon in SRID 900914)
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "
+UPDATE $fullTargetTableName
+SET wkb_geometry = ST_Force2D(wkb_geometry)
+WHERE ST_GeometryType(wkb_geometry) IN ('ST_Polygon', 'ST_MultiPolygon');
+"
+
+# Optionally, change column type if needed (ensure that the geometry column is of the correct type)
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "
+ALTER TABLE $fullTargetTableName
+ALTER COLUMN wkb_geometry TYPE Geometry(MultiPolygon, 900914) 
+USING ST_Force2D(wkb_geometry);
+"
+
 createSQLSpatialIndex=True
 
 source ./common_postprocessing.sh

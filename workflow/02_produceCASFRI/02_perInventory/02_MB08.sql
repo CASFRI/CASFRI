@@ -58,7 +58,7 @@ SELECT TT_CreateMappingView('rawfri', 'mb08', 'mb_fli');
 -- DELETE FROM casfri50.eco_all WHERE left(cas_id, 4) = 'MB08';
 
 -- Add translated ones
-INSERT INTO casfri50.eco_all
+INSERT INTO casfri50.eco_all  --00:00:24
 SELECT * FROM TT_Translate_mb08_eco('rawfri', 'mb08_l1_to_mb_fli_l1_map');
 
 
@@ -77,7 +77,7 @@ SELECT TT_Prepare('translation', 'mb_fli01_lyr', '_mb08_lyr', 'ab_avi01_lyr');
 -- DELETE FROM casfri50.lyr_all WHERE left(cas_id, 4) = 'MB08';
 
 -- Add translated ones
--- Layer 1
+-- Layer 1 
 SELECT TT_CreateMappingView('rawfri', 'mb08', 1, 'mb_fli', 1);
 
 INSERT INTO casfri50.lyr_all -- 00:02:25.960
@@ -107,10 +107,10 @@ SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb08_nfl', 'ab_avi01_nfl');
 -- DELETE FROM casfri50.nfl_all WHERE left(cas_id, 4) = 'MB08';
 
 -- Add translated NFL
-SELECT TT_CreateMappingView('rawfri', 'mb08', 4, 'mb_fli', 1);
+SELECT TT_CreateMappingView('rawfri', 'mb08', 6, 'mb_fli', 1);
 
 INSERT INTO casfri50.nfl_all -- 
-SELECT * FROM TT_Translate_mb08_nfl('rawfri', 'mb08_l4_to_mb_fli_l1_map');
+SELECT * FROM TT_Translate_mb08_nfl('rawfri', 'mb08_l6_to_mb_fli_l1_map');
 
 
 ------------------------
