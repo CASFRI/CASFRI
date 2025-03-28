@@ -1359,6 +1359,7 @@ RETURNS TABLE (ttable text,
                        'pc_panp01_' || lower(schemaName) || ', ' ||
                        'pc_wbnp01_' || lower(schemaName) || ', ' ||
                        'pe_pei01_' || lower(schemaName) || ', ' ||
+                       'pe_pei02_' || lower(schemaName) || ', ' ||
                        'qc_ini03_' || lower(schemaName) || ', ' ||
                        'qc_ini04_' || lower(schemaName) || ', ' ||
                        'qc_ipf05_' || lower(schemaName) || ', ' ||
@@ -1563,6 +1564,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'fvi01_structure_per_validation' THEN '-8887'
                   WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
+                  WHEN rulelc = 'pe_pei02_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN '-9998'
                   WHEN rulelc = 'sk_utm_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'sfv01_hascountofnotnull' THEN '-8886'
@@ -1615,6 +1617,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'bc_vri01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'ns_nsi01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'pe_pei01_wetland_validation' THEN 'NOT_APPLICABLE'
+                  WHEN rulelc = 'pe_pei01_dist_type_length_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'nt_fvi01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'sk_utm01_wetland_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'sk_sfv01_wetland_validation' THEN 'NOT_APPLICABLE'
@@ -2122,21 +2125,54 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Return 4 character wetland code
 -------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text);
+--DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_wetland_code(
   landtype text,
-  per1 text
+  per1 text,
+  landtype2 text,
+  per2 text,
+  landtype3 text,
+  per3 text
 )
 RETURNS text AS $$
-  SELECT CASE
-           WHEN landtype='BO' AND NOT per1='0' THEN 'BFX-'
-           WHEN landtype='BO' AND per1='0' THEN 'BOX-'
-           WHEN landtype='SO' THEN 'SOX-'
-           WHEN landtype='SW' AND NOT per1='0' THEN 'STX-'
-           WHEN landtype='SW' AND per1='0' THEN 'SOX-'
-           ELSE NULL
-         END;
-$$ LANGUAGE sql IMMUTABLE;
+	BEGIN
+		IF landtype2 = '999'
+		THEN
+		 	RETURN CASE
+		           WHEN landtype='BO' AND NOT per1='0' THEN 'BFX-'
+		           WHEN landtype='BO' AND per1='0' THEN 'BOX-'
+		           WHEN landtype='SO' THEN 'SOX-'
+		           WHEN landtype='SW' AND NOT per1='0' THEN 'STX-'
+		           WHEN landtype='SW' AND per1='0' THEN 'SOX-'
+		           ELSE NULL END;
+	    ELSE
+		    RETURN CASE
+		        WHEN landtype = 'BO' AND per1 >='7' THEN 'BF--'
+		        WHEN landtype = 'BO' AND per1 >= '1' AND per1 < '7' THEN 'BT--'
+		        WHEN landtype = 'BO' AND (landtype2 = 'DMW' OR landtype2 = 'SMW' OR landtype2 = 'OWW') THEN 'BO--'
+		        WHEN landtype = 'SSW' AND (landtype2 = 'MDW' OR landtype2 = 'OWW' OR landtype2 = 'BOW') THEN 'SO-S'
+		        WHEN landtype = 'SSW' AND landtype2 = 'WSW' THEN 'ST-S'
+		        WHEN landtype = 'SSW' AND per1 = '10' THEN 'SO-S'
+		        WHEN landtype = 'WSW' AND per1 >= '7' AND landtype2 = 'SSW' AND per2 > '2' THEN 'SF-S'
+		        WHEN landtype = 'WSW' AND landtype2 = 'WSW' THEN 'SF--'
+		        WHEN landtype = 'WSW' AND per1 > '1' AND per1 < '7' THEN 'ST--'
+		        WHEN landtype = 'WSW' THEN 'SO--'
+		        WHEN landtype = 'OWW' AND ((landtype2 = 'SSW' AND per2 >= '3') OR (landtype3 = 'SSW' AND 'per3' >= '3')) THEN 'SO-S'
+		        WHEN landtype = 'OWW' AND landtype2 = 'WSW' THEN 'ST--'
+		        WHEN landtype = 'OWW' AND landtype2 = 'DMW' AND landtype3 = 'SSW' AND per3 >= '3' THEN 'MO-S'
+		        WHEN landtype = 'OWW' AND landtype2 = 'DMW' THEN 'MO--'
+		        WHEN landtype = 'OWW' THEN 'WO--'
+		        WHEN landtype = 'BKW' THEN 'EOA-'
+		        WHEN landtype = 'DMW' THEN 'MO--'
+		        WHEN landtype = 'MDW' THEN 'WO--'
+		        WHEN landtype = 'SAW' THEN 'EOA-'
+		        WHEN landtype = 'SDW' THEN 'Z---'
+		        WHEN landtype = 'SFW' THEN 'W---'
+		        WHEN landtype = 'SMW' THEN 'MO--'
+		        ELSE NULL END;
+		END IF;
+	END;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -3101,14 +3137,16 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- hasCountOfNotNull using pei01 custom countOfNotNull
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text,text);
+--DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text,text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_hasCountOfNotNull(
   spec1 text,
   spec2 text,
   spec3 text,
   spec4 text,
   spec5 text,
-  landtype text,
+  landuse text,
+  subuse text,
+  class1 text,
   count text,
   exact text
 )
@@ -3122,7 +3160,54 @@ RETURNS boolean AS $$
     _exact = exact::boolean;
 
     -- process
-    _counted_nulls = TT_pe_pei01_countOfNotNull(spec1, spec2, spec3, spec4, spec5, landtype, '2');
+    _counted_nulls = TT_pe_pei01_countOfNotNull(spec1, spec2, spec3, spec4, spec5, landuse, subuse, class1, '2');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_pe_pei02_hasCountOfNotNull
+--
+-- spec1 text
+-- spec2 text
+-- spec3 text
+-- spec4 text
+-- spec5 text
+-- landtype text
+-- count text
+-- exact text
+--
+-- hasCountOfNotNull using pei02 custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_pe_pei02_hasCountOfNotNull(text, text, text, text, text, text, text,text, text, text);
+CREATE OR REPLACE FUNCTION TT_pe_pei02_hasCountOfNotNull(
+  spec1 text,
+  spec2 text,
+  spec3 text,
+  spec4 text,
+  spec5 text,
+  landtype text,
+  class1 text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = TT_pe_pei02_countOfNotNull(spec1, spec2, spec3, spec4, spec5, landtype, class1, '2');
 
     IF _exact THEN
       RETURN _counted_nulls = _count;
@@ -4008,12 +4093,16 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TT_pe_pei01_wetland_validation
 -- Assign 4 letter wetland character code, then return true if the requested character (1-4)
 -- is not null and not -.
--- e.g. TT_pe_pei01_wetland_validation(landtype, per1, '1')
+-- e.g. TT_pe_pei01_wetland_validation(landtype, per1, 999, 999, 999, '1')
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text);
+--DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_wetland_validation(
   landtype text,
   per1 text,
+  landtype2 text,
+  per2 text,
+  landtype3 text,
+  per3 text,
   ret_char_pos text
 )
 RETURNS boolean AS $$
@@ -4021,7 +4110,7 @@ RETURNS boolean AS $$
     _wetland_code text;
     _wetland_char text;
   BEGIN
-    _wetland_code = TT_pe_pei01_wetland_code(landtype, per1);
+	_wetland_code = TT_pe_pei01_wetland_code(landtype, per1, landtype2, per2, landtype3, per3);
     _wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
     IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
@@ -4486,6 +4575,11 @@ RETURNS boolean AS $$
     _yt03_nat_non_veg text; -- YT03 - needs to be 1st in string list
     _yt03_non_for_anth text; -- YT03 - needs to be 2nd in string list
     _yt03_non_for_veg text; -- YT03 - needs to be 3rd in string list
+    _class1 text; -- PE02 - needs to be 1st in string list
+    _landuse text; -- PE02 - needs to be 2nd in string list
+    _subuse text; -- PE02 - needs to be 3rd in string list
+    _pe02_non_for_veg text; -- PE02 - needs to be 3rd string list
+    _nfl_code_list text;
   BEGIN
     -- parse string lists
     _fiter_attributes = TT_ParseStringList(filter_attributes, TRUE);
@@ -4592,6 +4686,25 @@ RETURNS boolean AS $$
         _non_for_veg_boolean = TRUE;
       END IF;
     END IF;
+
+   	---------
+   	-- PE02
+   	---------
+   	-- assign source values to variables depending on the inventory id
+       IF inventory_id IN('PE02', 'PE03','PE04') THEN
+         _class1 = _source_vals[1];
+         _landuse = _source_vals[2];
+         _subuse = _source_vals[3];
+         _pe02_non_for_veg = _source_vals[4];
+       END IF;
+
+   	-- run validations
+    IF 'all_nfl' = ANY (_fiter_attributes) THEN
+    	_nfl_code_list := '{''BAR'',''BSB'',''SDW'',''WWW'',''WAT'',''SO'',''SD'',''WW'',''FL'',''AGR'',''COM'',''RES'',''IND'',''NON'',''REC'',''TRN'',''URB'',''INT'',''CL'',''WF'',''PL'',''RN'',''RD'',''RR'',''AG'',''EP'',''UR'',''BOW'',''BO''}';
+       IF (TT_matchList(_class1, _nfl_code_list) OR TT_matchList(_subuse, _nfl_code_list) OR TT_matchList(_landuse, _nfl_code_list)) THEN
+         _non_for_veg_boolean = TRUE;
+       END IF;
+     END IF;
 	
 	-------------------------------------------------------------
     -- return TRUE if any of the nfl attribute validations passed
@@ -5920,7 +6033,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_pe_pie01_countOfNotNull
+-- TT_pe_pei01_countOfNotNull
 --
 -- spec1 text
 -- spec2 text
@@ -5928,6 +6041,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- spec4 text
 -- spec5 text
 -- landtype text
+-- class1 text
 -- max_rank_to_consider text
 --
 -- Determine if spec1/2/3/4/5 contain a valid species code. Note that the
@@ -5939,20 +6053,22 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- Pass species and nfl variables to countOfNotNull().
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text,text);
+--DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text,text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_countOfNotNull(
   spec1 text,
   spec2 text,
   spec3 text,
   spec4 text,
   spec5 text,
-  landtype text,
+  landuse text,
+  subuse text,
+  class1 text,
   max_rank_to_consider text
 )
 RETURNS int AS $$
   DECLARE
-    species_codes text[] := '{AL,AP,BE,BF,BN,BS,CE,DF,EL,EM,GB,HE,JP,LA,LI,LP,MA,NS,PC,PO,RM,RO,RP,RS,SM,SP,WA,WB,WP,WS,YB}'; --codes copied from lookup table
-    nfl_codes text[] := '{SO,SD,WW,FL,CL,WF,PL,RN,RD,RR,AG,EP,UR,BO}';
+    species_codes text[] := '{AL,AP,AS,BA,BE,BF,BI,BN,BS,CE,CP,DF,EB,EL,EL,EM,GB,HE,HP,HS,IH,JL,JP,LA,LI,LP,LX,MA,NS,PC,PO,PP,RM,RO,RP,RS,SF,SI,SM,SP,TH,WA,WB,WI,WP,WS,YB,YP}'; --codes copied from PEI CORPORATE LAND USE INVENTORY 2000
+    nfl_codes text[] := '{BAR,BSB,SDW,WWW,WAT,SO,SD,WW,FL,AGR,COM,RES,IND,NON,REC,TRN,URB,INT,CL,WF,PL,RN,RD,RR,AG,EP,UR,BOW,BO}';
     is_lyr text;
     is_nfl text;
   BEGIN
@@ -5962,19 +6078,79 @@ RETURNS int AS $$
     ELSE
       is_lyr = NULL::text;
     END IF;
-  
-    -- if landtype matches any of the nfl values, we know there is an NFL record.
-    -- set is_nfl to be a valid string.
-    IF landtype = ANY(nfl_codes) THEN
+
+
+    -- if landtype matches any of the nfl values, we know there is an NFL record., set is_nfl to be a valid string.
+    IF landuse = ANY(nfl_codes) OR subuse = ANY(nfl_codes) OR class1 = ANY(nfl_codes)  THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
     END IF;
-  
+
     -- call countOfNotNull
     RETURN TT_countOfNotNull(is_lyr, is_nfl, max_rank_to_consider, 'FALSE');
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_pe_pei01_map_dist_year
+--
+-- dist_type text
+--
+-- The PEI02 disturbance codes include a plantation code with year established
+-- eg. PN-92, PN-02
+-- This value needs to be parsed into a full year and returned as int to populate
+-- the dist_year columns
+--
+-- pass dist_type values where dist_type includes PN
+-------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_pe_pei01_map_dist_year(
+  dist_type text
+)
+RETURNS text AS $$
+  DECLARE
+    partial_year text;
+  BEGIN
+    -- eg. PN-92, year is 1992
+    partial_year = TT_SubstringText(dist_type, '4'::text, '2'::text);
+
+    IF partial_year is NULL THEN
+      RETURN NULL;
+    END IF;
+
+    -- if between 50 - 99, year is in 1900's
+    IF TT_IsBetween(partial_year, '30'::text, '99'::text, TRUE::text, TRUE::text ) THEN
+      RETURN TT_Concat('{''19'', ' || partial_year || '}'::text, ''::text);
+    ELSE -- 2000's
+      RETURN TT_Concat('{''20'', ' || partial_year || '}'::text, ''::text);
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_pe_pei01_dist_type_length_validation
+--
+-- dist_type text
+-- landtype text
+-- substring_start text
+--
+-- Intended to validate dist_type_2 length for PEI. 
+-- If the inventory records two disturbance types in one field, then the substring start will be equal to 3. 
+-- If this is the case, and the length isnt 4, then the disturbance type isn't applicable and will return false.
+-- Returns true otherwise
+-------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_pe_pei01_dist_type_length_validation(
+  dist_type TEXT,
+  landtype TEXT,
+  substring_start TEXT
+)
+RETURNS BOOLEAN AS $$
+	BEGIN
+		RETURN length(tt_coalesceText(ARRAY[dist_type,landtype]::TEXT)) = 4 OR substring_start = 1::TEXT;
+	 END;
+$$ LANGUAGE plpgsql STABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -7429,19 +7605,23 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TT_pe_pei01_wetland_translation
 --
 -- Assign 4 letter wetland character code, then return the requested character (1-4)
--- e.g. TT_pe_pei01_wetland_translation(landtype, per1, '1')
+-- e.g. TT_pe_pei01_wetland_translation(landtype, per1, 999, 999, 999, 999, '1')
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_translation(text, text, text);
+--DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_translation(text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_wetland_translation(
   landtype text,
   per1 text,
+  landtype2 text,
+  per2 text,
+  landtype3 text,
+  per3 text,
   ret_char_pos text
 )
 RETURNS text AS $$
   DECLARE
     _wetland_code text;
   BEGIN
-    _wetland_code = TT_pe_pei01_wetland_code(landtype, per1);
+	_wetland_code = TT_pe_pei01_wetland_code(landtype, per1, landtype2, per2, landtype3, per3);
     IF _wetland_code IS NULL THEN
       RETURN NULL;
     END IF;
