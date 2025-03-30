@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- CASFRI - Constraints script for CASFRI v5
+-- CASFRI - Constraints script for CASFRI v5 --56min54sec
 -- For use with PostgreSQL Table Tranlation Framework v2.0.1 for PostgreSQL 13.x
 -- https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework
 -- https://github.com/CASFRI/CASFRI

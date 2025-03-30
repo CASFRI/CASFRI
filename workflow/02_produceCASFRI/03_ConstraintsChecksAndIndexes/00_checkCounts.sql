@@ -12,7 +12,7 @@
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 --                         Melina Houle <melina.houle@sbf.ulaval.ca>
 -------------------------------------------------------------------------------
--- cas_all counts 26m00
+-- cas_all counts 25m39
 ---------------------------------------------
 SELECT * FROM (
 (WITH expected AS (
@@ -45,7 +45,8 @@ SELECT * FROM (
   SELECT 'MB07' inv, 219682 cnt UNION ALL 
   SELECT 'NB01' inv, 927177 cnt UNION ALL 
   SELECT 'NB02' inv, 1123893 cnt UNION ALL 
-  SELECT 'NL01' inv, 1863664 cnt UNION ALL 
+  SELECT 'NL01' inv, 1863664 cnt UNION ALL
+  SELECT 'NL02' inv, 2612451 cnt UNION ALL
   SELECT 'NS01' inv, 1127926 cnt UNION ALL 
   SELECT 'NS02' inv, 1090671 cnt UNION ALL 
   SELECT 'NS03' inv, 995886 cnt UNION ALL 
@@ -140,6 +141,7 @@ UNION ALL
   SELECT 'NB01' inv, 252564 cnt UNION ALL 
   SELECT 'NB02' inv, 333114 cnt UNION ALL 
   SELECT 'NL01' inv, 122641 cnt UNION ALL 
+  SELECT 'NL02' inv, 30956 cnt UNION ALL 
   SELECT 'NS01' inv, 87348 cnt UNION ALL 
   SELECT 'NS02' inv, 84546 cnt UNION ALL 
   SELECT 'NS03' inv, 69446 cnt UNION ALL 
@@ -233,7 +235,8 @@ UNION ALL
   SELECT 'MB07' inv, 81226 cnt UNION ALL 
   SELECT 'NB01' inv, 71998 cnt UNION ALL 
   SELECT 'NB02' inv, 104289 cnt UNION ALL 
-  SELECT 'NL01' inv, 238785 cnt UNION ALL 
+  SELECT 'NL01' inv, 238785 cnt UNION ALL
+  SELECT 'NL02' inv, 264026 cnt UNION ALL 
   SELECT 'NS01' inv, 100080 cnt UNION ALL 
   SELECT 'NS02' inv, 102171 cnt UNION ALL 
   SELECT 'NS03' inv, 122782 cnt UNION ALL 
@@ -328,6 +331,7 @@ UNION ALL
   SELECT 'NB01' inv, 933901 cnt UNION ALL
   SELECT 'NB02' inv, 1057299 cnt UNION ALL
   SELECT 'NL01' inv, 1189361 cnt UNION ALL
+  SELECT 'NL02' inv, 1421015 cnt UNION ALL
   SELECT 'NS01' inv, 1061739 cnt UNION ALL
   SELECT 'NS02' inv, 1033945 cnt UNION ALL
   SELECT 'NS03' inv, 1015761 cnt UNION ALL
@@ -421,7 +425,8 @@ UNION ALL
   SELECT 'MB07' inv, 25088 cnt UNION ALL 
   SELECT 'NB01' inv, 87260 cnt UNION ALL 
   SELECT 'NB02' inv, 141700 cnt UNION ALL 
-  SELECT 'NL01' inv, 664096 cnt UNION ALL 
+  SELECT 'NL01' inv, 664096 cnt UNION ALL
+  SELECT 'NL02' inv, 487879 cnt UNION ALL 
   SELECT 'NS01' inv, 198342 cnt UNION ALL 
   SELECT 'NS02' inv, 196479 cnt UNION ALL 
   SELECT 'NS03' inv, 191505 cnt UNION ALL 
@@ -515,7 +520,8 @@ UNION ALL
   SELECT 'MB07' inv, 219682 cnt UNION ALL 
   SELECT 'NB01' inv, 927177 cnt UNION ALL 
   SELECT 'NB02' inv, 1123893 cnt UNION ALL 
-  SELECT 'NL01' inv, 1863664 cnt UNION ALL 
+  SELECT 'NL01' inv, 1863664 cnt UNION ALL
+  SELECT 'NL02' inv, 2612451 cnt UNION ALL 
   SELECT 'NS01' inv, 1127926 cnt UNION ALL 
   SELECT 'NS02' inv, 1090671 cnt UNION ALL 
   SELECT 'NS03' inv, 995886 cnt UNION ALL 
