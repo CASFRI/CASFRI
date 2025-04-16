@@ -4991,7 +4991,7 @@ RETURNS boolean AS $$
     nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
 	
 	-- catch any NFL rows and return FALSE
-    IF typeclas = ANY(nfl_string_list) OR typeclas_nonveg = ANY(nfl_string_list) OR typeclas_anth = ANY(nfl_string_list) THEN
+    IF COALESCE(typeclas, 'NULL') = ANY(nfl_string_list) OR COALESCE(typeclas_nonveg, 'NULL') = ANY(nfl_string_list) OR COALESCE(typeclas_anth, 'NULL') = ANY(nfl_string_list) THEN
       RETURN FALSE;
     END IF;
 	
@@ -6015,7 +6015,7 @@ RETURNS int AS $$
     nfl_string_list = ARRAY['BE','BR','BU','CB','ES','LA','LL','LS','MO','MU','PO','RE','RI','RO','RS','RT','SW','AP','BP','EL','GP','TS','RD','SH','SU','PM','BL','BM','BY','HE','HF','HG','SL','ST'];
 	
     -- if NFL 1 present, give _is_nfl1 a string.
-    IF typeclas_nonveg = ANY(nfl_string_list) OR typeclas_anth = ANY(nfl_string_list) OR typeclas = ANY(nfl_string_list) THEN
+    IF COALESCE(typeclas_nonveg, 'NULL') = ANY(nfl_string_list) OR COALESCE(typeclas_anth, 'NULL') = ANY(nfl_string_list) OR COALESCE(typeclas, 'NULL') = ANY(nfl_string_list) THEN
       _is_nfl1 = 'a_value';
 	  _lyr1 = NULL::text;
     ELSE
@@ -6024,11 +6024,11 @@ RETURNS int AS $$
     END IF;
   
     -- if NFL 2 present, give _is_nfl2 a string.
-    IF mintypeclas = ANY(nfl_string_list) THEN
+    IF COALESCE(mintypeclas, 'NULL') = ANY(nfl_string_list) THEN
       _is_nfl2 = 'a_value';
 	  _lyr2 = NULL::text;
     ELSE
-    	IF mintypeclas = '999' AND _is_nfl1 = 'a_value'
+    	IF COALESCE(mintypeclas, 'NULL') = '999' AND COALESCE(_is_nfl1, 'NULL') = 'a_value'
     	THEN
 			_lyr2 = NULL::text;
     	ELSE 
