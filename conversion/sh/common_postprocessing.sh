@@ -13,6 +13,8 @@ fi
 
 echo
 echo CONVERSION OF "$fullTargetTableName" DONE......
+duration=$SECONDS
+pretty_time "$duration"
 
 if [ ${leaveConvShellOpen}x == Truex ]; then
   /bin/bash

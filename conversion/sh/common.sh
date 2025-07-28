@@ -30,5 +30,20 @@ layer_creation_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry -lco F
 # other_options="-t_srs ESRI:102001"
 other_options="-t_srs $prjFile"
 
+# Compute script duration
+pretty_time() {
+    local total_seconds=$1
+    printf "Script completed in "
+    if (( total_seconds >= 3600 )); then
+        printf "%dh %dm %ds\n" $((total_seconds/3600)) $(( (total_seconds%3600)/60 )) $((total_seconds%60))
+    elif (( total_seconds >= 60 )); then
+        printf "%dm %ds\n" $((total_seconds/60)) $((total_seconds%60))
+    else
+        printf "%ds\n" "$total_seconds"
+    fi
+}
+
+SECONDS=0
+
 #Create schema if it doesn't exist
 "$gdalFolder/ogrinfo" "$pg_connection_string" -sql "CREATE SCHEMA IF NOT EXISTS $targetFRISchema";
