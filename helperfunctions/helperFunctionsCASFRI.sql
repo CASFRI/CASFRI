@@ -1352,14 +1352,13 @@ RETURNS TABLE (ttable text,
                        'mb_fri02_' || lower(schemaName) || ', ' ||
                        'nb_nbi01_' || lower(schemaName) || ', ' ||
                        'nl_nli01_' || lower(schemaName) || ', ' ||
-					   'nl_nli02_' || lower(schemaName) || ', ' ||
+                       'nl_nli02_' || lower(schemaName) || ', ' ||
                        'ns_nsi01_' || lower(schemaName) || ', ' ||
                        'nt_fvi01_' || lower(schemaName) || ', ' ||
                        'on_fim02_' || lower(schemaName) || ', ' ||
                        'pc_panp01_' || lower(schemaName) || ', ' ||
                        'pc_wbnp01_' || lower(schemaName) || ', ' ||
                        'pe_pei01_' || lower(schemaName) || ', ' ||
-                       'pe_pei02_' || lower(schemaName) || ', ' ||
                        'qc_ini03_' || lower(schemaName) || ', ' ||
                        'qc_ini04_' || lower(schemaName) || ', ' ||
                        'qc_ipf05_' || lower(schemaName) || ', ' ||
@@ -1564,7 +1563,6 @@ RETURNS text AS $$
                   WHEN rulelc = 'fvi01_structure_per_validation' THEN '-8887'
                   WHEN rulelc = 'on_fim02_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'pe_pei01_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'pe_pei02_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'qc_prg4_lengthmatchlist' THEN '-9998'
                   WHEN rulelc = 'sk_utm_hascountofnotnull' THEN '-8886'
                   WHEN rulelc = 'sfv01_hascountofnotnull' THEN '-8886'
@@ -3131,13 +3129,15 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- spec3 text
 -- spec4 text
 -- spec5 text
--- landtype text
--- count text
+-- landuse text,
+-- subuse text,
+-- class1 text,
+-- count text,
 -- exact text
 --
 -- hasCountOfNotNull using pei01 custom countOfNotNull
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text,text, text);
+--DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_hasCountOfNotNull(
   spec1 text,
   spec2 text,
@@ -3161,53 +3161,6 @@ RETURNS boolean AS $$
 
     -- process
     _counted_nulls = TT_pe_pei01_countOfNotNull(spec1, spec2, spec3, spec4, spec5, landuse, subuse, class1, '2');
-
-    IF _exact THEN
-      RETURN _counted_nulls = _count;
-    ELSE
-      RETURN _counted_nulls >= _count;
-    END IF;
-  END;
-$$ LANGUAGE plpgsql IMMUTABLE;
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
--- TT_pe_pei02_hasCountOfNotNull
---
--- spec1 text
--- spec2 text
--- spec3 text
--- spec4 text
--- spec5 text
--- landtype text
--- count text
--- exact text
---
--- hasCountOfNotNull using pei02 custom countOfNotNull
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei02_hasCountOfNotNull(text, text, text, text, text, text, text,text, text, text);
-CREATE OR REPLACE FUNCTION TT_pe_pei02_hasCountOfNotNull(
-  spec1 text,
-  spec2 text,
-  spec3 text,
-  spec4 text,
-  spec5 text,
-  landtype text,
-  class1 text,
-  count text,
-  exact text
-)
-RETURNS boolean AS $$
-  DECLARE
-    _count int;
-    _exact boolean;
-    _counted_nulls int;
-  BEGIN
-    _count = count::int;
-    _exact = exact::boolean;
-
-    -- process
-    _counted_nulls = TT_pe_pei02_countOfNotNull(spec1, spec2, spec3, spec4, spec5, landtype, class1, '2');
 
     IF _exact THEN
       RETURN _counted_nulls = _count;
@@ -4095,7 +4048,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- is not null and not -.
 -- e.g. TT_pe_pei01_wetland_validation(landtype, per1, 999, 999, 999, '1')
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text, text, text, text);
+--DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_pe_pei01_wetland_validation(
   landtype text,
   per1 text,
@@ -4110,7 +4063,7 @@ RETURNS boolean AS $$
     _wetland_code text;
     _wetland_char text;
   BEGIN
-	_wetland_code = TT_pe_pei01_wetland_code(landtype, per1, landtype2, per2, landtype3, per3);
+    _wetland_code = TT_pe_pei01_wetland_code(landtype, per1, landtype2, per2, landtype3, per3);
     _wetland_char = substring(_wetland_code from ret_char_pos::int for 1);
     IF _wetland_char IS NULL OR _wetland_char = '-' THEN
       RETURN FALSE;
