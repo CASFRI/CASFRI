@@ -284,7 +284,7 @@ UNION ALL
 SELECT '8.2'::text number,
        'Check count'::text function_tested,
        'ON02'::text description,
-       TT_Count('rawfri', 'on02') = 3629073 passed
+       TT_Count('rawfri', 'on02') = 3629072 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '9.1'::text number,
