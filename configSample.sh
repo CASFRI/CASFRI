@@ -62,20 +62,37 @@ invList7CFS=(AB30 MB03)
 invList8=(DS01 DS02 DS03 DS04 DS05)
 
 # Merge all inventory lists into a list of list
-fullList=(invList1 invList2 invList3 invList4 invList5 invList6 invList7)
+fullList=(invList1 invList2 invList3 invList4 invList5 invList6 invList7 invList8)
 #fullList=(invList1CFS invList2CFS invList3CFS invList4CFS invList5 iCFSt6 invList7CFS)
 
 #################################################################
-# GDAL installation folder
+# GDAL executable folder
 #################################################################
+# with miniconda
+#gdalFolder="C:/ProgramData/Miniconda3/Library/bin/"
+
+# without miniconda
 gdalFolder="C:/Program Files/GDAL"
 
 # Set this to true if using GDAL version 1.11.4
 gdal_1_11_4=False
 
 #################################################################
-# Python installation folder (for gdal_polygonize.py)
+# GDAL python executable folder (gdal_calc.py and gdal_polygonize.py)
 #################################################################
+# with miniconda
+#gdalPyFolder="C:/ProgramData/Miniconda3/Scripts/"
+
+# without miniconda
+gdalPyFolder="$gdalFolder"
+
+#################################################################
+# Python installation folder
+#################################################################
+# with miniconda
+#pythonPath="C:/ProgramData/miniconda3"
+
+# without miniconda
 pythonPath="C:/Python311"
 
 #################################################################
