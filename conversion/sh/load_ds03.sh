@@ -13,10 +13,17 @@
 # The python bindings coming with the GDAL version we use from 
 # https://www.gisinternals.com/ do not work anymore. To get 
 # gdal_polygonize.py to work properly we installed MiniConda (which  install
-# its own version of Python) and then numpy and gdal:
+# its own version of Python) and a compatible set of gdal package:
 #
-#   conda install numpy
-#   conda install gdal
+#   conda install -c conda-forge gdal=3.10.0 libgdal-core=3.10.0 libgdal-pg=3.10.0 postgresql --force-reinstall
+#
+# You can then test that the PostgreSQL driver is installed properly:
+#
+#   ogrinfo --formats | grep -i postgresql
+#
+# And that gdal_polygonize is running smoothly (must be >= 3.1)
+#
+#   gdal_polygonize --version
 #
 # The second method, using PostGIS raster2pgsql and ST_DumpAsPolygons(), is 
 # slower but does not require any special installation.
@@ -59,23 +66,39 @@ unset PROJ_LIB
 # value with gdal_cal.py (making the raster to polygonize smaller by the way) and to 
 # gdal_polygonize.py the resulting raster directly into PostGIS.
 #
-# The combined raster is created only for all in the FRIs hierarchy. It is not recreated 
-# for each generation of casfri.
+# The combined raster is created only once in the FRIs source folder. It is not recreated 
+# for each generation of CASFRI.
 
-# Create a temporary folder for the temporary combined raster
+# Define paths
 tempDstPath=${srcPath}/temp
 tempRasterFullPath=${tempDstPath}/${datasetName}_combined.tif
 
+# Create a temporary folder for the temporary files
+echo --------------------------------
+echo Create temp dir for temp raster...
 if [ ! -d "${tempDstPath}" ]; then
   mkdir "${tempDstPath}"
+  echo Temp dir created...
+else
+  echo Temp dir already exists. Skipping creation...
 fi
 
-# Create the temporary raster combining the type and the year raster into a smaller raster 
-# easier to handle for gdal_polygonize.py
+# Create the temporary reduced size raster combining the type and the year rasters from 
+# two 16 bits int to a smaller 8 bits (byte) raster easier to process with gdal_polygonize.py.
+#
+# Types values (1 and 2) are converted to 0 and 100
+# Years values (from 1985 to 2015) are truncated to values from 85 to 15
+# values are then added so that:
+#   85 means type=1 and year=1985
+#   185 mean type=2 and year=1985
+#   15 means type=1 and year=2015
+#   115 means type=2 and year=2015
+echo --------------------------------
+echo Create a temporary reduced size raster
 if [ ! -e "${tempRasterFullPath}" ]; then
 	echo "Creating ${tempRasterFullPath}..."
 
-  "$pythonPath/scripts/gdal_calc.py" -A "$srcFullPath1" -B "$srcFullPath2" \
+  "$pythonPath/python.exe" "$gdalFolder/gdal_calc.py" -A "$srcFullPath1" -B "$srcFullPath2" \
   --type=Byte \
   --calc="(A-1)*100+(B-numpy.trunc(B/100)*100)" \
   --co="COMPRESS=LZW" --co="BIGTIFF=YES" --co="TILED=YES" --co="BLOCKXSIZE=1024" --co="BLOCKYSIZE=1024" \
@@ -88,21 +111,29 @@ else
 fi
 
 # DROP the target table if requested
-#if [ $overwriteFRI == True ]; then
+echo --------------------------------
+echo DROP the temp tables if requested
+if [ $overwriteFRI == True ]; then
   "$gdalFolder/ogrinfo" "$pg_connection_string" \
   -sql "
   DROP TABLE IF EXISTS ${fullTargetTableName}_temp;
   DROP TABLE IF EXISTS ${fullTargetTableName};
-#  "
-#fi
+"
+  echo Table ${fullTargetTableName} DROPed...
+else
+   echo Table ${fullTargetTableName} NOT DROPed...
+fi
 
 # Vectorize directly to PostGIS
-"$pythonPath/scripts/gdal_polygonize.py" "${tempRasterFullPath}" \
--lco "SPATIAL_INDEX=NONE" \
+echo --------------------------------
+echo Vectorize directly to PostGIS
+"$pythonPath/python.exe" "$gdalFolder/gdal_polygonize.py" "${tempRasterFullPath}" \
 -f PostgreSQL "$pg_connection_string" \
-${fullTargetTableName}_temp
+${fullTargetTableName}_temp dn
 
 # Reproject the geometry and parse the combined field into type and year
+echo --------------------------------
+echo Reproject and parse
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 CREATE TABLE ${fullTargetTableName} AS
