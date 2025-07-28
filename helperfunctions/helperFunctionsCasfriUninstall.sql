@@ -23,12 +23,12 @@ DROP FUNCTION IF EXISTS TT_yvi01_nfl_soil_moisture_validation(text,text,text,tex
 DROP FUNCTION IF EXISTS TT_sk_utm01_species_percent_validation(text,text,text,text,text);
 DROP FUNCTION IF EXISTS TT_avi01_stand_structure_validation(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_validation(text,text,text,text,text,text,text,text,text);
-DROP FUNCTION IF EXISTS TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_vri01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_hasCountOfNotNull(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_on_fim02_hasCountOfNotNull(text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS tt_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_sfv01_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fvi01_structure_per_validation(text, text);
 DROP FUNCTION IF EXISTS TT_qc_prg3_wetland_validation(text, text, text, text, text, text, text);
@@ -39,7 +39,7 @@ DROP FUNCTION IF EXISTS TT_mb_fri_hascountOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_isCommercial(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_isNonCommercial(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_isForest(text, text);
-DROP FUNCTION IF EXISTS TT_nl_nli02_isForest(text, text);
+DROP FUNCTION IF EXISTS TT_nl_nli02_isForest(text);
 DROP FUNCTION IF EXISTS TT_qc_prg4_lengthMatchList(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli01_origin_lower_validation(text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli02_origin_lower_validation(text);
@@ -53,10 +53,10 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli02_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_validation(text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_validation(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_validation(text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_validation(text, text, text, text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_ab_photo_year_validation(text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_ab_photo_year_validation(text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_validation(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_validation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_validation(text, text, text);
@@ -69,6 +69,7 @@ DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_mapText(text, text, text, text, 
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_notNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_hasCountOfLayers(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fim_species_count_validate(text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_dist_type_length_validation(text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -104,7 +105,7 @@ DROP FUNCTION IF EXISTS TT_generic_stand_structure_translation(text, text, text,
 DROP FUNCTION IF EXISTS TT_fvi01_stand_structure_translation(text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fli01_stand_structure_translation(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_countOfNotNull(text, text, text, text);
-DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_countOfNotNull(text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_on_fim02_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm_countOfNotNull(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_height(text, text, text, text);
@@ -140,11 +141,11 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli02_wetland_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_translation(text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_translation(text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_translation(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_translation(text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pc01_species_per_translation(text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_translation(text, text, text, text, text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_ab_photo_year_translation(text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_ab_photo_year_translation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_translation(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fli01_wetland_translation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_translation(text, text, text);
@@ -162,6 +163,8 @@ DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyText(text, text, text, text,
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyInt(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_matchList(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nt_lyr_layer_translation(text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_map_dist_year(text);
+DROP FUNCTION IF EXISTS TT_vri01_src_inv_area_translation(text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------
@@ -172,7 +175,7 @@ DROP FUNCTION IF EXISTS TT_nl_nli01_wetland_code(text, text, text);
 DROP FUNCTION IF EXISTS TT_nl_nli02_wetland_code(text, text, text);
 DROP FUNCTION IF EXISTS TT_bc_vri01_wetland_code(text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_ns_nsi01_wetland_code(text, text, text, text);
-DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text);
+DROP FUNCTION IF EXISTS TT_pe_pei01_wetland_code(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nt_fvi01_wetland_code(text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_utm01_wetland_code(text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_sk_sfv01_wetland_code(text, text, text, text, text, text, text, text, text);
@@ -214,6 +217,7 @@ DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidNumber() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidRange() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);
 DROP FUNCTION IF EXISTS TT_Count(name, name);
+DROP FUNCTION IF EXISTS TT_DropAllConstraints(name, name);
 -------------------------------------------------------------------------------
 -- Tools views
 -------------------------------------------------------------------------------
