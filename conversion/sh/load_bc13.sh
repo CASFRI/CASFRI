@@ -28,6 +28,7 @@ fullTargetTableName=$targetFRISchema.bc13
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
+-nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName" \
 -progress $overwrite_tab
 

@@ -45,10 +45,12 @@ tableName_L2=${fullTargetTableName}_layer_2
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_L1" \
 -nln $tableName_L1 $layer_creation_options $other_options \
+-nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab
 
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_L2" \
+-nlt PROMOTE_TO_MULTI \
 -nln $tableName_L2 $layer_creation_options $other_options \
 -progress $overwrite_tab
 
