@@ -8,16 +8,20 @@ not do what they should not do (break other correct translations).
 For more info on this kind of tests look at "regression tests" in Wikipedia 
 or ask your favorite LLM.
 
-While unit tests from the "helperfunctions" folder test the result of 
+While unit tests from the "helperfunctions" folder test the results of 
 individual helper functions, these translation tests test the results of 
 changes to conversion scripts and translation tables (which are ordered 
-series of multiple translation functions). They are also necessary addition 
-to check count tests that are fast tests checking only for the count of 
-converted and translated rows.
+series of multiple translation functions). They are also a necessary 
+addition to check count tests that are fast tests checking only for the count 
+of converted and translated rows.
+
+There are some PostgreSQL packages to ease the development of unit and 
+regression tests ([pgTAP](https://pgtap.org/), [PGUnit](https://github.com/adrianandrei-ca/pgunit)). They are generally designed to test functionality, not data 
+production, so we had to develop our own method.
 
 While it is obvious how changes to helper functions and translation tables 
-affect resulting tables (it's their goal), changes to conversion scripts can 
-also alter final tables in a number of way:
+affect resulting tables (it's their goals), changes to conversion scripts can 
+also alter final tables in a number of ways:
 
 - Changing the version of PostGIS or GDAL can alter the way geometries are 
   loaded in the database. This might have an impact on their metrics (e.g. 
