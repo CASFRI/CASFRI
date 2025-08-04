@@ -282,7 +282,8 @@ Once the invListX variables have been defined, you can launch the different proc
 
 1. ./conversion/sh/**load_all.sh** loads all the source inventories listed in the invListX variables into the PostgreSQL schema defined by the targetFRISchema variable in the configuration script (config.sh).
 
-2. ./translation/test/**testTranslation.sh** runs translation tables on subsets of source inventories. The resulting tables are compared with archived tables for desired or undesired differences. This quick check is to make sure everything works as expected before launching the main, long translation process. This is also used to make sure nothing is broken while developping new features or fixing issues. The resulting tables are written to the casfri50_test schema.
+2. ./translation/test/**testTranslation.sh** runs translation tables on subsets of source inventories. The resulting tables are compared with archived tables for desired or undesired differences. This quick check is to make sure everything works as expected before launching the main, long translation process. This is also used to make sure nothing is broken while developping new features or fixing issues. The resulting tables are written to the casfri50_test schema. The whole translation test process is explained in the [CASFRI/translation
+/test/readme.md](https://github.com/CASFRI/CASFRI/blob/master/translation/test/readme.md) document.
 
 4. ./workflow/02_produceCASFRI/**01_translate_all_00.sh** prepares the database before launching the main translation process.
 
