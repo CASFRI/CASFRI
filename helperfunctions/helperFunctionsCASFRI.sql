@@ -4611,30 +4611,30 @@ RETURNS boolean AS $$
       END IF;
     END IF;
   
-	---------
-	-- YT03
-	---------
-	-- assign source values to variables depending on the inventory id
+    ---------
+    -- YT03
+    ---------
+    -- assign source values to variables depending on the inventory id
     IF inventory_id IN('YT03') THEN
       _yt03_nat_non_veg = _source_vals[1];
       _yt03_non_for_anth = _source_vals[2];
       _yt03_non_for_veg = _source_vals[3];
     END IF;
 	
-	-- run validations
-	IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
+    -- run validations
+    IF 'nat_non_veg' = ANY (_fiter_attributes) THEN
       IF TT_notEmpty(_yt03_nat_non_veg) THEN
         _nat_non_veg_boolean = TRUE;
       END IF;
     END IF;
 	
-	IF 'non_for_anth' = ANY (_fiter_attributes) THEN
+	  IF 'non_for_anth' = ANY (_fiter_attributes) THEN
       IF TT_notEmpty(_yt03_non_for_anth) THEN
         _non_for_anth_boolean = TRUE;
       END IF;
     END IF;
 	
-	IF 'non_for_veg' = ANY (_fiter_attributes) THEN
+	  IF 'non_for_veg' = ANY (_fiter_attributes) THEN
       IF TT_notEmpty(_yt03_non_for_veg) THEN
         _non_for_veg_boolean = TRUE;
       END IF;
@@ -4644,22 +4644,22 @@ RETURNS boolean AS $$
    	-- PE02
    	---------
    	-- assign source values to variables depending on the inventory id
-       IF inventory_id IN('PE02', 'PE03','PE04') THEN
-         _class1 = _source_vals[1];
-         _landuse = _source_vals[2];
-         _subuse = _source_vals[3];
-         _pe02_non_for_veg = _source_vals[4];
-       END IF;
+    IF left(inventory_id, 2) = 'PE' THEN
+      _class1 = _source_vals[1];
+      _landuse = _source_vals[2];
+      _subuse = _source_vals[3];
+      _pe02_non_for_veg = _source_vals[4];
+    END IF;
 
    	-- run validations
     IF 'all_nfl' = ANY (_fiter_attributes) THEN
     	_nfl_code_list := '{''BAR'',''BSB'',''SDW'',''WWW'',''WAT'',''SO'',''SD'',''WW'',''FL'',''AGR'',''COM'',''RES'',''IND'',''NON'',''REC'',''TRN'',''URB'',''INT'',''CL'',''WF'',''PL'',''RN'',''RD'',''RR'',''AG'',''EP'',''UR'',''BOW'',''BO''}';
-       IF (TT_matchList(_class1, _nfl_code_list) OR TT_matchList(_subuse, _nfl_code_list) OR TT_matchList(_landuse, _nfl_code_list)) THEN
-         _non_for_veg_boolean = TRUE;
-       END IF;
-     END IF;
+      IF (TT_matchList(_class1, _nfl_code_list) OR TT_matchList(_subuse, _nfl_code_list) OR TT_matchList(_landuse, _nfl_code_list)) THEN
+        _non_for_veg_boolean = TRUE;
+      END IF;
+    END IF;
 	
-	-------------------------------------------------------------
+	  -------------------------------------------------------------
     -- return TRUE if any of the nfl attribute validations passed
     IF _nat_non_veg_boolean OR _non_for_veg_boolean OR _non_for_anth_boolean THEN
       RETURN TRUE;

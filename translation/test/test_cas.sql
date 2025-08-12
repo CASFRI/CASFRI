@@ -202,6 +202,18 @@ SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei', 300, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_pe_cas_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_300_cas');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'pe02', 'pe_pei', 300, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_pe_cas_test('rawfri', 'pe02_l1_to_pe_pei_l1_map_300_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pe03', 'pe_pei', 300, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_pe_cas_test('rawfri', 'pe03_l1_to_pe_pei_l1_map_300_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pe04', 'pe_pei', 300, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_pe_cas_test('rawfri', 'pe04_l1_to_pe_pei_l1_map_300_cas');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb01', 'mb_fri2', 300, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_mb_fri2_cas_test('rawfri', 'mb01_l1_to_mb_fri2_l1_map_300_cas');

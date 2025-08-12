@@ -370,6 +370,18 @@ SELECT TT_CreateMappingView('rawfri', 'pe01', 2, 'pe_pei', 1, 1000, NULL, 'nfl')
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_pe_nfl_test('rawfri', 'pe01_l2_to_pe_pei_l1_map_1000_nfl');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'pe02', 2, 'pe_pei', 1, 500, NULL, 'nfl'); -- Generates about 200 (227) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_pe_nfl_test('rawfri', 'pe02_l2_to_pe_pei_l1_map_500_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pe03', 2, 'pe_pei', 1, 500, NULL, 'nfl'); -- Generates about 200 (208) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_pe_nfl_test('rawfri', 'pe03_l2_to_pe_pei_l1_map_500_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'pe04', 2, 'pe_pei', 1, 500, NULL, 'nfl'); -- Generates about 200 (228) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_pe_nfl_test('rawfri', 'pe04_l2_to_pe_pei_l1_map_500_nfl');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb01', 2, 'mb_fri2', 1, 2200, NULL, 'nfl'); -- Generates about 200 (227) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_mb_fri02_nfl_test('rawfri', 'mb01_l2_to_mb_fri2_l1_map_2200_nfl');
