@@ -21,14 +21,11 @@ fi
 export PG_USE_COPY=YES
 export PROJ_LIB="$gdalFolder/projlib"
 
-prjFile="$scriptDir/../canadaAlbersEqualAreaConic.prj"
-
 pg_connection_string="PG:host=$pghost port=$pgport dbname=${pgdbname} user=${pguser} password=${pgpassword}"
 
 layer_creation_options="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry -lco FID=ogc_fid"
 
-# other_options="-t_srs ESRI:102001"
-other_options="-t_srs $prjFile"
+other_options="-t_srs ESRI:102001"
 
 # Compute script duration
 pretty_time() {

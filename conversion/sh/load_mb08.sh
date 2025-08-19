@@ -49,7 +49,7 @@ fi
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableName" \
 -progress $overwrite_tab
 
-# Alter the geometry column to ensure it is 2D (MultiPolygon in SRID 900914)
+# Alter the geometry column to ensure it is 2D (MultiPolygon in SRID 102001)
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 UPDATE $fullTargetTableName
@@ -61,7 +61,7 @@ WHERE ST_GeometryType(wkb_geometry) IN ('ST_Polygon', 'ST_MultiPolygon');
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 ALTER TABLE $fullTargetTableName
-ALTER COLUMN wkb_geometry TYPE Geometry(MultiPolygon, 900914) 
+ALTER COLUMN wkb_geometry TYPE Geometry(MultiPolygon, 102001) 
 USING ST_Force2D(wkb_geometry);
 "
 

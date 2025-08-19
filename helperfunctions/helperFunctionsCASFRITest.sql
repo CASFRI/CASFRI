@@ -3060,25 +3060,25 @@ UNION ALL
 SELECT '79.1'::text number,
        'TT_nl_nli01_origin_upper_translation'::text function_tested,
        'Test age class 1 Newfoundland'::text description,
-       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1995 passed
+       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1995 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '79.2'::text number,
        'TT_nl_nli01_origin_upper_translation'::text function_tested,
        'Test age class 2 Newfoundland'::text description,
-       TT_nl_nli01_origin_upper_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1974 passed
+       TT_nl_nli01_origin_upper_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1974 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '79.3'::text number,
        'TT_nl_nli01_origin_upper_translation'::text function_tested,
        'Test age class 9 Labrador'::text description,
-       TT_nl_nli01_origin_upper_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1834 passed
+       TT_nl_nli01_origin_upper_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1834 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '79.4'::text number,
        'TT_nl_nli01_origin_upper_translation'::text function_tested,
        'Test age class 9 Newfoundland, null'::text description,
-       TT_nl_nli01_origin_upper_translation('9', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+       TT_nl_nli01_origin_upper_translation('9', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
 ---------------------------------------------------------
   -- TT_nl_nli01_origin_lower_translation
 ---------------------------------------------------------
@@ -3086,31 +3086,31 @@ UNION ALL
 SELECT '80.1'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 1 Newfoundland'::text description,
-       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1975 passed
+       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1975 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '80.2'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 2 Newfoundland'::text description,
-       TT_nl_nli01_origin_lower_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1955 passed
+       TT_nl_nli01_origin_lower_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1955 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '80.3'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 9 Labrador'::text description,
-       TT_nl_nli01_origin_lower_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+       TT_nl_nli01_origin_lower_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '80.4'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 8 Labrador, null'::text description,
-       TT_nl_nli01_origin_lower_translation('8', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1835 passed
+       TT_nl_nli01_origin_lower_translation('8', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1835 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '80.5'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 8 Newfoundland, null'::text description,
-       TT_nl_nli01_origin_lower_translation('8', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+       TT_nl_nli01_origin_lower_translation('8', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
 ---------------------------------------------------------
   -- tt_nl_nli01_origin_lower_validation
 ---------------------------------------------------------

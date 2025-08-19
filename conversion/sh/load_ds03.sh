@@ -141,7 +141,7 @@ SELECT ogc_fid,
        dn orig_value,
        (dn/100 + 1) dist_type,
        dn - (dn/100)*100 + CASE WHEN dn - (dn/100)*100 < 30 THEN  2000 ELSE 1900 END dist_year,
-	     ST_Transform(wkb_geometry, 900914) wkb_geometry,
+	     ST_Transform(wkb_geometry, 102001) wkb_geometry,
        '${datasetName}' AS src_filename, 
        '${inventoryID}' AS inventory_id
 FROM ${fullTargetTableName}_temp;

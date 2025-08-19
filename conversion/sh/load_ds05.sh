@@ -127,7 +127,7 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 #        dn orig_value,
 #        (dn/100 + 1) dist_type,
 #        dn - (dn/100)*100 + CASE WHEN dn - (dn/100)*100 < 30 THEN  2000 ELSE 1900 END dist_year,
-# 	     ST_Transform(wkb_geometry, 900914) wkb_geometry,
+# 	     ST_Transform(wkb_geometry, 102001) wkb_geometry,
 #        '${datasetName}' AS src_filename, 
 #        '${inventoryID}' AS inventory_id
 # FROM ${fullTargetTableName}_temp;
@@ -291,23 +291,6 @@ if [ "${combineRasters}" == "true" ]; then
   echo "Combined raster parsed."
 else
   echo "Combined raster NOT parsed."
-fi
-
-# Reproject from 102001 to 900914
-echo --------------------------------
-echo Reproject combined raster...
-if [ "${combineRasters}" == "true" ]; then
-  "$gdalFolder/ogrinfo" "$pg_connection_string" \
-  -sql "
-  UPDATE rawfri.ds05 
-  SET wkb_geometry = ST_Transform(wkb_geometry, 900914);
-  ALTER TABLE rawfri.ds05 
-  ALTER COLUMN wkb_geometry TYPE geometry(MULTIPOLYGON, 900914) 
-  USING ST_SetSRID(wkb_geometry, 900914);
-  "
-  echo "Combined raster reprojected."
-else
-  echo "Combined raster NOT reprojected."
 fi
 
 ############## Process - Finish processing for both methods ########################

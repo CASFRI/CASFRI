@@ -202,7 +202,7 @@ if [ "${mergeTables}" == "true" ]; then
         '$inventoryID' inventory_id,
         '$srcFileName' src_filename, 
         'fire' map_sheet_id,
-        ST_Transform(wkb_geometry, 900914) wkb_geometry
+        ST_Transform(wkb_geometry, 102001) wkb_geometry
   FROM ${fullTargetTableName}_fire_year
   UNION ALL
   SELECT ogc_fid * 2 - 1 ogc_fid, 
@@ -212,7 +212,7 @@ if [ "${mergeTables}" == "true" ]; then
         '$inventoryID' inventory_id,
         '$srcFileName' src_filename, 
         'harvest' map_sheet_id,
-        ST_Transform(wkb_geometry, 900914) wkb_geometry
+        ST_Transform(wkb_geometry, 102001) wkb_geometry
   FROM ${fullTargetTableName}_harvest_year
   ;
   DROP TABLE IF EXISTS ${fullTargetTableName}_fire_year;
@@ -238,7 +238,7 @@ fi
 #   SELECT ST_DumpAsPolygons(rast) gv
 #   FROM ${fullTargetTableName1}
 # )
-# SELECT ST_Transform((gv).geom, 900914) AS wkb_geometry, 
+# SELECT ST_Transform((gv).geom, 102001) AS wkb_geometry, 
 #        (gv).val AS year,
 #        0 AS type,
 # 	     '${datasetName}' AS src_filename, 
@@ -254,7 +254,7 @@ fi
 #   SELECT ST_DumpAsPolygons(rast) gv
 #   FROM ${fullTargetTableName2}
 # )
-# SELECT ST_Transform((gv).geom, 900914) AS wkb_geometry, 
+# SELECT ST_Transform((gv).geom, 102001) AS wkb_geometry, 
 #        (gv).val AS year,
 #        1 AS type,
 # 	   '${datasetName}' AS src_filename, 
