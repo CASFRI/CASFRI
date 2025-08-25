@@ -3,7 +3,7 @@ source ./common.sh
 inventoryID=PE02
 
 
-srcFileName=CorporateLanduseInventory2010
+srcFileName=Corporate_Landuse_Inventory_2010
 srcName="$srcFileName"
 srcFullPath="$friDir/PE/$inventoryID/data/inventory/$srcFileName.shp"
 fullTargetTableName=$targetFRISchema.pe02
