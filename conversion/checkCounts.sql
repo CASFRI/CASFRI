@@ -115,7 +115,7 @@ FROM test_series AS a FULL OUTER JOIN (
       ('6.2', 'NS', 'ns02', 1090671),
       ('6.3', 'NS', 'ns03', 995886),
       ('7.1', 'NT', 'nt01', 281388),
-      ('7.2', 'NT', 'nt03', 320523),
+      ('7.2', 'NT', 'nt03', 320526),
       ('8.1', 'ON', 'on01', 4106417),
       ('8.2', 'ON', 'on02', 3629072),
       ('9.1', 'PC', 'pc01', 8094),
@@ -473,7 +473,7 @@ ORDER BY maj_num::int, min_num::int
 -- SELECT '7.2'::text number,
 --        'Check count'::text function_tested,
 --        'NT03'::text description,
---        TT_Count('rawfri', 'nt03') = 320523 passed,
+--        TT_Count('rawfri', 'nt03') = 320526 passed,
 --        CASE WHEN TT_Count('rawfri', 'ab21') = 0 THEN 0
 --             ELSE TT_Count('rawfri', 'ab21')
 --        END AS comment
