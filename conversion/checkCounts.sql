@@ -68,7 +68,8 @@ ORDER BY maj_num, min_num
 SELECT coalesce(maj_num || '.' || min_num, b.number) AS number,
        coalesce(a.juridiction, 'ERROR: Insufficient number of tests for ' || 
                 b.juridiction || ' in the initial table...') AS juridiction,
-       coalesce(tableName, 'ERROR: Too many tests (' || nb_test || ') for ' || a.juridiction || ' in the initial table...') description, 
+       coalesce(tableName, 'ERROR: Too many tests (' || nb_test || ') for ' || a.juridiction || ' in the initial table...') description,
+       expected,
        NOT passed IS NULL AND 
           (regexp_split_to_array(number, '\.'))[1] = maj_num AND 
           (regexp_split_to_array(number, '\.'))[2] = min_num AND passed passed,
