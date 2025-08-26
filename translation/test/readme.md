@@ -1,4 +1,4 @@
-## Translation Tests
+## Understanding Translation Tests
 
 Translation test tables and their associated scripts are a way to ensure 
 that changes made to conversion scripts, helper functions and translation 
