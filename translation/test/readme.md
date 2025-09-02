@@ -1,24 +1,22 @@
 ## Understanding Translation Tests
 
-Translation test tables and their associated scripts are a way to ensure 
-that changes made to conversion scripts, helper functions and translation 
-tables do what they have to do (improve or update the translated data 
-tables) and do not do what they should not do (break other correct 
-translations).
+Translation test tables and their associated scripts are a way to ensure that 
+changes made to conversion scripts, helper functions and translation tables do 
+what they have to do (improve or update the translated data tables) and do not 
+do what they should not do (break other correct translations).
 
-For more info on this kind of tests look at the "Regression tests" article 
-in Wikipedia or ask your favorite LLM.
+For more info on this kind of tests look at the "Regression tests" article in 
+Wikipedia or ask your favorite LLM.
 
 While unit tests from the "helperfunctions" folder test the results of 
-individual helper functions, these translation tests test the results of 
-changes to conversion scripts and translation tables (which are ordered 
-series of multiple translation functions). They are also a necessary 
-addition to "check count" tests that are fast tests checking only for the 
-count of converted and translated rows.
+individual helper functions, these translation tests test the results of changes
+to conversion scripts and translation tables (which are ordered series of 
+multiple translation functions). They are also a necessary addition to "check 
+count" tests that are fast tests checking only for the count of converted and 
+translated rows.
 
 There are some PostgreSQL packages to ease the development of unit and 
-regression tests ([pgTAP](https://pgtap.org/), [PGUnit](https://github.com/adrianandrei-ca/pgunit)). They are generally designed 
-to test functionality rather than data production, so we had to develop 
+regression tests ([pgTAP](https://pgtap.org/), [PGUnit](https://github.com/adrianandrei-ca/pgunit)). They are generally designed to test functionality rather than data production, so we had to develop 
 our own method.
 
 While it is obvious how changes to helper functions and translation tables 
@@ -26,41 +24,38 @@ affect resulting tables (it's their goals), changes to conversion scripts can
 also alter final tables in a number of ways:
 
 - Changing the version of PostGIS or GDAL can alter the way geometries are 
-  loaded in the database. This might have an impact on their metrics (e.g. 
-  area, perimeter) and/or their topology (e.g. a same geometry, after being 
-  loaded with a different version of PostGIS, might be equivalent to the 
-  previously loaded one but not identical because the new version of GEOS 
-  changed the order of its vertices. It might also alter how the geometry 
-  topologically relates with other geometries (e.g. it does not intersect 
-  anymore or it intersects differently with another geometry)). This might 
-  have an impact on subsequent derived tables like the flat table or the 
-  history table.
+  loaded in the database. This might have an impact on their metrics (e.g. area,
+  perimeter) and/or their topology (e.g. a same geometry, after being loaded 
+  with a different version of PostGIS, might be equivalent to the previously 
+  loaded one but not identical because the new version of GEOS   changed the 
+  order of its vertices. It might also alter how the geometry topologically 
+  relates with other geometries (e.g. it does not intersect anymore or it 
+  intersects differently with another geometry)). This might   have an impact on
+  subsequent derived tables like the flat table or the history table.
 
 - Changes in a loading script might alter the count of rows in the converted 
-  table (e.g. eliminating rows with invalid geometries or geometries having 
-  null areas or changing the way multi-tables datasets are joined together).
+  table (e.g. eliminating rows with invalid geometries or geometries having null
+  areas or changing the way multi-tables datasets are joined together).
 
 This is why it is important to update the translation test tables if they are 
-by any means modified by the translation process but also if they are 
-modified by the conversion process.
+by any means modified by the translation process but also if they are modified 
+by the conversion process.
 
-Translation tests take about 30 minutes to complete. This is still much 
-faster than a complete translation which ca take hours. They are designed to 
-test all translated inventory at once because changes to some generic helper 
-functions and changes to standard-based (as opposed to inventory-based) 
-translation tables can affect more than one inventory. It makes sure 
-developers do not inadvertently skip testing some affected inventories which 
-could be the case if the tests were designed to be executed inventory per 
-inventory. 
+Translation tests take about 30 minutes to complete. This is still much faster 
+than a complete translation which ca take hours. They are designed to test all 
+translated inventory at once because changes to some generic helper functions 
+and changes to standard-based (as opposed to inventory-based) translation tables
+can affect more than one inventory. It makes sure developers do not 
+inadvertently skip testing some affected inventories which could be the case if 
+the tests were designed to be executed inventory per inventory. 
 
-To ensure a fast development cycle, translation tests test only a random 
-sample of each source table (from the rawfri schema). Source table samples 
-are generated by VIEWs created by the TT_CreateMappingView() PL/pgSQL 
-function. This function is described in the main readme and in the 
+To ensure a fast development cycle, translation tests test only a random sample 
+of each source table (from the rawfri schema). Source table samples are 
+generated by VIEWs created by the TT_CreateMappingView() PL/pgSQL function. 
+This function is described in the main readme and in the 
 helperFunctionCASFRI.sql file.
 
-Approximate number of rows to test depending on the number of translated 
-rows:
+Approximate number of rows to test depending on the number of translated rows:
 
 | Nb. of source rows | Nb. of test rows
 |------------------:|:-----:|
@@ -74,20 +69,20 @@ rows:
 | 1500000 - 2000000 | 900 |
 | 2000000 - more | 1000 |
 
-Because the number of random row tests for big tables is significantly 
-smaller than the definitive number of translated rows, it is very well 
-possible that a change in a translation table of a helper function 
-affecting a limited number of rows will not affect any test table.
+Because the number of random row tests for big tables is significantly smaller 
+than the definitive number of translated rows, it is very well possible that a 
+change in a translation table of a helper function affecting a limited number of
+rows will not affect any test table.
 
-New test translation tables are produced from those sampled tables and 
-compared with the archived ones to make sure changes have only the desired 
-impact on final translations.
+New test translation tables are produced from those sampled tables and compared 
+with the archived ones to make sure changes have only the desired impact on 
+final translations.
 
 ## Testing Procedure
 
 These tests should be executed before committing any changes to conversion 
-scripts, translation scripts or helper functions affecting the final 
-translated tables.
+scripts, translation scripts or helper functions affecting the final translated 
+tables.
 
 Undesired differences with the archived tables should be fixed and desired
 changes should be archived to replace the old sampled tables.
@@ -99,13 +94,12 @@ A proper development cycle should involve these steps:
    archived ones. 
 3) Make changes to a conversion script, a translation script or a helper 
    function.
-4) Validate, by your own means, that the changes have the desired effect on 
-   the target data (quick).
+4) Validate, by your own means, that the changes have the desired effect on the 
+   target data (quick).
 5) Back to 1) until satisfaction.
-6) Run the translation tests (slow) and dump the results from the 
-   database.
-7) Compare the resulting tables with the archived ones to ensure the 
-   changes affected only what they had to affect.
+6) Run the translation tests (slow) and dump the results from the database.
+7) Compare the resulting tables with the archived ones to ensure the changes 
+   affected only what they had to affect.
 8) Fix scripts producing undesired changes (Back to step 1).
 9) Commit your script changes with the modified sampled test tables.
 
@@ -119,16 +113,107 @@ scripts in a bash command line window:
 Steps 2) and 7) - "Comparing the resulting tables with the archived ones" can
 be done efficiently in a number of ways. Here are two of them:
 
-If you are using a GUI Git client like GitKraken, it will automatically 
-show the changed rows as soon as you dump the tables from the database. You 
-can view the differences in three different modes: hunk, inline or splitted 
-view. You can easily stage selected lines to be committed and omit others 
-if you wish.
+If you are using a GUI Git client like GitKraken, it will automatically show the
+changed rows as soon as you dump the tables from the database. You can view the 
+differences in three different modes: hunk, inline or splitted view. You can 
+easily stage selected lines to be committed and omit others if you wish.
 
 Another way is to make a copy of the "data13" folder (different versions of 
-PostgreSQL may generate a different set of sampled rows), dump the test 
-tables and to compare them back with the copy using your favorite diff 
-application (WinMerge is very good on Windows).
+PostgreSQL may generate a different set of sampled rows), dump the test tables 
+and to compare them back with the copy using your favorite diff application 
+(WinMerge is very good on Windows).
 
 Archiving new tables is essential to ensure that future development cycles 
 start from a reliable baseline.
+
+# A Key to Determining the Cause of Differences Between Archived and New Test Tables
+
+Here are some of the most common differences you will encounter and attempts at 
+explaining each of them when comparing newly produced test tables with archived 
+ones. Letters identify the different types of differences and numbers their 
+possible explanations. Note that the list of possible explanations is not 
+exhaustive and must only be used as a starting list of possible causes. It 
+should be updated when facing new cases.
+
+We can group differences in two main categories:
+
+--------------------------------------------------------------------------------
+A - Differences in randomly selected rows
+
+    The selection of the random rows for the tests involves two actors:
+
+    - On the conversion side, ogr2ogr generates a constant "ogc_fid" column. 
+      Normally values in this column are always the same from conversions to 
+      conversions.
+
+    - On the database side, a VIEW produced by the TT_CreateMappingView() 
+      function selects a random list of rows using the ogc_fid column. It should
+      also always select the same set of rows.
+
+    Changes in the way FRIs are loaded or changes in the number of rows produced 
+    by the VIEW can lead to different types of differences when comparing new 
+    test tables with archived ones.
+
+A1 - All rows have different values but the tested ogc_fid values remain the 
+     same (in the CAS_ID identifier). This is explained by ogr2ogr loading rows 
+     in a different order and assigning them different ogc_fid values. It might 
+     be caused by:
+
+     - some rows having been added or removed directly in the source FRI data 
+       set (shapefiles or geodatabases) causing each row to be assigned a 
+       new ogc_fid.
+     - a change in the SELECT statement used within the ogr2ogr command for 
+       some datasets in the .sh conversion scripts if this statement selects 
+       more or less rows to be converted. e.g. WHERE ST_Area() <> 0
+     - a new version of the loading executable (e.g. different version of 
+       ogr2ogr or gdal_polygonize) processing the FRI rows in a different 
+       sequence, thus generating ogc_fid in a different sequence too.
+     
+A2 - All rows have different values including the ogc_fid values. This is
+     explained by a change in the number of random ogc_fid values requested in 
+     the test/test_xxx.sql files. Even if only one row less or one row more is 
+     requested, the whole list of random value changes and hence a completely 
+     different set of rows is selected. This could also be caused by a different 
+     version of PostgreSQL making the random() function produce different random
+    numbers for the same seed.
+
+A3 - Only some additional or missing rows might be caused:
+
+     - by rows dropped AFTER the conversion process, not matching the VIEW 
+       random list of ogc_fids anymore. This is generally caused by changes in 
+       some conversion script's SQL queries assembling loaded tables into a 
+       unique table after initial conversion. e.g. joining a table of polygons 
+       with a table of data. This would only explain missing rows.
+     - by rows added or dropped by the ROW_TRANSLATION_RULE in a translation 
+       table. When present, this rule defines which rows are translated and 
+       which are not. Changing it might make some rows to appear or disappear 
+       from a test table.
+
+A4 - The same rows are listed but in a different order. This is caused by an 
+     adjustment of the ORDER BY clause in the statement producing an ordered 
+     version of the test table at the end of the test/test_xxx.sql files (test 
+     tables must be properly ordered in order to be compared with their archived 
+     counterparts). The difference generally appears when a field is added to 
+     a table (e.g. LAYER) and it is later added to the ordering statement.  
+
+--------------------------------------------------------------------------------
+B - Differences in translated values
+
+    CAS_IDs should be identical (unless translation rules have changed them) but 
+    some other attributes are different.
+
+B1 - Small differences in casfri_area and casfri_perimeter (in the order of 
+     0.00000000001 hectare) are caused by different versions of ogr2ogr or 
+     PostGIS computing areas and perimeters differently.
+
+B2 - Medium differences in casfri_area and casfri_perimeter (in the order of 
+     0.00001 hectare) are caused by a shift of the geometries related to a 
+     difference between the old projected coordinate system used and the new one.
+
+B3 - Changes in error codes might be caused by different default values 
+     assigned to validation helper functions in the translation engine 
+     TT_DefaultErrorCode() function, the project specific 
+     TT_DefaultProjectErrorCode() function or directly in the translation table.
+
+B4 - All other changes are normally caused by changes in the translation table's 
+     validation or translation rules.
