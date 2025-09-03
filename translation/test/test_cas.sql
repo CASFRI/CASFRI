@@ -251,6 +251,10 @@ SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli2', 1000, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_nl_nli02_cas_test('rawfri', 'nl02_l1_to_nl_nli2_l1_map_1000_cas');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli2', 900, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new  
+SELECT * FROM TT_Translate_nl_nli02_cas_test('rawfri', 'nl02_l1_to_nl_nli2_l1_map_900_cas');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'qc01', 'qc_ini03', 1100, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_qc_ini03_cas_test('rawfri', 'qc01_l1_to_qc_ini03_l1_map_1100_cas');
