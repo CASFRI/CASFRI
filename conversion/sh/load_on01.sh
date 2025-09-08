@@ -39,6 +39,7 @@ DROP TABLE IF EXISTS $tempPoly;
 DROP TABLE IF EXISTS $tempForAtt;
 DROP TABLE IF EXISTS $tempNonForAtt;
 "
+export PGCLIENTENCODING=LATIN1
 
 # Load 130 first to establish the right format for the area field
 for F in 130 012 030 040 060 067 120 140 150 175 177 178 210 220 230 260 280 350 360 370 375 390 405 415 421 438 444 451 490 509 535 565 601 615 644 680 702 754 780 796 840 851 853 889 898 930 970 993
@@ -79,7 +80,7 @@ do
   layer_creation_options=""
 done
 
-
+unset PGCLIENTENCODING
 
 "$gdalFolder\ogrinfo" "$pg_connection_string" \
 -sql "
