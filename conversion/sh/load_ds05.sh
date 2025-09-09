@@ -92,7 +92,7 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 # if [ ! -e "${tempRasterFullPath}" ]; then
 # 	echo "Creating ${tempRasterFullPath}..."
 
-#   "$pythonPath/scripts/gdal_calc.py" -A "$srcFullPath1" -B "$srcFullPath2" \
+#   "$pythonPath/python.exe" "$gdalPyFolder/gdal_calc.py" -A "$srcFullPath1" -B "$srcFullPath2" \
 #   --type=Byte \
 #   --calc="(A-1)*100+(B-numpy.trunc(B/100)*100)" \
 #   --co="COMPRESS=LZW" --co="BIGTIFF=YES" --co="TILED=YES" --co="BLOCKXSIZE=1024" --co="BLOCKYSIZE=1024" \
@@ -114,7 +114,7 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 # #fi
 
 # # Vectorize directly to PostGIS
-# "$gdalFolder/gdal_polygonize.py" "${tempRasterFullPath}" \
+# "$pythonPath/python.exe" "$gdalPyFolder/gdal_polygonize.py" "${tempRasterFullPath}" \
 # -lco "SPATIAL_INDEX=NONE" \
 # -f PostgreSQL "$pg_connection_string" \
 # ${fullTargetTableName}_temp

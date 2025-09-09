@@ -98,7 +98,7 @@ echo Create a temporary reduced size raster
 if [ ! -e "${tempRasterFullPath}" ]; then
 	echo "Creating ${tempRasterFullPath}..."
 
-  "$pythonPath/python.exe" "$gdalFolder/gdal_calc.py" -A "$srcFullPath1" -B "$srcFullPath2" \
+  "$pythonPath/python.exe" "$gdalPyFolder/gdal_calc.py" -A "$srcFullPath1" -B "$srcFullPath2" \
   --type=Byte \
   --calc="(A-1)*100+(B-numpy.trunc(B/100)*100)" \
   --co="COMPRESS=LZW" --co="BIGTIFF=YES" --co="TILED=YES" --co="BLOCKXSIZE=1024" --co="BLOCKYSIZE=1024" \
@@ -127,7 +127,7 @@ fi
 # Vectorize directly to PostGIS
 echo --------------------------------
 echo Vectorize directly to PostGIS
-"$pythonPath/python.exe" "$gdalFolder/gdal_polygonize.py" "${tempRasterFullPath}" \
+"$pythonPath/python.exe" "$gdalPyFolder/gdal_polygonize.py" "${tempRasterFullPath}" \
 -f PostgreSQL "$pg_connection_string" \
 ${fullTargetTableName}_temp dn
 
