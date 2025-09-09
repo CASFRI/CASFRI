@@ -165,7 +165,7 @@ A1 - All rows have different values but the tested ogc_fid values remain the
        more or less rows to be converted. e.g. WHERE ST_Area() <> 0
      - a new version of the loading executable (e.g. a different version of 
        ogr2ogr or gdal_polygonize) processing the FRI rows in a different 
-       sequence, thus generating ogc_fid in a different sequence too.
+       sequence, thus generating ogc_fid in a completely different sequence too.
      
 A2 - All rows have different values including the ogc_fid values. This is
      explained by a change in the number of random ogc_fid values requested in 
@@ -178,7 +178,7 @@ A2 - All rows have different values including the ogc_fid values. This is
 A3 - Only some additional or missing rows might be caused:
 
      - by rows dropped AFTER the conversion process, not matching the VIEW 
-       random list of ogc_fids anymore. This is generally caused by changes in 
+       random list of ogc_fid anymore. This is generally caused by changes in 
        some conversion script's SQL queries assembling loaded tables into a 
        unique table after initial conversion. e.g. joining a table of polygons 
        with a table of data. This would only explain missing rows, not 
@@ -187,6 +187,8 @@ A3 - Only some additional or missing rows might be caused:
        table. When present, this rule defines which rows are translated and 
        which are not. Changing it might make some rows to appear or disappear 
        from a test table.
+     - by a limited number of changes in the list of ogc_fid produced by a 
+       different version of ogr2ogr.
 
 A4 - The same rows are listed but in a different order. This is caused by an 
      adjustment of the ORDER BY clause in the statement producing an ordered 
@@ -198,8 +200,8 @@ A4 - The same rows are listed but in a different order. This is caused by an
 --------------------------------------------------------------------------------
 B - Differences in translated values
 
-    CAS_IDs should be identical (unless translation rules have changed them) but 
-    some other attributes are different.
+    CAS_IDs are identical (unless the CAS_ID translation rules have changed 
+    them) but some other attributes are different.
 
 B1 - Small differences in casfri_area and casfri_perimeter (in the order of 
      0.00000000001 hectare) are caused by different versions of ogr2ogr or 
@@ -215,4 +217,5 @@ B3 - Changes in error codes might be caused by different default values
      TT_DefaultProjectErrorCode() function or directly in the translation table.
 
 B4 - All other changes are normally caused by changes in the translation table's 
-     validation or translation rules.
+     validation or translation rules or in the CASFRI helper functions used in 
+     those rules.
