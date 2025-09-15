@@ -46,9 +46,9 @@ SELECT * FROM (
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'AB'::text juridiction,  1 maj_num, 16 nb_test UNION ALL
+    SELECT 'AB'::text juridiction,  1 maj_num, 17 nb_test UNION ALL
     SELECT 'BC'::text juridiction,  2 maj_num,  6 nb_test UNION ALL
-    SELECT 'MB'::text juridiction,  3 maj_num,  6 nb_test UNION ALL
+    SELECT 'MB'::text juridiction,  3 maj_num,  7 nb_test UNION ALL
     SELECT 'NB'::text juridiction,  4 maj_num,  2 nb_test UNION ALL
     SELECT 'NL'::text juridiction,  5 maj_num,  3 nb_test UNION ALL
     SELECT 'NS'::text juridiction,  6 maj_num,  3 nb_test UNION ALL
@@ -59,7 +59,7 @@ WITH test_nb AS (
     SELECT 'QC'::text juridiction, 11 maj_num,  7 nb_test UNION ALL
     SELECT 'SK'::text juridiction, 12 maj_num,  6 nb_test UNION ALL
     SELECT 'YT'::text juridiction, 13 maj_num,  3 nb_test UNION ALL
-    SELECT 'DS'::text juridiction, 14 maj_num,  4 nb_test
+    SELECT 'DS'::text juridiction, 14 maj_num,  5 nb_test
 ), test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
 SELECT maj_num::text, juridiction, nb_test, generate_series(1, nb_test)::text min_num
@@ -97,6 +97,7 @@ FROM test_series AS a FULL OUTER JOIN (
       ('1.14', 'AB', 'ab30', 4555),
       ('1.15', 'AB', 'ab31', 802933),
       ('1.16', 'AB', 'ab32', 834245),
+      ('1.17', 'AB', 'ab34', 3631),
       ('2.1', 'BC', 'bc04', 4431314),
       ('2.2', 'BC', 'bc08', 4677411),
       ('2.3', 'BC', 'bc10', 5151772),
@@ -109,6 +110,7 @@ FROM test_series AS a FULL OUTER JOIN (
       ('3.4', 'MB', 'mb05', 1644808),
       ('3.5', 'MB', 'mb06', 163064),
       ('3.6', 'MB', 'mb07', 219682),
+      ('3.7', 'MB', 'mb08', 101508),
       ('4.1', 'NB', 'nb01', 927177),
       ('4.2', 'NB', 'nb02', 1123893),
       ('5.1', 'NL', 'nl_photoyear', 8083),
@@ -146,7 +148,8 @@ FROM test_series AS a FULL OUTER JOIN (
       ('14.1', 'DS', 'ds01', 59539),
       ('14.2', 'DS', 'ds02', 15358919),
       ('14.3', 'DS', 'ds03', 27593270),
-      ('14.4', 'DS', 'ds04', 206849)
+      ('14.4', 'DS', 'ds04', 206849),
+      ('14.5', 'DS', 'ds05', 13188798)
     ) AS t(number, juridiction, fri, ecnt)
    )
    SELECT number, juridiction, (TT_CountAndDiff(fri, ecnt)).*

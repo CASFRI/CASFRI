@@ -30,7 +30,8 @@ SELECT TT_Prepare('translation', 'pe_pei01_eco', '_pe_eco_test', 'ab_avi01_eco')
 SELECT TT_Prepare('translation', 'mb_fri01_eco', '_mb_fri_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'mb_fri02_eco', '_mb_fri02_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'mb_fli01_eco', '_mb_fli_eco_test', 'ab_avi01_eco');
-SELECT TT_Prepare('translation', 'nl_nli01_eco', '_nl_nli_eco_test', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'nl_nli01_eco', '_nl_nli01_eco_test', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'nl_nli02_eco', '_nl_nli02_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'qc_ini03_eco', '_qc_ini03_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'qc_ini04_eco', '_qc_ini04_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'qc_ipf05_eco', '_qc_ipf05_eco_test', 'ab_avi01_eco');
@@ -232,9 +233,13 @@ SELECT TT_CreateMappingView('rawfri', 'mb07', 'mb_fli', 600, NULL, 'eco'); -- Ge
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_mb_fli_eco_test('rawfri', 'mb07_l1_to_mb_fli_l1_map_600_eco');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli', 3150, NULL, 'eco'); -- Generates about 400 (406) ECO rows
+SELECT TT_CreateMappingView('rawfri', 'nl01', 'nl_nli1', 2500, NULL, 'eco'); -- Generates about 300 (329) ECO rows
 INSERT INTO casfri50_test.eco_all_new 
-SELECT * FROM TT_Translate_nl_nli_eco_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_3150_eco');
+SELECT * FROM TT_Translate_nl_nli01_eco_test('rawfri', 'nl01_l1_to_nl_nli1_l1_map_2500_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'nl02', 'nl_nli2', 2900, NULL, 'eco'); -- Generates about 300 (311) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_nl_nli02_eco_test('rawfri', 'nl02_l1_to_nl_nli2_l1_map_2900_eco');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'qc01', 'qc_ini03', 6000, NULL, 'eco'); -- Generates about 600 (620) ECO rows
 INSERT INTO casfri50_test.eco_all_new 

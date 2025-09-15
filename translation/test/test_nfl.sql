@@ -30,7 +30,8 @@ SELECT TT_Prepare('translation', 'pe_pei01_nfl', '_pe_nfl_test', 'ab_avi01_nfl')
 SELECT TT_Prepare('translation', 'mb_fri01_nfl', '_mb_fri_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fri02_nfl', '_mb_fri02_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'mb_fli01_nfl', '_mb_fli_nfl_test', 'ab_avi01_nfl');
-SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl_nli_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl_nli01_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'nl_nli02_nfl', '_nl_nli02_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ini03_nfl', '_qc_ini03_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ini04_nfl', '_qc_ini04_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'qc_ipf05_nfl', '_qc_ipf05_nfl_test', 'ab_avi01_nfl');
@@ -406,9 +407,13 @@ SELECT TT_CreateMappingView('rawfri', 'mb07', 6, 'mb_fli', 1, 2000, NULL, 'nfl')
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_mb_fli_nfl_test('rawfri', 'mb07_l6_to_mb_fli_l1_map_2000_nfl');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 1800, NULL, 'nfl'); -- Generates about 600 (618) NFL rows
+SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli1', 1, 1800, NULL, 'nfl'); -- Generates about 600 (618) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 
-SELECT * FROM TT_Translate_nl_nli_nfl_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_1800_nfl');
+SELECT * FROM TT_Translate_nl_nli01_nfl_test('rawfri', 'nl01_l1_to_nl_nli1_l1_map_1800_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 2800, NULL, 'nfl'); -- Generates about 500 (532) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_nl_nli02_nfl_test('rawfri', 'nl02_l1_to_nl_nli2_l1_map_2800_nfl');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'qc01', 3, 'qc_ini03', 1, 4000, NULL, 'nfl'); -- Generates about 800 (827) NFL rows
 INSERT INTO casfri50_test.nfl_all_new 

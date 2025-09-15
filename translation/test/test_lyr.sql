@@ -30,7 +30,8 @@ SELECT TT_Prepare('translation', 'pe_pei01_lyr', '_pe_lyr_test', 'ab_avi01_lyr')
 SELECT TT_Prepare('translation', 'mb_fri01_lyr', '_mb_fri_lyr_test', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'mb_fri02_lyr', '_mb_fri02_lyr_test', 'ab_avi01_lyr'); 
 SELECT TT_Prepare('translation', 'mb_fli01_lyr', '_mb_fli_lyr_test', 'ab_avi01_lyr'); 
-SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_nli_lyr_test', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'nl_nli01_lyr', '_nl_nli01_lyr_test', 'ab_avi01_lyr');
+SELECT TT_Prepare('translation', 'nl_nli02_lyr', '_nl_nli02_lyr_test', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'qc_ini03_lyr', '_qc_ini03_lyr_test', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'qc_ini04_lyr', '_qc_ini04_lyr_test', 'ab_avi01_lyr');
 SELECT TT_Prepare('translation', 'qc_ipf05_lyr', '_qc_ipf05_lyr_test', 'ab_avi01_lyr');
@@ -506,9 +507,13 @@ SELECT TT_CreateMappingView('rawfri', 'mb07', 5, 'mb_fli', 1, NULL, NULL, 'lyr')
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb07_l5_to_mb_fli_l1_map_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli', 1, 1350, NULL, 'lyr'); -- Generates about 800 (861) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'nl01', 1, 'nl_nli1', 1, 1350, NULL, 'lyr'); -- Generates about 800 (861) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
-SELECT * FROM TT_Translate_nl_nli_lyr_test('rawfri', 'nl01_l1_to_nl_nli_l1_map_1350_lyr');
+SELECT * FROM TT_Translate_nl_nli01_lyr_test('rawfri', 'nl01_l1_to_nl_nli1_l1_map_1350_lyr');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'nl02', 1, 'nl_nli2', 1, 1500, NULL, 'lyr'); -- Generates about 800 (820) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_nl_nli02_lyr_test('rawfri', 'nl02_l1_to_nl_nli2_l1_map_1500_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'qc01', 1, 'qc_ini03', 1, 1700, NULL, 'lyr'); -- Generates about 1000 (1072) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
