@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION TT_CountAndDiff(
   tName name,
   expectedCount int
 )
-RETURNS TABLE(tableName text, expected int, passed boolean, diff text)
+RETURNS TABLE(tableName text, expected int, counted int, passed boolean, diff text)
 AS $$
   DECLARE
     queryStr text;
@@ -27,6 +27,7 @@ BEGIN
   RETURN QUERY SELECT 
     upper(tName) tableName, 
     expectedCount expected,
+    TT_Count('rawfri', lower(tName)) counted,
     TT_Count('rawfri', lower(tName)) = expectedCount passed,
     CASE WHEN TT_Count('rawfri', lower(tName)) = 0 THEN 'absent'
          ELSE (TT_Count('rawfri', lower(tName)) - expectedCount)::text
