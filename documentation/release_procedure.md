@@ -13,7 +13,7 @@ A whole release process includes:
 
 The whole release process should take about one week... This is necessary to ensure that release are stables and actually able to do what they are supposed to do without issues. 
 
-Note that only major issues preventing the conversion or the translation process to work properly should be fixed during the release process. Leave other small issues to subsequent releases.
+Note that only major issues preventing the conversion or the translation process to work properly should be fixed during the release process. Leave other issues to subsequent releases.
 
 **1. Prepare the release**
 
@@ -33,11 +33,11 @@ Note that only major issues preventing the conversion or the translation process
 
 1. Copy the [CASFRI/configSample.sh](https://github.com/CASFRI/CASFRI/blob/master/configSample.sh) script to CASFRI/config.sh and edit it so the listed shell variables reflect your configuration.
 
-3. Make sure all the inventories to load are listed in your config.sh invList1-5 variables. All inventories pertaining to the same invList1-5 variable are executed in parallel. Different invList1-5 variables are executed sequentially. There are five lists to avoid overloading the system.
+3. Make sure all the inventories to load are listed in your config.sh invList1 to invList8 variables. All inventories pertaining to the same invListX variable are executed in parallel. Different invListX variables are executed sequentially. There are many lists to avoid overloading the conversion process.
 
-3. Open a Bash command window, CD to the CASFRI/conversion/sh folder and load all the listed inventories using the [load_all.sh](https://github.com/CASFRI/CASFRI/blob/master/conversion/sh/load_all.sh) script. This script split the loading process in three steps in order to avoid overloading the server. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
+3. Open a Bash command window, CD to the CASFRI/conversion/sh folder and load all the listed inventories using the [load_all.sh](https://github.com/CASFRI/CASFRI/blob/master/conversion/sh/load_all.sh) script. This script split the loading process according to the way the invList1 to invList8 variables were configured. Each inventory conversion trigger the oppening of a new command window. By default all those command windows close by themselves when they are done. You can control this behavior by setting the config.sh "leaveConvShellOpen" variable to True. In this case you will have to close some windows for the loading process to go on.
 
-4. In the same command window, load the translation tables using the [CASFRI/translation/load_tables.sh](https://github.com/CASFRI/CASFRI/blob/master/translation/load_tables.sh) script.
+4. In the same command window, after the whole translation is finisned, load the translation tables using the [CASFRI/translation/load_tables.sh](https://github.com/CASFRI/CASFRI/blob/master/translation/load_tables.sh) script.
 
 **3. Install and unsintall the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
 
@@ -77,7 +77,7 @@ More details about the translation tests can be found in the [CASFRI/translation
 
 **5. Run the translation**
 
-In the command window, CD to CASFRI/workflow/02_produceCASFRI and execute the 01_translate_all_00.sh and then the 01_translate_all_01.sh scripts one AFTER the other. The first script prepare the target shema and tables and the second actually translate all the inventories listed in the invList1-5 variables.
+In the command window, CD to CASFRI/workflow/02_produceCASFRI and execute the 01_translate_all_00.sh and then the 01_translate_all_01.sh scripts one AFTER the other. The first script prepare the target shema and tables and the second actually translate all the inventories listed in the invListX variables.
 
 **6. Validate the translation**
 
