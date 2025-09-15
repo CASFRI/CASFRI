@@ -294,8 +294,8 @@ SET covertype = snc.covertype,
     cden_code = snc.cden_code  
 FROM $tableName_StockNonCom snc
 WHERE f.forestid = snc.forestid;
-"
 DROP TABLE $tableName_StockNonCom;
+"
 # total number of rows: 2612451
 
 
