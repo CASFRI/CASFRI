@@ -50,12 +50,12 @@ WITH test_nb AS (
     SELECT 'BC'::text juridiction,  2 maj_num,  6 nb_test UNION ALL
     SELECT 'MB'::text juridiction,  3 maj_num,  6 nb_test UNION ALL
     SELECT 'NB'::text juridiction,  4 maj_num,  2 nb_test UNION ALL
-    SELECT 'NL'::text juridiction,  5 maj_num,  2 nb_test UNION ALL
+    SELECT 'NL'::text juridiction,  5 maj_num,  3 nb_test UNION ALL
     SELECT 'NS'::text juridiction,  6 maj_num,  3 nb_test UNION ALL
     SELECT 'NT'::text juridiction,  7 maj_num,  2 nb_test UNION ALL
     SELECT 'ON'::text juridiction,  8 maj_num,  2 nb_test UNION ALL
     SELECT 'PC'::text juridiction,  9 maj_num,  2 nb_test UNION ALL
-    SELECT 'PE'::text juridiction, 10 maj_num,  1 nb_test UNION ALL
+    SELECT 'PE'::text juridiction, 10 maj_num,  4 nb_test UNION ALL
     SELECT 'QC'::text juridiction, 11 maj_num,  7 nb_test UNION ALL
     SELECT 'SK'::text juridiction, 12 maj_num,  6 nb_test UNION ALL
     SELECT 'YT'::text juridiction, 13 maj_num,  3 nb_test UNION ALL
@@ -71,6 +71,7 @@ SELECT coalesce(maj_num || '.' || min_num, b.number) AS number,
                 b.juridiction || ' in the initial table...') AS juridiction,
        coalesce(tableName, 'ERROR: Too many tests (' || nb_test || ') for ' || a.juridiction || ' in the initial table...') description,
        expected,
+       counted,
        NOT passed IS NULL AND 
           (regexp_split_to_array(number, '\.'))[1] = maj_num AND 
           (regexp_split_to_array(number, '\.'))[2] = min_num AND passed passed,
@@ -112,6 +113,7 @@ FROM test_series AS a FULL OUTER JOIN (
       ('4.2', 'NB', 'nb02', 1123893),
       ('5.1', 'NL', 'nl_photoyear', 8083),
       ('5.2', 'NL', 'nl01', 1863664),
+      ('5.3', 'NL', 'nl02', 2612451),
       ('6.1', 'NS', 'ns01', 1127926),
       ('6.2', 'NS', 'ns02', 1090671),
       ('6.3', 'NS', 'ns03', 995886),
@@ -122,6 +124,9 @@ FROM test_series AS a FULL OUTER JOIN (
       ('9.1', 'PC', 'pc01', 8094),
       ('9.2', 'PC', 'pc02', 1053),
       ('10.1', 'PE', 'pe01', 107220),
+      ('10.2', 'PE', 'pe02', 174944),
+      ('10.3', 'PE', 'pe03', 188020),
+      ('10.4', 'PE', 'pe04', 175592),
       ('11.1', 'QC', 'qc01', 5563194),
       ('11.2', 'QC', 'qc02', 2876326),
       ('11.3', 'QC', 'qc03', 401188),
