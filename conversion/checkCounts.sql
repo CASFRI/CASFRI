@@ -46,11 +46,11 @@ SELECT * FROM (
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-    SELECT 'AB'::text juridiction,  1 maj_num, 17 nb_test UNION ALL
+    SELECT 'AB'::text juridiction,  1 maj_num, 19 nb_test UNION ALL
     SELECT 'BC'::text juridiction,  2 maj_num,  6 nb_test UNION ALL
     SELECT 'MB'::text juridiction,  3 maj_num,  7 nb_test UNION ALL
     SELECT 'NB'::text juridiction,  4 maj_num,  2 nb_test UNION ALL
-    SELECT 'NL'::text juridiction,  5 maj_num,  3 nb_test UNION ALL
+    SELECT 'NL'::text juridiction,  5 maj_num,  4 nb_test UNION ALL
     SELECT 'NS'::text juridiction,  6 maj_num,  3 nb_test UNION ALL
     SELECT 'NT'::text juridiction,  7 maj_num,  2 nb_test UNION ALL
     SELECT 'ON'::text juridiction,  8 maj_num,  2 nb_test UNION ALL
@@ -95,9 +95,11 @@ FROM test_series AS a FULL OUTER JOIN (
       ('1.12', 'AB', 'ab27', 32070),
       ('1.13', 'AB', 'ab29', 620944),
       ('1.14', 'AB', 'ab30', 4555),
-      ('1.15', 'AB', 'ab31', 802933),
-      ('1.16', 'AB', 'ab32', 834245),
-      ('1.17', 'AB', 'ab34', 3631),
+      ('1.15', 'AB', 'ab_alpac_photoyear', 1595),
+      ('1.16', 'AB', 'ab31', 802933),
+      ('1.17', 'AB', 'ab_alpac_updated_photoyear', 767),
+      ('1.18', 'AB', 'ab32', 834245),
+      ('1.19', 'AB', 'ab34', 3631),
       ('2.1', 'BC', 'bc04', 4431314),
       ('2.2', 'BC', 'bc08', 4677411),
       ('2.3', 'BC', 'bc10', 5151772),
@@ -115,7 +117,8 @@ FROM test_series AS a FULL OUTER JOIN (
       ('4.2', 'NB', 'nb02', 1123893),
       ('5.1', 'NL', 'nl_photoyear', 8083),
       ('5.2', 'NL', 'nl01', 1863664),
-      ('5.3', 'NL', 'nl02', 2612451),
+      ('5.3', 'NL', 'nl02_photoyear', 64),
+      ('5.4', 'NL', 'nl02', 2612451),
       ('6.1', 'NS', 'ns01', 1127926),
       ('6.2', 'NS', 'ns02', 1090671),
       ('6.3', 'NS', 'ns03', 995886),
