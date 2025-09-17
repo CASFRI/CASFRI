@@ -29,7 +29,7 @@ source ./common.sh
 inventoryID=QC01
 srcFullPath=$friDir/QC/$inventoryID/data/inventory/
 fullTargetTableName=$targetFRISchema.qc01
-photoFullPath=${srcFullPath}photoyear_per_mapsheet.csv
+photoFullPath=$friDir/QC/$inventoryID/data/photoyear/photoyear_per_mapsheet.csv
 
 tempTable=${fullTargetTableName}_temp
 tempPhoto=${fullTargetTableName}_photo
