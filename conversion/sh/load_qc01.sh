@@ -124,7 +124,8 @@ SELECT
   ges_co, psc_co, cde_co, cha_co, per_co_ori, per_an_ori, cag_co, per_co_moy, pee_nb_int, per_an_moy, clp_co, ter_co, dsu_co, cdr_co, tec_co_tec,
   pee_dt_mjd, ppr_co_ppr, pee_dh_tra, prb_co_prb, pee_va_app, pee_dc_meo, phc_co_phc, ser_co_ser, pee_dc_aut, tvs_no, no_id, nog, indicatif, pee_dh_cre, pee_dh_maj,
   txl_no_txl, met_no, tme_co, prs_co, prs_an_sou, mst_co_mst, eti_in_gen, src_filename, inventory_id
-FROM $tempTable;
+FROM $tempTable
+ORDER BY geocode, ogc_fid;
 "
 
 echo "
