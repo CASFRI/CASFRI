@@ -30,23 +30,28 @@ targetTranslationFileSchema=translation
 # Extra, non inventory tables to load (not translate)
 photoYearList=(ab_photoyear nl_photoyear nl02_photoyear)
 
-# First series of inventories having more than 2000000 rows. Longest one should be last.
+# First series of inventories having more than 2000000 rows. 
+# IMPORTANT: Longest one should be last because the next series will start only after the last.
 invList1=(BC04 BC11 QC05 QC01)
 invList1CFS=(BC11 BC16 QC08 QC09 QC10)
 
-# Second series of inventories having more than 2000000 rows. Longest one should be last.
+# Second series of inventories having more than 2000000 rows.
+# IMPORTANT: Longest one should be last because the next series will start only after the last.
 invList2=(BC08 QC06 BC12 BC10)
 invList2CFS=(BC08 QC04 QC05 BC12 BC10)
 
-# Third series of inventories having more than 2000000 rows. Longest one should be last.
+# Third series of inventories having more than 2000000 rows.
+# IMPORTANT: Longest one should be last because the next series will start only after the last.
 invList3=(QC04 QC02 ON01 ON02 NL02)
 invList3CFS=(ON02 BC13 BC14 BC15)
 
-# Inventories having between 800000 and 2000000 rows. Longest one should be last.
+# Inventories having between 800000 and 2000000 rows.
+# IMPORTANT: Longest one should be last because the next series will start only after the last.
 invList4=(AB32 NB01 NB02 NS01 NS02 NS03 SK01 NL01 MB05)
 invList4CFS=(NB02 NB03 NS03 NS04)
 
-# Inventories having between 240000 and 800000 rows. Longest one should be last.
+# Inventories having between 240000 and 800000 rows.
+# IMPORTANT: Longest one should be last because the next series will lauch after the last.
 invList5=(AB21 AB25 AB29 AB31 SK04 NT01 NT03 QC03 YT01 SK05)
 invList5CFS=(AB29 NT03 NT04 QC03)
 
