@@ -776,8 +776,8 @@ RETURNS text AS $$
 
     -- Check if table fromTableName exists
     IF NOT TT_TableExists(schemaName, fromTableName) THEN
-      RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''translation.%''...', fromTableName;
-      RETURN 'ERROR: Could not find table ''translation..' || fromTableName || '''...';
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''%.%''...', schemaName, fromTableName;
+      RETURN 'ERROR: Could not find table ''' || schemaName || '.' || fromTableName || '''...';
     END IF;
 
     -- Check if an entry for (fromTableName, fromLayer) exists in table 'attribute_dependencies'
