@@ -37,6 +37,10 @@ SELECT * FROM (
   SELECT 'BC11' inv, 5419596 cnt UNION ALL 
   SELECT 'BC12' inv, 4861240 cnt UNION ALL 
   SELECT 'BC13' inv, 3343257 cnt UNION ALL 
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 206849 cnt UNION ALL 
   SELECT 'MB01' inv, 134790 cnt UNION ALL 
   SELECT 'MB02' inv, 60370 cnt UNION ALL 
   SELECT 'MB04' inv, 27221 cnt UNION ALL 
@@ -72,11 +76,7 @@ SELECT * FROM (
   SELECT 'SK06' inv, 211482 cnt UNION ALL 
   SELECT 'YT01' inv, 249636 cnt UNION ALL 
   SELECT 'YT02' inv, 231137 cnt UNION ALL 
-  SELECT 'YT03' inv, 71073 cnt UNION ALL 
-  SELECT 'DS01' inv, 59539 cnt UNION ALL 
-  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
-  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
-  SELECT 'DS04' inv, 206849 cnt
+  SELECT 'YT03' inv, 71073 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.cas_all
@@ -132,6 +132,10 @@ UNION ALL
   SELECT 'BC11' inv, 1367466 cnt UNION ALL 
   SELECT 'BC12' inv, 1223952 cnt UNION ALL 
   SELECT 'BC13' inv, 0 cnt UNION ALL 
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 80096 cnt UNION ALL 
   SELECT 'MB01' inv, 0 cnt UNION ALL 
   SELECT 'MB02' inv, 7828 cnt UNION ALL 
   SELECT 'MB04' inv, 11239 cnt UNION ALL 
@@ -167,11 +171,7 @@ UNION ALL
   SELECT 'SK06' inv, 45081 cnt UNION ALL 
   SELECT 'YT01' inv, 20704 cnt UNION ALL 
   SELECT 'YT02' inv, 19173 cnt UNION ALL 
-  SELECT 'YT03' inv, 23285 cnt UNION ALL 
-  SELECT 'DS01' inv, 59539 cnt UNION ALL 
-  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
-  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
-  SELECT 'DS04' inv, 80096 cnt
+  SELECT 'YT03' inv, 23285 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.dst_all
@@ -227,6 +227,10 @@ UNION ALL
   SELECT 'BC11' inv, 73017 cnt UNION ALL 
   SELECT 'BC12' inv, 69225 cnt UNION ALL 
   SELECT 'BC13' inv, 20889 cnt UNION ALL 
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 0 cnt UNION ALL 
   SELECT 'MB01' inv, 26176 cnt UNION ALL 
   SELECT 'MB02' inv, 15982 cnt UNION ALL 
   SELECT 'MB04' inv, 7725 cnt UNION ALL 
@@ -262,11 +266,7 @@ UNION ALL
   SELECT 'SK06' inv, 28356 cnt UNION ALL 
   SELECT 'YT01' inv, 11150 cnt UNION ALL 
   SELECT 'YT02' inv, 10313 cnt UNION ALL 
-  SELECT 'YT03' inv, 11096 cnt UNION ALL 
-  SELECT 'DS01' inv, 0 cnt UNION ALL 
-  SELECT 'DS02' inv, 0 cnt UNION ALL 
-  SELECT 'DS03' inv, 0 cnt UNION ALL 
-  SELECT 'DS04' inv, 0 cnt
+  SELECT 'YT03' inv, 11096 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.eco_all
@@ -321,7 +321,11 @@ UNION ALL
   SELECT 'BC10' inv, 4744673 cnt UNION ALL
   SELECT 'BC11' inv, 4994212 cnt UNION ALL
   SELECT 'BC12' inv, 4462520 cnt UNION ALL
-  SELECT 'BC13' inv, 2801258 cnt UNION ALL
+  SELECT 'BC13' inv, 2801258 cnt UNION ALL 
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 0 cnt UNION ALL
   SELECT 'MB01' inv, 114862 cnt UNION ALL
   SELECT 'MB02' inv, 89445 cnt UNION ALL
   SELECT 'MB04' inv, 36931 cnt UNION ALL
@@ -357,11 +361,7 @@ UNION ALL
   SELECT 'SK06' inv, 296399 cnt UNION ALL
   SELECT 'YT01' inv, 114733 cnt UNION ALL
   SELECT 'YT02' inv, 105102 cnt UNION ALL
-  SELECT 'YT03' inv, 65548 UNION ALL 
-  SELECT 'DS01' inv, 0 cnt UNION ALL 
-  SELECT 'DS02' inv, 0 cnt UNION ALL 
-  SELECT 'DS03' inv, 0 cnt UNION ALL 
-  SELECT 'DS04' inv, 0 cnt
+  SELECT 'YT03' inv, 65548
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.lyr_all
@@ -417,6 +417,10 @@ UNION ALL
   SELECT 'BC11' inv, 2268314 cnt UNION ALL 
   SELECT 'BC12' inv, 2124390 cnt UNION ALL 
   SELECT 'BC13' inv, 935559 cnt UNION ALL 
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 126753 cnt UNION ALL 
   SELECT 'MB01' inv, 14008 cnt UNION ALL 
   SELECT 'MB02' inv, 4669 cnt UNION ALL 
   SELECT 'MB04' inv, 2572 cnt UNION ALL 
@@ -452,11 +456,7 @@ UNION ALL
   SELECT 'SK06' inv, 83670 cnt UNION ALL 
   SELECT 'YT01' inv, 82302 cnt UNION ALL 
   SELECT 'YT02' inv, 76018 cnt UNION ALL 
-  SELECT 'YT03' inv, 97712 cnt UNION ALL 
-  SELECT 'DS01' inv, 0 cnt UNION ALL 
-  SELECT 'DS02' inv, 0 cnt UNION ALL 
-  SELECT 'DS03' inv, 0 cnt UNION ALL 
-  SELECT 'DS04' inv, 126753 cnt
+  SELECT 'YT03' inv, 97712 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.nfl_all
@@ -512,6 +512,10 @@ UNION ALL
   SELECT 'BC11' inv, 5419596 cnt UNION ALL 
   SELECT 'BC12' inv, 4861240 cnt UNION ALL 
   SELECT 'BC13' inv, 3343257 cnt UNION ALL 
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 206849 cnt UNION ALL 
   SELECT 'MB01' inv, 134790 cnt UNION ALL 
   SELECT 'MB02' inv, 60370 cnt UNION ALL 
   SELECT 'MB04' inv, 27221 cnt UNION ALL 
@@ -547,11 +551,7 @@ UNION ALL
   SELECT 'SK06' inv, 211482 cnt UNION ALL 
   SELECT 'YT01' inv, 249636 cnt UNION ALL 
   SELECT 'YT02' inv, 231137 cnt UNION ALL 
-  SELECT 'YT03' inv, 71073 cnt UNION ALL 
-  SELECT 'DS01' inv, 59539 cnt UNION ALL 
-  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
-  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
-  SELECT 'DS04' inv, 206849 cnt
+  SELECT 'YT03' inv, 71073 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.geo_all
