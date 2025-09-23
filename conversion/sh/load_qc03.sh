@@ -76,7 +76,7 @@ ALTER TABLE $tableName_meta RENAME COLUMN no_prg TO meta_no_prg;
 ALTER TABLE $tableName_meta RENAME COLUMN ver_prg TO meta_ver_prg;
 
 -- join qc03_poly, qc03_meta
-DROP TABLE IF EXISTS  $fullTargetTableName;
+DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
 CREATE TABLE  $fullTargetTableName AS
 SELECT *, substring(replace(poly.geoc_maj, ',','.'), 1, 10) geoc_maj_1_10, substring(replace(poly.geoc_maj, ',','.'), 11, 10) geoc_maj_11_20
 FROM $tableName_poly AS poly
@@ -93,8 +93,8 @@ ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
 ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geoc_maj;
 
 --drop tables
-DROP TABLE IF EXISTS $tableName_poly;
-DROP TABLE IF EXISTS $tableName_meta;
+DROP TABLE IF EXISTS $tableName_poly CASCADE;
+DROP TABLE IF EXISTS $tableName_meta CASCADE;
 "
 
 createSQLSpatialIndex=True

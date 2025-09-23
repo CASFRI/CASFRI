@@ -117,7 +117,7 @@ Creating $tempAttributes as DISTINCT ON (geocode) from $tempTable...
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS $tempAttributes;
+DROP TABLE IF EXISTS $tempAttributes CASCADE;
 CREATE TABLE $tempAttributes AS
 SELECT 
   DISTINCT ON (geocode) geocode, substring(geocode,1,10) geocode_1_10, substring(geocode,11,10) geocode_11_20, ogc_fid, c08peefd_, c08peefd_i, fca_no, pee_dt_mjg, pee_sp_pee, pee_gc_ori, pee_no_maj, prg_no, uco_no_uco, pee_no_auc, pee_dt_mju, toponyme, tco_co,
@@ -154,7 +154,7 @@ Creating $tempPolygons with unioned polygons...
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS $tempPolygons;
+DROP TABLE IF EXISTS $tempPolygons CASCADE;
 CREATE TABLE $tempPolygons AS
 SELECT geocode, ST_Union(wkb_geometry) wkb_geometry, sum(area) area
 FROM $tempTable
@@ -167,7 +167,7 @@ Creating final table ${fullTargetTableName}...
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS $fullTargetTableName;
+DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
 CREATE TABLE $fullTargetTableName AS
 SELECT polys.wkb_geometry, polys.area, atts.*, ph.photoyear
 FROM $tempPolygons polys
@@ -183,10 +183,10 @@ Dropping temporary tables...
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE $tempTable;
-DROP TABLE $tempPhoto;
-DROP TABLE $tempPolygons;
-DROP TABLE $tempAttributes;
+DROP TABLE $tempTable CASCADE;
+DROP TABLE $tempPhoto CASCADE;
+DROP TABLE $tempPolygons CASCADE;
+DROP TABLE $tempAttributes CASCADE;
 "
 
 source ./common_postprocessing.sh

@@ -108,8 +108,8 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 # #if [ $overwriteFRI == True ]; then
 #   "$gdalFolder/ogrinfo" "$pg_connection_string" \
 #   -sql "
-#   DROP TABLE IF EXISTS ${fullTargetTableName}_temp;
-#   DROP TABLE IF EXISTS ${fullTargetTableName};
+#   DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
+#   DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
 # #  "
 # #fi
 
@@ -131,7 +131,7 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 #        '${datasetName}' AS src_filename, 
 #        '${inventoryID}' AS inventory_id
 # FROM ${fullTargetTableName}_temp;
-# DROP TABLE IF EXISTS ${fullTargetTableName}_temp;
+# DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
 
 
 ######################## Method 2 - Load as raster #############################
@@ -148,11 +148,11 @@ rasterOptions="-I -M -t 2048x2048"
 connectionParams="-d $pgdbname -U $pguser -h $pghost -p $pgport"
 
 # delete last created tables in server / temp tables after translation
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_year;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_type;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_3978;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_102001;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_102001_poly;"
+# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_year CASCADE;"
+# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_type CASCADE;"
+# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_3978 CASCADE;"
+# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_102001 CASCADE;"
+# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_102001_poly CASCADE;"
 
 # Define names and paths
 tempDstPath=${srcPath}/temp
@@ -228,8 +228,9 @@ if [ "${combineRasters}" == "true" ]; then
   FROM $fullTargetTableName1 r1
   JOIN $fullTargetTableName2 r2
   ON ST_Intersects(r1.rast, r2.rast);  -- Ensure they overlap
-  DROP TABLE IF EXISTS $fullTargetTableName1;
-  DROP TABLE IF EXISTS $fullTargetTableName2;
+  
+  DROP TABLE IF EXISTS $fullTargetTableName1 CASCADE;
+  DROP TABLE IF EXISTS $fullTargetTableName2 CASCADE;
 
   "
   echo "Loaded rasters combined."

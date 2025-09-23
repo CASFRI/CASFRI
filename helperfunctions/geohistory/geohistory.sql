@@ -761,7 +761,7 @@ RETURNS boolean AS $$
     
     IF individualTables THEN
       queryStr = queryStr || '
-DROP TABLE IF EXISTS casfri50_history.' || lower(inv) || '_history;
+DROP TABLE IF EXISTS casfri50_history.' || lower(inv) || '_history CASCADE;
 CREATE TABLE casfri50_history.' || lower(inv) || '_history AS
 ';
     ELSE

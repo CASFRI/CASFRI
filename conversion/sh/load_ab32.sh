@@ -52,11 +52,14 @@ overwrite_option="$overwrite_tab"
 # Fix it
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_alpac_updated_photoYear;
+DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_alpac_updated_photoYear CASCADE;
+
 CREATE TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear AS
 SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, photo_year::int, ogc_fid
 FROM ${alpacTableName};
-DROP TABLE IF EXISTS ${alpacTableName};
+
+DROP TABLE IF EXISTS ${alpacTableName} CASCADE;
+
 ALTER TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear RENAME TO ab_alpac_updated_photoYear;
 "
 createSQLSpatialIndex=True  

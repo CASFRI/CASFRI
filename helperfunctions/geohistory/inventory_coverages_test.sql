@@ -17,7 +17,7 @@ SET lc_messages TO 'en_US.UTF-8';
 CREATE SCHEMA IF NOT EXISTS casfri50_coverage;
 -----------------------------------------------------------
 -- Create a 3x3 grid of polygons to test TT_IsSurrounded()
-DROP TABLE IF EXISTS casfri50_coverage.test3x3;
+DROP TABLE IF EXISTS casfri50_coverage.test3x3 CASCADE;
 CREATE TABLE casfri50_coverage.test3x3 AS
 SELECT generate_series(1, 9) id, 
        (ST_PixelAsPolygons(ST_AddBand(ST_MakeEmptyRaster(3, 3, 0, 0, 1.0), '8BSI'::text, 1, 0), 1, FALSE)).geom;

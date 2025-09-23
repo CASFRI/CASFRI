@@ -215,8 +215,8 @@ if [ "${mergeTables}" == "true" ]; then
         ST_Transform(wkb_geometry, 102001) wkb_geometry
   FROM ${fullTargetTableName}_harvest_year
   ;
-  DROP TABLE IF EXISTS ${fullTargetTableName}_fire_year;
-  DROP TABLE IF EXISTS ${fullTargetTableName}_harvest_year;
+  DROP TABLE IF EXISTS ${fullTargetTableName}_fire_year CASCADE;
+  DROP TABLE IF EXISTS ${fullTargetTableName}_harvest_year CASCADE;
   "
 fi
 ########################### Process - Loading raster method ################################

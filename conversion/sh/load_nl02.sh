@@ -85,7 +85,7 @@ ALTER TABLE $fullTargetTableName ADD COLUMN nfcode varchar;
 INSERT INTO $fullTargetTableName (nfcode, globalid, shape_length, shape_area, src_filename, inventory_id, wkb_geometry)
 SELECT nfcode, globalid, shape_length, shape_area, src_filename, inventory_id, wkb_geometry
 FROM $tableName_nonforest;
-DROP TABLE $tableName_nonforest;
+DROP TABLE $tableName_nonforest CASCADE;
 "
 # total number of rows: 1407193 + 501701 = 1908894
 
@@ -110,7 +110,7 @@ ALTER TABLE $fullTargetTableName ADD COLUMN buffwidth INTEGER;
 INSERT INTO $fullTargetTableName (wbcode, name, buffwidth, globalid, shape_length, shape_area, src_filename, inventory_id, wkb_geometry)
 SELECT wbcode, name, buffwidth, globalid, shape_length, shape_area, src_filename, inventory_id, wkb_geometry
 FROM $tableName_water;
-DROP TABLE $tableName_water;
+DROP TABLE $tableName_water CASCADE;
 "
 # total number of rows: 1407193 + 501701 + 703557 = 2612451
 
@@ -138,7 +138,7 @@ SET rr_subtype = d.rr_subtype,
     year_dist = EXTRACT(YEAR FROM d.year_dist)
 FROM $tableName_dist d
 WHERE f.forestid = d.forestid;
-DROP TABLE $tableName_dist;
+DROP TABLE $tableName_dist CASCADE;
 "
 # total number of rows: 1407193 + 501701 + 703557 = 2612451
 
@@ -153,6 +153,8 @@ DROP TABLE $tableName_dist;
 
 # # 5.2 Create pivot table : there is max. 6 species for 1 forestid
 "$pgFolder/bin/psql" $connectionParams -c "
+DROP TABLE $tableName_Species_pivot CASCADE;
+
 CREATE TABLE $tableName_Species_pivot AS 
 SELECT 
     forestid,
@@ -235,8 +237,8 @@ SET species_1 = p.species_1,
     species_per_10 = p.species_per_10      
 FROM $tableName_Species_pivot p
 WHERE f.forestid = p.forestid;
-DROP TABLE $tableName_Species_pivot;
-DROP TABLE $tableName_Species;
+DROP TABLE $tableName_Species_pivot CASCADE;
+DROP TABLE $tableName_Species CASCADE;
 "
 # total number of rows: 2612451
 
@@ -268,7 +270,7 @@ SET spcomp = sc.spcomp,
     cden_code = sc.cden_code  
 FROM $tableName_StockCom sc
 WHERE f.forestid = sc.forestid;
-DROP TABLE $tableName_StockCom;
+DROP TABLE $tableName_StockCom CASCADE;
 "
 # total number of rows: 2612451
 
@@ -294,7 +296,7 @@ SET covertype = snc.covertype,
     cden_code = snc.cden_code  
 FROM $tableName_StockNonCom snc
 WHERE f.forestid = snc.forestid;
-DROP TABLE $tableName_StockNonCom;
+DROP TABLE $tableName_StockNonCom CASCADE;
 "
 # total number of rows: 2612451
 

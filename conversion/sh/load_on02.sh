@@ -40,7 +40,7 @@ fi
 # drop any temp tables from previous loads
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS $temp_table;
+DROP TABLE IF EXISTS $temp_table CASCADE;
 "
 
 for F in AL_615_2D AP_451_2D ARF_110_2D BA_220_2D BSF_030_2D CF_175_2D CL_noFMU_2D CLF_NBI_2D CR_2D DF_535_2D DRM_177_2D ER_230_2D FSF_360_2D GCF_438_2D HF_601_2D KF_644_2D LF_796_2D LS_702_2D LSP_2D MAF_140_2D MB_851_067_370_2D MF_565_2D ML_2D NAG_390_2D NF_754_2D NSF_630_2D OF_796_2D PA_NA_2D PF_421_2D QPP_2D RL_840_2D SF_210_2D SPF_853_2D SUF_889_2D TF_898_2D TL_120_2D W_130_2D WAB_2D WJ_490_2D WRF_060_2D
@@ -74,7 +74,7 @@ done
 # Use sql to select inventory columns for final on02 table
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS $fullTargetTableName; 
+DROP TABLE IF EXISTS $fullTargetTableName CASCADE; 
 CREATE TABLE $fullTargetTableName AS
 SELECT wkb_geometry, ogc_fid, inventory_id, src_filename, area, perimeter, fmfobjid, polyid, substring(polyid, 1, 10) AS polyid_1_10, substring(polyid, 11, 10) AS polyid_11_20, polytype, yrsource, source, formod, devstage, yrdep, deptype,
        oyrorg, ospcomp, oleadspc, oage, oht, occlo, osi, osc, uyrorg, uspcomp, uleadspc, uage, uht, ucclo, usi, usc,
@@ -82,7 +82,7 @@ SELECT wkb_geometry, ogc_fid, inventory_id, src_filename, area, perimeter, fmfob
 FROM $temp_table
 WHERE polyid IS NOT NULL AND ST_Area(wkb_geometry) > 0;
 
-DROP TABLE IF EXISTS $temp_table;
+DROP TABLE IF EXISTS $temp_table CASCADE;
 "
 
 createSQLSpatialIndex=True

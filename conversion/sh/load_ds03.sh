@@ -116,8 +116,8 @@ echo DROP the temp tables if requested
 if [ $overwriteFRI == True ]; then
   "$gdalFolder/ogrinfo" "$pg_connection_string" \
   -sql "
-  DROP TABLE IF EXISTS ${fullTargetTableName}_temp;
-  DROP TABLE IF EXISTS ${fullTargetTableName};
+  DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
+  DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
 "
   echo Table ${fullTargetTableName} DROPed...
 else
@@ -145,7 +145,7 @@ SELECT ogc_fid,
        '${datasetName}' AS src_filename, 
        '${inventoryID}' AS inventory_id
 FROM ${fullTargetTableName}_temp;
-DROP TABLE IF EXISTS ${fullTargetTableName}_temp;
+DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
 "
 
 ######################### Method 2 - Load as raster #############################

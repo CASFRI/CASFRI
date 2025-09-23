@@ -81,6 +81,7 @@ tableName_full=${fullTargetTableName}_full
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 CREATE INDEX ON $tableName_poly (geocode);
+DROP TABLE IF EXISTS $tableName_sup CASCADE;
 
 -- select all SUP rows
 DROP TABLE IF EXISTS $tableName_sup;
@@ -96,7 +97,7 @@ FROM $tableName_etage
 WHERE etage = 'SUP';
 
 -- select all INF rows
-DROP TABLE IF EXISTS $tableName_inf;
+DROP TABLE IF EXISTS $tableName_inf CASCADE;
 CREATE TABLE $tableName_inf AS
 SELECT geocode inf_geocode, 
 etage inf_etage, 
@@ -114,6 +115,7 @@ ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 
 -- join qc07_poly, qc07_meta, qc07_etage_sup, and qc07_etage_inf
 DROP TABLE IF EXISTS $fullTargetTableName;
+DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
 CREATE TABLE $fullTargetTableName AS
 SELECT *, substring(replace(poly.geocode, ',','.'), 1, 10) geocode_1_10, substring(replace(poly.geocode, ',','.'), 11, 10) geocode_11_20
 FROM $tableName_poly AS poly
@@ -136,11 +138,11 @@ ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS inf_geocode;
 ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geocode;
 
 --drop tables
-DROP TABLE IF EXISTS $tableName_poly;
-DROP TABLE IF EXISTS $tableName_meta;
-DROP TABLE IF EXISTS $tableName_etage;
-DROP TABLE IF EXISTS $tableName_sup;
-DROP TABLE IF EXISTS $tableName_inf;
+DROP TABLE IF EXISTS $tableName_poly CASCADE;
+DROP TABLE IF EXISTS $tableName_meta CASCADE;
+DROP TABLE IF EXISTS $tableName_etage CASCADE;
+DROP TABLE IF EXISTS $tableName_sup CASCADE;
+DROP TABLE IF EXISTS $tableName_inf CASCADE;
 "
 
 createSQLSpatialIndex=True

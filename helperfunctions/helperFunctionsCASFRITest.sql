@@ -15,7 +15,7 @@
 SET lc_messages TO 'en_US.UTF-8';
 
 -- Create some test lookup table
-DROP TABLE IF EXISTS test_lookup_qc_stdstr;
+DROP TABLE IF EXISTS test_lookup_qc_stdstr CASCADE;
 CREATE TABLE test_lookup_qc_stdstr AS
 SELECT 'VIR'::text source_val, '1'::text num_of_layers, 'VIR'::text layer_1_age, ''::text layer_2_age
 UNION ALL
@@ -32,14 +32,14 @@ UNION ALL
 SELECT '1010'::text, '2'::text, '10'::text, '10'::text;
 
 -- Create some test lookup table
-DROP TABLE IF EXISTS test_lookup_on_species;
+DROP TABLE IF EXISTS test_lookup_on_species CASCADE;
 CREATE TABLE test_lookup_on_species AS
 SELECT 'Sw'::text source_val, 'PICE_GLAU'::text spec1
 UNION ALL
 SELECT 'Sb'::text, 'PICE_MARI'::text;
 
 -- test photo year table with geometry
-DROP TABLE IF EXISTS photo_test2;
+DROP TABLE IF EXISTS photo_test2 CASCADE;
 CREATE TABLE photo_test2 AS
 SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 7, 7 7, 7 0, 0 0)))', 4268) AS the_geom, 1990::text AS YEAR
 UNION ALL

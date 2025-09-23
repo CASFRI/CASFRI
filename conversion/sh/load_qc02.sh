@@ -68,7 +68,7 @@ ALTER TABLE $tableName_poly DROP COLUMN IF EXISTS ogc_fid;
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 
 -- join qc02_poly, qc02_meta
-DROP TABLE IF EXISTS  $fullTargetTableName;
+DROP TABLE IF EXISTS  $fullTargetTableName CASCADE;
 CREATE TABLE  $fullTargetTableName AS
 SELECT *, substring(replace(poly.geocode, ',','.'), 1, 10) geocode_1_10, substring(replace(poly.geocode, ',','.'), 11, 10) geocode_11_20
 FROM $tableName_poly AS poly
@@ -85,8 +85,8 @@ ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
 ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geoc_maj;
 
 --drop tables
-DROP TABLE IF EXISTS $tableName_poly;
-DROP TABLE IF EXISTS $tableName_meta;
+DROP TABLE IF EXISTS $tableName_poly CASCADE;
+DROP TABLE IF EXISTS $tableName_meta CASCADE;
 "
 
 createSQLSpatialIndex=True

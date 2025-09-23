@@ -100,7 +100,7 @@ WHERE inventory_id = 'SK08' OR inventory_id = 'SK09';
 **9. Regenerate the table containing the count of row per inventory (this code is in 01_PrepareGeoHistory.sql):**
 
 ```
-DROP TABLE IF EXISTS casfri50_coverage.inv_counts;
+DROP TABLE IF EXISTS casfri50_coverage.inv_counts CASCADE;
 CREATE TABLE casfri50_coverage.inv_counts AS
 SELECT left(cas_id, 4) inv, count(*) cnt
 FROM casfri50.cas_all

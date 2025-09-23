@@ -62,15 +62,15 @@ UPDATE $tableName_avi SET polynum = POLY_NUM;
 ALTER TABLE $tableName_avi DROP COLUMN IF EXISTS POLY_NUM;
 
 -- Join
-DROP TABLE IF EXISTS $fullTargetTableName; 
+DROP TABLE IF EXISTS $fullTargetTableName CASCADE; 
 CREATE TABLE $fullTargetTableName AS
 SELECT *
   FROM $tableName_poly A 
     LEFT JOIN $tableName_avi B ON A.POLY_NUM = B.polynum;
 
 -- Drop tables
-DROP TABLE IF EXISTS $tableName_poly;
-DROP TABLE IF EXISTS $tableName_avi;
+DROP TABLE IF EXISTS $tableName_poly CASCADE;
+DROP TABLE IF EXISTS $tableName_avi CASCADE;
 "
 
 # Run ogr2ogr to load Alpac photoyear
@@ -83,11 +83,14 @@ DROP TABLE IF EXISTS $tableName_avi;
 # Fix it
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_alpac_updated_photoYear;
+DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_alpac_updated_photoYear CASCADE;
+
 CREATE TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear AS
 SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, photo_year::int, ogc_fid
 FROM ${alpacTableName};
-DROP TABLE IF EXISTS ${alpacTableName};
+
+DROP TABLE IF EXISTS ${alpacTableName} CASCADE;
+
 ALTER TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear RENAME TO ab_alpac_updated_photoYear;
 "
 createSQLSpatialIndex=True  

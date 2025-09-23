@@ -35,9 +35,9 @@ overwrite_option="$overwrite_tab"
 # drop any temp tables from previous loads
 "$gdalFolder\ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS $tempPoly;
-DROP TABLE IF EXISTS $tempForAtt;
-DROP TABLE IF EXISTS $tempNonForAtt;
+DROP TABLE IF EXISTS $tempPoly CASCADE;
+DROP TABLE IF EXISTS $tempForAtt CASCADE;
+DROP TABLE IF EXISTS $tempNonForAtt CASCADE;
 "
 export PGCLIENTENCODING=LATIN1
 
@@ -88,7 +88,8 @@ CREATE INDEX ON $tempForAtt USING btree(src_filename);
 CREATE INDEX ON $tempForAtt USING btree(recno);
 CREATE INDEX ON $tempNonForAtt USING btree(src_filename);
 CREATE INDEX ON $tempNonForAtt USING btree(recno);
-DROP TABLE IF EXISTS $fullTargetTableName;
+
+DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
 CREATE TABLE $fullTargetTableName AS
 WITH non_forested_distinct AS (
   SELECT DISTINCT ON (src_filename, recno) *
@@ -119,9 +120,10 @@ SELECT a.ogc_fid, a.area_meter, a.perimeter_, a.polyid, a.polytype, a.owner, a.a
 FROM (rawfri.on01_poly a
 LEFT JOIN $tempForAtt b ON (a.src_filename = b.src_filename AND a.recno::int = b.recno::int))
 LEFT JOIN non_forested_distinct c ON (a.src_filename = c.src_filename AND a.recno::int = c.recno::int);
-DROP TABLE IF EXISTS $tempPoly;
-DROP TABLE IF EXISTS $tempForAtt;
-DROP TABLE IF EXISTS $tempNonForAtt;
+
+DROP TABLE IF EXISTS $tempPoly CASCADE;
+DROP TABLE IF EXISTS $tempForAtt CASCADE;
+DROP TABLE IF EXISTS $tempNonForAtt CASCADE;
 "
 
 createSQLSpatialIndex=True
