@@ -189,6 +189,10 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 1600, NULL, 'eco'); -- G
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_sk_sfv_eco_test('rawfri', 'sk06_l1_to_sk_sfv_l1_map_1600_eco');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'sk07', 'sk_utm', 700, NULL, 'eco'); -- Generates 0 ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_sk_utm_eco_test('rawfri', 'sk07_l1_to_sk_utm_l1_map_700_eco');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt01', 'yt', 4400, NULL, 'eco'); -- Generates about 200 (203) ECO rows
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_yt_01_eco_test('rawfri', 'yt01_l1_to_yt_l1_map_4400_eco');
