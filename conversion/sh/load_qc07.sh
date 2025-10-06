@@ -109,8 +109,7 @@ eta_ess_pc inf_eta_ess_pc
 FROM $tableName_etage 
 WHERE etage = 'INF';
 
--- drop all ogc_fid columns
-ALTER TABLE $tableName_poly DROP COLUMN IF EXISTS ogc_fid;
+-- Drop the meta table OGC_FID attribute as we only need the poly table one
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 
 -- join qc07_poly, qc07_meta, qc07_etage_sup, and qc07_etage_inf
@@ -126,11 +125,7 @@ LEFT join $tableName_sup AS sup
 LEFT join $tableName_inf AS inf 
   on poly.geocode = inf.inf_geocode;
     
---update ogc_fid
-ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
-ALTER TABLE $fullTargetTableName ADD COLUMN ogc_fid INT;
-UPDATE $fullTargetTableName SET ogc_fid=temp_key;
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
+-- Drop intermediate tables GEOCODE attributes
 
 --drop extra geocode attributes
 ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS sup_geocode;

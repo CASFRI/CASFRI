@@ -62,10 +62,8 @@ tableName_meta=${fullTargetTableName}_meta
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-CREATE INDEX ON $tableName_poly (geoc_maj);
+-- Drop the meta table ogc_fid column as we only need the poly table one
 
--- drop all ogr_fid columns
-ALTER TABLE $tableName_poly DROP COLUMN IF EXISTS ogc_fid;
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 
 -- drop geometry columns from meta
@@ -83,12 +81,8 @@ SELECT *, substring(replace(poly.geoc_maj, ',','.'), 1, 10) geoc_maj_1_10, subst
 FROM $tableName_poly AS poly
 LEFT join $tableName_meta AS meta 
   on poly.geoc_maj = meta.meta_geoc_maj;
-  
---update ogc_fid
-ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
-ALTER TABLE $fullTargetTableName ADD COLUMN ogc_fid INT;
-UPDATE $fullTargetTableName SET ogc_fid=temp_key;
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
+
+-- Drop final table GEOCODE duplicate attribute
 
 --drop extra geocode attributes
 ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geoc_maj;

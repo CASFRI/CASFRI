@@ -53,18 +53,13 @@ tableName_meta=${fullTargetTableName}_meta
 -sql "SELECT geocode AS meta_geocode, no_prg AS meta_no_prg, ver_prg AS meta_ver_prg, an_pro_sou, an_saisie, an_pro_ori FROM $gdbFileName_meta WHERE ver_prg NOT LIKE '%AIPF%'" \
 -progress $overwrite_tab
 
-# Join META  tables to polygons using the GEOCODE attribute.
-# The ogc_fid attributes are no longer unique identifiers after the 
-# join so a new ogc_fid is created.
-# Split geocode into 2 columns for use in cas_id.
-# Original tables are deleted at the end.
-
+# Join META attributes to polygons using the GEOCODE attribute.
+# Only the POLY table's OGC_FID attribute is preserved for inclusion in CAS_ID.
+# Split GEOCODE into two columns for use in CAS_ID.
+# Intermediate tables are dropped at the end.
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-CREATE INDEX ON $tableName_poly (geocode);
-
--- drop all ogr_fid columns
-ALTER TABLE $tableName_poly DROP COLUMN IF EXISTS ogc_fid;
+-- Drop the meta table ogc_fid column as we only need the poly table one
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 
 -- join qc02_poly, qc02_meta
