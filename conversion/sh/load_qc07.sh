@@ -80,11 +80,9 @@ tableName_full=${fullTargetTableName}_full
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-CREATE INDEX ON $tableName_poly (geocode);
+-- Create an intermediate table with SUP rows
 DROP TABLE IF EXISTS $tableName_sup CASCADE;
 
--- select all SUP rows
-DROP TABLE IF EXISTS $tableName_sup;
 CREATE TABLE $tableName_sup AS
 SELECT geocode sup_geocode, 
 etage sup_etage, 
@@ -112,9 +110,13 @@ WHERE etage = 'INF';
 -- Drop the meta table OGC_FID attribute as we only need the poly table one
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 
--- join qc07_poly, qc07_meta, qc07_etage_sup, and qc07_etage_inf
-DROP TABLE IF EXISTS $fullTargetTableName;
+-- Join qc07_poly, qc07_meta, qc07_etage_sup and qc07_etage_inf into qc07.
+CREATE INDEX ON $tableName_meta (meta_geocode);
+CREATE INDEX ON $tableName_sup (sup_geocode);
+CREATE INDEX ON $tableName_inf (inf_geocode);
+
 DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
+
 CREATE TABLE $fullTargetTableName AS
 SELECT *, substring(replace(poly.geocode, ',','.'), 1, 10) geocode_1_10, substring(replace(poly.geocode, ',','.'), 11, 10) geocode_11_20
 FROM $tableName_poly AS poly

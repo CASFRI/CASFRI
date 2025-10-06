@@ -74,7 +74,9 @@ ALTER TABLE $tableName_meta RENAME COLUMN geoc_maj TO meta_geoc_maj;
 ALTER TABLE $tableName_meta RENAME COLUMN no_prg TO meta_no_prg;
 ALTER TABLE $tableName_meta RENAME COLUMN ver_prg TO meta_ver_prg;
 
--- join qc04_poly, qc04_meta
+-- Create an index on the joining attribute
+CREATE INDEX ON $tableName_meta (meta_geoc_maj);
+
 DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
 CREATE TABLE  $fullTargetTableName AS
 SELECT *, substring(replace(poly.geoc_maj, ',','.'), 1, 10) geoc_maj_1_10, substring(replace(poly.geoc_maj, ',','.'), 11, 10) geoc_maj_11_20

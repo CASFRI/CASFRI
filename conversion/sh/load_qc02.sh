@@ -64,8 +64,11 @@ tableName_meta=${fullTargetTableName}_meta
 -- Drop the meta table ogc_fid column as we only need the poly table one
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 
--- join qc02_poly, qc02_meta
+-- Create an index on the joining attribute
+CREATE INDEX ON $tableName_meta (meta_geocode);
+
 DROP TABLE IF EXISTS  $fullTargetTableName CASCADE;
+
 CREATE TABLE  $fullTargetTableName AS
 SELECT *, substring(replace(poly.geocode, ',','.'), 1, 10) geocode_1_10, substring(replace(poly.geocode, ',','.'), 11, 10) geocode_11_20
 FROM $tableName_poly AS poly

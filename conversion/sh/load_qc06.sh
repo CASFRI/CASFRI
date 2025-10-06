@@ -62,19 +62,18 @@ tableName_meta=${fullTargetTableName}_meta
 -- Drop the meta table ogc_fid column as we only need the poly table one
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
 
--- join qc02_poly, qc02_meta
+-- Create an index on the joining attribute
+CREATE INDEX ON $tableName_meta (meta_geocode);
+
 DROP TABLE IF EXISTS  $fullTargetTableName CASCADE;
+
 CREATE TABLE  $fullTargetTableName AS
 SELECT *, substring(replace(poly.geocode, ',','.'), 1, 10) geocode_1_10, substring(replace(poly.geocode, ',','.'), 11, 10) geocode_11_20
 FROM $tableName_poly AS poly
 LEFT join $tableName_meta AS meta 
   on poly.geocode = meta.meta_geocode;
     
---update ogc_fid
-ALTER TABLE $fullTargetTableName ADD COLUMN temp_key BIGSERIAL PRIMARY KEY;
-ALTER TABLE $fullTargetTableName ADD COLUMN ogc_fid INT;
-UPDATE $fullTargetTableName SET ogc_fid=temp_key;
-ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS temp_key;
+-- Drop final table GEOCODE duplicate attribute
 
 --drop extra geocode attributes
 ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS meta_geoc_maj;

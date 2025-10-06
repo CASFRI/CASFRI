@@ -77,10 +77,9 @@ tableName_full=${fullTargetTableName}_full
 
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-CREATE INDEX ON $tableName_poly (geoc_maj);
+-- Create an intermediate table with SUP rows
 DROP TABLE IF EXISTS $tableName_sup CASCADE;
--- select all SUP rows
-DROP TABLE IF EXISTS $tableName_sup;
+
 CREATE TABLE $tableName_sup AS
 SELECT geoc_maj sup_geoc_maj, 
 etage sup_etage, 
@@ -93,7 +92,6 @@ FROM $tableName_etage
 WHERE etage = 'SUP';
 
 -- select all INF rows
-DROP TABLE IF EXISTS $tableName_inf;
 DROP TABLE IF EXISTS $tableName_inf CASCADE;
 CREATE TABLE $tableName_inf AS
 SELECT geoc_maj inf_geoc_maj, 
@@ -117,8 +115,11 @@ ALTER TABLE $tableName_meta RENAME COLUMN geoc_maj TO meta_geoc_maj;
 ALTER TABLE $tableName_meta RENAME COLUMN no_prg TO meta_no_prg;
 ALTER TABLE $tableName_meta RENAME COLUMN ver_prg TO meta_ver_prg;
 
--- join qc05_poly, qc05_meta, qc05_etage_sup, and qc05_etage_inf
-DROP TABLE IF EXISTS $fullTargetTableName;
+-- Join qc05_poly, qc05_meta, qc05_etage_sup and qc05_etage_inf into qc05.
+CREATE INDEX ON $tableName_meta (meta_geoc_maj);
+CREATE INDEX ON $tableName_sup (sup_geoc_maj);
+CREATE INDEX ON $tableName_inf (inf_geoc_maj);
+
 DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
 CREATE TABLE $fullTargetTableName AS
 SELECT *, substring(replace(poly.geoc_maj, ',','.'), 1, 10) geoc_maj_1_10, substring(replace(poly.geoc_maj, ',','.'), 11, 10) geoc_maj_11_20
