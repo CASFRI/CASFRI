@@ -18,7 +18,7 @@ SET tt.debug TO FALSE;
 --------------------------------------------------------------------------
 -- Translate all NL01. 14h47m 
 --------------------------------------------------------------------------
--- CAS 
+-- CAS - 52m
 ------------------------
 BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_cas', '_nl01_cas', 'ab_avi01_cas'); 
@@ -35,7 +35,7 @@ COMMIT;
 
 
 ------------------------
--- DST
+-- DST - 10m
 ------------------------
 BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl01_dst', 'ab_avi01_dst');
@@ -52,7 +52,7 @@ COMMIT;
 
 
 ------------------------
--- ECO
+-- ECO - 2m
 ------------------------
 BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_eco', '_nl01_eco', 'ab_avi01_eco');
@@ -69,7 +69,7 @@ COMMIT;
 
 
 ------------------------
--- LYR
+-- LYR - Analysing time: 2h, processing time: 3h45m
 ------------------------
 -- Check the uniqueness of YT species codes
 BEGIN;
@@ -92,7 +92,7 @@ COMMIT;
 
 
 ------------------------
--- NFL
+-- NFL - 6m
 ------------------------
 BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_nfl', '_nl01_nfl', 'ab_avi01_nfl');
@@ -109,7 +109,7 @@ COMMIT;
 
 
 ------------------------
--- GEO
+-- GEO - 10m
 ------------------------
 BEGIN;
 SELECT TT_Prepare('translation', 'nl_nli01_geo', '_nl01_geo', 'ab_avi01_geo'); 
