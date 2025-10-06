@@ -168,6 +168,7 @@ Creating final table ${fullTargetTableName}...
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
+
 CREATE TABLE $fullTargetTableName AS
 SELECT polys.wkb_geometry, polys.area, atts.*, ph.photoyear
 FROM $tempPolygons polys
