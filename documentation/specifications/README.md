@@ -770,7 +770,7 @@ The **SITE_CLASS** attribute estimates the potential productivity of land for tr
 
 ### SITE_INDEX
 
-The **SITE_CLASS** attribute estimates site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada, it is copied from the source data when available.
+The **SITE_INDEX** attribute estimates site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada, it is copied from the source data when available.
 
 | Values    | Description |
 | :-------- | :-------------- |
