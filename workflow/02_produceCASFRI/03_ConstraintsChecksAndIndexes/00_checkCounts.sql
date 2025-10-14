@@ -93,7 +93,8 @@ SELECT 'cas_all' AS cas_table,
        coalesce(cnt.nb, 0) counted,
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
@@ -105,7 +106,8 @@ SELECT 'cas_all' AS cas_table,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -192,7 +194,8 @@ SELECT 'dst_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
@@ -204,7 +207,8 @@ SELECT 'dst_all' AS cas_table,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -291,7 +295,8 @@ SELECT 'eco_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
@@ -303,7 +308,8 @@ SELECT 'eco_all' AS cas_table,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -390,7 +396,8 @@ SELECT 'lyr_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
@@ -402,7 +409,8 @@ SELECT 'lyr_all' AS cas_table,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -489,7 +497,8 @@ SELECT 'nfl_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
@@ -501,7 +510,8 @@ SELECT 'nfl_all' AS cas_table,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -588,7 +598,8 @@ SELECT 'geo_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
@@ -601,7 +612,8 @@ SELECT 'geo_all' AS cas_table,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
