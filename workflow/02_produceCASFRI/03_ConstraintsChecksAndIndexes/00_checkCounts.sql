@@ -101,7 +101,7 @@ SELECT 'cas_all' AS cas_table,
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'cas_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
@@ -202,7 +202,7 @@ SELECT 'dst_all' AS cas_table,
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'dst_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
@@ -303,7 +303,7 @@ SELECT 'eco_all' AS cas_table,
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'eco_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
@@ -404,7 +404,7 @@ SELECT 'lyr_all' AS cas_table,
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'lyr_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
@@ -505,7 +505,7 @@ SELECT 'nfl_all' AS cas_table,
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'nfl_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
@@ -607,7 +607,7 @@ FROM expected exp NATURAL FULL JOIN counts cnt
 
 UNION ALL
 SELECT 'geo_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
