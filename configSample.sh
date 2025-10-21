@@ -57,7 +57,7 @@ invList7CFS=(AB29 AB30)
 invList8=(DS01 DS02 DS03 DS04 DS05)
 
 # Merge all inventory lists into a list of list
-fullList=(invList1 invList2 invList3 invList4 invList5 invList6 invList7 invList8)
+fullList=(photoYearList invList1 invList2 invList3 invList4 invList5 invList6 invList7 invList8)
 #fullList=(invList1CFS invList2CFS invList3CFS invList4CFS invList5 iCFSt6 invList7CFS)
 
 #################################################################
