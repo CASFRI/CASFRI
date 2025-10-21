@@ -53,8 +53,8 @@ overwrite_option="$overwrite_tab"
 for F in "$srcFullPath/"* 
 do
   if [[ $F == *.shp ]]
-    then
-	srcFileName="$(b=${F##*/}; echo ${b%.*})"
+  then
+    srcFileName="$(b=${F##*/}; echo ${b%.*})"
 	
     "$gdalFolder/ogr2ogr" \
     -f PostgreSQL "$pg_connection_string" "$F" \

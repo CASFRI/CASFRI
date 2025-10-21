@@ -1432,7 +1432,7 @@ SELECT '4.72'::text number,
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
-                        ARRAY['origin_lower_between_0_and_2050',
+                        ARRAY['origin_lower_between_1000_and_2050',
                               '(origin_lower > 1000 AND origin_lower <= 2050) OR 
                                origin_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
