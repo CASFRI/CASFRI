@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- CASFRI - Constraints script for CASFRI v5
+-- CASFRI - Constraints script for CASFRI v5 --56min54sec
 -- For use with PostgreSQL Table Tranlation Framework v2.0.1 for PostgreSQL 13.x
 -- https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework
 -- https://github.com/CASFRI/CASFRI
@@ -1432,7 +1432,7 @@ SELECT '4.72'::text number,
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'lyr_all', 'CHECK', 
-                        ARRAY['origin_lower_between_0_and_2050',
+                        ARRAY['origin_lower_between_1000_and_2050',
                               '(origin_lower > 1000 AND origin_lower <= 2050) OR 
                                origin_lower = ANY(TT_IsMissingOrInvalidRange())
                               ']) AS (passed boolean, cstr_query text)) foo
@@ -1754,7 +1754,7 @@ SELECT '5.27'::text number,
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'nfl_all', 'CHECK', 
                         ARRAY['one_nfl_per_row',
-                              'LEFT(cas_id, 4) IN(''AB03'', ''AB10'', ''AB16'', ''AB25'', ''AB29'') OR
+                              'LEFT(cas_id, 4) IN(''AB03'', ''AB10'', ''AB16'', ''AB21'', ''AB24'', ''AB25'', ''AB29'', ''AB31'', ''AB32'') OR
 							                 (((non_for_veg = ANY(TT_IsMissingOrNotInSetCode()))::int + (nat_non_veg = ANY(TT_IsMissingOrNotInSetCode()))::int + (non_for_anth = ANY(TT_IsMissingOrNotInSetCode()))::int) = 2) OR
                                (((non_for_veg = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int + (nat_non_veg = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int + (non_for_anth = ANY(ARRAY[''NOT_APPLICABLE'', ''UNKNOWN_VALUE'']))::int) = 3)
                               ']) AS (passed boolean, cstr_query text)) foo

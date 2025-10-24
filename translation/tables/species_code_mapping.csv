@@ -73,6 +73,8 @@ HARD_UNKN,GENH_SPP_###, ,,ZH,OH,,,UH,,,,FZ,,,,,Hardwood unknown (planted)
 HARD_UNKN,GENH_SPP_###, ,,,,,,H,,,,MF,,,,,Hardwood unknown
 HARD_UNKN,GENH_SPP_###, ,,,,,,HS,,,,MX,,,,,Hardwood unknown
 HARD_UNKN,GENH_SPP_###,,,,,,,,,,,MR,,,,,
+HARD_UNKN,GENH_SPP_###, ,,,,,,H,,,,,,,,,Hardwood unknown
+HARD_UNKN,GENH_SPP_###, ,,,,,,HS,,,,,,,,,Hardwood unknown
 JUGL_CINE,JUGL_CIN_###,Juglans cinerea ,,,,,BN,,,,BN,NC,,,,,
 JUGL_NIGR,JUGL_NIG_###,Juglans nigra ,,,,,WB,,,,,NN,,,,,
 JUNI_SCOP,JUNI_SCO_###,Juniperus scopulorum ,,JR,,,,,,,,,,,,,
@@ -92,7 +94,7 @@ MALU_SUBS,MALU_SPP_###,Malus spp. ,,U,,,,,,,,,,,,,
 MORU_RUBR,MORU_RUB_###,Morus rubra ,,,,,MO,,,,,,,,,,
 NYSS_SYLV,NYSS_SYL_###,Nyssa sylvatica ,,,,,GB,,,,,,,,,,
 OSTR_VIRG,OSTR_VIR_###,Ostrya virginiana ,,,I,,IW,IW,,,,OV,HH,,,,
-PICE_ABIE,PICE_ABI_###,Picea abies ,,SN,NS,,SN,NS,,,NS,EV,,,,,
+PICE_ABIE,PICE_ABI_###,Picea abies ,,SN,NS,,SN,NS,,,NS,EV,,NS,,,
 PICE_ABIE,PICE_ABI_###,Picea abies ,,SA,,,,,,,,,,,,,
 PICE_ENGE,PICE_ENG_###,Picea engelmannii ,SE,SE,,,,,,,,,,ES,,,
 PICE_ENGE,PICE_ENG_GLA,Picea engelmannii xglauca,,SXW,,,,,,,,,,,,,

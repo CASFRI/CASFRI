@@ -32,7 +32,7 @@ CREATE SCHEMA IF NOT EXISTS casfri50_history_test;
 -- of the two polygons with polygons having higher ids having precedence over 
 -- polygons having lower ones.
 ------------------------------------------------------------------------------
-DROP TABLE IF EXISTS casfri50_history.inv_precedence;
+DROP TABLE IF EXISTS casfri50_history.inv_precedence CASCADE;
 CREATE TABLE casfri50_history.inv_precedence AS 
 SELECT 'AB03' inv, 3 rank
 UNION ALL
@@ -170,7 +170,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- Sampling area NB1
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_nb1_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_nb1
@@ -183,7 +183,7 @@ CREATE INDEX sampling_area_nb1_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_nb1_gridded;
 
 -- Generate history on gridded table - 796 rows, pg11: 1m09, pg13: 18s
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb1_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_nb1_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -212,7 +212,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area NB2
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_nb2_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_nb2
@@ -225,7 +225,7 @@ CREATE INDEX sampling_area_nb2_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_nb2_gridded;
 
 -- Generate history on gridded table - 6693 rows, pg11: 3m54, pg13: 45s
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nb2_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_nb2_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -254,7 +254,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area 'NT1'
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_nt1_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_nt1
@@ -267,7 +267,7 @@ CREATE INDEX sampling_area_nt1_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_nt1_gridded;
 
 -- Generate history on gridded table - 1253 rows, pg11: 1m36, pg13: 16s 
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt1_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_nt1_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -295,7 +295,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area 'NT2'
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_nt2_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_nt2
@@ -308,7 +308,7 @@ CREATE INDEX sampling_area_nt2_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_nt2_gridded;
 
 -- Generate history on gridded table - 1040 rows, pg11: 2m10, pg13: 22s 
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_nt2_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_nt2_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -336,7 +336,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area BC1
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_bc1_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_bc1
@@ -349,7 +349,7 @@ CREATE INDEX sampling_area_bc1_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_bc1_gridded;
 
 -- Generate history on gridded table - 6951 rows, pg13: 2m08
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc1_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_bc1_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -378,7 +378,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area BC2
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_bc2_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_bc2
@@ -391,7 +391,7 @@ CREATE INDEX sampling_area_bc2_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_bc2_gridded;
 
 -- Generate history on gridded table - 9158 rows, pg13: 1m57
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_bc2_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_bc2_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -419,7 +419,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area SK1
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_sk1_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_sk1
@@ -432,7 +432,7 @@ CREATE INDEX sampling_area_sk1_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_sk1_gridded;
 
 -- Generate history on gridded table - 3688 rows, pg11: 1m17, pg13: 16s 
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk1_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_sk1_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -460,7 +460,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area SK2
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_sk2_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_sk2
@@ -473,7 +473,7 @@ CREATE INDEX sampling_area_sk2_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_sk2_gridded;
 
 -- Generate history on gridded table - 4617 rows, pg11: 2m33, pg13: 40s
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk2_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_sk2_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -502,7 +502,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area SK3
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_sk3_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_sk3
@@ -515,7 +515,7 @@ CREATE INDEX sampling_area_sk3_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_sk3_gridded;
 
 -- Generate history on gridded table - 3462 rows, pg11: 1m41, pg13: 22s
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk3_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_sk3_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,
@@ -543,7 +543,7 @@ ORDER BY id, valid_year_begin;
 -- Sampling area SK4
 --------------------------------------------------------------------------------------
 -- Intersect with CASFRI
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4_gridded;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4_gridded CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_sk4_gridded AS
 SELECT inventory_id, cas_id, photo_year, (TT_SplitByGrid(geometry, 1000)).geom geometry
 FROM casfri50_history_test.sampling_area_sk4
@@ -556,7 +556,7 @@ CREATE INDEX sampling_area_sk4_gridded_casid_idx ON casfri50_history_test.sampli
 --SELECT * FROM casfri50_history_test.sampling_area_sk4_gridded;
 
 -- Generate history on gridded table - 4734 rows, pg11: 2m11, pg13: 28s 
-DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4_gridded_history_new;
+DROP TABLE IF EXISTS casfri50_history_test.sampling_area_sk4_gridded_history_new CASCADE;
 CREATE TABLE casfri50_history_test.sampling_area_sk4_gridded_history_new AS
 WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, photo_year, TRUE, geometry,

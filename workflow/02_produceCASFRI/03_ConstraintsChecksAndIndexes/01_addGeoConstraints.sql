@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- CASFRI - Geo constraints script for CASFRI v5
+-- CASFRI - Geo constraints script for CASFRI v5  --1hr34min47sec
 -- For use with PostgreSQL Table Tranlation Framework v2.0.1 for PostgreSQL 13.x
 -- https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework
 -- https://github.com/CASFRI/CASFRI
@@ -67,7 +67,7 @@ FROM (SELECT *
 UNION ALL
 SELECT '6.6'::text number,
        'cas_all' target_table,
-       'Ensure GEO table CAS_ID is 50 characters long' description, 
+       'Issue #792. One BC04 geometry is invalid. Ensure GEO table GEOMETRY is valid' description, 
        passed, cstr_query
 FROM (SELECT * 
       FROM TT_AddConstraint('casfri50', 'geo_all', 'CHECK', 

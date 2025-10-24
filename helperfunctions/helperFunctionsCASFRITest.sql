@@ -15,7 +15,7 @@
 SET lc_messages TO 'en_US.UTF-8';
 
 -- Create some test lookup table
-DROP TABLE IF EXISTS test_lookup_qc_stdstr;
+DROP TABLE IF EXISTS test_lookup_qc_stdstr CASCADE;
 CREATE TABLE test_lookup_qc_stdstr AS
 SELECT 'VIR'::text source_val, '1'::text num_of_layers, 'VIR'::text layer_1_age, ''::text layer_2_age
 UNION ALL
@@ -32,14 +32,14 @@ UNION ALL
 SELECT '1010'::text, '2'::text, '10'::text, '10'::text;
 
 -- Create some test lookup table
-DROP TABLE IF EXISTS test_lookup_on_species;
+DROP TABLE IF EXISTS test_lookup_on_species CASCADE;
 CREATE TABLE test_lookup_on_species AS
 SELECT 'Sw'::text source_val, 'PICE_GLAU'::text spec1
 UNION ALL
 SELECT 'Sb'::text, 'PICE_MARI'::text;
 
 -- test photo year table with geometry
-DROP TABLE IF EXISTS photo_test2;
+DROP TABLE IF EXISTS photo_test2 CASCADE;
 CREATE TABLE photo_test2 AS
 SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 7, 7 7, 7 0, 0 0)))'::text, 4268) AS the_geom, 1990::text AS YEAR
 UNION ALL
@@ -85,7 +85,7 @@ WITH test_nb AS (
   SELECT 'TT_vri01_countOfNotNull'::text function_tested,                  35 maj_num, 17 nb_test UNION ALL
   SELECT 'TT_sk_utm01_species_percent_validation'::text function_tested,   36 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,  37 maj_num, 11 nb_test UNION ALL
-  SELECT 'TT_sk_utm01_species'::text function_tested,          38 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_species'::text function_tested,                      38 maj_num,  3 nb_test UNION ALL
   SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  6 nb_test UNION ALL
@@ -107,10 +107,10 @@ WITH test_nb AS (
   SELECT 'TT_qc_prg3_wetland_validation'::text function_tested,            57 maj_num,  2 nb_test UNION ALL
   SELECT 'TT_qc_prg5_wetland_validation'::text function_tested,            58 maj_num,  2 nb_test UNION ALL
   SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_species'::text function_tested,                       60 maj_num,  14 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_species'::text function_tested,                       60 maj_num, 14 nb_test UNION ALL
   SELECT 'TT_qc_prg5_species'::text function_tested,                       61 maj_num,  8 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num,  12 nb_test UNION ALL
-  SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num,  10 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num, 12 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num, 10 nb_test UNION ALL
   SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                 66 maj_num,  5 nb_test UNION ALL
   SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test UNION ALL
@@ -124,77 +124,76 @@ WITH test_nb AS (
   SELECT 'TT_nl_nli01_isForest'::text function_tested,                     75 maj_num,  3 nb_test UNION ALL
   SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,     76 maj_num,  3 nb_test UNION ALL
   SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num,  13 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,   4 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,   5 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,   4 nb_test UNION ALL
-  SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,   1 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,83 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,     84 maj_num,   2 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,   2 nb_test UNION ALL
-  SELECT 'TT_qc_prg3_wetland_translation'::text function_tested,           86 maj_num,   15 nb_test UNION ALL
-  SELECT 'TT_qc_prg5_wetland_translation'::text function_tested,           87 maj_num,   7 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,           88 maj_num,   7 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,   2 nb_test UNION ALL
-  SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,   5 nb_test UNION ALL
-  SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                  91 maj_num,   4 nb_test UNION ALL
-	SELECT 'TT_lyr_layer_translation'::text function_tested,                 92 maj_num,   15 nb_test UNION ALL
-	SELECT 'TT_bc_lyr_layer_translation'::text function_tested,              93 maj_num,   6 nb_test UNION ALL
-	SELECT 'TT_ab_avi01_wetland_translation'::text function_tested,          94 maj_num,   5 nb_test UNION ALL
-	SELECT 'TT_ab_avi01_wetland_validation'::text function_tested,           95 maj_num,   2 nb_test UNION ALL
-	SELECT 'TT_nl_nli01_wetland_translation'::text function_tested,          96 maj_num,   4 nb_test UNION ALL
-	SELECT 'TT_nl_nli01_wetland_validation'::text function_tested,           97 maj_num,   2 nb_test UNION ALL
-	SELECT 'TT_bc_vri01_wetland_translation'::text function_tested,          98 maj_num,   7 nb_test UNION ALL
-	SELECT 'TT_bc_vri01_wetland_validation'::text function_tested,           99 maj_num,   2 nb_test UNION ALL
-	SELECT 'TT_ns_nsi01_wetland_translation'::text function_tested,          100 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_ns_nsi01_wetland_validation'::text function_tested,           101 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pe_pei01_wetland_translation'::text function_tested,          102 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_pe_pei01_wetland_validation'::text function_tested,           103 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_nt_fvi01_wetland_translation'::text function_tested,          104 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_nt_fvi01_wetland_validation'::text function_tested,           105 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc01_species_per_translation'::text function_tested,          106 maj_num,  7 nb_test UNION ALL
-	SELECT 'TT_sk_utm01_wetland_translation'::text function_tested,          107 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_utm01_wetland_validation'::text function_tested,           108 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_ab_photo_year_validation'::text function_tested,              109 maj_num,  6 nb_test UNION ALL
-	SELECT 'TT_ab_photo_year_translation'::text function_tested,             110 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_sfv01_wetland_translation'::text function_tested,          111 maj_num,  7 nb_test UNION ALL
-	SELECT 'TT_sk_sfv01_wetland_validation'::text function_tested,           112 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_mb_fli01_wetland_translation'::text function_tested,          113 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_mb_fli01_wetland_validation'::text function_tested,           114 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_mb_fri01_wetland_translation'::text function_tested,          115 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,           116 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc02_wetland_translation'::text function_tested,              117 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_pc02_wetland_validation'::text function_tested,               118 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc02_countOfNotNull'::text function_tested,                   119 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,                120 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_yt_wetland_translation'::text function_tested,                121 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_yt_wetland_validation'::text function_tested,                 122 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_nb_lyr_layer_translation'::text function_tested,              123 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_nb_countofnotnull'::text function_tested,                     124 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_nb_hascountofnotnull'::text function_tested,                  125 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_ns_lyr_layer_translation'::text function_tested,              126 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_on_lyr_layer_translation'::text function_tested,              127 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,         128 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_qc_prg3_src_inv_area_translation'::text function_tested,      130 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_stand_structure_translation'::text function_tested,  131 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_copyText'::text function_tested,         132 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_mapText'::text function_tested,          133 maj_num,  1 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_matchList'::text function_tested,        134 maj_num,  1 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_notNull'::text function_tested,          135 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,          136 maj_num,  1 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested, 137 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,              138 maj_num,  6 nb_test UNION ALL
-  SELECT 'TT_pe_pei02_countOfNotNull'::text function_tested,               139 maj_num,  9 nb_test UNION ALL
-   SELECT 'TT_mb_fri03_getSpeciesPer1'::text function_tested,               140 maj_num,  5 nb_test UNION ALL
-   SELECT 'TT_mb_fri03_species_validation'::text function_tested,           141 maj_num,  9 nb_test UNION ALL
-   SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,            142 maj_num,  4 nb_test UNION ALL
-   SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
-   SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested, 144 maj_num,  4 nb_test UNION ALL
-   SELECT 'TT_pe_pei01_dist_type_length_validation'::text function_tested,  145 maj_num,  4 nb_test UNION ALL
-   SELECT 'TT_pe_pei01_has_nfl_info'::text function_tested,                 146 maj_num,  4 nb_test UNION ALL
-   SELECT 'TT_yvi03_hascountofnotnull'::text function_tested,               147 maj_num,  4 nb_test UNION ALL
-   SELECT 'TT_yvi03_countofnotnull'::text function_tested,                  148 maj_num,  4 nb_test UNION ALL
-   SELECT 'TT_nb_stand_structure_translation'::text function_tested,        149 maj_num,  4 nb_test
+  SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num, 13 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,  1 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,83 maj_num, 3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,     84 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_qc_prg3_wetland_translation'::text function_tested,           86 maj_num, 15 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_wetland_translation'::text function_tested,           87 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,           88 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                  91 maj_num,  4 nb_test UNION ALL
+	SELECT 'TT_lyr_layer_translation'::text function_tested,                 92 maj_num, 15 nb_test UNION ALL
+	SELECT 'TT_bc_lyr_layer_translation'::text function_tested,              93 maj_num,  6 nb_test UNION ALL
+	SELECT 'TT_ab_avi01_wetland_translation'::text function_tested,          94 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_ab_avi01_wetland_validation'::text function_tested,           95 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_nl_nli01_wetland_translation'::text function_tested,          96 maj_num,  4 nb_test UNION ALL
+	SELECT 'TT_nl_nli01_wetland_validation'::text function_tested,           97 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_bc_vri01_wetland_translation'::text function_tested,          98 maj_num,  7 nb_test UNION ALL
+	SELECT 'TT_bc_vri01_wetland_validation'::text function_tested,           99 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_ns_nsi01_wetland_translation'::text function_tested,         100 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_ns_nsi01_wetland_validation'::text function_tested,          101 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_pe_pei01_wetland_translation'::text function_tested,         102 maj_num,  4 nb_test UNION ALL
+	SELECT 'TT_pe_pei01_wetland_validation'::text function_tested,          103 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_nt_fvi01_wetland_translation'::text function_tested,         104 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_nt_fvi01_wetland_validation'::text function_tested,          105 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_pc01_species_per_translation'::text function_tested,         106 maj_num,  7 nb_test UNION ALL
+	SELECT 'TT_sk_utm01_wetland_translation'::text function_tested,         107 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_sk_utm01_wetland_validation'::text function_tested,          108 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_ab_photo_year_validation'::text function_tested,             109 maj_num,  6 nb_test UNION ALL
+	SELECT 'TT_ab_photo_year_translation'::text function_tested,            110 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_sk_sfv01_wetland_translation'::text function_tested,         111 maj_num,  7 nb_test UNION ALL
+	SELECT 'TT_sk_sfv01_wetland_validation'::text function_tested,          112 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_mb_fli01_wetland_translation'::text function_tested,         113 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_mb_fli01_wetland_validation'::text function_tested,          114 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_mb_fri01_wetland_translation'::text function_tested,         115 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,          116 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_pc02_wetland_translation'::text function_tested,             117 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_pc02_wetland_validation'::text function_tested,              118 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_pc02_countOfNotNull'::text function_tested,                  119 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,               120 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_yt_wetland_translation'::text function_tested,               121 maj_num,  4 nb_test UNION ALL
+	SELECT 'TT_yt_wetland_validation'::text function_tested,                122 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_nb_lyr_layer_translation'::text function_tested,             123 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_nb_countofnotnull'::text function_tested,                    124 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_nb_hascountofnotnull'::text function_tested,                 125 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_ns_lyr_layer_translation'::text function_tested,             126 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_on_lyr_layer_translation'::text function_tested,             127 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,        128 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_qc_prg3_src_inv_area_translation'::text function_tested,     130 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_stand_structure_translation'::text function_tested, 131 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_copyText'::text function_tested,        132 maj_num,  5 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_mapText'::text function_tested,         133 maj_num,  1 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_matchList'::text function_tested,       134 maj_num,  1 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_notNull'::text function_tested,         135 maj_num,  2 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,         136 maj_num,  1 nb_test UNION ALL
+	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,137 maj_num,  4 nb_test UNION ALL
+	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,             138 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_dist_type_length_validation'::text function_tested, 139 maj_num,  4 nb_test
+  SELECT 'TT_mb_fri03_getSpeciesPer1'::text function_tested,               140 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_mb_fri03_species_validation'::text function_tested,           141 maj_num,  9 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,            142 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested, 144 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_has_nfl_info'::text function_tested,                 145 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi03_hascountofnotnull'::text function_tested,               146 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi03_countofnotnull'::text function_tested,                  147 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nb_stand_structure_translation'::text function_tested,        148 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -1376,103 +1375,103 @@ UNION ALL
 SELECT '35.1'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 5, all 3 nfl layers present'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '5') = 5 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '5') = 5 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.2'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 4, 2 nfl layer present'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', '', '5') = 4 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', '', '5') = 4 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.3'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, 1 nfl layer'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', '', '', 'OR', '', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', '', '', 'OR', '', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.4'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, non_for_veg 4'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', '', 'ST', '', '', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', '', 'ST', '', '', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.5'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'non_for_veg fail'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', '', '5') = 2 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', '', '5') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.6'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 1'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', 'MU', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', 'MU', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.7'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 2'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'LL', 'XX', 'XX', 'XX', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'LL', 'XX', 'XX', 'XX', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.8'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 3'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'I', 'XX', 'SI', 'XX', 'XX', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'I', 'XX', 'SI', 'XX', 'XX', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.9'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 4'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', 'LL', 'XX', 'ICE', '', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', 'LL', 'XX', 'ICE', '', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.10'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, nat_non_veg 5'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', NULL::text, 'RO', NULL::text, NULL::text, '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', NULL::text, 'RO', NULL::text, NULL::text, '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.11'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'nat_non_veg fail'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'XX', 'XX', 'XX', 'XX', '5') = 2 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'XX', 'XX', 'XX', 'XX', '5') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.12'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, non_for_anth 1'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', 'AP', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', '', '', '', 'AP', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.13'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, non_for_anth 2'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'AP', 'XX', 'XX', 'XX', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'AP', 'XX', 'XX', 'XX', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.14'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 3, non_for_anth 3'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'F', 'XX', 'XX', 'C', 'XX', '5') = 3 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'F', 'XX', 'XX', 'C', 'XX', '5') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.15'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 1'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '5') = 1 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '5') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.16'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Count of 0'::text description,
-       TT_vri01_countOfNotNull('{'''',''''}', '{'''',''''}', '', '', '', '', '', '5') = 0 passed
+       TT_vri01_countOfNotNull(NULL, '{'''',''''}', '{'''',''''}', '', '', '', '', '', '5') = 0 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '35.17'::text number,
        'TT_vri01_countOfNotNull'::text function_tested,
        'Test BC08 option'::text description,
-       TT_vri01_countOfNotNull('{''val'',''val''}', '{'''',''''}', 'V', '', '', '', 'AP', '5') = 2 passed
+       TT_vri01_countOfNotNull(NULL, '{''val'',''val''}', '{'''',''''}', 'V', '', '', '', 'AP', '5') = 2 passed
 ---------------------------------------------------------
  -- TT_sk_utm01_species_percent_validation
 ---------------------------------------------------------
@@ -1772,55 +1771,55 @@ UNION ALL
 SELECT '43.1'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test spec1'::text description,
-       TT_pe_pei01_countOfNotNull('BS', '', '', '', '', '', '2') = 1 passed
+       TT_pe_pei01_countOfNotNull('BS', '', '', '', '', '', '', '', '2') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.2'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test spec2'::text description,
-       TT_pe_pei01_countOfNotNull('', 'BS', '', '', '', '', '2') = 1 passed
+       TT_pe_pei01_countOfNotNull('', 'BS', '', '', '', '', '', '', '2') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.3'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test spec3'::text description,
-       TT_pe_pei01_countOfNotNull('', '', 'BS', '', '', '', '2') = 1 passed
+       TT_pe_pei01_countOfNotNull('', '', 'BS', '', '', '', '', '', '2') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.4'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test spec4'::text description,
-       TT_pe_pei01_countOfNotNull('', '', '', 'BS', '', '', '2') = 1 passed
+       TT_pe_pei01_countOfNotNull('', '', '', 'BS', '', '', '', '', '2') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.5'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test spec5'::text description,
-       TT_pe_pei01_countOfNotNull('', '', '', '', 'BS', '', '2') = 1 passed
+       TT_pe_pei01_countOfNotNull('', '', '', '', 'BS', '', '', '', '2') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.6'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test spec1 and nfl'::text description,
-       TT_pe_pei01_countOfNotNull('BS', '', '', '', '', 'SO', '2') = 2 passed
+       TT_pe_pei01_countOfNotNull('BS', '', '', '', '', 'SO', '', '', '2') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.7'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test nfl only'::text description,
-       TT_pe_pei01_countOfNotNull('', '', '', '', '', 'SO', '2') = 1 passed
+       TT_pe_pei01_countOfNotNull('', '', '', '', '', 'SO', '', '', '2') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.8'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test 0 layers'::text description,
-       TT_pe_pei01_countOfNotNull('', '', '', '', '', '', '2') = 0 passed
+       TT_pe_pei01_countOfNotNull('', '', '', '', '', '', '', '', '2') = 0 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '43.9'::text number,
        'TT_pe_pei01_countOfNotNull'::text function_tested,
        'Test all spec and nfl'::text description,
-       TT_pe_pei01_countOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '2') = 2 passed
+       TT_pe_pei01_countOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '', '', '2') = 2 passed
 ---------------------------------------------------------
  -- TT_vri01_hasCountOfNotNull
 ---------------------------------------------------------
@@ -1828,37 +1827,37 @@ UNION ALL
 SELECT '44.1'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Test exact'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '5', 'TRUE') passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '5', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.2'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Test exact'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '4', 'TRUE') IS FALSE passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '4', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.3'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Test exact false'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '4', 'FALSE') passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{''val'',''val''}', 'V', 'BL', 'EL', '', 'AP', '4', 'FALSE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.4'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Count of 1'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '1', 'FALSE') passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '1', 'FALSE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.5'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Count of 0'::text description,
-       TT_vri01_hasCountOfNotNull('{'''',''''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '1', 'FALSE') IS FALSE passed
+       TT_vri01_hasCountOfNotNull(NULL, '{'''',''''}', '{'''',''''}', '', 'XX', 'XX', 'C', 'XX', '1', 'FALSE') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '44.6'::text number,
        'TT_vri01_hasCountOfNotNull'::text function_tested,
        'Test BC08 option'::text description,
-       TT_vri01_hasCountOfNotNull('{''val'',''val''}', '{'''',''''}', 'V', '', '', '', 'AP', '1', 'FALSE') passed
+       TT_vri01_hasCountOfNotNull(NULL, '{''val'',''val''}', '{'''',''''}', 'V', '', '', '', 'AP', '1', 'FALSE') passed
 ---------------------------------------------------------
  -- TT_ns_nsi01_hasCountOfNotNull
 ---------------------------------------------------------
@@ -2000,19 +1999,19 @@ UNION ALL
 SELECT '49.1'::text number,
        'TT_pe_pei01_hasCountOfNotNull'::text function_tested,
        'Test spec and nfl'::text description,
-       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '2', 'TRUE')  passed
+       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '', '', '2', 'TRUE')  passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '49.2'::text number,
        'TT_pe_pei01_hasCountOfNotNull'::text function_tested,
        'Test exact FALSE'::text description,
-       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '1', 'FALSE')  passed
+       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '', '', '1', 'FALSE')  passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '49.3'::text number,
        'TT_pe_pei01_hasCountOfNotNull'::text function_tested,
        'Test exact TRUE fail'::text description,
-       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '1', 'TRUE') IS FALSE passed
+       TT_pe_pei01_hasCountOfNotNull('BS', 'BS', 'BS', 'BS', 'BS', 'SO', '', '', '1', 'TRUE') IS FALSE passed
 ---------------------------------------------------------
  -- TT_sfv01_hasCountOfNotNull  
 ---------------------------------------------------------
@@ -3065,61 +3064,61 @@ SELECT '78.13'::text number,
 ---------------------------------------------------------
   -- TT_nl_nli01_origin_upper_translation
 ---------------------------------------------------------
---UNION ALL
---SELECT '79.1'::text number,
---       'TT_nl_nli01_origin_upper_translation'::text function_tested,
---       'Test age class 1 Newfoundland'::text description,
---       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1995 passed
------------------------------------------------------------
---UNION ALL
---SELECT '79.2'::text number,
---       'TT_nl_nli01_origin_upper_translation'::text function_tested,
---       'Test age class 2 Newfoundland'::text description,
---       TT_nl_nli01_origin_upper_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1974 passed
------------------------------------------------------------
---UNION ALL
---SELECT '79.3'::text number,
---       'TT_nl_nli01_origin_upper_translation'::text function_tested,
---       'Test age class 9 Labrador'::text description,
---       TT_nl_nli01_origin_upper_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1834 passed
------------------------------------------------------------
---UNION ALL
---SELECT '79.4'::text number,
---       'TT_nl_nli01_origin_upper_translation'::text function_tested,
---       'Test age class 9 Newfoundland, null'::text description,
---       TT_nl_nli01_origin_upper_translation('9', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
------------------------------------------------------------
---  -- TT_nl_nli01_origin_lower_translation
------------------------------------------------------------
---UNION ALL
---SELECT '80.1'::text number,
---       'TT_nl_nli01_origin_lower_translation'::text function_tested,
---       'Test age class 1 Newfoundland'::text description,
---       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1975 passed
------------------------------------------------------------
---UNION ALL
---SELECT '80.2'::text number,
---       'TT_nl_nli01_origin_lower_translation'::text function_tested,
---       'Test age class 2 Newfoundland'::text description,
---       TT_nl_nli01_origin_lower_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1955 passed
------------------------------------------------------------
---UNION ALL
---SELECT '80.3'::text number,
---       'TT_nl_nli01_origin_lower_translation'::text function_tested,
---       'Test age class 9 Labrador'::text description,
---       TT_nl_nli01_origin_lower_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
------------------------------------------------------------
---UNION ALL
---SELECT '80.4'::text number,
---       'TT_nl_nli01_origin_lower_translation'::text function_tested,
---       'Test age class 8 Labrador, null'::text description,
---       TT_nl_nli01_origin_lower_translation('8', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) = 1835 passed
------------------------------------------------------------
---UNION ALL
---SELECT '80.5'::text number,
---       'TT_nl_nli01_origin_lower_translation'::text function_tested,
---       'Test age class 8 Newfoundland, null'::text description,
---       TT_nl_nli01_origin_lower_translation('8', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 900914)))::text) IS NULL passed
+UNION ALL
+SELECT '79.1'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 1 Newfoundland'::text description,
+       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1995 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.2'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 2 Newfoundland'::text description,
+       TT_nl_nli01_origin_upper_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1974 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.3'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 9 Labrador'::text description,
+       TT_nl_nli01_origin_upper_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1834 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.4'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'Test age class 9 Newfoundland, null'::text description,
+       TT_nl_nli01_origin_upper_translation('9', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
+---------------------------------------------------------
+  -- TT_nl_nli01_origin_lower_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '80.1'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 1 Newfoundland'::text description,
+       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1975 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.2'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 2 Newfoundland'::text description,
+       TT_nl_nli01_origin_lower_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1955 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.3'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 9 Labrador'::text description,
+       TT_nl_nli01_origin_lower_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.4'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 8 Labrador, null'::text description,
+       TT_nl_nli01_origin_lower_translation('8', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1835 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.5'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'Test age class 8 Newfoundland, null'::text description,
+       TT_nl_nli01_origin_lower_translation('8', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
 ---------------------------------------------------------
   -- tt_nl_nli01_origin_lower_validation
 ---------------------------------------------------------
@@ -3964,37 +3963,37 @@ UNION ALL
 SELECT '109.1'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - no overlap'::text description,
-       TT_ab_photo_year_validation('AB06'::text , ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'translation'::text , 'photo_test2'::text , 'the_geom'::text , NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.2'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - one overlap'::text description,
-       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'translation', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.3'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - three overlap'::text description,
-       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'translation', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.4'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test post AB25 inventories - null'::text description,
-       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'translation', 'photo_test2', 'the_geom', NULL::text, '1900', '2020', '2005') IS FALSE passed
+       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, '1900', '2020', '0') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.5'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test post AB25 inventories - passes'::text description,
-       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'translation', 'photo_test2', 'the_geom', '2000', '1900', '2020','2005') passed
+       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', '2000', '1900', '2020', NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.6'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test post AB25 inventories - not between'::text description,
-       TT_ab_photo_year_validation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, '2021', '1900', '2020','2005') IS FALSE passed
+       TT_ab_photo_year_validation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, '2021', '1900', '2020', NULL::text) IS FALSE passed
 ---------------------------------------------------------
  -- TT_ab_photo_year_translation
 ---------------------------------------------------------
@@ -4002,31 +4001,31 @@ UNION ALL
 SELECT '110.1'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - no overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'translation', 'photo_test2', 'the_geom', 'YEAR', NULL::text, '2005') IS NULL passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.2'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'translation', 'photo_test2', 'the_geom', 'YEAR', NULL::text, '2005') = 1990 passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) = 1990 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.3'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - multiple overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'translation', 'photo_test2', 'the_geom', 'YEAR', NULL::text, '2005') = 2000 passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) = 2000 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.4'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test post AB25 inventories'::text description,
-       TT_ab_photo_year_translation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'translation', 'photo_test2', 'the_geom', 'YEAR', '2001','2005') = 2001 passed
+       TT_ab_photo_year_translation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', '2001', NULL::text) = 2001 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.5'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test post AB25 inventories check nulls'::text description,
-       TT_ab_photo_year_translation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '2001', '2001') = 2001 passed
+       TT_ab_photo_year_translation('AB26', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '2001', NULL::text) = 2001 passed
 ---------------------------------------------------------
  -- TT_sk_sfv01_wetland_translation
 ---------------------------------------------------------
@@ -4640,61 +4639,31 @@ SELECT '138.6'::text number,
        'Test layer 2 null mintypeclas and species'::text description,
        TT_nt_lyr_layer_translation(NULL::text, NULL::text, 'TC', NULL::text, '{''10'',''5''}', '{''A''}', '{''B''}', '2') = 2 passed
 ---------------------------------------------------------
--- TT_pe_pei02_countOfNotNull
+ -- TT_pe_pei_dist_type_length_validation
 ---------------------------------------------------------
 UNION ALL
 SELECT '139.1'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test spec1'::text description,
-       TT_pe_pei02_countOfNotNull('BS', '', '', '', '', '', 'NULL','2') = 1 passed
+       'TT_pe_pei01_dist_type_length_validation'::text function_tested,
+       'Test substring start = 1'::text description,
+       TT_pe_pei01_dist_type_length_validation('AB', 'CD', '1') = TRUE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '139.2'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test spec2'::text description,
-       TT_pe_pei02_countOfNotNull('', 'BS', '', '', '', '', 'NULL','2') = 1 passed
+       'TT_pe_pei01_dist_type_length_validation'::text function_tested,
+       'Test substring start != 1 and length != 4'::text description,
+       TT_pe_pei01_dist_type_length_validation('AB', 'CD', '3') = FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '139.3'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test spec3'::text description,
-       TT_pe_pei02_countOfNotNull('', '', 'BS', '', '', '', 'NULL', '2') = 1 passed
+       'TT_pe_pei01_dist_type_length_validation'::text function_tested,
+       'Test coalesced and length 4'::text description,
+       TT_pe_pei01_dist_type_length_validation(NULL, 'ABCD', '2') = TRUE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '139.4'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test spec4'::text description,
-       TT_pe_pei02_countOfNotNull('', '', '', 'BS', '', '', 'NULL', '2') = 1 passed
----------------------------------------------------------
-UNION ALL
-SELECT '139.5'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test spec5'::text description,
-       TT_pe_pei02_countOfNotNull('', '', '', '', 'BS', '', 'NULL', '2') = 1 passed
----------------------------------------------------------
-UNION ALL
-SELECT '139.6'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test spec1 and nfl'::text description,
-       TT_pe_pei02_countOfNotNull('BS', '', '', '', '', 'FM', 'NULL', '2') = 2 passed
----------------------------------------------------------
-UNION ALL
-SELECT '139.7'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test nfl only'::text description,
-       TT_pe_pei02_countOfNotNull('', '', '', '', '', 'FM', 'NULL', '2') = 1 passed
----------------------------------------------------------
-UNION ALL
-SELECT '139.8'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test 0 layers'::text description,
-       TT_pe_pei02_countOfNotNull('', '', '', '', '', '', 'NULL', '2') = 0 passed
----------------------------------------------------------
-UNION ALL
-SELECT '139.9'::text number,
-       'TT_pe_pei02_countOfNotNull'::text function_tested,
-       'Test all spec and nfl'::text description,
-       TT_pe_pei02_countOfNotNull('BS', 'AS', 'MA', 'BF', 'WE', 'SO', 'NULL', '2') = 2 passed
+       'TT_pe_pei01_dist_type_length_validation'::text function_tested,
+       'Test greater than length 4'::text description,
+       TT_pe_pei01_dist_type_length_validation('ABCDE', 'ABCD', '4') = FALSE passed
 ---------------------------------------------------------
 -- TT_mb_fri03_getSpeciesPer1
 ---------------------------------------------------------
@@ -4836,29 +4805,31 @@ SELECT '143.4'::text number,
        'Test 2 not null'::text description,
        TT_mb_fli01_countOfNotNull('{SP1}', '{SP2}', '{NULL}', '{NULL}', '{NULL}', 'NULL', 3::TEXT) = 2 passed
 ---------------------------------------------------------
+ -- TT_nt_fvi01_species_per_range_validation
+---------------------------------------------------------
 UNION ALL
 SELECT '144.1'::text number,
-       'TT_pe_pei01_dist_type_length_validation'::text function_tested,
-       'Test substring start = 1'::text description,
-       TT_pe_pei01_dist_type_length_validation('AB', 'CD', '1') = TRUE passed
+       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
+       'Test valid small range'::text description,
+       TT_nt_fvi01_species_per_range_validation('NT03', '2') = TRUE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '144.2'::text number,
-       'TT_pe_pei01_dist_type_length_validation'::text function_tested,
-       'Test substring start != 1 and length != 4'::text description,
-       TT_pe_pei01_dist_type_length_validation('AB', 'CD', '3') = FALSE passed
+       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
+       'Test valid large range'::text description,
+       TT_nt_fvi01_species_per_range_validation('NT04', '60') = TRUE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '144.3'::text number,
-       'TT_pe_pei01_dist_type_length_validation'::text function_tested,
-       'Test coalesced and length 4'::text description,
-       TT_pe_pei01_dist_type_length_validation(NULL, 'ABCD', '2') = TRUE passed
+       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
+       'Test invalid small range'::text description,
+       TT_nt_fvi01_species_per_range_validation('NT03', '12') = FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '144.4'::text number,
-       'TT_pe_pei01_dist_type_length_validation'::text function_tested,
-       'Test greater than length 4'::text description,
-       TT_pe_pei01_dist_type_length_validation('ABCDE', 'ABCD', '4') = FALSE passed
+       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
+       'Test invalid large range'::text description,
+       TT_nt_fvi01_species_per_range_validation('NT04', '105') = FALSE passed
 ---------------------------------------------------------
  -- TT_pe_pei01_has_nfl_info
 ---------------------------------------------------------
@@ -4937,55 +4908,30 @@ SELECT '147.4'::text number,
        'TT_yvi03_countofnotnull'::text function_tested,
        'Test null species and null NFL'::text description,
        TT_yvi03_countofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT) = 0 passed
----------------------------------------------------------
- -- TT_nt_fvi01_species_per_range_validation
----------------------------------------------------------
-UNION ALL
-SELECT '148.1'::text number,
-       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
-       'Test valid small range'::text description,
-       TT_nt_fvi01_species_per_range_validation('NT03', '2') = TRUE passed
----------------------------------------------------------
-UNION ALL
-SELECT '148.2'::text number,
-       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
-       'Test valid large range'::text description,
-       TT_nt_fvi01_species_per_range_validation('NT04', '60') = TRUE passed
----------------------------------------------------------
-UNION ALL
-SELECT '148.3'::text number,
-       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
-       'Test invalid small range'::text description,
-       TT_nt_fvi01_species_per_range_validation('NT03', '12') = FALSE passed
----------------------------------------------------------
-UNION ALL
-SELECT '148.4'::text number,
-       'TT_nt_fvi01_species_per_range_validation'::text function_tested,
-       'Test invalid large range'::text description,
-       TT_nt_fvi01_species_per_range_validation('NT04', '105') = FALSE passed
+
 ---------------------------------------------------------
  -- TT_nb_stand_structure_translation
 ---------------------------------------------------------
 UNION ALL
-SELECT '149.1'::text number,
+SELECT '148.1'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test single species layer'::text description,
        TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['']::TEXT, 'NOT_LYR') = 'SINGLE_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '149.2'::text number,
+SELECT '148.2'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test two species layers'::text description,
        TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['SP']::TEXT, 'NOT_LYR') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '149.3'::text number,
+SELECT '148.3'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test second layer only'::text description,
        TT_nb_stand_structure_translation(ARRAY['']::TEXT, ARRAY['SP']::TEXT, 'FW') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '149.4'::text number,
+SELECT '148.4'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test null species and null NFL'::text description,
        TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['SP']::TEXT, 'FW') = 'MULTI_LAYERED' passed

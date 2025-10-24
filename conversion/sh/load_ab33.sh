@@ -48,11 +48,14 @@ alpacTableName=$targetFRISchema.ab_alpac_photoYear
 # Fix it
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS ${targetFRISchema}.new_alpac_photoyear;
+DROP TABLE IF EXISTS ${targetFRISchema}.new_alpac_photoyear CASCADE;
+
 CREATE TABLE ${targetFRISchema}.new_alpac_photoyear AS
 SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, avi_year::int, ogc_fid
 FROM ${alpacTableName};
-DROP TABLE IF EXISTS ${alpacTableName};
+
+DROP TABLE IF EXISTS ${alpacTableName} CASCADE;
+
 ALTER TABLE ${targetFRISchema}.new_alpac_photoyear RENAME TO ab_alpac_photoyear;
 "
 createSQLSpatialIndex=True  

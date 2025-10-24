@@ -32,11 +32,14 @@ fullTargetTableName=$targetFRISchema.nl02_photoYear
 # Fix it
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS ${targetFRISchema}.new_nl02_photoyear;
+DROP TABLE IF EXISTS ${targetFRISchema}.new_nl02_photoyear CASCADE;
+
 CREATE TABLE ${targetFRISchema}.new_nl02_photoyear AS
-SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, photo_year AS year, ogc_fid
+SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, year, ogc_fid
 FROM ${fullTargetTableName};
-DROP TABLE IF EXISTS ${fullTargetTableName};
+
+DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
+
 ALTER TABLE ${targetFRISchema}.new_nl02_photoyear RENAME TO nl02_photoyear;
 "
 createSQLSpatialIndex=True

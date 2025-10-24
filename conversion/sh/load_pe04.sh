@@ -1,9 +1,11 @@
+#!/bin/bash -x
+
 source ./common.sh
 
 inventoryID=PE04
 
 
-srcFileName=CorporateLandUseInventory2020
+srcFileName=Corporate_Land_Use_Inventory_2020
 srcName="$srcFileName"
 srcFullPath="$friDir/PE/$inventoryID/data/inventory/$srcFileName.shp"
 peSubFolder="$friDir/PE/$inventoryID/data/inventory/"

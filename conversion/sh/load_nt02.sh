@@ -87,7 +87,7 @@ ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS invproj_id;
 ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS seam_id;
 ALTER TABLE $geometryTableName DROP COLUMN IF EXISTS ogc_fid;
 
-DROP TABLE IF EXISTS ${fullTargetTableName}_geom_merged; 
+DROP TABLE IF EXISTS ${fullTargetTableName}_geom_merged CASCADE; 
 CREATE TABLE ${fullTargetTableName}_geom_merged AS
 WITH dup AS (
   SELECT fc_id::int
@@ -116,20 +116,23 @@ FROM $geometryTableName
 GROUP BY fc_id::int
 HAVING count(*) = 1;
 
-DROP TABLE IF EXISTS ${fullTargetTableName}_unique_att;
+DROP TABLE IF EXISTS ${fullTargetTableName}_unique_att CASCADE;
+
 CREATE TABLE ${fullTargetTableName}_unique_att AS
 SELECT DISTINCT ON (fc_id) *
 FROM $attributeTableName;
 
 CREATE INDEX ON ${fullTargetTableName}_unique_att (fc_id);
 
-DROP TABLE IF EXISTS ${fullTargetTableName}_geom_att;
+DROP TABLE IF EXISTS ${fullTargetTableName}_geom_att CASCADE;
+
 CREATE TABLE ${fullTargetTableName}_geom_att AS
 SELECT a.fc_id afc_id, a.invproj_id ainvproj_id, a.wkb_geometry, a.areaha, a.inventory_id, a.src_filename, b.*
 FROM ${fullTargetTableName}_geom_merged a 
 LEFT OUTER JOIN ${fullTargetTableName}_unique_att b USING (fc_id);
 
-DROP TABLE IF EXISTS $fullTargetTableName; 
+DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
+
 CREATE TABLE $fullTargetTableName AS
 SELECT *
 FROM ${fullTargetTableName}_geom_att a
@@ -145,12 +148,12 @@ ALTER TABLE IF EXISTS $fullTargetTableName RENAME COLUMN afc_id TO fc_id;
 ALTER TABLE IF EXISTS $fullTargetTableName DROP COLUMN IF EXISTS invproj_id;
 ALTER TABLE IF EXISTS $fullTargetTableName RENAME COLUMN ainvproj_id TO invproj_id;
 
-DROP TABLE IF EXISTS $photoyearTableName;
-DROP TABLE IF EXISTS $geometryTableName;
-DROP TABLE IF EXISTS $attributeTableName;
-DROP TABLE IF EXISTS ${fullTargetTableName}_geom_merged; 
-DROP TABLE IF EXISTS ${fullTargetTableName}_unique_att;
-DROP TABLE IF EXISTS ${fullTargetTableName}_geom_att;
+DROP TABLE IF EXISTS $photoyearTableName CASCADE;
+DROP TABLE IF EXISTS $geometryTableName CASCADE;
+DROP TABLE IF EXISTS $attributeTableName CASCADE;
+DROP TABLE IF EXISTS ${fullTargetTableName}_geom_merged CASCADE; 
+DROP TABLE IF EXISTS ${fullTargetTableName}_unique_att CASCADE;
+DROP TABLE IF EXISTS ${fullTargetTableName}_geom_att CASCADE;
 "
 
 createSQLSpatialIndex=True

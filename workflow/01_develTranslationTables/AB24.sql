@@ -136,7 +136,7 @@ SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id,
        b.height, a.height_upper, a.height_lower,
        b.spec1, a.species_1,
        b.spec1_per, a.species_per_1
-FROM TT_Translate_ab24_lyr_devel('rawfri', 'ab24_l2_to_ab_l1_map_200') a, rawfri.ab24_l2_to_ab_l1_map_200_lyr b
+FROM TT_Translate_ab24_lyr_devel('rawfri', 'ab24_l1_to_ab_l1_map_200') a, rawfri.ab24_l1_to_ab_l1_map_200 b
 WHERE ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------

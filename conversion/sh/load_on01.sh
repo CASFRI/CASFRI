@@ -35,10 +35,11 @@ overwrite_option="$overwrite_tab"
 # drop any temp tables from previous loads
 "$gdalFolder\ogrinfo" "$pg_connection_string" \
 -sql "
-DROP TABLE IF EXISTS $tempPoly;
-DROP TABLE IF EXISTS $tempForAtt;
-DROP TABLE IF EXISTS $tempNonForAtt;
+DROP TABLE IF EXISTS $tempPoly CASCADE;
+DROP TABLE IF EXISTS $tempForAtt CASCADE;
+DROP TABLE IF EXISTS $tempNonForAtt CASCADE;
 "
+export PGCLIENTENCODING=LATIN1
 
 # Load 130 first to establish the right format for the area field
 for F in 130 012 030 040 060 067 120 140 150 175 177 178 210 220 230 260 280 350 360 370 375 390 405 415 421 438 444 451 490 509 535 565 601 615 644 680 702 754 780 796 840 851 853 889 898 930 970 993
@@ -79,7 +80,7 @@ do
   layer_creation_options=""
 done
 
-
+unset PGCLIENTENCODING
 
 "$gdalFolder\ogrinfo" "$pg_connection_string" \
 -sql "
@@ -87,7 +88,8 @@ CREATE INDEX ON $tempForAtt USING btree(src_filename);
 CREATE INDEX ON $tempForAtt USING btree(recno);
 CREATE INDEX ON $tempNonForAtt USING btree(src_filename);
 CREATE INDEX ON $tempNonForAtt USING btree(recno);
-DROP TABLE IF EXISTS $fullTargetTableName;
+
+DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
 CREATE TABLE $fullTargetTableName AS
 WITH non_forested_distinct AS (
   SELECT DISTINCT ON (src_filename, recno) *
@@ -118,9 +120,10 @@ SELECT a.ogc_fid, a.area_meter, a.perimeter_, a.polyid, a.polytype, a.owner, a.a
 FROM (rawfri.on01_poly a
 LEFT JOIN $tempForAtt b ON (a.src_filename = b.src_filename AND a.recno::int = b.recno::int))
 LEFT JOIN non_forested_distinct c ON (a.src_filename = c.src_filename AND a.recno::int = c.recno::int);
-DROP TABLE IF EXISTS $tempPoly;
-DROP TABLE IF EXISTS $tempForAtt;
-DROP TABLE IF EXISTS $tempNonForAtt;
+
+DROP TABLE IF EXISTS $tempPoly CASCADE;
+DROP TABLE IF EXISTS $tempForAtt CASCADE;
+DROP TABLE IF EXISTS $tempNonForAtt CASCADE;
 "
 
 createSQLSpatialIndex=True

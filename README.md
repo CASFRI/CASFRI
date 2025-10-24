@@ -52,7 +52,7 @@ The current version is 5.3.1 and is available for download at https://github.com
 
 ./translation/tables                    Translation tables and associated loading scripts
 
-./translation/test                      Unit tests for CASFRI translations
+./translation/test                      Regression tests for CASFRI translations
 
 ./workflow/01_develTranslationTables    Translation scripts used for development and testing on sample versions of source tables
 
@@ -178,7 +178,7 @@ Validation is performed at multiple stages during and after translation:
 
 * **Validation of the translated CASFRI** - The [constraints](https://github.com/edwardsmarc/CASFRI/tree/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes) scripts adds a set of database constraints to the translated tables. These constraints ensure that the translated data conform to the CASFRI standard as outlined in the [CASFRI 5 specification document](https://github.com/edwardsmarc/CASFRI/tree/master/documentation/specifications).
 
-* **Horizontal review of translation tables** - The function TT_StackTranslationRules() creates a table of all translation and validation rules used for all inventories for a given CASFRI table. This allows manual validation of all translation rules and assignment of error codes for a given attribute.
+* **Horizontal review of translation tables** - The function TT_StackTranslationRules() creates a table of all translation and validation rules used for all inventories for a given CASFRI table. This allows visual validation of all translation rules and assignment of error codes for a given attribute.
 
 * **Validation of output using summary statistics** - The [summary_statistics](https://github.com/edwardsmarc/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to create summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be downloaded (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpected values, correct assignment of error codes etc.
 
@@ -270,7 +270,7 @@ The resulting table can then be joined, using the CAS_id attribute, with:
   b) one of the CASFRI normalized tables from the casfri50 schema (cas_all, dst_all, eco_all, lyr_all, nfl_all).
 
 # Parallelization
-Conversion, translation, production of the historical table and production of the inventory coverages are all very long processes when translating many inventories. In it's current state, with about 50 inventories supported, the final cas_all table gathers more than 66 million rows. If you add the other CASFRI tables (eco_all, dst_all, lyr_all, nfl_all and geo_all) that's more than 225 million rows translated. If you multiply this by the number of attributes composing each CASFRI table you get more than 3 billion values to translate. Even for a powerful database management system like PostgreSQL, that's a lot of information to process. 
+Conversion, translation, production of the historical table and production of the inventory coverages are all very long processes when translating many inventories. In it's current state, with about 50 inventories supported, the final cas_all table gathers more than 66 million rows. If you include the other CASFRI tables (eco_all, dst_all, lyr_all, nfl_all and geo_all) that's more than 225 million rows translated. If you multiply this by the number of attributes composing each CASFRI table you get more than 3 billion values to translate. Even for a powerful database management system like PostgreSQL, that's a lot of information to process. 
 
 Much effort have been deployed during the developement of CASFRI 5 to make this process as quick and efficient as possible. Moving from PostgreSQL 11 to PostgreSQL 13 and from PostGIS 2.5 to PostGIS 3.1 has been a good step in this regard. PostgreSQL provides much better support for PARALLEL SAFE functions and PostGIS 3.1 uses the new faster GEOS 3.9 geometry library.
 
@@ -282,7 +282,8 @@ Once the invListX variables have been defined, you can launch the different proc
 
 1. ./conversion/sh/**load_all.sh** loads all the source inventories listed in the invListX variables into the PostgreSQL schema defined by the targetFRISchema variable in the configuration script (config.sh).
 
-2. ./translation/test/**testTranslation.sh** runs translation tables on subsets of source inventories. The resulting tables are compared with archived tables for desired or undesired differences. This quick check is to make sure everything works as expected before launching the main, long translation process. This is also used to make sure nothing is broken while developping new features or fixing issues. The resulting tables are written to the casfri50_test schema.
+2. ./translation/test/**testTranslation.sh** runs translation tables on subsets of source inventories. The resulting tables are compared with archived tables for desired or undesired differences. This quick check is to make sure everything works as expected before launching the main, long translation process. This is also used to make sure nothing is broken while developping new features or fixing issues. The resulting tables are written to the casfri50_test schema. The whole translation test process is explained in the [CASFRI/translation
+/test/readme.md](https://github.com/CASFRI/CASFRI/blob/master/translation/test/readme.md) document.
 
 4. ./workflow/02_produceCASFRI/**01_translate_all_00.sh** prepares the database before launching the main translation process.
 

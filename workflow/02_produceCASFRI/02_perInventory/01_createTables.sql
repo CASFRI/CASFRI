@@ -122,5 +122,5 @@ DROP TABLE IF EXISTS casfri50.geo_all CASCADE;
 CREATE TABLE casfri50.geo_all
 (
     cas_id text,
-    geometry geometry(MultiPolygon,900914)
+    geometry geometry(MultiPolygon, 102001)
 );

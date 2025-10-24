@@ -239,8 +239,8 @@ t2.proj_height_class_cd_2 AS l2_proj_height_class_cd_2,
 t2.data_source_height_cd AS l2_data_source_height_cd
 FROM ${tableName_L1} t1
 LEFT OUTER JOIN ${tableName_L2} t2 USING (feature_id);
-DROP TABLE IF EXISTS ${tableName_L1};
-DROP TABLE IF EXISTS ${tableName_L2};
+DROP TABLE IF EXISTS ${tableName_L1} CASCADE;
+DROP TABLE IF EXISTS ${tableName_L2} CASCADE;
 "
 
 createSQLSpatialIndex=True

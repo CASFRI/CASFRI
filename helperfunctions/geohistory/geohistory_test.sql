@@ -145,7 +145,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --SELECT TT_HasPrecedence('1', '13', '1', '2', true, true); -- true
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_0_without_validity_new;
+DROP TABLE IF EXISTS casfri50_history_test.test_0_without_validity_new CASCADE;
 CREATE TABLE casfri50_history_test.test_0_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
@@ -158,7 +158,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_0_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_0_with_validity_new;
+DROP TABLE IF EXISTS casfri50_history_test.test_0_with_validity_new CASCADE;
 CREATE TABLE casfri50_history_test.test_0_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
@@ -305,7 +305,7 @@ ORDER BY test, idx;
 -- SELECT * FROM casfri50_history_test.test_2;
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_2_without_validity_new;
+DROP TABLE IF EXISTS casfri50_history_test.test_2_without_validity_new CASCADE;
 CREATE TABLE casfri50_history_test.test_2_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
@@ -318,7 +318,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_2_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_2_with_validity_new;
+DROP TABLE IF EXISTS casfri50_history_test.test_2_with_validity_new CASCADE
 CREATE TABLE casfri50_history_test.test_2_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
@@ -453,7 +453,7 @@ ORDER BY test, idx;
 -- SELECT * FROM casfri50_history_test.test_3;
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_3_without_validity_new;
+DROP TABLE IF EXISTS casfri50_history_test.test_3_without_validity_new CASCADE;
 CREATE TABLE casfri50_history_test.test_3_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
@@ -466,7 +466,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_3_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_3_with_validity_new;
+DROP TABLE IF EXISTS casfri50_history_test.test_3_with_validity_new CASCADE;
 CREATE TABLE casfri50_history_test.test_3_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
@@ -673,7 +673,7 @@ CREATE INDEX test_4_geom_idx
 -- SELECT * FROM casfri50_history_test.test_4;
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_4_without_validity_new;
+DROP TABLE IF EXISTS casfri50_history_test.test_4_without_validity_new CASCADE;
 CREATE TABLE casfri50_history_test.test_4_without_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry
@@ -686,7 +686,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_4_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_4_with_validity_new;
+DROP TABLE IF EXISTS casfri50_history_test.test_4_with_validity_new CASCADE;
 CREATE TABLE casfri50_history_test.test_4_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry

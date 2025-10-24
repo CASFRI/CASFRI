@@ -43,16 +43,17 @@ SELECT inventory_id, jurisdiction, owner_type, owner_name, standard_type, standa
        data_availability, redistribution, permission, license_agreement, 
        photo_year_start, photo_year_end, photo_year_src
 FROM translation.inventory_list_cas05
-WHERE inventory_id IN ('AB03', 'AB06', 'AB07', 'AB08', 'AB10', 'AB11', 'AB16', 'AB25', 'AB27','AB29', 'AB30', 
- 'AB31', 'AB32', 'AB33', 'BC08', 'BC10', 'BC11', 'BC12','BC13', 'BC14', 'BC16', 'BC18',
- 'MB01', 'MB02', 'MB03', 'MB04', 'MB05', 'MB06', 'MB07', 'MB10', 'MB11', 'MB12', 'MB13'
- 'NB01', 'NB02', 'NB03', 'NL01', 'NL02', 'NS01', 'NS02', 'NS03','NS04', 'NT01', 'NT03', 'NT04',
- 'ON01', 'ON02', 'PC01', 'PC02', 'PE01', 'PE02', 'PE03'
- 'QC01', 'QC02', 'QC03', 'QC04', 'QC05', 'QC06', 'QC07', 'QC08','QC09', 'QC10'
- 'SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06', 
- 'YT01', 'YT02', 'YT03', 'YT04');
+WHERE inventory_id IN ('AB03', 'AB06', 'AB07', 'AB08', 'AB10', 'AB11', 'AB16', 'AB21', 'AB24', 'AB25', 'AB27', 'AB29', 'AB30', 'AB31', 'AB32', 'AB34', 
+                       'BC04', 'BC08', 'BC10', 'BC11', 'BC12', 'BC13', 'BC13', 'BC14', 'BC15', 'BC16', 'BC17', 'BC18', 
+                       'MB01', 'MB02', 'MB03', 'MB04', 'MB05', 'MB06', 'MB07', 'MB08', 'MB10' , 'MB11', 'MB12', 'MB13',
+                       'NB01', 'NB02', 'NB03', 'NB04', 'NB05', 'NB06', 'NB07', 'NB08', 'NL01', 'NL02', 'NS01', 'NS02', 'NS03', 'NS04', 'NT01', 'NT03', 
+		       'NT03', 'ON01', 'ON02', 'PC01', 'PC02', 'PE01', 'PE02', 'PE03', 'PE04', 
+                       'QC01', 'QC02', 'QC03', 'QC04', 'QC05', 'QC06', 'QC07', 'QC08', 'QC09', 'QC10',
+                       'SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06', 'SK07',
+                       'YT01', 'YT02', 'YT03', 'YT04',
+                       'DS01', 'DS02', 'DS03', 'DS04', 'DS05');
 ------------------------
-SELECT count(*) FROM casfri50.hdr_all; -- 5
+SELECT count(*) FROM casfri50.hdr_all; -- 63
 
 -- Add primary key constraint
 ALTER TABLE casfri50.hdr_all ADD PRIMARY KEY (inventory_id);

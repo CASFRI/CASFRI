@@ -12,7 +12,7 @@
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 --                         Melina Houle <melina.houle@sbf.ulaval.ca>
 -------------------------------------------------------------------------------
--- cas_all counts 1m05
+-- cas_all counts 25m39
 ---------------------------------------------
 SELECT * FROM (
 (WITH expected AS (
@@ -23,14 +23,26 @@ SELECT * FROM (
   SELECT 'AB10' inv, 194696 cnt UNION ALL 
   SELECT 'AB11' inv, 118624 cnt UNION ALL 
   SELECT 'AB16' inv, 120476 cnt UNION ALL 
+  SELECT 'AB21' inv, 338501 cnt UNION ALL 
+  SELECT 'AB24' inv, 144881 cnt UNION ALL 
   SELECT 'AB25' inv, 527038 cnt UNION ALL 
+  SELECT 'AB27' inv, 32070 cnt UNION ALL 
   SELECT 'AB29' inv, 620944 cnt UNION ALL 
   SELECT 'AB30' inv, 4555 cnt UNION ALL 
+  SELECT 'AB31' inv, 802933 cnt UNION ALL 
+  SELECT 'AB32' inv, 834245 cnt UNION ALL 
+  SELECT 'AB34' inv, 3631 cnt UNION ALL 
+  SELECT 'BC04' inv, 4431314 cnt UNION ALL 
   SELECT 'BC08' inv, 4677411 cnt UNION ALL 
   SELECT 'BC10' inv, 5151772 cnt UNION ALL 
   SELECT 'BC11' inv, 5419596 cnt UNION ALL 
   SELECT 'BC12' inv, 4861240 cnt UNION ALL 
-  SELECT 'BC18' inv, 6533093 cnt UNION ALL 
+  SELECT 'BC13' inv, 3343257 cnt UNION ALL 
+  SELECT 'BC18' inv, 6533093 cnt UNION ALL
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 206849 cnt UNION ALL 
   SELECT 'MB01' inv, 134790 cnt UNION ALL 
   SELECT 'MB02' inv, 60370 cnt UNION ALL 
   SELECT 'MB04' inv, 27221 cnt UNION ALL 
@@ -39,18 +51,21 @@ SELECT * FROM (
   SELECT 'MB07' inv, 219682 cnt UNION ALL 
   SELECT 'NB01' inv, 927177 cnt UNION ALL 
   SELECT 'NB02' inv, 1123893 cnt UNION ALL 
-  SELECT 'NL01' inv, 1863664 cnt UNION ALL 
-  SELECT 'NL02' inv, 2612451 cnt UNION ALL 
+  SELECT 'NL01' inv, 1863664 cnt UNION ALL
+  SELECT 'NL02' inv, 2612451 cnt UNION ALL
   SELECT 'NS01' inv, 1127926 cnt UNION ALL 
   SELECT 'NS02' inv, 1090671 cnt UNION ALL 
   SELECT 'NS03' inv, 995886 cnt UNION ALL 
   SELECT 'NT01' inv, 281388 cnt UNION ALL 
-  SELECT 'NT03' inv, 320523 cnt UNION ALL 
+  SELECT 'NT03' inv, 320526 cnt UNION ALL 
   SELECT 'ON01' inv, 4106417 cnt UNION ALL
-  SELECT 'ON02' inv, 3629073 cnt UNION ALL -- GDAL 3.x loads one row more than GDAL 1.11.x
+  SELECT 'ON02' inv, 3629072 cnt UNION ALL
   SELECT 'PC01' inv, 8094 cnt UNION ALL 
   SELECT 'PC02' inv, 1053 cnt UNION ALL 
   SELECT 'PE01' inv, 107220 cnt UNION ALL 
+  SELECT 'PE02' inv, 174944 cnt UNION ALL 
+  SELECT 'PE03' inv, 188020 cnt UNION ALL 
+  SELECT 'PE04' inv, 175592 cnt UNION ALL 
   SELECT 'QC01' inv, 5563194 cnt UNION ALL 
   SELECT 'QC02' inv, 2876326 cnt UNION ALL 
   SELECT 'QC03' inv, 401188 cnt UNION ALL 
@@ -79,19 +94,21 @@ SELECT 'cas_all' AS cas_table,
        coalesce(cnt.nb, 0) counted,
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'cas_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -108,14 +125,26 @@ UNION ALL
   SELECT 'AB10' inv, 30757 cnt UNION ALL 
   SELECT 'AB11' inv, 16740 cnt UNION ALL 
   SELECT 'AB16' inv, 8873 cnt UNION ALL 
+  SELECT 'AB21' inv, 21837 cnt UNION ALL 
+  SELECT 'AB24' inv, 20233 cnt UNION ALL 
   SELECT 'AB25' inv, 24122 cnt UNION ALL 
+  SELECT 'AB27' inv, 5786 cnt UNION ALL 
   SELECT 'AB29' inv, 47445 cnt UNION ALL 
   SELECT 'AB30' inv, 4555 cnt UNION ALL 
+  SELECT 'AB31' inv, 71143 cnt UNION ALL 
+  SELECT 'AB32' inv, 128795 cnt UNION ALL 
+  SELECT 'AB34' inv, 3631 cnt UNION ALL 
+  SELECT 'BC04' inv, 1021697 cnt UNION ALL 
   SELECT 'BC08' inv, 1142604 cnt UNION ALL 
   SELECT 'BC10' inv, 1421223 cnt UNION ALL 
   SELECT 'BC11' inv, 1367466 cnt UNION ALL 
   SELECT 'BC12' inv, 1223952 cnt UNION ALL 
-  SELECT 'BC18' inv, 2736714 cnt UNION ALL 
+  SELECT 'BC13' inv, 0 cnt UNION ALL 
+  SELECT 'BC18' inv, 2736714 cnt UNION ALL  
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 80096 cnt UNION ALL 
   SELECT 'MB01' inv, 0 cnt UNION ALL 
   SELECT 'MB02' inv, 7828 cnt UNION ALL 
   SELECT 'MB04' inv, 11239 cnt UNION ALL 
@@ -125,16 +154,20 @@ UNION ALL
   SELECT 'NB01' inv, 252564 cnt UNION ALL 
   SELECT 'NB02' inv, 333114 cnt UNION ALL 
   SELECT 'NL01' inv, 122641 cnt UNION ALL 
+  SELECT 'NL02' inv, 30956 cnt UNION ALL 
   SELECT 'NS01' inv, 87348 cnt UNION ALL 
   SELECT 'NS02' inv, 84546 cnt UNION ALL 
   SELECT 'NS03' inv, 69446 cnt UNION ALL 
   SELECT 'NT01' inv, 77270 cnt UNION ALL 
   SELECT 'NT03' inv, 87975 cnt UNION ALL 
-  SELECT 'ON01' inv, 317060 cnt UNION ALL
+  SELECT 'ON01' inv, 317618 cnt UNION ALL
   SELECT 'ON02' inv, 152398 cnt UNION ALL 
   SELECT 'PC01' inv, 0 cnt UNION ALL 
   SELECT 'PC02' inv, 505 cnt UNION ALL 
   SELECT 'PE01' inv, 33266 cnt UNION ALL 
+  SELECT 'PE02' inv, 35741 cnt UNION ALL 
+  SELECT 'PE03' inv, 38161 cnt UNION ALL 
+  SELECT 'PE04' inv, 51493 cnt UNION ALL 
   SELECT 'QC01' inv, 2416820 cnt UNION ALL 
   SELECT 'QC02' inv, 1314826 cnt UNION ALL 
   SELECT 'QC03' inv, 81902 cnt UNION ALL 
@@ -163,19 +196,21 @@ SELECT 'dst_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'dst_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -191,24 +226,37 @@ UNION ALL
   SELECT 'AB08' inv, 1022 cnt UNION ALL 
   SELECT 'AB10' inv, 25183 cnt UNION ALL 
   SELECT 'AB11' inv, 7441 cnt UNION ALL 
-  SELECT 'AB16' inv, 5528 cnt UNION ALL 
+  SELECT 'AB16' inv, 5541 cnt UNION ALL 
+  SELECT 'AB21' inv, 41974 cnt UNION ALL 
+  SELECT 'AB24' inv, 11279 cnt UNION ALL 
   SELECT 'AB25' inv, 47372 cnt UNION ALL 
+  SELECT 'AB27' inv, 1943 cnt UNION ALL 
   SELECT 'AB29' inv, 53682 cnt UNION ALL 
   SELECT 'AB30' inv, 0 cnt UNION ALL 
+  SELECT 'AB31' inv, 71080 cnt UNION ALL 
+  SELECT 'AB32' inv, 76935 cnt UNION ALL 
+  SELECT 'AB34' inv, 0 cnt UNION ALL 
+  SELECT 'BC04' inv, 66610 cnt UNION ALL 
   SELECT 'BC08' inv, 66837 cnt UNION ALL 
   SELECT 'BC10' inv, 70989 cnt UNION ALL 
   SELECT 'BC11' inv, 73017 cnt UNION ALL 
   SELECT 'BC12' inv, 69225 cnt UNION ALL 
-  SELECT 'BC18' inv, 93979 cnt UNION ALL 
+  SELECT 'BC13' inv, 20889 cnt UNION ALL 
+  SELECT 'BC18' inv, 93979 cnt UNION ALL  
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 0 cnt UNION ALL 
   SELECT 'MB01' inv, 26176 cnt UNION ALL 
   SELECT 'MB02' inv, 15982 cnt UNION ALL 
   SELECT 'MB04' inv, 7725 cnt UNION ALL 
   SELECT 'MB05' inv, 171269 cnt UNION ALL 
-  SELECT 'MB06' inv, 0 cnt UNION ALL 
+  SELECT 'MB06' inv, 44300 cnt UNION ALL 
   SELECT 'MB07' inv, 81226 cnt UNION ALL 
   SELECT 'NB01' inv, 71998 cnt UNION ALL 
   SELECT 'NB02' inv, 104289 cnt UNION ALL 
-  SELECT 'NL01' inv, 238785 cnt UNION ALL 
+  SELECT 'NL01' inv, 238785 cnt UNION ALL
+  SELECT 'NL02' inv, 264026 cnt UNION ALL 
   SELECT 'NS01' inv, 100080 cnt UNION ALL 
   SELECT 'NS02' inv, 102171 cnt UNION ALL 
   SELECT 'NS03' inv, 122782 cnt UNION ALL 
@@ -219,6 +267,9 @@ UNION ALL
   SELECT 'PC01' inv, 1767 cnt UNION ALL 
   SELECT 'PC02' inv, 1947 cnt UNION ALL 
   SELECT 'PE01' inv, 1488 cnt UNION ALL 
+  SELECT 'PE02' inv, 8485 cnt UNION ALL 
+  SELECT 'PE03' inv, 7303 cnt UNION ALL 
+  SELECT 'PE04' inv, 9228 cnt UNION ALL 
   SELECT 'QC01' inv, 655416 cnt UNION ALL 
   SELECT 'QC02' inv, 402283 cnt UNION ALL 
   SELECT 'QC03' inv, 50600 cnt UNION ALL 
@@ -247,19 +298,21 @@ SELECT 'eco_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'eco_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -276,14 +329,26 @@ UNION ALL
   SELECT 'AB10' inv, 225160 cnt UNION ALL
   SELECT 'AB11' inv, 112854 cnt UNION ALL
   SELECT 'AB16' inv, 149674 cnt UNION ALL
+  SELECT 'AB21' inv, 400037 cnt UNION ALL
+  SELECT 'AB24' inv, 169137 cnt UNION ALL
   SELECT 'AB25' inv, 529256 cnt UNION ALL
+  SELECT 'AB27' inv, 36931 cnt UNION ALL
   SELECT 'AB29' inv, 651779 cnt UNION ALL
   SELECT 'AB30' inv, 0 cnt UNION ALL
+  SELECT 'AB31' inv, 820395 cnt UNION ALL
+  SELECT 'AB32' inv, 845020 cnt UNION ALL
+  SELECT 'AB34' inv, 0 cnt UNION ALL 
+  SELECT 'BC04' inv, 3828781 cnt UNION ALL
   SELECT 'BC08' inv, 4272025 cnt UNION ALL
-  SELECT 'BC10' inv, 4744673 cnt UNION ALL
+  SELECT 'BC10' inv, 4671602 cnt UNION ALL
   SELECT 'BC11' inv, 4994212 cnt UNION ALL
   SELECT 'BC12' inv, 4462520 cnt UNION ALL
+  SELECT 'BC13' inv, 2801258 cnt UNION ALL 
   SELECT 'BC18' inv, 6623609 cnt UNION ALL
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 0 cnt UNION ALL
   SELECT 'MB01' inv, 114862 cnt UNION ALL
   SELECT 'MB02' inv, 89445 cnt UNION ALL
   SELECT 'MB04' inv, 36931 cnt UNION ALL
@@ -293,16 +358,20 @@ UNION ALL
   SELECT 'NB01' inv, 933901 cnt UNION ALL
   SELECT 'NB02' inv, 1057299 cnt UNION ALL
   SELECT 'NL01' inv, 1189361 cnt UNION ALL
+  SELECT 'NL02' inv, 1421015 cnt UNION ALL
   SELECT 'NS01' inv, 1061739 cnt UNION ALL
   SELECT 'NS02' inv, 1033945 cnt UNION ALL
   SELECT 'NS03' inv, 1015761 cnt UNION ALL
   SELECT 'NT01' inv, 245837 cnt UNION ALL
-  SELECT 'NT03' inv, 349959 cnt UNION ALL
-  SELECT 'ON01' inv, 2924927 cnt UNION ALL
-  SELECT 'ON02' inv, 2484504 cnt UNION ALL
+  SELECT 'NT03' inv, 349965 cnt UNION ALL
+  SELECT 'ON01' inv, 2944927 cnt UNION ALL
+  SELECT 'ON02' inv, 2484503 cnt UNION ALL
   SELECT 'PC01' inv, 7319 cnt UNION ALL
   SELECT 'PC02' inv, 1760 cnt UNION ALL
   SELECT 'PE01' inv, 81074 cnt UNION ALL
+  SELECT 'PE02' inv, 85366 cnt UNION ALL
+  SELECT 'PE03' inv, 99006 cnt UNION ALL
+  SELECT 'PE04' inv, 87092 cnt UNION ALL
   SELECT 'QC01' inv, 3727842 cnt UNION ALL
   SELECT 'QC02' inv, 1509880 cnt UNION ALL
   SELECT 'QC03' inv, 160597 cnt UNION ALL
@@ -331,19 +400,21 @@ SELECT 'lyr_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'lyr_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -360,14 +431,26 @@ UNION ALL
   SELECT 'AB10' inv, 60555 cnt UNION ALL 
   SELECT 'AB11' inv, 23805 cnt UNION ALL 
   SELECT 'AB16' inv, 26858 cnt UNION ALL 
+  SELECT 'AB21' inv, 87958 cnt UNION ALL 
+  SELECT 'AB24' inv, 40853 cnt UNION ALL 
   SELECT 'AB25' inv, 231921 cnt UNION ALL 
+  SELECT 'AB27' inv, 8069 cnt UNION ALL 
   SELECT 'AB29' inv, 260247 cnt UNION ALL 
   SELECT 'AB30' inv, 0 cnt UNION ALL 
-  SELECT 'BC08' inv, 1998885 cnt UNION ALL 
-  SELECT 'BC10' inv, 2276213 cnt UNION ALL 
-  SELECT 'BC11' inv, 2268314 cnt UNION ALL 
-  SELECT 'BC12' inv, 2124390 cnt UNION ALL 
-  SELECT 'BC18' inv, 2460612 cnt UNION ALL 
+  SELECT 'AB31' inv, 212112 cnt UNION ALL 
+  SELECT 'AB32' inv, 254399 cnt UNION ALL 
+  SELECT 'AB34' inv, 0 cnt UNION ALL 
+  SELECT 'BC04' inv, 1847902 cnt UNION ALL 
+  SELECT 'BC08' inv, 1972671 cnt UNION ALL 
+  SELECT 'BC10' inv, 2252481 cnt UNION ALL 
+  SELECT 'BC11' inv, 2251417 cnt UNION ALL 
+  SELECT 'BC12' inv, 2100786 cnt UNION ALL 
+  SELECT 'BC13' inv, 935559 cnt UNION ALL 
+  SELECT 'BC18' inv, 2460612 cnt UNION ALL
+  SELECT 'DS01' inv, 0 cnt UNION ALL 
+  SELECT 'DS02' inv, 0 cnt UNION ALL 
+  SELECT 'DS03' inv, 0 cnt UNION ALL 
+  SELECT 'DS04' inv, 126753 cnt UNION ALL 
   SELECT 'MB01' inv, 14008 cnt UNION ALL 
   SELECT 'MB02' inv, 4669 cnt UNION ALL 
   SELECT 'MB04' inv, 2572 cnt UNION ALL 
@@ -376,7 +459,8 @@ UNION ALL
   SELECT 'MB07' inv, 25088 cnt UNION ALL 
   SELECT 'NB01' inv, 87260 cnt UNION ALL 
   SELECT 'NB02' inv, 141700 cnt UNION ALL 
-  SELECT 'NL01' inv, 664096 cnt UNION ALL 
+  SELECT 'NL01' inv, 664096 cnt UNION ALL
+  SELECT 'NL02' inv, 487879 cnt UNION ALL 
   SELECT 'NS01' inv, 198342 cnt UNION ALL 
   SELECT 'NS02' inv, 196479 cnt UNION ALL 
   SELECT 'NS03' inv, 191505 cnt UNION ALL 
@@ -387,6 +471,9 @@ UNION ALL
   SELECT 'PC01' inv, 3593 cnt UNION ALL 
   SELECT 'PC02' inv, 1614 cnt UNION ALL 
   SELECT 'PE01' inv, 22223 cnt UNION ALL 
+  SELECT 'PE02' inv, 78282 cnt UNION ALL 
+  SELECT 'PE03' inv, 87373 cnt UNION ALL 
+  SELECT 'PE04' inv, 78653 cnt UNION ALL 
   SELECT 'QC01' inv, 1248591 cnt UNION ALL 
   SELECT 'QC02' inv, 713236 cnt UNION ALL 
   SELECT 'QC03' inv, 197876 cnt UNION ALL 
@@ -415,19 +502,21 @@ SELECT 'nfl_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
 UNION ALL
 SELECT 'nfl_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
@@ -444,14 +533,26 @@ UNION ALL
   SELECT 'AB10' inv, 194696 cnt UNION ALL 
   SELECT 'AB11' inv, 118624 cnt UNION ALL 
   SELECT 'AB16' inv, 120476 cnt UNION ALL 
+  SELECT 'AB21' inv, 338501 cnt UNION ALL 
+  SELECT 'AB24' inv, 144881 cnt UNION ALL 
   SELECT 'AB25' inv, 527038 cnt UNION ALL 
+  SELECT 'AB27' inv, 32070 cnt UNION ALL 
   SELECT 'AB29' inv, 620944 cnt UNION ALL 
   SELECT 'AB30' inv, 4555 cnt UNION ALL 
+  SELECT 'AB31' inv, 802933 cnt UNION ALL 
+  SELECT 'AB32' inv, 834245 cnt UNION ALL 
+  SELECT 'AB34' inv, 3631 cnt UNION ALL 
+  SELECT 'BC04' inv, 4431314 cnt UNION ALL 
   SELECT 'BC08' inv, 4677411 cnt UNION ALL 
   SELECT 'BC10' inv, 5151772 cnt UNION ALL 
   SELECT 'BC11' inv, 5419596 cnt UNION ALL 
   SELECT 'BC12' inv, 4861240 cnt UNION ALL 
-  SELECT 'BC18' inv, 6533093 cnt UNION ALL 
+  SELECT 'BC13' inv, 3343257 cnt UNION ALL 
+  SELECT 'BC18' inv, 6533093 cnt UNION ALL  
+  SELECT 'DS01' inv, 59539 cnt UNION ALL 
+  SELECT 'DS02' inv, 15358919 cnt UNION ALL 
+  SELECT 'DS03' inv, 27593270 cnt UNION ALL 
+  SELECT 'DS04' inv, 206849 cnt UNION ALL 
   SELECT 'MB01' inv, 134790 cnt UNION ALL 
   SELECT 'MB02' inv, 60370 cnt UNION ALL 
   SELECT 'MB04' inv, 27221 cnt UNION ALL 
@@ -460,17 +561,21 @@ UNION ALL
   SELECT 'MB07' inv, 219682 cnt UNION ALL 
   SELECT 'NB01' inv, 927177 cnt UNION ALL 
   SELECT 'NB02' inv, 1123893 cnt UNION ALL 
-  SELECT 'NL01' inv, 1863664 cnt UNION ALL 
+  SELECT 'NL01' inv, 1863664 cnt UNION ALL
+  SELECT 'NL02' inv, 2612451 cnt UNION ALL 
   SELECT 'NS01' inv, 1127926 cnt UNION ALL 
   SELECT 'NS02' inv, 1090671 cnt UNION ALL 
   SELECT 'NS03' inv, 995886 cnt UNION ALL 
   SELECT 'NT01' inv, 281388 cnt UNION ALL 
-  SELECT 'NT03' inv, 320523 cnt UNION ALL 
+  SELECT 'NT03' inv, 320526 cnt UNION ALL 
   SELECT 'ON01' inv, 4106417 cnt UNION ALL
-  SELECT 'ON02' inv, 3629073 cnt UNION ALL  -- GDAL 3.x loads one row more than GDAL 1.11.x
+  SELECT 'ON02' inv, 3629072 cnt UNION ALL
   SELECT 'PC01' inv, 8094 cnt UNION ALL 
   SELECT 'PC02' inv, 1053 cnt UNION ALL 
   SELECT 'PE01' inv, 107220 cnt UNION ALL 
+  SELECT 'PE02' inv, 174944 cnt UNION ALL 
+  SELECT 'PE03' inv, 188020 cnt UNION ALL 
+  SELECT 'PE04' inv, 175592 cnt UNION ALL 
   SELECT 'QC01' inv, 5563194 cnt UNION ALL 
   SELECT 'QC02' inv, 2876326 cnt UNION ALL 
   SELECT 'QC03' inv, 401188 cnt UNION ALL 
@@ -499,19 +604,22 @@ SELECT 'geo_all' AS cas_table,
        coalesce(cnt.nb, 0) counted, 
        coalesce(cnt.nb, 0) - exp.cnt diff,
        CASE WHEN exp.cnt != 0 AND coalesce(cnt.nb, 0) = 0 THEN 'NOT_TRANSLATED'
-            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'INCOMPLETE'
+            WHEN coalesce(cnt.nb, 0) < exp.cnt THEN 'LESS'
+            WHEN coalesce(cnt.nb, 0) > exp.cnt THEN 'MORE'
             ELSE 'OK'
        END status,
        NOT exp.cnt IS NULL AND exp.cnt = coalesce(cnt.nb, 0) passed 
 FROM expected exp NATURAL FULL JOIN counts cnt
+
 UNION ALL
 SELECT 'geo_all' AS cas_table, 
-       'TOTAL' inv,
+       '_TOTAL' inv,
        (SELECT sum(cnt) FROM expected) expected,
        (SELECT sum(nb) FROM counts) counted,
        (SELECT sum(nb) FROM counts) - (SELECT sum(cnt) FROM expected) diff,
        CASE WHEN (SELECT sum(nb) FROM counts) = 0 THEN 'NOT_TRANSLATED'
-            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'INCOMPLETE'
+            WHEN (SELECT sum(nb) FROM counts) < (SELECT sum(cnt) FROM expected) THEN 'LESS'
+            WHEN (SELECT sum(nb) FROM counts) > (SELECT sum(cnt) FROM expected) THEN 'MORE'
             ELSE 'OK'
        END status,
        ((SELECT sum(cnt) FROM expected) = (SELECT sum(nb) FROM counts)) passed
