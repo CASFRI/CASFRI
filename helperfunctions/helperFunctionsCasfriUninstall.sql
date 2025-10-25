@@ -70,8 +70,6 @@ DROP FUNCTION IF EXISTS TT_fim_species(text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_mapText(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_notNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_hasCountOfLayers(text, text, text, text);
-DROP FUNCTION IF EXISTS TT_yvi03_nat_non_veg_validation(text,text,text, text);
-DROP FUNCTION IF EXISTS TT_yvi03_nfl_soil_moisture_validation(text,text,text,text,text);
 DROP FUNCTION IF EXISTS TT_fim_species_count_validate(text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_dist_type_length_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_mb03_disturbance_hasCountOfNotNull(text, text);
@@ -170,10 +168,8 @@ DROP FUNCTION IF EXISTS TT_yt_yvi02_stand_structure_translation(text, text, text
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyText(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_copyInt(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_matchList(text, text, text, text, text, text);
-DROP FUNCTION IF EXISTS TT_yvi03_nat_non_veg_translation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_map_dist_year(text);
 DROP FUNCTION IF EXISTS TT_vri01_src_inv_area_translation(text, text);
-DROP FUNCTION IF EXISTS TT_yvi03_non_for_veg_translation(text, text);
 DROP FUNCTION IF EXISTS TT_nt_lyr_layer_translation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_mb03_map_disturbance(text, text, text);
 DROP FUNCTION IF EXISTS TT_nb_stand_structure_translation(text, text, text)

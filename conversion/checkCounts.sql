@@ -169,7 +169,8 @@ FROM test_series AS a FULL OUTER JOIN (
       ('13.7', 'SK', 'sk07', 1470758),
       ('14.1', 'YT', 'yt01', 249636),
       ('14.2', 'YT', 'yt02', 231137),
-      ('14.3', 'YT', 'yt03', 71073)
+      ('14.3', 'YT', 'yt03', 71073),
+      ('14.4', 'YT', 'yt04', 231137)
     ) AS t(number, juridiction, fri, ecnt)
    )
    SELECT number, juridiction, (TT_CountAndDiff(fri, ecnt)).*

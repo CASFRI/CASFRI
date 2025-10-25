@@ -225,6 +225,10 @@ SELECT TT_CreateMappingView('rawfri', 'yt03', 1, 'yt_yvi02', 1, 750, NULL, 'dst'
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_yt_02_dst_test('rawfri', 'yt03_l1_to_yt_yvi02_l1_map_750_dst');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'yt04', 1, 'yt', 1, 2500, NULL, 'dst'); -- Generates about 200 (218) DST rows
+INSERT INTO casfri50_test.dst_all_new
+SELECT * FROM TT_Translate_yt_01_dst_test('rawfri', 'yt04_l1_to_yt_l1_map_2500_dst');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt03', 2, 'yt_yvi02', 1, 10000, NULL, 'dst'); -- Generates about 200 (208) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_yt_yvi02_dst_test('rawfri', 'yt03_l2_to_yt_yvi02_l1_map_10000_dst');
