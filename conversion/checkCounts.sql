@@ -47,7 +47,7 @@ SELECT * FROM (
 -- by returning nothing.
 WITH test_nb AS (
     SELECT 'AB'::text juridiction,  1 maj_num, 19 nb_test UNION ALL
-    SELECT 'BC'::text juridiction,  2 maj_num,  6 nb_test UNION ALL
+    SELECT 'BC'::text juridiction,  2 maj_num, 11 nb_test UNION ALL
     SELECT 'DS'::text juridiction,  3 maj_num,  5 nb_test UNION ALL
     SELECT 'MB'::text juridiction,  4 maj_num,  7 nb_test UNION ALL
     SELECT 'NB'::text juridiction,  5 maj_num,  2 nb_test UNION ALL
@@ -106,6 +106,11 @@ FROM test_series AS a FULL OUTER JOIN (
       ('2.4', 'BC', 'bc11', 5419596),
       ('2.5', 'BC', 'bc12', 4861240),
       ('2.6', 'BC', 'bc13', 3343257),
+      ('2.7', 'BC', 'bc14', 5376926),
+      ('2.8', 'BC', 'bc15', 5398030),
+      ('2.9', 'BC', 'bc16', 5901370),
+      ('2.10', 'BC', 'bc17', 4972179),
+      ('2.11', 'BC', 'bc18', 6250929),
       ('3.1', 'DS', 'ds01', 59539),
       ('3.2', 'DS', 'ds02', 15358919),
       ('3.3', 'DS', 'ds03', 27593270),
