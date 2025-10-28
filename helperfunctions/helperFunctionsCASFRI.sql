@@ -4547,7 +4547,7 @@ RETURNS boolean AS $$
     -- BC
     -----------
     -- assign source values to variables depending on the inventory id
-    IF inventory_id IN('BC08','BC10', 'BC11', 'BC12','BC04','BC13') THEN
+    IF left(inventory_id, 2) = 'BC' THEN
       _inventory_standard_cd = _source_vals[1];
       _land_cover_class_cd_1 = _source_vals[2];
       _bclcs_level_4 = _source_vals[3];

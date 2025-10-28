@@ -129,6 +129,26 @@ SELECT TT_CreateMappingView('rawfri', 'bc13', 'bc', 30000, NULL, 'eco'); -- Gene
 INSERT INTO casfri50_test.eco_all_new
 SELECT * FROM TT_Translate_bc_eco_test('rawfri', 'bc13_l1_to_bc_l1_map_30000_eco');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc14', 'bc', 22000, NULL, 'eco'); -- Generates about 200 (219) ECO rows
+INSERT INTO casfri50_test.eco_all_new
+SELECT * FROM TT_Translate_bc_eco_test('rawfri', 'bc14_l1_to_bc_l1_map_22000_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc15', 'bc', 22000, NULL, 'eco'); -- Generates about 200 (220) ECO rows
+INSERT INTO casfri50_test.eco_all_new
+SELECT * FROM TT_Translate_bc_eco_test('rawfri', 'bc15_l1_to_bc_l1_map_22000_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc16', 'bc', 21000, NULL, 'eco'); -- Generates about 200 (227) ECO rows
+INSERT INTO casfri50_test.eco_all_new
+SELECT * FROM TT_Translate_bc_eco_test('rawfri', 'bc16_l1_to_bc_l1_map_21000_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc17', 'bc', 22000, NULL, 'eco'); -- Generates about 200 (221) ECO rows
+INSERT INTO casfri50_test.eco_all_new
+SELECT * FROM TT_Translate_bc_eco_test('rawfri', 'bc17_l1_to_bc_l1_map_22000_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc18', 'bc', 16000, NULL, 'eco'); -- Generates about 200 (214) ECO rows
+INSERT INTO casfri50_test.eco_all_new
+SELECT * FROM TT_Translate_bc_eco_test('rawfri', 'bc18_l1_to_bc_l1_map_16000_eco');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 1300, NULL, 'eco'); -- Generates about 200 (345) ECO rows
 INSERT INTO casfri50_test.eco_all_new
 SELECT * FROM TT_Translate_nt_eco_test('rawfri', 'nt01_l1_to_nt_l1_map_1300_eco');
