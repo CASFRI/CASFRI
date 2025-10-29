@@ -45,11 +45,13 @@ tableName_L2=${fullTargetTableName}_layer_2
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_L1" \
 -nln $tableName_L1 $layer_creation_options $other_options \
+-nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab
 
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_L2" \
 -nln $tableName_L2 $layer_creation_options $other_options \
+-nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab
 
 # Join layer 1 and layer 2 into the final table
@@ -57,7 +59,9 @@ tableName_L2=${fullTargetTableName}_layer_2
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 CREATE INDEX ON ${tableName_L2} (feature_id);
-DROP TABLE IF EXISTS ${fullTargetTableName};
+
+DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
+
 CREATE TABLE ${fullTargetTableName} AS
 SELECT '${srcFileName}' AS src_filename,
 '${inventoryID}' AS inventory_id,
@@ -239,6 +243,7 @@ t2.proj_height_class_cd_2 AS l2_proj_height_class_cd_2,
 t2.data_source_height_cd AS l2_data_source_height_cd
 FROM ${tableName_L1} t1
 LEFT OUTER JOIN ${tableName_L2} t2 USING (feature_id);
+
 DROP TABLE IF EXISTS ${tableName_L1} CASCADE;
 DROP TABLE IF EXISTS ${tableName_L2} CASCADE;
 "

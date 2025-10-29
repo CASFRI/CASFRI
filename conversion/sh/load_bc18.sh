@@ -28,29 +28,31 @@ inventoryID=BC18
 
 srcFileName=VEG_COMP_LYR
 
-###########SRC file is not unzipped or projection data###############
 
 srcFileName_L1=${srcFileName}_L1_POLY_2024
-srcFullPath_L1="/vsizip/$friDir/BC/$inventoryID/data/inventory/${srcFileName_L1}.gdb.zip/${srcFileName_L1}.gdb"
+srcFullPath_L1="$friDir/BC/$inventoryID/data/inventory/${srcFileName_L1}.gdb"
 
 srcFileName_L2=${srcFileName}_L2_POLY_2024
-srcFullPath_L2="/vsizip/$friDir/BC/$inventoryID/data/inventory/${srcFileName_L2}.gdb.zip/${srcFileName_L2}.gdb"
+srcFullPath_L2="$friDir/BC/$inventoryID/data/inventory/${srcFileName_L2}.gdb"
 
 fullTargetTableName=$targetFRISchema.bc18
 tableName_L1=${fullTargetTableName}_layer_1
 tableName_L2=${fullTargetTableName}_layer_2
 
 ########################################## Process ######################################
+
 # Run ogr2ogr to load all 3 tables
 
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_L1" \
 -nln $tableName_L1 $layer_creation_options -s_srs "EPSG:3005" $other_options \
+-nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab
 
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFullPath_L2" \
 -nln $tableName_L2 $layer_creation_options -s_srs "EPSG:3005" $other_options \
+-nlt PROMOTE_TO_MULTI \
 -progress $overwrite_tab
 
 # Join layer 1 and layer 2 into the final table
@@ -58,7 +60,9 @@ tableName_L2=${fullTargetTableName}_layer_2
 "$gdalFolder/ogrinfo" "$pg_connection_string" \
 -sql "
 CREATE INDEX ON ${tableName_L2} (feature_id);
-DROP TABLE IF EXISTS ${fullTargetTableName};
+
+DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
+
 CREATE TABLE ${fullTargetTableName} AS
 SELECT '${srcFileName}' AS src_filename,
 '${inventoryID}' AS inventory_id,
@@ -158,6 +162,8 @@ t1.earliest_nonlogging_dist_date,
 t1.stand_percentage_dead,
 t1.free_to_grow_ind,
 t1.harvest_date,
+t1.feature_area_sqm,
+t1.feature_length_m,
 t1.layer_id AS l1_layer_id,
 t1.for_cover_rank_cd AS l1_for_cover_rank_cd,
 t1.non_forest_descriptor AS l1_non_forest_descriptor,
@@ -196,9 +202,7 @@ t1.proj_height_class_cd_1 AS l1_proj_height_class_cd_1,
 t1.proj_height_2 AS l1_proj_height_2,
 t1.proj_height_class_cd_2 AS l1_proj_height_class_cd_2,
 t1.data_source_height_cd AS l1_data_source_height_cd,
-t1.feature_area_sqm,
-t1.feature_length_m,
-t1.geometry_length AS l1_geometry_len,
+t1.geometry_len AS l1_geometry_len,
 t1.geometry_area AS l1_geometry_area,
 t2.layer_id AS l2_layer_id,
 t2.for_cover_rank_cd AS l2_for_cover_rank_cd,
@@ -240,6 +244,7 @@ t2.proj_height_class_cd_2 AS l2_proj_height_class_cd_2,
 t2.data_source_height_cd AS l2_data_source_height_cd
 FROM ${tableName_L1} t1
 LEFT OUTER JOIN ${tableName_L2} t2 USING (feature_id);
+
 DROP TABLE IF EXISTS ${tableName_L1} CASCADE;
 DROP TABLE IF EXISTS ${tableName_L2} CASCADE;
 "

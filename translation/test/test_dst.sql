@@ -137,9 +137,25 @@ SELECT TT_CreateMappingView('rawfri', 'bc12', 1, 'bc', 1, 3400, NULL, 'dst'); --
 INSERT INTO casfri50_test.dst_all_new
 SELECT * FROM TT_Translate_bc_dst_test('rawfri', 'bc12_l1_to_bc_l1_map_3400_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'bc18', 1, 'bc', 1, 3600, NULL, 'dst'); -- Generates about 1000 DST rows
+SELECT TT_CreateMappingView('rawfri', 'bc14', 1, 'bc', 1, 2600, NULL, 'dst'); -- Generates about 800 (824) DST rows
 INSERT INTO casfri50_test.dst_all_new
-SELECT * FROM TT_Translate_bc_dst_test('rawfri', 'bc18_l1_to_bc_l1_map_3600_dst');
+SELECT * FROM TT_Translate_bc_dst_test('rawfri', 'bc14_l1_to_bc_l1_map_2600_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc15', 1, 'bc', 1, 2600, NULL, 'dst'); -- Generates about 800 (860) DST rows
+INSERT INTO casfri50_test.dst_all_new
+SELECT * FROM TT_Translate_bc_dst_test('rawfri', 'bc15_l1_to_bc_l1_map_2600_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc16', 1, 'bc', 1, 2000, NULL, 'dst'); -- Generates about 800 (817) DST rows
+INSERT INTO casfri50_test.dst_all_new
+SELECT * FROM TT_Translate_bc_dst_test('rawfri', 'bc16_l1_to_bc_l1_map_2000_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc17', 1, 'bc', 1, 2900, NULL, 'dst'); -- Generates about 800 (818) DST rows
+INSERT INTO casfri50_test.dst_all_new
+SELECT * FROM TT_Translate_bc_dst_test('rawfri', 'bc17_l1_to_bc_l1_map_2900_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc18', 1, 'bc', 1, 1900, NULL, 'dst'); -- Generates about 800 (820) DST rows
+INSERT INTO casfri50_test.dst_all_new
+SELECT * FROM TT_Translate_bc_dst_test('rawfri', 'bc18_l1_to_bc_l1_map_1900_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 1, 'nt', 1, 800, NULL, 'dst'); -- Generates about 200 (211) DST rows
 INSERT INTO casfri50_test.dst_all_new

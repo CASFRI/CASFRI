@@ -141,8 +141,24 @@ SELECT TT_CreateMappingView('rawfri', 'bc13', 'bc', 1000, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_bc_cas_test('rawfri', 'bc13_l1_to_bc_l1_map_1000_cas');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc14', 'bc', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_bc_cas_test('rawfri', 'bc14_l1_to_bc_l1_map_1000_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc15', 'bc', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_bc_cas_test('rawfri', 'bc15_l1_to_bc_l1_map_1000_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc16', 'bc', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_bc_cas_test('rawfri', 'bc16_l1_to_bc_l1_map_1000_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'bc17', 'bc', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_bc_cas_test('rawfri', 'bc17_l1_to_bc_l1_map_1000_cas');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'bc18', 'bc', 1000, NULL, 'cas');
-INSERT INTO casfri50_test.cas_all_new
+INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_bc_cas_test('rawfri', 'bc18_l1_to_bc_l1_map_1000_cas');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 400, NULL, 'cas');
