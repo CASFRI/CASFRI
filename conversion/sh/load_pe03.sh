@@ -1,17 +1,26 @@
+#!/bin/bash -x
+
+# This script loads the 2000 PEI forest inventory (PE03) into PostgreSQL
+
+# This dataset is a single shapefile
+
+# The KEY attribute is a unique identifier made up of the MAP and STAND values
+# Note that there are 31 KEY_ entries that actually have 2 polygons. These look
+# to be cases where the original polygon has been split into 2. For this reason we
+# should have ogc_fid in the cas_id to ensure uniqueness.
+
+######################################## Set variables #######################################
+
 source ./common.sh
 
 inventoryID=PE03
-
-
 srcFileName=PEI_CORPORATE_LANDUSE_INVENTORY_2000
-srcName="$srcFileName"
-srcFullPath="$friDir/PE/$inventoryID/data/inventory/$srcFileName.shp"
+
 peSubFolder="$friDir/PE/$inventoryID/data/inventory/"
+srcFullPath="$peSubFolder/$srcFileName.shp"
 fullTargetTableName=$targetFRISchema.pe03
 
-
 ########################################## Process ######################################
-
 
 if [ ! -e "$peSubFolder/poly_id_added.txt" ]; then
 
@@ -24,12 +33,11 @@ if [ ! -e "$peSubFolder/poly_id_added.txt" ]; then
 fi
 # load polygons
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName \
+-f PostgreSQL "$pg_connection_string" "$srcFullPath" \
+-nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
-$layer_creation_options $other_options \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id, 2000 as year_ FROM $srcName" \
--progress $overwrite_tab
+-progress $overwrite_tab \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id, 2000 as year_ FROM \"$srcFileName\""
 
 createSQLSpatialIndex=True
 

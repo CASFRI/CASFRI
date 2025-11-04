@@ -3,12 +3,8 @@
 # This script loads the New Brunswick FRI data into PostgreSQL
 # This is for holder id 16
 
-# If the table already exists, it can be overwritten by setting the "overwriteFRI" variable
-# in the configuration file.
-
 # Workflow is to load the first table normally, then append the others
 # Use -nlt PROMOTE_TO_MULTI to take care of any mixed single and multi part geometries
-
 
 ######################################## Set variables #######################################
 
@@ -24,7 +20,6 @@ srcFileFullPath="$friDir/$NB_subFolder$srcFilename.gdb"
 fullTargetTableName=$targetFRISchema.$inventoryID
 
 ########################################## Process ######################################
-
 
 "$gdalFolder/ogr2ogr" \
 -f PostgreSQL "$pg_connection_string" "$srcFileFullPath" \

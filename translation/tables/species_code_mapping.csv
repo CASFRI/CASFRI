@@ -64,7 +64,7 @@ FRAX_SUBS,FRAX_SPP_###,Fraxinus spp. ,,,AS,,AX,AS,,,,FR,AS,,,,
 GLED_TRIA,GLED_TRI_###,Gleditsia triacanthos ,,,HL,,GT,,,,,,,,,,
 GYMN_DIOI,GYMN_DIO_###,Gymnocladus dioicus ,,,,,KK,,,,,,,,,,
 HAMA_VIRG,HAMA_VIR_###,Hamamelis virginiana ,,,,,HAZ,,,,,,,,,,
-HARD_INTO,HARD_INT_###,,,,IH,,,IH,,,,FI,,,,,Intolerant Hardwood
+HARD_INTO,HARD_INT_###,,,,IH,,,IH,,,IH,FI,,,,,Intolerant Hardwood
 HARD_MOIS,HARD_MOI_###,,,,,,,,,,,FH,,,,,Moist hardwoods
 HARD_NONC,HARD_NON_###,,,,NC,,,,,,,FN,,,,,Non commercial hardwoods
 HARD_TOLE,HARD_TOL_###,,,,TH,,,TH,,,,FT,,,,,Tolerant hardwood

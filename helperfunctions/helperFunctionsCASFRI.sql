@@ -4748,6 +4748,19 @@ RETURNS boolean AS $$
     END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+
+CREATE OR REPLACE FUNCTION TT_nb_hasCountOfNotNull(
+  layer1_sp text,
+  layer2_sp text,
+  wc text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  SELECT TT_nb_hasCountOfNotNull(layer1_sp, layer2_sp, wc, NULL::text, NULL::text, count, exact);
+$$ LANGUAGE sql IMMUTABLE;
+
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -4927,7 +4940,7 @@ RETURNS boolean AS $$
     END IF;
 
    	---------
-   	-- PE02
+   	-- PE
    	---------
    	-- assign source values to variables depending on the inventory id
     IF left(inventory_id, 2) = 'PE' THEN
@@ -8527,6 +8540,31 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- TT_nb_stand_structure_translation
+--
+-- Return either 'SINGLE_LAYERED' or 'MULTI_LAYERED' depending on count of lyr_all layers
+-- If wc = 'FW' then the layer exists
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_nb_stand_structure_translation(text, text, text)
+CREATE OR REPLACE FUNCTION TT_nb_stand_structure_translation(
+  layer1_sp text,
+  layer2_sp text,
+  wc text
+)
+RETURNS text AS $$
+  DECLARE
+	_nfl text;
+  BEGIN
+    IF wc = 'FW' THEN
+      layer1_sp = 'a string';
+    END IF;
+		
+    RETURN tt_ifElseCountOfNotNullText(layer1_sp, layer2_sp, 2::TEXT, 1::TEXT, 'SINGLE_LAYERED', 'MULTI_LAYERED');
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_qc_prg3_src_inv_area_translation
 --
 -- If inventory_id is QC01, use divideDouble(src_inv_area, 10000)
@@ -8750,10 +8788,10 @@ CREATE OR REPLACE FUNCTION TT_vri01_src_inv_area_translation(
 RETURNS double precision AS $$
   BEGIN
     IF inventory_id IN ('BC04', 'BC13') THEN
-	  RETURN src_inv_area::double precision; 
-	ELSE
-	  RETURN TT_divideDouble(src_inv_area, '10000');
-	END IF;
+      RETURN src_inv_area::double precision; 
+    ELSE
+      RETURN TT_divideDouble(src_inv_area, '10000');
+    END IF;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
