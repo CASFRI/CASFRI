@@ -1,0 +1,11 @@
+rule_id,target_attribute,target_attribute_type,validation_rules,translation_rules,description,desc_uptodate_with_rules
+1,CAS_ID,text,notEmpty(inventory_id);notEmpty(src_filename);notNull(map_sheet_id);notNull(orig_stand_id);notNull(ogc_fid),"padConcat({inventory_id, src_filename, map_sheet_id, orig_stand_id, ogc_fid}, {4,15,10,10,7}, {'x','x','x','x','x'}, '-', TRUE, TRUE)",Create cas_id using the unique identifier poly_id added during loading.,TRUE
+2,INVENTORY_ID,text,notEmpty(inventory_id),copyText(inventory_id),Copies source value,TRUE
+3,ORIG_STAND_ID,text,notNull(orig_stand_id),copyText(orig_stand_id),Copies source value,TRUE
+4,STAND_STRUCTURE,text,"notEmpty(species, TRUE|NOT_APPLICABLE)",copyText('SINGLE_LAYERED'),"Only one LYR layer possible. If species info present, stand structure is SINGLE_LAYERED.",TRUE
+5,NUM_OF_LAYERS,integer,"mb_fri_hasCountOfNotNull({species}, subtype, 1, FALSE|-8886)","mb_fri_countOfNotNull({species}, subtype, 2)","Counts number of layers based on the presence of a not null value for attributes representing each layer. Up to a max of 2. Returns UNKNOWN_VALUE if num_of_layers is zero. num_of_layers should always be 0 or 1 because every row is either DST, NFL or LYR. Counts non-productive productivity codes as a LYR layer if species not present.",TRUE
+6,MAP_SHEET_ID,text,notNull(map_sheet_id);notEmpty(map_sheet_id),copyText(map_sheet_id),Copies source value,TRUE
+7,CASFRI_AREA,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoArea(wkb_geometry),Validates geometry then calculates area,TRUE
+8,CASFRI_PERIMETER,double precision,"geoIsValid(wkb_geometry, TRUE|-8888)",geoPerimeter(wkb_geometry),Validates geometry then calculates perimeter,TRUE
+9,SRC_INV_AREA,double precision,"notNull(src_inv_area);isNumeric(src_inv_area);isGreaterThan(src_inv_area, 0, FALSE|-9999)","divideDouble(src_inv_area, 10000)",Converts source area from m2 to ha. Return OUT_OF_RANGE for any zero values.,TRUE
+10,STAND_PHOTO_YEAR,integer,"notNull(stand_photo_year);isInt(stand_photo_year);isGreaterThan(stand_photo_year, 0, FALSE|-9997);isBetween(stand_photo_year, 1900, 2020)",copyInt(stand_photo_year),Copies source value,TRUE

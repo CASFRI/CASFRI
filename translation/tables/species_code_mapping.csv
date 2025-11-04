@@ -8,7 +8,8 @@ ABIE_MAGN,ABIE_MAG_SHA,Abies magnifica var. shastensis ,,BM,,,,,,,,,,,,,
 ABIE_PICE,ABIE_PIC_###,,,,FS,,,,,,,SE,,,,,"Mix spruce, balsam fir. "
 ABIE_PICE,ABIE_PIC_###,,,,SF,,,,,,,,,,,,"Mix spruce, balsam fir"
 ABIE_PROC,ABIE_PRO_###,Abies procera ,,BP,,,,,,,,,,,,,
-ABIE_SUBS,ABIE_SPP_###,Abies spp. ,,B,,,,,,,,,,,,,
+ABIE_SUBS,ABIE_SPP_###,Abies spp. ,,B,,,,,,,,SC,,,,,
+ABIE_SUBS,ABIE_SPP_###,Abies spp. ,,,,,,,,,,SS,,,,,
 ACER_CIRC,ACER_CIR_###,Acer circinatum ,,MV,,,,,,,,,,,,,
 ACER_FREE,ACER_FRE_###,Acer x freemanii (Acer rubrum ? Acer saccharinum) ,,,,,MF,,,,,,,,,,
 ACER_MACR,ACER_MAC_###,Acer macrophyllum ,,MB,,,,,,,,,,,,,
@@ -33,6 +34,7 @@ BETU_MAND,BETU_MAN_###,Betula mandschurica var japonica,,,,,,,,,,,,JB,,,
 BETU_NEOA,BETU_NEO_###,Betula neoalaskana ,,EA,,,,,,,,,,,,,
 BETU_OCCI,BETU_OCC_###,Betula occidentalis ,,EW,,,,,,,,,,,,,
 BETU_PAPY,BETU_PAP_###,Betula papyrifera ,BW,EP,WB,BW,BW,WB,WB,W,WB,BP,WB,WB,,BP,
+BETU_PAPY,BETU_PAP_###,Betula papyrifera ,,,,,,,,,,BB,,,,,
 BETU_PEND,BETU_PEN_###,Betula pendula ,,EE,EB,,BP,,,,EB,,,,,,
 BETU_POPU,BETU_POP_###,Betula populifolia ,,,GB,,BG,GB,,,GB,BG,,,,,
 BETU_PUBE,BETU_PUB_###,Betula pubescens ,,ES,,,,,,,,,,,,,
@@ -68,8 +70,9 @@ HARD_NONC,HARD_NON_###,,,,NC,,,,,,,FN,,,,,Non commercial hardwoods
 HARD_TOLE,HARD_TOL_###,,,,TH,,,TH,,,,FT,,,,,Tolerant hardwood
 HARD_UNKN,GENH_SPP_###, ,,XH,HW,,OH,OH,,,TH,FX,,,,,Hardwood unknown
 HARD_UNKN,GENH_SPP_###, ,,ZH,OH,,,UH,,,,FZ,,,,,Hardwood unknown (planted)
-HARD_UNKN,GENH_SPP_###, ,,,,,,H,,,,,,,,,Hardwood unknown
-HARD_UNKN,GENH_SPP_###, ,,,,,,HS,,,,,,,,,Hardwood unknown
+HARD_UNKN,GENH_SPP_###, ,,,,,,H,,,,MF,,,,,Hardwood unknown
+HARD_UNKN,GENH_SPP_###, ,,,,,,HS,,,,MX,,,,,Hardwood unknown
+HARD_UNKN,GENH_SPP_###,,,,,,,,,,,MR,,,,,
 JUGL_CINE,JUGL_CIN_###,Juglans cinerea ,,,,,BN,,,,BN,NC,,,,,
 JUGL_NIGR,JUGL_NIG_###,Juglans nigra ,,,,,WB,,,,,NN,,,,,
 JUNI_SCOP,JUNI_SCO_###,Juniperus scopulorum ,,JR,,,,,,,,,,,,,
@@ -103,6 +106,7 @@ PICE_SITX,PICE_SIT_X##,Picea sitchensis xunknown ,,SXS,,,,,,,,,,,,,
 ,PICE_HYB_###,Picea xunknown,,SX,,,,,,,HS,,,,,,
 PICE_SITX,PICE_LUT_X##,Picea xlutzii ,,SXL,,,,,,,,,,,,,
 PICE_SUBS,PICE_SPP_###,Picea spp. ,,S,SP,,SX,XS,,,,EP,,,,,
+PICE_SUBS,PICE_SPP_###,Picea spp. ,,,,,,,,,,EE,,,,,
 PINU_ALBI,PINU_ALB_###,Pinus albicaulis ,PA,PA,,,,,,,,,,,,,
 PINU_BANK,PINU_BAN_###,Pinus banksiana ,PJ,PJ,JP,PJ,PJ,JP,JP,,JP,PG,JP,JP,,PB,
 PINU_CONC,PINU_CON_CON,Pinus contorta var. contorta ,,PLC,,,,,,,,,,,,,
@@ -166,8 +170,8 @@ SALI_SUBS,SALI_SPP_###,Salix spp. ,,,,,,,,,,,WI,,,,
 SASS_ALBI,SASS_ALB_###,Sassafras albidum ,,,,,SS,,,,,,,,,,
 SOFT_UNKN,GENC_SPP_###, ,,XC,OS,,OC,OS,,,SF,RX,,,,,Softwood unknown
 SOFT_UNKN,GENC_SPP_###, ,,ZC,SW,,,US,,,,RZ,,,,,Softwood unknown (planted)
-SOFT_UNKN,GENC_SPP_###, ,,,,,,S,,,,,,,,,Softwood unknown
-SOFT_UNKN,GENC_SPP_###, ,,,,,,SH,,,,,,,,,Softwood unknown
+SOFT_UNKN,GENC_SPP_###, ,,,,,,S,,,,RS,,,,,Softwood unknown
+SOFT_UNKN,GENC_SPP_###, ,,,,,,SH,,,,RE,,,,,Softwood unknown
 SORB_AUCU,SORB_AUC_###,Sorbus aucuparia ,,OD,,,EMA,,,,,,,,,,
 SORB_SUBS,SORB_SPP_###,Sorbus spp. ,,,,,AM,,,,,,,,,,
 SPEC_UNKN,UNKN_SPP_###,,,X,MS,,,UC,,,,,,,BC,,Species unknown
@@ -175,6 +179,7 @@ SPEC_UNKN,UNKN_SPP_###,,,Z,NR,,,,,,,,,,,,Species unknown
 TAXU_BREV,TAXU_BRE_###,Taxus brevifolia ,,TW,,,,,,,,,,,,,
 THUJ_JUNI,JUNI_VIR_###,Juniperus virginiana ,,,,,CR,,,,,,,,,,
 THUJ_OCCI,THUJ_OCC_###,Thuja occidentalis ,,,EC,,CW,EC,,,CE,TO,EC,,,,
+THUJ_OCCI,THUJ_OCC_###,Thuja occidentalis ,,,,,,,,,,CE,,,,,
 THUJ_PLIC,THUJ_PLI_###,Thuja plicata ,,CW,WC,,,,,,,,,,,,
 TILI_AMER,TILI_AME_###,Tilia americana ,,,,,BD,,,,,TA,B,,,,
 TILI_AMER,TILI_AME_###,Tilia americana ,,,,,,,,,,,BD,,,,
