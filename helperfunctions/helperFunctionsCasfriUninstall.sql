@@ -63,6 +63,7 @@ DROP FUNCTION IF EXISTS TT_mb_fri01_wetland_validation(text, text, text);
 DROP FUNCTION IF EXISTS TT_pc02_wetland_validation(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pc02_hasCountOfNotNull(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_yt_wetland_validation(text, text, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS TT_nb_hasCountOfNotNull(text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_nb_hasCountOfNotNull(text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_fim_species(text, text);
 DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_mapText(text, text, text, text, text, text, text);
@@ -165,6 +166,8 @@ DROP FUNCTION IF EXISTS TT_yt_yvi02_disturbance_matchList(text, text, text, text
 DROP FUNCTION IF EXISTS TT_nt_lyr_layer_translation(text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_pe_pei01_map_dist_year(text);
 DROP FUNCTION IF EXISTS TT_vri01_src_inv_area_translation(text, text);
+DROP FUNCTION IF EXISTS TT_nb_stand_structure_translation(text, text, text)
+
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

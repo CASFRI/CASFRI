@@ -170,8 +170,8 @@ WITH test_nb AS (
 	SELECT 'TT_yt_wetland_translation'::text function_tested,               121 maj_num,  4 nb_test UNION ALL
 	SELECT 'TT_yt_wetland_validation'::text function_tested,                122 maj_num,  2 nb_test UNION ALL
 	SELECT 'TT_nb_lyr_layer_translation'::text function_tested,             123 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_nb_countofnotnull'::text function_tested,                    124 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_nb_hascountofnotnull'::text function_tested,                 125 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_nb_countOfNotNull'::text function_tested,                    124 maj_num,  3 nb_test UNION ALL
+	SELECT 'TT_nb_hasCountOfNotNull'::text function_tested,                 125 maj_num,  3 nb_test UNION ALL
 	SELECT 'TT_ns_lyr_layer_translation'::text function_tested,             126 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_on_lyr_layer_translation'::text function_tested,             127 maj_num,  5 nb_test UNION ALL
 	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,        128 maj_num,  5 nb_test UNION ALL
@@ -184,8 +184,8 @@ WITH test_nb AS (
 	SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,         136 maj_num,  1 nb_test UNION ALL
 	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,137 maj_num,  4 nb_test UNION ALL
 	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,             138 maj_num,  6 nb_test UNION ALL
-  SELECT 'TT_pe_pei01_dist_type_length_validation'::text function_tested, 139 maj_num,  4 nb_test
-
+  SELECT 'TT_pe_pei01_dist_type_length_validation'::text function_tested, 139 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nb_stand_structure_translation'::text function_tested,       148 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -4656,6 +4656,32 @@ SELECT '139.4'::text number,
        'TT_pe_pei01_dist_type_length_validation'::text function_tested,
        'Test greater than length 4'::text description,
        TT_pe_pei01_dist_type_length_validation('ABCDE', 'ABCD', '4') = FALSE passed
+---------------------------------------------------------
+ -- TT_nb_stand_structure_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '148.1'::text number,
+       'TT_nb_stand_structure_translation'::text function_tested,
+       'Test single species layer'::text description,
+       TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['']::TEXT, 'NOT_LYR') = 'SINGLE_LAYERED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '148.2'::text number,
+       'TT_nb_stand_structure_translation'::text function_tested,
+       'Test two species layers'::text description,
+       TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['SP']::TEXT, 'NOT_LYR') = 'MULTI_LAYERED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '148.3'::text number,
+       'TT_nb_stand_structure_translation'::text function_tested,
+       'Test second layer only'::text description,
+       TT_nb_stand_structure_translation(ARRAY['']::TEXT, ARRAY['SP']::TEXT, 'FW') = 'MULTI_LAYERED' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '148.4'::text number,
+       'TT_nb_stand_structure_translation'::text function_tested,
+       'Test null species and null NFL'::text description,
+       TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['SP']::TEXT, 'FW') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
