@@ -58,7 +58,7 @@ WITH test_nb AS (
     SELECT 'PC'::text juridiction, 10 maj_num,  2 nb_test UNION ALL
     SELECT 'PE'::text juridiction, 11 maj_num,  4 nb_test UNION ALL
     SELECT 'QC'::text juridiction, 12 maj_num,  7 nb_test UNION ALL
-    SELECT 'SK'::text juridiction, 13 maj_num,  6 nb_test UNION ALL
+    SELECT 'SK'::text juridiction, 13 maj_num,  7 nb_test UNION ALL
     SELECT 'YT'::text juridiction, 14 maj_num,  3 nb_test
 ), test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -161,6 +161,7 @@ FROM test_series AS a FULL OUTER JOIN (
       ('13.4', 'SK', 'sk04', 633522),
       ('13.5', 'SK', 'sk05', 421977),
       ('13.6', 'SK', 'sk06', 211482),
+      ('13.7', 'SK', 'sk07', 1470758),
       ('14.1', 'YT', 'yt01', 249636),
       ('14.2', 'YT', 'yt02', 231137),
       ('14.3', 'YT', 'yt03', 71073)

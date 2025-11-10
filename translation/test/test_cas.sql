@@ -207,9 +207,9 @@ SELECT TT_CreateMappingView('rawfri', 'sk06', 'sk_sfv', 400, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_sk_sfv_cas_test('rawfri', 'sk06_l1_to_sk_sfv_l1_map_400_cas');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'sk07', 'sk_utm', 700, NULL, 'cas');
+SELECT TT_CreateMappingView('rawfri', 'sk07', 'sk_utm', 900, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
-SELECT * FROM TT_Translate_sk_utm_cas_test('rawfri', 'sk07_l1_to_sk_utm_l1_map_700_cas');
+SELECT * FROM TT_Translate_sk_utm_cas_test('rawfri', 'sk07_l1_to_sk_utm_l1_map_900_cas');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt01', 'yt', 400, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
