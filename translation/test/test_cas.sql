@@ -299,17 +299,29 @@ SELECT TT_CreateMappingView('rawfri', 'qc04', 'qc_ini04', 1000, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_qc_ini04_cas_test('rawfri', 'qc04_l1_to_qc_ini04_l1_map_1000_cas');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'qc06', 'qc_ini04', 1000, NULL, 'cas');
-INSERT INTO casfri50_test.cas_all_new 
-SELECT * FROM TT_Translate_qc_ini04_cas_test('rawfri', 'qc06_l1_to_qc_ini04_l1_map_1000_cas');
-------------------------
 SELECT TT_CreateMappingView('rawfri', 'qc05', 'qc_ipf', 1000, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_qc_ipf05_cas_test('rawfri', 'qc05_l1_to_qc_ipf_l1_map_1000_cas');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc06', 'qc_ini04', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_qc_ini04_cas_test('rawfri', 'qc06_l1_to_qc_ini04_l1_map_1000_cas');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'qc07', 'qc_ipf', 200, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 
 SELECT * FROM TT_Translate_qc_ipf05_cas_test('rawfri', 'qc07_l1_to_qc_ipf_l1_map_200_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc08', 'qc_ini03', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_qc_ini03_cas_test('rawfri', 'qc08_l1_to_qc_ini03_l1_map_1000_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc09', 'qc_ini04', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_qc_ini04_cas_test('rawfri', 'qc09_l1_to_qc_ini04_l1_map_1000_cas');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc10', 'qc_ipf', 1000, NULL, 'cas');
+INSERT INTO casfri50_test.cas_all_new 
+SELECT * FROM TT_Translate_qc_ipf05_cas_test('rawfri', 'qc10_l1_to_qc_ipf_l1_map_1000_cas');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'pc01', 'pc_panp', 200, NULL, 'cas');
 INSERT INTO casfri50_test.cas_all_new 

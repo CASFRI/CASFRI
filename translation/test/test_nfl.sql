@@ -515,6 +515,18 @@ SELECT TT_CreateMappingView('rawfri', 'qc07', 3, 'qc_ipf', 1, 1450, NULL, 'nfl')
 INSERT INTO casfri50_test.nfl_all_new 
 SELECT * FROM TT_Translate_qc_ipf05_nfl_test('rawfri', 'qc07_l3_to_qc_ipf_l1_map_1450_nfl');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc08', 3, 'qc_ini03', 1, 2100, NULL, 'nfl'); -- Generates about 1000 (1016) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_qc_ini03_nfl_test('rawfri', 'qc08_l3_to_qc_ini03_l1_map_2100_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc09', 3, 'qc_ini04', 1, 7000, NULL, 'nfl'); -- Generates about 1000 (1061) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_qc_ini04_nfl_test('rawfri', 'qc09_l3_to_qc_ini04_l1_map_7000_nfl');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc10', 3, 'qc_ipf', 1, 7000, NULL, 'nfl'); -- Generates about 1000 (1032) NFL rows
+INSERT INTO casfri50_test.nfl_all_new 
+SELECT * FROM TT_Translate_qc_ipf05_nfl_test('rawfri', 'qc10_l3_to_qc_ipf_l1_map_7000_nfl');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 500, NULL, 'nfl'); -- Generates 200 (214) LYR rows
 INSERT INTO casfri50_test.nfl_all_new
 SELECT * FROM TT_Translate_pc_panp_nfl_test('rawfri', 'pc01_l4_to_pc_panp_l1_map_500_nfl');
