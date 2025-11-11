@@ -3138,7 +3138,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_vri01_hasCountOfNotNull
+-- TT_mb_fli01_hasCountOfNotNull
 --
 -- species_layer_1 text,
 -- species_layer_2 text,
