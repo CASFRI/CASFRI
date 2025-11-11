@@ -237,6 +237,10 @@ SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, 3000, NULL, 'dst')
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_ns_dst_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_3000_dst');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns04', 1, 'ns_nsi', 1, 3000, NULL, 'dst'); -- Generates about 200 (219) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_ns_dst_test('rawfri', 'ns04_l1_to_ns_nsi_l1_map_3000_dst');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 700, NULL, 'dst'); -- Generates about 200 (233) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_pe_dst_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_700_dst');

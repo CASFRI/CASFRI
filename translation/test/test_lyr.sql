@@ -471,6 +471,14 @@ SELECT TT_CreateMappingView('rawfri', 'ns03', 2, 'ns_nsi', 1, 1700, NULL, 'lyr')
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns03_l2_to_ns_nsi_l1_map_1700_lyr');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns04', 1, 'ns_nsi', 1, 800, NULL, 'lyr'); -- Generates about 600 (646) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns04_l1_to_ns_nsi_l1_map_800_lyr');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns04', 2, 'ns_nsi', 1, 1700, NULL, 'lyr'); -- Generates about 400 (469) LYR rows
+INSERT INTO casfri50_test.lyr_all_new
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns04_l2_to_ns_nsi_l1_map_1700_lyr');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 300, NULL, 'lyr'); -- Generates about 200 (227) LYR rows
 INSERT INTO casfri50_test.lyr_all_new
 SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_300_lyr');

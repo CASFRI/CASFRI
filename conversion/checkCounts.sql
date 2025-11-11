@@ -52,7 +52,7 @@ WITH test_nb AS (
     SELECT 'MB'::text juridiction,  4 maj_num,  7 nb_test UNION ALL
     SELECT 'NB'::text juridiction,  5 maj_num,  8 nb_test UNION ALL
     SELECT 'NL'::text juridiction,  6 maj_num,  4 nb_test UNION ALL
-    SELECT 'NS'::text juridiction,  7 maj_num,  3 nb_test UNION ALL
+    SELECT 'NS'::text juridiction,  7 maj_num,  4 nb_test UNION ALL
     SELECT 'NT'::text juridiction,  8 maj_num,  2 nb_test UNION ALL
     SELECT 'ON'::text juridiction,  9 maj_num,  2 nb_test UNION ALL
     SELECT 'PC'::text juridiction, 10 maj_num,  2 nb_test UNION ALL
@@ -138,6 +138,7 @@ FROM test_series AS a FULL OUTER JOIN (
       ('7.1', 'NS', 'ns01', 1127926),
       ('7.2', 'NS', 'ns02', 1090671),
       ('7.3', 'NS', 'ns03', 995886),
+      ('7.4', 'NS', 'ns04', 1004111),
       ('8.1', 'NT', 'nt01', 281388),
       ('8.2', 'NT', 'nt03', 320526),
       ('9.1', 'ON', 'on01', 4106417),
