@@ -30,7 +30,18 @@ fullTargetTableName=$targetFRISchema.yt04
 -f PostgreSQL "$pg_connection_string" "$srcFullPath" "$srcFileName" \
 -nln $fullTargetTableName $layer_creation_options $other_options \
 -nlt PROMOTE_TO_MULTI \
--sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id, OGR_GEOM_AREA as shape_area FROM $srcFileName" \
+-sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id, id as poly_no, OGR_GEOM_AREA as shape_area FROM $srcFileName" \
 -progress $overwrite_tab
+
+# drop id
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS id;"
+
+#remove comma from land_type and cov_cl_mod values to avoid weird parsing issues with TT_ParseString
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "UPDATE $fullTargetTableName SET land_type = replace(land_type,',','')"
+
+"$gdalFolder/ogrinfo" "$pg_connection_string" \
+-sql "UPDATE $fullTargetTableName SET cov_cl_mod = replace(cov_cl_mod,',','')"
 
 source ./common_postprocessing.sh

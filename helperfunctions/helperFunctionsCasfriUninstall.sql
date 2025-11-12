@@ -75,6 +75,7 @@ DROP FUNCTION IF EXISTS TT_pe_pei01_dist_type_length_validation(text, text, text
 DROP FUNCTION IF EXISTS TT_mb_mb03_disturbance_hasCountOfNotNull(text, text);
 DROP FUNCTION IF EXISTS TT_mb_fri03_getSpeciesPer1(text);
 DROP FUNCTION IF EXISTS TT_mb_fri03_species_validation(text, text);
+DROP FUNCTION IF EXISTS TT_yvi01_hasCountOfNotNull(text, text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE functions
 -------------------------------------------------------------------------------
@@ -172,8 +173,9 @@ DROP FUNCTION IF EXISTS TT_pe_pei01_map_dist_year(text);
 DROP FUNCTION IF EXISTS TT_vri01_src_inv_area_translation(text, text);
 DROP FUNCTION IF EXISTS TT_nt_lyr_layer_translation(text, text, text, text, text, text, text, text);
 DROP FUNCTION IF EXISTS TT_mb_mb03_map_disturbance(text, text, text);
-DROP FUNCTION IF EXISTS TT_nb_stand_structure_translation(text, text, text)
-
+DROP FUNCTION IF EXISTS TT_nb_stand_structure_translation(text, text, text);
+DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text,text);
+DROP FUNCTION IF EXISTS TT_yvi01_countofnotnull(text, text, text, text, text, text);
 -------------------------------------------------------------------------------
 -- Generic functions
 -------------------------------------------------------------------------------

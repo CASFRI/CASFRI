@@ -190,8 +190,11 @@ WITH test_nb AS (
   SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,            142 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested, 144 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nb_stand_structure_translation'::text function_tested,        145 maj_num,  4 nb_test
-),
+  SELECT 'TT_nb_stand_structure_translation'::text function_tested,        145 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_nat_non_veg_translation':: text function_tested,        146 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_hascountofnotnull'::text function_tested,               147 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_countofnotnull'::text function_tested,                  148 maj_num,  4 nb_test
+ ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
 SELECT function_tested, maj_num, nb_test, generate_series(1, nb_test)::text min_num
@@ -202,7 +205,7 @@ SELECT coalesce(maj_num || '.' || min_num, b.number) AS number,
        coalesce(a.function_tested, 'ERROR: Insufficient number of tests for ' || 
                 b.function_tested || ' in the initial table...') AS function_tested,
        coalesce(description, 'ERROR: Too many tests (' || nb_test || ') for ' || a.function_tested || ' in the initial table...') description, 
-       NOT passed IS NULL AND 
+       NOT passed IS NULL AND
           (regexp_split_to_array(number, '\.'))[1] = maj_num::text AND 
           (regexp_split_to_array(number, '\.'))[2] = min_num AND passed passed
 FROM test_series AS a FULL OUTER JOIN (
@@ -4858,6 +4861,84 @@ SELECT '145.4'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test null species and null NFL'::text description,
        TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['SP']::TEXT, 'FW') = 'MULTI_LAYERED' passed
+---------------------------------------------------------
+ -- TT_yvi01_nat_non_veg_translation
+---------------------------------------------------------
+UNION ALL
+SELECT '146.1'::text number,
+       'TT_yvi01_non_for_anth_translation'::text function_tested,
+       'Test yt01 class code for Road'::text description,
+       TT_yvi01_nat_non_veg_translation('RD'::TEXT, NULL) = 'FACILITY_INFRASTRUCTURE' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '146.2'::text number,
+       'TT_yvi01_non_for_anth_translation'::text function_tested,
+       'Test yt04 cover_type code for Road'::text description,
+       TT_yvi01_nat_non_veg_translation(NULL, 'Road'::TEXT) = 'FACILITY_INFRASTRUCTURE' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '146.3'::text number,
+       'TT_yvi01_non_for_anth_translation'::text function_tested,
+       'Test yt01 class code for Gravel Pit'::text description,
+       TT_yvi01_nat_non_veg_translation('G'::TEXT, NULL) = 'BORROW_PIT' passed
+---------------------------------------------------------
+UNION ALL
+SELECT '146.4'::text number,
+       'TT_yvi01_non_for_anth_translation'::text function_tested,
+       'Test yt04 class code for Gravel Pit'::text description,
+       TT_yvi01_nat_non_veg_translation(NULL,'Gravel Pit'::TEXT) = 'BORROW_PIT' passed
+---------------------------------------------------------
+ -- TT_yvi01_hasCountOfNotNull
+---------------------------------------------------------
+UNION ALL
+SELECT '147.1'::text number,
+       'TT_yvi01_hascountofnotnull'::text function_tested,
+       'Test species and null NFL'::text description,
+       TT_yvi01_hascountofnotnull('SP', NULL, NULL, NULL, NULL, 1::TEXT, TRUE::TEXT) = TRUE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '147.2'::text number,
+       'TT_yvi01_hascountofnotnull'::text function_tested,
+       'Test species and NFL'::text description,
+       TT_yvi01_hascountofnotnull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 1::TEXT, FALSE::TEXT) = TRUE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '147.3'::text number,
+       'TT_yvi01_hascountofnotnull'::text function_tested,
+       'Test species and non NFL'::text description,
+       TT_yvi01_hascountofnotnull('SP', 'Vegetated, Forested', NULL, NULL, 'Upland', 2::TEXT, FALSE::TEXT) = FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '147.4'::text number,
+       'TT_yvi01_hascountofnotnull'::text function_tested,
+       'Test null species and null NFL'::text description,
+       TT_yvi01_hascountofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT, FALSE::TEXT) = FALSE passed
+---------------------------------------------------------
+ -- TT_yvi01_countofnotnull
+---------------------------------------------------------
+UNION ALL
+SELECT '148.1'::text number,
+       'TT_yvi01_countofnotnull'::text function_tested,
+       'Test species and null NFL'::text description,
+       TT_yvi01_countofnotnull('SP', NULL, NULL, NULL, NULL, 1::TEXT) = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '148.2'::text number,
+       'TT_yvi01_countofnotnull'::text function_tested,
+       'Test species and NFL'::text description,
+       TT_yvi01_countofnotnull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 2::TEXT) = 2 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '148.3'::text number,
+       'TT_yvi01_countofnotnull'::text function_tested,
+       'Test species and non NFL'::text description,
+       TT_yvi01_countofnotnull('SP', 'Vegetated, Forested', NULL, NULL, 'Upland', 2::TEXT) = 1 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '148.4'::text number,
+       'TT_yvi01_countofnotnull'::text function_tested,
+       'Test null species and null NFL'::text description,
+       TT_yvi01_countofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT) = 0 passed
 ---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)

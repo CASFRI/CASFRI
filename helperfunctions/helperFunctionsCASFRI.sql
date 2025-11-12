@@ -1598,7 +1598,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'vri01_nat_non_veg_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'vri01_non_for_anth_validation' THEN 'INVALID_VALUE'
                   WHEN rulelc = 'vri01_non_for_veg_validation' THEN 'INVALID_VALUE'
-                  WHEN rulelc = 'yvi01_nat_non_veg_validation' THEN 'NOT_IN_SET'
+                  WHEN rulelc = 'yvi01_nat_non_veg_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'yvi01_nfl_soil_moisture_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'avi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
                   WHEN rulelc = 'fvi01_stand_structure_validation' THEN 'NOT_APPLICABLE'
@@ -2730,7 +2730,7 @@ CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_validation(
 )
 RETURNS boolean AS $$		
   BEGIN
-    IF type_lnd IN('NW', 'NS', 'NE','Non-Vegetated, Water', 'Non-Vegetated, Snow/Ice', 'Non-Vegetated, Exposed Land') THEN
+    IF type_lnd IN('NW', 'NS', 'NE','Non-Vegetated Water', 'Non-Vegetated Snow/Ice', 'Non-Vegetated Exposed Land') THEN
       IF landpos IN ('A','Alpine') THEN
         RETURN TRUE;
       END IF;
@@ -2773,8 +2773,8 @@ RETURNS boolean AS $$
   BEGIN
 
     -- If row has non_for_veg attribute, return true
-    IF type_lnd IN ('VN', 'Vegetated, Non-Forested') THEN
-      IF class_ IN('S','H','C','M') OR cl_mod IN ('Tall Shrub', 'Low Shrub', 'Tall Shrub, Open', 'Tall Shrub, Closed') THEN
+    IF type_lnd IN ('VN', 'Vegetated Non-Forested') THEN
+      IF class_ IN('S','H','C','M') OR cl_mod IN ('Tall Shrub', 'Low Shrub', 'Tall Shrub Open', 'Tall Shrub Closed') THEN
         IF TT_yvi01_non_for_veg_translation(type_lnd, class_, cl_mod) IS NOT NULL THEN
           RETURN TRUE;
         END IF;
@@ -2782,9 +2782,9 @@ RETURNS boolean AS $$
     END IF;
 
     -- If row has nat_non_veg attribute of EX, return true
-    IF type_lnd IN('NW','NS','NE', 'Non-Vegetated, Water','Non-Vegetated, Snow/Ice','Non-Vegetated, Exposed Land') THEN
+    IF type_lnd IN('NW','NS','NE', 'Non-Vegetated Water','Non-Vegetated Snow/Ice','Non-Vegetated Exposed Land') THEN
       IF TT_yvi01_nat_non_veg_validation(type_lnd, class_, landpos, covertype) THEN
-        IF TT_yvi01_nat_non_veg_translation(type_lnd, class_, landpos, covertype) = 'EXPOSED_LAND' THEN
+        IF TT_yvi01_nat_non_veg_translation(type_lnd, class_, landpos, covertype) IN ('EXPOSED_LAND','WATER_SEDIMENT') THEN
           RETURN TRUE;
         END IF;
       END IF;
@@ -4587,6 +4587,49 @@ RETURNS BOOLEAN AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
+-- TT_yvi03_hasCountOfNotNull
+--
+-- species_1 text,
+-- type_lnd text,
+-- cover_type text,
+-- cl_mod text,
+-- landpos text,
+-- count text,
+-- exact text
+--
+-- hasCountOfNotNull using yvi03 custom countOfNotNull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_hasCountOfNotNull(text, text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yvi01_hasCountOfNotNull(
+  species_1 text,
+  type_lnd text,
+  cover_type text,
+  cl_mod text,
+  landpos text,
+  count text,
+  exact text
+)
+RETURNS boolean AS $$
+  DECLARE
+    _count int;
+    _exact boolean;
+    _counted_nulls int;
+  BEGIN
+    _count = count::int;
+    _exact = exact::boolean;
+
+    -- process
+    _counted_nulls = TT_yvi01_countOfNotNull(species_1, type_lnd, cover_type, cl_mod, landpos, '2');
+
+    IF _exact THEN
+      RETURN _counted_nulls = _count;
+    ELSE
+      RETURN _counted_nulls >= _count;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- ROW_TRANSLATION_RULE Function Definitions...
 -------------------------------------------------------------------------------
@@ -4837,22 +4880,22 @@ CREATE OR REPLACE FUNCTION TT_yvi01_hasNFLInfo(
 )
 RETURNS boolean AS $$
   DECLARE
-  	urban text[];
+    urban text[];
     shrub text[];
     nonveg_land text[];
     water text[];
     non_veg text[];
   BEGIN
-  	urban = ARRAY['RD','G','T','Road Surface','Gravel Pit','Tailings'];
-    shrub = ARRAY['S','H',',C','M','Tall Shrub', 'Low Shrub', 'Tall Shrub, Open', 'Tall Shrub, Closed','Mixed'];
-    nonveg_land = ARRAY['NW','NS','NE','Non-Vegetated, Water', 'Non-Vegetated, Snow/Ice', 'Non-Vegetated, Exposed Land'];
+    urban = ARRAY['RD','G','T','Road Surface','Gravel Pit','Tailings'];
+    shrub = ARRAY['S','H',',C','M','Tall Shrub', 'Low Shrub', 'Tall Shrub Open', 'Tall Shrub Closed','Mixed'];
+    nonveg_land = ARRAY['NW','NS','NE','Non-Vegetated Water', 'Non-Vegetated Snow/Ice', 'Non-Vegetated Exposed Land'];
     water = ARRAY['R','L','River', 'Lake'];
     non_veg = ARRAY['RS','E','S','B','RR','River Sediments', 'Exposed Soil', 'Burned Area', 'Rock & Rubble','Rock'];
     --- matchList({type_lnd, '-', class}  {'NU-RD', 'NU-G', 'NU-T'})
-    IF landtype IN ('Non-Vegetated, Urban/Industrial','NU') AND covertype = ANY(urban) THEN
+    IF landtype IN ('Non-Vegetated Urban/Industrial','NU') AND covertype = ANY(urban) THEN
       RETURN TRUE;
     --- matchList({type_lnd, '-', class}, {'VN-S', 'VN-H', 'VN-C', 'VN-M'})
-    ELSIF landtype IN ('Vegetated, Non-Forested','VN') AND cover_class = ANY(shrub) THEN
+    ELSIF landtype IN ('Vegetated Non-Forested','VN') AND cover_class = ANY(shrub) THEN
       RETURN TRUE;
     --- matchList({type_lnd, '-', landpos}, {'NW-A', 'NS-A', 'NE-A'});
     ELSIF landpos IN ('A','Alpine') AND landtype = ANY(nonveg_land)  THEN
@@ -4870,6 +4913,41 @@ RETURNS boolean AS $$
 $$ LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_yvi03_countofnotnull
+--
+-- Identify any NFL layers. Identify any non-productve LYR layers and set species_1 to a string.
+-- Pass strings and species to countofnotnull
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_countofnotnull(text, text, text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_yvi01_countofnotnull(
+  species_1 text,
+  type_lnd text,
+  cover_type text,
+  cl_mod text,
+  landpos text,
+  maxRankToConsider text
+)
+RETURNS int AS $$
+  DECLARE
+	_nfl text;
+  BEGIN
+    IF tt_notEmpty(species_1) THEN
+      species_1 = 'a string';
+    END IF;
+
+    IF tt_yvi01_hasNFLInfo(type_lnd, cover_type, cl_mod, landpos) THEN
+      _nfl = 'a_string';
+    ELSE
+      _nfl = NULL;
+    END IF;
+
+    RETURN TT_countOfNotNull(species_1, _nfl, maxRankToConsider, 'FALSE');
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -- Begin Translation Function Definitions...
@@ -5456,18 +5534,18 @@ CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_translation(
   covertype text
 )
 RETURNS text AS $$
-  BEGIN
-    IF type_lnd IN('NW', 'NS', 'NE','Non-Vegetated, Water', 'Non-Vegetated, Snow/Ice', 'Non-Vegetated, Exposed Land') THEN
+    BEGIN
+    IF type_lnd IN('NW', 'NS', 'NE','Non-Vegetated Water', 'Non-Vegetated Snow/Ice', 'Non-Vegetated Exposed Land') THEN
       IF landpos IN ('A','Alpine') THEN
         RETURN 'ALPINE';
       END IF;
-    
+
       IF class_ IN('R','L','RS','E','S','B','RR','River','Lake') THEN
         RETURN TT_mapText(class_, '{''R'',''L'',''RS'',''E'',''S'',''B'',''RR'',''River'',''Lake''}', '{''RIVER'',''LAKE'',''WATER_SEDIMENT'',''EXPOSED_LAND'',''SAND'',''EXPOSED_LAND'',''ROCK_RUBBLE'',''RIVER'',''LAKE''}');
       END IF;
 
       IF covertype IN('River Sediments','Exposed Soil','Burned Area','Rock & Rubble') THEN
-        RETURN TT_mapText(class_, '{''River Sediments'',''Exposed Soil'',''Burned Area'',''Rock & Rubble'')}', '{''WATER_SEDIMENT'',''EXPOSED_LAND'',''EXPOSED_LAND'',''ROCK_RUBBLE''}');
+        RETURN TT_mapText(covertype, '{''River Sediments'',''Exposed Soil'',''Burned Area'',''Rock & Rubble''}'::text[]::text, '{''WATER_SEDIMENT'',''EXPOSED_LAND'',''EXPOSED_LAND'',''ROCK_RUBBLE''}'::text[]::text,false::text,false::text);
       END IF;
     END IF;
     
@@ -5476,6 +5554,35 @@ RETURNS text AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
+-- TT_yvi01_non_for_anth_translation
+--
+
+-- class_ text
+-- covertype text
+--
+-- Assigns non_for_anth casfri attributes based on source attribute from two different columns used by separate inventories.
+-- class_ of 'RD' becomes 'OTHER'
+-- covertype of 'Gravel Pit' becomes 'OTHER'
+------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_yvi01_non_for_anth_translation(text, text, text);
+CREATE OR REPLACE FUNCTION TT_yvi01_non_for_anth_translation(
+  class_ text,
+  covertype text
+)
+RETURNS text AS $$
+  DECLARE
+    _output text;
+  BEGIN
+    _output = TT_mapText(class_, '{''RD'',''G'',''T''}', '{''FACILITY_INFRASTRUCTURE'',''BORROW_PIT'',''INDUSTRIAL''}');
+
+    IF _output is NULL THEN
+      _output = TT_mapText(covertype, '{''Road Surface'',''Gravel Pit'',''Tailings''}', '{''FACILITY_INFRASTRUCTURE'',''BORROW_PIT'',''INDUSTRIAL''}',FALSE::text,FALSE::text);
+    END IF;
+
+    RETURN _output;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_yvi01_non_for_veg_translation
 --
@@ -5496,22 +5603,22 @@ CREATE OR REPLACE FUNCTION TT_yvi01_non_for_veg_translation(
 RETURNS text AS $$
 	SELECT CASE
 	         WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TS' THEN 'TALL_SHRUB'
-	         WHEN type_lnd = 'Vegetated, Non-Forested' AND cl_mod = 'Tall Shrub' THEN 'TALL_SHRUB'
+	         WHEN type_lnd = 'Vegetated Non-Forested' AND cl_mod = 'Tall Shrub' THEN 'TALL_SHRUB'
            WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TSo' THEN 'TALL_SHRUB'
-           WHEN type_lnd = 'Vegetated, Non-Forested' AND cl_mod = 'Tall Shrub, Open' THEN 'TALL_SHRUB'
+           WHEN type_lnd = 'Vegetated Non-Forested' AND cl_mod = 'Tall Shrub Open' THEN 'TALL_SHRUB'
            WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'TSc' THEN 'TALL_SHRUB'
-           WHEN type_lnd = 'Vegetated, Non-Forested' AND cl_mod = 'Tall Shrub, Closed' THEN 'TALL_SHRUB'
+           WHEN type_lnd = 'Vegetated Non-Forested' AND cl_mod = 'Tall Shrub Closed' THEN 'TALL_SHRUB'
            WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = 'LS' THEN 'LOW_SHRUB'
-           WHEN type_lnd = 'Vegetated, Non-Forested' AND cl_mod = 'Low Shrub' THEN 'LOW_SHRUB'
+           WHEN type_lnd = 'Vegetated Non-Forested' AND cl_mod = 'Low Shrub' THEN 'LOW_SHRUB'
            WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod = '' THEN 'TALL_SHRUB' -- assign generic shrub to TALL_SHRUB
-           WHEN type_lnd = 'Vegetated, Non-Forested' AND cl_mod = '' THEN 'TALL_SHRUB'
+           WHEN type_lnd = 'Vegetated Non-Forested' AND cl_mod = '' THEN 'TALL_SHRUB'
            WHEN type_lnd = 'VN' AND class_ = 'S' AND cl_mod IS NULL THEN 'TALL_SHRUB' -- assign generic shrub to TALL_SHRUB
-           WHEN type_lnd = 'Vegetated, Non-Forested' AND cl_mod IS NULL THEN 'TALL_SHRUB'
+           WHEN type_lnd = 'Vegetated Non-Forested' AND cl_mod IS NULL THEN 'TALL_SHRUB'
            WHEN type_lnd = 'VN' AND class_ = 'C' THEN 'BRYOID'
            WHEN type_lnd = 'VN' AND class_ = 'H' THEN 'HERBS'
            WHEN type_lnd = 'VN' AND class_ = 'M' THEN 'HERBS'
            ELSE NULL
-         END;
+  END;
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 

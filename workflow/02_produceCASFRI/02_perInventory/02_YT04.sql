@@ -35,7 +35,7 @@ SELECT * FROM TT_Translate_yt04_cas('rawfri', 'yt04_l1_to_yt_l1_map');
 ------------------------
 -- DST
 ------------------------
-SELECT TT_Prepare('translation', 'yt_yvi03_dst', '_yt04_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'yt_yvi01_dst', '_yt04_dst', 'ab_avi01_dst');
 
 SELECT TT_CreateMappingView('rawfri', 'yt04', 1, 'yt', 1);
 
@@ -50,7 +50,7 @@ SELECT * FROM TT_Translate_yt04_dst('rawfri', 'yt04_l1_to_yt_l1_map');
 ------------------------
 -- ECO
 ------------------------
-SELECT TT_Prepare('translation', 'yt_yvi03_eco', '_yt04_eco', 'ab_avi01_eco');
+SELECT TT_Prepare('translation', 'yt_yvi01_eco', '_yt04_eco', 'ab_avi01_eco');
 
 SELECT TT_CreateMappingView('rawfri', 'yt04', 'yt');
 
@@ -71,7 +71,7 @@ ON translation.species_code_mapping (yt_species_codes)
 WHERE TT_NotEmpty(yt_species_codes);
 
 -- Prepare the translation function
-SELECT TT_Prepare('translation', 'yt_yvi03_lyr', '_yt04_lyr', 'ab_avi01_lyr'); 
+SELECT TT_Prepare('translation', 'yt_yvi01_lyr', '_yt04_lyr', 'ab_avi01_lyr');
 
 SELECT TT_CreateMappingView('rawfri', 'yt04', 1, 'yt', 1);
 
@@ -86,7 +86,7 @@ SELECT * FROM TT_Translate_yt04_lyr('rawfri', 'yt04_l1_to_yt_l1_map');
 ------------------------
 -- NFL
 ------------------------
-SELECT TT_Prepare('translation', 'yt_yvi03_nfl', '_yt04_nfl', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'yt_yvi01_nfl', '_yt04_nfl', 'ab_avi01_nfl');
 
 SELECT TT_CreateMappingView('rawfri', 'yt04', 2, 'yt', 1);
 
