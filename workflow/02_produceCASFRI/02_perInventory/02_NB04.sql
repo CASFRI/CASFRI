@@ -62,7 +62,7 @@ SELECT * FROM TT_Translate_nb04_eco('rawfri', 'nb04_l1_to_nb_l1_map');
 -- LYR
 ------------------------
 -- Check the uniqueness of NB species codes
-CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nb02_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nb04_species_codes_idx
 ON translation.species_code_mapping (nb_species_codes)
 WHERE TT_NotEmpty(nb_species_codes);
 

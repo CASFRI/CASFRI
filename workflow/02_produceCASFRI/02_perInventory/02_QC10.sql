@@ -76,7 +76,7 @@ COMMIT;
 -- LYR
 ------------------------
 -- Check the uniqueness of QC species codes
-CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_qc05_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_qc10_species_codes_idx
 ON translation.species_code_mapping (qc_species_codes)
 WHERE TT_NotEmpty(qc_species_codes);
 

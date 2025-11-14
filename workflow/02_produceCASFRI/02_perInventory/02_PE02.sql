@@ -63,7 +63,7 @@ SELECT * FROM TT_Translate_pe02_eco('rawfri', 'pe02_l1_to_pe_pei_l1_map');
 ------------------------
 
 -- Check the uniqueness of NS species codes
-CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_pe01_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_pe02_species_codes_idx
 ON translation.species_code_mapping (pe_species_codes)
 WHERE TT_NotEmpty(pe_species_codes);
 
