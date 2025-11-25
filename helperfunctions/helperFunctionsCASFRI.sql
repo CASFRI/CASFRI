@@ -1586,12 +1586,11 @@ RETURNS text AS $$
 				  WHEN rulelc = 'mb_mb03_disturbance_hascountofnotnull' THEN '-8888'
 				  WHEN rulelc = 'nl_nli01_crown_closure_validation' THEN '-8886'
 				  WHEN rulelc = 'nl_nli01_height_validation' THEN '-8886'
-				  WHEN rulelc = 'nb_hasCountOfNotNull' THEN '-8886'
+				  WHEN rulelc = 'nb_hascountofnotnull' THEN '-8886'
 				  WHEN rulelc = 'mb_fri03_getSpeciesPer1' THEN '-8888'
 				  WHEN rulelc = 'nt_fvi01_species_per_range_validation' THEN '-9999'
 				  WHEN rulelc = 'yvi03_hascountofnotnull' THEN '-8886'
-                  ELSE
-                   TT_DefaultErrorCode(rulelc, targetTypelc) END;
+                  ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
     ELSIF targetTypelc = 'geometry' THEN
       RETURN CASE WHEN rulelc = 'projectrule1' THEN NULL
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;

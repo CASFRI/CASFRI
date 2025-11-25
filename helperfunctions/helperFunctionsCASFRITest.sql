@@ -185,8 +185,14 @@ WITH test_nb AS (
 	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,137 maj_num,  4 nb_test UNION ALL
 	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,             138 maj_num,  6 nb_test UNION ALL
   SELECT 'TT_pe_pei01_dist_type_length_validation'::text function_tested, 139 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nb_stand_structure_translation'::text function_tested,       148 maj_num,  4 nb_test
-  SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested,   146 maj_num,  4 nb_test
+  SELECT 'TT_mb_fri03_getSpeciesPer1'::text function_tested,               140 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_mb_fri03_species_validation'::text function_tested,           141 maj_num,  9 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,            142 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi03_hasCountOfNotNull'::text function_tested,               144 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi03_countOfNotNull'::text function_tested,                  145 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested, 146 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nb_stand_structure_translation'::text function_tested,        147 maj_num,  4 nb_test
 ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -4322,45 +4328,45 @@ SELECT '123.5'::text number,
        'species without productivity'::text description,
        TT_nb_lyr_layer_translation('{NULL, 10}', '{NULL, NULL}', '{bf, bs}', 'FW', '1') = 2 passed
 ---------------------------------------------------------
- -- TT_nb_countofnotnull
+ -- TT_nb_countOfNotNull
 ---------------------------------------------------------
 UNION ALL
 SELECT '124.1'::text number,
-       'TT_nb_countofnotnull'::text function_tested,
+       'TT_nb_countOfNotNull'::text function_tested,
        'Species only'::text description,
-       TT_nb_countofnotnull('{bf, bs}', '{bf, bs}', NULL::text, NULL::text, NULL::text, '3') = 2 passed
+       TT_nb_countOfNotNull('{bf, bs}', '{bf, bs}', NULL::text, NULL::text, NULL::text, '3') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '124.2'::text number,
-       'TT_nb_countofnotnull'::text function_tested,
+       'TT_nb_countOfNotNull'::text function_tested,
        'l1 Species only'::text description,
-       TT_nb_countofnotnull('{bf, bs}', '{NULL, NULL}', NULL::text, NULL::text, NULL::text, '3') = 1 passed
+       TT_nb_countOfNotNull('{bf, bs}', '{NULL, NULL}', NULL::text, NULL::text, NULL::text, '3') = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '124.3'::text number,
-       'TT_nb_countofnotnull'::text function_tested,
+       'TT_nb_countOfNotNull'::text function_tested,
        'l1 Species only and NFL'::text description,
-       TT_nb_countofnotnull('{bf, bs}', '{NULL, NULL}', NULL::text, 'BL', NULL::text, '3') = 2 passed
+       TT_nb_countOfNotNull('{bf, bs}', '{NULL, NULL}', NULL::text, 'BL', NULL::text, '3') = 2 passed
 ---------------------------------------------------------
- -- TT_nb_hascountofnotnull
+ -- TT_nb_hasCountOfNotNull
 ---------------------------------------------------------
 UNION ALL
 SELECT '125.1'::text number,
-       'TT_nb_hascountofnotnull'::text function_tested,
+       'TT_nb_hasCountOfNotNull'::text function_tested,
        'Species only'::text description,
-       TT_nb_hascountofnotnull('{bf, bs}', '{bf, bs}', NULL::text, NULL::text, NULL::text, '2', 'TRUE') passed
+       TT_nb_hasCountOfNotNull('{bf, bs}', '{bf, bs}', NULL::text, NULL::text, NULL::text, '2', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '125.2'::text number,
-       'TT_nb_hascountofnotnull'::text function_tested,
+       'TT_nb_hasCountOfNotNull'::text function_tested,
        'Treed muskeg'::text description,
-       TT_nb_hascountofnotnull('{NULL, NULL}', '{NULL, NULL}', 'FW', NULL::text, NULL::text, '1', 'TRUE') passed
+       TT_nb_hasCountOfNotNull('{NULL, NULL}', '{NULL, NULL}', 'FW', NULL::text, NULL::text, '1', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '125.3'::text number,
-       'TT_nb_hascountofnotnull'::text function_tested,
+       'TT_nb_hasCountOfNotNull'::text function_tested,
        'NFL and treed muskeg'::text description,
-       TT_nb_hascountofnotnull('{NULL, NULL}', '{NULL, NULL}', 'FW', 'BL', NULL::text, '2', 'TRUE') passed
+       TT_nb_hasCountOfNotNull('{NULL, NULL}', '{NULL, NULL}', 'FW', 'BL', NULL::text, '2', 'TRUE') passed
 ---------------------------------------------------------
  -- TT_ns_lyr_layer_translation
 ---------------------------------------------------------
@@ -4684,7 +4690,7 @@ UNION ALL
 SELECT '140.4'::text number,
        'TT_mb_fri03_getSpeciesPer1'::text function_tested,
        'Test single species with non 100%'::text description,
-       TT_mb_fri03_getSpeciesPer1('TR9') IS NULL passed
+       TT_mb_fri03_getSpeciesPer1('TR9') = 90 passed
  ---------------------------------------------------------
 UNION ALL
 SELECT '140.5'::text number,
@@ -4807,53 +4813,53 @@ SELECT '143.4'::text number,
 ---------------------------------------------------------
 UNION ALL
 SELECT '144.1'::text number,
-       'TT_yvi03_hascountofnotnull'::text function_tested,
+       'TT_yvi03_hasCountOfNotNull'::text function_tested,
        'Test species and null NFL'::text description,
-       TT_yvi03_hascountofnotnull('SP', NULL, NULL, NULL, NULL, 1::TEXT, TRUE::TEXT) = TRUE passed
+       TT_yvi03_hasCountOfNotNull('SP', NULL, NULL, NULL, NULL, 1::TEXT, TRUE::TEXT) = TRUE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '144.2'::text number,
-       'TT_yvi03_hascountofnotnull'::text function_tested,
+       'TT_yvi03_hasCountOfNotNull'::text function_tested,
        'Test species and NFL'::text description,
-       TT_yvi03_hascountofnotnull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 1::TEXT, FALSE::TEXT) = TRUE passed
+       TT_yvi03_hasCountOfNotNull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 1::TEXT, FALSE::TEXT) = TRUE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '144.3'::text number,
-       'TT_yvi03_hascountofnotnull'::text function_tested,
+       'TT_yvi03_hasCountOfNotNull'::text function_tested,
        'Test species and non NFL'::text description,
-       TT_yvi03_hascountofnotnull('SP', 'Vegetated, Forested', NULL, NULL, 'Upland', 2::TEXT, FALSE::TEXT) = FALSE passed
+       TT_yvi03_hasCountOfNotNull('SP', 'Vegetated, Forested', NULL, NULL, 'Upland', 2::TEXT, FALSE::TEXT) = FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '144.4'::text number,
-       'TT_yvi03_hascountofnotnull'::text function_tested,
+       'TT_yvi03_hasCountOfNotNull'::text function_tested,
        'Test null species and null NFL'::text description,
-       TT_yvi03_hascountofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT, FALSE::TEXT) = FALSE passed
+       TT_yvi03_hasCountOfNotNull(NULL, NULL, NULL, NULL, NULL, 1::TEXT, FALSE::TEXT) = FALSE passed
 ---------------------------------------------------------
- -- TT_yvi03_countofnotnull
+ -- TT_yvi03_countOfNotNull
 ---------------------------------------------------------
 UNION ALL
 SELECT '145.1'::text number,
-       'TT_yvi03_countofnotnull'::text function_tested,
+       'TT_yvi03_countOfNotNull'::text function_tested,
        'Test species and null NFL'::text description,
-       TT_yvi03_countofnotnull('SP', NULL, NULL, NULL, NULL, 1::TEXT) = 1 passed
+       TT_yvi03_countOfNotNull('SP', NULL, NULL, NULL, NULL, 1::TEXT) = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '145.2'::text number,
-       'TT_yvi03_countofnotnull'::text function_tested,
+       'TT_yvi03_countOfNotNull'::text function_tested,
        'Test species and NFL'::text description,
-       TT_yvi03_countofnotnull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 2::TEXT) = 2 passed
+       TT_yvi03_countOfNotNull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 2::TEXT) = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '145.3'::text number,
-       'TT_yvi03_countofnotnull'::text function_tested,
+       'TT_yvi03_countOfNotNull'::text function_tested,
        'Test species and non NFL'::text description,
-       TT_yvi03_countofnotnull('SP', 'Vegetated, Forested', NULL, NULL, 'Upland', 2::TEXT) = 1 passed
+       TT_yvi03_countOfNotNull('SP', 'Vegetated, Forested', NULL, NULL, 'Upland', 2::TEXT) = 1 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '145.4'::text number,
-       'TT_yvi03_countofnotnull'::text function_tested,
+       'TT_yvi03_countOfNotNull'::text function_tested,
        'Test null species and null NFL'::text description,
-       TT_yvi03_countofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT) = 0 passed
+       TT_yvi03_countOfNotNull(NULL, NULL, NULL, NULL, NULL, 1::TEXT) = 0 passed
 ---------------------------------------------------------
  -- TT_nt_fvi01_species_per_range_validation
 ---------------------------------------------------------
