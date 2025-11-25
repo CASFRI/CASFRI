@@ -185,12 +185,7 @@ WITH test_nb AS (
 	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,137 maj_num,  4 nb_test UNION ALL
 	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,             138 maj_num,  6 nb_test UNION ALL
   SELECT 'TT_pe_pei01_dist_type_length_validation'::text function_tested, 139 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_mb_fri03_getSpeciesPer1'::text function_tested,               140 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_mb_fri03_species_validation'::text function_tested,           141 maj_num,  9 nb_test UNION ALL
-  SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,            142 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi03_hascountofnotnull'::text function_tested,               144 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi03_countofnotnull'::text function_tested,                  145 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nb_stand_structure_translation'::text function_tested,       148 maj_num,  4 nb_test
   SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested,   146 maj_num,  4 nb_test
 ),
 test_series AS (
@@ -4889,25 +4884,25 @@ SELECT '146.4'::text number,
  -- TT_nb_stand_structure_translation
 ---------------------------------------------------------
 UNION ALL
-SELECT '148.1'::text number,
+SELECT '147.1'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test single species layer'::text description,
        TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['']::TEXT, 'NOT_LYR') = 'SINGLE_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '148.2'::text number,
+SELECT '147.2'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test two species layers'::text description,
        TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['SP']::TEXT, 'NOT_LYR') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '148.3'::text number,
+SELECT '147.3'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test second layer only'::text description,
        TT_nb_stand_structure_translation(ARRAY['']::TEXT, ARRAY['SP']::TEXT, 'FW') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
 UNION ALL
-SELECT '148.4'::text number,
+SELECT '147.4'::text number,
        'TT_nb_stand_structure_translation'::text function_tested,
        'Test null species and null NFL'::text description,
        TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['SP']::TEXT, 'FW') = 'MULTI_LAYERED' passed
