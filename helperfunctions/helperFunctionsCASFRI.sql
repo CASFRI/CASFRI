@@ -1587,7 +1587,7 @@ RETURNS text AS $$
                   WHEN rulelc = 'nl_nli01_crown_closure_validation' THEN '-8886'
                   WHEN rulelc = 'nl_nli01_height_validation' THEN '-8886'
                   WHEN rulelc = 'nb_hascountofnotnull' THEN '-8886'
-                  WHEN rulelc = 'mb_fri03_getSpeciesPer1' THEN '-8888'
+                  WHEN rulelc = 'mb_fri03_getspeciesper1' THEN '-8888'
                   WHEN rulelc = 'nt_fvi01_species_per_range_validation' THEN '-9999'
                   WHEN rulelc = 'yvi03_hascountofnotnull' THEN '-8886'
                   ELSE TT_DefaultErrorCode(rulelc, targetTypelc) END;
@@ -6395,7 +6395,7 @@ RETURNS int AS $$
     is_nfl text;
   BEGIN
     -- set is_nfl to be a valid string.
-    IF nnf_anth IN('NMB','NMC','NMR','NMS','NMG','NWL','NWR','NWW','NMM','NMO','NWE','NWA','NSL','NMF', 'CP', 'CA', 'CPR', 'ASB', 'AFL', 'ADD', 'CIP','CIW','CIU','ASC','ASR','ASP','ASN','AIH','AIR', 'AAR', 'AIG','AII','AIW','AIA','AIF','AIU', 'SO','SO1','SO2','SO3','SO4','SO5','SO6','SO7','SO8','SO9','AL','SC','SC1','SC2','SC3','SC4','SC5','SC6','SC7','SC8','SC9','CC','HG','CS','HF','AS','HU','VI','BR','RA','CL','DL','AU') THEN
+    IF nnf_anth IN('NMB','NMC','NMR','NMS','NMG','NWL','NWR','NWW','NWM','NWO','NWE','NWA','NSL','NMF', 'CP', 'CA', 'CPR', 'ASB', 'AFL', 'ADD', 'CIP','CIW','CIU','ASC','ASR','ASP','ASN','AIH','AIR', 'AAR', 'AIG','AII','AIW','AIA','AIF','AIU', 'SO','SO1','SO2','SO3','SO4','SO5','SO6','SO7','SO8','SO9','AL','SC','SC1','SC2','SC3','SC4','SC5','SC6','SC7','SC8','SC9','CC','HG','CS','HF','AS','HU','VI','BR','RA','CL','DL','AU') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
@@ -6661,7 +6661,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_mb_fri_countOfNotNull
 --
--- species text - string list of species attributes. This is carried through to couneOfNotNull
+-- species text - string list of species attributes. This is carried through to countOfNotNull
 -- nfl text - nfl code
 -- max_rank_to_consider text
 --
@@ -6682,7 +6682,7 @@ RETURNS int AS $$
   BEGIN
     -- if any of the nfl functions return true, we know there is an NFL record.
     -- set is_nfl to be a valid string.
-    IF TT_matchList(nfl,'{''802'',''803'',''804'',''838'',''839'',''848'',''900'',''901'',''991'',''992'',''993'',''994'',''995'',''810'',''811'',''812'',''813'',''815'',''816'',''840'',''841'',''842'',''843'',''844'',''845'',''846'',''847'',''849'',''851'', ''801'',''821'',''822'',''823'',''824'',''830'',''831'',''832'',''835''}') THEN
+    IF TT_matchList(nfl,'{''802'',''803'',''804'',''810'',''811'',''812'',''813'',''815'',''816'',''838'',''839'',''840'',''841'',''842'',''843'',''844'',''845'',''846'',''847'',''849'',''851'', ''801'',''821'',''822'',''823'',''824'',''830'',''831'',''832'',''835'',''848'',''900'',''901'',''991'',''992'',''993'',''994'',''995''}') THEN
       is_nfl = 'a_value';
     ELSE
       is_nfl = NULL::text;
@@ -6690,8 +6690,8 @@ RETURNS int AS $$
 
 	  -- if val is a non-productive type, we know there is a LYR record. It's the same attribute as nfl
     -- set species to be a valid string.
-    IF TT_matchList(nfl,'{''701'', ''702'', ''703'', ''704'', ''711'', ''712'', ''713'', ''721'', ''722'', ''723'', ''724'', ''725'', ''731'', ''732'', ''733'', ''734''}')
-    OR tt_hasCountOfNotNull(species, '1', 'FALSE') THEN
+    IF TT_matchList(nfl,'{''700'', ''701'', ''702'', ''703'', ''704'', ''710'', ''711'', ''712'', ''713'', ''720'', ''721'', ''722'', ''723'', ''724'', ''725'', ''730'', ''731'', ''732'', ''733'', ''734''}')
+    OR TT_HasCountOfNotNull(species, '1', 'FALSE') THEN
       species = 'a_value';
     END IF;
 
