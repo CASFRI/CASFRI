@@ -35,7 +35,6 @@ SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc_ini03_dst_test', 'ab_avi01
 SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc_ini04_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc_ipf05_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc_wbnp01_dst_test', 'ab_avi01_dst');
-SELECT TT_Prepare('translation', 'yt_yvi02_dst', '_yt_yvi02_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'ds_cfs01_dst', '_ds_cfs_dst_test', 'ab_avi01_dst');
 
 ------------------------
@@ -227,7 +226,7 @@ SELECT * FROM TT_Translate_yt_02_dst_test('rawfri', 'yt03_l1_to_yt_yvi02_l1_map_
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt03', 2, 'yt_yvi02', 1, 10000, NULL, 'dst'); -- Generates about 200 (208) DST rows
 INSERT INTO casfri50_test.dst_all_new 
-SELECT * FROM TT_Translate_yt_yvi02_dst_test('rawfri', 'yt03_l2_to_yt_yvi02_l1_map_10000_dst');
+SELECT * FROM TT_Translate_yt_02_dst_test('rawfri', 'yt03_l2_to_yt_yvi02_l1_map_10000_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, 2800, NULL, 'dst'); -- Generates about 200 (228) DST rows
 INSERT INTO casfri50_test.dst_all_new 

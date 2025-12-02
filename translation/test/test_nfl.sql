@@ -37,7 +37,6 @@ SELECT TT_Prepare('translation', 'qc_ini04_nfl', '_qc_ini04_nfl_test', 'ab_avi01
 SELECT TT_Prepare('translation', 'qc_ipf05_nfl', '_qc_ipf05_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pc_panp01_nfl', '_pc_panp_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'pc_wbnp01_nfl', '_pc_wbnp_nfl_test', 'ab_avi01_nfl');
-SELECT TT_Prepare('translation', 'yt_yvi02_nfl', '_yt_yvi02_nfl_test', 'ab_avi01_nfl');
 SELECT TT_Prepare('translation', 'ds_bea01_nfl', '_ds_bea01_nfl_test', 'ab_avi01_nfl');
 
 ------------------------
