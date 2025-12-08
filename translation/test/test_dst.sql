@@ -35,7 +35,6 @@ SELECT TT_Prepare('translation', 'qc_ini03_dst', '_qc_ini03_dst_test', 'ab_avi01
 SELECT TT_Prepare('translation', 'qc_ini04_dst', '_qc_ini04_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'qc_ipf05_dst', '_qc_ipf05_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'pc_wbnp01_dst', '_pc_wbnp01_dst_test', 'ab_avi01_dst');
-SELECT TT_Prepare('translation', 'yt_yvi02_dst', '_yt_yvi02_dst_test', 'ab_avi01_dst');
 SELECT TT_Prepare('translation', 'ds_cfs01_dst', '_ds_cfs_dst_test', 'ab_avi01_dst');
 
 ------------------------
@@ -173,6 +172,10 @@ SELECT TT_CreateMappingView('rawfri', 'nt03', 1, 'nt', 1, 800, NULL, 'dst'); -- 
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_nt_dst_test('rawfri', 'nt03_l1_to_nt_l1_map_800_dst');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'nt04', 1, 'nt', 1, 600, NULL, 'dst'); -- Generates about 200 (212) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_nt_dst_test('rawfri', 'nt04_l1_to_nt_l1_map_600_dst');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'on01', 1, 'on', 1, 6000, NULL, 'dst'); -- Generates about 400 (442) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_on_dst_test('rawfri', 'on01_l1_to_on_l1_map_6000_dst');
@@ -223,7 +226,7 @@ SELECT * FROM TT_Translate_yt_02_dst_test('rawfri', 'yt03_l1_to_yt_yvi02_l1_map_
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt03', 2, 'yt_yvi02', 1, 10000, NULL, 'dst'); -- Generates about 200 (208) DST rows
 INSERT INTO casfri50_test.dst_all_new 
-SELECT * FROM TT_Translate_yt_yvi02_dst_test('rawfri', 'yt03_l2_to_yt_yvi02_l1_map_10000_dst');
+SELECT * FROM TT_Translate_yt_02_dst_test('rawfri', 'yt03_l2_to_yt_yvi02_l1_map_10000_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, 2800, NULL, 'dst'); -- Generates about 200 (228) DST rows
 INSERT INTO casfri50_test.dst_all_new 
@@ -236,6 +239,10 @@ SELECT * FROM TT_Translate_ns_dst_test('rawfri', 'ns02_l1_to_ns_nsi_l1_map_3000_
 SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, 3000, NULL, 'dst'); -- Generates about 200 (217) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_ns_dst_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_3000_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns04', 1, 'ns_nsi', 1, 3000, NULL, 'dst'); -- Generates about 200 (219) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_ns_dst_test('rawfri', 'ns04_l1_to_ns_nsi_l1_map_3000_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 700, NULL, 'dst'); -- Generates about 200 (233) DST rows
 INSERT INTO casfri50_test.dst_all_new 
@@ -308,6 +315,18 @@ SELECT * FROM TT_Translate_qc_ini04_dst_test('rawfri', 'qc06_l1_to_qc_ini04_l1_m
 SELECT TT_CreateMappingView('rawfri', 'qc07', 1, 'qc_ipf', 1, 400, NULL, 'dst'); -- Generates about 200 (218) DST rows
 INSERT INTO casfri50_test.dst_all_new 
 SELECT * FROM TT_Translate_qc_ipf05_dst_test('rawfri', 'qc07_l1_to_qc_ipf_l1_map_400_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc08', 1, 'qc_ini03', 1, 5200, NULL, 'dst'); -- Generates about 1000 (1072) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_qc_ini03_dst_test('rawfri', 'qc08_l1_to_qc_ini03_l1_map_5200_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc09', 1, 'qc_ini04', 1, 1700, NULL, 'dst'); -- Generates about 1000 (1062) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_qc_ini04_dst_test('rawfri', 'qc09_l1_to_qc_ini04_l1_map_1700_dst');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc10', 1, 'qc_ipf', 1, 2000, NULL, 'dst'); -- Generates about 1000 (1030) DST rows
+INSERT INTO casfri50_test.dst_all_new 
+SELECT * FROM TT_Translate_qc_ipf05_dst_test('rawfri', 'qc10_l1_to_qc_ipf_l1_map_2000_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'pc02', 1, 'pc_wbnp', 1, 500, NULL, 'dst'); -- Generates about 200 (235) DST rows
 INSERT INTO casfri50_test.dst_all_new 

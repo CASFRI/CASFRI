@@ -52,13 +52,13 @@ WITH test_nb AS (
     SELECT 'MB'::text juridiction,  4 maj_num,  7 nb_test UNION ALL
     SELECT 'NB'::text juridiction,  5 maj_num,  8 nb_test UNION ALL
     SELECT 'NL'::text juridiction,  6 maj_num,  4 nb_test UNION ALL
-    SELECT 'NS'::text juridiction,  7 maj_num,  3 nb_test UNION ALL
-    SELECT 'NT'::text juridiction,  8 maj_num,  2 nb_test UNION ALL
+    SELECT 'NS'::text juridiction,  7 maj_num,  4 nb_test UNION ALL
+    SELECT 'NT'::text juridiction,  8 maj_num,  3 nb_test UNION ALL
     SELECT 'ON'::text juridiction,  9 maj_num,  2 nb_test UNION ALL
     SELECT 'PC'::text juridiction, 10 maj_num,  2 nb_test UNION ALL
     SELECT 'PE'::text juridiction, 11 maj_num,  4 nb_test UNION ALL
-    SELECT 'QC'::text juridiction, 12 maj_num,  7 nb_test UNION ALL
-    SELECT 'SK'::text juridiction, 13 maj_num,  6 nb_test UNION ALL
+    SELECT 'QC'::text juridiction, 12 maj_num, 10 nb_test UNION ALL
+    SELECT 'SK'::text juridiction, 13 maj_num,  7 nb_test UNION ALL
     SELECT 'YT'::text juridiction, 14 maj_num,  3 nb_test
 ), test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -138,8 +138,10 @@ FROM test_series AS a FULL OUTER JOIN (
       ('7.1', 'NS', 'ns01', 1127926),
       ('7.2', 'NS', 'ns02', 1090671),
       ('7.3', 'NS', 'ns03', 995886),
+      ('7.4', 'NS', 'ns04', 1004111),
       ('8.1', 'NT', 'nt01', 281388),
       ('8.2', 'NT', 'nt03', 320526),
+      ('8.3', 'NT', 'nt04', 53360),
       ('9.1', 'ON', 'on01', 4106417),
       ('9.2', 'ON', 'on02', 3629072),
       ('10.1', 'PC', 'pc01', 8094),
@@ -155,12 +157,16 @@ FROM test_series AS a FULL OUTER JOIN (
       ('12.5', 'QC', 'qc05', 6768074),
       ('12.6', 'QC', 'qc06', 4809274),
       ('12.7', 'QC', 'qc07', 85057),
+      ('12.8', 'QC', 'qc08', 404179),
+      ('12.9', 'QC', 'qc09', 563695),
+      ('12.10','QC', 'qc10', 8897958),
       ('13.1', 'SK', 'sk01', 1501667),
       ('13.2', 'SK', 'sk02', 27312),
       ('13.3', 'SK', 'sk03', 8964),
       ('13.4', 'SK', 'sk04', 633522),
       ('13.5', 'SK', 'sk05', 421977),
       ('13.6', 'SK', 'sk06', 211482),
+      ('13.7', 'SK', 'sk07', 1470758),
       ('14.1', 'YT', 'yt01', 249636),
       ('14.2', 'YT', 'yt02', 231137),
       ('14.3', 'YT', 'yt03', 71073)

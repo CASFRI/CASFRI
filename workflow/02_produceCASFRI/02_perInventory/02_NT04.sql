@@ -63,7 +63,7 @@ SELECT * FROM TT_Translate_nt04_eco('rawfri', 'nt04_l1_to_nt_l1_map');
 -- LYR
 ------------------------
 -- Check the uniqueness of NT species codes
-CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nt03_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_nt04_species_codes_idx
 ON translation.species_code_mapping (nt_species_codes)
 WHERE TT_NotEmpty(nt_species_codes);
 

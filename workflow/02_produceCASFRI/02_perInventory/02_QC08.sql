@@ -70,7 +70,7 @@ SELECT * FROM TT_Translate_qc08_eco('rawfri', 'qc08_l1_to_qc_ini03_l1_map');
 -- LYR
 ------------------------
 -- Check the uniqueness of QC species codes
-CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_qc03_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_qc08_species_codes_idx
 ON translation.species_code_mapping (qc_species_codes)
 WHERE TT_NotEmpty(qc_species_codes);
 

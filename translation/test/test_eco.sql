@@ -37,7 +37,6 @@ SELECT TT_Prepare('translation', 'qc_ini04_eco', '_qc_ini04_eco_test', 'ab_avi01
 SELECT TT_Prepare('translation', 'qc_ipf05_eco', '_qc_ipf05_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'pc_panp01_eco', '_pc_panp_eco_test', 'ab_avi01_eco');
 SELECT TT_Prepare('translation', 'pc_wbnp01_eco', '_pc_wbnp_eco_test', 'ab_avi01_eco');
-SELECT TT_Prepare('translation', 'yt_yvi02_eco', '_yt_yvi02_eco_test', 'ab_avi01_eco');
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.eco_all_new CASCADE;
 ------------------------
@@ -165,6 +164,10 @@ SELECT TT_CreateMappingView('rawfri', 'nt03', 'nt', 950, NULL, 'eco'); -- Genera
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_nt_eco_test('rawfri', 'nt03_l1_to_nt_l1_map_950_eco');
 ------------------------
+SELECT TT_CreateMappingView('rawfri', 'nt04', 'nt', 350, NULL, 'eco'); -- Generates about 200 (222) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_nt_eco_test('rawfri', 'nt04_l1_to_nt_l1_map_350_eco');
+------------------------
 SELECT TT_CreateMappingView('rawfri', 'on01', 'on', 1000, NULL, 'eco'); -- Generates 0 ECO rows
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_on_eco_test('rawfri', 'on01_l1_to_on_l1_map_1000_eco');
@@ -224,6 +227,10 @@ SELECT * FROM TT_Translate_ns_eco_test('rawfri', 'ns02_l1_to_ns_nsi_l1_map_3400_
 SELECT TT_CreateMappingView('rawfri', 'ns03', 'ns_nsi', 2500, NULL, 'eco'); -- Generates about 300 (314) ECO rows
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_ns_eco_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_2500_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'ns04', 'ns_nsi', 2500, NULL, 'eco'); -- Generates about 300 (317) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_ns_eco_test('rawfri', 'ns04_l1_to_ns_nsi_l1_map_2500_eco');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'pe01', 'pe_pei', 16000, NULL, 'eco'); -- Generates about 200 (229) ECO rows
 INSERT INTO casfri50_test.eco_all_new 
@@ -300,6 +307,18 @@ SELECT * FROM TT_Translate_qc_ini04_eco_test('rawfri', 'qc06_l1_to_qc_ini04_l1_m
 SELECT TT_CreateMappingView('rawfri', 'qc07', 'qc_ipf', 3000, NULL, 'eco'); -- Generates about 200 (210) ECO rows
 INSERT INTO casfri50_test.eco_all_new 
 SELECT * FROM TT_Translate_qc_ipf05_eco_test('rawfri', 'qc07_l1_to_qc_ipf_l1_map_3000_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc08', 'qc_ini03', 3000, NULL, 'eco'); -- Generates about 200 (210) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_qc_ini03_eco_test('rawfri', 'qc08_l1_to_qc_ini03_l1_map_3000_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc09', 'qc_ini04', 3000, NULL, 'eco'); -- Generates about 200 (210) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_qc_ini04_eco_test('rawfri', 'qc09_l1_to_qc_ini04_l1_map_3000_eco');
+------------------------
+SELECT TT_CreateMappingView('rawfri', 'qc10', 'qc_ipf', 3000, NULL, 'eco'); -- Generates about 200 (210) ECO rows
+INSERT INTO casfri50_test.eco_all_new 
+SELECT * FROM TT_Translate_qc_ipf05_eco_test('rawfri', 'qc10_l1_to_qc_ipf_l1_map_3000_eco');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'pc01', 4, 'pc_panp', 1, 1100, NULL, 'eco'); -- Generates about 200 (216) ECO rows
 INSERT INTO casfri50_test.eco_all_new 

@@ -53,7 +53,7 @@ SELECT * FROM TT_Translate_mb13_eco('rawfri', 'mb13_l1_to_mb_fri3_l1_map');
 -- LYR
 ------------------------
 -- Check the uniqueness of MB species codes
-CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_mb03_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_mb13_species_codes_idx
 ON translation.species_code_mapping (mb_species_codes)
 WHERE TT_NotEmpty(mb_species_codes);
 

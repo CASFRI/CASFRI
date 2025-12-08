@@ -70,7 +70,7 @@ SELECT * FROM TT_Translate_yt03_eco('rawfri', 'yt03_l1_to_yt_yvi02_l1_map');
 -- LYR
 ------------------------
 -- Check the uniqueness of YT species codes
-CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_yt02_species_codes_idx
+CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_yt03_species_codes_idx
 ON translation.species_code_mapping (yt_species_codes)
 WHERE TT_NotEmpty(yt_species_codes);
 
