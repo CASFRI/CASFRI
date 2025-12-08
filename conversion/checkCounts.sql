@@ -59,7 +59,7 @@ WITH test_nb AS (
     SELECT 'PE'::text juridiction, 11 maj_num,  4 nb_test UNION ALL
     SELECT 'QC'::text juridiction, 12 maj_num, 10 nb_test UNION ALL
     SELECT 'SK'::text juridiction, 13 maj_num,  7 nb_test UNION ALL
-    SELECT 'YT'::text juridiction, 14 maj_num,  3 nb_test
+    SELECT 'YT'::text juridiction, 14 maj_num,  4 nb_test
 ), test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
 SELECT maj_num::text, juridiction, nb_test, generate_series(1, nb_test)::text min_num
