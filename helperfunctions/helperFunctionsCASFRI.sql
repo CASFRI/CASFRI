@@ -2509,7 +2509,7 @@ RETURNS text AS $$
     _smr = upper(smr);
 	RETURN CASE
            WHEN left(_smr,1)='A' THEN 'MONG'
-           WHEN left(_smr,1)='W' AND (class_='S' OR class_ in ('Tall Shrub', 'Low Shrub', 'Tall Shrub, Open', 'Tall Shrub, Closed')) THEN 'SONS'
+           WHEN left(_smr,1)='W' AND (class_='S' OR class_ in ('Tall Shrub', 'Low Shrub', 'Tall Shrub Open', 'Tall Shrub Closed')) THEN 'SONS'
            WHEN _smr='W' AND class_='H' THEN 'MONG'
            WHEN _smr='W' AND class_='M' THEN 'SONS'
            WHEN _smr='W' AND class_='C' THEN 'FONS'
@@ -4887,15 +4887,17 @@ RETURNS boolean AS $$
     non_veg text[];
   BEGIN
     urban = ARRAY['RD','G','T','Road Surface','Gravel Pit','Tailings'];
-    shrub = ARRAY['S','H',',C','M','Tall Shrub', 'Low Shrub', 'Tall Shrub Open', 'Tall Shrub Closed','Mixed'];
+    shrub = ARRAY['S','H','C','M','Tall Shrub', 'Low Shrub', 'Tall Shrub Open', 'Tall Shrub Closed','Mixed'];
     nonveg_land = ARRAY['NW','NS','NE','Non-Vegetated Water', 'Non-Vegetated Snow/Ice', 'Non-Vegetated Exposed Land'];
     water = ARRAY['R','L','River', 'Lake'];
     non_veg = ARRAY['RS','E','S','B','RR','River Sediments', 'Exposed Soil', 'Burned Area', 'Rock & Rubble','Rock'];
     --- matchList({type_lnd, '-', class}  {'NU-RD', 'NU-G', 'NU-T'})
     IF landtype IN ('Non-Vegetated Urban/Industrial','NU') AND covertype = ANY(urban) THEN
       RETURN TRUE;
+    ELSIF landtype = 'Vegetated Non-Forested' AND cover_class = ANY(shrub) THEN
+      RETURN TRUE;
     --- matchList({type_lnd, '-', class}, {'VN-S', 'VN-H', 'VN-C', 'VN-M'})
-    ELSIF landtype IN ('Vegetated Non-Forested','VN') AND cover_class = ANY(shrub) THEN
+    ELSIF landtype = 'VN' AND covertype = ANY(shrub) THEN
       RETURN TRUE;
     --- matchList({type_lnd, '-', landpos}, {'NW-A', 'NS-A', 'NE-A'});
     ELSIF landpos IN ('A','Alpine') AND landtype = ANY(nonveg_land)  THEN
@@ -5576,7 +5578,7 @@ RETURNS text AS $$
   BEGIN
     _output = TT_mapText(class_, '{''RD'',''G'',''T''}', '{''FACILITY_INFRASTRUCTURE'',''BORROW_PIT'',''INDUSTRIAL''}');
 
-    IF _output is NULL THEN
+    IF _output IS NULL THEN
       _output = TT_mapText(covertype, '{''Road Surface'',''Gravel Pit'',''Tailings''}', '{''FACILITY_INFRASTRUCTURE'',''BORROW_PIT'',''INDUSTRIAL''}',FALSE::text,FALSE::text);
     END IF;
 
@@ -8293,7 +8295,7 @@ RETURNS text AS $$
     _wetland_code = TT_yt_wetland_code(smr, cc, class_, sp1, sp2, sp1_per, avg_ht);
     _wetland_char = substring(_wetland_code from retCharPos::int for 1);
     IF _wetland_char IS NULL OR _wetland_char = '-' THEN
-      RETURN FALSE;
+      RETURN NULL;
     END IF;
     IF _wetland_code IS NULL THEN
       RETURN NULL;

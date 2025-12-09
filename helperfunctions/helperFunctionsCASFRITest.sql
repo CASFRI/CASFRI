@@ -191,7 +191,7 @@ WITH test_nb AS (
   SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested, 144 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_nb_stand_structure_translation'::text function_tested,        145 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi01_nat_non_veg_translation':: text function_tested,        146 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_non_for_anth_translation':: text function_tested,       146 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_yvi01_hascountofnotnull'::text function_tested,               147 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_yvi01_countofnotnull'::text function_tested,                  148 maj_num,  4 nb_test
  ),
@@ -4862,31 +4862,31 @@ SELECT '145.4'::text number,
        'Test null species and null NFL'::text description,
        TT_nb_stand_structure_translation(ARRAY['SP']::TEXT, ARRAY['SP']::TEXT, 'FW') = 'MULTI_LAYERED' passed
 ---------------------------------------------------------
- -- TT_yvi01_nat_non_veg_translation
+ -- TT_yvi01_non_for_anth_translation
 ---------------------------------------------------------
 UNION ALL
 SELECT '146.1'::text number,
        'TT_yvi01_non_for_anth_translation'::text function_tested,
        'Test yt01 class code for Road'::text description,
-       TT_yvi01_nat_non_veg_translation('RD'::TEXT, NULL) = 'FACILITY_INFRASTRUCTURE' passed
+       TT_yvi01_non_for_anth_translation('RD'::TEXT, NULL) = 'FACILITY_INFRASTRUCTURE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '146.2'::text number,
        'TT_yvi01_non_for_anth_translation'::text function_tested,
        'Test yt04 cover_type code for Road'::text description,
-       TT_yvi01_nat_non_veg_translation(NULL, 'Road'::TEXT) = 'FACILITY_INFRASTRUCTURE' passed
+       TT_yvi01_non_for_anth_translation(NULL, 'Road Surface'::TEXT) = 'FACILITY_INFRASTRUCTURE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '146.3'::text number,
        'TT_yvi01_non_for_anth_translation'::text function_tested,
        'Test yt01 class code for Gravel Pit'::text description,
-       TT_yvi01_nat_non_veg_translation('G'::TEXT, NULL) = 'BORROW_PIT' passed
+       TT_yvi01_non_for_anth_translation('G'::TEXT, NULL) = 'BORROW_PIT' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '146.4'::text number,
        'TT_yvi01_non_for_anth_translation'::text function_tested,
        'Test yt04 class code for Gravel Pit'::text description,
-       TT_yvi01_nat_non_veg_translation(NULL,'Gravel Pit'::TEXT) = 'BORROW_PIT' passed
+       TT_yvi01_non_for_anth_translation(NULL,'Gravel Pit'::TEXT) = 'BORROW_PIT' passed
 ---------------------------------------------------------
  -- TT_yvi01_hasCountOfNotNull
 ---------------------------------------------------------
@@ -4900,7 +4900,7 @@ UNION ALL
 SELECT '147.2'::text number,
        'TT_yvi01_hascountofnotnull'::text function_tested,
        'Test species and NFL'::text description,
-       TT_yvi01_hascountofnotnull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 1::TEXT, FALSE::TEXT) = TRUE passed
+       TT_yvi01_hascountofnotnull('SP', 'Vegetated Non-Forested', NULL, 'Low Shrub', 'Alpine', 1::TEXT, FALSE::TEXT) = TRUE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '147.3'::text number,
@@ -4926,7 +4926,7 @@ UNION ALL
 SELECT '148.2'::text number,
        'TT_yvi01_countofnotnull'::text function_tested,
        'Test species and NFL'::text description,
-       TT_yvi01_countofnotnull('SP', 'Vegetated, Non-Forested', NULL, 'Low Shrub', 'Alpine', 2::TEXT) = 2 passed
+       TT_yvi01_countofnotnull('SP', 'Vegetated Non-Forested', NULL, 'Low Shrub', 'Alpine', 2::TEXT) = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '148.3'::text number,

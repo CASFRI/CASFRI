@@ -91,7 +91,8 @@ SELECT * FROM (
   SELECT 'SK07' inv, 1470758 cnt UNION ALL 
   SELECT 'YT01' inv, 249636 cnt UNION ALL 
   SELECT 'YT02' inv, 231137 cnt UNION ALL 
-  SELECT 'YT03' inv, 71073 cnt
+  SELECT 'YT03' inv, 71073 cnt UNION ALL 
+  SELECT 'YT04' inv, 231137 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.cas_all
@@ -203,7 +204,8 @@ UNION ALL
   SELECT 'SK07' inv, 69144 cnt UNION ALL 
   SELECT 'YT01' inv, 20704 cnt UNION ALL 
   SELECT 'YT02' inv, 19173 cnt UNION ALL 
-  SELECT 'YT03' inv, 23285 cnt
+  SELECT 'YT03' inv, 23285 cnt UNION ALL 
+  SELECT 'YT04' inv, 19173 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.dst_all
@@ -315,7 +317,8 @@ UNION ALL
   SELECT 'SK07' inv, 444737 cnt UNION ALL 
   SELECT 'YT01' inv, 11150 cnt UNION ALL 
   SELECT 'YT02' inv, 10313 cnt UNION ALL 
-  SELECT 'YT03' inv, 11096 cnt
+  SELECT 'YT03' inv, 11096 cnt UNION ALL 
+  SELECT 'YT04' inv, 10313 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.eco_all
@@ -427,7 +430,8 @@ UNION ALL
   SELECT 'SK07' inv, 1092211 cnt UNION ALL 
   SELECT 'YT01' inv, 114733 cnt UNION ALL
   SELECT 'YT02' inv, 105102 cnt UNION ALL
-  SELECT 'YT03' inv, 65548
+  SELECT 'YT03' inv, 65548 cnt UNION ALL
+  SELECT 'YT04' inv, 105102
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.lyr_all
@@ -539,7 +543,8 @@ UNION ALL
   SELECT 'SK07' inv, 316424 cnt UNION ALL 
   SELECT 'YT01' inv, 82302 cnt UNION ALL 
   SELECT 'YT02' inv, 76018 cnt UNION ALL 
-  SELECT 'YT03' inv, 97712 cnt
+  SELECT 'YT03' inv, 97712 cnt UNION ALL 
+  SELECT 'YT04' inv, 19949 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.nfl_all
@@ -651,7 +656,8 @@ UNION ALL
   SELECT 'SK07' inv, 1470758 cnt UNION ALL 
   SELECT 'YT01' inv, 249636 cnt UNION ALL 
   SELECT 'YT02' inv, 231137 cnt UNION ALL 
-  SELECT 'YT03' inv, 71073 cnt
+  SELECT 'YT03' inv, 71073 cnt UNION ALL 
+  SELECT 'YT04' inv, 231137 cnt
 ), counts AS (
   SELECT left(cas_id, 4) inv, count(*) nb
   FROM casfri50.geo_all
