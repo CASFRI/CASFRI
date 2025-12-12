@@ -82,6 +82,8 @@ tableName_full=${fullTargetTableName}_full
 -- Create an intermediate table with SUP rows
 DROP TABLE IF EXISTS $tableName_sup CASCADE;
 
+CREATE INDEX ON $tableName_etage (etage);
+
 CREATE TABLE $tableName_sup AS
 SELECT geoc_maj sup_geoc_maj, 
        etage sup_etage, 
