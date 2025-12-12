@@ -1097,25 +1097,25 @@ UNION ALL
 SELECT '27.1'::text number,
        'TT_yvi01_nat_non_veg_validation'::text function_tested,
        'Test wrong type_lnd'::text description,
-       TT_yvi01_nat_non_veg_validation('VF', '', '') IS FALSE passed
+       TT_yvi01_nat_non_veg_validation('VF', '', '', '') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '27.2'::text number,
        'TT_yvi01_nat_non_veg_validation'::text function_tested,
        'test Alpine'::text description,
-       TT_yvi01_nat_non_veg_validation('NE', '', 'A') passed
+       TT_yvi01_nat_non_veg_validation('NE', '', 'A', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '27.3'::text number,
        'TT_yvi01_nat_non_veg_validation'::text function_tested,
        'test class true'::text description,
-       TT_yvi01_nat_non_veg_validation('NE', 'R', '') passed
+       TT_yvi01_nat_non_veg_validation('NE', 'R', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '27.4'::text number,
        'TT_yvi01_nat_non_veg_validation'::text function_tested,
        'test class false'::text description,
-       TT_yvi01_nat_non_veg_validation('NE', NULL::text, NULL::text) IS FALSE passed
+       TT_yvi01_nat_non_veg_validation('NE', NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
   -- TT_yvi01_nat_non_veg_translation
 ---------------------------------------------------------
@@ -1123,25 +1123,25 @@ UNION ALL
 SELECT '28.1'::text number,
        'TT_yvi01_nat_non_veg_translation'::text function_tested,
        'Test wrong type_lnd'::text description,
-       TT_yvi01_nat_non_veg_translation('VF', '', '') IS NULL passed
+       TT_yvi01_nat_non_veg_translation('VF', '', '', '') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '28.2'::text number,
        'TT_yvi01_nat_non_veg_translation'::text function_tested,
        'test Alpine'::text description,
-       TT_yvi01_nat_non_veg_translation('NE', '', 'A') = 'ALPINE' passed
+       TT_yvi01_nat_non_veg_translation('NE', '', 'A', '') = 'ALPINE' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '28.3'::text number,
        'TT_yvi01_nat_non_veg_translation'::text function_tested,
        'test class true'::text description,
-       TT_yvi01_nat_non_veg_translation('NE', 'R', '') = 'RIVER' passed
+       TT_yvi01_nat_non_veg_translation('NE', 'R', '', '') = 'RIVER' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '28.4'::text number,
        'TT_yvi01_nat_non_veg_translation'::text function_tested,
        'test class false'::text description,
-       TT_yvi01_nat_non_veg_translation('NE', NULL::text, NULL::text) IS NULL passed
+       TT_yvi01_nat_non_veg_translation('NE', NULL::text, NULL::text, NULL::text) IS NULL passed
 ---------------------------------------------------------
   -- TT_yvi01_non_for_veg_translation
 ---------------------------------------------------------
@@ -1182,37 +1182,37 @@ UNION ALL
 SELECT '30.1'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test non_for_veg pass'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('VN', 'C', '', '') passed
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'C', '', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '30.2'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test non_for_veg fail'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', NULL::text, '') passed
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', NULL::text, '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '30.3'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test non_for_veg pass 2'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', 'TS', '') passed
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'S', 'TS', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '30.4'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test nat_non_veg fail, not EX'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('NW', '', '', 'A') IS FALSE passed
+       TT_yvi01_nfl_soil_moisture_validation('NW', '', '', 'A', '') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '30.5'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test nat_non_veg pass, is EX'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('NW', 'E', '', '') passed
+       TT_yvi01_nfl_soil_moisture_validation('NW', 'E', '', '', '') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '30.6'::text number,
        'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,
        'Test nat_non_veg fail, wrong type'::text description,
-       TT_yvi01_nfl_soil_moisture_validation('VN', 'E', '', '') IS FALSE passed
+       TT_yvi01_nfl_soil_moisture_validation('VN', 'E', '', '', '') IS FALSE passed
 ---------------------------------------------------------
   -- TT_avi01_stand_structure_validation
 ---------------------------------------------------------
