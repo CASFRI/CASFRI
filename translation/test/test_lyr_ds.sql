@@ -1,0 +1,1 @@
+CREATE SCHEMA IF NOT EXISTS casfri50_test;

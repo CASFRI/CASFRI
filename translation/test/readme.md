@@ -27,10 +27,10 @@ also alter final tables in a number of ways:
   loaded in the database. This might have an impact on their metrics (e.g. area,
   perimeter) and/or their topology (e.g. the same geometry, after being loaded 
   with a different version of PostGIS, might be equivalent to the previously 
-  loaded one but not identical because the new version of GEOS   changed the 
+  loaded one but not identical because the new version of GEOS changed the 
   order of its vertices. It might also alter how the geometry topologically 
   relates with other geometries (e.g. it does not intersect anymore or it 
-  intersects differently with another geometry)). This might   have an impact on
+  intersects differently with another geometry)). This might have an impact on
   subsequent derived tables like the flat table or the history table.
 
 - Changes in a loading script might alter the count of rows in the converted 
@@ -40,7 +40,7 @@ also alter final tables in a number of ways:
 This is why it is important to update the translation test tables if they are, 
 by any means, modified by the translation process or the conversion process.
 
-Translation tests take about 30 minutes to complete. This is still much faster 
+Translation tests take about 10 minutes to complete. This is still much faster 
 than a complete translation which can take hours. They are designed to test all 
 translated inventory at once because changes to some generic helper functions 
 and changes to standard-based (as opposed to inventory-based) translation tables
@@ -88,7 +88,7 @@ changes should be archived to replace the old sampled tables.
 
 A proper development cycle should involve these steps:
 
-1) Load, generate and dump the translation tests tables.
+1) Generate and dump the translation tests tables.
 2) Make sure they do not show any differences from the archived ones. 
 3) Make changes to a conversion script, a translation script or a helper 
    function.
@@ -101,14 +101,18 @@ A proper development cycle should involve these steps:
 8) Fix scripts producing undesired changes (Back to step 1).
 9) Commit your script changes with the modified sampled test tables.
 
-Steps 1) and 6) - "Running all the translation tests" involves running those 
-scripts in a bash command line window:
+Steps 1) and 6) - "Generate and dump the translation tests tables" involves 
+running those scripts in a bash command line window:
 
-1) Load the test tables into the database with "load_test_tables.sh".
-2) Run the translation using "test_translation.sh".
-3) Execute "dump_test_tables.sh" to dump the test tables.
+1) Run the translation using "test_translation.sh".
+2) Execute "dump_test_tables.sh" to dump the test tables.
 
-Steps 2) and 7) - "Comparing the resulting tables with the archived ones" can
+"test_translation.sh" now accept an argument being the two letters of a province.
+This will run the tests only for this province. e.g.
+
+./test_translation.sh bc
+
+Steps 2) and 7) - "Compare the resulting tables with the archived ones" can
 be done efficiently in several ways. Here are two of them:
 
 If you are using a GUI Git client like GitKraken, it will automatically show the
