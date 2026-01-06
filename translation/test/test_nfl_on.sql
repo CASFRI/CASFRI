@@ -1,5 +1,5 @@
 CREATE SCHEMA IF NOT EXISTS casfri50_test;
-SELECT TT_Prepare('translation', 'on_fim02_nfl', '_on_nfl_test', 'ab_avi01_nfl');
+SELECT TT_Prepare('translation', 'on_fim02_nfl', '_on_nfl_test', 'ab_avi01_nfl', FALSE);
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.nfl_on_new CASCADE;
 ------------------------

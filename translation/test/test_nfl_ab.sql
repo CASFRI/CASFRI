@@ -1,5 +1,5 @@
 CREATE SCHEMA IF NOT EXISTS casfri50_test;
-SELECT TT_Prepare('translation', 'ab_avi01_nfl', '_ab_nfl_test');
+SELECT TT_Prepare('translation', 'ab_avi01_nfl', '_ab_nfl_test', FALSE);
 DROP TABLE IF EXISTS casfri50_test.nfl_ab_new CASCADE;
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab03', 3, 'ab', 1, 1120, NULL, 'nfl'); -- Generates about 200 (204) NFL rows

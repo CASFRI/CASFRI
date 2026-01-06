@@ -1,5 +1,5 @@
 CREATE SCHEMA IF NOT EXISTS casfri50_test;
-SELECT TT_Prepare('translation', 'ab_avi01_eco', '_ab_eco_test');
+SELECT TT_Prepare('translation', 'ab_avi01_eco', '_ab_eco_test', FALSE);
 DROP TABLE IF EXISTS casfri50_test.eco_ab_new CASCADE;
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab03', 'ab', 1600, NULL, 'eco'); -- Generates about 100 (103) ECO rows

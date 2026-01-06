@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS casfri50_test;
-SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl_nli01_dst_test', 'ab_avi01_dst');
-SELECT TT_Prepare('translation', 'nl_nli02_dst', '_nl_nli02_dst_test', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'nl_nli01_dst', '_nl_nli01_dst_test', 'ab_avi01_dst', FALSE);
+SELECT TT_Prepare('translation', 'nl_nli02_dst', '_nl_nli02_dst_test', 'ab_avi01_dst', FALSE);
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.dst_nl_new CASCADE;
 ------------------------

@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS casfri50_test;
-SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt_01_cas_test', 'ab_avi01_cas'); 
-SELECT TT_Prepare('translation', 'yt_yvi02_cas', '_yt_02_cas_test', 'ab_avi01_cas'); 
+SELECT TT_Prepare('translation', 'yt_yvi01_cas', '_yt_01_cas_test', 'ab_avi01_cas', FALSE); 
+SELECT TT_Prepare('translation', 'yt_yvi02_cas', '_yt_02_cas_test', 'ab_avi01_cas', FALSE); 
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.cas_yt_new CASCADE;
 ------------------------
