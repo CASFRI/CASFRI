@@ -28,4 +28,4 @@ ORDER BY cas_id, layer,
          dist_type_2, dist_year_2, dist_ext_upper_2, dist_ext_lower_2,
          dist_type_3, dist_year_3, dist_ext_upper_3, dist_ext_lower_3;
 ------------------------
--- SELECT (TT_CheckTestNumber('dst', 'ds')).*
+-- SELECT (TT_CheckNumberOfTests('dst', 'ds')).*

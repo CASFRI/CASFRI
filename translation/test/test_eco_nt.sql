@@ -3,9 +3,9 @@ SELECT TT_Prepare('translation', 'nt_fvi01_eco', '_nt_eco_test', 'ab_avi01_eco')
 ------------------------
 DROP TABLE IF EXISTS casfri50_test.eco_nt_new CASCADE;
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 1300, NULL, 'eco'); -- Generates about 200 (345) ECO rows
+SELECT TT_CreateMappingView('rawfri', 'nt01', 'nt', 1210, NULL, 'eco'); -- Generates about 200 (224) ECO rows
 CREATE TABLE casfri50_test.eco_nt_new AS
-SELECT * FROM TT_Translate_nt_eco_test('rawfri', 'nt01_l1_to_nt_l1_map_1300_eco');
+SELECT * FROM TT_Translate_nt_eco_test('rawfri', 'nt01_l1_to_nt_l1_map_1210_eco');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'nt03', 'nt', 950, NULL, 'eco'); -- Generates about 200 (201) ECO rows
 INSERT INTO casfri50_test.eco_nt_new 
@@ -21,4 +21,6 @@ SELECT * FROM casfri50_test.eco_nt_new
 -- ORDER BY all columns to ensure that only identical row can be intermixed
 ORDER BY cas_id, wetland_type, wet_veg_cover, wet_landform_mod, wet_local_mod, eco_site, layer;
 ------------------------
--- SELECT (TT_CheckTestNumber('eco', 'nt')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('eco', 'nt', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

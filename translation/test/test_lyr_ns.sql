@@ -7,37 +7,37 @@ CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ns_species_codes_idx
 ON translation.species_code_mapping (ns_species_codes)
 WHERE TT_NotEmpty(ns_species_codes);
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, 1000, NULL, 'lyr'); -- Generates about 700 (779) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns01', 1, 'ns_nsi', 1, 500, NULL, 'lyr'); -- Generates 395 LYR rows
 CREATE TABLE casfri50_test.lyr_ns_new AS
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns01_l1_to_ns_nsi_l1_map_1000_lyr');
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns01_l1_to_ns_nsi_l1_map_500_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns01', 2, 'ns_nsi', 1, 2100, NULL, 'lyr'); -- Generates about 300 (328) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns01', 2, 'ns_nsi', 1, 4100, NULL, 'lyr'); -- Generates 675 LYR rows
 INSERT INTO casfri50_test.lyr_ns_new
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns01_l2_to_ns_nsi_l1_map_2100_lyr');
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns01_l2_to_ns_nsi_l1_map_4100_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns02', 1, 'ns_nsi', 1, 1000, NULL, 'lyr'); -- Generates about 700 (776) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns02', 1, 'ns_nsi', 1, 500, NULL, 'lyr'); -- Generates 385 LYR rows
 INSERT INTO casfri50_test.lyr_ns_new
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns02_l1_to_ns_nsi_l1_map_1000_lyr');
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns02_l1_to_ns_nsi_l1_map_500_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns02', 2, 'ns_nsi', 1, 2100, NULL, 'lyr'); -- Generates about 300 (348) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns02', 2, 'ns_nsi', 1, 4100, NULL, 'lyr'); -- Generates 696 LYR rows
 INSERT INTO casfri50_test.lyr_ns_new
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns02_l2_to_ns_nsi_l1_map_2100_lyr');
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns02_l2_to_ns_nsi_l1_map_4100_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, 800, NULL, 'lyr'); -- Generates about 600 (609) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns03', 1, 'ns_nsi', 1, 50, NULL, 'lyr'); -- Generates 39 LYR rows
 INSERT INTO casfri50_test.lyr_ns_new
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_800_lyr');
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns03_l1_to_ns_nsi_l1_map_50_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns03', 2, 'ns_nsi', 1, 1700, NULL, 'lyr'); -- Generates about 400 (429) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns03', 2, 'ns_nsi', 1, 4550, NULL, 'lyr'); -- Generates 1079 LYR rows
 INSERT INTO casfri50_test.lyr_ns_new
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns03_l2_to_ns_nsi_l1_map_1700_lyr');
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns03_l2_to_ns_nsi_l1_map_4550_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns04', 1, 'ns_nsi', 1, 800, NULL, 'lyr'); -- Generates about 600 (646) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns04', 1, 'ns_nsi', 1, 50, NULL, 'lyr'); -- Generates 39 LYR rows
 INSERT INTO casfri50_test.lyr_ns_new
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns04_l1_to_ns_nsi_l1_map_800_lyr');
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns04_l1_to_ns_nsi_l1_map_50_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ns04', 2, 'ns_nsi', 1, 1700, NULL, 'lyr'); -- Generates about 400 (469) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ns04', 2, 'ns_nsi', 1, 4300, NULL, 'lyr'); -- Generates 1156 LYR rows
 INSERT INTO casfri50_test.lyr_ns_new
-SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns04_l2_to_ns_nsi_l1_map_1700_lyr');
+SELECT * FROM TT_Translate_ns_lyr_test('rawfri', 'ns04_l2_to_ns_nsi_l1_map_4300_lyr');
 ------------------------
 -- Create an ordered VIEW on the LYR table
 CREATE OR REPLACE VIEW casfri50_test.lyr_ns_new_ordered AS
@@ -48,4 +48,6 @@ ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_
          species_6, species_per_6, species_7, species_per_7, species_8, species_per_8, species_9, species_per_9, species_10, species_per_10, 
          origin_upper, origin_lower, site_class, site_index;
 ------------------------
--- SELECT (TT_CheckTestNumber('lyr', 'ns')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('lyr', 'ns', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

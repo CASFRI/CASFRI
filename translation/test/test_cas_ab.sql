@@ -51,9 +51,9 @@ SELECT TT_CreateMappingView('rawfri', 'ab29', 'ab', 600, NULL, 'cas');
 INSERT INTO casfri50_test.cas_ab_new 
 SELECT * FROM TT_Translate_ab_cas_test('rawfri', 'ab29_l1_to_ab_l1_map_600_cas');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab30', 'ab', 200, NULL, 'cas');
+SELECT TT_CreateMappingView('rawfri', 'ab30', 'ab', 100, NULL, 'cas');
 INSERT INTO casfri50_test.cas_ab_new 
-SELECT * FROM TT_Translate_ab_cas_test('rawfri', 'ab30_l1_to_ab_l1_map_200_cas');
+SELECT * FROM TT_Translate_ab_cas_test('rawfri', 'ab30_l1_to_ab_l1_map_100_cas');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab31', 'ab', 700, NULL, 'cas');
 INSERT INTO casfri50_test.cas_ab_new 
@@ -63,9 +63,9 @@ SELECT TT_CreateMappingView('rawfri', 'ab32', 'ab', 700, NULL, 'cas');
 INSERT INTO casfri50_test.cas_ab_new 
 SELECT * FROM TT_Translate_ab_cas_test('rawfri', 'ab32_l1_to_ab_l1_map_700_cas');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab34', 'ab', 200, NULL, 'cas');
+SELECT TT_CreateMappingView('rawfri', 'ab34', 'ab', 100, NULL, 'cas');
 INSERT INTO casfri50_test.cas_ab_new 
-SELECT * FROM TT_Translate_ab_cas_test('rawfri', 'ab34_l1_to_ab_l1_map_200_cas');
+SELECT * FROM TT_Translate_ab_cas_test('rawfri', 'ab34_l1_to_ab_l1_map_100_cas');
 ------------------------
 -- Create an ordered VIEW on the CAS table
 CREATE OR REPLACE VIEW casfri50_test.cas_ab_new_ordered AS
@@ -75,4 +75,6 @@ ORDER BY cas_id, inventory_id, orig_stand_id, stand_structure,
          num_of_layers, map_sheet_id, casfri_area, 
          casfri_perimeter, src_inv_area, stand_photo_year; 
 ------------------------
--- SELECT (TT_CheckTestNumber('cas', 'ab')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('cas', 'ab', FALSE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

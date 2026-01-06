@@ -7,21 +7,21 @@ CREATE UNIQUE INDEX IF NOT EXISTS species_code_mapping_ab_species_codes_idx
 ON translation.species_code_mapping (ab_species_codes)
 WHERE TT_NotEmpty(ab_species_codes);
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab03', 1, 'ab', 1, 300, NULL, 'lyr'); -- Generates about 200 (252) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ab03', 1, 'ab', 1, 260, NULL, 'lyr'); -- Generates about 200 (217) LYR rows
 CREATE TABLE casfri50_test.lyr_ab_new AS 
-SELECT * FROM TT_Translate_ab_lyr_test('rawfri', 'ab03_l1_to_ab_l1_map_300_lyr');
+SELECT * FROM TT_Translate_ab_lyr_test('rawfri', 'ab03_l1_to_ab_l1_map_260_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab', 1, 600, NULL, 'lyr'); -- Generates about 200 (225) LYR rows
 INSERT INTO casfri50_test.lyr_ab_new 
 SELECT * FROM TT_Translate_ab_lyr_test('rawfri', 'ab03_l2_to_ab_l1_map_600_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, 300, NULL, 'lyr'); -- Generates about 200 (241) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, 260, NULL, 'lyr'); -- Generates about 200 (217) LYR rows
 INSERT INTO casfri50_test.lyr_ab_new 
-SELECT * FROM TT_Translate_ab_lyr_test('rawfri', 'ab06_l1_to_ab_l1_map_300_lyr');
+SELECT * FROM TT_Translate_ab_lyr_test('rawfri', 'ab06_l1_to_ab_l1_map_260_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab', 1, 480, NULL, 'lyr'); -- Generates about 200 (218) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'ab06', 2, 'ab', 1, 260, NULL, 'lyr'); -- Generates about 100 (102) LYR rows
 INSERT INTO casfri50_test.lyr_ab_new 
-SELECT * FROM TT_Translate_ab_lyr_test('rawfri', 'ab06_l2_to_ab_l1_map_480_lyr');
+SELECT * FROM TT_Translate_ab_lyr_test('rawfri', 'ab06_l2_to_ab_l1_map_260_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab07', 1, 'ab', 1, 250, NULL, 'lyr'); -- Generates about 200 (212) LYR rows
 INSERT INTO casfri50_test.lyr_ab_new 
@@ -128,4 +128,6 @@ ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_
          species_6, species_per_6, species_7, species_per_7, species_8, species_per_8, species_9, species_per_9, species_10, species_per_10, 
          origin_upper, origin_lower, site_class, site_index;
 ------------------------
--- SELECT (TT_CheckTestNumber('lyr', 'ab')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('lyr', 'ab', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

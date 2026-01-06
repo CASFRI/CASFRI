@@ -41,9 +41,9 @@ SELECT TT_CreateMappingView('rawfri', 'mb04', 2, 'mb_fli', 1, 480, NULL, 'lyr');
 INSERT INTO casfri50_test.lyr_mb_new
 SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb04_l2_to_mb_fli_l1_map_480_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'mb04', 3, 'mb_fli', 1, 3550, NULL, 'lyr'); -- Generates about 200 (222) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'mb04', 3, 'mb_fli', 1, 1800, NULL, 'lyr'); -- Generates about 100 (111) LYR rows
 INSERT INTO casfri50_test.lyr_mb_new
-SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb04_l3_to_mb_fli_l1_map_3550_lyr');
+SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb04_l3_to_mb_fli_l1_map_1800_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb04', 4, 'mb_fli', 1, NULL, NULL, 'lyr'); -- Generates about 200 (25) LYR rows
 INSERT INTO casfri50_test.lyr_mb_new
@@ -77,9 +77,9 @@ SELECT TT_CreateMappingView('rawfri', 'mb07', 1, 'mb_fli', 1, 500, NULL, 'lyr');
 INSERT INTO casfri50_test.lyr_mb_new
 SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb07_l1_to_mb_fli_l1_map_500_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'mb07', 2, 'mb_fli', 1, 34000, NULL, 'lyr'); -- Generates about 200 (214) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'mb07', 2, 'mb_fli', 1, 15000, NULL, 'lyr'); -- Generates about 100 (111) LYR rows
 INSERT INTO casfri50_test.lyr_mb_new
-SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb07_l2_to_mb_fli_l1_map_34000_lyr');
+SELECT * FROM TT_Translate_mb_fli_lyr_test('rawfri', 'mb07_l2_to_mb_fli_l1_map_15000_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'mb07', 3, 'mb_fli', 1, NULL, NULL, 'lyr'); -- Generates about 200 (3) LYR rows
 INSERT INTO casfri50_test.lyr_mb_new
@@ -102,4 +102,6 @@ ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_
          species_6, species_per_6, species_7, species_per_7, species_8, species_per_8, species_9, species_per_9, species_10, species_per_10, 
          origin_upper, origin_lower, site_class, site_index;
 ------------------------
--- SELECT (TT_CheckTestNumber('lyr', 'mb')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('lyr', 'mb', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

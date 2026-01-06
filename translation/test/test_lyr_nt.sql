@@ -27,9 +27,9 @@ SELECT TT_CreateMappingView('rawfri', 'nt04', 1, 'nt', 1, 750, NULL, 'lyr'); -- 
 INSERT INTO casfri50_test.lyr_nt_new 
 SELECT * FROM TT_Translate_nt_lyr_test('rawfri', 'nt04_l1_to_nt_l1_map_750_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'nt04', 2, 'nt', 1, 26000, NULL, 'lyr'); -- Generates about 200 (209) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'nt04', 2, 'nt', 1, 5000, NULL, 'lyr'); -- Generates 51 LYR rows
 INSERT INTO casfri50_test.lyr_nt_new 
-SELECT * FROM TT_Translate_nt_lyr_test('rawfri', 'nt04_l2_to_nt_l1_map_26000_lyr');
+SELECT * FROM TT_Translate_nt_lyr_test('rawfri', 'nt04_l2_to_nt_l1_map_5000_lyr');
 ------------------------
 -- Create an ordered VIEW on the LYR table
 CREATE OR REPLACE VIEW casfri50_test.lyr_nt_new_ordered AS
@@ -40,4 +40,6 @@ ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_
          species_6, species_per_6, species_7, species_per_7, species_8, species_per_8, species_9, species_per_9, species_10, species_per_10, 
          origin_upper, origin_lower, site_class, site_index;
 ------------------------
--- SELECT (TT_CheckTestNumber('lyr', 'nt')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('lyr', 'nt', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

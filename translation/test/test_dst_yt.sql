@@ -16,9 +16,9 @@ SELECT TT_CreateMappingView('rawfri', 'yt03', 1, 'yt_yvi02', 1, 750, NULL, 'dst'
 INSERT INTO casfri50_test.dst_yt_new 
 SELECT * FROM TT_Translate_yt_02_dst_test('rawfri', 'yt03_l1_to_yt_yvi02_l1_map_750_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'yt03', 2, 'yt_yvi02', 1, 10000, NULL, 'dst'); -- Generates about 200 (208) DST rows
+SELECT TT_CreateMappingView('rawfri', 'yt03', 2, 'yt_yvi02', 1, 5100, NULL, 'dst'); -- Generates about 100 (110) DST rows
 INSERT INTO casfri50_test.dst_yt_new 
-SELECT * FROM TT_Translate_yt_02_dst_test('rawfri', 'yt03_l2_to_yt_yvi02_l1_map_10000_dst');
+SELECT * FROM TT_Translate_yt_02_dst_test('rawfri', 'yt03_l2_to_yt_yvi02_l1_map_5100_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'yt04', 1, 'yt', 1, 2500, NULL, 'dst'); -- Generates about 200 (218) DST rows
 INSERT INTO casfri50_test.dst_yt_new
@@ -33,4 +33,6 @@ ORDER BY cas_id, layer,
          dist_type_2, dist_year_2, dist_ext_upper_2, dist_ext_lower_2,
          dist_type_3, dist_year_3, dist_ext_upper_3, dist_ext_lower_3;
 ------------------------
--- SELECT (TT_CheckTestNumber('dst', 'yt')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('dst', 'yt', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

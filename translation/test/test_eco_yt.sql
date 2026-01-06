@@ -26,4 +26,6 @@ SELECT * FROM casfri50_test.eco_yt_new
 -- ORDER BY all columns to ensure that only identical row can be intermixed
 ORDER BY cas_id, wetland_type, wet_veg_cover, wet_landform_mod, wet_local_mod, eco_site, layer;
 ------------------------
--- SELECT (TT_CheckTestNumber('eco', 'yt')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('eco', 'yt', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

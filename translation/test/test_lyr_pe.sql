@@ -11,17 +11,17 @@ SELECT TT_CreateMappingView('rawfri', 'pe01', 1, 'pe_pei', 1, 300, NULL, 'lyr');
 CREATE TABLE casfri50_test.lyr_pe_new AS
 SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe01_l1_to_pe_pei_l1_map_300_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'pe02', 1, 'pe_pei', 1, 500, NULL, 'lyr'); -- Generates about 200 (243) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'pe02', 1, 'pe_pei', 1, 450, NULL, 'lyr'); -- Generates about 200 (222) LYR rows
 INSERT INTO casfri50_test.lyr_pe_new
-SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe02_l1_to_pe_pei_l1_map_500_lyr');
+SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe02_l1_to_pe_pei_l1_map_450_lyr');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'pe03', 1, 'pe_pei', 1, 400, NULL, 'lyr'); -- Generates about 200 (208) LYR rows
 INSERT INTO casfri50_test.lyr_pe_new
 SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe03_l1_to_pe_pei_l1_map_400_lyr');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'pe04', 1, 'pe_pei', 1, 500, NULL, 'lyr'); -- Generates about 200 (245) LYR rows
+SELECT TT_CreateMappingView('rawfri', 'pe04', 1, 'pe_pei', 1, 400, NULL, 'lyr'); -- Generates about 200 (200) LYR rows
 INSERT INTO casfri50_test.lyr_pe_new
-SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe04_l1_to_pe_pei_l1_map_500_lyr');
+SELECT * FROM TT_Translate_pe_lyr_test('rawfri', 'pe04_l1_to_pe_pei_l1_map_400_lyr');
 ------------------------
 -- Create an ordered VIEW on the LYR table
 CREATE OR REPLACE VIEW casfri50_test.lyr_pe_new_ordered AS
@@ -32,4 +32,6 @@ ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_
          species_6, species_per_6, species_7, species_per_7, species_8, species_per_8, species_9, species_per_9, species_10, species_per_10, 
          origin_upper, origin_lower, site_class, site_index;
 ------------------------
--- SELECT (TT_CheckTestNumber('lyr', 'pe')).*
+-- SELECT  *
+-- FROM TT_CheckNumberOfTests('lyr', 'pe', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

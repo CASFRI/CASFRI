@@ -55,4 +55,6 @@ ORDER BY cas_id, inventory_id, orig_stand_id, stand_structure,
          num_of_layers, map_sheet_id, casfri_area, 
          casfri_perimeter, src_inv_area, stand_photo_year; 
 ------------------------
--- SELECT (TT_CheckTestNumber('cas', 'bc')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('cas', 'bc', FALSE)
+-- WHERE NOT sufficient OR diff_pct >= 20;

@@ -7,13 +7,13 @@ SELECT TT_CreateMappingView('rawfri', 'ab03', 1, 'ab', 1, 2000, NULL, 'dst'); --
 CREATE TABLE casfri50_test.dst_ab_new AS
 SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab03_l1_to_ab_l1_map_2000_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, 1250, NULL, 'dst'); -- Generates about 200 (197) DST rows
+SELECT TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, 600, NULL, 'dst'); -- Generates about 100 (108) DST rows
 INSERT INTO casfri50_test.dst_ab_new
-SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab06_l1_to_ab_l1_map_1250_dst');
+SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab06_l1_to_ab_l1_map_600_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab07', 1, 'ab', 1, 3600, NULL, 'dst'); -- Generates about 200 (209) DST rows
+SELECT TT_CreateMappingView('rawfri', 'ab07', 1, 'ab', 1, 1800, NULL, 'dst'); -- Generates about 100 (111) DST rows
 INSERT INTO casfri50_test.dst_ab_new
-SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab07_l1_to_ab_l1_map_3600_dst');
+SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab07_l1_to_ab_l1_map_1800_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab08', 1, 'ab', 1, 1200, NULL, 'dst'); -- Generates about 200 (200) DST rows
 INSERT INTO casfri50_test.dst_ab_new
@@ -51,9 +51,9 @@ SELECT TT_CreateMappingView('rawfri', 'ab29', 1, 'ab', 1, 2700, NULL, 'dst'); --
 INSERT INTO casfri50_test.dst_ab_new
 SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab29_l1_to_ab_l1_map_2700_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab30', 1, 'ab', 1, 200, NULL, 'dst'); -- Generates about 200 (200) DST rows
+SELECT TT_CreateMappingView('rawfri', 'ab30', 1, 'ab', 1, 100, NULL, 'dst'); -- Generates about 100 (100) DST rows
 INSERT INTO casfri50_test.dst_ab_new
-SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab30_l1_to_ab_l1_map_200_dst');
+SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab30_l1_to_ab_l1_map_100_dst');
 ------------------------
 SELECT TT_CreateMappingView('rawfri', 'ab31', 1, 'ab', 1, 2200, NULL, 'dst'); -- Generates about 200 (210) DST rows
 INSERT INTO casfri50_test.dst_ab_new
@@ -63,9 +63,9 @@ SELECT TT_CreateMappingView('rawfri', 'ab32', 1, 'ab', 1, 2200, NULL, 'dst'); --
 INSERT INTO casfri50_test.dst_ab_new
 SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab32_l1_to_ab_l1_map_2200_dst');
 ------------------------
-SELECT TT_CreateMappingView('rawfri', 'ab34', 1, 'ab', 1, 200, NULL, 'dst'); -- Generates about 200 (200) DST rows
+SELECT TT_CreateMappingView('rawfri', 'ab34', 1, 'ab', 1, 100, NULL, 'dst'); -- Generates about 100 (100) DST rows
 INSERT INTO casfri50_test.dst_ab_new
-SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab34_l1_to_ab_l1_map_200_dst');
+SELECT * FROM TT_Translate_ab_dst_test('rawfri', 'ab34_l1_to_ab_l1_map_100_dst');
 ------------------------
 -- Create an ordered VIEW on the DST table
 CREATE OR REPLACE VIEW casfri50_test.dst_ab_new_ordered AS
@@ -76,4 +76,6 @@ ORDER BY cas_id, layer,
          dist_type_2, dist_year_2, dist_ext_upper_2, dist_ext_lower_2,
          dist_type_3, dist_year_3, dist_ext_upper_3, dist_ext_lower_3;
 ------------------------
--- SELECT (TT_CheckTestNumber('dst', 'ab')).*
+-- SELECT *
+-- FROM TT_CheckNumberOfTests('dst', 'ab', TRUE)
+-- WHERE NOT sufficient OR diff_pct >= 20;
