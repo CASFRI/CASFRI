@@ -52,6 +52,8 @@ SELECT * FROM casfri50_test.nfl_qc_new
 ORDER BY cas_id, layer, layer_rank, soil_moist_reg, structure_per, crown_closure_upper, crown_closure_lower, 
          height_upper, height_lower, nat_non_veg, non_for_anth, non_for_veg;
 ------------------------
--- SELECT * 
--- FROM TT_CheckNumberOfTests('nfl', 'qc', FALSE)
--- WHERE NOT sufficient OR diff_pct >= 20;
+/*
+SELECT *  
+FROM TT_CheckNumberOfTests('nfl', 'qc', FALSE)
+WHERE NOT sufficient OR diff_pct >= 20;
+*/

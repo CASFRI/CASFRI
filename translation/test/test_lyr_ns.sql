@@ -48,6 +48,8 @@ ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_
          species_6, species_per_6, species_7, species_per_7, species_8, species_per_8, species_9, species_per_9, species_10, species_per_10, 
          origin_upper, origin_lower, site_class, site_index;
 ------------------------
--- SELECT *
--- FROM TT_CheckNumberOfTests('lyr', 'ns', TRUE)
--- WHERE NOT sufficient OR diff_pct >= 20;
+/*
+SELECT * 
+FROM TT_CheckNumberOfTests('lyr', 'ns', TRUE)
+WHERE NOT sufficient OR diff_pct >= 20;
+*/

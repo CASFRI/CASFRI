@@ -142,9 +142,11 @@ SELECT * FROM casfri50_test.nfl_bc_new
 ORDER BY cas_id, layer, layer_rank, soil_moist_reg, structure_per, crown_closure_upper, crown_closure_lower, 
          height_upper, height_lower, nat_non_veg, non_for_anth, non_for_veg;
 ------------------------
--- SELECT *
--- FROM TT_CheckNumberOfTests('nfl', 'bc', FALSE)
--- WHERE NOT sufficient OR diff_pct >= 20;
+/*
+SELECT * 
+FROM TT_CheckNumberOfTests('nfl', 'bc', FALSE)
+WHERE NOT sufficient OR diff_pct >= 20;
+*/
 ------------------------
 -- Query to determine the right number of tested row per layer when the view generate row for different layers
 -- SELECT TT_CreateMappingView('rawfri', 'bc12', 3, 'bc', 1, 5000, NULL, 'nfl'); -- Generates about 500 (514) NFL rows

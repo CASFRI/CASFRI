@@ -33,5 +33,6 @@ ORDER BY cas_id, layer, soil_moist_reg, structure_per, layer, layer_rank, crown_
          origin_upper, origin_lower, site_class, site_index;
 ------------------------
 -- SELECT  *
--- FROM TT_CheckNumberOfTests('lyr', 'pe', TRUE)
--- WHERE NOT sufficient OR diff_pct >= 20;
+FROM TT_CheckNumberOfTests('lyr', 'pe', TRUE)
+WHERE NOT sufficient OR diff_pct >= 20;
+*/
