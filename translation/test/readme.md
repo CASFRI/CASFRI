@@ -9,18 +9,18 @@ For more info on this kind of tests look at the "Regression tests" article in
 Wikipedia or ask your favorite LLM.
 
 While unit tests from the "helperfunctions" folder test the results of 
-individual helper functions, these translation tests test the results of changes
-to conversion scripts and translation tables (which are ordered series of 
-multiple translation functions). They are also a necessary addition to "check 
-count" tests that are fast tests checking only for the count of converted and 
-translated rows.
+individual helper functions, the translation tests found in this folder test
+the results of changes to conversion scripts and translation tables (which are 
+ordered series of multiple translation functions). They are also a necessary 
+addition to "check count" tests that are fast tests checking only for the count 
+of converted and translated rows.
 
 There are some PostgreSQL packages to ease the development of unit and 
 regression tests ([pgTAP](https://pgtap.org/), [PGUnit](https://github.com/adrianandrei-ca/pgunit)). They are generally designed to test functionality rather than data production, so we had to develop 
-our own method.
+our own testing method.
 
 While it is obvious how changes to helper functions and translation tables 
-affect resulting tables (it's their goals), changes to conversion scripts can 
+affect resulting tables (it's their goals!), changes to conversion scripts can 
 also alter final tables in a number of ways:
 
 - Changing the version of PostGIS or GDAL can alter the way geometries are 
@@ -58,7 +58,11 @@ Approximate number of rows to test depending on the number of translated rows:
 
 | Nb. of source rows | Nb. of test rows
 |-------------------:|:-----:|
-|        1 -  100000 |   200 |
+|        1 -      20 |     0 |
+|       20 -     100 |     5 |
+|      100 -    1000 |    50 |
+|     1000 -    5000 |   100 |
+|     5000 -  100000 |   200 |
 |   100000 -  200000 |   300 |
 |   200000 -  400000 |   400 |
 |   400000 -  600000 |   500 |
@@ -67,6 +71,24 @@ Approximate number of rows to test depending on the number of translated rows:
 |  1000000 - 1500000 |   800 |
 |  1500000 - 2000000 |   900 |
 |  2000000 - more    |  1000 |
+
+There is a helper function that quickly counts the number of tests for specific 
+sets of CASFRI tables. You can use it to determine whether the number of tests 
+is sufficient without being excessive (i.e., no more than 20% above the required 
+number), as shown below:
+
+  SELECT * 
+  FROM TT_CheckNumberOfTests('nfl', 'qc', FALSE)
+  WHERE NOT sufficient OR diff_pct >= 20;
+
+This will list inventories with an insufficient or excessive number of tests.
+
+The last parameter determines whether the test numbers are grouped by layer. For 
+some CASFRI tables (NFL for most inventories, ECO for PC), source attributes may 
+sometimes translate into more than one layer. In such cases, it becomes difficult 
+— and sometimes impossible — to set the correct number of rows to test in order 
+to obtain the appropriate number of tests for each layer. When this happens, it 
+is preferable to define this number globally across all layers.
 
 Because the number of random row tests for big tables is significantly smaller 
 than the final number of translated rows, it is very well possible that a change

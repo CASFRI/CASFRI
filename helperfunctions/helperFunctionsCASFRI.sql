@@ -669,19 +669,20 @@ $$ LANGUAGE plpgsql VOLATILE STRICT;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_CheckTestNumber(casTable text, province text)
+-- TT_CheckNumberOfTests(casTable text, province text)
 --
 -- casTable text - Name of the CASFRI table to check for the number of tests (cas, dst, eco, lyr, nfl).
 -- province text - Name of the province to check for the number of tests (all, ab, bc, ds, mb, nb, nl, ns, nt, on, pc, pe, qc, sk, yt).
 --
 -- Check if number of tests for a specific inventory and province is sufficient.
 --
--- e.g. SELECT TT_CheckTestNumber('eco', 'ab');
+-- e.g. SELECT TT_CheckNumberOfTests('eco', 'ab');
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_CheckTestNumber(text, text);
-CREATE OR REPLACE FUNCTION TT_CheckTestNumber(
+--DROP FUNCTION IF EXISTS TT_CheckNumberOfTests(text, text, text);
+CREATE OR REPLACE FUNCTION TT_CheckNumberOfTests(
   casTable text,
-  province text DEFAULT 'all'
+  province text DEFAULT 'all',
+  groupByLayer boolean DEFAULT TRUE
 ) RETURNS TABLE (inv text,
                  layer text,
                  cnt bigint,
@@ -693,7 +694,8 @@ CREATE OR REPLACE FUNCTION TT_CheckTestNumber(
   DECLARE
     tableName text := casTable::text || '_' || left(province::text, 2) || '_new';
     queryStr text;
-    hasLayerCol boolean := CASE casTable 
+    groupByLayer boolean := groupByLayer AND 
+                           CASE casTable 
                              WHEN 'cas' THEN FALSE 
                              ELSE TRUE 
                            END;
@@ -703,22 +705,22 @@ CREATE OR REPLACE FUNCTION TT_CheckTestNumber(
     prov text;
   BEGIN
     IF casTable IS NULL THEN
-      RAISE EXCEPTION 'ERROR in TT_CheckTestNumber(): First argument can not be NULL...';
+      RAISE EXCEPTION 'ERROR in TT_CheckNumberOfTests(): First argument can not be NULL...';
     END IF;
     IF province IS NULL THEN
       province := 'all';
     END IF;
     IF NOT lower(casTable) IN ('cas', 'dst', 'eco', 'lyr', 'nfl') THEN
-      RAISE EXCEPTION 'ERROR in TT_CheckTestNumber(): First argument must be either ''cas'', ''dst'', ''eco'', ''lyr'', or ''nfl''...';
+      RAISE EXCEPTION 'ERROR in TT_CheckNumberOfTests(): First argument must be either ''cas'', ''dst'', ''eco'', ''lyr'', or ''nfl''...';
     END IF;
     IF lower(province) != ALL(provinces) AND lower(province) != 'all' THEN
-      RAISE EXCEPTION 'ERROR in TT_CheckTestNumber(): Second argument must be either ''ab'', ''bc'', ''ds'', ''mb'', ''nb'', ''nl'', ''ns'', ''nt'', ''on'', ''pc'', ''pe'', ''qc'', ''sk'' or ''yt''...';
+      RAISE EXCEPTION 'ERROR in TT_CheckNumberOfTests(): Second argument must be either ''ab'', ''bc'', ''ds'', ''mb'', ''nb'', ''nl'', ''ns'', ''nt'', ''on'', ''pc'', ''pe'', ''qc'', ''sk'' or ''yt''...';
     END IF;
     IF lower(province) != 'all' AND NOT TT_TableExists('casfri50_test', tableName) THEN
-      RAISE EXCEPTION 'ERROR in TT_CheckTestNumber(): Table ''casfri50_test.%'' does not exists. You must run the translation tests before being able to use this function..', tableName;
+      RAISE EXCEPTION 'ERROR in TT_CheckNumberOfTests(): Table ''casfri50_test.%'' does not exists. You must run the translation tests before being able to use this function..', tableName;
     END IF;
     IF NOT TT_TableExists('casfri50', casTable ||'_all') THEN
-      RAISE EXCEPTION 'ERROR in TT_CheckTestNumber(): Table ''casfri50.%'' does not exists. Your must run a first complete translation before being able to run this function..', tableName;
+      RAISE EXCEPTION 'ERROR in TT_CheckNumberOfTests(): Table ''casfri50.%'' does not exists. Your must run a first complete translation before being able to run this function..', tableName;
     END IF;
 
     -- Construct the query on the test table to check
@@ -743,27 +745,31 @@ WITH sourceTable AS (
   FROM ' || sourceTableQueryStr || '
 ), tested AS (
   SELECT 
-    left(cas_id, 4) inv, ' || CASE WHEN hasLayerCol THEN '
+    left(cas_id, 4) inv, ' || CASE WHEN groupByLayer THEN '
     layer,' ELSE '' END || '
     count(*) cnt
   FROM sourceTable
-  GROUP BY left(cas_id, 4)' || CASE WHEN hasLayerCol THEN ', layer' ELSE '' END || '
-  ORDER BY left(cas_id, 4)' || CASE WHEN hasLayerCol THEN ', layer' ELSE '' END || '
+  GROUP BY left(cas_id, 4)' || CASE WHEN groupByLayer THEN ', layer' ELSE '' END || '
+  ORDER BY left(cas_id, 4)' || CASE WHEN groupByLayer THEN ', layer' ELSE '' END || '
 ), translated AS (
   SELECT 
-    left(cas_id, 4) inv, ' || CASE WHEN hasLayerCol THEN '
+    left(cas_id, 4) inv, ' || CASE WHEN groupByLayer THEN '
     layer,' ELSE '' END || '
     count(*) cnt 
   FROM casfri50.' || casTable ||'_all' || 
   CASE WHEN lower(province) != 'all' THEN '
   WHERE left(cas_id, 2) = ''' || upper(province) || '''' 
   ELSE '' END || '
-  GROUP BY left(cas_id, 4)' || CASE WHEN hasLayerCol THEN ', layer' ELSE '' END || '
-  ORDER BY left(cas_id, 4)' || CASE WHEN hasLayerCol THEN ', layer' ELSE '' END || '
+  GROUP BY left(cas_id, 4)' || CASE WHEN groupByLayer THEN ', layer' ELSE '' END || '
+  ORDER BY left(cas_id, 4)' || CASE WHEN groupByLayer THEN ', layer' ELSE '' END || '
 ), suggested_nb AS (
   SELECT * 
   FROM (VALUES 
-      (1, 100000, 200), 
+      (1, 20, 0), 
+      (20, 100, 5), 
+      (100, 1000, 50), 
+      (1000, 5000, 100), 
+      (5000, 100000, 200), 
       (100000, 200000, 300), 
       (200000, 400000, 400), 
       (400000, 600000, 500), 
@@ -776,30 +782,31 @@ WITH sourceTable AS (
 )
 SELECT 
   a.inv, 
-  ' || CASE WHEN hasLayerCol THEN 'layer::text,' ELSE '''NA'',' END || '
+  ' || CASE WHEN groupByLayer THEN 'layer::text,' ELSE '''NA'',' END || '
   a.cnt, 
   s.s_nb suggested_nbr, 
-  b.cnt tested_nb,
-  b.cnt = a.cnt OR b.cnt >= s.s_nb sufficient,
-  CASE WHEN b.cnt = a.cnt THEN 0
+  coalesce(b.cnt, 0) tested_nb,
+  coalesce(b.cnt = a.cnt OR b.cnt >= s.s_nb, TRUE) sufficient,
+  CASE WHEN b.cnt IS NULL OR b.cnt = a.cnt THEN 0
        ELSE b.cnt - s.s_nb
   END diff,
-  CASE WHEN b.cnt = a.cnt THEN 0
+  CASE WHEN s.s_nb = 0 OR b.cnt = a.cnt THEN 0
        ELSE trunc(((b.cnt - s.s_nb)::float/s.s_nb*100)::numeric, 1)
   END diff_pct
 FROM translated a 
 LEFT OUTER JOIN suggested_nb s ON (s.min <= a.cnt AND a.cnt < s.max) 
-LEFT OUTER JOIN tested b USING (inv' || CASE WHEN hasLayerCol THEN ', layer' ELSE '' END || ');';
+LEFT OUTER JOIN tested b USING (inv' || CASE WHEN groupByLayer THEN ', layer' ELSE '' END || ');';
     RAISE NOTICE 'Executing: %', queryStr;
 
     RETURN QUERY EXECUTE queryStr;
   END
 $$ LANGUAGE plpgsql VOLATILE;
 
---SELECT (TT_CheckTestNumber('cas', 'pc')).*
---SELECT (TT_CheckTestNumber('eco', 'all')).*
---SELECT (TT_CheckTestNumber('cas'::text, NULL::text)).*;
---SELECT TT_checkTestNumber('cas'::text, 'x'::text);
+--SELECT (TT_CheckNumberOfTests('lyr', 'bc')).*
+--SELECT (TT_CheckNumberOfTests('eco', 'all')).*
+--SELECT (TT_CheckNumberOfTests('cas'::text, NULL::text)).*;
+--SELECT TT_CheckTestNumber('cas'::text, 'x'::text);
+--SELECT (TT_CheckNumberOfTests('nfl', 'bc', TRUE)).*
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------

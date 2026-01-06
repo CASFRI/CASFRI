@@ -230,7 +230,7 @@ DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidRange() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);
 DROP FUNCTION IF EXISTS TT_Count(name, name);
 DROP FUNCTION IF EXISTS TT_DropAllConstraints(name, name);
-DROP FUNCTION IF EXISTS TT_CheckTestNumber(text, text);
+DROP FUNCTION IF EXISTS TT_CheckNumberOfTests(text, text);
 -------------------------------------------------------------------------------
 -- Tools views
 -------------------------------------------------------------------------------

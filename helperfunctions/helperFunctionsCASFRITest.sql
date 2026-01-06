@@ -194,7 +194,7 @@ WITH test_nb AS (
   SELECT 'TT_yvi01_non_for_anth_translation':: text function_tested,       146 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_yvi01_hascountofnotnull'::text function_tested,               147 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_yvi01_countofnotnull'::text function_tested,                  148 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_checkTestNumber'::text function_tested,                       149 maj_num,  4 nb_test
+  SELECT 'TT_checkNumberOfTests'::text function_tested,                       149 maj_num,  4 nb_test
  ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -4941,28 +4941,28 @@ SELECT '148.4'::text number,
        'Test null species and null NFL'::text description,
        TT_yvi01_countofnotnull(NULL, NULL, NULL, NULL, NULL, 1::TEXT) = 0 passed
 ---------------------------------------------------------
- -- TT_checkTestNumber
+ -- TT_checkNumberOfTests
 ---------------------------------------------------------
 UNION ALL
 SELECT '149.1'::text number,
-       'TT_checkTestNumber'::text function_tested,
+       'TT_checkNumberOfTests'::text function_tested,
        'Test all null'::text description,
-       TT_IsError('SELECT TT_checkTestNumber(NULL::text, NULL::text);'::text) = 'ERROR in TT_CheckTestNumber(): First argument can not be NULL...' passed
+       TT_IsError('SELECT TT_checkNumberOfTests(NULL::text, NULL::text, NULL::boolean);'::text) = 'ERROR in TT_CheckNumberOfTests(): First argument can not be NULL...' passed
 UNION ALL
 SELECT '149.2'::text number,
-       'TT_checkTestNumber'::text function_tested,
+       'TT_checkNumberOfTests'::text function_tested,
        'Test first argument null'::text description,
-       TT_IsError('SELECT TT_checkTestNumber(NULL::text, ''bc''::text);'::text) = 'ERROR in TT_CheckTestNumber(): First argument can not be NULL...' passed
+       TT_IsError('SELECT TT_checkNumberOfTests(NULL::text, ''bc''::text, NULL::boolean);'::text) = 'ERROR in TT_CheckNumberOfTests(): First argument can not be NULL...' passed
 UNION ALL
 SELECT '149.3'::text number,
-       'TT_checkTestNumber'::text function_tested,
+       'TT_checkNumberOfTests'::text function_tested,
        'Test wrong first argument'::text description,
-       TT_IsError('SELECT TT_checkTestNumber(''x''::text, ''bc''::text);'::text) = 'ERROR in TT_CheckTestNumber(): First argument must be either ''cas'', ''dst'', ''eco'', ''lyr'', or ''nfl''...' passed
+       TT_IsError('SELECT TT_checkNumberOfTests(''x''::text, ''bc''::text, NULL::boolean);'::text) = 'ERROR in TT_CheckNumberOfTests(): First argument must be either ''cas'', ''dst'', ''eco'', ''lyr'', or ''nfl''...' passed
 UNION ALL
 SELECT '149.4'::text number,
-       'TT_checkTestNumber'::text function_tested,
+       'TT_checkNumberOfTests'::text function_tested,
        'Test wrong second argument'::text description,
-       TT_IsError('SELECT TT_checkTestNumber(''cas''::text, ''x''::text);'::text) = 'ERROR in TT_CheckTestNumber(): Second argument must be either ''ab'', ''bc'', ''ds'', ''mb'', ''nb'', ''nl'', ''ns'', ''nt'', ''on'', ''pc'', ''pe'', ''qc'', ''sk'' or ''yt''...' passed
+       TT_IsError('SELECT TT_checkNumberOfTests(''cas''::text, ''x''::text, NULL::boolean);'::text) = 'ERROR in TT_CheckNumberOfTests(): Second argument must be either ''ab'', ''bc'', ''ds'', ''mb'', ''nb'', ''nl'', ''ns'', ''nt'', ''on'', ''pc'', ''pe'', ''qc'', ''sk'' or ''yt''...' passed
 ---------------------------------------------------------
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
