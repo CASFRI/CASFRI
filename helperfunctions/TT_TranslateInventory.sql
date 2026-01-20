@@ -13,9 +13,10 @@ DECLARE
   queryStr text;
   lyrMetadataTableName text = 'layer_metadata';
   invMetadataTableName text = 'inventory_metadata';
-
   casfriTablesArr text[];
   casfriTable text;
+  layerMax int;
+  layerMin int;
 BEGIN
   inventoryID := lower(btrim(btrim(inventoryID, ' '), ''''));
   upperInventoryID := upper(inventoryID);
@@ -37,6 +38,7 @@ BEGIN
 
   IF translationType = 'F' OR translationType = 'T' THEN
     FOREACH casfriTable IN ARRAY casfriTablesArr LOOP
+      ----------------------------------------------------------------------------------------------
       -- Check that table 'inventory_metadata' exists
       IF NOT TT_TableExists('public', invMetadataTableName) THEN
         RAISE NOTICE 'ERROR TT_TranslateInventory(): Could not find table ''public.%''...', invMetadataTableName;
@@ -82,33 +84,41 @@ BEGIN
       queryStr = 'SELECT lower(standard_id) FROM public.' || invMetadataTableName || ' im
       WHERE ''' || inventoryID || '''  = lower(im.inventory_id)';
       EXECUTE queryStr INTO standardID;
-    
+
+      -- Extract lower and upper layer number to process
+      --SELECT ARRAY[min(layer), max(layer)]
+      --FROM translation.layer_metadata
+      --WHERE inventory_id = 'AB06' AND STRPOS(casfri_table, 'NFL') > 0;
+      queryStr = 'SELECT min(layer) layerMin, max(layer) layerMax
+      FROM translation.' || lyrMetadataTableName || '
+      WHERE inventory_id = ''' || upperInventoryID || ''' AND STRPOS(casfri_table, ''' || upper(casfriTable) || ''') > 0;';
+      RAISE NOTICE 'queryStr=%', queryStr;
+      EXECUTE queryStr INTO layerMin, layerMax;
+      RAISE NOTICE '6 - TT_TranslateInventory(): Found layers % to % for ''%'' % table...', layerMin, layerMax, inventoryID, casfriTable;
+
       ----------------------------------------------------------------------------------------------
       -- Prepare the TT_Translate_%_%() function using the 'translation'.'%_%_%' translation table
       --SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab03_cas'); 
-      RAISE NOTICE '6 - TT_Prepare() the TT_Translate_%_%() function using the ''translation''.''%_%_%'' translation table...', inventoryID, casfriTable, juridiction, standardID, casfriTable;
+      RAISE NOTICE '7 - TT_TranslateInventory(): TT_Prepare() the TT_Translate_%_%() function using the ''translation''.''%_%_%'' translation table...', inventoryID, casfriTable, juridiction, standardID, casfriTable;
       PERFORM TT_Prepare('translation', juridiction || '_' || standardID || '_' || casfriTable, '_' || inventoryID || '_' || casfriTable); 
 
-      ----------------------------------------------------------------------------------------------
-      -- Create the view mapping the rafri attributes to the translated table ones
-      --SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab');
-      RAISE NOTICE '7 - TT_CreateMappingView(''rawfri'', ''%'', ''%'')...', inventoryID, juridiction;
-      PERFORM TT_CreateMappingView('rawfri', inventoryID, juridiction);
-    
-      ----------------------------------------------------------------------------------------------
-      -- Execute the TT_Translate_%_%() function to insert data into the casfri50.%_all table
-      --INSERT INTO casfri50.cas_all  -- xmxs
-      --SELECT * FROM TT_Translate_ab03_cas('rawfri', 'ab03_l1_to_ab_l1_map');
-      RAISE NOTICE '8 - Insert translated data into ''casfri50.%_all'' table using TT_Translate_%_%()...', casfriTable, inventoryID, casfriTable;
-      queryStr := 'INSERT INTO casfri50.' || casfriTable || '_all ' ||
-                   ' SELECT * FROM TT_Translate_' || inventoryID || '_' || casfriTable || '(''rawfri'', ''' || inventoryID || '_l1_to_' || juridiction || '_l1_map'');';
-      EXECUTE queryStr;
-      RAISE NOTICE 'To check execute: SELECT * FROM casfri50.%_all WHERE left(cas_id, 4) = ''%'';', casfriTable, upperInventoryID;
+      FOR layer IN layerMin..layerMax LOOP
+        ----------------------------------------------------------------------------------------------
+        --For each layer, create the view mapping the rawfri attributes to the translated table ones
+        --SELECT TT_CreateMappingView('rawfri', 'ab06', 'ab');
+        RAISE NOTICE '8 - TT_TranslateInventory(): TT_CreateMappingView(''rawfri'', ''%'', ''%'', ''%'', 1)...', inventoryID, layer, juridiction;
+        PERFORM TT_CreateMappingView('rawfri', inventoryID, layer, juridiction, 1);
 
-      --RAISE NOTICE 'Produce the DST table...';
-      -- warning NB02 and YT03 have more than one DST layers
-      --RAISE NOTICE 'Produce the ECO table...';
-      -- warning PC01 and PC02 have more than one ECO layers
+        ----------------------------------------------------------------------------------------------
+        -- Execute the TT_Translate_%_%() function to insert data into the casfri50.%_all table
+        --INSERT INTO casfri50.cas_all  -- xmxs
+        --SELECT * FROM TT_Translate_ab03_cas('rawfri', 'ab03_l1_to_ab_l1_map');
+        RAISE NOTICE '9 - TT_TranslateInventory()): Insert translated data into ''casfri50.%_all'' table using TT_Translate_%_%(''rawfri'', ''%''_l%_to_%_l1_map)...', casfriTable, inventoryID, casfriTable, inventoryID, layer, juridiction;
+        queryStr := 'INSERT INTO casfri50.' || casfriTable || '_all ' ||
+                    ' SELECT * FROM TT_Translate_' || inventoryID || '_' || casfriTable || '(''rawfri'', ''' || inventoryID || '_l' || layer || '_to_' || juridiction || '_l1_map'');';
+        EXECUTE queryStr;
+        RAISE NOTICE 'To check execute: SELECT * FROM casfri50.%_all WHERE left(cas_id, 4) = ''%'';', casfriTable, upperInventoryID;
+      END LOOP;
     END LOOP;
   ELSIF translationType = 'D' THEN
     FOREACH casfriTable IN ARRAY casfriTablesArr LOOP
@@ -124,4 +134,5 @@ BEGIN
 END;
 $$;
 --CALL TT_TranslateInventory('AB06', 'D', 'cas');
---CALL TT_TranslateInventory('AB06', 'F', 'cas');
+--CALL TT_TranslateInventory('Ab06', 'F', 'cas');
+--CALL TT_TranslateInventory('AB06', 'F', 'nfl');
