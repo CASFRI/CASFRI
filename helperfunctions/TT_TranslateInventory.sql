@@ -84,7 +84,7 @@ DECLARE
   r RECORD;
   nbTestRows int;
   viewName text;
-  nbTranslatedLayers int = 0;
+  nbTranslatedLayers int;
   insertStatement text;
 BEGIN
   RAISE NOTICE '-------------------------------------------------------------------------------';
@@ -214,9 +214,9 @@ BEGIN
           -- Get the number of rows to test from the 'nb_tests' table
           queryStr := format('
             SELECT nb_test_rows
-            FROM casfri50_test.%I
+            FROM %I.%I
             WHERE inventory_id = %L AND cas_table = %L AND layer = %L;',
-            nbTestTableName, inventoryID, casfriTable, r.layer);
+            targetSchema, nbTestTableName, inventoryID, casfriTable, r.layer);
           EXECUTE queryStr INTO nbTestRows;
         END IF;
 
@@ -224,6 +224,7 @@ BEGIN
         --TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, 201, NULL, 'cas');
         queryStr := format('SELECT TT_CreateMappingView(''rawfri'', %L, %s, %L, 1, %s, NULL, %L);', inventoryID, r.layer, standardID, coalesce(nbTestRows::text, 'NULL'), casfriTable);
         RAISE NOTICE '4.1 - TT_TranslateInventory(): %', queryStr;
+        EXECUTE queryStr;
 
         viewName := inventoryID || '_l' || r.layer || '_to_' || standardID || '_l1_map' || (CASE WHEN nbTestRows IS NULL THEN '' ELSE '_'|| nbTestRows END) || '_' || casfriTable;
         IF TT_TableExists('rawfri', viewName) THEN
@@ -233,9 +234,13 @@ BEGIN
           --INSERT INTO casfri50.cas_all  -- xmxs
           --SELECT * FROM TT_Translate_ab03_cas('rawfri', 'ab03_l1_to_ab_l1_map');
           RAISE NOTICE '5.1 - TT_TranslateInventory(): Inserting translated rows into ''%.%'' table using TT_Translate_%_%(''rawfri'', ''%''_l%_to_%_l1_map)...', targetSchema, targetTable, inventoryID, casfriTable, inventoryID, r.layer, juridiction;
-          queryStr = format('INSERT INTO casfri50.%I ' ||
-                      ' SELECT * FROM TT_Translate%s(''rawfri'', %L);', casfriTable || '_all', ttPrepareFctSuffix, viewName);
+          insertStatement := format('INSERT INTO %I.%I ', targetSchema, targetTable);
+          IF NOT TT_TableExists(targetSchema, targetTable) THEN
+            insertStatement := format('CREATE TABLE %I.%I AS ', targetSchema, targetTable);
+          END IF;
           queryStr := format('
+            %s SELECT * FROM TT_Translate%s(''rawfri'', %L);
+            ', insertStatement, ttPrepareFctSuffix, viewName);
           --RAISE NOTICE 'CCCC queryStr=%', queryStr;
           EXECUTE queryStr;
           RAISE NOTICE '5.2 - TT_TranslateInventory(): DONE Inserting translated rows into ''%.%'' table using TT_Translate_%_%(''rawfri'', ''%''_l%_to_%_l1_map). To check, execute: SELECT * FROM %.% WHERE left(cas_id, 4) = ''%'';', targetSchema, targetTable, inventoryID, casfriTable, inventoryID, r.layer, juridiction, targetSchema, targetTable, upperInventoryID;
