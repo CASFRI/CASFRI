@@ -1,4 +1,60 @@
---DROP PROCEDURE IF EXISTS TT_TranslateInventory(text, text, text, boolean);
+--DROP PROCEDURE IF EXISTS TT_RunAllTests(text, text);
+CREATE OR REPLACE PROCEDURE TT_RunAllTests(
+  juridiction text, -- 'ab', 'bc', etc.
+  casfriTable text DEFAULT 'all' -- can be 'cas', 'eco', 'dst', 'lyr', 'nfl' or 'all'
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+  validCasfriTables text[] := ARRAY['cas', 'eco', 'dst', 'lyr', 'nfl', 'all'];
+  queryStr text;
+  invMetadataTableName text := 'inventory_metadata';
+  r RECORD;
+BEGIN
+  -- Check that casfriTable is valid
+  IF lower(casfriTable) != ALL(validCasfriTables) THEN
+    RAISE EXCEPTION 'TT_RunAllTests() ERROR: ''%'' is not a proper argument for ''casfriTable''. Valid values are ''cas'', ''eco'', ''dst'', ''lyr'', ''nfl'' and ''all''...', casfriTable;
+  END IF;
+  -- Get the list of inventories for this juridiction
+  queryStr := format('
+    SELECT inventory_id, *
+    FROM public.%I
+    WHERE left(inventory_id, 2) = upper(%L) AND
+          (upper(translated_by_cfs) = ''YES'' OR
+           upper(translated_by_ulaval) = ''YES'') AND
+          TT_TableExists(''rawfri'', lower(inventory_id));
+    ', invMetadataTableName, juridiction);
+  --RAISE NOTICE 'queryStr=%', queryStr;
+  FOR r IN EXECUTE queryStr LOOP
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+    RAISE NOTICE 'TT_RunAllTests(): 1 - Running ''%'' tests for inventory ''%''...', upper(casfriTable), upper(r.inventory_id);
+    --RAISE NOTICE 'TT_RunAllTests(): 2 - Deleting table ''%.%''...', upper(casfriTable), upper(r.inventory_id);
+    --EXECUTE format('
+    --  DROP TABLE IF EXISTS casfri50_test.dst_%s CASCADE;
+    --  ', juridiction);
+    CALL TT_TranslateInventory(r.inventory_id, 'D', casfriTable, TRUE, FALSE, FALSE);
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+    CALL TT_TranslateInventory(r.inventory_id, 'T', casfriTable, TRUE, FALSE, FALSE);
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+  END LOOP;
+END;
+$$;
+
+/*
+CALL TT_RunAllTests('ab', 'xxx')
+CALL TT_RunAllTests('ab', 'cas')
+CALL TT_RunAllTests('ab', 'nfl')
+CALL TT_RunAllTests('ab')
+*/
+
+------------------------------------------------------------------------------
+-- TT_TranslateInventory
+--
+-- Translate a CASFRI inventory into the casfri50 schema using the
+-- translation tables stored in the 'translation' schema.
+------------------------------------------------------------------------------
+--DROP PROCEDURE IF EXISTS TT_TranslateInventory(text, text, text, boolean, boolean, boolean);
 CREATE OR REPLACE PROCEDURE TT_TranslateInventory(
   inventoryID text,
   translationType text DEFAULT 'T', -- can be 'T'ranslate or 'D'elete
@@ -8,6 +64,7 @@ CREATE OR REPLACE PROCEDURE TT_TranslateInventory(
 )
 LANGUAGE plpgsql AS $$
 DECLARE
+  validCasfriTables text[] := ARRAY['cas', 'eco', 'dst', 'lyr', 'nfl', 'geo', 'all'];
   upperInventoryID text;
   standardID text;
   juridiction text = lower(left(inventoryID, 2));
@@ -16,6 +73,8 @@ DECLARE
   lyrMetadataTableName text = 'layer_metadata';
   invMetadataTableName text = 'inventory_metadata';
   nbTestTableName text = 'nb_tests';
+  targetSchema text := 'casfri50';
+  targetTable text;
   translationTableName text;
   ttPrepareFctSuffix text;
   casfriTablesArr text[];
@@ -25,7 +84,22 @@ DECLARE
   nbTestRows int;
   viewName text;
   nbTranslatedLayers int = 0;
+  insertStatement text;
 BEGIN
+  RAISE NOTICE '-------------------------------------------------------------------------------';
+  -- Check that casfriTable is valid
+  IF test THEN
+    -- Remove 'geo' as valid casfriTable when testing
+    validCasfriTables := array_remove(validCasfriTables, 'geo');
+  END IF;
+  IF lower(casfriTable) != ALL(validCasfriTables) THEN
+    queryStr := array_to_string(
+        ARRAY(SELECT quote_literal(elem) FROM unnest(validCasfriTables) AS elem),
+        ','
+    );
+    RAISE EXCEPTION 'TT_TranslateInventory() ERROR: ''%'' is not a proper argument for ''casfriTable''. Valid values are %...', casfriTable, queryStr;
+  END IF;
+
   inventoryID := lower(btrim(btrim(inventoryID, ' '), ''''));
   upperInventoryID := upper(inventoryID);
   translationType = upper(translationType);
@@ -47,6 +121,7 @@ BEGIN
   IF translationType = 'T' THEN
     FOREACH casfriTable IN ARRAY casfriTablesArr LOOP
       upperCasfriTable = upper(casfriTable);
+      targetTable := casfriTable || '_all';
       ----------------------------------------------------------------------------------------------
       -- Check that table 'inventory_metadata' exists
       IF NOT TT_TableExists('public', invMetadataTableName) THEN
@@ -95,17 +170,23 @@ BEGIN
       EXECUTE queryStr INTO standardID;
       -- Prepend it with the juridiction
       standardID = lower(juridiction || '_' || standardID);
+      translationTableName := format('%s_%s', standardID, casfriTable);
+      ttPrepareFctSuffix := format('_%s_%s', inventoryID, casfriTable);
 
       IF test THEN
+        -- Set other test variable
+        ttPrepareFctSuffix := ttPrepareFctSuffix || '_test';
+        targetSchema := 'casfri50_test';
+        targetTable := casfriTable || '_' || lower(juridiction);
         ----------------------------------------------------------------------------------------------
         -- Check that table 'nb_tests' exists
-        IF NOT TT_TableExists('casfri50_test', nbTestTableName) THEN
+        IF NOT TT_TableExists(targetSchema, nbTestTableName) THEN
           RAISE NOTICE 'ERROR TT_TranslateInventory(): Could not find table ''casfri50_test.%''...', nbTestTableName;
           RETURN;
         END IF;
         RAISE NOTICE '4 - TT_TranslateInventory(): Table ''casfri50_test.%'' exists...', nbTestTableName;
       END IF;
-
+      PERFORM TT_Prepare('translation', translationTableName, ttPrepareFctSuffix, showProgress, showTQuery);
       ----------------------------------------------------------------------------------------------
       -- Prepare the TT_Translate_%_%() function using the 'translation'.'%_%_%' translation table
       --SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab03_cas');
@@ -165,11 +246,20 @@ BEGIN
     END LOOP;
   ELSIF translationType = 'D' THEN
     FOREACH casfriTable IN ARRAY casfriTablesArr LOOP
-      -- Delete existing entries
-      RAISE NOTICE '2 - TT_TranslateInventory(): Delete ''%'' entries from ''casfri50.%_all'' table. To check execute: SELECT * FROM casfri50.%_all WHERE left(cas_id, 4) = ''%'';', upperInventoryID, casfriTable, casfriTable, upperInventoryID;
-      queryStr = format('DELETE FROM casfri50.%I WHERE left(cas_id, 4) = %L;', casfriTable || '_all', upperInventoryID);
-      RAISE NOTICE 'queryStr=%', queryStr;
-      EXECUTE queryStr;
+      targetTable := casfriTable || '_all';
+      IF test THEN
+        targetSchema := 'casfri50_test';
+        targetTable := casfriTable || '_' || lower(juridiction);
+      END IF;
+      -- Check if table exists
+      IF TT_TableExists(targetSchema, targetTable) THEN
+        -- Delete existing entries
+        RAISE NOTICE '1 - TT_TranslateInventory(): Deleting ''%'' entries from ''%.%'' table. To check, execute: SELECT * FROM %.% WHERE left(cas_id, 4) = ''%'';', upperInventoryID, targetSchema, targetTable, targetSchema, targetTable, upperInventoryID;
+        queryStr := format('
+          DELETE FROM %I.%I WHERE left(cas_id, 4) = %L;
+          ', targetSchema, targetTable, upperInventoryID);
+        --RAISE NOTICE 'DDDD queryStr=%', queryStr;
+        EXECUTE queryStr;
     END LOOP;
   ELSE
     RAISE NOTICE 'ERROR TT_TranslateInventory(): Unsupported translation type (%)...', translationType;
