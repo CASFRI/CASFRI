@@ -283,15 +283,30 @@ BEGIN
   END IF;
 END;
 $$;
---CALL TT_TranslateInventory('AB06', 'D', 'cas');
---CALL TT_TranslateInventory('Ab06', 'T', 'cas');
---CALL TT_TranslateInventory('Ab06', 'T', 'cas', FALSE, FALSE);
---CALL TT_TranslateInventory('AB06', 'D', 'nfl');
---CALL TT_TranslateInventory('AB06', 'T', 'nfl');
---CALL TT_TranslateInventory('AB06', 'T', 'nfl', TRUE);
---CALL TT_TranslateInventory('AB34', 'T', 'nfl');
---CALL TT_TranslateInventory('AB34', 'T', 'nfl', TRUE);
+/*
+CALL TT_TranslateInventory('AB06', 'D', 'cas');
+CALL TT_TranslateInventory('Ab06', 'T', 'cas');
+CALL TT_TranslateInventory('Ab06', 'T', 'cas');
+CALL TT_TranslateInventory('Ab06', 'T', 'cas', FALSE, FALSE, FALSE);
 
---CALL TT_TranslateInventory('Ab06', 'T', 'cas', TRUE);
--- SELECT TT_CreateMappingView('rawfri', 'ab06', '1', 'ab_avi01', 1, 201, NULL, 'nfl')
--- SELECT ab06_l1_to_ab_avi01_l1_200_map
+CALL TT_TranslateInventory('Ab06', 'T', 'cas', FALSE, FALSE);
+CALL TT_TranslateInventory('Ab06', 'T', 'cas', TRUE);
+
+CALL TT_TranslateInventory('AB06', 'D', 'nfl');
+CALL TT_TranslateInventory('AB06', 'T', 'nfl');
+CALL TT_TranslateInventory('AB06', 'D', 'nfl', TRUE);
+CALL TT_TranslateInventory('AB06', 'T', 'nfl', TRUE);
+
+CALL TT_TranslateInventory('AB06');
+CALL TT_TranslateInventory('Ab06', 'T', 'all', FALSE, FALSE, FALSE);
+CALL TT_TranslateInventory('Ab06', 'T', 'lyr', FALSE, FALSE, FALSE);
+
+CALL TT_TranslateInventory('AB34', 'T', 'nfl');
+CALL TT_TranslateInventory('AB34', 'T', 'nfl', TRUE);
+
+CALL TT_TranslateInventory('AB06', 'D', 'eco', TRUE);
+CALL TT_TranslateInventory('AB06', 'T', 'eco', TRUE);
+
+CALL TT_TranslateInventory('AB06', 'T', 'all', TRUE);
+
+*/
