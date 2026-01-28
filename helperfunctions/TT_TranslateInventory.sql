@@ -56,11 +56,12 @@ CALL TT_RunAllTests('ab')
 ------------------------------------------------------------------------------
 --DROP PROCEDURE IF EXISTS TT_TranslateInventory(text, text, text, boolean, boolean, boolean);
 CREATE OR REPLACE PROCEDURE TT_TranslateInventory(
-  inventoryID text,
+  inventoryID text, -- 'AB06', 'AB34', etc.
   translationType text DEFAULT 'T', -- can be 'T'ranslate or 'D'elete
-  casfriTables text DEFAULT 'all',
-  test boolean DEFAULT FALSE,
-  progress boolean DEFAULT TRUE
+  casfriTables text DEFAULT 'all', -- can be 'cas', 'eco', 'dst', 'lyr', 'nfl', 'geo' or 'all'
+  test boolean DEFAULT FALSE, -- if TRUE use the 'casfri50_test.nb_test' table to get the number of rows to translate
+  showProgress boolean DEFAULT TRUE, -- if TRUE display progress notices
+  showTQuery boolean DEFAULT FALSE -- if TRUE display translation query notices
 )
 LANGUAGE plpgsql AS $$
 DECLARE
@@ -196,14 +197,6 @@ BEGIN
       PERFORM TT_Prepare('translation', translationTableName, ttPrepareFctSuffix, showProgress, showTQuery);
       ----------------------------------------------------------------------------------------------
       ----------------------------------------------------------------------------------------------
-      --SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab03_cas');
-      RAISE NOTICE '6 - TT_TranslateInventory(): TT_Prepare() the TT_Translate_%_%() function using the ''translation''.''%_%'' translation table...', inventoryID, casfriTable, standardID, casfriTable;
-      translationTableName = format('%s_%s', standardID, casfriTable);
-      ttPrepareFctSuffix = format('_%s_%s', inventoryID, casfriTable);
-      IF test THEN
-        ttPrepareFctSuffix = ttPrepareFctSuffix || '_test';
-      END IF;
-      PERFORM TT_Prepare('translation', translationTableName, ttPrepareFctSuffix, progress);
 
       queryStr := format('
         SELECT layer::int
