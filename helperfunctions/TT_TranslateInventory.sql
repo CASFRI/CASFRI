@@ -67,12 +67,12 @@ DECLARE
   validCasfriTables text[] := ARRAY['cas', 'eco', 'dst', 'lyr', 'nfl', 'geo', 'all'];
   upperInventoryID text;
   standardID text;
-  juridiction text = lower(left(inventoryID, 2));
+  juridiction text := lower(left(inventoryID, 2));
   nbEntry int;
   queryStr text;
-  lyrMetadataTableName text = 'layer_metadata';
-  invMetadataTableName text = 'inventory_metadata';
-  nbTestTableName text = 'nb_tests';
+  lyrMetadataTableName text := 'layer_metadata';
+  invMetadataTableName text := 'inventory_metadata';
+  nbTestTableName text := 'nb_tests';
   targetSchema text := 'casfri50';
   targetTable text;
   translationTableName text;
@@ -102,15 +102,15 @@ BEGIN
 
   inventoryID := lower(btrim(btrim(inventoryID, ' '), ''''));
   upperInventoryID := upper(inventoryID);
-  translationType = upper(translationType);
+  translationType := upper(translationType);
 
   -- Build an array with the list of CASFRI table to process
   casfriTables = lower(casfriTables);
   IF casfriTables = 'all' THEN
-    casfriTables = 'cas, eco, dst, lyr, nfl, geo';
+    casfriTables := 'cas, eco, dst, lyr, nfl, geo';
   END IF;
-  casfriTablesArr = regexp_split_to_array(casfriTables, '\s*,\s*');
-  
+  casfriTablesArr := regexp_split_to_array(casfriTables, '\s*,\s*');
+
   -- Check that table 'inventoryID' exists
   IF NOT TT_TableExists('rawfri', inventoryID) THEN
     RAISE NOTICE 'ERROR TT_TranslateInventory(): Could not find table ''rawfri.%''...', inventoryID;
@@ -120,8 +120,9 @@ BEGIN
 
   IF translationType = 'T' THEN
     FOREACH casfriTable IN ARRAY casfriTablesArr LOOP
-      upperCasfriTable = upper(casfriTable);
+      upperCasfriTable := upper(casfriTable);
       targetTable := casfriTable || '_all';
+      nbTranslatedLayers := 0;
       ----------------------------------------------------------------------------------------------
       -- Check that table 'inventory_metadata' exists
       IF NOT TT_TableExists('public', invMetadataTableName) THEN
@@ -132,8 +133,10 @@ BEGIN
     
       ----------------------------------------------------------------------------------------------
       -- Check that one and only one entry for 'inventoryID' exists in table 'inventory_metadata'
-      queryStr = format('SELECT count(*) FROM public.%I im
-      WHERE %L = lower(im.inventory_id);', invMetadataTableName, inventoryID);
+      queryStr := format('
+        SELECT count(*) FROM public.%I im
+        WHERE %L = lower(im.inventory_id);
+        ', invMetadataTableName, inventoryID);
       EXECUTE queryStr INTO nbEntry;
       IF nbEntry = 0 THEN
         RAISE NOTICE 'ERROR TT_TranslateInventory(): No entry found for inventory_id ''%'' in table ''public.%''...', upperInventoryID, invMetadataTableName;
@@ -154,8 +157,10 @@ BEGIN
     
       ----------------------------------------------------------------------------------------------
       -- Check that at least one entry for 'inventoryID' exists in table 'layer_metadata'
-      queryStr = format('SELECT count(*) FROM translation.%I lm
-      WHERE %L = lower(lm.inventory_id);', lyrMetadataTableName, inventoryID);
+      queryStr := format('
+        SELECT count(*) FROM translation.%I lm
+        WHERE %L = lower(lm.inventory_id);
+        ', lyrMetadataTableName, inventoryID);
       EXECUTE queryStr INTO nbEntry;
       IF nbEntry = 0 THEN
         RAISE NOTICE 'ERROR TT_TranslateInventory(): No entry found for inventory_id ''%'' in table ''translation.%''...', upperInventoryID, lyrMetadataTableName;
@@ -165,11 +170,13 @@ BEGIN
     
       ----------------------------------------------------------------------------------------------
       -- Extract standard info from 'inventory_metadata'
-      queryStr = format('SELECT lower(standard_id) FROM public.%I im
-      WHERE %L  = lower(im.inventory_id);', invMetadataTableName, inventoryID);
+      queryStr := format('
+        SELECT lower(standard_id) FROM public.%I im
+        WHERE %L = lower(im.inventory_id);
+        ', invMetadataTableName, inventoryID);
       EXECUTE queryStr INTO standardID;
       -- Prepend it with the juridiction
-      standardID = lower(juridiction || '_' || standardID);
+      standardID := lower(juridiction || '_' || standardID);
       translationTableName := format('%s_%s', standardID, casfriTable);
       ttPrepareFctSuffix := format('_%s_%s', inventoryID, casfriTable);
 
@@ -188,7 +195,7 @@ BEGIN
       END IF;
       PERFORM TT_Prepare('translation', translationTableName, ttPrepareFctSuffix, showProgress, showTQuery);
       ----------------------------------------------------------------------------------------------
-      -- Prepare the TT_Translate_%_%() function using the 'translation'.'%_%_%' translation table
+      ----------------------------------------------------------------------------------------------
       --SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab03_cas');
       RAISE NOTICE '6 - TT_TranslateInventory(): TT_Prepare() the TT_Translate_%_%() function using the ''translation''.''%_%'' translation table...', inventoryID, casfriTable, standardID, casfriTable;
       translationTableName = format('%s_%s', standardID, casfriTable);
@@ -198,7 +205,7 @@ BEGIN
       END IF;
       PERFORM TT_Prepare('translation', translationTableName, ttPrepareFctSuffix, progress);
 
-      queryStr = format('
+      queryStr := format('
         SELECT layer::int
         FROM translation.%I
         WHERE inventory_id = %L AND STRPOS(casfri_table, %L) > 0;',
@@ -207,10 +214,10 @@ BEGIN
 
       -- Iterate over all layers to translate
       FOR r IN EXECUTE queryStr LOOP
-        nbTestRows = NULL;
+        nbTestRows := NULL;
         IF test THEN
           -- Get the number of rows to test from the 'nb_tests' table
-          queryStr = format('
+          queryStr := format('
             SELECT nb_test_rows
             FROM casfri50_test.%I
             WHERE inventory_id = %L AND cas_table = %L AND layer = %L;',
@@ -220,10 +227,10 @@ BEGIN
 
         -- Create the mapping VIEW
         --SELECT TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, 201, NULL, 'cas');
-        RAISE NOTICE '7 - TT_TranslateInventory(): TT_CreateMappingView(''rawfri'', ''%'', %, ''%'', 1, %, NULL, ''%'')...', inventoryID, r.layer, standardID, nbTestRows, casfriTable;
+        queryStr := format('SELECT TT_CreateMappingView(''rawfri'', %L, %s, %L, 1, %s, NULL, %L);', inventoryID, r.layer, standardID, coalesce(nbTestRows::text, 'NULL'), casfriTable);
         PERFORM TT_CreateMappingView('rawfri', inventoryID, r.layer, standardID, 1, nbTestRows, NULL, casfriTable);
 
-        viewName = inventoryID || '_l' || r.layer || '_to_' || standardID || '_l1_map' || (CASE WHEN nbTestRows IS NULL THEN '' ELSE '_'|| nbTestRows END) || '_' || casfriTable;
+        viewName := inventoryID || '_l' || r.layer || '_to_' || standardID || '_l1_map' || (CASE WHEN nbTestRows IS NULL THEN '' ELSE '_'|| nbTestRows END) || '_' || casfriTable;
         IF TT_TableExists('rawfri', viewName) THEN
           ----------------------------------------------------------------------------------------------
           -- Execute the TT_Translate_%_%() function to insert data into the casfri50.%_all table
@@ -232,6 +239,7 @@ BEGIN
           RAISE NOTICE '8 - TT_TranslateInventory()): Insert translated data into ''casfri50.%_all'' table using TT_Translate_%_%(''rawfri'', ''%''_l%_to_%_l1_map). To check execute: SELECT * FROM casfri50.%_all WHERE left(cas_id, 4) = ''%'';', casfriTable, inventoryID, casfriTable, inventoryID, r.layer, juridiction, casfriTable, upperInventoryID;
           queryStr = format('INSERT INTO casfri50.%I ' ||
                       ' SELECT * FROM TT_Translate%s(''rawfri'', %L);', casfriTable || '_all', ttPrepareFctSuffix, viewName);
+          queryStr := format('
           EXECUTE queryStr;
           nbTranslatedLayers := nbTranslatedLayers + 1;
           RAISE NOTICE '   - TT_TranslateInventory(): % layer(s) translated for ''%'' % table...', nbTranslatedLayers, upperInventoryID, upperCasfriTable;
