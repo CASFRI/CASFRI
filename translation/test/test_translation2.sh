@@ -4,8 +4,7 @@ source ../../common.sh
 
 prov_to_test=$@
 
-dontclose="read -p 'Press enter close the command window...';"
-
+#dontclose="read -p 'Press enter close the command window...';"
 
 if false; then
 "$pgFolder/bin/psql" $psqlConnectionString -P pager=off -c "CREATE SCHEMA IF NOT EXISTS casfri50_test;"
@@ -17,9 +16,9 @@ $overwriteTable
 fi
 
 # Build a list of province codes to test based on the fullList arrays
-declare -A provToTestAssArr
-declare -n nameRef
-provToTestList=()
+declare -A provToTestAssArr # the associative array to track unique province codes
+declare -n nameRef # nameref for indirect reference to arrays
+provToTestList=() # the list of unique province codes to test
 
 for nameRef in "${fullList[@]}"
 do
@@ -41,20 +40,21 @@ do
   done
 done
 
-runAllTest() {
+# Define a function to runll tests for a given province code and CASFRI table
+runTest() {
   local provCode=$1
   local casTable=$2
   local runInBackground=$3
 
-  echo "Running all tests for province code: $provCode and cas table: $casTable"
+  echo "Running $casTable tests for all $provCode inventories"
 
   bashCmd="$gitPath/git-bash.exe"
   psqlCmd="$pgFolder/bin/psql"
   sqlStatement="CALL TT_RunAllTests('$provCode', '$casTable');"
   if [ "$runInBackground" = true ]; then
-    "$bashCmd" -c "$psqlCmd $psqlConnectionString -P pager=off -c \"$sqlStatement\"" &
+    "$bashCmd" -c "$psqlCmd $psqlConnectionString -P pager=off -c \"$sqlStatement\";$dontclose" &
   else
-    "$bashCmd" -c "$psqlCmd $psqlConnectionString -P pager=off -c \"$sqlStatement\""
+    "$bashCmd" -c "$psqlCmd $psqlConnectionString -P pager=off -c \"$sqlStatement\";$dontclose"
   fi
 }
 
@@ -65,9 +65,9 @@ do
 
   runInBackground=true
   [ ${#provToTestList[@]} == 1 ] || [ $prov == ${provToTestList[-1]} ] && runInBackground=false
-  runAllTest "$prov" "cas" "true"
-  runAllTest "$prov" "eco" "true"
-  runAllTest "$prov" "dst" "true"
-  runAllTest "$prov" "nfl" "true"
-  runAllTest "$prov" "lyr" "$runInBackground"
+  runTest "$prov" "cas" "true"
+  runTest "$prov" "eco" "true"
+  runTest "$prov" "dst" "true"
+  runTest "$prov" "nfl" "true"
+  runTest "$prov" "lyr" "$runInBackground"
  done
