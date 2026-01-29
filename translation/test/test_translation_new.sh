@@ -17,13 +17,13 @@ fi
 
 # Build a list of province codes to test based on the fullList arrays
 declare -A provToTestAssArr # the associative array to track unique province codes
-declare -n nameRef # nameref for indirect reference to arrays
+declare -n sublistRef # sublistRef for indirect reference to arrays
 provToTestList=() # the list of unique province codes to test
 
-for nameRef in "${fullList[@]}"
+for sublistRef in "${fullList[@]}"
 do
-  echo "The ${nameRef} sub list has ${#nameRef[@]} inventories..."
-  for invID in "${nameRef[@]}"
+  echo "The ${sublistRef} sub list has ${#sublistRef[@]} inventories..."
+  for invID in "${sublistRef[@]}"
   do
     # Skip strings shorter than 2 letters
     (( ${#invID} < 2 )) && continue
@@ -63,8 +63,11 @@ for prov in "${provToTestList[@]}"
 do
   echo "Testing translation for $prov"
 
+  # Determine if this is the last province code to test
   runInBackground=true
   [ ${#provToTestList[@]} == 1 ] || [ $prov == ${provToTestList[-1]} ] && runInBackground=false
+
+  # Run tests for each CASFRI table
   runTest "$prov" "cas" "true"
   runTest "$prov" "eco" "true"
   runTest "$prov" "dst" "true"
