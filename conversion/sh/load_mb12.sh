@@ -40,5 +40,8 @@ source $thisScriptDir/../pre_conversion.sh
 -progress $overwriteTable
 
 "$gdalFolder/ogrinfo" "$gdalConnectionString" -sql "UPDATE $fullTargetTableName SET cc = NULL where cc = ' '";
+
+createSQLSpatialIndex=True
+
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/../post_conversion.sh

@@ -45,5 +45,7 @@ source $thisScriptDir/../pre_conversion.sh
 # ~200 features have a period in their species string, remove it
 "$gdalFolder/ogrinfo" "$gdalConnectionString" -sql "UPDATE $fullTargetTableName SET species = REPLACE(species, '.', '') where species like '%.%'";
 
+createSQLSpatialIndex=True
+
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/../post_conversion.sh

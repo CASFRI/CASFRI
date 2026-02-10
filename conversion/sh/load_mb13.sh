@@ -40,5 +40,8 @@ source $thisScriptDir/../pre_conversion.sh
            productivity as subtype, ht_sum as height, spp_sum as species, origin_sum as year_org
            FROM $gdbTableName WHERE fri_fli = 'FRI'" \
 -progress $overwriteTable
+
+createSQLSpatialIndex=True
+
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/../post_conversion.sh

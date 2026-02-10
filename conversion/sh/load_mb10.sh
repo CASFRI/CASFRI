@@ -38,5 +38,8 @@ source $thisScriptDir/../pre_conversion.sh
 -sql "SELECT *, '$srcFileName' AS src_filename, '$destInventoryID' AS inventory_id, mu_id AS mu_fli,
             yearphoto as yearphoto_fli FROM $gdbTableName WHERE fri_fli = 'FLI'" \
 -progress $overwriteTable
+
+createSQLSpatialIndex=True
+
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/../post_conversion.sh

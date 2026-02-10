@@ -170,5 +170,7 @@ DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
 
 ############## Process - Finish processing for both methods ########################
 
+createSQLSpatialIndex=True
+
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/../post_conversion.sh

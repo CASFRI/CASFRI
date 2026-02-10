@@ -64,7 +64,6 @@ DROP TABLE IF EXISTS ${alpacTableName} CASCADE;
 
 ALTER TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear RENAME TO ab_alpac_updated_photoYear;
 "
-createSQLSpatialIndex=True  
 
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/../post_conversion.sh

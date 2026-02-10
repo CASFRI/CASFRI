@@ -230,7 +230,5 @@ FROM $gdbTableName
 WHERE FRI_FLI='FLI'" \
 -progress $overwriteTable
 
-createSQLSpatialIndex=True
-
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/../post_conversion.sh
