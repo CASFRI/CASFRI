@@ -27,7 +27,8 @@
 
 ######################################## Set variables #########################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=QC04
 srcFileName=CARTE_ECO_MAJ_PROV_10
@@ -42,25 +43,28 @@ tableName_meta=${fullTargetTableName}_meta
 
 ########################################## Process #############################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Load the polygon table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_poly" \
--nln $tableName_poly $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_poly" \
+-nln $tableName_poly $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly WHERE ver_prg NOT LIKE '%AIPF%'" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Load the attribute table (meta)
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_meta" \
--nln $tableName_meta $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_meta" \
+-nln $tableName_meta $gdalLco $gdalOtherOptions \
 -sql "SELECT * FROM $gdbFileName_meta WHERE ver_prg NOT LIKE '%AIPF%'" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Join META attributes to polygons using the GEOCODE attribute.
 # Only the POLY table's OGC_FID attribute is preserved for inclusion in CAS_ID.
 # Split GEOCODE into two columns for use in CAS_ID.
 # Intermediate tables are dropped at the end.
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 -- Drop the meta table ogc_fid column as we only need the poly table one
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
@@ -97,4 +101,5 @@ DROP TABLE IF EXISTS $tableName_meta CASCADE;
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

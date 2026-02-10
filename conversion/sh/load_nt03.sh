@@ -29,7 +29,8 @@
 #
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=NT03
 
@@ -42,15 +43,18 @@ polyTargetTableName=${fullTargetTableName}_poly
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr to load all table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
--nln $polyTargetTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbTableName" \
+-nln $polyTargetTableName $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableName" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Fix case 3, then case 2, then case 1
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS rawfri.nt03_case3 CASCADE;
 
@@ -81,4 +85,5 @@ DROP TABLE rawfri.nt03_case2 CASCADE;
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

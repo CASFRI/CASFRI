@@ -9,7 +9,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 srcInventoryID=NT04
 
@@ -21,14 +22,17 @@ fullTargetTableName=$targetFRISchema.nt04
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr to load all table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbTableName" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$srcInventoryID' AS inventory_id FROM $gdbTableName" \
--progress $overwrite_tab
+-progress $overwriteTable
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" -sql " \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" -sql " \
 UPDATE $fullTargetTableName 
 SET mod1code = mod2code, 
     mod2code = mod1code, 
@@ -39,6 +43,5 @@ SET mod1code = mod2code,
 WHERE mod1year > mod2year;
 ";
 
-createSQLSpatialIndex=True
-
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

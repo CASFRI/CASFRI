@@ -19,7 +19,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=YT01
 srcFileName=INVENTORY_POLY_40K
@@ -28,6 +29,9 @@ srcFullPath="$friDir/YT/$inventoryID/data/inventory/$srcFileName.shp"
 fullTargetTableName=$targetFRISchema.yt01
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Standard SQL code used to add and drop columns in gdbs. If column is not present the DROP command
 # will return an error which can be ignored.
@@ -46,12 +50,12 @@ fi
 
 # Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $srcFileName" \
--progress $overwrite_tab
+-progress $overwriteTable
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 -- add new columns
 ALTER TABLE $fullTargetTableName ADD COLUMN dist_code1_type text;
@@ -69,4 +73,5 @@ UPDATE $fullTargetTableName SET dist_code1_year = CONCAT('19', RIGHT(dist_code1,
 UPDATE $fullTargetTableName SET dist_code2_year = RIGHT(dist_code2,4)::int WHERE LENGTH(dist_code2)=6;
 "
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

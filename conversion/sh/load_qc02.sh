@@ -25,7 +25,8 @@
 
 ######################################## Set variables #########################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=QC02
 srcFileName_poly=PEE_MAJ_PROV
@@ -43,25 +44,28 @@ tableName_meta=${fullTargetTableName}_meta
 
 ########################################## Process #############################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Load the polygon table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath_poly" "$gdbFileName_poly" \
--nln $tableName_poly $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath_poly" "$gdbFileName_poly" \
+-nln $tableName_poly $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName_poly' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly WHERE ver_prg IS NULL" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Load the attribute table (meta)
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath_meta" "$gdbFileName_meta" \
--nln $tableName_meta $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath_meta" "$gdbFileName_meta" \
+-nln $tableName_meta $gdalLco $gdalOtherOptions \
 -sql "SELECT geocode AS meta_geocode, no_prg AS meta_no_prg, ver_prg AS meta_ver_prg, an_pro_sou, an_saisie, an_pro_ori FROM $gdbFileName_meta WHERE ver_prg IS NULL" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Join META attributes to polygons using the GEOCODE attribute.
 # Only the POLY table's OGC_FID attribute is preserved for inclusion in CAS_ID.
 # Split GEOCODE into two columns for use in CAS_ID.
 # Intermediate tables are dropped at the end.
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 -- Drop the meta table ogc_fid column as we only need the poly table one
 ALTER TABLE $tableName_meta DROP COLUMN IF EXISTS ogc_fid;
@@ -90,4 +94,5 @@ DROP TABLE IF EXISTS $tableName_meta CASCADE;
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

@@ -18,7 +18,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=AB24
 
@@ -29,13 +30,17 @@ fullTargetTableName=$targetFRISchema.ab24
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id, substr(structure,1,1) AS struc, 
 		substr(structure,2,1) AS struc_val, substr(u_structur,1,1) AS ustruc, substr(u_structur,2,1) AS ustruc_val 
 	FROM $srcFileName WHERE pid <>9000" \
--progress $overwrite_tab
+-progress $overwriteTable
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

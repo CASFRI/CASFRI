@@ -20,19 +20,23 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=AB16
 srcFullPath=$friDir/AB/$inventoryID/data/inventory
 
 fullTargetTableName=$targetFRISchema.ab16
 
-overwrite_option="$overwrite_tab"
+overwrite_option="$overwriteTable"
 
 # PostgreSQL variables
 ogrTab='PAL'
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Loop through all mapsheets.
 # For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
@@ -45,14 +49,15 @@ ogrTab='PAL'
 for F in "$srcFullPath/t"* 
 do
   "$gdalFolder/ogr2ogr" \
-  -f PostgreSQL "$pg_connection_string" "$F/forest" \
+  -f PostgreSQL "$gdalConnectionString" "$F/forest" \
   -nln $fullTargetTableName \
   -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id, 'FOREST#' AS forest_id_1, 'FOREST-ID' AS forest_id_2 FROM $ogrTab" \
-  $layer_creation_options $other_options \
+  $gdalLco $gdalOtherOptions \
   $overwrite_option
 
   overwrite_option="-update -append"  
-  layer_creation_options=""
+  gdalLco=""
 done
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

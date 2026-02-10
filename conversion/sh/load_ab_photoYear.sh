@@ -14,24 +14,30 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
+
+inventoryID=AB06
 
 srcFileName=PhotoYear_Update
-srcFullPath="$friDir/AB/AB06/data/photoyear/$srcFileName.shp"
+srcFullPath="$friDir/AB/$inventoryID/data/photoyear/$srcFileName.shp"
 
 fullTargetTableName=$targetFRISchema.ab_photoYear
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Fix it
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_photoyear CASCADE;
 
@@ -46,4 +52,5 @@ ALTER TABLE ${targetFRISchema}.new_ab_photoyear RENAME TO ab_photoyear;
 "
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

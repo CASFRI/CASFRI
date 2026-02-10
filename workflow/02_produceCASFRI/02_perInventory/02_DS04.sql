@@ -35,7 +35,7 @@ SELECT * FROM TT_Translate_ds04_cas('rawfri', 'ds04_l1_to_ds_l1_map');
 ------------------------
 -- DST
 ------------------------
-SELECT TT_Prepare('translation', 'ds_cfs01_dst', '_ds04_dst', 'ab_avi01_dst');
+SELECT TT_Prepare('translation', 'ds_bea01_dst', '_ds04_dst', 'ab_avi01_dst');
 
 SELECT TT_CreateMappingView('rawfri', 'ds04', 1, 'ds', 1);
 
@@ -64,7 +64,7 @@ SELECT * FROM TT_Translate_ds04_nfl('rawfri', 'ds04_l1_to_ds_l1_map');
 ------------------------
 -- GEO
 ------------------------
-SELECT TT_Prepare('translation', 'ds_cfs01_geo', '_ds04_geo', 'ab_avi01_geo');
+SELECT TT_Prepare('translation', 'ds_bea01_geo', '_ds04_geo', 'ab_avi01_geo');
 
 SELECT TT_CreateMappingView('rawfri', 'ds04', 1, 'ds', 1);
 

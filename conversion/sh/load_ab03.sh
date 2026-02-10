@@ -21,7 +21,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=AB03
 
@@ -35,21 +36,25 @@ fullTargetTableName=$targetFRISchema.ab03
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 ### FILE 1 ###
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcBlueridgeFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcBlueridgeFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcNameBlueridge' AS src_filename, '$inventoryID' AS inventory_id FROM $srcNameBlueridge WHERE poly_num > 0" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 ### FILE 2 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcW2FullPath" \
--nln $fullTargetTableName $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcW2FullPath" \
+-nln $fullTargetTableName $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcNameW2' AS src_filename, '$inventoryID' AS inventory_id FROM $srcNameW2 WHERE poly_num > 0" \
 -progress
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

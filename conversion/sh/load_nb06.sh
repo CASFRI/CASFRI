@@ -8,7 +8,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=NB06
 fileInventoryID=NB06
@@ -21,14 +22,18 @@ fullTargetTableName=$targetFRISchema.$inventoryID
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFileFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFileFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI -nlt CONVERT_TO_LINEAR \
 -emptyStrAsNull \
 -sql "SELECT *, '$srcFilename' AS src_filename, '$inventoryID' AS inventory_id FROM $srcLayerName WHERE (holder IS NULL OR holder NOT IN (16, 20)) AND fid != 1467074" \
--progress $overwrite_tab
+-progress $overwriteTable
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" -sql "ALTER TABLE $fullTargetTableName ALTER COLUMN stdlab TYPE TEXT; UPDATE $fullTargetTableName SET stdlab = '' WHERE stdlab IS NULL; UPDATE $fullTargetTableName SET slu = NULL WHERE trim(slu) = '';"
+"$gdalFolder/ogrinfo" "$gdalConnectionString" -sql "ALTER TABLE $fullTargetTableName ALTER COLUMN stdlab TYPE TEXT; UPDATE $fullTargetTableName SET stdlab = '' WHERE stdlab IS NULL; UPDATE $fullTargetTableName SET slu = NULL WHERE trim(slu) = '';"
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

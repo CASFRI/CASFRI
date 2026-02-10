@@ -11,7 +11,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=PE03
 srcFileName=PEI_CORPORATE_LANDUSE_INVENTORY_2000
@@ -21,6 +22,9 @@ srcFullPath="$peSubFolder/$srcFileName.shp"
 fullTargetTableName=$targetFRISchema.pe03
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 if [ ! -e "$peSubFolder/poly_id_added.txt" ]; then
 
@@ -33,12 +37,11 @@ if [ ! -e "$peSubFolder/poly_id_added.txt" ]; then
 fi
 # load polygons
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
--progress $overwrite_tab \
+-progress $overwriteTable \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id, 2000 as year_ FROM \"$srcFileName\""
 
-createSQLSpatialIndex=True
-
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

@@ -15,7 +15,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=AB33
 
@@ -30,23 +31,25 @@ alpacTableName=$targetFRISchema.ab_alpac_photoYear
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $srcFileName" \
--progress $overwrite_tab
-
+-progress $overwriteTable
 
 # Run ogr2ogr to load Alpac photoyear
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$alpacFullPath" \
--nln $alpacTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$alpacFullPath" \
+-nln $alpacTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Fix it
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS ${targetFRISchema}.new_alpac_photoyear CASCADE;
 
@@ -60,4 +63,5 @@ ALTER TABLE ${targetFRISchema}.new_alpac_photoyear RENAME TO ab_alpac_photoyear;
 "
 createSQLSpatialIndex=True  
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

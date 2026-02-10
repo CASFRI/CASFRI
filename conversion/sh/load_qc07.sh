@@ -28,7 +28,8 @@
 
 ######################################## Set variables #########################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=QC07
 srcFileName_poly=PEE_MAJ_PROV
@@ -53,25 +54,28 @@ tableName_full=${fullTargetTableName}_full
 
 ########################################## Process #############################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Load the polygon table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath_poly" "$gdbFileName_poly" \
--nln $tableName_poly $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath_poly" "$gdbFileName_poly" \
+-nln $tableName_poly $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName_poly' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly WHERE ver_prg LIKE '%AIPF%'" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Load the attribute table (meta)
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath_meta" "$gdbFileName_meta" \
--nln $tableName_meta $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath_meta" "$gdbFileName_meta" \
+-nln $tableName_meta $gdalLco $gdalOtherOptions \
 -sql "SELECT geocode AS meta_geocode, no_prg AS meta_no_prg, ver_prg AS meta_ver_prg, an_pro_sou, an_saisie, an_pro_ori FROM $gdbFileName_meta WHERE ver_prg LIKE '%AIPF%'" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Load the etage table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath_etage" "$gdbFileName_etage" \
--nln $tableName_etage $layer_creation_options $other_options \
--progress $overwrite_tab
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath_etage" "$gdbFileName_etage" \
+-nln $tableName_etage $gdalLco $gdalOtherOptions \
+-progress $overwriteTable
 
 # Join the POLY, META and ETAGE tables using the GEOCODE attribute.
 # Only the POLY table's OGC_FID attribute is preserved for inclusion in CAS_ID.
@@ -82,7 +86,7 @@ tableName_full=${fullTargetTableName}_full
 # We also split GEOCODE into two columns for use in cas_id.
 # Intermediate tables are deleted at the end.
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 -- Create an intermediate table with SUP rows
 DROP TABLE IF EXISTS $tableName_sup CASCADE;
@@ -150,4 +154,5 @@ DROP TABLE IF EXISTS $tableName_inf CASCADE;
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

@@ -7,7 +7,7 @@
 # Standard is SFVI but the column names have been changed.
 
 # The year of photography is currently unknown at the polygon level but varies from 1994 - 2005.
-# See Issue #317. 2000 will be used for the STAND_PHOTO_YEAR attribute set in attribute_dependencies.csv
+# See Issue #317. 2000 will be used for the STAND_PHOTO_YEAR attribute set in layer_metadata.csv
 
 # Load into a target table in the schema defined in the config file.
 
@@ -16,7 +16,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=SK06
 srcFileName=MistikSFVI
@@ -28,11 +29,15 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName" \
--progress $overwrite_tab
+-progress $overwriteTable
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

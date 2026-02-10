@@ -16,7 +16,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=AB27
 
@@ -36,24 +37,27 @@ alpacTableName=$targetFRISchema.ab_alpac_updated_photoYear
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr for polygons
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_poly" \
--nln $tableName_poly $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_poly" \
+-nln $tableName_poly $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for avi table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_avi" \
--nln $tableName_avi $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_avi" \
+-nln $tableName_avi $gdalLco $gdalOtherOptions \
 -sql "SELECT * FROM $gdbFileName_avi" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Join AVI table to polygon using POLY_NUM attribute.
 # The ogc_fid attributes are no longer unique identifiers after the 
 # join so a new ogc_fid is created.
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 -- Alter ogc_fid, POLY_NUM. Joins don't work with matching names.
 ALTER TABLE $tableName_avi DROP COLUMN IF EXISTS ogc_fid;
@@ -75,13 +79,13 @@ DROP TABLE IF EXISTS $tableName_avi CASCADE;
 
 # Run ogr2ogr to load Alpac photoyear
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$alpacFullPath" \
--nln $alpacTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$alpacFullPath" \
+-nln $alpacTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Fix it
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_alpac_updated_photoYear CASCADE;
 
@@ -95,4 +99,5 @@ ALTER TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear RENAME TO ab_alpac
 "
 createSQLSpatialIndex=True  
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

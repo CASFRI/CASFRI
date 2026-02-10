@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Batch file for loading translation tables into PostgreSQL
 
@@ -11,50 +11,52 @@
 
 #################################### Set variables ######################################
 
-source ../conversion/sh/common.sh
+source ../common.sh
 
-tables_to_load=$@
+files_to_load=$@
 
-# Folder containing translation files to be loaded:
-load_folders='tables/ tables/lookup ../documentation/'
+# Folders containing translation files to be loaded
+#load_folders=(./ tables/)
 
 #####################################################################################################################################################################
 
-# make schema if it doesn't exist
-"$gdalFolder/ogrinfo" "$pg_connection_string" -sql "CREATE SCHEMA IF NOT EXISTS $targetTranslationFileSchema";
+source ../metadata/load_metadata.sh
 
-if [ ${tables_to_load}x == x ]; then
-  # load all files in the folder
-  for t in $load_folders
+# Make schema if it doesn't exist
+"$gdalFolder/ogrinfo" "$gdalConnectionString" -sql "CREATE SCHEMA IF NOT EXISTS $targetTranslationFileSchema";
+
+if [ ${files_to_load}x == x ]; then
+  # Load all files in the folder
+  #for load_folder in "${load_folders[@]}"
+  #do
+  #if [ -d "$load_folder" ]; then
+  echo "Loading all CSV files from the \"table\"..."
+  for file_name in ./tables/*.csv
   do
-    echo $t
-    if [ -d "$t" ]; then 
-      for i in $t/*.csv
-      do
-        x=${i##*/} # gets file name with .csv
-        tab_name=${x%%.csv} # removes .csv
+    x=${file_name##*/} # gets file name with .csv
+    table_name=${x%%.csv} # removes .csv
 
-        # load using ogr
-        echo "loading..."$tab_name
-        "$gdalFolder/ogr2ogr" \
-        -f "PostgreSQL" "$pg_connection_string" $i \
-        -nln $targetTranslationFileSchema.$tab_name \
-        $overwrite_tab
-      done
-    fi
+    echo "Loading $table_name..."
+    "$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" ./tables/${table_name}.csv \
+    -nln $targetTranslationFileSchema.$table_name $overwriteTable
   done
+  #fi
+  #done
 else
-  # load files passed as parameter
-  for g in $tables_to_load
+  # Load files passed as parameter
+  for file_name in $files_to_load
   do
-    echo
-    echo Loading ${g}.....
-    
-    tab_name=${g%%.csv} # removes .csv
+    table_name=${file_name%%.csv} # removes .csv
+    #load_folder=${load_folders[1]} # gets folder path
 
-    "$gdalFolder/ogr2ogr" \
-    -f "PostgreSQL" "$pg_connection_string" tables/$g \
-    -nln $targetTranslationFileSchema.$tab_name \
-    $overwrite_tab
+    # Change source folder only for layer_metadata.csv
+    #if [[ "$table_name" == "layer_metadata" ]]; then
+    #    load_folder=${load_folders[0]}
+    #fi
+
+    echo "Loading $table_name..."
+
+    "$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" ./tables/${table_name}.csv \
+    -nln $targetTranslationFileSchema.$table_name $overwriteTable
   done
 fi

@@ -22,7 +22,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=BC10
 
@@ -40,23 +41,26 @@ tableName_L2=${fullTargetTableName}_layer_2
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr to load all 3 tables
 
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath_L1" \
--nln $tableName_L1 $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath_L1" \
+-nln $tableName_L1 $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
--progress $overwrite_tab
+-progress $overwriteTable
 
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath_L2" \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath_L2" \
 -nlt PROMOTE_TO_MULTI \
--nln $tableName_L2 $layer_creation_options $other_options \
--progress $overwrite_tab
+-nln $tableName_L2 $gdalLco $gdalOtherOptions \
+-progress $overwriteTable
 
 # Join layer 1 and layer 2 into the final table
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 CREATE INDEX ON ${tableName_L2} (feature_id);
 
@@ -251,5 +255,6 @@ DROP TABLE IF EXISTS ${tableName_L2} CASCADE;
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh
 

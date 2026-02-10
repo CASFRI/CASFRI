@@ -20,31 +20,37 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=NS02
 srcFolder="$friDir/NS/$inventoryID/data/inventory/"
 fullTargetTableName=$targetFRISchema.ns02
 
-overwrite_option="$overwrite_tab"
+overwrite_option="$overwriteTable"
 
+########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
+# Loop through each county shapefile and load
 for F in Antigonish Annapolis 'Cape Breton' Colchester Cumberland Digby Guyborough 'Halifax East' 'Halifax West' Hants Inverness Kings Lunenburg Pictou Queens Richmond Shelburne 'St. Marys' Victoria Yarmouth
 do
     srcFullPath="$srcFolder$F/forest.shp"
 
     "$gdalFolder/ogr2ogr" \
-    -f PostgreSQL "$pg_connection_string" "$srcFullPath" \
+    -f PostgreSQL "$gdalConnectionString" "$srcFullPath" \
     -nln $fullTargetTableName \
     -nlt PROMOTE_TO_MULTI \
     -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM forest" \
     -progress \
-    $layer_creation_options $other_options \
+    $gdalLco $gdalOtherOptions \
     $overwrite_option 
 	
     overwrite_option="-update -append"
-    layer_creation_options=""
+    gdalLco=""
 done
 
-createSQLSpatialIndex=True
-
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

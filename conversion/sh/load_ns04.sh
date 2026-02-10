@@ -12,7 +12,8 @@
 # and should be used in the cas_id.
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=NS04
 srcFileName=FOR_Forest_PL_UT83
@@ -20,17 +21,21 @@ srcFolder="$friDir/NS/$inventoryID/data/inventory"
 srcFullPath="$srcFolder/$srcFileName.shp"
 fullTargetTableName=$targetFRISchema.ns04
 
-overwrite_option="$overwrite_tab"
+overwrite_option="$overwriteTable"
+
+########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # load polygons
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" \
 -nln $fullTargetTableName \
 -nlt PROMOTE_TO_MULTI \
-$layer_creation_options $other_options \
+$gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $srcFileName" \
--progress $overwrite_tab
+-progress $overwriteTable
 
-createSQLSpatialIndex=True
-
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

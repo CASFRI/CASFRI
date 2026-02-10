@@ -27,7 +27,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=NB02
 NB_subFolder=NB/$inventoryID/data/inventory/
@@ -47,6 +48,9 @@ srcForestFullPath="$friDir/$NB_subFolder$srcNameForest.shp"
 fullTargetTableName=$targetFRISchema.nb02
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 ### Add unique poly_id to each shp ###
 # Standard SQL code used to add and drop columns in shapefiles. If column is not present the DROP command
@@ -84,18 +88,18 @@ fi
 #Load Waterbody table first. SHAPE_AREA field has a value larger than the numeric type assigned in PostgreSQL. Returns error when loading. Unable to edit field precision on import.
 #Solution is to load the Waterbody table first with -lco PRECISION=NO. This changes the type from NUMERIC to DOUBLE. All other tables will be converted to DOUBLE when appended.
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcWaterFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcWaterFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcNameWater' AS src_filename, '$inventoryID' AS inventory_id, 0 as stdlab FROM $srcNameWater" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 ### FILE 2 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcNonForestFullPath" \
+-f PostgreSQL "$gdalConnectionString" "$srcNonForestFullPath" \
 -nln $fullTargetTableName \
-$other_options \
+$gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcNameNonForest' AS src_filename, '$inventoryID' AS inventory_id, 0 AS stdlab FROM $srcNameNonForest" \
 -progress
@@ -103,9 +107,9 @@ $other_options \
 ### FILE 3 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcWetlandFullPath" \
+-f PostgreSQL "$gdalConnectionString" "$srcWetlandFullPath" \
 -nln $fullTargetTableName \
-$other_options \
+$gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcNameWetland' AS src_filename, '$inventoryID' AS inventory_id, 0 AS stdlab FROM $srcNameWetland" \
 -progress
@@ -113,11 +117,12 @@ $other_options \
 ## File 4 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcForestFullPath" \
+-f PostgreSQL "$gdalConnectionString" "$srcForestFullPath" \
 -nln $fullTargetTableName \
-$other_options \
+$gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcNameForest' AS src_filename, '$inventoryID' AS inventory_id FROM $srcNameForest" \
 -progress
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

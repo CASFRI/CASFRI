@@ -16,7 +16,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=AB32
 srcFileName=savi_data_fma_121214
@@ -29,28 +30,29 @@ alpacFileName=savi_photo_yr
 alpacFullPath=$friDir/AB/$inventoryID/data/photoyear/$alpacFileName.shp
 alpacTableName=$targetFRISchema.ab_alpac_updated_photoYear
 
-overwrite_option="$overwrite_tab"
-
+overwrite_option="$overwriteTable"
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr to load FRIs
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbTableName" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableName" \
--progress $overwrite_tab
-
+-progress $overwriteTable
 
 # Run ogr2ogr to load Alpac photoyear
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$alpacFullPath" \
--nln $alpacTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$alpacFullPath" \
+-nln $alpacTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Fix it
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS ${targetFRISchema}.new_ab_alpac_updated_photoYear CASCADE;
 
@@ -64,4 +66,5 @@ ALTER TABLE ${targetFRISchema}.new_ab_alpac_updated_photoYear RENAME TO ab_alpac
 "
 createSQLSpatialIndex=True  
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

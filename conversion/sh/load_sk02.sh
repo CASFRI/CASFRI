@@ -20,7 +20,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=SK02
 srcFileName=SFVI_Island_Forest
@@ -51,69 +52,73 @@ srcFullPath="$friDir/SK/$inventoryID/data/inventory/$srcFileName.gdb"
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr for polygons, don't load non-FRI polygons
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_poly" \
--nln $TableName_poly $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_poly" \
+-nln $TableName_poly $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_poly \
         WHERE NOT(TYPE = 'OTH' AND SMR = ' ' AND LUC = ' ' AND TRANSP_CLASS = ' ')" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for meta data
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_meta" \
--nln $TableName_meta $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_meta" \
+-nln $TableName_meta $gdalLco $gdalOtherOptions \
 -sql "SELECT *, poly_id AS poly_id_meta FROM $gdbFileName_meta" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for dist data
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_dist" \
--nln $TableName_dist $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_dist" \
+-nln $TableName_dist $gdalLco $gdalOtherOptions \
 -sql "SELECT *, poly_id AS poly_id_dist FROM $gdbFileName_dist" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for herbs data
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_herbs" \
--nln $TableName_herbs $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_herbs" \
+-nln $TableName_herbs $gdalLco $gdalOtherOptions \
 -sql "SELECT *, poly_id AS poly_id_herbs FROM $gdbFileName_herbs" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for layer 1 data
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_l1" \
--nln $TableName_l1 $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_l1" \
+-nln $TableName_l1 $gdalLco $gdalOtherOptions \
 -sql "SELECT *, poly_id AS poly_id_l1 FROM $gdbFileName_l1" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for layer 2 data
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_l2" \
--nln $TableName_l2 $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_l2" \
+-nln $TableName_l2 $gdalLco $gdalOtherOptions \
 -sql "SELECT *, poly_id AS poly_id_l2 FROM $gdbFileName_l2" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for layer 3 data
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_l3" \
--nln $TableName_l3 $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_l3" \
+-nln $TableName_l3 $gdalLco $gdalOtherOptions \
 -sql "SELECT *, poly_id AS poly_id_l3 FROM $gdbFileName_l3" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for shrubs data
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_shrubs" \
--nln $TableName_shrubs $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_shrubs" \
+-nln $TableName_shrubs $gdalLco $gdalOtherOptions \
 -sql "SELECT *, poly_id AS poly_id_shrubs FROM $gdbFileName_shrubs" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Temporarily swap fullTargetTableName with tempTableName
 swap=$fullTargetTableName
 fullTargetTableName=$tempTableName
 
 # Join tables by sourcing the join code
-source ./sk_SFVI_join_code.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/sk_SFVI_join_code.sh
 
 fullTargetTableName=$swap
 
@@ -121,14 +126,13 @@ fullTargetTableName=$swap
 
 # Run ogr2ogr for wetland data
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_wetland" \
--nln $TableName_wetland $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_wetland" \
+-nln $TableName_wetland $gdalLco $gdalOtherOptions \
 -sql "SELECT *, poly_id AS poly_id_wetland FROM $gdbFileName_wetland" \
--progress $overwrite_tab
-
+-progress $overwriteTable
 
 # Join wetland to the temp table and save as fullTargetTableName.
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 -- delete ogc and poly_id, joins don't work with matching names
 ALTER TABLE $TableName_wetland 
@@ -155,4 +159,5 @@ ALTER TABLE $fullTargetTableName
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

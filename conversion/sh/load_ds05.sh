@@ -41,7 +41,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=DS05
 
@@ -64,6 +65,9 @@ unset PROJ_LIB
 export PROJ_LIB="/c/Program Files/GDAL/projlib"
 
 ####################################### Process  ###########################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 ################## Method 1 - Combine and vectorize directly to PostGIS ####################
 
@@ -106,7 +110,7 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 
 # # DROP the target table if requested
 # #if [ $overwriteFRI == True ]; then
-#   "$gdalFolder/ogrinfo" "$pg_connection_string" \
+#   "$gdalFolder/ogrinfo" "$gdalConnectionString" \
 #   -sql "
 #   DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
 #   DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
@@ -116,11 +120,11 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 # # Vectorize directly to PostGIS
 # "$pythonPath/python.exe" "$gdalPyFolder/gdal_polygonize.py" "${tempRasterFullPath}" \
 # -lco "SPATIAL_INDEX=NONE" \
-# -f PostgreSQL "$pg_connection_string" \
+# -f PostgreSQL "$gdalConnectionString" \
 # ${fullTargetTableName}_temp
 
 # # Reproject the geometry and parse the combined field into type and year
-# "$gdalFolder/ogrinfo" "$pg_connection_string" \
+# "$gdalFolder/ogrinfo" "$gdalConnectionString" \
 # -sql "
 # CREATE TABLE ${fullTargetTableName} AS
 # SELECT ogc_fid, 
@@ -133,7 +137,6 @@ export PROJ_LIB="/c/Program Files/GDAL/projlib"
 # FROM ${fullTargetTableName}_temp;
 # DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
 
-
 ######################## Method 2 - Load as raster #############################
 
 # Set these variable to false if you don't want to create the associated intermediate step
@@ -145,14 +148,13 @@ combineRasters=true
 # raster option list: set to default value
 # https://postgis.net/docs/using_raster_dataman.html
 rasterOptions="-I -M -t 2048x2048"
-connectionParams="-d $pgdbname -U $pguser -h $pghost -p $pgport"
 
 # delete last created tables in server / temp tables after translation
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_year CASCADE;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_type CASCADE;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_3978 CASCADE;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_102001 CASCADE;"
-# "$pgFolder/bin/psql" $connectionParams -c "DROP TABLE IF EXISTS rawfri.DS05_102001_poly CASCADE;"
+# "$pgFolder/bin/psql" $psqlConnectionString -c "DROP TABLE IF EXISTS rawfri.DS05_year CASCADE;"
+# "$pgFolder/bin/psql" $psqlConnectionString -c "DROP TABLE IF EXISTS rawfri.DS05_type CASCADE;"
+# "$pgFolder/bin/psql" $psqlConnectionString -c "DROP TABLE IF EXISTS rawfri.DS05_3978 CASCADE;"
+# "$pgFolder/bin/psql" $psqlConnectionString -c "DROP TABLE IF EXISTS rawfri.DS05_102001 CASCADE;"
+# "$pgFolder/bin/psql" $psqlConnectionString -c "DROP TABLE IF EXISTS rawfri.DS05_102001_poly CASCADE;"
 
 # Define names and paths
 tempDstPath=${srcPath}/temp
@@ -168,7 +170,6 @@ if [ ! -d "${tempDstPath}" ]; then
 else
   echo Temp dir already exists. Skipping creation...
 fi
-
 
 # Temporarily reproject type raster to 3978
 echo --------------------------------
@@ -196,7 +197,7 @@ fi
 echo --------------------------------
 echo Upload year raster to db...
 if [ "${loadRasters}" == "true" ]; then
-  "$pgFolder/bin/raster2pgsql" -s 3978 $rasterOptions $tempRasterFullPathType $fullTargetTableName1 | "$pgFolder/bin/psql" $connectionParams
+  "$pgFolder/bin/raster2pgsql" -s 3978 $rasterOptions $tempRasterFullPathType $fullTargetTableName1 | "$pgFolder/bin/psql" $psqlConnectionString
   echo "$tempRasterFullPathType loaded."
 else
   echo "$tempRasterFullPathType NOT loaded."
@@ -206,7 +207,7 @@ fi
 echo --------------------------------
 echo Upload year raster to db...
 if [ "${loadRasters}" == "true" ]; then
-  "$pgFolder/bin/raster2pgsql" -s 3978 $rasterOptions $tempRasterFullPathYear $fullTargetTableName2 | "$pgFolder/bin/psql" $connectionParams
+  "$pgFolder/bin/raster2pgsql" -s 3978 $rasterOptions $tempRasterFullPathYear $fullTargetTableName2 | "$pgFolder/bin/psql" $psqlConnectionString
   echo "$tempRasterFullPathYear loaded."
 else
   echo "$tempRasterFullPathYear NOT loaded."
@@ -216,7 +217,7 @@ fi
 echo --------------------------------
 echo Combine both rasters...
 if [ "${combineRasters}" == "true" ]; then
-  "$pgFolder/bin/psql" $connectionParams -c "
+  "$pgFolder/bin/psql" $psqlConnectionString -c "
   CREATE TABLE $targetFRISchema.${inventoryID,,}_3978 AS
   SELECT 
       ST_MapAlgebra(
@@ -242,7 +243,7 @@ fi
 echo --------------------------------
 echo Reproject combined raster...
 if [ "${combineRasters}" == "true" ]; then
-  "$pgFolder/bin/psql" $connectionParams -c "
+  "$pgFolder/bin/psql" $psqlConnectionString -c "
   DELETE FROM rawfri.DS05_3978 WHERE ST_NumBands(rast) = 0;
   CREATE TABLE rawfri.DS05_102001 AS
   SELECT ST_Transform(rast, 102001) AS rast FROM rawfri.DS05_3978;
@@ -255,12 +256,11 @@ else
   echo "Combined raster NOT reprojected."
 fi
 
-
 # Polygonize raster
 echo --------------------------------
 echo Polygonize combined raster...
 if [ "${combineRasters}" == "true" ]; then
-  "$pgFolder/bin/psql" $connectionParams -c "
+  "$pgFolder/bin/psql" $psqlConnectionString -c "
   CREATE TABLE rawfri.DS05_102001_poly AS
   SELECT (ST_DumpAsPolygons(rast)).*
   FROM rawfri.DS05_102001;
@@ -276,7 +276,7 @@ fi
 echo --------------------------------
 echo Parse combined raster...
 if [ "${combineRasters}" == "true" ]; then
-  "$gdalFolder/ogrinfo" "$pg_connection_string" \
+  "$gdalFolder/ogrinfo" "$gdalConnectionString" \
   -sql "
   CREATE TABLE ${fullTargetTableName} AS
   SELECT row_number() OVER ()::INTEGER AS ogc_fid, 
@@ -297,5 +297,6 @@ fi
 ############## Process - Finish processing for both methods ########################
 
 if [ "${combineRasters}" == "true" ]; then
-  source ./common_postprocessing.sh
+  thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh
 fi

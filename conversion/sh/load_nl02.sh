@@ -7,7 +7,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=NL02
 
@@ -51,21 +52,24 @@ tableNameStockNonCom=${fullTargetTableName}_stocknoncom
 
 ########################################## Process #############################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 ################################################################################
 #if false; then
 # 1 - Load Forest table (1407193 rows)
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableNameForest" \
--nln $tableNameTemp $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbTableNameForest" \
+-nln $tableNameTemp $gdalLco $gdalOtherOptions \
 -sql "SELECT *, 'forest' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableNameForest" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 ################################################################################ 
 # 2 - Load Non-Forest table (501701 rows)
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPathNonForest" "$gdbTableNameNonforest" \
--nln $tableNameTemp $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPathNonForest" "$gdbTableNameNonforest" \
+-nln $tableNameTemp $gdalLco $gdalOtherOptions \
 -sql "SELECT *, 'nonforest' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableNameNonforest" \
 -progress
 
@@ -75,8 +79,8 @@ tableNameStockNonCom=${fullTargetTableName}_stocknoncom
 # 3 - Load Water table (703557 rows)
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPathWater" "$gdbTableNameWater" \
--nln $tableNameTemp $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPathWater" "$gdbTableNameWater" \
+-nln $tableNameTemp $gdalLco $gdalOtherOptions \
 -sql "SELECT *, 'waterbody' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableNameWater" \
 -progress
 
@@ -85,21 +89,21 @@ tableNameStockNonCom=${fullTargetTableName}_stocknoncom
 ################################################################################
 # 4 - Add the temp table "dist"
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPathDist" "$gdbTableNameDist" \
--nln $tableNameDist $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPathDist" "$gdbTableNameDist" \
+-nln $tableNameDist $gdalLco $gdalOtherOptions \
 -sql "SELECT * FROM $gdbTableNameDist" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 ################################################################################
 # 5.1 - Add the temp table "species"
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPathSpecies" "$gdbTableNameSpecies" \
--nln $tableNameSpecies $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPathSpecies" "$gdbTableNameSpecies" \
+-nln $tableNameSpecies $gdalLco $gdalOtherOptions \
 -sql "SELECT * FROM $gdbTableNameSpecies" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # 5.2 - Pivot the table : there is max. 6 species per forestid (686505 rows)
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS $tableNameSpeciesPivot CASCADE;
 
@@ -139,22 +143,22 @@ CREATE INDEX ON ${tableNameSpeciesPivot} (forestid);
 ################################################################################
 # 6 - Add the temp table "commercial stock" (686365 rows)
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPathStockCom" "$gdbTableNameStockCom" \
--nln $tableNameStockcom $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPathStockCom" "$gdbTableNameStockCom" \
+-nln $tableNameStockcom $gdalLco $gdalOtherOptions \
 -sql "SELECT * FROM $gdbTableNameStockCom" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 ################################################################################
 # 7 - Add the temp table "Non commercial stock" (647481 rows)
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPathStockNonCom" "$gdbTableNameStockNonCom" \
--nln $tableNameStockNonCom $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPathStockNonCom" "$gdbTableNameStockNonCom" \
+-nln $tableNameStockNonCom $gdalLco $gdalOtherOptions \
 -sql "SELECT * FROM $gdbTableNameStockNonCom" \
--progress $overwrite_tab
+-progress $overwriteTable
 #fi
 ################################################################################
 # 8 - Join everything into the final table (2612451 rows)
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 CREATE INDEX ON ${tableNameStockcom} (forestid);
 CREATE INDEX ON ${tableNameStockNonCom} (forestid);
@@ -196,4 +200,5 @@ DROP TABLE IF EXISTS $tableNameStockNonCom CASCADE;
 ############################## Post Process ####################################
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

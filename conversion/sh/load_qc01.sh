@@ -24,7 +24,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=QC01
 srcFullPath=$friDir/QC/$inventoryID/data/inventory/
@@ -36,12 +37,15 @@ tempPhoto=${fullTargetTableName}_photo
 tempAttributes=${fullTargetTableName}_attributes
 tempPolygons=${fullTargetTableName}_polygons
 
-overwrite_option="$overwrite_tab"
+overwrite_option="$overwriteTable"
 
 # PostgreSQL variables
 ogrTab='c08peefo'
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Loop through all tiles.
 # For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
@@ -57,15 +61,15 @@ do
     echo ' '
 
     "$gdalFolder/ogr2ogr" \
-    -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
+    -f PostgreSQL "$gdalConnectionString" "$F/$ogrTab.shp" \
     -nln $tempTable \
     -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab WHERE geocode IS NOT NULL" \
     -progress \
-    $layer_creation_options $other_options \
+    $gdalLco $gdalOtherOptions \
     $overwrite_option
 
     overwrite_option="-update -append"
-    layer_creation_options=""
+    gdalLco=""
   else
     echo '***********************************************************************'
     echo '*********************** Skipping '${F##*/}'... ****************************'
@@ -80,17 +84,17 @@ do
     echo ' '
 
     "$gdalFolder/ogr2ogr" \
-    -f PostgreSQL "$pg_connection_string" "$F/$ogrTab.shp" \
+    -f PostgreSQL "$gdalConnectionString" "$F/$ogrTab.shp" \
     -nln $tempTable \
     -sql "SELECT *, '${F##*/}' AS src_filename, '$inventoryID' AS inventory_id FROM $ogrTab WHERE geocode IS NOT NULL" \
     -progress \
-    $layer_creation_options $other_options \
+    $gdalLco $gdalOtherOptions \
     $overwrite_option
 done
 
 # Load the photo year table to join
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$photoFullPath" \
+-f PostgreSQL "$gdalConnectionString" "$photoFullPath" \
 -nln $tempPhoto \
 -progress \
 $overwrite_option
@@ -105,7 +109,7 @@ Joining temporary tables together...
 Creating index on $tempPhoto...
 "
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 CREATE UNIQUE INDEX IF NOT EXISTS qc01_photoyear_idx
 ON $tempPhoto (FCA_NO);
@@ -115,7 +119,7 @@ echo "
 Creating $tempAttributes as DISTINCT ON (geocode) from $tempTable...
 "
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS $tempAttributes CASCADE;
 CREATE TABLE $tempAttributes AS
@@ -132,7 +136,7 @@ echo "
 Creating index on $tempAttributes...
 "
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 CREATE UNIQUE INDEX IF NOT EXISTS qc01_attribute_idx
 ON $tempAttributes (geocode);
@@ -142,7 +146,7 @@ echo "
 Creating index on $tempTable...
 "
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 CREATE INDEX IF NOT EXISTS qc01_geocode_idx
 ON $tempTable (geocode);
@@ -152,7 +156,7 @@ echo "
 Creating $tempPolygons with unioned polygons...
 "
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS $tempPolygons CASCADE;
 CREATE TABLE $tempPolygons AS
@@ -165,7 +169,7 @@ echo "
 Creating final table ${fullTargetTableName}...
 "
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS $fullTargetTableName CASCADE;
 
@@ -182,7 +186,7 @@ echo "
 Dropping temporary tables...
 "
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE $tempTable CASCADE;
 DROP TABLE $tempPhoto CASCADE;
@@ -190,4 +194,7 @@ DROP TABLE $tempPolygons CASCADE;
 DROP TABLE $tempAttributes CASCADE;
 "
 
-source ./common_postprocessing.sh
+createSQLSpatialIndex=True
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

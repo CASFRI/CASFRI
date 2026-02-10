@@ -12,7 +12,8 @@
 # in the configuration file.
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 srcInventoryID=MB10
 
@@ -26,18 +27,23 @@ MB_subFolder=MB/$inventoryID/data/inventory/
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Run ogr2ogr to load all table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbTableName" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI -nlt CONVERT_TO_LINEAR \
 -emptyStrAsNull \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$destInventoryID' AS inventory_id, mu_id AS poly_id,
       yearphoto as fri_yr, mu_id as tile, shape_area as area, cc_frifli as crown10,
       productivity as subtype, ht_sum as height, spp_sum as species, origin_sum as year_org
       FROM $gdbTableName WHERE fri_fli = 'FRI'" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # ~200 features have a period in their species string, remove it
-"$gdalFolder/ogrinfo" "$pg_connection_string" -sql "UPDATE $fullTargetTableName SET species = REPLACE(species, '.', '') where species like '%.%'";
+"$gdalFolder/ogrinfo" "$gdalConnectionString" -sql "UPDATE $fullTargetTableName SET species = REPLACE(species, '.', '') where species like '%.%'";
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

@@ -15,7 +15,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=YT04
 srcFileName=Vegetation_Inventory_40k
@@ -25,23 +26,27 @@ fullTargetTableName=$targetFRISchema.yt04
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath" "$srcFileName" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath" "$srcFileName" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id, id as poly_no, OGR_GEOM_AREA as shape_area FROM $srcFileName" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # drop id
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "ALTER TABLE $fullTargetTableName DROP COLUMN IF EXISTS id;"
 
 #remove comma from land_type and cov_cl_mod values to avoid weird parsing issues with TT_ParseString
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "UPDATE $fullTargetTableName SET land_type = replace(land_type,',','')"
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "UPDATE $fullTargetTableName SET cov_cl_mod = replace(cov_cl_mod,',','')"
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

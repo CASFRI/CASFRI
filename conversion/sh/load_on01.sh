@@ -19,7 +19,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=ON01
 srcFolder="$friDir/ON/$inventoryID/data/inventory/"
@@ -29,11 +30,15 @@ tempPoly=$targetFRISchema.on01_poly
 tempForAtt=$targetFRISchema.on01_forest_att
 tempNonForAtt=$targetFRISchema.on01_nonfor_att
 
-overwrite_option="$overwrite_tab"
+overwrite_option="$overwriteTable"
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # drop any temp tables from previous loads
-"$gdalFolder\ogrinfo" "$pg_connection_string" \
+"$gdalFolder\ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS $tempPoly CASCADE;
 DROP TABLE IF EXISTS $tempForAtt CASCADE;
@@ -51,17 +56,17 @@ do
 
 # Load shapefile
   "$gdalFolder/ogr2ogr" \
-  -f PostgreSQL "$pg_connection_string" "$srcFolder/mu$F/$shpName.shp" \
+  -f PostgreSQL "$gdalConnectionString" "$srcFolder/mu$F/$shpName.shp" \
   -nln $tempPoly \
   -nlt PROMOTE_TO_MULTI \
   -progress \
   -sql "SELECT *, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM $shpName" \
-  $layer_creation_options $other_options \
+  $gdalLco $gdalOtherOptions \
   $overwrite_option
 
 # Load forest info from the .mdb using the ODBC driver
   "$gdalFolder/ogr2ogr" \
-  -f PostgreSQL "$pg_connection_string" "$srcFolder/mu$F/$mdbName" \
+  -f PostgreSQL "$gdalConnectionString" "$srcFolder/mu$F/$mdbName" \
   -nln $tempForAtt\
   -progress \
   -sql "SELECT *, Switch(area = 0, ha, area <> 0, area) AS fixed_area, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM $mdbForTableName" \
@@ -69,20 +74,20 @@ do
 
 # Load non forest info from the .mdb using the ODBC driver
   "$gdalFolder/ogr2ogr" \
-  -f PostgreSQL "$pg_connection_string" "$srcFolder/mu$F/$mdbName" \
+  -f PostgreSQL "$gdalConnectionString" "$srcFolder/mu$F/$mdbName" \
   -nln $tempNonForAtt \
   -progress \
   -sql "SELECT *, Switch(area = 0, ha, area <> 0, area) AS fixed_area, '$F' AS src_filename, '$inventoryID' AS inventory_id FROM $mdbNonForTableName" \
-  $layer_creation_options \
+  $gdalLco \
   $overwrite_option
 
   overwrite_option="-update -append -addfields"
-  layer_creation_options=""
+  gdalLco=""
 done
 
 unset PGCLIENTENCODING
 
-"$gdalFolder\ogrinfo" "$pg_connection_string" \
+"$gdalFolder\ogrinfo" "$gdalConnectionString" \
 -sql "
 CREATE INDEX ON $tempForAtt USING btree(src_filename);
 CREATE INDEX ON $tempForAtt USING btree(recno);
@@ -128,4 +133,5 @@ DROP TABLE IF EXISTS $tempNonForAtt CASCADE;
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

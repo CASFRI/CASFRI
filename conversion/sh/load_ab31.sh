@@ -18,7 +18,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=AB31
 srcFileNameMain=Approved_avi_nad83
@@ -35,10 +36,12 @@ alpacFileName=Alpac_aviPhotoYear
 alpacFullPath=$friDir/AB/$inventoryID/data/photoyear/$alpacFileName.shp
 alpacTableName=$targetFRISchema.ab_alpac_photoYear
 
-overwrite_option="$overwrite_tab"
-
+overwrite_option="$overwriteTable"
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Loop through all mapsheets.
 # For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
@@ -48,34 +51,32 @@ overwrite_option="$overwrite_tab"
 # Original columns will be loaded as forest_ and forest_id, they will be NULL because ogr2ogr cannot append the values from the invalid field names.
 # New fields will be added to the right of the table
 
-
 # Run ogr2ogr to load FRIs
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPathMain" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPathMain" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcFileNameMain' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableNameMain WHERE MER <> 0" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Load missing part
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcFullPathMissing" \
--nln $fullTargetTableName $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPathMissing" \
+-nln $fullTargetTableName $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcFileNameMissing' AS src_filename, '$inventoryID' AS inventory_id, '$poly_num' AS poly_id FROM $gdbTableNameMissing WHERE MER <> 0" \
 -progress
 
-
 # Run ogr2ogr to load Alpac photoyear
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$alpacFullPath" \
--nln $alpacTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$alpacFullPath" \
+-nln $alpacTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Fix it
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS ${targetFRISchema}.new_alpac_photoyear CASCADE;
 
@@ -89,4 +90,5 @@ ALTER TABLE ${targetFRISchema}.new_alpac_photoyear RENAME TO ab_alpac_photoyear;
 "
 createSQLSpatialIndex=True  
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

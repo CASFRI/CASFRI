@@ -23,7 +23,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=AB10
 
@@ -46,19 +47,22 @@ fullTargetTableName=$targetFRISchema.ab10
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 ### FILE 1 ###
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath1" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath1" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcName1' AS src_filename, '$inventoryID' AS inventory_id, f2h_5830_ AS source_id FROM $srcName1 WHERE poly_num > 0" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 ### FILE 2 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcFullPath2" \
--nln $fullTargetTableName $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath2" \
+-nln $fullTargetTableName $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcName2' AS src_filename, '$inventoryID' AS inventory_id, f5h_5830_ AS source_id FROM $srcName2 WHERE poly_num > 0" \
 -progress
@@ -66,8 +70,8 @@ fullTargetTableName=$targetFRISchema.ab10
 ### FILE 3 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcFullPath3" \
--nln $fullTargetTableName $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath3" \
+-nln $fullTargetTableName $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcName3' AS src_filename, '$inventoryID' AS inventory_id, f7h_5830_ AS source_id FROM $srcName3 WHERE poly_num > 0" \
 -progress
@@ -75,8 +79,8 @@ fullTargetTableName=$targetFRISchema.ab10
 ### FILE 4 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcFullPath4" \
--nln $fullTargetTableName $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath4" \
+-nln $fullTargetTableName $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcName4' AS src_filename, '$inventoryID' AS inventory_id, s19_twp_ AS source_id FROM $srcName4 WHERE poly_num > 0" \
 -progress
@@ -84,10 +88,11 @@ fullTargetTableName=$targetFRISchema.ab10
 ### FILE 5 ###
 "$gdalFolder/ogr2ogr" \
 -update -append -addfields \
--f PostgreSQL "$pg_connection_string" "$srcFullPath5" \
--nln $fullTargetTableName $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath5" \
+-nln $fullTargetTableName $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
 -sql "SELECT *, '$srcName5' AS src_filename, '$inventoryID' AS inventory_id, weyersl_ AS source_id FROM $srcName5 WHERE poly_num > 0" \
 -progress
 	
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

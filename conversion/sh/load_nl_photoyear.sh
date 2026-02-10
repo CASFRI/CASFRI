@@ -13,7 +13,7 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+source ../common.sh
 
 srcFileName=photoyear
 srcFullPath="$friDir/NL/NL01/data/photoyear/$srcFileName.shp"
@@ -22,15 +22,17 @@ fullTargetTableName=$targetFRISchema.nl_photoYear
 
 ########################################## Process ######################################
 
+source ./pre_conversion.sh
+
 # Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
--f PostgreSQL "$pg_connection_string" "$srcFullPath" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f PostgreSQL "$gdalConnectionString" "$srcFullPath" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Fix it
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS ${targetFRISchema}.new_nl_photoyear CASCADE;
 
@@ -44,4 +46,4 @@ ALTER TABLE ${targetFRISchema}.new_nl_photoyear RENAME TO nl_photoyear;
 "
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+source ./post_conversion.sh

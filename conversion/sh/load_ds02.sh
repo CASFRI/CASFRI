@@ -35,7 +35,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=DS02
 
@@ -57,9 +58,11 @@ rasterCreationOptions="-co COMPRESS=LZW -co TILED=YES -co BLOCKXSIZE=1024 -co BL
 
 ###################### Process - Loading vector method ###########################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 ##### Method 1 - Reduce raster size and vectorize directly to PostGIS ############
 
-connectionParams="-d $pgdbname -U $pguser -h $pghost -p $pgport"
 rasterOptions="-I -t 2048x2048"
 
 # Set these variable to false if you don't want to create the associated intermediate step
@@ -155,7 +158,7 @@ do
   echo --------------------------------
   echo DROP the temp tables if requested
   if [ "$overwriteFRI" == "True" ] && [ "${loadSQL}" == "true" ]; then
-    "$gdalFolder/ogrinfo" "$pg_connection_string" \
+    "$gdalFolder/ogrinfo" "$gdalConnectionString" \
     -sql "
     DROP TABLE IF EXISTS ${tempTargetTableName} CASCADE;
     "
@@ -168,7 +171,7 @@ do
   echo --------------------------------
   echo Load the .sql file
   if [ -e "${reducedRasterFullPath}.sql" ] && [ "${loadSQL}" == "true" ]; then
-    "$pgFolder/bin/psql" $connectionParams -f ${reducedRasterFullPath}.sql
+    "$pgFolder/bin/psql" $psqlConnectionString -f ${reducedRasterFullPath}.sql
     echo ${reducedRasterFullPath}.sql loaded...
   else
     echo ${reducedRasterFullPath}.sql NOT loaded...
@@ -179,7 +182,7 @@ done
 echo --------------------------------
 echo DROP the final target table if requested
 if [ "$overwriteFRI" == "True" ] && [ "${mergeTables}" == "true" ]; then
-  "$gdalFolder/ogrinfo" "$pg_connection_string" \
+  "$gdalFolder/ogrinfo" "$gdalConnectionString" \
   -sql "
   DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
   "
@@ -192,7 +195,7 @@ fi
 echo --------------------------------
 echo Reproject the geometries and merge the two tables
 if [ "${mergeTables}" == "true" ]; then
-  "$gdalFolder/ogrinfo" "$pg_connection_string" \
+  "$gdalFolder/ogrinfo" "$gdalConnectionString" \
   -sql "
   CREATE TABLE ${fullTargetTableName} AS
   SELECT ogc_fid * 2 ogc_fid, 
@@ -221,17 +224,16 @@ if [ "${mergeTables}" == "true" ]; then
 fi
 ########################### Process - Loading raster method ################################
 
-# connectionParams="-d $pgdbname -U $pguser -h $pghost -p $pgport"
 # rasterOptions="-I -N 0 -t 2000x2000"
 # 
 # ### upload file1 ###
-# "$pgFolder/bin/raster2pgsql" $rasterOptions $srcFullPath1 $fullTargetTableName1 | $pgFolder/bin/psql $connectionParams
+# "$pgFolder/bin/raster2pgsql" $rasterOptions $srcFullPath1 $fullTargetTableName1 | $pgFolder/bin/psql $psqlConnectionString
 # 
 # ### upload file2 ###
-# "$pgFolder/bin/raster2pgsql" $rasterOptions $srcFullPath2 $fullTargetTableName2 | $pgFolder/bin/psql $connectionParams
+# "$pgFolder/bin/raster2pgsql" $rasterOptions $srcFullPath2 $fullTargetTableName2 | $pgFolder/bin/psql $psqlConnectionString
 # 
 # ### vectorize raster 1 - type 0 = fire ###
-# "$gdalFolder/ogrinfo" "$pg_connection_string" \
+# "$gdalFolder/ogrinfo" "$gdalConnectionString" \
 # -sql "
 # CREATE TABLE ${targetFRISchema}.${inventoryID} AS
 # WITH rasttable AS (
@@ -247,7 +249,7 @@ fi
 # "
 
 # ### vectorize raster 2 - type 1 = logging ###
-# "$gdalFolder/ogrinfo" "$pg_connection_string" \
+# "$gdalFolder/ogrinfo" "$gdalConnectionString" \
 # -sql "
 # INSECT INTO ${targetFRISchema}.${inventoryID} (
 # WITH rasttable AS (
@@ -266,5 +268,7 @@ fi
 ############## Process - Finish processing for both methods ########################
 
 if [ "${mergeTables}" == "true" ]; then
-  source ./common_postprocessing.sh
+  thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+  source $thisScriptDir/../post_conversion.sh
+
 fi

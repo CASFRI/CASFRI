@@ -28,19 +28,23 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=NL01
 srcFullPath=$friDir/NL/$inventoryID/data/inventory
 
 fullTargetTableName=$targetFRISchema.nl01
 
-overwrite_option="$overwrite_tab"
+overwrite_option="$overwriteTable"
 
 # PostgreSQL variables
 ogrTab=PAL
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Loop through all mapsheets.
 # For first load, set -lco PRECISION=NO to avoid type errors on import. Remove for following loads.
@@ -62,15 +66,16 @@ do
     lcov_column2='LCOV'$mapsheet'-ID'
   
     "$gdalFolder/ogr2ogr" \
-    -f PostgreSQL "$pg_connection_string" "$F/lcov$mapsheet" \
+    -f PostgreSQL "$gdalConnectionString" "$F/lcov$mapsheet" \
     -nln $fullTargetTableName \
     -sql "SELECT *, 'ms$mapsheet' AS src_filename, '$inventoryID' AS inventory_id, '$lcov_column1' AS lcov_id_1, '$lcov_column2' AS lcov_id_2 FROM $ogrTab" \
-    $layer_creation_options $other_options \
+    $gdalLco $gdalOtherOptions \
     $overwrite_option
 
     overwrite_option="-update -append"  
-    layer_creation_options="" # layer creation options ignored when appending.
+    gdalLco="" # layer creation options ignored when appending.
   fi
 done
 		
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

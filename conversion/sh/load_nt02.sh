@@ -34,7 +34,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=NT02
 srcFileName=NT_FORCOV
@@ -50,25 +51,28 @@ photoyearTableName=${fullTargetTableName}_photoyear
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # Run ogr2ogr for geometries
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_geometry" \
--nln $geometryTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_geometry" \
+-nln $geometryTableName $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbFileName_geometry" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for attributes
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_attributes" \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_attributes" \
 -lco PRECISION=NO \
 -nln $attributeTableName \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Run ogr2ogr for photo year
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbFileName_photoyear" \
--nln $photoyearTableName $layer_creation_options $other_options \
--progress $overwrite_tab
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbFileName_photoyear" \
+-nln $photoyearTableName $gdalLco $gdalOtherOptions \
+-progress $overwriteTable
 
 # Join attributes and photo year tables to geometries.
 # Some columns need to be dropped before joining.
@@ -80,7 +84,7 @@ photoyearTableName=${fullTargetTableName}_photoyear
 # to perform a dissolve.
 # Duplicate rows in the attribute table are removed.
 # Original tables are deleted at the end.
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS ogc_fid;
 ALTER TABLE $attributeTableName DROP COLUMN IF EXISTS invproj_id;
@@ -158,9 +162,8 @@ DROP TABLE IF EXISTS ${fullTargetTableName}_geom_att CASCADE;
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
-
-
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh
 
 
 

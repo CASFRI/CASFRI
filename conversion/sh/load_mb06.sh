@@ -20,7 +20,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=MB06
 
@@ -32,6 +33,9 @@ gdbTableName=MB_FRIFLI_Updatedto2010FINAL_v6
 fullTargetTableName=$targetFRISchema.mb06
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Standard SQL code used to add and drop columns in gdbs. If column is not present the DROP command
 # will return an error which can be ignored.
@@ -50,8 +54,8 @@ fi
 
 # Run ogr2ogr to load all table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbTableName" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -sql "SELECT fid_mb_fli_fmu11to14_updatedto2010final,
 fri_fli,
 sacov1,
@@ -224,8 +228,9 @@ poly_id,
 '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id 
 FROM $gdbTableName 
 WHERE FRI_FLI='FLI'" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

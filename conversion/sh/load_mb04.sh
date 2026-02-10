@@ -19,7 +19,8 @@
 # Load each table then join
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=MB04
 
@@ -40,39 +41,42 @@ layer4_temp=${fullTargetTableName}_layer4_tab
 
 ########################################## Process ######################################
 
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
+
 # load polygons
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$poly_tab" \
--nln $poly_temp $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$poly_tab" \
+-nln $poly_temp $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $poly_tab" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # load attributes
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$layer1_tab" \
--nln $layer1_temp $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$layer1_tab" \
+-nln $layer1_temp $gdalLco $gdalOtherOptions \
 -sql "SELECT *, forestkey AS forestkey_lyr1 FROM $layer1_tab" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$layer2_tab" \
--nln $layer2_temp $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$layer2_tab" \
+-nln $layer2_temp $gdalLco $gdalOtherOptions \
 -sql "SELECT *, forestkey AS forestkey_lyr2 FROM $layer2_tab" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$layer3_tab" \
--nln $layer3_temp $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$layer3_tab" \
+-nln $layer3_temp $gdalLco $gdalOtherOptions \
 -sql "SELECT *, forestkey AS forestkey_lyr3 FROM $layer3_tab" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$layer4_tab" \
--nln $layer4_temp $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$layer4_tab" \
+-nln $layer4_temp $gdalLco $gdalOtherOptions \
 -sql "SELECT *, forestkey AS forestkey_lyr4 FROM $layer4_tab" \
--progress $overwrite_tab
+-progress $overwriteTable
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 -- delete ogc_fid, id, mapsheet, polynum, mer, twp, rge, forestkey. Joins don't work with matching names.
 ALTER TABLE $layer1_temp DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS polynum, DROP COLUMN IF EXISTS mer, DROP COLUMN IF EXISTS twp, DROP COLUMN IF EXISTS rge, DROP COLUMN IF EXISTS forestkey;
@@ -107,4 +111,5 @@ ALTER TABLE $fullTargetTableName
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

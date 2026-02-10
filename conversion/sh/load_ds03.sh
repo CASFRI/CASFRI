@@ -34,7 +34,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=DS03
 
@@ -54,6 +55,9 @@ fullTargetTableName2=$targetFRISchema.${inventoryID,,}_year
 unset PROJ_LIB
 
 ####################################### Process  ###########################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 ################## Method 1 - Combine and vectorize directly to PostGIS ####################
 
@@ -114,7 +118,7 @@ fi
 echo --------------------------------
 echo DROP the temp tables if requested
 if [ $overwriteFRI == True ]; then
-  "$gdalFolder/ogrinfo" "$pg_connection_string" \
+  "$gdalFolder/ogrinfo" "$gdalConnectionString" \
   -sql "
   DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
   DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
@@ -128,13 +132,13 @@ fi
 echo --------------------------------
 echo Vectorize directly to PostGIS
 "$pythonPath/python.exe" "$gdalPyFolder/gdal_polygonize.py" "${tempRasterFullPath}" \
--f PostgreSQL "$pg_connection_string" \
+-f PostgreSQL "$gdalConnectionString" \
 ${fullTargetTableName}_temp dn
 
 # Reproject the geometry and parse the combined field into type and year
 echo --------------------------------
 echo Reproject and parse
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 CREATE TABLE ${fullTargetTableName} AS
 SELECT ogc_fid, 
@@ -151,10 +155,10 @@ DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
 ######################### Method 2 - Load as raster #############################
 
 # ### upload file1 ###
-# "$pgFolder/bin/raster2pgsql" $rasterOptions $srcFullPath1 $fullTargetTableName1 | $pgFolder/bin/psql $connectionParams
+# "$pgFolder/bin/raster2pgsql" $rasterOptions $srcFullPath1 $fullTargetTableName1 | $pgFolder/bin/psql $psqlConnectionString
 # 
 # ### upload file2 ###
-# "$pgFolder/bin/raster2pgsql" $rasterOptions $srcFullPath2 $fullTargetTableName2 | $pgFolder/bin/psql $connectionParams
+# "$pgFolder/bin/raster2pgsql" $rasterOptions $srcFullPath2 $fullTargetTableName2 | $pgFolder/bin/psql $psqlConnectionString
 # 
 # ### combine both rasters into a single one ###
 # SELECT
@@ -166,4 +170,5 @@ DROP TABLE IF EXISTS ${fullTargetTableName}_temp CASCADE;
 
 ############## Process - Finish processing for both methods ########################
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

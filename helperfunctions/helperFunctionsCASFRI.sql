@@ -90,27 +90,307 @@ $$ LANGUAGE sql IMMUTABLE;
 --
 -- Count the number of rows in a table without failing if the table does not exist
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_Count(name, name);
+--DROP FUNCTION IF EXISTS TT_Count(name, name, text, boolean);
 CREATE OR REPLACE FUNCTION TT_Count(
   schemaName name,
-  tableName name
+  tableName name,
+  whereClause text DEFAULT NULL,
+  showNotice boolean DEFAULT FALSE
 ) RETURNS int AS $$
   DECLARE
     queryStr text;
     returnCnt bigint;
   BEGIN
-    RAISE NOTICE 'Counting rows in %.%', schemaName, tableName;
+    IF NOT whereClause IS NULL AND upper(left(whereClause, 5)) != 'WHERE' THEN
+      whereClause = 'WHERE ' || whereClause;
+    END IF;
+    
+    schemaName = lower(schemaName);
+    tableName = lower(tableName);
+
+    IF showNotice THEN
+      RAISE NOTICE 'TT_Count() : Counting rows in %.% %', schemaName, tableName, whereClause;
+    END IF;
+
     IF NOT TT_TableExists(schemaName, tableName) THEN
+      IF showNotice THEN
+        RAISE NOTICE 'TT_Count() : Table %.% does not exist. Returning 0...', schemaName, tableName;
+      END IF;
       RETURN 0;
     END IF;
-    queryStr = 'SELECT count(*) FROM ' || schemaName || '.' || tableName;
+
+    queryStr = format('SELECT count(*) FROM %I.%I %s', schemaName, tableName, whereClause);
+    IF showNotice THEN
+      RAISE NOTICE 'TT_Count() : queryStr = %', queryStr;
+    END IF;
     EXECUTE queryStr INTO returnCnt;
     RETURN returnCnt;
   END
 $$ LANGUAGE plpgsql VOLATILE;
-------------------------------------------------------------
+-- SELECT TT_Count('rawfri', 'Ab34')
+-- SELECT TT_Count('casfri50', 'cas_all')
+-- SELECT TT_Count('casfri50', 'cas_all', 'left(cas_id, 4) = ''AB34''', TRUE)
 
-------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_CountAndDiff
+--
+-- Count the number of rows in a table and derive the difference with expected count.
+-------------------------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_CountAndDiff(name, name, int, text);
+CREATE OR REPLACE FUNCTION TT_CountAndDiff(
+  schmName name,
+  tblName name,
+  expectedCount int,
+  whereClause text DEFAULT NULL
+)
+RETURNS TABLE(tablename text, expected int, counted int, passed boolean, diff text)
+AS $$
+  DECLARE
+    queryStr text;
+BEGIN
+  RETURN QUERY 
+  SELECT
+    upper(tblName) tablename, 
+    expectedCount expected,
+    TT_Count(schmName, lower(tblName), whereClause) counted,
+    TT_Count(schmName, lower(tblName), whereClause) = expectedCount passed,
+    CASE WHEN TT_Count(schmName, lower(tblName), whereClause) = 0 THEN 'absent'
+         ELSE (TT_Count(schmName, lower(tblName), whereClause) - expectedCount)::text
+    END diff;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+/*
+SELECT (TT_CountAndDiff('rawfri', 'Ab34', 3456)).*
+SELECT (TT_CountAndDiff('casfri50', 'cas_all', 3456)).*
+
+SELECT 'AB34' inv, (TT_CountAndDiff('casfri50', 'cas_all', 3456, 'left(cas_id, 4) = ''AB34''')).*
+SELECT 'AB34' inv, (TT_CountAndDiff('casfri50', 'cas_all', 3456, 'WHERE left(cas_id, 4) = ''AB34''')).*
+
+*/
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_ConvertedStandCount
+--
+-- Count the rows for an array of inventory_id
+-- When an ARRAY of inv id is passed (e.g. ARRAY['AB34', 'AB06']), return the 
+-- count only for these inventories.
+-------------------------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_ConvertedStandCount(text[]);
+CREATE OR REPLACE FUNCTION TT_ConvertedStandCount(
+  invArr text[]
+) 
+RETURNS TABLE (
+  inventory_id text,
+  expected int,
+  counted int,
+  passed boolean,
+  diff text
+) AS $$
+ DECLARE
+    queryStr text;
+  BEGIN
+    queryStr = '
+    WITH inv_metadata AS (
+      SELECT * FROM (
+        SELECT 
+          left(inventory_id, 2) jurisdiction, 
+          lower(inventory_id) inventory_id, 
+          converted_stand_cnt::int
+        FROM inventory_metadata
+        UNION ALL
+        SELECT *
+        FROM (VALUES
+          (''AB'', ''ab_photoyear'', 560),
+          (''AB'', ''ab_alpac_photoyear'', 1595),
+          (''AB'', ''ab_alpac_updated_photoyear'', 767),
+          (''NL'', ''nl01_photoyear'', 8083),
+          (''NL'', ''nl02_photoyear'', 64)
+        ) AS t(jurisdiction, inventory_id, converted_stand_cnt)
+      ) all_inv
+      WHERE inventory_id = ANY(SELECT LOWER(UNNEST($1)))
+      ORDER BY inventory_id
+    ), loaded_inv AS (
+      SELECT tablename
+      FROM pg_catalog.pg_tables
+      WHERE schemaname = ''rawfri''
+      ORDER BY tablename
+    ), inv_counts AS (
+      SELECT (TT_CountAndDiff(''rawfri'', coalesce(inventory_id, tablename), coalesce(converted_stand_cnt, 0))).*
+      FROM inv_metadata
+      LEFT OUTER JOIN loaded_inv
+      ON (inventory_id = tablename)
+      ORDER BY tablename
+    )
+    SELECT tablename inventory_id, expected, counted, passed, diff
+    FROM inv_counts
+    ORDER BY inventory_id;';
+    RETURN QUERY EXECUTE queryStr USING invArr;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-- SELECT * FROM TT_ConvertedStandCount(ARRAY['AB34', 'AB06']);
+-------------------------------------------------------------------------------
+-- TT_ConvertedStandCount
+--
+-- Count the rows for all inventories listed in inventory_metadata or only for
+-- those identified in a specific column (e.g. 'TRANSLATED_BY_CFS').
+-- Otherwise return the count for all inventories found in the rawfri schema.
+-------------------------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_ConvertedStandCount(text); 
+CREATE OR REPLACE FUNCTION TT_ConvertedStandCount(
+  invMetadataColName text DEFAULT NULL
+) 
+RETURNS TABLE (
+  inventory_id text,
+  expected int,
+  counted int,
+  passed boolean,
+  diff text
+) AS $$
+  DECLARE
+    queryStr text;
+  BEGIN
+    queryStr := format('
+    WITH inv AS (
+      SELECT array_agg(md.inventory_id) invarr 
+      FROM inventory_metadata md%s
+    )
+    SELECT * FROM TT_ConvertedStandCount((SELECT invarr FROM inv));',
+    CASE WHEN invMetadataColName IS NULL THEN '' ELSE format(' WHERE upper(%s) = ''YES''', invMetadataColName) END);
+    --RAISE NOTICE 'queryStr = %', queryStr;
+    RETURN QUERY EXECUTE queryStr;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
+-- SELECT (TT_ConvertedStandCount()).*
+-- SELECT (TT_ConvertedStandCount('TRANSLATED_BY_CUSTOM')).*
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_TranslatedRowCount
+--
+-- Count the rows for an array of inventory_id
+-- When an ARRAY of inv id is passed (e.g. ARRAY['AB34', 'AB06']), return the 
+-- count only for these inventories.
+-------------------------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_TranslatedRowCount(text[]);
+CREATE OR REPLACE FUNCTION TT_TranslatedRowCount(
+  invArr text[]
+) 
+RETURNS TABLE (
+  inventory_id text,
+  cas_table text,
+  expected int,
+  counted int,
+  passed boolean,
+  diff text,
+  status text
+) AS $$
+ DECLARE
+    queryStr text;
+  BEGIN
+    queryStr = '
+WITH row_counts AS (
+  SELECT upper(inventory_id) inventory_id, 
+         cas_row_cnt::int, 
+         dst_row_cnt::int, 
+         eco_row_cnt::int, 
+         lyr_row_cnt::int, 
+         nfl_row_cnt::int, 
+         geo_row_cnt::int
+  FROM inventory_metadata
+  WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST($1)))
+  ORDER BY inventory_id
+), row_counts_pivoted AS (
+  SELECT * FROM (
+    SELECT inventory_id, ''CAS'' cas_table, cas_row_cnt row_cnt 
+    FROM row_counts
+    UNION ALL
+    SELECT inventory_id, ''DST'' cas_table, dst_row_cnt row_cnt
+    FROM row_counts
+    UNION ALL
+    SELECT inventory_id, ''ECO'' cas_table, eco_row_cnt row_cnt
+    FROM row_counts
+    UNION ALL
+    SELECT inventory_id, ''LYR'' cas_table, lyr_row_cnt row_cnt
+    FROM row_counts
+    UNION ALL
+    SELECT inventory_id, ''NFL'' cas_table, nfl_row_cnt row_cnt
+    FROM row_counts
+    UNION ALL
+    SELECT inventory_id, ''GEO'' cas_table, geo_row_cnt row_cnt
+    FROM row_counts
+  ) pivoted
+  ORDER BY inventory_id, cas_table
+), translated_counts AS (
+  SELECT inventory_id, (TT_CountAndDiff(''casfri50'', 
+                          lower(cas_table) || ''_all'', 
+                          coalesce(row_cnt, 0), 
+                          ''WHERE left(cas_id, 4) = '''''' || inventory_id || '''''''')).*
+  FROM row_counts_pivoted
+  ORDER BY inventory_id
+)
+SELECT inventory_id, 
+       left(tablename, 3) cas_table, 
+       expected, 
+       counted, 
+       passed, 
+       diff,
+       CASE WHEN expected != 0 AND coalesce(counted, 0) = 0 THEN ''NOT_TRANSLATED''
+            WHEN coalesce(counted, 0) < expected THEN ''LESS''
+            WHEN coalesce(counted, 0) > expected THEN ''MORE''
+            ELSE ''OK''
+       END status
+FROM translated_counts
+ORDER BY inventory_id, cas_table;
+';
+    --RAISE NOTICE 'queryStr = %', queryStr;
+
+    RETURN QUERY EXECUTE queryStr USING invArr;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+-- SELECT * FROM TT_TranslatedRowCount(ARRAY['Ab34', 'AB06']);
+-------------------------------------------------------------------------------
+-- TT_TranslatedRowCount
+--
+-- Count the rows for all inventories listed in inventory_metadata or only for
+-- those identified in a specific column (e.g. 'TRANSLATED_BY_CFS').
+-- Otherwise return the count for all inventories found in the rawfri schema.
+-------------------------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_TranslatedRowCount(text); 
+CREATE OR REPLACE FUNCTION TT_TranslatedRowCount(
+  invMetadataColName text DEFAULT NULL
+) 
+RETURNS TABLE (
+  inventory_id text,
+  cas_table text,
+  expected int,
+  counted int,
+  passed boolean,
+  diff text,
+  status text
+) AS $$
+  DECLARE
+    queryStr text;
+  BEGIN
+    queryStr := format('
+    WITH inv AS (
+      SELECT array_agg(md.inventory_id) invarr 
+      FROM inventory_metadata md%s
+    )
+    SELECT * FROM TT_TranslatedRowCount((SELECT invarr FROM inv));',
+    CASE WHEN invMetadataColName IS NULL THEN '' ELSE format(' WHERE upper(%s) = ''YES''', invMetadataColName) END);
+    --RAISE NOTICE 'queryStr = %', queryStr;
+    RETURN QUERY EXECUTE queryStr;
+  END
+$$ LANGUAGE plpgsql VOLATILE;
+-- SELECT (TT_TranslatedRowCount()).*
+-- SELECT (TT_TranslatedRowCount('TRANSLATED_BY_CUSTOM')).*
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_TableColumnType
 --
 --   tableSchema name - Name of the schema containing the table.
@@ -677,8 +957,8 @@ $$ LANGUAGE plpgsql VOLATILE STRICT;
 -- Check if number of tests for a specific inventory and province is sufficient.
 --
 -- e.g. SELECT TT_CheckNumberOfTests('eco', 'ab');
-------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_CheckNumberOfTests(text, text, text);
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CheckNumberOfTests(text, text, boolean);
 CREATE OR REPLACE FUNCTION TT_CheckNumberOfTests(
   casTable text,
   province text DEFAULT 'all',
@@ -811,7 +1091,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_CreateMapping
-------------------------------------------------------------
+-------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_CreateMapping(text, int, text, int);
 CREATE OR REPLACE FUNCTION TT_CreateMapping(
   fromTableName text,
@@ -822,25 +1102,28 @@ CREATE OR REPLACE FUNCTION TT_CreateMapping(
 RETURNS TABLE (num int, key text, from_att text, to_att text, contributing boolean) AS $$
   DECLARE
     queryStr text;
+    lyrMetadataTableName text := 'layer_metadata';
+    lyrMetadataSchemaName text := 'public';
   BEGIN
-    IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
-      RAISE EXCEPTION 'ERROR TT_CreateMapping(): Could not find table ''translation.dependencies''...';
+    IF NOT TT_TableExists(lyrMetadataSchemaName, lyrMetadataTableName) THEN
+      RAISE EXCEPTION 'ERROR TT_CreateMapping(): Could not find table ''%.%''...', lyrMetadataSchemaName, lyrMetadataTableName;
     END IF;
-    queryStr = 'WITH colnames AS (
-    SELECT TT_TableColumnNames(''translation'', ''attribute_dependencies'') col_name_arr
+    queryStr = format('
+  WITH colnames AS (
+    SELECT TT_TableColumnNames(%1$L, %2$L) col_name_arr
   ), colnames_num AS (
     SELECT generate_series(1, cardinality(col_name_arr)) num, unnest(col_name_arr) colname
     FROM colnames
   ), from_att AS (
     -- Vertical table of all ''from'' attribute mapping
     SELECT (jsonb_each(to_jsonb(a.*))).*
-    FROM translation.attribute_dependencies a
-    WHERE lower(btrim(btrim(inventory_id, '' ''), '''''''')) = lower(''' || fromTableName || ''') AND layer = ' || fromLayer || '::text
+    FROM %1$I.%2$I a
+    WHERE lower(btrim(btrim(inventory_id, '' ''), '''''''')) = lower(%3$L) AND layer = %4$L
   ), to_att AS (
     -- Vertical table of all ''to'' attribute mapping
     SELECT (jsonb_each(to_jsonb(a.*))).*
-    FROM translation.attribute_dependencies a
-    WHERE lower(btrim(btrim(inventory_id, '' ''), '''''''')) = lower(''' || toTableName || ''') AND layer = ' || toLayer || '::text
+    FROM %1$I.%2$I a
+    WHERE lower(btrim(btrim(inventory_id, '' ''), '''''''')) = lower(%5$L) AND layer = %6$L
   ), splitted AS (
     -- Splitted by comma, still vertically
     SELECT colnames_num.num, from_att.key,
@@ -859,7 +1142,9 @@ RETURNS TABLE (num int, key text, from_att text, to_att text, contributing boole
          CASE WHEN left(from_att, 1) = ''['' AND right(from_att, 1) = '']'' THEN FALSE
               ELSE TRUE
          END contributing
-  FROM splitted;';
+  FROM splitted;
+  ', lyrMetadataSchemaName, lyrMetadataTableName, fromTableName, fromLayer::text, toTableName, toLayer::text);
+    --RAISE NOTICE 'TT_CreateMapping() queryStr: %', queryStr;
     RETURN QUERY EXECUTE queryStr;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
@@ -869,7 +1154,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- TT_CreateMappingView
 --
 -- Return a view mapping attributes of fromTableName to attributes of toTableName
--- according to the translation.attribute_dependencies table.
+-- according to the layer_metadata table.
 -- Can also be used to create a view selecting the minimal set of useful attribute
 -- and to get a random sample of the source table when randomNb is provided.
 ------------------------------------------------------------
@@ -908,29 +1193,32 @@ RETURNS text AS $$
     attListViewName text = '';
     rowSubsetKeywords text[] = ARRAY['lyr', 'lyr2', 'nfl', 'dst', 'eco'];
     maxLayerNb int = 0;
+    lyrMetadataTableName text := 'layer_metadata';
+    lyrMetadataSchemaName text := 'public';
+
   BEGIN
-    -- Check if table 'attribute_dependencies' exists
-    IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
-      RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''translation.dependencies''...';
-      RETURN 'ERROR: Could not find table ''translation.dependencies''...';
+    -- Check if table 'layer_metadata' exists
+    IF NOT TT_TableExists(lyrMetadataSchemaName, lyrMetadataTableName) THEN
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''%.%''...', lyrMetadataSchemaName, lyrMetadataTableName;
+      RETURN format('ERROR: Could not find table ''%s.%s''...', lyrMetadataSchemaName, lyrMetadataTableName);
     END IF;
 
     -- Check if table fromTableName exists
     IF NOT TT_TableExists(schemaName, fromTableName) THEN
       RAISE NOTICE 'ERROR TT_CreateMappingView(): Could not find table ''%.%''...', schemaName, fromTableName;
-      RETURN 'ERROR: Could not find table ''' || schemaName || '.' || fromTableName || '''...';
+      RETURN format('ERROR: Could not find table ''%s.%s''...', schemaName, fromTableName);
     END IF;
 
-    -- Check if an entry for (fromTableName, fromLayer) exists in table 'attribute_dependencies'
-    SELECT count(*) FROM translation.attribute_dependencies
-    WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(fromTableName) AND layer = fromLayer::text
-    INTO nb;
+    -- Check if an entry for (fromTableName, fromLayer) exists in table 'layer_metadata'
+    queryStr = format('SELECT count(*) FROM %s.%s
+    WHERE lower(btrim(btrim(inventory_id, '' ''), '''')) = lower(''%s'') AND layer = ''%s''', lyrMetadataSchemaName, lyrMetadataTableName, fromTableName, fromLayer::text);
+    EXECUTE queryStr INTO nb;
     IF nb = 0 THEN
-      RAISE NOTICE 'ERROR TT_CreateMappingView(): No entry found for inventory_id ''%'' layer % in table ''translation.dependencies''...', fromTableName, fromLayer;
-      RETURN 'ERROR: No entry could be found for inventory_id '''  || fromTableName || ''' layer ' || fromLayer || ' in table ''translation.dependencies''...';
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): No entry found for inventory_id ''%'' layer % in table ''%.%''...', fromTableName, fromLayer, lyrMetadataSchemaName, lyrMetadataTableName;
+      RETURN format('ERROR: No entry could be found for inventory_id ''%s'' layer %s in table ''%s.%s''...', fromTableName, fromLayer, lyrMetadataSchemaName, lyrMetadataTableName);
     ELSIF nb > 1 THEN
-      RAISE NOTICE 'ERROR TT_CreateMappingView(): More than one entry match inventory_id ''%'' layer % in table ''translation.dependencies''...', fromTableName, fromLayer;
-      RETURN 'ERROR: More than one entry match inventory_id '''  || fromTableName || ''' layer ' || fromLayer || ' in table ''translation.dependencies''...';
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): More than one entry match inventory_id ''%'' layer % in table ''%.%''...', fromTableName, fromLayer, lyrMetadataSchemaName, lyrMetadataTableName;
+      RETURN format('ERROR: More than one entry match inventory_id ''%s'' layer %s in table ''%s.%s''...', fromTableName, fromLayer, lyrMetadataSchemaName, lyrMetadataTableName);
     END IF;
 
     -- Support a variant where rowSubset is the third parameter (not toTableName)
@@ -963,7 +1251,7 @@ RETURNS text AS $$
           attName = btrim(attName, ' ');
           IF NOT attName = ANY (sourceTableCols) THEN
             RAISE NOTICE 'ERROR TT_CreateMappingView(): Attribute ''%'' in ''rowSubset'' not found in table ''translation.%''...', attName, fromTableName;
-            RETURN 'ERROR: Attribute ''' || attName || ''' in ''rowSubset'' not found in table ''translation.''' || fromTableName || '''...';
+            RETURN format('ERROR: Attribute ''%s'' in ''rowSubset'' not found in table ''translation.%s''...', attName, fromTableName);
           END IF;
           whereExpArr = array_append(whereExpArr, '(TT_NotEmpty(' || attName || '::text) AND ' || attName || '::text != ''0'')');
           attListViewName = attListViewName || lower(left(attName, 1));
@@ -975,20 +1263,20 @@ RETURNS text AS $$
         validRowSubset = TRUE;
       ELSE
         RAISE NOTICE 'ERROR TT_CreateMappingView(): Invalid rowSubset value (%)...', rowSubset;
-        RETURN 'ERROR: Invalid rowSubset value (' || rowSubset || ')...';
+        RETURN format('ERROR: Invalid rowSubset value (%s)...', rowSubset);
       END IF;
     END IF;
 
-    -- Check if an entry for (toTableName, toLayer) exists in table 'attribute_dependencies'
-    SELECT count(*) FROM translation.attribute_dependencies
-    WHERE lower(btrim(btrim(inventory_id, ' '), '''')) = lower(toTableName) AND layer = toLayer::text
-    INTO nb;
+    -- Check if an entry for (toTableName, toLayer) exists in table 'layer_metadata'
+    queryStr = format('SELECT count(*) FROM %s.%s
+    WHERE lower(btrim(btrim(inventory_id, '' ''), '''')) = lower(''%s'') AND layer = ''%s''', lyrMetadataSchemaName, lyrMetadataTableName, toTableName, toLayer::text);
+    EXECUTE queryStr INTO nb;
     IF nb = 0 THEN
-      RAISE NOTICE 'ERROR TT_CreateMappingView(): No entry found for inventory_id ''%'' layer % in table ''translation.dependencies''...', toTableName, toLayer;
-      RETURN 'ERROR: No entry could be found for inventory_id '''  || toTableName || ''' layer ' || toLayer || ' in table ''translation.dependencies''...';
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): No entry found for inventory_id ''%'' layer % in table ''%.%''...', toTableName, toLayer::text, lyrMetadataSchemaName, lyrMetadataTableName;
+      RETURN format('ERROR: No entry could be found for inventory_id ''%s'' layer %s in table ''%s.%s''...', toTableName, toLayer::text, lyrMetadataSchemaName, lyrMetadataTableName);
     ELSIF nb > 1 THEN
-      RAISE NOTICE 'ERROR TT_CreateMappingView(): More than one entry match inventory_id ''%'' layer % in table ''translation.dependencies''...', toTableName, toLayer;
-      RETURN 'ERROR: More than one entry match inventory_id '''  || toTableName || ''' layer ' || toLayer || ' in table ''translation.dependencies''...';
+      RAISE NOTICE 'ERROR TT_CreateMappingView(): More than one entry match inventory_id ''%'' layer % in table ''%.%''...', toTableName, toLayer::text, lyrMetadataSchemaName, lyrMetadataTableName;
+      RETURN format('ERROR: More than one entry match inventory_id ''%s'' layer %s in table ''%s.%s''...', toTableName, toLayer::text, lyrMetadataSchemaName, lyrMetadataTableName);
     END IF;
 
     -- Build the attribute mapping string
@@ -1228,17 +1516,19 @@ RETURNS text AS $$
     attCount int = 0;
     trimmedAttName text;
     indentStr text;
+    lyrMetadataTableName text := 'layer_metadata';
+    lyrMetadataSchemaName text := 'public';
   BEGIN
-    -- Check if table 'attribute_dependencies' exists
-    IF NOT TT_TableExists('translation', 'attribute_dependencies') THEN
-      RAISE NOTICE 'ERROR TT_CreateFilterView(): Could not find table ''translation.dependencies''...';
-      RETURN 'ERROR: Could not find table ''translation.dependencies''...';
+    -- Check if table 'layer_metadata' exists
+    IF NOT TT_TableExists(lyrMetadataSchemaName, lyrMetadataTableName) THEN
+      RAISE NOTICE 'ERROR TT_CreateFilterView(): Could not find table ''%.%''...', lyrMetadataSchemaName, lyrMetadataTableName;
+      RETURN format('ERROR: Could not find table ''%s.%s''...', lyrMetadataSchemaName, lyrMetadataTableName);
     END IF;
 
     -- Check if tableName exists
     IF NOT TT_TableExists(schemaName, tableName) THEN
-      RAISE NOTICE 'ERROR TT_CreateFilterView(): Could not find table ''translation.%''...', tableName;
-      RETURN 'ERROR: Could not find table ''translation..' || tableName || '''...';
+      RAISE NOTICE 'ERROR TT_CreateFilterView(): Could not find table ''%.%''...', schemaName, tableName;
+      RETURN format('ERROR: Could not find table ''%s.%s''...', schemaName, tableName);
     END IF;
 
     -- For whereInAttrList only, replace each comma inside two brackets with a special keyword that will be replaced with AND later
@@ -1263,7 +1553,7 @@ RETURNS text AS $$
        whereOutAttrList = regexp_replace(lower(whereOutAttrList), mappingRec.key || '\M', mappingRec.attrs, 'g');
     END LOOP;
 
-     -- Loop through all the possible keywords building the list of attributes from attribute_dependencies and replacing them in the 3 provided lists of attributes
+     -- Loop through all the possible keywords building the list of attributes from layer_metadata and replacing them in the 3 provided lists of attributes
     FOREACH keyword IN ARRAY keywordArr LOOP
       -- Determine from which layer to grab the attributes
       layer = right(keyword, 1);
@@ -1273,7 +1563,7 @@ RETURNS text AS $$
       attArr = '{}';
       sigAttArr = '{}';
 
-      -- Loop through all attribute_dependencies row mapping
+      -- Loop through all layer_metadata row mapping
       FOR mappingRec IN SELECT *
                         FROM TT_CreateMapping(tableName, layer::int, tableName, layer::int)
                         WHERE TT_NotEmpty(from_att)
@@ -1682,6 +1972,372 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_RunAllTests
+--
+-- Run all the translation tests associated with a jurisdiction and a CASFRI
+-- table (cas, eco, dst, lyr, nfl or all). If the 'all' keyword is used for the
+-- CASFRI table, tests will be run for all casfri tables.
+-------------------------------------------------------------------------------
+--DROP PROCEDURE IF EXISTS TT_RunAllTests(text, text);
+CREATE OR REPLACE PROCEDURE TT_RunAllTests(
+  jurisdiction text, -- 'ab', 'bc', etc.
+  casfriTable text DEFAULT 'all' -- can be 'cas', 'eco', 'dst', 'lyr', 'nfl' or 'all'
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+  validCasfriTables text[] := ARRAY['cas', 'eco', 'dst', 'lyr', 'nfl', 'all'];
+  queryStr text;
+  invMetadataTableName text := 'inventory_metadata';
+  targetSchema text := 'casfri50_test';
+  targetTable text;
+  callStr text;
+  r RECORD;
+BEGIN
+  -- Check that casfriTable is valid
+  IF lower(casfriTable) != ALL(validCasfriTables) THEN
+    RAISE EXCEPTION 'TT_RunAllTests() ERROR: ''%'' is not a proper argument for ''casfriTable''. Valid values are ''cas'', ''eco'', ''dst'', ''lyr'', ''nfl'' and ''all''...', casfriTable;
+  END IF;
+  jurisdiction := lower(jurisdiction);
+
+  -- Get the list of inventories for this jurisdiction
+  queryStr := format('
+    SELECT inventory_id, *
+    FROM public.%I
+    WHERE left(inventory_id, 2) = upper(%L) AND
+          (upper(translated_by_cfs) = ''YES'' OR
+           upper(translated_by_ulaval) = ''YES'') AND
+          TT_TableExists(''rawfri'', lower(inventory_id));
+    ', invMetadataTableName, jurisdiction);
+  queryStr := format('
+    SELECT inventory_id, *
+    FROM public.%I
+    WHERE left(inventory_id, 2) = upper(%L);
+    ', invMetadataTableName, jurisdiction);
+  --RAISE NOTICE 'queryStr=%', queryStr;
+  FOR r IN EXECUTE queryStr LOOP
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+    callStr := format('TT_RunAllTests(''%s'', ''%s'')', jurisdiction, casfriTable);
+    IF TT_TableExists('rawfri', lower(r.inventory_id)) THEN
+      targetTable := format('%s_%s', lower(casfriTable), jurisdiction);
+      targetTable := format('''%I.%I''', targetSchema, targetTable);
+      IF lower(casfriTable) = 'all' THEN
+        targetTable := format('all CASFRI test tables in the ''%s'' schema', targetSchema);
+      END IF;
+      RAISE NOTICE '%: 1 - Deleting ''%'' entries from %...', callStr, (r.inventory_id), targetTable;
+      CALL TT_TranslateInventory(r.inventory_id, 'D', casfriTable, TRUE, FALSE, FALSE);
+      RAISE NOTICE '-------------------------------------------------------------------------------';
+      RAISE NOTICE '%: 2 - Translating ''%'' entries to %...', callStr, upper(r.inventory_id), targetTable;
+      CALL TT_TranslateInventory(r.inventory_id, 'T', casfriTable, TRUE, FALSE, FALSE);
+    ELSE
+      RAISE NOTICE '%: Table ''rawfri.%'' does not exists. Nothing to test for ''%'' CASFRI tables...', callStr, upper(r.inventory_id), casfriTable;
+    END IF;
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+  END LOOP;
+END;
+$$;
+
+/*
+CALL TT_RunAllTests('ab', 'xxx')
+CALL TT_RunAllTests('ab', 'cas')
+CALL TT_RunAllTests('ab', 'nfl')
+CALL TT_RunAllTests('ab')
+*/
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_TranslateInventory
+--
+-- Translate a CASFRI inventory into the casfri50 schema using the
+-- translation tables stored in the 'translation' schema.
+-------------------------------------------------------------------------------
+--DROP PROCEDURE IF EXISTS TT_TranslateInventory(text, text, text, boolean, boolean, boolean);
+CREATE OR REPLACE PROCEDURE TT_TranslateInventory(
+  inventoryID text, -- 'AB06', 'AB34', etc.
+  translationType text DEFAULT 'T', -- can be 'T'ranslate or 'D'elete
+  casfriTables text DEFAULT 'all', -- can be 'cas', 'eco', 'dst', 'lyr', 'nfl', 'geo' or 'all'
+  test boolean DEFAULT FALSE, -- if TRUE use the 'casfri50_test.nb_test' table to get the number of rows to translate
+  showProgress boolean DEFAULT TRUE, -- if TRUE display progress notices
+  showTQuery boolean DEFAULT FALSE -- if TRUE display translation query notices
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+  validCasfriTables text[] := ARRAY['cas', 'eco', 'dst', 'lyr', 'nfl', 'geo', 'all'];
+  upperInventoryID text;
+  standardID text;
+  jurisdiction text := lower(left(inventoryID, 2));
+  nbEntry int;
+  queryStr text;
+  lyrMetadataTableName text := 'layer_metadata';
+  lyrMetadataSchemaName text := 'public';
+  invMetadataTableName text := 'inventory_metadata';
+  invMetadataSchemaName text := 'public';
+  nbTestTableName text := 'nb_tests_per_layer';
+  targetSchema text := 'casfri50';
+  targetTable text;
+  translationTableName text;
+  ttPrepareFctSuffix text;
+  casfriTablesArr text[];
+  casfriTable text;
+  upperCasfriTable text;
+  r RECORD;
+  nbTestRows int;
+  viewName text;
+  nbTranslatedLayers int;
+  insertStatement text;
+BEGIN
+  RAISE NOTICE '-------------------------------------------------------------------------------';
+  RAISE NOTICE 'TT_TranslateInventory(''%'', ''%'', ''%'', %, %, %)', inventoryID, translationType, casfriTables, test::text, showProgress::text, showTQuery::text;
+  RAISE NOTICE 'test is ''%'', showProgress is ''%'' and showTQuery is ''%''...', test::text, showProgress::text, showTQuery::text;
+  RAISE NOTICE '-------------------------------------------------------------------------------';
+  -- Check that casfriTable is valid
+  IF test THEN
+    -- Remove 'geo' as valid casfriTable when testing
+    validCasfriTables := array_remove(validCasfriTables, 'geo');
+  END IF;
+  IF lower(casfriTable) != ALL(validCasfriTables) THEN
+    queryStr := array_to_string(
+        ARRAY(SELECT quote_literal(elem) FROM unnest(validCasfriTables) AS elem),
+        ','
+    );
+    RAISE EXCEPTION 'TT_TranslateInventory() ERROR: ''%'' is not a proper argument for ''casfriTable''. Valid values are %...', casfriTable, queryStr;
+  END IF;
+
+  inventoryID := lower(btrim(btrim(inventoryID, ' '), ''''));
+  upperInventoryID := upper(inventoryID);
+  translationType := upper(translationType);
+
+  -- Build an array with the list of CASFRI table to process
+  casfriTables := lower(casfriTables);
+  IF casfriTables = 'all' THEN
+    casfriTables := 'cas, eco, dst, lyr, nfl, geo';
+  END IF;
+  casfriTablesArr := regexp_split_to_array(casfriTables, '\s*,\s*');
+
+  -- Check that table 'inventoryID' exists
+  IF NOT TT_TableExists('rawfri', inventoryID) THEN
+    RAISE NOTICE '1.0 - TT_TranslateInventory() ERROR : Could not find table ''rawfri.%''...', inventoryID;
+    RETURN;
+  END IF;
+
+  IF translationType = 'T' THEN
+    FOREACH casfriTable IN ARRAY casfriTablesArr LOOP
+      upperCasfriTable := upper(casfriTable);
+      targetTable := casfriTable || '_all';
+      nbTranslatedLayers := 0;
+      ----------------------------------------------------------------------------------------------
+      -- Check that table 'inventory_metadata' exists
+      IF NOT TT_TableExists('public', invMetadataTableName) THEN
+        RAISE NOTICE '1.0 - TT_TranslateInventory() ERROR : Could not find table ''public.%''...', invMetadataTableName;
+        RETURN;
+      END IF;
+    
+      ----------------------------------------------------------------------------------------------
+      -- Check that one and only one entry for 'inventoryID' exists in table 'inventory_metadata'
+      queryStr := format('
+        SELECT count(*) FROM %I.%I im
+        WHERE %L = lower(im.inventory_id);
+        ', invMetadataSchemaName, invMetadataTableName, inventoryID);
+      EXECUTE queryStr INTO nbEntry;
+      IF nbEntry = 0 THEN
+        RAISE NOTICE '1.0 - TT_TranslateInventory() ERROR : No entry found for inventory_id ''%'' in table ''%.%''...', upperInventoryID, invMetadataSchemaName, invMetadataTableName;
+        RETURN;
+      ELSIF nbEntry > 1 THEN
+        RAISE NOTICE '1.0 - TT_TranslateInventory() ERROR : More than one entry match inventoryID ''%'' in table ''%.%''...', upperInventoryID, invMetadataSchemaName, invMetadataTableName;
+        RETURN;
+      END IF;
+      RAISE NOTICE '1.0 - TT_TranslateInventory(): One entry for ''%'' was found in ''%.%''...', upperInventoryID, invMetadataSchemaName, invMetadataTableName;
+
+      ----------------------------------------------------------------------------------------------
+      -- Check that table 'layer_metadata' exists
+      IF NOT TT_TableExists(lyrMetadataSchemaName, lyrMetadataTableName) THEN
+        RAISE NOTICE 'TT_TranslateInventory() ERROR : Could not find table ''%.%''...', lyrMetadataSchemaName, lyrMetadataTableName;
+        RETURN;
+      END IF;
+    
+      ----------------------------------------------------------------------------------------------
+      -- Check that at least one entry for 'inventoryID' exists in table 'layer_metadata' for this casfriTable
+      queryStr := format('
+        SELECT count(*) FROM %I.%I
+        WHERE inventory_id = %L AND STRPOS(casfri_table, %L) > 0;',
+        lyrMetadataSchemaName, lyrMetadataTableName, upperInventoryID, upperCasfriTable);
+      EXECUTE queryStr INTO nbEntry;
+      IF nbEntry = 0 THEN
+        RAISE NOTICE '2.0 - TT_TranslateInventory() ERROR : No entry found for inventory_id ''%'' in table ''%.%''...', upperInventoryID, lyrMetadataSchemaName, lyrMetadataTableName;
+      ELSE
+        RAISE NOTICE '2.0 - TT_TranslateInventory(): % entries were found for ''%'' in ''%.%''...', nbEntry, upperInventoryID, lyrMetadataSchemaName, lyrMetadataTableName;
+      
+        ----------------------------------------------------------------------------------------------
+        -- Extract standard info from 'inventory_metadata'
+        queryStr := format('
+          SELECT lower(standard_id) FROM %I.%I im
+          WHERE %L = lower(im.inventory_id);
+          ', invMetadataSchemaName, invMetadataTableName, inventoryID);
+        EXECUTE queryStr INTO standardID;
+        -- Prepend it with the jurisdiction
+        standardID := lower(jurisdiction || '_' || standardID);
+
+        ----------------------------------------------------------------------------------------------
+        ----------------------------------------------------------------------------------------------
+        -- STEP I - Prepare the TT_Translate_%_%() function using the 'translation'.'%_%_%' translation table
+        -- e.g.
+        -- SELECT TT_Prepare('translation', 'ab_avi01_cas', '_ab03_cas');
+        ----------------------------------------------------------------------------------------------
+        ----------------------------------------------------------------------------------------------
+        translationTableName := format('%s_%s', standardID, casfriTable);
+        ttPrepareFctSuffix := format('_%s_%s', inventoryID, casfriTable);
+        
+        RAISE NOTICE '3.0 - TT_TranslateInventory(): PERFORM TT_Prepare(''translation'', ''%'', ''%'', %, %) 
+                      to create the TT_Translate%() function...', 
+                    translationTableName, ttPrepareFctSuffix, showProgress::text, showTQuery::text, ttPrepareFctSuffix;
+
+        IF test THEN
+          -- Set other test variable
+          ttPrepareFctSuffix := ttPrepareFctSuffix || '_test';
+          targetSchema := 'casfri50_test';
+          targetTable := casfriTable || '_' || lower(jurisdiction);
+          ----------------------------------------------------------------------------------------------
+          -- Check that table 'nb_tests_per_layer' exists
+          IF NOT TT_TableExists(targetSchema, nbTestTableName) THEN
+            RAISE NOTICE '3.0 - TT_TranslateInventory() ERROR : Could not find table ''%.%''...', targetSchema, nbTestTableName;
+            RETURN;
+          END IF;
+        END IF;
+        PERFORM TT_Prepare('translation', translationTableName, ttPrepareFctSuffix, showProgress, showTQuery);
+        IF TT_FctExists('Translate' || ttPrepareFctSuffix, ARRAY['Name', 'Name']) THEN
+          RAISE NOTICE '3.0 - TT_TranslateInventory() : Function TT_Translate%() created successfully...', ttPrepareFctSuffix;
+        ELSE
+          RAISE NOTICE '3.0 - TT_TranslateInventory() ERROR : Could not create function TT_Translate%()...', ttPrepareFctSuffix;
+          RETURN;
+        END IF;
+        ----------------------------------------------------------------------------------------------
+        ----------------------------------------------------------------------------------------------
+        -- STEP II - Create the mapping VIEW
+        -- e.g.
+        -- TT_CreateMappingView('rawfri', 'ab06', 1, 'ab', 1, 201, NULL, 'cas');
+        ----------------------------------------------------------------------------------------------
+        ----------------------------------------------------------------------------------------------
+        queryStr := format('
+          SELECT layer::int
+          FROM %I.%I
+          WHERE inventory_id = %L AND STRPOS(casfri_table, %L) > 0;',
+          lyrMetadataSchemaName, lyrMetadataTableName, upperInventoryID, upperCasfriTable);
+        --RAISE NOTICE 'AAAA queryStr=%', queryStr;
+
+        -- Iterate over all layers to translate
+        FOR r IN EXECUTE queryStr LOOP
+          nbTestRows := NULL;
+          IF test THEN
+            -- Get the number of rows to test from the 'nb_tests_per_layer' table
+            queryStr := format('
+              SELECT nb_test_rows
+              FROM %I.%I
+              WHERE inventory_id = %L AND cas_table = %L AND layer = %L;',
+              targetSchema, nbTestTableName, inventoryID, casfriTable, r.layer);
+            EXECUTE queryStr INTO nbTestRows;
+          END IF;
+
+          -- Create the mapping VIEW
+          queryStr := format('SELECT TT_CreateMappingView(''rawfri'', %L, %s, %L, 1, %s, NULL, %L);', inventoryID, r.layer, standardID, coalesce(nbTestRows::text, 'NULL'), casfriTable);
+          RAISE NOTICE '4.1 - TT_TranslateInventory(): %', queryStr;
+          EXECUTE queryStr;
+
+          viewName := inventoryID || '_l' || r.layer || '_to_' || standardID || '_l1_map' || (CASE WHEN nbTestRows IS NULL THEN '' ELSE '_'|| nbTestRows END) || '_' || casfriTable;
+          IF TT_TableExists('rawfri', viewName) THEN
+            RAISE NOTICE '4.2 - TT_TranslateInventory(): View ''rawfri.%'' created successfully...', viewName;
+            ----------------------------------------------------------------------------------------------
+            ----------------------------------------------------------------------------------------------
+            -- STEP III - Translate the VIEW data
+            -- e.g.
+            -- INSERT INTO casfri50.cas_all  -- xmxs
+            -- SELECT * FROM TT_Translate_ab03_cas('rawfri', 'ab03_l1_to_ab_l1_map');
+            ----------------------------------------------------------------------------------------------
+            ----------------------------------------------------------------------------------------------
+            RAISE NOTICE '5.1 - TT_TranslateInventory(): Inserting translated rows into ''%.%'' table using TT_Translate_%_%(''rawfri'', ''%_l%_to_%_l1_map'')...', targetSchema, targetTable, inventoryID, casfriTable, inventoryID, r.layer, jurisdiction;
+            insertStatement := format('INSERT INTO %I.%I ', targetSchema, targetTable);
+            IF NOT TT_TableExists(targetSchema, targetTable) THEN
+              insertStatement := format('CREATE TABLE %I.%I AS ', targetSchema, targetTable);
+            END IF;
+            queryStr := format('
+              %s SELECT * FROM TT_Translate%s(''rawfri'', %L);
+              ', insertStatement, ttPrepareFctSuffix, viewName);
+            --RAISE NOTICE 'CCCC queryStr=%', queryStr;
+            EXECUTE queryStr;
+            RAISE NOTICE '5.2 - TT_TranslateInventory(): DONE Inserting translated rows into ''%.%'' table using TT_Translate_%_%(''rawfri'', ''%''_l%_to_%_l1_map). To check, execute: SELECT * FROM %.% WHERE left(cas_id, 4) = ''%'';', targetSchema, targetTable, inventoryID, casfriTable, inventoryID, r.layer, jurisdiction, targetSchema, targetTable, upperInventoryID;
+            nbTranslatedLayers := nbTranslatedLayers + 1;
+            RAISE NOTICE '5.3 - TT_TranslateInventory(): % layer(s) translated for ''%'' % table...', nbTranslatedLayers, upperInventoryID, upperCasfriTable;
+          ELSE
+            RAISE NOTICE '4.1 - TT_TranslateInventory(): ERROR: % FAILED...', queryStr;
+          END IF;
+          RAISE NOTICE '-------------------------------------------------------------------------------';
+        END LOOP;
+        IF nbTranslatedLayers = 0 THEN
+          RAISE NOTICE '4.0 - TT_TranslateInventory(): No % layer to translate for ''%''...', upperCasfriTable, upperInventoryID;
+        END IF;
+      END IF;
+      RAISE NOTICE '-------------------------------------------------------------------------------';
+    END LOOP;
+  ELSIF translationType = 'D' THEN
+    FOREACH casfriTable IN ARRAY casfriTablesArr LOOP
+      targetTable := casfriTable || '_all';
+      IF test THEN
+        targetSchema := 'casfri50_test';
+        targetTable := casfriTable || '_' || lower(jurisdiction);
+      END IF;
+      -- Check if table exists
+      IF TT_TableExists(targetSchema, targetTable) THEN
+        -- Delete existing entries
+        RAISE NOTICE '1 - TT_TranslateInventory(): Deleting ''%'' entries from ''%.%'' table. To check, execute: SELECT * FROM %.% WHERE left(cas_id, 4) = ''%'';', upperInventoryID, targetSchema, targetTable, targetSchema, targetTable, upperInventoryID;
+        queryStr := format('
+          DELETE FROM %I.%I WHERE left(cas_id, 4) = %L;
+          ', targetSchema, targetTable, upperInventoryID);
+        --RAISE NOTICE 'DDDD queryStr=%', queryStr;
+        EXECUTE queryStr;
+      ELSE
+        RAISE NOTICE '1 - TT_TranslateInventory(): Deleting ''%'' entries from ''%.%'' table. Table does not exists...', upperInventoryID, targetSchema, targetTable;
+      END IF;
+    END LOOP;
+    RAISE NOTICE '-------------------------------------------------------------------------------';
+  ELSE
+    RAISE NOTICE '1 - TT_TranslateInventory() ERROR : Unsupported translation type (%)...', translationType;
+  END IF;
+END;
+$$;
+/*
+-- tests
+CALL TT_TranslateInventory('AB06', 'D', 'cas');
+CALL TT_TranslateInventory('Ab06', 'T', 'cas');
+CALL TT_TranslateInventory('Ab06', 'T', 'cas');
+CALL TT_TranslateInventory('Ab06', 'T', 'cas', FALSE, FALSE, FALSE);
+
+CALL TT_TranslateInventory('Ab06', 'T', 'cas', FALSE, FALSE);
+CALL TT_TranslateInventory('Ab06', 'T', 'cas', TRUE);
+
+CALL TT_TranslateInventory('AB06', 'D', 'nfl');
+CALL TT_TranslateInventory('AB06', 'T', 'nfl');
+CALL TT_TranslateInventory('AB06', 'D', 'nfl', TRUE);
+CALL TT_TranslateInventory('AB06', 'T', 'nfl', TRUE);
+
+CALL TT_TranslateInventory('AB06');
+CALL TT_TranslateInventory('Ab06', 'T', 'all', FALSE, FALSE, FALSE);
+CALL TT_TranslateInventory('Ab06', 'T', 'lyr', FALSE, FALSE, FALSE);
+
+CALL TT_TranslateInventory('AB34', 'T', 'nfl');
+CALL TT_TranslateInventory('AB34', 'T', 'nfl', TRUE);
+
+CALL TT_TranslateInventory('AB06', 'D', 'eco', TRUE);
+CALL TT_TranslateInventory('AB06', 'T', 'eco', TRUE);
+
+CALL TT_TranslateInventory('AB06', 'T', 'all', TRUE);
+*/
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_DefaultProjectErrorCode
+--
 -- Overwrite the TT_DefaultProjectErrorCode() function to define default error
 -- codes for these helper functions...
 -------------------------------------------------------------------------------
@@ -2597,9 +3253,9 @@ $$ LANGUAGE sql IMMUTABLE;
 -- Return 4-character wetland code
 -- In pc02 every ECO translation is associated with either a lYR or NFL horizontal layer.
 -- In order to correctly assign LAYER values for ECO, ROW_TRANSLATION_RULE should only run
--- the wetland translations associated with LYR when a LYR row is being translated in the attribute
--- dependencies. We use the lyr_or_nfl assigned to 'table' in the attribute_dependencies to do this.
--- Same goes for NFL, should only run for NFL rows being translated in attribute_dependencies.
+-- the wetland translations associated with LYR when a LYR row is being translated in the layer
+-- metadata. We use the lyr_or_nfl assigned to 'table' in the layer_metadata to do this.
+-- Same goes for NFL, should only run for NFL rows being translated in layer_metadata.
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_pc02_wetland_code(text, text);
 CREATE OR REPLACE FUNCTION TT_pc02_wetland_code(
@@ -2862,7 +3518,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --
 -- e.g. TT_yvi01_nat_non_veg_validation(type_lnd, class, landpos)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text,text,text);
+--DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_validation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_validation(
   type_lnd text,
   class_ text,
@@ -2902,7 +3558,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- nat_non_veg = EX (burned or exposed land).
 -- e.g. TT_yvi01_nfl_soil_moisture_validation(type_land, class_, cl_mod, landpos)
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_yvi01_nfl_soil_moisture_validation(text,text,text,text);
+--DROP FUNCTION IF EXISTS TT_yvi01_nfl_soil_moisture_validation(text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_yvi01_nfl_soil_moisture_validation(
   type_lnd text,
   class_ text,
@@ -4972,6 +5628,7 @@ $$ LANGUAGE plpgsql;
 -- Note typeclas can be empty string or NULL and still have species info.
 -- We just want to avoid adding rows where typeclas is an NFL value and species
 -- are present.
+--DROP FUNCTION IF EXISTS TT_row_translation_rule_nt_lyr(text, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_row_translation_rule_nt_lyr(
   typeclas_nonveg text,
   typeclas_anth text,
@@ -5013,6 +5670,7 @@ $$ LANGUAGE plpgsql;
 -- If landtype is an NFL type, check the covertype contains an NFL type as well, if so return true
 -- if landtype is vegetated, check if it's cover is one of Shrub types or rock, if so return true
 -- else FALSE
+--DROP FUNCTION IF EXISTS TT_yvi01_hasNFLInfo(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_yvi01_hasNFLInfo(
   landtype text,
   covertype text,
@@ -5669,7 +6327,7 @@ SELECT TT_fim_species_percent_translation('SB 500B 2O 10', '3') -- 10
 -- landpos of A becomes AP
 -- classes of 'R','L','RS','E','S','B','RR' become 'RIVER,'LAKE,'WATER_SEDIMENT','EXPOSED_LAND','SAND','EXPOSED_LAND','ROCK_RUBBLE'
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text, text, text);
+--DROP FUNCTION IF EXISTS TT_yvi01_nat_non_veg_translation(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_yvi01_nat_non_veg_translation(
   type_lnd text,
   class_ text,
@@ -5708,7 +6366,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- class_ of 'RD' becomes 'OTHER'
 -- covertype of 'Gravel Pit' becomes 'OTHER'
 ------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_yvi01_non_for_anth_translation(text, text, text);
+--DROP FUNCTION IF EXISTS TT_yvi01_non_for_anth_translation(text, text);
 CREATE OR REPLACE FUNCTION TT_yvi01_non_for_anth_translation(
   class_ text,
   covertype text
@@ -8738,14 +9396,14 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
--- TT_mb_mb03_disturbance_notNull
+-- TT_mb_mb03_disturbance_hasCountOfNotNull
 --
 -- dst_type1 to dst_type5 - contain year values for fire_yr, blowdown_yr, cut_yr, regen_yr, and ftg_sp_yr
 -- dist_num - number of the CASFRI disturbanc feature, 1 - 3
 -- Check any of the disturbance fields are not null for a certain count
 --    first dist_type requires 1 value to not be null, 2nd requires 2, 3rd requires 3
 ------------------------------------------------------------
--- DROP FUNCTION IF EXISTS TT_mb_mb03_disturbance_notNull(text, text, text, text, text,text);
+-- DROP FUNCTION IF EXISTS TT_mb_mb03_disturbance_hasCountOfNotNull(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_mb_mb03_disturbance_hasCountOfNotNull(
   dst_type1 text,
   dst_type2 text,

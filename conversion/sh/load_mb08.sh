@@ -15,7 +15,8 @@
 
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 inventoryID=MB08
 
@@ -26,6 +27,9 @@ fullTargetTableName=$targetFRISchema.mb08
 MB_subFolder=MB/$inventoryID/data/inventory
 
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Standard SQL code used to add and drop columns in gdbs. If column is not present the DROP command
 # will return an error which can be ignored.
@@ -44,13 +48,13 @@ fi
 
 # load polygons
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbTableName" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$inventoryID' AS inventory_id FROM $gdbTableName" \
--progress $overwrite_tab
+-progress $overwriteTable
 
 # Alter the geometry column to ensure it is 2D (MultiPolygon in SRID 102001)
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 UPDATE $fullTargetTableName
 SET wkb_geometry = ST_Force2D(wkb_geometry)
@@ -58,7 +62,7 @@ WHERE ST_GeometryType(wkb_geometry) IN ('ST_Polygon', 'ST_MultiPolygon');
 "
 
 # Optionally, change column type if needed (ensure that the geometry column is of the correct type)
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 ALTER TABLE $fullTargetTableName
 ALTER COLUMN wkb_geometry TYPE Geometry(MultiPolygon, 102001) 
@@ -67,4 +71,5 @@ USING ST_Force2D(wkb_geometry);
 
 createSQLSpatialIndex=True
 
-source ./common_postprocessing.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

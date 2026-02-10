@@ -12,7 +12,8 @@
 # in the configuration file.
 ######################################## Set variables #######################################
 
-source ./common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
 
 srcInventoryID=MB10
 
@@ -23,17 +24,21 @@ destInventoryID=MB12
 gdbTableName=MB_FRIFLI_Updatedto2010_v9WDriveCopy
 fullTargetTableName=$targetFRISchema.mb12
 
-
 ########################################## Process ######################################
+
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Run ogr2ogr to load all table
 "$gdalFolder/ogr2ogr" \
--f "PostgreSQL" "$pg_connection_string" "$srcFullPath" "$gdbTableName" \
--nln $fullTargetTableName $layer_creation_options $other_options \
+-f "PostgreSQL" "$gdalConnectionString" "$srcFullPath" "$gdbTableName" \
+-nln $fullTargetTableName $gdalLco $gdalOtherOptions \
 -nlt PROMOTE_TO_MULTI -nlt CONVERT_TO_LINEAR \
 -emptyStrAsNull \
 -sql "SELECT *, '$srcFileName' AS src_filename, '$destInventoryID' AS inventory_id, mu_id AS mu_fli,
             yearphoto as yearphoto_fli FROM $gdbTableName WHERE fri_fli = 'FLI'" \
--progress $overwrite_tab
+-progress $overwriteTable
 
-"$gdalFolder/ogrinfo" "$pg_connection_string" -sql "UPDATE $fullTargetTableName SET cc = NULL where cc = ' '";
+"$gdalFolder/ogrinfo" "$gdalConnectionString" -sql "UPDATE $fullTargetTableName SET cc = NULL where cc = ' '";
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh

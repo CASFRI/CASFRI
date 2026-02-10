@@ -3,7 +3,7 @@
 # Join all attribute tables to polygons.
 # The ogc_fid attribute is dropped from all but the poly table. 
 # Original tables are deleted at the end.
-"$gdalFolder/ogrinfo" "$pg_connection_string" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 -- delete ogc and poly_id, joins don't work with matching names. SK04 and SK05 needs to drop duplicated CROWN_CLOSURE column from layer 1, shrub and herb tables
 ALTER TABLE $TableName_meta DROP COLUMN IF EXISTS ogc_fid, DROP COLUMN IF EXISTS poly_id;
