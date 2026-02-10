@@ -7933,7 +7933,7 @@ RETURNS int AS $$
     age int;
   BEGIN
     map_unit_int = substring(src_filename, 3,3)::int;
-    photo_year = TT_geoIntersectionInt(the_geom, 'rawfri', 'nl_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
+    photo_year = TT_geoIntersectionInt(the_geom, 'rawfri', 'nl01_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
 
     IF map_unit_int > 0 AND map_unit_int <=180 THEN
       age = TT_mapText(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{''0'',''21'',''41'',''61'',''81'',''101'',''121''}')::int; -- Newfoundland
@@ -8009,7 +8009,7 @@ RETURNS int AS $$
     age int;
   BEGIN
     map_unit_int = substring(src_filename, 3,3)::int;
-    photo_year = TT_geoIntersectionInt(the_geom, 'rawfri', 'nl_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
+    photo_year = TT_geoIntersectionInt(the_geom, 'rawfri', 'nl01_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
 
     -- don't return the last values of 7 and 9 because the upper age is not defined, therefore lower origin is unknown_value. Catch these with validation.
     IF map_unit_int > 0 AND map_unit_int <=180 THEN

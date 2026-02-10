@@ -54,7 +54,7 @@ maxTranslationsInParallel=36
 #################################################################
 
 # Extra, non inventory tables to load (not translate) in either cases.
-photoYearList=(ab_photoyear nl_photoyear nl02_photoyear)
+photoYearList=(ab_photoyear nl01_photoyear nl02_photoyear)
 
 #----------------------------------------------------------------
 

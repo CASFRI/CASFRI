@@ -4,27 +4,31 @@
 
 #The format of the source dataset is ArcInfo Coverages divided into mapsheets.
 
-# The FRI data is stored in the "lcovxxx" feature for each mapsheet where xxx is the mapsheet number. 
-# Script loops through each mapsheet folder, gets the mapsheet number, and appends the lcov table to the target table in PostgreSQL.
-# Done using the -append argument. 
+# The FRI data is stored in the "lcovxxx" feature for each mapsheet where xxx is 
+# the mapsheet number. Script loops through each mapsheet folder, gets the 
+# mapsheet number, and appends the lcov table to the target table in PostgreSQL
+# using the -append argument.
+
 # Note that -update is also needed in order to append in PostgreSQL. 
 # -addfields is not needed here as columns match in all tables.
 
-# Note that some mapsheet folders do not contain any data and will return an error.
+# Note that many mapsheet folders do not contain any data and will return an error.
 # I don't think it is possible to skip these folders without inspecting them using
 # the ESRI driver. i.e. using 'if file exists' loop would not work.
+# Those mapsheets are: ms17, ms21, ms37-38, ms122-125, ms128-129, ms135-143, 
+# ms148-151, etc...
 
 # The year of photography is included as a shapefile. 
 # Photo year will be joined to the loaded table in PostgreSQL
 
-# The combination of inventory_id, src_filename, stand_id and lcov_id_1 in the loaded dataset makes
-# a unique identifier that links back to a single row in the source data. These attributes should be
-# used in the cas_id.
+# The combination of inventory_id, src_filename, stand_id and lcov_id_1 in the 
+# loaded dataset makes a unique identifier that links back to a single row in 
+# the source data. These attributes should be used in the cas_id.
 
 # Load into the nl01 target table in the schema defined in the config file.
 
-# If the table already exists, it can be overwritten by setting the "overwriteFRI" variable 
-# in the configuration file.
+# If the table already exists, it can be overwritten by setting the "overwriteFRI" 
+# variable in the configuration file.
 
 ######################################## Set variables #######################################
 

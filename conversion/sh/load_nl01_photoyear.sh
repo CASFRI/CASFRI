@@ -13,16 +13,20 @@
 
 ######################################## Set variables #######################################
 
-source ../common.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../../common.sh
+
+inventoryID=NL01
 
 srcFileName=photoyear
-srcFullPath="$friDir/NL/NL01/data/photoyear/$srcFileName.shp"
+srcFullPath="$friDir/NL/$inventoryID/data/photoyear/$srcFileName.shp"
 
-fullTargetTableName=$targetFRISchema.nl_photoYear
+fullTargetTableName=$targetFRISchema.nl01_photoYear
 
 ########################################## Process ######################################
 
-source ./pre_conversion.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../pre_conversion.sh
 
 # Run ogr2ogr
 "$gdalFolder/ogr2ogr" \
@@ -34,16 +38,17 @@ source ./pre_conversion.sh
 # Fix it
 "$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
-DROP TABLE IF EXISTS ${targetFRISchema}.new_nl_photoyear CASCADE;
+DROP TABLE IF EXISTS ${targetFRISchema}.new_nl01_photoyear CASCADE;
 
-CREATE TABLE ${targetFRISchema}.new_nl_photoyear AS
+CREATE TABLE ${targetFRISchema}.new_nl01_photoyear AS
 SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, photoyear, ogc_fid
 FROM ${fullTargetTableName};
 
 DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
 
-ALTER TABLE ${targetFRISchema}.new_nl_photoyear RENAME TO nl_photoyear;
+ALTER TABLE ${targetFRISchema}.new_nl01_photoyear RENAME TO nl01_photoyear;
 "
 createSQLSpatialIndex=True
 
-source ./post_conversion.sh
+thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source $thisScriptDir/../post_conversion.sh
