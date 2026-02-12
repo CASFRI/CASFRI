@@ -17,6 +17,5 @@ SELECT TT_DeleteAllViews('rawfri');
 DROP SCHEMA IF EXISTS translation CASCADE;
 DROP SCHEMA IF EXISTS casfri50_test CASCADE;
 DROP SCHEMA IF EXISTS casfri50 CASCADE;
-DROP EXTENSION IF EXISTS table_translation_framework CASCADE;
 
 
