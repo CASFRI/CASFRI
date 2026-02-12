@@ -426,6 +426,8 @@ RETURNS geometry AS $$
   DECLARE
     returnGeom geometry;
   BEGIN
+    RAISE NOTICE 'TT_RemoveHoles() : START...';
+
     IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
       RETURN inGeom;
     END IF;
@@ -445,6 +447,8 @@ RETURNS geometry AS $$
     )
     SELECT ST_BuildArea(ST_Union(final_geom)) geom
     FROM polygons INTO returnGeom;
+    
+    RAISE NOTICE 'TT_RemoveHoles() : END Geometry has now % points...', ST_NPoints(returnGeom);
 
     RETURN returnGeom;
   END;
@@ -463,9 +467,14 @@ RETURNS geometry AS $$
   DECLARE
     returnGeom geometry;
   BEGIN
+    --RAISE NOTICE 'TT_TrimSubPolygons() : START...';
+
     IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
       RETURN inGeom;
     END IF;
+
+    --RAISE NOTICE 'TT_TrimSubPolygons() : 111...';
+
     WITH all_geoms AS (
       SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
     )
@@ -473,9 +482,15 @@ RETURNS geometry AS $$
     FROM all_geoms
     WHERE ST_Area(geom) >= minArea INTO returnGeom;
 
+    --RAISE NOTICE 'TT_TrimSubPolygons() : 222...';
+
     IF returnGeom IS NULL THEN
+      --RAISE NOTICE 'TT_TrimSubPolygons() : 333...';
       RETURN ST_SetSRID('POLYGON EMPTY'::geometry, ST_SRID(inGeom));
     END IF;
+
+    --RAISE NOTICE 'TT_TrimSubPolygons() : END Geometry has now % points...', ST_NPoints(returnGeom);
+
     RETURN returnGeom;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
@@ -497,6 +512,8 @@ RETURNS geometry AS $$
     queryStr text;
     returnGeom geometry;
   BEGIN
+    RAISE NOTICE 'TT_SuperUnion() : START...';
+
     queryStr = 'WITH gridded AS (' ||
                   'SELECT TT_SplitByGrid(' || geomColumnName ||', 10000) split ' ||
                   'FROM ' || TT_FullTableName(schemaName, tableName) ||
@@ -508,8 +525,11 @@ RETURNS geometry AS $$
                ') ' ||
                'SELECT ST_Union(geom) geom ' ||
                'FROM first_level_union;';
-    --RAISE NOTICE 'queryStr=%', queryStr;
+    RAISE NOTICE 'queryStr=%', queryStr;
     EXECUTE queryStr INTO returnGeom;
+    
+    RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
+
     RETURN returnGeom;
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -549,7 +569,7 @@ SELECT n, log(abs(n))
 FROM series
 WHERE n != 0;
 
-SELECT round(123, -2)
+SELECT round(123, -2);
 -----------------------------------------------------------
 -- TT_SplitAgg aggregate state function
 --
@@ -618,7 +638,7 @@ $$ LANGUAGE sql VOLATILE;
 ---------------------------------------
 -- ST_SplitAgg aggregate
 -- DROP AGGREGATE IF EXISTS TT_SplitAgg(geometry, geometry, double precision);
-CREATE AGGREGATE TT_SplitAgg(geometry, geometry, double precision) (
+CREATE OR REPLACE AGGREGATE TT_SplitAgg(geometry, geometry, double precision) (
     SFUNC=TT_SplitAgg_StateFN,
     STYPE=geometry[]
 );
@@ -626,7 +646,7 @@ CREATE AGGREGATE TT_SplitAgg(geometry, geometry, double precision) (
 ---------------------------------------
 -- ST_SplitAgg aggregate defaulting tolerance to 0.0
 -- DROP AGGREGATE IF EXISTS TT_SplitAgg(geometry, geometry);
-CREATE AGGREGATE TT_SplitAgg(geometry, geometry) (
+CREATE OR REPLACE AGGREGATE TT_SplitAgg(geometry, geometry) (
     SFUNC=TT_SplitAgg_StateFN,
     STYPE=geometry[]
 );
@@ -641,7 +661,7 @@ CREATE OR REPLACE FUNCTION TT_ProduceDerivedCoverages(
   detailedGeom geometry, -- non simplified version of the coverage geometry
   minArea double precision DEFAULT 10000000, -- minimum area of holes and island to keep
   sparse boolean DEFAULT FALSE, -- apply a special treatment for sparce geometries
-  sparseBuf double precision DEFAULT 5000 -- buufer to apply for sparse geometries
+  sparseBuf double precision DEFAULT 5000 -- buffer to apply for sparse geometries
 )
 RETURNS boolean AS $$
   DECLARE
@@ -655,13 +675,17 @@ RETURNS boolean AS $$
     smoothedGeom geometry;
     cnt int;
   BEGIN
+    RAISE NOTICE 'TT_RemoveHoles() for ''%'' to produce noholes...', fromInv;
     noHolesGeom = TT_RemoveHoles(detailedGeom, minArea);
+    RAISE NOTICE 'TT_TrimSubPolygons() for ''%'' to produce noislands...', fromInv;
     noIslandsGeom = TT_TrimSubPolygons(noHolesGeom, minArea);
+    RAISE NOTICE 'ST_SimplifyPreserveTopology() for ''%'' to produce simplified...', fromInv;
     simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 100);
+    RAISE NOTICE 'TT_TrimSubPolygons(TT_BufferedSmooth()) for ''%'' to produce smoothed...', fromInv;
     smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), minArea);
     SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE inv = fromInv INTO cnt;
     FOREACH tableName IN ARRAY tableNameArr LOOP
-      RAISE NOTICE 'Processing % %...', fromInv, tableName;
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating % %...', fromInv, tableName;
       outGeom = CASE WHEN tableName = 'detailed' THEN detailedGeom
                      WHEN tableName = 'noholes' THEN noHolesGeom
                      WHEN tableName = 'noislands' THEN noIslandsGeom
@@ -676,7 +700,7 @@ RETURNS boolean AS $$
       EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
 
       -- Create a gridded version for each
-      RAISE NOTICE 'Processing % %...', fromInv, tableName || '_gridded';
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating % %...', fromInv, tableName || '_gridded';
       queryStr = 'CREATE TABLE IF NOT EXISTS casfri50_coverage.' || tableName || '_gridded
                  (inv text, nb_polys int, nb_points int, geom geometry);
                  CREATE INDEX IF NOT EXISTS ' || tableName || '_geom_idx ON casfri50_coverage.' || tableName || '_gridded USING gist(geom);
@@ -688,7 +712,7 @@ RETURNS boolean AS $$
                        FROM casfri50_coverage.' || tableName || '
                        WHERE inv = ''' || upper(fromInv) || ''') foo;';
       EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
-      RAISE NOTICE 'Processing of % finished...', fromInv;
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Processing of % finished...', fromInv;
     END LOOP;
     
     RETURN TRUE;
@@ -749,8 +773,8 @@ RETURNS boolean AS $$
       WHERE inventory_id = ''' || inv || ''';';
       EXECUTE countQuery INTO expectedRowNb;
 
-      RAISE NOTICE 'TT_ProduceInvGeoHistory() - % gridded polygon to process...', expectedRowNb;
-      
+      RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - % gridded polygon to process...', inv, expectedRowNb;
+
       seqName = 'geohistory_' || lower(inv);
       queryStr = 'DROP SEQUENCE IF EXISTS ' || seqName || '_1;
       CREATE SEQUENCE ' || seqName || '_1 START 1;
@@ -838,7 +862,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- New TYPE for TT_ValidYearUnionStateFct()
 ------------------------------------------------------------------
---DROP TYPE IF EXISTS geomlowuppval;
+DROP TYPE IF EXISTS geomlowuppval CASCADE;
 CREATE TYPE geomlowuppval AS
 (
   geom geometry,
@@ -1044,7 +1068,7 @@ RETURNS geomlowuppval[] AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 --------------------------------------
 --DROP AGGREGATE IF EXISTS TT_ValidYearUnion(geometry, int, int);
-CREATE AGGREGATE TT_ValidYearUnion(
+CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
   geom geometry,
   yearLower int,
   yearUpper int
@@ -1215,17 +1239,18 @@ RETURNS TABLE (id text,
     IF debug_l2 THEN RAISE NOTICE E'000 ovlpPolyQuery = \n%\n', ovlpPolyQuery;END IF;
     
     time = clock_timestamp();
-    IF debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 0...';END IF;
+    IF debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 0 with safeDiff to FALSE...';END IF;
     diffAttempts = 0;
-
-    IF debug_l2 THEN RAISE NOTICE 'Setting safeDiff to FALSE...';END IF;
     safeDiff = FALSE;
-    -- Here we loop until a satistactory set of historical polygon has been computed first 
-    -- using the unsafe version of ST_Difference() and then with a safe version of it
+    -- Here we loop until a satistactory set of historical polygon has been intersected first 
+    -- using the unsafe version of ST_Difference() (diffAttempts = 0) and then with a safe 
+    -- version of it (diffAttempts = 1)
+    IF (debug_l1 OR debug_l2) AND diffAttempts = 0 THEN RAISE NOTICE '****************************************************************';END IF;
+    IF debug_l1 OR debug_l2 THEN RAISE NOTICE '000 Processing main polygon with polyID %. photo_year=%', poly_row_id, poly_photo_year;END IF;
     WHILE diffAttempts < 2 LOOP
+      IF (debug_l1 OR debug_l2) AND diffAttempts = 1 THEN RAISE NOTICE '----------------------- SAFE OFF --------------------------';END IF;
+      IF (debug_l1 OR debug_l2) AND diffAttempts = 1 THEN RAISE NOTICE '----------------------- SAFE ON --------------------------';END IF;
       BEGIN
-        IF debug_l1 OR debug_l2 THEN RAISE NOTICE '---------------------------------------------------------------';END IF;
-        IF debug_l1 OR debug_l2 THEN RAISE NOTICE '000 processing polyID %. photo_year=%', poly_row_id, poly_photo_year;END IF;
 
         -- Initialize preValidYearPoly to the current polygon
         preValidYearPoly = poly_geom;
@@ -1256,25 +1281,27 @@ RETURNS TABLE (id text,
         END IF;
 
         -- LOOP over all overlapping polygons sorted by photoYear ASC
+        IF debug_l1 THEN RAISE NOTICE 'START looping over intersecting polygons...';END IF;
         FOR ovlpRow IN EXECUTE ovlpPolyQuery 
         USING poly_row_id, poly_geom LOOP
-          IF debug_l2 THEN RAISE NOTICE '---------------------------';END IF;
-          IF debug_l1 THEN RAISE NOTICE 'Processing overlapping polygon %', ovlpRow.gh_row_id;END IF;
-          IF debug_l2 THEN RAISE NOTICE '111 ovlp poly id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;END IF;
-          IF debug_l2 THEN RAISE NOTICE '111 ovlp_area=%', ST_Area(ST_Intersection(poly_geom, ovlpRow.gh_geom));END IF;
+          IF debug_l2 THEN RAISE NOTICE '  ---------------------------';END IF;
+          IF debug_l1 THEN RAISE NOTICE '  Processing overlapping polygon %', ovlpRow.gh_row_id;END IF;
+          IF debug_l2 THEN RAISE NOTICE '  111 ovlp poly id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;END IF;
+          IF debug_l2 THEN RAISE NOTICE '  111 ovlp_area=%', ST_Area(ST_Intersection(poly_geom, ovlpRow.gh_geom));END IF;
 
           -----------------------------------------------------------
           -- CASE B - (A - B) RefYB -> RefYE (see logic table above)
           -----------------------------------------------------------
+          IF debug_l2 THEN RAISE NOTICE E'  111 calling TT_HasPrecedence(''%'', ''%'', ''%'', ''%'', %, %)', poly_inv, poly_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, 'true', 'true';END IF;
           hasPrecedence = TT_HasPrecedence(poly_inv, poly_row_id, ovlpRow.gh_inv, ovlpRow.gh_row_id, true, true);
-          IF debug_l2 THEN RAISE NOTICE E'111 hasPrecedence = %\n', hasPrecedence;END IF;
+          IF debug_l2 THEN RAISE NOTICE E'  111 hasPrecedence = %\n', hasPrecedence;END IF;
          
           IF (ovlpRow.gh_photo_year = poly_photo_year AND 
              ((hasPrecedence AND NOT poly_is_valid AND ovlpRow.gh_is_valid) OR
              (NOT hasPrecedence AND (NOT poly_is_valid OR (poly_is_valid AND ovlpRow.gh_is_valid))))) OR
              (ovlpRow.gh_photo_year < poly_photo_year AND NOT poly_is_valid AND ovlpRow.gh_is_valid) OR
              (ovlpRow.gh_photo_year > poly_photo_year AND NOT poly_is_valid) THEN
-            IF debug_l2 THEN RAISE NOTICE 'AAA.1 CASE SAME YEAR: Remove ovlpPoly from prePoly. ovlp.py = %', ovlpRow.gh_photo_year;END IF;
+            IF debug_l2 THEN RAISE NOTICE '  AAA.1 CASE SAME YEAR: Remove ovlpPoly from prePoly. ovlp.py = %', ovlpRow.gh_photo_year;END IF;
 
             preValidYearPoly = TT_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, safeDiffGridSize, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
             preValidYearPoly = ST_Multi(TT_TrimSubPolygons(ST_CollectionExtract(preValidYearPoly, 3), smallestPolyArea));
@@ -1285,7 +1312,7 @@ RETURNS TABLE (id text,
               valid_year_begin = refYearBegin;
               valid_year_end = preValidYearPolyYearEnd;
               valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-              RAISE NOTICE 'AAA.2 Debug_poly = %', left(poly_type, 50);
+              RAISE NOTICE '  AAA.2 Debug_poly = %', left(poly_type, 50);
               RETURN NEXT;
             END IF;
 
@@ -1299,18 +1326,18 @@ RETURNS TABLE (id text,
                 valid_year_begin = postValidYearPolyYearBegin;
                 valid_year_end = refYearEnd;
                 valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-                RAISE NOTICE 'AAA.3 Debug_poly = %', left(poly_type, 50);
+                RAISE NOTICE '  AAA.3 Debug_poly = %', left(poly_type, 50);
                 RETURN NEXT;
               END IF;
             END IF;
 
-            IF debug_l2 THEN RAISE NOTICE 'AAA CASE SAME YEAR Done';END IF;
+            IF debug_l2 THEN RAISE NOTICE '  AAA CASE SAME YEAR Done';END IF;
 
           -----------------------------------------------------------
           -- CASE C - (A - B) RefYB -> AY - 1 and A AY -> RefYE (see logic table above)
           -----------------------------------------------------------
           ELSIF ovlpRow.gh_photo_year < poly_photo_year AND poly_is_valid AND ovlpRow.gh_is_valid THEN
-            IF debug_l2 THEN RAISE NOTICE 'CCC CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. ovlp.py = %', ovlpRow.gh_photo_year;END IF;
+            IF debug_l2 THEN RAISE NOTICE '  CCC CASE 2: Initialize postPoly and remove ovlpPoly from prePoly. ovlp.py = %', ovlpRow.gh_photo_year;END IF;
 
             postValidYearPoly = coalesce(postValidYearPoly, preValidYearPoly);
             postValidYearPolyYearBegin = poly_photo_year;
@@ -1326,15 +1353,15 @@ RETURNS TABLE (id text,
               valid_year_begin = refYearBegin;
               valid_year_end = preValidYearPolyYearEnd;
               valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-              RAISE NOTICE 'CCC Debug_poly = %', left(poly_type, 50);
+              RAISE NOTICE '  CCC Debug_poly = %', left(poly_type, 50);
               RETURN NEXT;
             END IF;
-            IF debug_l2 THEN RAISE NOTICE 'CCC CASE 2 Done';END IF;
+            IF debug_l2 THEN RAISE NOTICE '  CCC CASE 2 Done';END IF;
           -----------------------------------------------------------
           -- CASE D - A RefYB -> BY - 1 and (A - B) BY -> RefYE (see logic table above)
           -----------------------------------------------------------
           ELSIF ovlpRow.gh_photo_year > poly_photo_year AND poly_is_valid AND ovlpRow.gh_is_valid THEN
-            IF debug_l2 THEN RAISE NOTICE 'DDD CASE 3: Return intermediate postPoly and set the next one by removing ovlpPoly. ovlp.ph = %', ovlpRow.gh_photo_year;END IF;
+            IF debug_l2 THEN RAISE NOTICE '  DDD CASE 3: Return intermediate postPoly and set the next one by removing ovlpPoly. ovlp.ph = %', ovlpRow.gh_photo_year;END IF;
 
             -- Make sure the last computed polygon still intersect with ovlpPoly
             IF TT_GeoHistoryOverlaps(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
@@ -1346,18 +1373,18 @@ RETURNS TABLE (id text,
                   valid_year_begin = postValidYearPolyYearBegin;
                   valid_year_end = ovlpRow.gh_photo_year - 1;
                   valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-                  IF debug_l2 THEN RAISE NOTICE '---------';END IF;
-                  IF debug_l2 THEN RAISE NOTICE 'RETURNING INTERMEDIATE postPoly valid_time=%', valid_time;END IF;
-                  IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+                  IF debug_l2 THEN RAISE NOTICE '  ---------';END IF;
+                  IF debug_l2 THEN RAISE NOTICE '  RETURNING INTERMEDIATE postPoly valid_time=%', valid_time;END IF;
+                  IF debug_l2 THEN RAISE NOTICE '  ---------';END IF;
                   RETURN NEXT;
                 ELSE
-                  IF debug_l2 THEN RAISE NOTICE 'DDD: postPoly is too small. No INTERMEDIATE postPoly RETURNED';END IF;
+                  IF debug_l2 THEN RAISE NOTICE '  DDD: postPoly is too small. No INTERMEDIATE postPoly RETURNED';END IF;
                 END IF;
               ELSE
-                IF debug_l2 THEN RAISE NOTICE 'DDD: (oldOvlpPolyYear IS NULL) = %', oldOvlpPolyYear IS NULL;END IF;
-                IF debug_l2 THEN RAISE NOTICE 'DDD: (oldOvlpPolyYear = ovlpRow.gh_photo_year) = %', oldOvlpPolyYear = ovlpRow.gh_photo_year;END IF;
-                IF debug_l2 THEN RAISE NOTICE 'DDD: (postValidYearPoly IS NULL) = %', postValidYearPoly IS NULL;END IF;
-                IF debug_l2 THEN RAISE NOTICE 'DDD: No INTERMEDIATE postPoly RETURNED';END IF;
+                IF debug_l2 THEN RAISE NOTICE '  DDD: (oldOvlpPolyYear IS NULL) = %', oldOvlpPolyYear IS NULL;END IF;
+                IF debug_l2 THEN RAISE NOTICE '  DDD: (oldOvlpPolyYear = ovlpRow.gh_photo_year) = %', oldOvlpPolyYear = ovlpRow.gh_photo_year;END IF;
+                IF debug_l2 THEN RAISE NOTICE '  DDD: (postValidYearPoly IS NULL) = %', postValidYearPoly IS NULL;END IF;
+                IF debug_l2 THEN RAISE NOTICE '  DDD: No INTERMEDIATE postPoly RETURNED';END IF;
               END IF;
 
               postValidYearPoly = TT_SafeDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, safeDiffGridSize, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || poly_row_id, ovlpRow.gh_row_id, safeDiff);
@@ -1371,29 +1398,27 @@ RETURNS TABLE (id text,
                 valid_year_begin = postValidYearPolyYearBegin;
                 valid_year_end = refYearEnd;
                 valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-                RAISE NOTICE 'DDD: Debug_poly = %', left(poly_type, 50);
+                RAISE NOTICE '  DDD: Debug_poly = %', left(poly_type, 50);
                 RETURN NEXT;
               END IF;
               preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, ovlpRow.gh_photo_year - 1);
             ELSE
-              IF debug_l2 THEN RAISE NOTICE 'DDD: TT_GeoHistoryOverlaps() is FALSE';END IF;
+              IF debug_l2 THEN RAISE NOTICE '  DDD: TT_GeoHistoryOverlaps() is FALSE';END IF;
             END IF;
-            IF debug_l2 THEN RAISE NOTICE 'DDD CASE 3 Done';END IF;
+            IF debug_l2 THEN RAISE NOTICE '  DDD CASE 3 Done';END IF;
           END IF;
           oldOvlpPolyYear = ovlpRow.gh_photo_year;
         END LOOP;
-        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 2...';END IF;
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE '  Setting diffAttempts to 2 to end the loop...';END IF;
         diffAttempts = 2;
       EXCEPTION WHEN OTHERS THEN
         IF diffAttempts = 1 THEN RAISE EXCEPTION 'TT_PolygonGeoHistory() ERROR: TT_SafeDifference() failed on %...', poly_row_id;END IF;
-        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting diffAttempts to 1...';END IF;
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE '  Setting diffAttempts to 1 with safeDiff to TRUE...';END IF;
         diffAttempts = 1;
-        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'Setting safeDiff to TRUE...';END IF;
         safeDiff = TRUE;
       END;
     END LOOP; -- WHILE
-    
-    IF debug_l2 THEN RAISE NOTICE '---------';END IF;
+    IF debug_l1 THEN RAISE NOTICE 'END looping over intersecting polygons...';END IF;
     ---------------------------------------------------------------------------
     -- Return the last new polygon (newestPoly, oldCurrentYear, ovlpPoly.photoYear)
     ---------------------------------------------------------------------------

@@ -16,9 +16,9 @@ if [ $# -gt 0 ]; then
   fi
 fi
 
-echo "The list of insventory to translate is ${fullList[@]}..."
+echo "The list of inventory to translate is ${fullList[@]}..."
 
-# Translate inventories for each province code in the list
+# Translate inventories for each inventory in the list
 tests_in_parallel=0
 
 # Iterate over the list of inventory 
@@ -30,12 +30,12 @@ do
   do
     sqlStatement="CALL TT_TranslateInventory('$invID', 'T', '$casTable');"
     echo "---------------------------------------------------------------------"
-    echo "Running $sqlStatement"
+    echo "Executing $sqlStatement"
 
     "$bashCmd" -c "$psqlCmd $psqlConnectionString -P pager=off -c \"$sqlStatement\";$dontCloseTranslationShell" &
     
     ((translation_in_parallel++))
-    if (( translation_in_parallel >= maxTranslationsInParallel)); then
+    if ((translation_in_parallel >= maxTranslationsInParallel)); then
       wait -n # wait for ANY job to finish
       ((translation_in_parallel--))
     fi

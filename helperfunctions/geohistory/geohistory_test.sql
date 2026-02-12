@@ -108,41 +108,43 @@ RETURNS boolean AS $$
         RETURN FALSE;
       END IF;
     END IF;
-IF inv1 != inv2 THEN
-  RAISE NOTICE 'inv1 (%) % precedence over inv2 (%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
-                                                                 THEN 'has' 
-                                                                 ELSE 'does not have'
-                                                            END, inv2;
-ELSE
-  RAISE NOTICE 'uid1 (%) % precedence over uid2 (%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2) 
-                                                                 THEN 'has' 
-                                                                 ELSE 'does not have'
-                                                            END, uid2;
-END IF;
-      RETURN ((numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)) OR 
-             (inv1 = inv2 AND ((numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)));
+    IF inv1 != inv2 THEN
+      RAISE NOTICE 'inv1 (%) % precedence over inv2 (%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
+                                                                     THEN 'has' 
+                                                                     ELSE 'does not have'
+                                                                END, inv2;
+    ELSE
+      RAISE NOTICE 'uid1 (%) % precedence over uid2 (%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2) 
+                                                                     THEN 'has' 
+                                                                     ELSE 'does not have'
+                                                                END, uid2;
+    END IF;
+    RETURN ((numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)) OR 
+            (inv1 = inv2 AND ((numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)));
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 
---SELECT TT_HasPrecedence(NULL, NULL, NULL, NULL); -- false
---SELECT TT_HasPrecedence('AB06', NULL, NULL, NULL); -- true
---SELECT TT_HasPrecedence('AB06', NULL, 'AB06', NULL); -- false
---SELECT TT_HasPrecedence('AB06', NULL, 'AB16', NULL); -- false
---SELECT TT_HasPrecedence('AB16', NULL, 'AB06', NULL); -- true
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', NULL); -- true
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
---SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
---SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
---SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
---SELECT TT_HasPrecedence('2', '2', '13', '13');  -- true
---SELECT TT_HasPrecedence('2', '2', '13', '13', true, true); -- false
---SELECT TT_HasPrecedence('13', '2', '2', '13', true, true); -- true
+/*
+SELECT TT_HasPrecedence(NULL, NULL, NULL, NULL); -- false
+SELECT TT_HasPrecedence('AB06', NULL, NULL, NULL); -- true
+SELECT TT_HasPrecedence('AB06', NULL, 'AB06', NULL); -- false
+SELECT TT_HasPrecedence('AB06', NULL, 'AB16', NULL); -- false
+SELECT TT_HasPrecedence('AB16', NULL, 'AB06', NULL); -- true
+SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', NULL); -- true
+SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
+SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
+SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
+SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
+SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
+SELECT TT_HasPrecedence('2', '2', '13', '13');  -- true
+SELECT TT_HasPrecedence('2', '2', '13', '13', true, true); -- false
+SELECT TT_HasPrecedence('13', '2', '2', '13', true, true); -- true
 
---SELECT TT_HasPrecedence('1', '2', '1', '13', true, false); -- true
---SELECT TT_HasPrecedence('1', '13', '1', '2', true, false); -- false
---SELECT TT_HasPrecedence('1', '2', '1', '13', true, true); -- false
---SELECT TT_HasPrecedence('1', '13', '1', '2', true, true); -- true
+SELECT TT_HasPrecedence('1', '2', '1', '13', true, false); -- true
+SELECT TT_HasPrecedence('1', '13', '1', '2', true, false); -- false
+SELECT TT_HasPrecedence('1', '2', '1', '13', true, true); -- false
+SELECT TT_HasPrecedence('1', '13', '1', '2', true, true); -- true
+*/
 
 -- Create a test table for TT_TableGeoHistory() without taking validity into account
 DROP TABLE IF EXISTS casfri50_history_test.test_0_without_validity_new CASCADE;
@@ -318,7 +320,7 @@ ADD PRIMARY KEY (row_id, id, poly_id);
 -- SELECT * FROM casfri50_history_test.test_2_without_validity_new;
 
 -- Create a test table for TT_TableGeoHistory() taking validity into account
-DROP TABLE IF EXISTS casfri50_history_test.test_2_with_validity_new CASCADE
+DROP TABLE IF EXISTS casfri50_history_test.test_2_with_validity_new CASCADE;
 CREATE TABLE casfri50_history_test.test_2_with_validity_new AS
 SELECT (ROW_NUMBER() OVER() - 1)::int row_id, * 
 FROM (SELECT id::int, poly_id, isvalid, poly_type, ref_year, valid_year_begin, valid_year_end, valid_time, ST_AsText(wkb_geometry) wkt_geometry

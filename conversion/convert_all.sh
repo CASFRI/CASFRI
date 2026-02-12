@@ -46,14 +46,20 @@ wait
 
 # Display the count of rows for inventories in the current list
 
+echo "---------------------------------------------------------------------"
+echo "Counting rows for fullList = ${quoted_list}
+"
 # Create a quoted list of inventory IDs for the SQL query
 printf -v quoted_list "'%s', " "${fullList[@]}"
 quoted_list=${quoted_list%, } # Remove the last comma and space
 
-echo "---------------------------------------------------------------------"
-echo "Counting rows for fullList = ${quoted_list}
-"
-
 "$psqlCmd" $psqlConnectionString -P pager=off -c "SELECT * FROM TT_ConvertedStandCount(ARRAY[${quoted_list}]);"
+
+# In pgAdmin
+# SELECT (TT_ConvertedStandCount(ARRAY['ab06', 'ab31'])).*
+# SELECT (TT_ConvertedStandCount('TRANSLATED_BY_CFS')).*
+# SELECT (TT_ConvertedStandCount('TRANSLATED_BY_ULAVAL')).*
+# SELECT (TT_ConvertedStandCount('TRANSLATED_BY_CUSTOM')).*
+# SELECT (TT_ConvertedStandCount()).*
 
 echo "######################## End load_all.sh #############################"

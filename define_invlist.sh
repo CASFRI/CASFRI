@@ -20,7 +20,7 @@ if ! [[ -v fullList ]]; then
   "
 
   echo "---------------------------------------------------------------------"
-  echo "Running $sqlStatement"
+  echo "Executing $sqlStatement"
 
   set -x
 

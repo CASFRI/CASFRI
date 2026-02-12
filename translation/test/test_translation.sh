@@ -9,7 +9,8 @@ set -x
 "$psqlCmd" $psqlConnectionString -P pager=off -c "CREATE SCHEMA IF NOT EXISTS casfri50_test;"
 
 "$ogrCmd" -f "PostgreSQL" "$gdalConnectionString" nb_tests_per_layer.csv -nln casfri50_test.nb_tests_per_layer $overwriteTable
-set +x
+
+{ set +x; } 2>/dev/null
 
 # Determine the list of inventory to test. If a list is provided as arguments, use it. 
 # Otherwise, use the fullList from define_invlist.sh
@@ -54,7 +55,7 @@ do
   do
     sqlStatement="CALL TT_RunAllTests('$prov', '$casTable');"
     echo "---------------------------------------------------------------------"
-    echo "Running $sqlStatement"
+    echo "Executing $sqlStatement"
 
     set -x
 
@@ -73,7 +74,7 @@ done
 # Wait for the whole translation tests to finish before dumping the results
 wait
 
-declare -A attributes=(
+declare -A ordering_attributes=(
   [cas]="cas_id, inventory_id, orig_stand_id, stand_structure, num_of_layers, 
          map_sheet_id, casfri_area, casfri_perimeter, src_inv_area, stand_photo_year"
   [eco]="cas_id, wetland_type, wet_veg_cover, wet_landform_mod, wet_local_mod, 
@@ -106,7 +107,7 @@ do
     set -x
 
     $ogrCmd -f "CSV" "./tables/${table_name}_test.csv" "$gdalConnectionString" \
-    -lco STRING_QUOTING=IF_NEEDED -sql "SELECT * FROM casfri50_test.${table_name} ORDER BY ${attributes[${casTable}]};" &
+    -lco STRING_QUOTING=IF_NEEDED -sql "SELECT * FROM casfri50_test.${table_name} ORDER BY ${ordering_attributes[${casTable}]};" &
 
     { set +x; } 2>/dev/null
     

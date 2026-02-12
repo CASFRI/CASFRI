@@ -157,15 +157,17 @@ RETURNS boolean AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
---SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
---SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
---SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
---SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
---SELECT TT_HasPrecedence('AB06', '3', 'AB16', '3'); -- false
---SELECT TT_HasPrecedence('AB06', '3', 'AB16', '2'); -- false
---SELECT TT_HasPrecedence('AB16', '3', 'AB06', '3'); -- true
---SELECT TT_HasPrecedence('AB16', '3', 'AB06', '2'); -- true
+/*
+SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AA'); -- false
+SELECT TT_HasPrecedence('AB06', 'AA', 'AB06', 'AB'); -- false
+SELECT TT_HasPrecedence('AB06', 'AB', 'AB06', 'AA'); -- true
+SELECT TT_HasPrecedence('AB06', '2', 'AB06', '3'); -- false
+SELECT TT_HasPrecedence('AB06', '3', 'AB06', '2'); -- true
+SELECT TT_HasPrecedence('AB06', '3', 'AB16', '3'); -- false
+SELECT TT_HasPrecedence('AB06', '3', 'AB16', '2'); -- false
+SELECT TT_HasPrecedence('AB16', '3', 'AB06', '3'); -- true
+SELECT TT_HasPrecedence('AB16', '3', 'AB06', '2'); -- true
+*/
 ------------------------------------------------------------------------------
 -- Create a spatial table of sampling areas having two 
 -- or more inventories with different photo_years
