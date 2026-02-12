@@ -229,75 +229,75 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -----------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_SplitByGrid(geometry, double precision, double precision, double precision, double precision);
 CREATE OR REPLACE FUNCTION TT_SplitByGrid(
-    ingeom geometry,
-    xgridsize double precision,
-    ygridsize double precision DEFAULT NULL,
-    xgridoffset double precision DEFAULT 0.0,
-    ygridoffset double precision DEFAULT 0.0
+  ingeom geometry,
+  xgridsize double precision,
+  ygridsize double precision DEFAULT NULL,
+  xgridoffset double precision DEFAULT 0.0,
+  ygridoffset double precision DEFAULT 0.0
 )
 RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
-    DECLARE
-        width int;
-        height int;
-        xminrounded double precision;
-        yminrounded double precision;
-        xmaxrounded double precision;
-        ymaxrounded double precision;
-        xmin double precision := ST_XMin(ingeom);
-        ymin double precision := ST_YMin(ingeom);
-        xmax double precision := ST_XMax(ingeom);
-        ymax double precision := ST_YMax(ingeom);
-        x int;
-        y int;
-        env geometry;
-        xfloor int;
-        yfloor int;
-    BEGIN
-        IF ingeom IS NULL OR ST_IsEmpty(ingeom) THEN
-            geom = ingeom;
-            tid = NULL;
-            tx = NULL;
-            ty = NULL;
-            tgeom = NULL;
-            RETURN NEXT;
-            RETURN;
-        END IF;
-        IF xgridsize IS NULL OR xgridsize <= 0 THEN
-            RAISE NOTICE 'Defaulting xgridsize to 1...';
-            xgridsize = 1;
-        END IF;
-        IF ygridsize IS NULL OR ygridsize <= 0 THEN
-            ygridsize = xgridsize;
-        END IF;
-        xfloor = floor((xmin - xgridoffset) / xgridsize);
-        xminrounded = xfloor * xgridsize + xgridoffset;
-        xmaxrounded = ceil((xmax - xgridoffset) / xgridsize) * xgridsize + xgridoffset;
-        yfloor = floor((ymin - ygridoffset) / ygridsize);
-        yminrounded = yfloor * ygridsize + ygridoffset;
-        ymaxrounded = ceil((ymax - ygridoffset) / ygridsize) * ygridsize + ygridoffset;
+  DECLARE
+    width int;
+    height int;
+    xminrounded double precision;
+    yminrounded double precision;
+    xmaxrounded double precision;
+    ymaxrounded double precision;
+    xmin double precision := ST_XMin(ingeom);
+    ymin double precision := ST_YMin(ingeom);
+    xmax double precision := ST_XMax(ingeom);
+    ymax double precision := ST_YMax(ingeom);
+    x int;
+    y int;
+    env geometry;
+    xfloor int;
+    yfloor int;
+  BEGIN
+    IF ingeom IS NULL OR ST_IsEmpty(ingeom) THEN
+      geom = ingeom;
+      tid = NULL;
+      tx = NULL;
+      ty = NULL;
+      tgeom = NULL;
+      RETURN NEXT;
+      RETURN;
+    END IF;
+    IF xgridsize IS NULL OR xgridsize <= 0 THEN
+      RAISE NOTICE 'Defaulting xgridsize to 1...';
+      xgridsize = 1;
+    END IF;
+    IF ygridsize IS NULL OR ygridsize <= 0 THEN
+      ygridsize = xgridsize;
+    END IF;
+    xfloor = floor((xmin - xgridoffset) / xgridsize);
+    xminrounded = xfloor * xgridsize + xgridoffset;
+    xmaxrounded = ceil((xmax - xgridoffset) / xgridsize) * xgridsize + xgridoffset;
+    yfloor = floor((ymin - ygridoffset) / ygridsize);
+    yminrounded = yfloor * ygridsize + ygridoffset;
+    ymaxrounded = ceil((ymax - ygridoffset) / ygridsize) * ygridsize + ygridoffset;
 
-        width = round((xmaxrounded - xminrounded) / xgridsize);
-        height = round((ymaxrounded - yminrounded) / ygridsize);
+    width = round((xmaxrounded - xminrounded) / xgridsize);
+    height = round((ymaxrounded - yminrounded) / ygridsize);
 
-        FOR x IN 1..width LOOP
-            FOR y IN 1..height LOOP
-                env = ST_MakeEnvelope(xminrounded + (x - 1) * xgridsize, yminrounded + (y - 1) * ygridsize, xminrounded + x * xgridsize, yminrounded + y * ygridsize, ST_SRID(ingeom));
-                IF ST_Intersects(env, ingeom) AND (
-                     ST_Dimension(ST_Intersection(ingeom, env)) = ST_Dimension(ingeom) OR
-                     ST_GeometryType(ST_Intersection(ingeom, env)) = ST_GeometryType(ingeom)
-                   ) 
-                   THEN
-                   geom = ST_Intersection(ingeom, env);
-                   tid = ((xfloor::int8 + x) * 10000000 + (yfloor::int8 + y))::int8;
-                   tx = xfloor + x;
-                   ty = yfloor + y;
-                   tgeom = env;
-                   RETURN NEXT;
-                 END IF;
-            END LOOP;
-        END LOOP;
-    RETURN;
-    END;
+    FOR x IN 1..width LOOP
+      FOR y IN 1..height LOOP
+        env = ST_MakeEnvelope(xminrounded + (x - 1) * xgridsize, yminrounded + (y - 1) * ygridsize, xminrounded + x * xgridsize, yminrounded + y * ygridsize, ST_SRID(ingeom));
+        IF ST_Intersects(env, ingeom) AND 
+           (
+              ST_Dimension(ST_Intersection(ingeom, env)) = ST_Dimension(ingeom) OR
+              ST_GeometryType(ST_Intersection(ingeom, env)) = ST_GeometryType(ingeom)
+           ) THEN
+          geom = ST_Intersection(ingeom, env);
+          tid = ((xfloor::int8 + x) * 10000000 + (yfloor::int8 + y))::int8;
+          tx = xfloor + x;
+          ty = yfloor + y;
+          tgeom = env;
+          RETURN NEXT;
+        END IF;
+      END LOOP;
+    END LOOP;
+  RETURN;
+  END;
 $$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE;
 /*
 SELECT * FROM TT_SplitByGrid(ST_Buffer(ST_MakePoint(0, 0), 100), 100);
@@ -328,57 +328,57 @@ SELECT * FROM TT_SplitByGrid(NULL::geometry, 10);
 -----------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_RandomPoints(geometry, integer, numeric);
 CREATE OR REPLACE FUNCTION TT_RandomPoints(
-    geom geometry,
-    nb integer,
-    seed numeric DEFAULT NULL
+  geom geometry,
+  nb integer,
+  seed numeric DEFAULT NULL
 )
 RETURNS SETOF geometry AS $$
-    DECLARE
-        pt geometry;
-        xmin float8;
-        xmax float8;
-        ymin float8;
-        ymax float8;
-        xrange float8;
-        yrange float8;
-        srid int;
-        count integer := 0;
-        gtype text;
-    BEGIN
-        SELECT ST_GeometryType(geom) INTO gtype;
+  DECLARE
+    pt geometry;
+    xmin float8;
+    xmax float8;
+    ymin float8;
+    ymax float8;
+    xrange float8;
+    yrange float8;
+    srid int;
+    count integer := 0;
+    gtype text;
+  BEGIN
+    SELECT ST_GeometryType(geom) INTO gtype;
 
-        -- Make sure the geometry is some kind of polygon
-        IF (gtype IS NULL OR (gtype != 'ST_Polygon') AND (gtype != 'ST_MultiPolygon')) THEN
-            RAISE NOTICE 'Attempting to get random points in a non polygon geometry';
-            RETURN NEXT NULL;
-            RETURN;
-        END IF;
+    -- Make sure the geometry is some kind of polygon
+    IF (gtype IS NULL OR (gtype != 'ST_Polygon') AND (gtype != 'ST_MultiPolygon')) THEN
+      RAISE NOTICE 'Attempting to get random points in a non polygon geometry';
+      RETURN NEXT NULL;
+      RETURN;
+    END IF;
 
-        -- Compute the extent
-        SELECT ST_XMin(geom), ST_XMax(geom), ST_YMin(geom), ST_YMax(geom), ST_SRID(geom)
-        INTO xmin, xmax, ymin, ymax, srid;
+    -- Compute the extent
+    SELECT ST_XMin(geom), ST_XMax(geom), ST_YMin(geom), ST_YMax(geom), ST_SRID(geom)
+    INTO xmin, xmax, ymin, ymax, srid;
 
-        -- and the range of the extent
-        SELECT xmax - xmin, ymax - ymin
-        INTO xrange, yrange;
+    -- and the range of the extent
+    SELECT xmax - xmin, ymax - ymin
+    INTO xrange, yrange;
 
-        -- Set the seed if provided
-        IF seed IS NOT NULL THEN
-            PERFORM setseed(seed);
-        END IF;
+    -- Set the seed if provided
+    IF seed IS NOT NULL THEN
+      PERFORM setseed(seed);
+    END IF;
 
-        -- Find valid points one after the other checking if they are inside the polygon
-        WHILE count < nb LOOP
-            SELECT ST_SetSRID(ST_MakePoint(xmin + xrange * random(), ymin + yrange * random()), srid)
-            INTO pt;
+    -- Find valid points one after the other checking if they are inside the polygon
+    WHILE count < nb LOOP
+      SELECT ST_SetSRID(ST_MakePoint(xmin + xrange * random(), ymin + yrange * random()), srid)
+      INTO pt;
 
-            IF ST_Contains(geom, pt) THEN
-                count := count + 1;
-                RETURN NEXT pt;
-            END IF;
-        END LOOP;
-        RETURN;
-    END;
+      IF ST_Contains(geom, pt) THEN
+        count := count + 1;
+        RETURN NEXT pt;
+      END IF;
+    END LOOP;
+    RETURN;
+  END;
 $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 
@@ -405,8 +405,8 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE STRICT;
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_BufferedSmooth(geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_BufferedSmooth(
-    geom geometry,
-    bufsize double precision DEFAULT 0
+  geom geometry,
+  bufsize double precision DEFAULT 0
 )
 RETURNS geometry AS $$
   SELECT ST_Buffer(ST_Buffer($1, $2), -$2)
@@ -548,7 +548,7 @@ CREATE OR REPLACE FUNCTION TT_SigDigits(
 ) 
 RETURNS numeric
 AS $$
-    SELECT round(n::numeric, digits - 1 - floor(CASE WHEN n = 0 THEN 0 ELSE log(abs(n)) END)::int)
+  SELECT round(n::numeric, digits - 1 - floor(CASE WHEN n = 0 THEN 0 ELSE log(abs(n)) END)::int)
 $$ LANGUAGE sql IMMUTABLE STRICT;
 
 --SELECT TT_SigDigits(0.0000372537::double precision, 3)
@@ -577,78 +577,78 @@ SELECT round(123, -2);
 -----------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_SplitAgg_StateFN(geometry[], geometry, geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_SplitAgg_StateFN(
-    geomarray geometry[],
-    geom1 geometry,
-    geom2 geometry,
-    tolerance double precision
+  geomarray geometry[],
+  geom1 geometry,
+  geom2 geometry,
+  tolerance double precision
 )
 RETURNS geometry[] AS $$
-    DECLARE
-        newgeomarray geometry[];
-        geom3 geometry;
-        newgeom geometry;
-        geomunion geometry;
-    BEGIN
-        -- First pass: geomarray is NULL
-       IF geomarray IS NULL THEN
-            geomarray = array_append(newgeomarray, geom1);
-        END IF;
+  DECLARE
+    newgeomarray geometry[];
+    geom3 geometry;
+    newgeom geometry;
+    geomunion geometry;
+  BEGIN
+    -- First pass: geomarray is NULL
+    IF geomarray IS NULL THEN
+      geomarray = array_append(newgeomarray, geom1);
+    END IF;
 
-        IF NOT geom2 IS NULL THEN
-            -- 2) Each geometry in the array - geom2
-            FOREACH geom3 IN ARRAY geomarray LOOP
-                newgeom = ST_Difference(geom3, geom2);
-                IF tolerance > 0 THEN
-                    newgeom = TT_TrimSubPolygons(newgeom, tolerance);
-                END IF;
-                IF NOT newgeom IS NULL AND NOT ST_IsEmpty(newgeom) THEN
-                    newgeomarray = array_append(newgeomarray, newgeom);
-                END IF;
-            END LOOP;
+    IF NOT geom2 IS NULL THEN
+      -- 2) Each geometry in the array - geom2
+      FOREACH geom3 IN ARRAY geomarray LOOP
+          newgeom = ST_Difference(geom3, geom2);
+          IF tolerance > 0 THEN
+              newgeom = TT_TrimSubPolygons(newgeom, tolerance);
+          END IF;
+          IF NOT newgeom IS NULL AND NOT ST_IsEmpty(newgeom) THEN
+              newgeomarray = array_append(newgeomarray, newgeom);
+          END IF;
+      END LOOP;
 
-        -- 3) gv1 intersecting each geometry in the array
-            FOREACH geom3 IN ARRAY geomarray LOOP
-                newgeom = ST_Intersection(geom3, geom2);
-                IF tolerance > 0 THEN
-                    newgeom = TT_TrimSubPolygons(newgeom, tolerance);
-                END IF;
-                IF NOT newgeom IS NULL AND NOT ST_IsEmpty(newgeom) THEN
-                    newgeomarray = array_append(newgeomarray, newgeom);
-                END IF;
-            END LOOP;
-        ELSE
-            newgeomarray = geomarray;
-        END IF;
-        RETURN newgeomarray;
-    END;
+    -- 3) gv1 intersecting each geometry in the array
+      FOREACH geom3 IN ARRAY geomarray LOOP
+          newgeom = ST_Intersection(geom3, geom2);
+          IF tolerance > 0 THEN
+              newgeom = TT_TrimSubPolygons(newgeom, tolerance);
+          END IF;
+          IF NOT newgeom IS NULL AND NOT ST_IsEmpty(newgeom) THEN
+              newgeomarray = array_append(newgeomarray, newgeom);
+          END IF;
+      END LOOP;
+    ELSE
+      newgeomarray = geomarray;
+    END IF;
+    RETURN newgeomarray;
+  END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 ---------------------------------------
 -- ST_SplitAgg aggregate variant state function defaulting tolerance to 0.0
 --DROP FUNCTION IF EXISTS TT_SplitAgg_StateFN(geometry[], geometry, geometry);
 CREATE OR REPLACE FUNCTION TT_SplitAgg_StateFN(
-    geomarray geometry[],
-    geom1 geometry,
-    geom2 geometry
+  geomarray geometry[],
+  geom1 geometry,
+  geom2 geometry
 )
 RETURNS geometry[] AS $$
-    SELECT TT_SplitAgg_StateFN($1, $2, $3, 0.0);
+  SELECT TT_SplitAgg_StateFN($1, $2, $3, 0.0);
 $$ LANGUAGE sql VOLATILE;
 
 ---------------------------------------
 -- ST_SplitAgg aggregate
 -- DROP AGGREGATE IF EXISTS TT_SplitAgg(geometry, geometry, double precision);
 CREATE OR REPLACE AGGREGATE TT_SplitAgg(geometry, geometry, double precision) (
-    SFUNC=TT_SplitAgg_StateFN,
-    STYPE=geometry[]
+  SFUNC=TT_SplitAgg_StateFN,
+  STYPE=geometry[]
 );
 
 ---------------------------------------
 -- ST_SplitAgg aggregate defaulting tolerance to 0.0
 -- DROP AGGREGATE IF EXISTS TT_SplitAgg(geometry, geometry);
 CREATE OR REPLACE AGGREGATE TT_SplitAgg(geometry, geometry) (
-    SFUNC=TT_SplitAgg_StateFN,
-    STYPE=geometry[]
+  SFUNC=TT_SplitAgg_StateFN,
+  STYPE=geometry[]
 );
 ------------------------------------------------------------------------------
 -- TT_ProduceDerivedCoverages()
