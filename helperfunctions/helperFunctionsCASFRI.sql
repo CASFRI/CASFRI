@@ -1017,6 +1017,9 @@ CREATE OR REPLACE FUNCTION TT_CheckNumberOfTests(
       END LOOP;
       sourceTableQueryStr := sourceTableQueryStr || ') AS dummy_name';
     END IF;
+    IF sourceTableQueryStr = '() AS dummy_name' THEN
+      RAISE EXCEPTION 'ERROR in TT_CheckNumberOfTests(): None of the test tables exist. Your must run a first complete translation before being able to run this function..';
+    END IF;
 
     -- Construct the main query
     queryStr = '
@@ -1082,11 +1085,33 @@ LEFT OUTER JOIN tested b USING (inv' || CASE WHEN groupByLayer THEN ', layer' EL
   END
 $$ LANGUAGE plpgsql VOLATILE;
 
---SELECT (TT_CheckNumberOfTests('lyr', 'bc')).*
---SELECT (TT_CheckNumberOfTests('eco', 'all')).*
---SELECT (TT_CheckNumberOfTests('cas'::text, NULL::text)).*;
---SELECT TT_CheckTestNumber('cas'::text, 'x'::text);
---SELECT (TT_CheckNumberOfTests('nfl', 'bc', TRUE)).*
+/*
+SELECT (TT_CheckNumberOfTests('cas')).*
+SELECT (TT_CheckNumberOfTests('dst')).*
+SELECT (TT_CheckNumberOfTests('eco')).*
+SELECT (TT_CheckNumberOfTests('eco', 'all', FALSE)).*
+SELECT (TT_CheckNumberOfTests('lyr')).*
+SELECT (TT_CheckNumberOfTests('nfl')).*
+SELECT (TT_CheckNumberOfTests('nfl', 'all', FALSE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'ab', TRUE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'bc', FALSE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'mb', FALSE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'nb', FALSE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'nl', TRUE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'ns', FALSE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'nt', TRUE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'on', TRUE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'pc', FALSE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'pe', FALSE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'pe', FALSE)).*
+SELECT (TT_CheckNumberOfTests('nfl', 'sk', FALSE)).*
+
+SELECT (TT_CheckNumberOfTests('lyr', 'bc')).*
+SELECT (TT_CheckNumberOfTests('eco', 'all')).*
+SELECT (TT_CheckNumberOfTests('cas'::text, NULL::text)).*;
+SELECT TT_CheckTestNumber('cas'::text, 'x'::text);
+SELECT (TT_CheckNumberOfTests('nfl', 'bc', TRUE)).*
+*/
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
