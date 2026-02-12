@@ -21,6 +21,20 @@ SELECT DISTINCT string_agg(layer::text, '_' ORDER BY layer) layers
 FROM casfri50_flat.cas_flat_one_layer_per_row
 GROUP BY cas_id;
 
+-- Another way to do it
+SELECT cas_id, string_agg(layer::text, '_' ORDER BY layer) layers
+FROM casfri50_flat.cas_flat_one_layer_per_row
+GROUP BY cas_id
+HAVING COUNT(layer) <> COUNT(DISTINCT layer);
+
+-- List them
+SELECT cas_id, layer, COUNT(*) AS cnt
+FROM casfri50_flat.cas_flat_one_layer_per_row
+GROUP BY cas_id, layer
+HAVING COUNT(*) > 1
+ORDER BY cas_id, layer;
+
+--
 SELECT *, max(layer) OVER (PARTITION BY cas_id) max_lyr
 FROM casfri50_flat.cas_flat_one_layer_per_row;
 --------------------------------------------------------------------------

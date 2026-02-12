@@ -211,7 +211,21 @@ FROM cas_lyr1_lyr2_nfl1_nfl2_dst_eco cas
 LEFT JOIN casfri50.geo_all geo 
 USING (cas_id);
 
+-- Add a unique index on cas_flat_all_layers_same_row
+CREATE UNIQUE INDEX cas_flat_all_layers_same_row_casid_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING btree(cas_id);
+
+-- Add more indexes
+CREATE INDEX cas_flat_all_layers_same_row_inventory_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 4));
+    
+CREATE INDEX cas_flat_all_layers_same_row_province_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 2));
+
+CREATE INDEX cas_flat_all_layers_same_row_geom_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING gist(geometry);
+
 --------------------------------------------------------------------------
--- Refresh the materalized view
---REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row; 8h
+-- Refresh the materalized view 8h
+--REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
 --------------------------------------------------------------------------

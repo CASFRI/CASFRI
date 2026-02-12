@@ -1,11 +1,12 @@
-#!/bin/bash -x
+#!/bin/bash
 
-source ../../conversion/sh/common.sh
+source ../../common.sh
 
-# Load shapefile of Canada provinces limits
-"$gdalFolder/ogr2ogr" -f "PostgreSQL" "$pg_connection_string" canada_provinces.shp \
--nln casfri50_coverage.canada_provinces $layer_creation_options $other_options \
--progress $overwrite_tab
+set -x
 
 "$pgFolder/bin/psql" -p $pgport -U $pguser -w -d $pgdbname -P pager=off -f ./01_PrepareGeoHistory.sql
 
+# Load shapefile of Canada provinces limits
+"$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" canada_provinces.shp \
+-nln casfri50_coverage.canada_provinces $gdalLco $gdalOtherOptions \
+-progress $overwriteTable

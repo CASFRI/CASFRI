@@ -36,6 +36,9 @@ maxTestsInParallel=30
 # Maximum number of translations to run in parallel
 maxTranslationsInParallel=36
 
+# Maximum number of translations to run in parallel
+maxGeoHistoryInParallel=10
+
 #################################################################
 # List of source tables to load and translate with convert_allall.sh
 #
@@ -152,9 +155,11 @@ bashCmd="$gitPath/git-bash.exe"
 #################################################################
 # Set to True if you want conversion, test and/or translation 
 # command windows to stay open after completion
-leaveConversionShellOpen=true
+leaveConversionShellOpen=False
 leaveTestShellOpen=False
 leaveTranslationShellOpen=False
+leaveGeoHistoryShellOpen=False
+leaveCoverageShellOpen=False
 
 closeWithEnter=False # otherwise close by closing the window
 

@@ -683,7 +683,7 @@ RETURNS boolean AS $$
     simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 100);
     RAISE NOTICE 'TT_TrimSubPolygons(TT_BufferedSmooth()) for ''%'' to produce smoothed...', fromInv;
     smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), minArea);
-    SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE inv = fromInv INTO cnt;
+    SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE upper(inv) = upper(fromInv) INTO cnt;
     FOREACH tableName IN ARRAY tableNameArr LOOP
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating % %...', fromInv, tableName;
       outGeom = CASE WHEN tableName = 'detailed' THEN detailedGeom
@@ -695,7 +695,7 @@ RETURNS boolean AS $$
       queryStr = 'CREATE TABLE IF NOT EXISTS casfri50_coverage.' || tableName || '
                  (inv text, nb_polys int, nb_points int, geom geometry);
                  DELETE FROM casfri50_coverage.' || tableName || '
-                 WHERE inv = ''' || upper(fromInv) || ''';
+                 WHERE upper(inv) = ''' || upper(fromInv) || ''';
                  INSERT INTO casfri50_coverage.' || tableName || ' (inv, nb_polys, nb_points, geom) VALUES ($2, $3, $4, $5);';
       EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
 
@@ -705,12 +705,12 @@ RETURNS boolean AS $$
                  (inv text, nb_polys int, nb_points int, geom geometry);
                  CREATE INDEX IF NOT EXISTS ' || tableName || '_geom_idx ON casfri50_coverage.' || tableName || '_gridded USING gist(geom);
                  DELETE FROM casfri50_coverage.' || tableName || '_gridded
-                 WHERE inv = ''' || upper(fromInv) || ''';
+                 WHERE upper(inv) = ''' || upper(fromInv) || ''';
                  INSERT INTO casfri50_coverage.' || tableName || '_gridded (inv, nb_polys, nb_points, geom) 
                  SELECT inv, nb_polys, ST_NPoints((geom).geom) nb_points, (geom).geom geom
                  FROM (SELECT inv, nb_polys, TT_SplitByGrid(geom, 10000) geom
                        FROM casfri50_coverage.' || tableName || '
-                       WHERE inv = ''' || upper(fromInv) || ''') foo;';
+                       WHERE upper(inv) = ''' || upper(fromInv) || ''') foo;';
       EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Processing of % finished...', fromInv;
     END LOOP;
@@ -770,7 +770,7 @@ RETURNS boolean AS $$
       countQuery = '
       SELECT count(*) 
       FROM casfri50_history.casflat_gridded
-      WHERE inventory_id = ''' || inv || ''';';
+      WHERE upper(inventory_id) = upper(''' || inv || ''');';
       EXECUTE countQuery INTO expectedRowNb;
 
       RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - % gridded polygon to process...', inv, expectedRowNb;
@@ -797,7 +797,7 @@ INSERT INTO casfri50_history.geo_history
       SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
                                    ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
       FROM casfri50_history.casflat_gridded
-      WHERE inventory_id = ''' || inv || '''';
+      WHERE upper(inventory_id) = upper(''' || inv || ''')';
       
     IF progress THEN
       queryStr = queryStr || ' AND CASE WHEN nextval(''' || seqName || '_1'') % 1000 = 0 THEN TT_PrintMessage(''' || inv || ' - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(''' || seqName || '_1''), $1, $2)) ELSE TRUE END';

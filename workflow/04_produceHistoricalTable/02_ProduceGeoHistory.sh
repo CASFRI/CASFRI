@@ -1,28 +1,73 @@
-#!/bin/bash -x
+#!/bin/bash
 
-source ../../conversion/sh/common.sh
+source ../../common.sh
+source ../../define_invlist.sh
 
-bashCmd="/c/program files/git/git-bash.exe"
-
-leaveOpenCmd=
-if [ ${leaveConvShellOpen}x == Truex ]; then
-  leaveOpenCmd="/bin/bash"
+if [ $# -gt 0 ]; then
+    fullList=("$@")
 fi
 
- 
-declare -n L
+echo "The list of inventory to produce geo history is ${fullList[@]}..."
 
-# Iterate over the list of list always making the last command a waiting one (the following ones wait for it to finish before proceeding)
-for L in "${fullList[@]}"; do
-  for F in "${L[@]}"; do
-    if [ $F == ${L[-1]} ]; then
-      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\""
-    else
-      "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"SELECT TT_ProduceInvGeoHistory('${F}');\";$leaveOpenCmd" &
-    fi
-  done
+# Translate inventories for each inventory in the list
+tests_in_parallel=0
+
+# Iterate over the list of inventory 
+translation_in_parallel=0
+for invID in "${fullList[@]}"
+do
+  echo "######################################################################"
+  sqlStatement="SELECT TT_ProduceInvGeoHistory('$invID', FALSE, TRUE);"
+  echo "---------------------------------------------------------------------"
+  echo "Executing $sqlStatement"
+
+  "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"$sqlStatement\";$dontCloseGeoHistoryShell" &
+  
+  ((geohistory_in_parallel++))
+  if ((geohistory_in_parallel >= maxGeoHistoryInParallel)); then
+    wait -n # wait for ANY job to finish
+    ((geohistory_in_parallel--))
+  fi
 done
 
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 2));\""
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 4));\""
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING gist(geom);\""
+wait
+
+set -x
+
+echo "---------------------------------------------------------------------"
+echo "Creating index on left(cas_id, 2)..."
+"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 2));\";$dontCloseGeoHistoryShell" &
+
+echo "Creating index on left(cas_id, 4)..."
+"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 4));\";$dontCloseGeoHistoryShell" &
+
+echo "Creating spatial index on geom..."
+"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING gist(geom);\";$dontCloseGeoHistoryShell" &
+
+wait
+
+{ set +x; } 2>/dev/null
+
+echo "---------------------------------------------------------------------"
+echo "Comparing number of rows from casfr50.geo_all with the number of rows in the geo history table...
+"
+
+# Create a quoted list of inventory IDs for the SQL query
+printf -v quoted_list "'%s', " "${fullList[@]}"
+quoted_list=${quoted_list%, } # Remove the last comma and space
+
+"$psqlCmd" $psqlConnectionString -c "
+WITH inv_list AS (
+  SELECT inventory_id, geo_row_cnt::int
+  FROM inventory_metadata
+  WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(ARRAY[${quoted_list}])))
+)
+SELECT inventory_id, 
+       max(geo_row_cnt) geo_row_cnt, 
+       count(*) geo_history_cnt,
+       count(*) - max(geo_row_cnt) diff
+FROM inv_list
+LEFT JOIN casfri50_history.geo_history ON (left(cas_id, 4) = inv_list.inventory_id)
+GROUP BY inventory_id
+ORDER BY inventory_id;
+"

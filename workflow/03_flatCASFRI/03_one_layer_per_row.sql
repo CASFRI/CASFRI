@@ -185,5 +185,29 @@ FROM cas_lyr_nfl_dst_eco
 LEFT JOIN casfri50.geo_all geo 
 USING (cas_id);
 
+--------------------------------------------------------------------------
 
+-- Add indexes
+CREATE INDEX cas_flat_one_layer_per_row_casid_idx
+ON casfri50_flat.cas_flat_one_layer_per_row USING btree(cas_id);
 
+CREATE INDEX cas_flat_one_layer_per_row_inventory_idx
+ON casfri50_flat.cas_flat_one_layer_per_row USING btree(left(cas_id, 4));
+    
+CREATE INDEX cas_flat_one_layer_per_row_province_idx
+ON casfri50_flat.cas_flat_one_layer_per_row USING btree(left(cas_id, 2));
+
+CREATE INDEX cas_flat_one_layer_per_row_geom_idx
+ON casfri50_flat.cas_flat_one_layer_per_row USING gist(geometry);
+
+-- Add a unique index on cas_flat_one_layer_per_row
+CREATE UNIQUE INDEX ON casfri50_flat.cas_flat_one_layer_per_row (cas_id, layer);
+
+-- bug
+--SELECT * FROM casfri50_flat.cas_flat_one_layer_per_row
+--WHERE cas_id = 'YT02-xYTVEGINVENTORY-xxxxxxxxxx-0000014069-0014069'
+
+--------------------------------------------------------------------------
+-- Refresh the materalized view 8h
+--REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row;
+--------------------------------------------------------------------------

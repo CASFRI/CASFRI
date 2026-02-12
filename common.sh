@@ -55,6 +55,22 @@ if [ "${leaveTranslationShellOpen,,}" = "true" ]; then
   fi
 fi
 
+if [ "${leaveGeoHistoryShellOpen,,}" = "true" ]; then
+  if [ "${closeWithEnter,,}" = "true" ]; then
+    dontCloseGeoHistoryShell="read -p 'Press enter close the command window...';"
+  else
+    dontCloseGeoHistoryShell="exec bash"
+  fi
+fi
+
+if [ "${leaveCoverageShellOpen,,}" = "true" ]; then
+  if [ "${closeWithEnter,,}" = "true" ]; then
+    dontCloseCoverageShell="read -p 'Press enter close the command window...';"
+  else
+    dontCloseCoverageShell="exec bash"
+  fi
+fi
+
 # Compute script duration
 pretty_time() {
     local total_seconds=$1

@@ -32,106 +32,6 @@ CREATE SCHEMA IF NOT EXISTS casfri50_history_test;
 -- of the two polygons with polygons having higher ids having precedence over 
 -- polygons having lower ones.
 ------------------------------------------------------------------------------
-DROP TABLE IF EXISTS casfri50_history.inv_precedence CASCADE;
-CREATE TABLE casfri50_history.inv_precedence AS 
-SELECT 'AB03' inv, 3 rank
-UNION ALL
-SELECT 'AB06', 6
-UNION ALL
-SELECT 'AB07', 7
-UNION ALL
-SELECT 'AB08', 8
-UNION ALL
-SELECT 'AB10', 10
-UNION ALL
-SELECT 'AB11', 11
-UNION ALL
-SELECT 'AB16', 16
-UNION ALL
-SELECT 'AB25', 25
-UNION ALL
-SELECT 'AB29', 29
-UNION ALL
-SELECT 'AB30', 30
-UNION ALL
-SELECT 'BC08', 8
-UNION ALL
-SELECT 'BC10', 10
-UNION ALL
-SELECT 'BC11', 11
-UNION ALL
-SELECT 'BC12', 12
-UNION ALL
-SELECT 'MB01', 1
-UNION ALL
-SELECT 'MB02', 2
-UNION ALL
-SELECT 'MB04', 4
-UNION ALL
-SELECT 'MB05', 5
-UNION ALL
-SELECT 'MB06', 6
-UNION ALL
-SELECT 'MB07', 7
-UNION ALL
-SELECT 'NB01', 1
-UNION ALL
-SELECT 'NB02', 2
-UNION ALL
-SELECT 'NL01', 1
-UNION ALL
-SELECT 'NS01', 1
-UNION ALL
-SELECT 'NS02', 2
-UNION ALL
-SELECT 'NS03', 3
-UNION ALL
-SELECT 'NT01', 1
-UNION ALL
-SELECT 'NT03', 3
-UNION ALL
-SELECT 'ON01', 1
-UNION ALL
-SELECT 'ON02', 2
-UNION ALL
-SELECT 'PC01', 1
-UNION ALL
-SELECT 'PC02', 2
-UNION ALL
-SELECT 'PE01', 1
-UNION ALL
-SELECT 'QC01', 1
-UNION ALL
-SELECT 'QC02', 2
-UNION ALL
-SELECT 'QC03', 3
-UNION ALL
-SELECT 'QC04', 4
-UNION ALL
-SELECT 'QC05', 5
-UNION ALL
-SELECT 'QC06', 6
-UNION ALL
-SELECT 'QC07', 7
-UNION ALL
-SELECT 'SK01', 1
-UNION ALL
-SELECT 'SK02', 2
-UNION ALL
-SELECT 'SK03', 3
-UNION ALL
-SELECT 'SK04', 5
-UNION ALL
-SELECT 'SK05', 4 -- SK05 has lower precedence than SK04
-UNION ALL
-SELECT 'SK06', 6
-UNION ALL
-SELECT 'YT01', 1
-UNION ALL
-SELECT 'YT02', 2
-UNION ALL
-SELECT 'YT03', 3;
-
 -- Overwrite development and test TT_HasPrecedence() function to something
 -- more simple and efficient taking inventory precedence into account as 
 -- numbers and uid as text. Both are never NULLs. numInv and numUid are ignored.
@@ -146,14 +46,14 @@ CREATE OR REPLACE FUNCTION TT_HasPrecedence(
 )
 RETURNS boolean AS $$
   DECLARE
-    inv1_num int = 0;
-    inv2_num int = 0;
+    inv1_rank int = 0;
+    inv2_rank int = 0;
   BEGIN
     IF inv1 != inv2 THEN
-      SELECT rank FROM casfri50_history.inv_precedence WHERE inv = inv1 INTO inv1_num;
-      SELECT rank FROM casfri50_history.inv_precedence WHERE inv = inv2 INTO inv2_num;
+      SELECT precedence_rank FROM inventory_metadata WHERE inventory_id = inv1 INTO inv1_rank;
+      SELECT precedence_rank FROM inventory_metadata WHERE inventory_id = inv2 INTO inv2_rank;
     END IF;
-    RETURN inv1_num > inv2_num OR (inv1_num = inv2_num AND uid1 > uid2);
+    RETURN inv1_rank > inv2_rank OR (inv1_rank = inv2_rank AND uid1 > uid2);
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 

@@ -14,6 +14,29 @@
 -------------------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS casfri50;
 --------------------------------------------------------------------------
+-------------------------------------------------------
+-- Translate all HDR tables into a common table
+-- HDR tables only need one row per inventory, they
+-- do not need to be made using translation, we can just
+-- select the required row and columns from the
+-- inventory_metadata table.
+-------------------------------------------------------
+-------------------------------------------------------
+DROP TABLE IF EXISTS casfri50.hdr_all CASCADE;
+
+CREATE TABLE casfri50.hdr_all AS -- 1 s
+SELECT inventory_id, jurisdiction, owner_type, owner_name, standard_type, standard_version, 
+       standard_id, standard_revision, documentation_titles, src_data_format, 
+       production_years, publication_date, acquisition_date, acquisition_type, acquisition_links, contact_info, 
+       data_availability, redistribution, permission, license_agreement, 
+       photo_year_start, photo_year_end, photo_year_src
+FROM public.inventory_metadata;
+------------------------
+SELECT count(*) FROM casfri50.hdr_all; -- 63
+
+-- Add primary key constraint
+ALTER TABLE casfri50.hdr_all ADD PRIMARY KEY (inventory_id);
+-------------------------------------------------------
 DROP TABLE IF EXISTS casfri50.cas_all CASCADE;
 CREATE TABLE casfri50.cas_all
 (
@@ -28,7 +51,7 @@ CREATE TABLE casfri50.cas_all
     src_inv_area double precision,
     stand_photo_year integer
 );
-
+-------------------------------------------------------
 DROP TABLE IF EXISTS casfri50.dst_all CASCADE;
 CREATE TABLE casfri50.dst_all
 (
@@ -47,7 +70,7 @@ CREATE TABLE casfri50.dst_all
     dist_ext_lower_3 integer,
     layer integer
 );
-
+-------------------------------------------------------
 DROP TABLE IF EXISTS casfri50.eco_all CASCADE;
 CREATE TABLE casfri50.eco_all
 (
@@ -59,7 +82,7 @@ CREATE TABLE casfri50.eco_all
     eco_site text,
 	layer integer
 );
-
+-------------------------------------------------------
 DROP TABLE IF EXISTS casfri50.lyr_all CASCADE;
 CREATE TABLE casfri50.lyr_all
 (
@@ -100,7 +123,7 @@ CREATE TABLE casfri50.lyr_all
     site_class text,
     site_index double precision
 );
-
+-------------------------------------------------------
 DROP TABLE IF EXISTS casfri50.nfl_all CASCADE;
 CREATE TABLE casfri50.nfl_all
 (
@@ -117,7 +140,7 @@ CREATE TABLE casfri50.nfl_all
     non_for_anth text,
     non_for_veg text
 );
-
+-------------------------------------------------------
 DROP TABLE IF EXISTS casfri50.geo_all CASCADE;
 CREATE TABLE casfri50.geo_all
 (

@@ -972,7 +972,7 @@ CREATE OR REPLACE FUNCTION TT_CheckNumberOfTests(
                  diff bigint,
                  diff_pct numeric) AS $$
   DECLARE
-    tableName text := casTable::text || '_' || left(province::text, 2) || '_new';
+    tableName text := casTable::text || '_' || left(province::text, 2);
     queryStr text;
     groupByLayer boolean := groupByLayer AND 
                            CASE casTable 
@@ -1008,7 +1008,7 @@ CREATE OR REPLACE FUNCTION TT_CheckNumberOfTests(
     IF lower(province) = 'all' THEN
       sourceTableQueryStr = '(';
       FOREACH prov IN ARRAY provinces LOOP
-        tableName := casTable || '_' || prov || '_new';
+        tableName := casTable || '_' || prov;
         IF TT_TableExists('casfri50_test', tableName) THEN
           sourceTableQueryStr := sourceTableQueryStr || unionAllStr || 'SELECT * FROM casfri50_test.' || tableName;
         END IF;

@@ -12,21 +12,31 @@
 --                         Pierre Vernier <pierre.vernier@gmail.com>
 --                         Melina Houle <melina.houle@sbf.ulaval.ca>
 -------------------------------------------------------------------------------
+/*
 -- Have a look at a sample
+
 SELECT * 
 FROM casfri50_flat.cas_flat_all_layers_same_row
 TABLESAMPLE SYSTEM ((100 * 100) / (SELECT count(*) FROM casfri50_flat.cas_flat_all_layers_same_row)::double precision) 
 REPEATABLE (1.2)
 ORDER BY cas_id;
+*/
 
 -- Make sure cas_flat_all_layers_same_row has the right count (66007533, 66008963)
-SELECT count(*) 
-FROM casfri50.cas_all;
+WITH counts AS (
+  SELECT 'cas_all' "table", count(*) cnt
+  FROM casfri50.cas_all
+  UNION ALL
+  SELECT 'cas_flat_all_layers_same_row' "table", count(*) cnt
+  FROM casfri50_flat.cas_flat_all_layers_same_row
+)
+SELECT 
+  sum(cnt) FILTER (WHERE "table" = 'cas_all') cas_all,
+  sum(cnt) FILTER (WHERE "table" = 'cas_flat_all_layers_same_row') cas_flat_all_layers_same_row,
+  sum(cnt) FILTER (WHERE "table" = 'cas_flat_all_layers_same_row') - sum(cnt) FILTER (WHERE "table" = 'cas_all') diff
+FROM counts;
 
-SELECT count(*) 
-FROM casfri50_flat.cas_flat_all_layers_same_row;
-
-
+/*
 -- Check the completeness of STAND_PHOTO_YEAR
 SELECT inventory_id, stand_photo_year, count(*) nb
 FROM casfri50_flat.cas_flat_all_layers_same_row
@@ -34,4 +44,6 @@ GROUP BY inventory_id, stand_photo_year
 ORDER BY inventory_id, stand_photo_year;
 
 -- All inventories except AB06 and BC08 have holes in STAND_PHOTO_YEAR assignation.
+
+*/
 
