@@ -22,7 +22,9 @@ else
   fullList=("${@^^}")
 fi
 
-echo "Final fullList = ${fullList[@]}"
+echo "The final list of inventory to convert is : ${fullList[@]}..."
+echo "Press any key to proceed..."
+read -n 1 -s
 
 # Iterate over the list of inventory
 echo "---------------------------------------------------------------------"

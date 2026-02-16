@@ -7,7 +7,9 @@ if [ $# -gt 0 ]; then
     fullList=("$@")
 fi
 
-echo "The list of inventory to produce geo history is ${fullList[@]}..."
+echo "The final list of inventory to produce geo history for is : ${fullList[@]}..."
+echo "Press any key to proceed..."
+read -n 1 -s
 
 # Translate inventories for each inventory in the list
 tests_in_parallel=0

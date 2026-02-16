@@ -16,7 +16,9 @@ if [ $# -gt 0 ]; then
   fi
 fi
 
-echo "The list of inventory to translate is ${fullList[@]}..."
+echo "The final list of inventory to translate is : ${fullList[@]}..."
+echo "Press any key to proceed..."
+read -n 1 -s
 
 # Translate inventories for each inventory in the list
 tests_in_parallel=0

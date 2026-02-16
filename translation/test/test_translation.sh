@@ -20,7 +20,9 @@ if [ $# -ne 0 ]; then
   fullList=("$@")
 fi
 
-echo "Final fullList = ${fullList[@]}"
+echo "The final list of inventory to test is : ${fullList[@]}..."
+echo "Press any key to proceed..."
+read -n 1 -s
 
 # Build a list of province codes to test based on the fullList array
 
