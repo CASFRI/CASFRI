@@ -250,6 +250,7 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
     x int;
     y int;
     env geometry;
+    intgeom geometry;
     xfloor int;
     yfloor int;
   BEGIN
@@ -281,18 +282,23 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
 
     FOR x IN 1..width LOOP
       FOR y IN 1..height LOOP
-        env = ST_MakeEnvelope(xminrounded + (x - 1) * xgridsize, yminrounded + (y - 1) * ygridsize, xminrounded + x * xgridsize, yminrounded + y * ygridsize, ST_SRID(ingeom));
-        IF ST_Intersects(env, ingeom) AND 
-           (
-              ST_Dimension(ST_Intersection(ingeom, env)) = ST_Dimension(ingeom) OR
-              ST_GeometryType(ST_Intersection(ingeom, env)) = ST_GeometryType(ingeom)
-           ) THEN
-          geom = ST_Intersection(ingeom, env);
-          tid = ((xfloor::int8 + x) * 10000000 + (yfloor::int8 + y))::int8;
-          tx = xfloor + x;
-          ty = yfloor + y;
-          tgeom = env;
-          RETURN NEXT;
+        env = ST_MakeEnvelope(xminrounded + (x - 1) * xgridsize, 
+                              yminrounded + (y - 1) * ygridsize, 
+                              xminrounded + x * xgridsize, 
+                              yminrounded + y * ygridsize, 
+                              ST_SRID(ingeom)
+        );
+        IF ST_Intersects(env, ingeom) THEN
+          intgeom = ST_Intersection(ingeom, env);
+          IF ST_Dimension(intgeom) = ST_Dimension(ingeom) OR
+             ST_GeometryType(intgeom) = ST_GeometryType(ingeom) THEN
+            geom = intgeom;
+            tid = ((xfloor::int8 + x) * 10000000 + (yfloor::int8 + y))::int8;
+            tx = xfloor + x;
+            ty = yfloor + y;
+            tgeom = env;
+            RETURN NEXT;
+          END IF;
         END IF;
       END LOOP;
     END LOOP;
