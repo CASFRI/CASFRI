@@ -17,7 +17,7 @@ coverage_in_parallel=0
 for invID in "${fullList[@]}"
 do
   echo "######################################################################"
-  sqlStatement="SELECT TT_ProduceDerivedCoverages(upper('${invID}'), TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = upper(''${invID}'')'));"
+  sqlStatement="SELECT TT_ProduceDerivedCoverages(upper('${invID}'), TT_SuperUnionDebug('casfri50', 'geo_all', 'cas_id', 'geometry', 'left(cas_id, 4) = upper(''${invID}'')'));"
   echo "---------------------------------------------------------------------"
   echo "Executing $sqlStatement"
 

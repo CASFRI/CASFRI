@@ -121,16 +121,34 @@ SELECT nextval('bug_splitbygrid');
 SELECT count(*) number_of_polygons_to_grid
 FROM casfri50_flat.cas_flat_all_layers_same_row;
 
--- Create a gridded version of the flat version of CASFRI 
+-- Create a gridded version of the flat version of CASFRI (parallel safe)
 -- 139M polygons, 6h15
+SET max_parallel_workers_per_gather = 16;
+SET max_parallel_workers = 16;
+--SET max_worker_processes = 16;
+--SHOW max_parallel_workers_per_gather;
+--SHOW max_parallel_workers;
+--SHOW max_worker_processes;
+
 DROP TABLE IF EXISTS casfri50_history.casflat_gridded;
+/*
+-- Parallel safe faster version using TT_SplitByGrid(). 
+-- This is the version that should be used but it is currently failing without 
+-- proper handling. The debug version below is used instead for now.
 CREATE TABLE casfri50_history.casflat_gridded AS
 SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).*
+FROM casfri50_flat.cas_flat_all_layers_same_row;
+*/
+
+-- Parallel unsafe version using some RAISE NOTICE and nextval() to display cas_id of failing polygons.
+CREATE TABLE casfri50_history.casflat_gridded AS
+SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGridDebug(cas_id, geometry, 1000)).*
 FROM casfri50_flat.cas_flat_all_layers_same_row
-WHERE CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 THEN TT_PrintMessage(currval('bug_splitbygrid')::text || ' polygons gridded...') ELSE TRUE END
+WHERE CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 THEN TT_PrintMessage(now()::timestamp(0)::text || ' : ' || currval('bug_splitbygrid')::text || ' polygons gridded...') ELSE TRUE END
 ;
 
-SELECT count(*) number_of_gridded_polygons_generated FROM casfri50_history.casflat_gridded;
+SELECT count(*) number_of_gridded_polygons_generated 
+FROM casfri50_history.casflat_gridded;
 
 CREATE INDEX ON casfri50_history.casflat_gridded USING btree(inventory_id); -- 30m
 CREATE INDEX ON casfri50_history.casflat_gridded USING btree(cas_id); -- 40m

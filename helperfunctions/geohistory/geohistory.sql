@@ -166,7 +166,7 @@ RETURNS geometry AS $$
           RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));          
         EXCEPTION WHEN OTHERS THEN
           RAISE NOTICE 'TT_SafeDifference() ERROR 4: Snapping both polygons failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
-        END;            
+        END;
       END IF;
 
       BEGIN
@@ -303,6 +303,91 @@ $$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE;
 SELECT * FROM TT_SplitByGrid(ST_Buffer(ST_MakePoint(0, 0), 100), 100);
 SELECT * FROM TT_SplitByGrid(NULL::geometry, 10);
 */
+
+-- Debug version of TT_SplitByGrid. Not parallel safe and with RAISE NOTICE for debugging purposes.
+--DROP FUNCTION IF EXISTS TT_SplitByGridDebug(text, geometry, double precision, double precision, double precision, double precision);
+CREATE OR REPLACE FUNCTION TT_SplitByGridDebug(
+  id text,
+  ingeom geometry,
+  xgridsize double precision,
+  ygridsize double precision DEFAULT NULL,
+  xgridoffset double precision DEFAULT 0.0,
+  ygridoffset double precision DEFAULT 0.0
+)
+RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
+  DECLARE
+    width int;
+    height int;
+    xminrounded double precision;
+    yminrounded double precision;
+    xmaxrounded double precision;
+    ymaxrounded double precision;
+    xmin double precision := ST_XMin(ingeom);
+    ymin double precision := ST_YMin(ingeom);
+    xmax double precision := ST_XMax(ingeom);
+    ymax double precision := ST_YMax(ingeom);
+    x int;
+    y int;
+    env geometry;
+    intgeom geometry;
+    xfloor int;
+    yfloor int;
+  BEGIN
+    IF ingeom IS NULL OR ST_IsEmpty(ingeom) THEN
+      geom = ingeom;
+      tid = NULL;
+      tx = NULL;
+      ty = NULL;
+      tgeom = NULL;
+      RETURN NEXT;
+      RETURN;
+    END IF;
+    IF xgridsize IS NULL OR xgridsize <= 0 THEN
+      --RAISE NOTICE 'Defaulting xgridsize to 1...';
+      xgridsize = 1;
+    END IF;
+    IF ygridsize IS NULL OR ygridsize <= 0 THEN
+      ygridsize = xgridsize;
+    END IF;
+    xfloor = floor((xmin - xgridoffset) / xgridsize);
+    xminrounded = xfloor * xgridsize + xgridoffset;
+    xmaxrounded = ceil((xmax - xgridoffset) / xgridsize) * xgridsize + xgridoffset;
+    yfloor = floor((ymin - ygridoffset) / ygridsize);
+    yminrounded = yfloor * ygridsize + ygridoffset;
+    ymaxrounded = ceil((ymax - ygridoffset) / ygridsize) * ygridsize + ygridoffset;
+
+    width = round((xmaxrounded - xminrounded) / xgridsize);
+    height = round((ymaxrounded - yminrounded) / ygridsize);
+
+    FOR x IN 1..width LOOP
+      FOR y IN 1..height LOOP
+        env = ST_MakeEnvelope(xminrounded + (x - 1) * xgridsize, yminrounded + (y - 1) * ygridsize, xminrounded + x * xgridsize, yminrounded + y * ygridsize, ST_SRID(ingeom));
+        BEGIN
+          IF ST_Intersects(env, ingeom) THEN
+            intgeom = ST_Intersection(ingeom, env);
+            IF ST_Dimension(intgeom) = ST_Dimension(ingeom) OR
+               ST_GeometryType(intgeom) = ST_GeometryType(ingeom) THEN
+              geom = intgeom;
+              tid = ((xfloor::int8 + x) * 10000000 + (yfloor::int8 + y))::int8;
+              tx = xfloor + x;
+              ty = yfloor + y;
+              tgeom = env;
+              RETURN NEXT;
+            END IF;
+          END IF;
+        EXCEPTION WHEN OTHERS THEN
+          RAISE NOTICE 'TT_SplitByGridDebug() ST_Intersects() failed on cas_id=''%''', id;
+        END;
+      END LOOP;
+    END LOOP;
+  RETURN;
+  END;
+$$ LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE;
+/*
+SELECT * FROM TT_SplitByGridDebug('1', ST_Buffer(ST_MakePoint(0, 0), 100), 100);
+SELECT * FROM TT_SplitByGridDebug('2', NULL::geometry, 10);
+*/
+
 -------------------------------------------------------------------------------
 -- TT_RandomPoints
 --
@@ -513,18 +598,17 @@ RETURNS geometry AS $$
     returnGeom geometry;
   BEGIN
     RAISE NOTICE 'TT_SuperUnion() : START...';
-
-    queryStr = 'WITH gridded AS (' ||
-                  'SELECT TT_SplitByGrid(' || geomColumnName ||', 10000) split ' ||
-                  'FROM ' || TT_FullTableName(schemaName, tableName) ||
-                  CASE WHEN NOT filterStr IS NULL THEN ' WHERE ' || filterStr ELSE '' END ||
+    queryStr = format('WITH gridded AS (' ||
+                  'SELECT TT_SplitByGrid(%s, 10000) split ' ||
+                  'FROM %I.%I ' ||
+                  CASE WHEN filterStr IS NULL THEN '' ELSE ' WHERE ' || filterStr END ||
                '), first_level_union AS (' ||
                   'SELECT ST_Union((split).geom) geom ' ||
                   'FROM gridded ' ||
                   'GROUP BY (split).tid' ||
                ') ' ||
                'SELECT ST_Union(geom) geom ' ||
-               'FROM first_level_union;';
+               'FROM first_level_union;', geomColumnName, schemaName, tableName);
     RAISE NOTICE 'queryStr=%', queryStr;
     EXECUTE queryStr INTO returnGeom;
     
@@ -536,6 +620,41 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- Test
 -- SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
 
+--DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, name, text);
+CREATE OR REPLACE FUNCTION TT_SuperUnionDebug(
+  schemaName name,
+  tableName name,
+  idColumnName name,
+  geomColumnName name,
+  filterStr text DEFAULT NULL
+)
+RETURNS geometry AS $$
+  DECLARE
+    queryStr text;
+    returnGeom geometry;
+  BEGIN
+    RAISE NOTICE 'TT_SuperUnion() : START...';
+    queryStr = format('WITH gridded AS (' ||
+                  'SELECT TT_SplitByGrid(%s, %s, 10000) split ' ||
+                  'FROM %I.%I ' ||
+                  CASE WHEN filterStr IS NULL THEN '' ELSE ' WHERE ' || filterStr END ||
+               '), first_level_union AS (' ||
+                  'SELECT ST_Union((split).geom) geom ' ||
+                  'FROM gridded ' ||
+                  'GROUP BY (split).tid' ||
+               ') ' ||
+               'SELECT ST_Union(geom) geom ' ||
+               'FROM first_level_union;', idColumnName, geomColumnName, schemaName, tableName);
+    RAISE NOTICE 'queryStr=%', queryStr;
+    EXECUTE queryStr INTO returnGeom;
+    
+    RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
+
+    RETURN returnGeom;
+  END
+$$ LANGUAGE plpgsql IMMUTABLE;
+-- Test
+-- SELECT TT_SuperUnionDebug('cas_id', 'casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
 ------------------------------------------------------------------------------
 -- TT_SigDigits()
 --
@@ -708,7 +827,7 @@ RETURNS boolean AS $$
                  WHERE upper(inv) = ''' || upper(fromInv) || ''';
                  INSERT INTO casfri50_coverage.' || tableName || '_gridded (inv, nb_polys, nb_points, geom) 
                  SELECT inv, nb_polys, ST_NPoints((geom).geom) nb_points, (geom).geom geom
-                 FROM (SELECT inv, nb_polys, TT_SplitByGrid(geom, 10000) geom
+                 FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000) geom
                        FROM casfri50_coverage.' || tableName || '
                        WHERE upper(inv) = ''' || upper(fromInv) || ''') foo;';
       EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
@@ -1598,13 +1717,13 @@ RETURNS TABLE (id text,
                valid_year_begin int, 
                valid_year_end int, 
                valid_time text) AS $$
-    SELECT id, 
-           isvalid,
-           TT_GeoOblique(wkb_geometry, valid_year_begin, z_factor, y_factor) wkb_geometry,
-           poly_type,
-           ref_year,
-           valid_year_begin, 
-           valid_year_end,
-           valid_time
-    FROM TT_TableGeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
+  SELECT id, 
+          isvalid,
+          TT_GeoOblique(wkb_geometry, valid_year_begin, z_factor, y_factor) wkb_geometry,
+          poly_type,
+          ref_year,
+          valid_year_begin, 
+          valid_year_end,
+          valid_time
+  FROM TT_TableGeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
 $$ LANGUAGE sql IMMUTABLE;
