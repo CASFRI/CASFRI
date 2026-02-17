@@ -18,12 +18,12 @@ if [ -z "$invToLoad" ]; then
   done
   wait
 else
-  echo "fullList defined by argument..."
+  echo "Using inventory list provided as arguments: ${@^^}"
   fullList=("${@^^}")
 fi
 
 echo "The final list of inventory to convert is : ${fullList[@]}..."
-echo "Press any key to proceed..."
+echo "Press any key to proceed or CTRL-C to cancel..."
 read -n 1 -s
 
 # Iterate over the list of inventory

@@ -7,17 +7,21 @@ casTableList=("cas" "eco" "dst" "nfl" "lyr" "geo")
 
 if [ $# -gt 0 ]; then
   # Read the list of inventory to translate from the command prompt
+
   arg2=$2
   if [[ $# -eq 2 && "${arg2,,}" =~ ^(cas|eco|dst|nfl|lyr|geo)$ ]]; then
-    fullList=("$1")
-    casTableList=("$2")
+    echo "Using inventory list provided as argument: ${1^^} ${2^^}"
+
+    fullList=("${1^^}")
+    casTableList=("${2^^}")
   else
-    fullList=("$@")
+    echo "Using inventory list provided as arguments: ${@^^}"
+    fullList=("${@^^}")
   fi
 fi
 
 echo "The final list of inventory to translate is : ${fullList[@]}..."
-echo "Press any key to proceed..."
+echo "Press any key to proceed or CTRL-C to cancel..."
 read -n 1 -s
 
 # Translate inventories for each inventory in the list

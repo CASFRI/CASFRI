@@ -29,6 +29,6 @@ if ! [[ -v fullList ]]; then
   { set +x; } 2>/dev/null
 fi
 
-echo "fullList as defined by define_invlist.sh = ${fullList[@]}"
+echo "fullList as defined by define_invlist.sh for column ${metadataTableLoadingColumn} = ${fullList[@]}"
 
 echo "######################## End define_invlist.sh ########################################"

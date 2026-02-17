@@ -1242,7 +1242,7 @@ CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
 -- |    0 (same)   |       T       |    F    |    F    | A RefYB -> RefYE       |   A   | Do nothing                                 | prePoly has prededence over ovlpPoly 
 -- |               |               |         |         |                        |       |                                            | so just ignore ovlpPoly
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- |    0 (same)   |       F       |    T    |    T    | (A - B) RefYB-> RefYE  |   B   | IF postPoly IS NOT NULL                    | ovlpPoly has precedence over prePoly 
+-- |    0 (same)   |       F       |    T    |    T    | (A - B) RefYB -> RefYE |   B   | IF postPoly IS NOT NULL                    | ovlpPoly has precedence over prePoly 
 -- |               |               |         |         |                        |       |   postPoly = postPoly - ovlpPoly           | so remove it from prePoly and 
 -- |               |               |         |         |                        |       | prePoly = prePoly - ovlpPoly               | from postPoly if it exists
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

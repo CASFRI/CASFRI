@@ -4,11 +4,12 @@ source ../../common.sh
 source ../../define_invlist.sh
 
 if [ $# -gt 0 ]; then
-    fullList=("$@")
+    echo "Using inventory list provided as arguments: ${@^^}"
+    fullList=("${@^^}")
 fi
 
 echo "The final list of inventory to produce geo history for is : ${fullList[@]}..."
-echo "Press any key to proceed..."
+echo "Press any key to proceed or CTRL-C to cancel..."
 read -n 1 -s
 
 # Translate inventories for each inventory in the list
