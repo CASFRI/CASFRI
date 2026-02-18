@@ -574,7 +574,7 @@ RETURNS geometry AS $$
   BEGIN
     RAISE NOTICE 'TT_SuperUnion() : START...';
     queryStr = format('WITH gridded AS (' ||
-                  'SELECT TT_SplitByGrid(%s, %s, 10000) split ' ||
+                  'SELECT TT_SplitByGridDebug(%s, %s, 10000) split ' ||
                   'FROM %I.%I ' ||
                   CASE WHEN filterStr IS NULL THEN '' ELSE ' WHERE ' || filterStr END ||
                '), first_level_union AS (' ||
