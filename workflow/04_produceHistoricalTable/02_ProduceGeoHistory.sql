@@ -122,9 +122,9 @@ ORDER BY inv;
 
 
 -- Create some indexes - 13m
-CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 2));
-CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 4));
-CREATE INDEX ON casfri50_history.geo_history USING gist(geom);
+CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING btree(left(cas_id, 2));
+CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING btree(left(cas_id, 4));
+CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING gist(geom);
 
 /* Display
 SELECT *

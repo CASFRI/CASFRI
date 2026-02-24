@@ -40,13 +40,16 @@ set -x
 
 echo "---------------------------------------------------------------------"
 echo "Creating index on left(cas_id, 2)..."
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 2));\";$dontCloseGeoHistoryShell" &
+"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
+CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING btree(left(cas_id, 2));\";$dontCloseGeoHistoryShell" &
 
 echo "Creating index on left(cas_id, 4)..."
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING btree(left(cas_id, 4));\";$dontCloseGeoHistoryShell" &
+"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
+CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING btree(left(cas_id, 4));\";$dontCloseGeoHistoryShell" &
 
 echo "Creating spatial index on geom..."
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"CREATE INDEX ON casfri50_history.geo_history USING gist(geom);\";$dontCloseGeoHistoryShell" &
+"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
+CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING gist(geom);\";$dontCloseGeoHistoryShell" &
 
 wait
 
