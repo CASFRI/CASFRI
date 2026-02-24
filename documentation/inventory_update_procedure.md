@@ -6,7 +6,7 @@ This procedure assumes that all the functions necessary to produce CASFRI are al
 
 **1. If, and only if, you are replacing a source inventory with another one, you must first drop it from the "rawfri" schema.**
 
- 1. DROP or rename each source inventory that have to be replaced from the "rawfri" schema in the database. If you just rename them, make sure to rename the associated indexes as well. If you DROP them, make sure to DROP CASCADE them as some VIEWs might depend on them.
+ 1.1. DROP or rename each source inventory that have to be replaced from the "rawfri" schema in the database. If you just rename them, make sure to rename the associated indexes as well. If you DROP them, make sure to DROP CASCADE them as some VIEWs might depend on them.
 
     To drop an inventory (just replace "sk08" with the proper inventory_id):
 
@@ -22,16 +22,16 @@ This procedure assumes that all the functions necessary to produce CASFRI are al
     ALTER INDEX sk08_wkb_geometry_geom_idx RENAME TO sk08_old_wkb_geometry_geom_idx;
     ```
     
- 2. List the inventories you want to load using the "invList" variable in the config.sh script.
+ 1.2. List the inventories you want to load using the "invList" variable in the config.sh script.
 
- 3. Open a Bash shell, CD to the CASFRI conversion/sh folder and load all inventories to update using the convert_all.sh script.
+ 1.3. Open a Bash shell, CD to the CASFRI conversion/sh folder and load all inventories to update using the convert_all.sh script.
 
- 4. Check that the count of converted stands in the newly created tables matches the CONVERTED_STAND_CNT column in inventory_metadata.csv.
+ 1.4. Check that the count of converted stands in the newly created tables matches the CONVERTED_STAND_CNT column in inventory_metadata.csv.
 
 
 **2. If you are replacing a source inventory or have modified a helper function or a translation table affecting the translation of some inventories, you must drop associated translated rows.**
 
- 1. First drop all the constraints (including primary and foreign keys) on the tables of the "casfri50" schema:
+ 2.1. First drop all the constraints (including primary and foreign keys) on the tables of the "casfri50" schema:
 
     ```
     SELECT TT_DropAllConstraints('casfri50', 'cas_all');
@@ -42,7 +42,7 @@ This procedure assumes that all the functions necessary to produce CASFRI are al
     SELECT TT_DropAllConstraints('casfri50', 'geo_all');
     ```
 
- 2. Delete inventories to be replaced from the tables in the "casfri50" schema:
+ 2.2. Delete inventories to be replaced from the tables in the "casfri50" schema:
 
     ```
     DELETE FROM casfri50.cas_all WHERE left(cas_id, 4) = 'SK08';
@@ -53,7 +53,7 @@ This procedure assumes that all the functions necessary to produce CASFRI are al
     DELETE FROM casfri50.geo_all WHERE left(cas_id, 4) = 'SK08';
     ```
 
- 3. Delete all the rows in the "casfri50_history" schema gridded version of the geo table for these inventories with queries like this:
+ 2.3. Delete all the rows in the "casfri50_history" schema gridded version of the geo table for these inventories with queries like this:
 
     ```
     DELETE FROM casfri50_history.casflat_gridded WHERE inventory_id = 'SK08';
@@ -74,15 +74,15 @@ This procedure assumes that all the functions necessary to produce CASFRI are al
 
 **6. Translate the new inventories using the CASFRI/workflow/02_produceCASFRI/01_createCASFRITables.sh script**
 
- 1. The inventories translated will be those defined by the config.sh "invList" variable.
+ 6.1. The inventories translated will be those defined by the config.sh "invList" variable.
 
- 2. Check that the count of translated rows in the "casfri50" tables matches the count of expected rows in the inventory_metadata.csv table using the TT_TranslatedRowCount() function.
+ 6.2. Check that the count of translated rows in the "casfri50" tables matches the count of expected rows in the inventory_metadata.csv table using the TT_TranslatedRowCount() function.
 
 ```
 SELECT (TT_TranslatedRowCount(ARRAY['SK08', 'SK09'])).*
 ``` 
  
- 3. Adjust and run the other scripts in the CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/ folder.
+ 6.3. Adjust and run the other scripts in the CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/ folder.
 
 **7. Regenerate the flat tables like this:**
 

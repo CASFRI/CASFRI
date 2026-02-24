@@ -77,9 +77,11 @@ sets of CASFRI tables. You can use it to determine whether the number of tests
 is sufficient without being excessive (i.e., no more than 20% above the required 
 number), as shown below:
 
-  SELECT * 
-  FROM TT_CheckNumberOfTests('nfl', 'qc', FALSE)
-  WHERE NOT sufficient OR diff_pct >= 20;
+```
+SELECT * 
+FROM TT_CheckNumberOfTests('nfl', 'qc', FALSE)
+WHERE NOT sufficient OR diff_pct >= 20;
+```
 
 This will list inventories with an insufficient or excessive number of tests.
 
@@ -183,9 +185,11 @@ A1 - All rows have different values but the tested ogc_fid values remain the
      - some rows having been added or removed directly in the source FRI data 
        set (shapefiles or geodatabases) causing each row to be assigned a 
        new ogc_fid.
+
      - a change in the SELECT statement used within the ogr2ogr command for 
        some datasets in the .sh conversion scripts if this statement selects 
        more or less rows to be converted. e.g. WHERE ST_Area() <> 0
+
      - a new version of the loading executable (e.g. a different version of 
        ogr2ogr or gdal_polygonize) processing the FRI rows in a different 
        sequence, thus generating ogc_fid in a completely different sequence too.
@@ -206,10 +210,12 @@ A3 - Only some additional or missing rows might be caused:
        unique table after initial conversion. e.g. joining a table of polygons 
        with a table of data. This would only explain missing rows, not 
        additional ones.
+
      - by rows added or dropped by the ROW_TRANSLATION_RULE in a translation 
        table. When present, this rule defines which rows are translated and 
        which are not. Changing it might make some rows to appear or disappear 
        from a test table.
+       
      - by a limited number of changes in the list of ogc_fid produced by a 
        different version of ogr2ogr.
 

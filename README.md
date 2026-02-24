@@ -188,7 +188,7 @@ Validation is performed at multiple stages during and after translation:
 * **Validation of output using summary statistics** - The [summary_statistics](https://github.com/CASFRI/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to produce summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be installed (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpected values, correct assignment of error codes etc.
 
 ### Workflow Scripts
-The translation of each dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI/02_perInventory](https://github.com/CASFRI/CASFRI/tree/master/workflow/02_produceCASFRI/02_perInventory) folder. The translation process involves calling three functions:
+The translation of each inventory dataset is done using the scripts in the [CASFRI/workflow/02_produceCASFRI/02_perInventory](https://github.com/CASFRI/CASFRI/tree/master/workflow/02_produceCASFRI/02_perInventory) folder. The translation process involves calling three functions:
 
 * TT_Prepare() to validates and compile the translation table into a TT_TanslateXXX() function.
 * TT_CreateMappingView() to create a VIEW mapping the raw inventory tables attribute names to the translation tables attribute names.
@@ -198,7 +198,7 @@ TT_TranslateInventory() is a wrapper around those three functions. It is used by
 
 TT_Prepare() is part of the PostgreSQL Table Translation Framework. It is described in detail in the [PostgreSQL Table Translation Framework](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework) along with explanations on how to write translation tables. 
 
-It is important to understand that a single translation table can be used for multiple translations, either for different layers within the same dataset, or for different datasets using the same standard but different attributes names. The workflow scripts accommodate this by combining three elements:
+It is important to understand that a single translation table can be used for multiple translations, either for different layers within the same inventory, or for different inventories using the same standard but different attributes names. The workflow scripts accommodate this by combining three elements:
 
 **1. Placeholder names in translation table helper functions -** Translation table helper functions use placeholder attribute names instead of actual source inventory attribute names. Every translation using a common translation table to translate similar inventories map inventory attribute names to these placeholder column names. That's how a single translation table can be reused to translate many inventories from the same jurisdiction. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow script, VIEWs are created to map the source inventory attribute names to the placeholder attribute names found in the translation table. One can then run the same translation using as many different VIEWs as there are inventories and layers.
 
