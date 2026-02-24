@@ -798,7 +798,7 @@ RETURNS text AS $$
     IF NOT startTime IS NULL THEN
       elapsedTime = EXTRACT(EPOCH FROM clock_timestamp() - startTime);
       remainingTime = ((100 - percentDone) * elapsedTime)/percentDone;
-      msg = msg || ' - ' || TT_PrettyDuration(elapsedTime, 3) || ' elapsed, ' || TT_PrettyDuration(remainingTime, 3) || ' remaining';
+      msg = msg || ' - ' || to_char(clock_timestamp(), 'HH24hMI') || ', ' || TT_PrettyDuration(elapsedTime, 3) || ' elapsed, ' || TT_PrettyDuration(remainingTime, 3) || ' remaining';
     END IF;
     msg = msg || '...';
     RETURN msg;
