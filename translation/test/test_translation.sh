@@ -21,7 +21,8 @@ if [ $# -ne 0 ]; then
 fi
 
 echo "The final list of inventory to test is : ${fullList[@]}..."
-echo "Press any key to proceed or CTRL-C to cancel..."
+echo "The number of parallel processes for translation tests is set to ${maxTestsInParallel}..."
+echo "Press any key to proceed..."
 read -n 1 -s
 
 # Build a list of province codes to test based on the fullList array
