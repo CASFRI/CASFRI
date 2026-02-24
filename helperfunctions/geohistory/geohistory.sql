@@ -828,7 +828,7 @@ RETURNS boolean AS $$
       countQuery = '
       SELECT count(*) 
       FROM casfri50_history.casflat_gridded
-      WHERE upper(inventory_id) = upper(''' || inv || ''');';
+      WHERE inventory_id = upper(''' || inv || ''');';
       EXECUTE countQuery INTO expectedRowNb;
 
       RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - % gridded polygon to process...', inv, expectedRowNb;
@@ -855,8 +855,8 @@ INSERT INTO casfri50_history.geo_history
       SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
                                    ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
       FROM casfri50_history.casflat_gridded
-      WHERE upper(inventory_id) = upper(''' || inv || ''')';
-      
+      WHERE inventory_id = upper(''' || inv || ''')';
+
     IF progress THEN
       queryStr = queryStr || ' AND CASE WHEN nextval(''' || seqName || '_1'') % 1000 = 0 THEN TT_PrintMessage(''' || inv || ' - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(''' || seqName || '_1''), $1, $2)) ELSE TRUE END';
     END IF;
