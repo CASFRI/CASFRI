@@ -11,15 +11,15 @@ A whole release process includes:
 - the documentation of remaining issues discovered while completing the complete, actual translation,
 - the documentation of the release itself.
 
-The whole release process should take about one week... This is necessary to ensure that releases are stables and actually able to do what they are supposed to do without issues. 
+The whole release process should take about one week... This is necessary to ensure that releases are stable and actually able to do what they are supposed to do without issues. 
 
-Note that only major issues preventing the conversion or the translation process to work properly should be fixed during the release process. It is better to fix other issues in the context of subsequent releases.
+Note that only major issues preventing the conversion or translation process from working properly should be fixed during the release process. It is better to fix other issues in the context of subsequent releases.
 
 **1. Prepare the release**
 
-1. Make sure every fixed issue has been closed in GitHub.
+1. Make sure every fixed issue has been closed on GitHub.
 
-2. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate all commits done during the release process to them and to prepare the texts with the list of fixed issues describing both releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all commits made to stabilize the releases to those "Produce Release" issues in addition to the number of the issue describing the actual fix committed.
+2. Create a new issue in both CASFRI and the PostgreSQL Table Translation Framework to associate all commits done during the release process to them and to prepare the texts listing fixed issues for both releases. Simply name those issues "Produce Release vx.y.z". Make sure to associate all commits made to stabilize the releases to those "Produce Release" issues in addition to the number of the issue describing the actual fix committed.
 
 3. In GitKraken (or your favorite git client), create a branch for both CASFRI and the PostgreSQL Table Translation Framework. Name these branches according to the Version Release versioning scheme described in each product Readme (x.y.z: increment z for bug fixes, y for new features and x when breaking backward compatibility).
 
@@ -43,7 +43,7 @@ Note that only major issues preventing the conversion or the translation process
 
 **3. Install and unsintall the PostgreSQL Table Translation Framework and the CASFRI Helper Functions**
 
-1. Copy the [PostgreSQL-Table-Translation-Framework/configSample.sh](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/configSample.sh) (or .bat) script to PostgreSQL-Table-Translation-Framework/config.sh (or .bat) and edit it to make the pghome variable point to your PostgreSQL installation directory and the tt_version variable to reflect the proper PostgreSQL Table Translation Framework version number. 
+1. Copy the [PostgreSQL-Table-Translation-Framework/configSample.sh](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/configSample.sh) (or .bat) script to PostgreSQL-Table-Translation-Framework/config.sh (or .bat) and edit it to make the "pghome" variable point to your PostgreSQL installation directory and the "tt_version" variable to reflect the proper PostgreSQL Table Translation Framework version number. 
 
 2. In the same shell, install the last version of the PostgreSQL Table Translation Framework extension file using the [PostgreSQL-Table-Translation-Framework/install.sh](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/install.sh) (or .bat) script. This step produce a file named table_translation_framework--x.y.z.sql in the PostgreSQL/XX/share/extension folder.
 
@@ -71,7 +71,7 @@ Note that only major issues preventing the conversion or the translation process
 SELECT (TT_ConvertedStandCount('TRANSLATED_BY_CFS')).*;
 ```
 
-The expected count of converted stand is in the CONVERTED_STAND_CNT column of the inventory_metadata.csv table. If many inventories failed to convert and you want to give them another try, you can list them directly in the config.sh file using the invList array variable. If invList is set, the conver_all.sh script will ignore the flags set in inventory_metadata.csv and will launch a conversion subscript only for those inventories. If you want to see the error message, set the "leaveConversionShellOpen" variable to True.
+The expected count of converted stand is in the CONVERTED_STAND_CNT column of the inventory_metadata.csv table. If many inventories failed to convert and you want to give them another try, you can list them directly in the config.sh file using the "invList" array variable. If "invList" is set, the conver_all.sh script will ignore the flags set in inventory_metadata.csv and will launch a conversion subscript only for those inventories. If you want to see the error message, set the "leaveConversionShellOpen" variable to True.
 
 You can also launch the same procedure by listing the inventories to process directly as convert.sh parameters:
 
@@ -87,15 +87,15 @@ You can also launch the same procedure by listing the inventories to process dir
 ./test_translation.sh AB03 BC08
 ```
 
-Even if you specify a specific list of inventories, all the inventories pertaining to the same jurisdiction will also be tested. For exampl, in the example above, all AB and all BC inventories will be tested. This is to ensure that changes made to the translation tables for one inventory do not break the translation of all the other inventories translated using the same translation tables.
+Even if you specify a list of inventories, all the inventories pertaining to the same jurisdiction will also be tested. For example, in the example above, all AB and all BC inventories will be tested. This is to ensure that changes made to the translation tables for one inventory do not break the translation of all the other inventories translated using the same translation tables.
 
-2. The resulting translation test tables will be dumped automatically at the end of the script. You should easily see the differences between those test tables and the archived reference tables in GitKraken (or any git client able to show differences between the local and the GitHub repositories). Fix any issue in the production of the test tables if they are wrong or commit the new tables if they are right.
+1. The resulting translation test tables will be dumped automatically at the end of the script. You should easily see the differences between those test tables and the archived reference tables in GitKraken (or any git client able to show differences between the local and the GitHub repositories). Fix any issue in the production of the test tables if they are wrong or commit the new tables if they are right.
    
 More details about the translation tests can be found in the [CASFRI/translation/test/readme.md](https://github.com/CASFRI/CASFRI/blob/master/translation/test/readme.md) file.
 
 **5. Run the translation**
 
-In the Bash shell, CD to CASFRI/workflow/02_produceCASFRI and execute the 01_createCASFRITables.sh and then the 02_translateAll.sh scripts one AFTER the other. The first script prepare the target shema and tables and the second actually translate all the inventories flagged for processing in the inventory_metadata.csv table or directly in the invList variable.
+In the Bash shell, CD to CASFRI/workflow/02_produceCASFRI and execute the 01_createCASFRITables.sh and then the 02_translateAll.sh scripts one AFTER the other. The first script prepares the target shema and tables and the second actually translates all the inventories flagged for processing in the inventory_metadata.csv table or directly in the "invList" variable.
 
 **6. Validate the translation**
 
@@ -107,9 +107,9 @@ You can also rerun this counting process in pgAdmin or with psql:
 SELECT (TT_TranslatedRowCount('TRANSLATED_BY_CFS')).*
 ``` 
 
-You should be able to explain every differences between the expected count and the actual number of translated rows and you should commit new values in inventory_metadata.csv only once you can explain them.
+You should be able to explain every difference between the expected count and the actual number of translated rows and you should commit new values in inventory_metadata.csv only once you can explain them.
 
-2. In pgAdmin, run the [CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql](https://github.com/CASFRI/CASFRI/blob/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql) script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the description of the constraint in the script itself. Remove existing reference for fixed, now passing issues. Do the same for the remaining validation scripts located in the same folder ([01_addGeoConstraints.sql](https://github.com/CASFRI/CASFRI/blob/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addGeoConstraints.sql), [CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/02_addIndexes.sql](https://github.com/CASFRI/CASFRI/blob/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/02_addIndexes.sql) and [03_additionalChecks.sql](https://github.com/CASFRI/CASFRI/blob/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/03_additionalChecks.sql)). 
+1. In pgAdmin, run the [CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql](https://github.com/CASFRI/CASFRI/blob/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql) script to make sure all the translated rows respect the CASFRI specifications. Create a new GitHub issue for any not passing constraint and add a reference to the issue number in the constraint description within the script. Remove existing reference for fixed, now passing issues. Do the same for the remaining validation scripts located in the same folder ([01_addGeoConstraints.sql](https://github.com/CASFRI/CASFRI/blob/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addGeoConstraints.sql), [CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/02_addIndexes.sql](https://github.com/CASFRI/CASFRI/blob/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/02_addIndexes.sql) and [03_additionalChecks.sql](https://github.com/CASFRI/CASFRI/blob/master/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/03_additionalChecks.sql)). 
 
 **7. Generate the flat (denormalized) tables**
 
@@ -119,11 +119,11 @@ Run the [CASFRI/workflow/03_flatCASFRI/01_all_layers_same_row.sh](https://github
 
 1. Execute the [CASFRI/helperfunctions/geohistory/geoHistory.sql](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory.sql) script in pgAdmin or using psql to load the required geohistory functions.
 
-2. Test the geohistory functions by first loading the test tables with the [CASFRI/helperfunctions/geohistory/load_test_tables.sh](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/load_test_tables.sh) and the [CASFRI/helperfunctions/geohistory/load_test_tables_with_inv_data.sh](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory_test_with_inv_data.sql) scripts and then executing [CASFRI/helperfunctions/geohistory/geohistory_test.sql](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory_test.sql), [CASFRI/helperfunctions/geohistory/geohistory_test_with_inv_data.sql](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory_test_with_inv_data.sql) and [CASFRI/helperfunctions/geohistory/geohistory_test_with_inv_data_gridded.sql](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory_test_with_inv_data_gridded.sql). Dump the test tables using the [CASFRI/helperfunctions/geohistory/dump_test_tables.sh](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/dump_test_tables.sh) and the [CASFRI/helperfunctions/geohistory/dump_test_tables_with_inv_data.sh](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/dump_test_tables_with_inv_data.sh) scripts and compare them with the archived tables using your favorite differenciation software. Archive the new tables if you can explain all the differences.
+2. Test the geohistory functions by first loading the test tables with the [CASFRI/helperfunctions/geohistory/load_test_tables.sh](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/load_test_tables.sh) and the [CASFRI/helperfunctions/geohistory/load_test_tables_with_inv_data.sh](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory_test_with_inv_data.sql) scripts and then executing [CASFRI/helperfunctions/geohistory/geohistory_test.sql](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory_test.sql), [CASFRI/helperfunctions/geohistory/geohistory_test_with_inv_data.sql](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory_test_with_inv_data.sql) and [CASFRI/helperfunctions/geohistory/geohistory_test_with_inv_data_gridded.sql](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/geohistory_test_with_inv_data_gridded.sql). Dump the test tables using the [CASFRI/helperfunctions/geohistory/dump_test_tables.sh](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/dump_test_tables.sh) and the [CASFRI/helperfunctions/geohistory/dump_test_tables_with_inv_data.sh](https://github.com/CASFRI/CASFRI/blob/master/helperfunctions/geohistory/dump_test_tables_with_inv_data.sh) scripts and compare them with the archived tables using your favorite differentiation software. Archive the new tables if you can explain all the differences.
 
 3. In the Bash shell, execute [CASFRI/workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sh](https://github.com/CASFRI/CASFRI/blob/master/workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sh) to prepare the casfri50_history schema, generate a gridded version of the casfri50.geo_all polygons and define some other functions.
 
-4. Execute the [CASFRI/workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sh](https://github.com/CASFRI/CASFRI/blob/master/workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sh) script to process all the inventories flagged for process in parallel. The "maxGeoHistoryInParallel" variable in config.sh controls how many parallel subshells can be launched at the same time.
+4. Execute the [CASFRI/workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sh](https://github.com/CASFRI/CASFRI/blob/master/workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sh) script to process all the inventories flagged for processing in parallel. The "maxGeoHistoryInParallel" variable in config.sh controls how many parallel subshells can be launched at the same time.
 
 5. Execute the [CASFRI/workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sh](https://github.com/CASFRI/CASFRI/blob/master/workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sh) to produce a set of tables containing the geographical coverage of each inventory.
 
@@ -139,4 +139,4 @@ Commit all changes you made to stabilize the release and get the complete transl
 
 3. Create a new release in GitHub and copy the description text from the release issue. Close the issue.
 
-Congratulation! You're done!
+Congratulations! You're done!
