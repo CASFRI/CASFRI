@@ -1465,17 +1465,27 @@ RETURNS TABLE (id text,
       poly_photo_year = refYearBegin;
     END IF;
     -- Prepare the nested LOOP query looping through polygons overlapping the current main loop polygons
-    ovlpPolyQuery = 'SELECT ' || quote_ident(idColName) || '::text gh_row_id, ' ||
-                                 quote_ident(geoColName) || ' gh_geom, ' ||
-                                 'CASE WHEN ' || quote_ident(photoYearColName) || ' < 0 OR ' || quote_ident(photoYearColName) || ' IS NULL THEN ' || refYearBegin || ' ELSE ' || quote_ident(photoYearColName) || ' END gh_photo_year, ' ||
-                                 quote_ident(precedenceColName) || '::text gh_inv, ' ||
-                                 CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, '::text,') || '::text])' END || ' gh_is_valid ' ||
-                    'FROM ' || TT_FullTableName(schemaName, tableName) || 
-                   ' WHERE ' || quote_ident(idColName) || '::text != $1 AND ' ||
-                          '($2 && ' || quote_ident(geoColName) || ' AND ' ||
-                          'TT_GeoHistoryOverlaps(' || quote_ident(geoColName) || ', $2)) ' ||
-                          'ORDER BY gh_photo_year;';
-    IF debug_l2 THEN RAISE NOTICE E'000 ovlpPolyQuery = \n%\n', ovlpPolyQuery;END IF;
+    ovlpPolyQuery = format('
+    SELECT  %1$I::text gh_row_id, 
+            %2$I gh_geom, 
+            CASE WHEN %3$I < 0 OR %3$I IS NULL THEN %4$s ELSE %3$I END gh_photo_year, 
+            %5$I::text gh_inv, 
+            %6$s gh_is_valid 
+    FROM %7$I.%8$I
+    WHERE %1$I::text != %9$L AND ($1 && %2$I) AND TT_SafeOverlaps($1, %2$I, %10$s, %9$L, %1$I, TRUE, FALSE, ''main loop'') ORDER BY gh_photo_year;',
+      idColName, 
+      geoColName,
+      photoYearColName, 
+      refYearBegin, 
+      precedenceColName, 
+      CASE WHEN validityColNames IS NULL THEN 'TRUE' ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, '::text,') || '::text])' END,
+      schemaName, 
+      tableName,
+      poly_row_id,
+      safeGridSize
+    );
+
+    IF debug_l2 THEN RAISE NOTICE E'000 3333 ovlpPolyQuery = \n%\n', ovlpPolyQuery;END IF;
     
     time = clock_timestamp();
     IF debug_l2 THEN RAISE NOTICE 'Setting diffCnt to 0...';END IF;
@@ -1522,7 +1532,7 @@ RETURNS TABLE (id text,
         -- LOOP over all overlapping polygons sorted by photoYear ASC
         IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'START looping over intersecting polygons...';END IF;
         FOR ovlpRow IN EXECUTE ovlpPolyQuery 
-        USING poly_row_id, poly_geom LOOP
+        USING poly_geom LOOP
           IF debug_l2 THEN RAISE NOTICE '  ---------------------------';END IF;
           IF debug_l1 OR debug_l2 THEN RAISE NOTICE '  Processing overlapping polygon %', ovlpRow.gh_row_id;END IF;
           IF debug_l2 THEN RAISE NOTICE '  111 ovlp poly id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;END IF;
@@ -1677,17 +1687,18 @@ RETURNS TABLE (id text,
           IF debug_l1 OR debug_l2 THEN RAISE NOTICE '  Setting diffCnt to 1...';END IF;
           diffCnt = 1;
           --safeDiff = TRUE;
-        END IF;
-        IF justBeforeSafeOvlp THEN
+        ELSIF justBeforeSafeOvlp THEN
           -- Stop if it's the second attempt with the safe version of the overlaps function
           IF ovlpCnt = 1 THEN RAISE EXCEPTION 'TT_PolygonGeoHistory() ERROR: TT_SafeOverlaps() failed on %...', poly_row_id;END IF;
           IF debug_l1 OR debug_l2 THEN RAISE NOTICE '  Setting ovlpCnt to 1...';END IF;
           ovlpCnt = 1;
           --safeOvlp = TRUE;
+        ELSE
+          RAISE EXCEPTION 'TT_PolygonGeoHistory() FATAL ERROR: Unknown error %', SQLERRM;
         END IF;
       END;
     END LOOP; -- WHILE
-    IF debug_l1 THEN RAISE NOTICE 'END looping over intersecting polygons...';END IF;
+    IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'END looping over intersecting polygons...';END IF;
     ---------------------------------------------------------------------------
     -- Return the last new polygon (newestPoly, oldCurrentYear, ovlpPoly.photoYear)
     ---------------------------------------------------------------------------
