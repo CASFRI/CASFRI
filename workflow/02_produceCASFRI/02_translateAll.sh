@@ -21,6 +21,7 @@ if [ $# -gt 0 ]; then
 fi
 
 echo "The final list of inventory to translate is : ${fullList[@]}..."
+echo "The number of parallel processes for translations is set to ${maxTranslationsInParallel}..."
 echo "Press any key to proceed or CTRL-C to cancel..."
 read -n 1 -s
 

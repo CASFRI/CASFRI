@@ -7,7 +7,11 @@ if [ $# -gt 0 ]; then
     fullList=("$@")
 fi
 
-echo "The list of inventory to produce geo history is ${fullList[@]}..."
+echo "The final list of inventory for which to produce a coverage polygon is : ${fullList[@]}..."
+echo "The number of parallel processes for producing inventory coverages is set to ${maxGeoHistoryInParallel}..."
+echo "Press any key to proceed or CTRL-C to cancel..."
+read -n 1 -s
+
 
 # Translate inventories for each inventory in the list
 tests_in_parallel=0

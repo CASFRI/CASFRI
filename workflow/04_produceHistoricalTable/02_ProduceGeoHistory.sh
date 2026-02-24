@@ -9,6 +9,7 @@ if [ $# -gt 0 ]; then
 fi
 
 echo "The final list of inventory to produce geo history for is : ${fullList[@]}..."
+echo "The number of parallel processes for producing geo history is set to ${maxGeoHistoryInParallel}..."
 echo "Press any key to proceed or CTRL-C to cancel..."
 read -n 1 -s
 
