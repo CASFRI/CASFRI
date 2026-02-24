@@ -1,9 +1,13 @@
 # Summarize layer attributes for each inventory
 # PV 2021-03-10
-
+#install.packages('rpostgis')
 library(rpostgis)
+#install.packages('tidyverse')
 library(tidyverse)
+#install.packages('summarytools')
 library(summarytools)
+
+casfri_path <- "G:/CASFRI/CASFRI"
 
 ################################################################################
 # Select tables
@@ -27,13 +31,13 @@ cas_vars = c("inventory_id", "stand_structure", "num_of_layers", "stand_photo_ye
 
 ################################################################################
 # Read user config.sh file
-cfg = readr::read_lines("../config.sh")
+cfg = readr::read_lines(file.path(casfri_path, "config.sh"))
 for (r in cfg) {
-    if (startsWith(r, "pgdbname_pr")) {
+    if (startsWith(r, "pgdbname")) {
         dbname = strsplit(r,"=")[[1]][2]
     } else if (startsWith(r, "pghost")) {
         host = strsplit(r,"=")[[1]][2]
-    } else if (startsWith(r, "pgport_pr")) {
+    } else if (startsWith(r, "pgport")) {
         port = strsplit(r,"=")[[1]][2]
     } else if (startsWith(r, "pguser")) {
         user = strsplit(r,"=")[[1]][2]
@@ -54,10 +58,10 @@ if (!exists("y")) {
 ################################################################################
 # Create rmarkdown file
 for (fi in cas_tables) {
-xvars = unlist(mget(paste0(fi,'_vars')))
-names(xvars) = NULL
-sink(paste0(fi, '.Rmd'))
-cat('---
+  xvars = unlist(mget(paste0(fi,'_vars')))
+  names(xvars) = NULL
+  sink(paste0(fi, '.Rmd'))
+  cat('---
 title: ', toupper(fi), ' Attributes
 date: "Updated: `r format(Sys.time(), \'%d %B %Y\')`"
 output:
@@ -74,27 +78,27 @@ library(tidyverse)
 library(summarytools)
 ```\n', sep="")
 
-for (j in 1:length(xvars)) {
-cat('\n<br>\n\n## ', xvars[j], '\n\n<br>
+  for (j in 1:length(xvars)) {
+    cat('\n<br>\n\n## ', xvars[j], '\n\n<br>
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 con = dbConnect(RPostgreSQL::PostgreSQL(), dbname=dbname, host=host, port=port, user=user, password=password)
 x = RPostgreSQL::dbGetQuery(con, \'SELECT cas_id, ',xvars[j],' FROM casfri50.', fi, '_all\')
 dbDisconnect(con)
 ```\n', sep="")
 
-for (i in 1:length(invids)) {
-cat('\n---\n\n**', invids[i],'**\n
+    for (i in 1:length(invids)) {
+    cat('\n---\n\n**', invids[i],'**\n
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 casids = y$cas_id[y$inventory_id=="',invids[i],'"]
 z = filter(x, cas_id %in% casids)
 dfSummary(z["', xvars[j], '"], graph.col=FALSE, max.distinct.values=100)
 ```\n', sep="")
-}
-}
-sink()
+    }
+  }
+  sink()
 
-################################################################################
-# Render rmarkdown to html
-rmarkdown::render(paste0(fi, ".Rmd"))
-file.remove(paste0(fi, ".Rmd"))
+  ################################################################################
+  # Render rmarkdown to html
+  rmarkdown::render(paste0(fi, ".Rmd"))
+  file.remove(paste0(fi, ".Rmd"))
 }
