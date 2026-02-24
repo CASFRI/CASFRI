@@ -23,7 +23,8 @@ DROP FUNCTION IF EXISTS TT_GeoHistoryOblique(name, name, name, name, name, text,
 DROP FUNCTION IF EXISTS TT_GeoOblique(geometry, int, double precision, double precision);
 DROP AGGREGATE IF EXISTS TT_ValidYearUnion(geometry, int, int);
 DROP FUNCTION IF EXISTS TT_ValidYearUnionStateFct(geomlowuppval[], geometry, int, int);
-DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean);
+DROP FUNCTION IF EXISTS TT_SafeOverlaps(geometry, geometry, double precision, text, text, boolean, boolean);
+DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean, boolean);
 DROP FUNCTION IF EXISTS TT_GeoHistoryOverlaps(geometry, geometry, boolean, double precision);
 DROP FUNCTION IF EXISTS TT_SplitByGrid(geometry, double precision, double precision, double precision, double precision);
 DROP FUNCTION IF EXISTS TT_SplitByGridDebug(text, geometry, double precision, double precision, double precision, double precision);

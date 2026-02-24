@@ -829,6 +829,7 @@ RETURNS boolean AS $$
       SELECT count(*) 
       FROM casfri50_history.casflat_gridded
       WHERE inventory_id = upper(''' || inv || ''');';
+      RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - Counting the number of gridded polygon to process...', inv;
       EXECUTE countQuery INTO expectedRowNb;
 
       RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - % gridded polygon to process...', inv, expectedRowNb;
@@ -920,68 +921,86 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_SafeOverlaps()
 ------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_SafeOverlaps(geometry, geometry, boolean);
+--DROP FUNCTION IF EXISTS TT_SafeOverlaps(geometry, geometry, double precision, text, text, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_SafeOverlaps(
   geom1 geometry,
   geom2 geometry,
   tolerance double precision DEFAULT NULL,
   geom1id text DEFAULT NULL,
   geom2id text DEFAULT NULL,
-  safe boolean DEFAULT FALSE
+  safe boolean DEFAULT FALSE,
+  showNotice boolean DEFAULT TRUE,
+  context text DEFAULT ''
 )
 RETURNS boolean AS $$
   DECLARE
     ovlp boolean;
   BEGIN
     IF safe THEN
-      RAISE NOTICE 'TT_SafeOverlaps() : Safe is TRUE...';
+      IF showNotice THEN RAISE NOTICE 'TT_SafeOverlaps(%) : Safe is TRUE...', context; END IF;
       BEGIN
         -- Attempt the normal operation
         ovlp := ST_Overlaps(geom1, geom2) OR ST_Contains(geom2, geom1) OR ST_Contains(geom1, geom2);
-        RAISE NOTICE 'TT_SafeOverlaps() : Safe is TRUE but normal operation worked...';
-        RETURN ovlp
+        IF showNotice THEN RAISE NOTICE 'TT_SafeOverlaps(%) : Safe is TRUE but normal operation worked...', context; END IF;
+        RETURN ovlp;
       EXCEPTION WHEN OTHERS THEN
         IF tolerance IS NULL THEN
-          RAISE NOTICE 'TT_SafeOverlaps() ERROR 1: Normal ST_Overlaps() failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeOverlaps(%) ERROR 1: Normal ST_Overlaps() failed. Try by buffering the first polygon (%) by 0...', context, coalesce(geom1id, 'no ID provided');
         ELSE
-          RAISE NOTICE 'TT_SafeOverlaps() ERROR 1: Normal ST_Overlaps() failed. Try by snapping the first polygon (%) to grid using tolerance...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeOverlaps(%) ERROR 1: Normal ST_Overlaps() failed. Try by snapping the first polygon (%) to grid using tolerance=%...', context, coalesce(geom1id, 'no ID provided'), tolerance::text;
         END IF;
       END;
       IF NOT tolerance IS NULL THEN
         BEGIN
-          RETURN ST_Overlaps(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), geom2);
+          geom1 := ST_MakeValid(ST_SnapToGrid(geom1, tolerance));
+          ovlp := ST_Overlaps(geom1, geom2) OR ST_Contains(geom2, geom1) OR ST_Contains(geom1, geom2);
+          RAISE NOTICE 'TT_SafeOverlaps(%) : That worked...', context;
+          RETURN ovlp;
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'TT_SafeOverlaps() ERROR 2: Snapping the first polygon failed. Try by snapping the second polygon (%) to grid using tolerance...', coalesce(geom2id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeOverlaps(%) ERROR 2: Snapping the first polygon failed. Try by snapping the second polygon (%) to grid using tolerance=%...', context, coalesce(geom2id, 'no ID provided'), tolerance::text;
         END;
 
         BEGIN
-          RETURN ST_Overlaps(geom1, ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
+          geom2 := ST_MakeValid(ST_SnapToGrid(geom2, tolerance));
+          ovlp := ST_Overlaps(geom1, geom2) OR ST_Contains(geom2, geom1) OR ST_Contains(geom1, geom2);
+          RAISE NOTICE 'TT_SafeOverlaps(%) : That worked...', context;
+          RETURN ovlp;
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'TT_SafeOverlaps() ERROR 3: Snapping the second polygon failed. Try by snapping the both polygons (% and %) to grid using tolerance...', coalesce(geom1id, 'no ID provided'), coalesce(geom2id, 'no ID provided');
-        END;            
+          RAISE NOTICE 'TT_SafeOverlaps(%) ERROR 3: Snapping the second polygon failed. Try by snapping the both polygons (% and %) to grid using tolerance=%...', context, coalesce(geom1id, 'no ID provided'), coalesce(geom2id, 'no ID provided'), tolerance::text;
+        END;
 
         BEGIN
-          RETURN ST_Overlaps(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));          
+          geom1 := ST_MakeValid(ST_SnapToGrid(geom1, tolerance));
+          geom2 := ST_MakeValid(ST_SnapToGrid(geom2, tolerance));
+          ovlp := ST_Overlaps(geom1, geom2) OR ST_Contains(geom2, geom1) OR ST_Contains(geom1, geom2);
+          RAISE NOTICE 'TT_SafeOverlaps(%) : That worked...', context;
+          RETURN ovlp;
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'TT_SafeOverlaps() ERROR 4: Snapping both polygons failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeOverlaps(%) ERROR 4: Snapping both polygons failed. Try by buffering the first polygon (%) by 0...', context, coalesce(geom1id, 'no ID provided');
         END;
       END IF;
 
       BEGIN
-        RETURN ST_Overlaps(ST_Buffer(geom1, 0), geom2);
+        geom1 := ST_Buffer(geom1, 0);
+        ovlp := ST_Overlaps(geom1, geom2) OR ST_Contains(geom2, geom1) OR ST_Contains(geom1, geom2);
+        RAISE NOTICE 'TT_SafeOverlaps(%) : That worked...', context;
+        RETURN ovlp;
       EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'TT_SafeOverlaps() ERROR 5: Buffering the first polygon by 0 failed. Try by buffering the second polygon (%) by 0...', coalesce(geom2id, 'no ID provided');
+        RAISE NOTICE 'TT_SafeOverlaps(%) ERROR 5: Buffering the first polygon by 0 failed. Try by buffering the second polygon (%) by 0...', context, coalesce(geom2id, 'no ID provided');
       END;
 
       BEGIN
-        RETURN ST_Overlaps(geom1, ST_Buffer(geom2, 0));
+        geom2 := ST_Buffer(geom2, 0);
+        ovlp := ST_Overlaps(geom1, geom2) OR ST_Contains(geom2, geom1) OR ST_Contains(geom1, geom2);
+        RAISE NOTICE 'TT_SafeOverlaps(%) : That worked...', context;
+        RETURN ovlp;
       EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'TT_SafeOverlaps() FATAL ERROR: Operation failed. Returning FALSE...';
+        RAISE NOTICE 'TT_SafeOverlaps(%) FATAL ERROR: Operation failed. Returning FALSE...', context;
       END;
       RETURN FALSE;
     ELSE
+      -- Safe is FALSE, just do the normal operation without any exception handling (faster)
       RETURN ST_Overlaps(geom1, geom2) OR ST_Contains(geom2, geom1) OR ST_Contains(geom1, geom2);
-      --RETURN ST_Overlaps(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
     END IF;
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -997,14 +1016,16 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- RAISE NOTICE messages to help identify the problematic cases and the approach 
 -- that worked.
 ------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean);
+--DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_SafeDifference(
   geom1 geometry,
   geom2 geometry,
   tolerance double precision DEFAULT NULL,
   geom1id text DEFAULT NULL,
   geom2id text DEFAULT NULL,
-  safe boolean DEFAULT FALSE
+  safe boolean DEFAULT FALSE,
+  showNotice boolean DEFAULT TRUE,
+  context text DEFAULT ''
 )
 RETURNS geometry AS $$
   DECLARE
@@ -1013,54 +1034,64 @@ RETURNS geometry AS $$
     --RAISE NOTICE 'geom1=%', ST_AsText(geom1);
     --RAISE NOTICE 'geom2=%', ST_AsText(geom2);
     IF safe THEN
-      RAISE NOTICE 'TT_SafeDifference() : Safe is TRUE...';
+      IF showNotice THEN RAISE NOTICE 'TT_SafeDifference(%) : Safe is TRUE...', context; END IF;
       BEGIN
         -- Attempt the normal operation
         diffGeom := ST_Difference(geom1, geom2);
-        RAISE NOTICE 'TT_SafeDifference() : Safe is TRUE but normal operation worked...';
+        IF showNotice THEN RAISE NOTICE 'TT_SafeDifference(%) : Safe is TRUE but normal operation worked...', context; END IF;
         RETURN diffGeom;
       EXCEPTION WHEN OTHERS THEN
         IF tolerance IS NULL THEN
-          RAISE NOTICE 'TT_SafeDifference() ERROR 1: Normal ST_Difference() failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference(%) ERROR 1: Normal ST_Difference() failed. Try by buffering the first polygon (%) by 0...', context, coalesce(geom1id, 'no ID provided');
         ELSE
-          RAISE NOTICE 'TT_SafeDifference() ERROR 1: Normal ST_Difference() failed. Try by snapping the first polygon (%) to grid using tolerance...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference(%) ERROR 1: Normal ST_Difference() failed. Try by snapping the first polygon (%) to grid using tolerance=%...', context, coalesce(geom1id, 'no ID provided'), tolerance::text;
         END IF;
       END;
       IF NOT tolerance IS NULL THEN
         BEGIN
-          RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), geom2);
+          diffGeom := ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), geom2);
+          RAISE NOTICE 'TT_SafeDifference(%) : That worked...', context;
+          RETURN diffGeom;
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'TT_SafeDifference() ERROR 2: Snapping the first polygon failed. Try by snapping the second polygon (%) to grid using tolerance...', coalesce(geom2id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference(%) ERROR 2: Snapping the first polygon failed. Try by snapping the second polygon (%) to grid using tolerance=%...', context, coalesce(geom2id, 'no ID provided'), tolerance::text;
         END;
 
         BEGIN
-          RETURN ST_Difference(geom1, ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
+          diffGeom := ST_Difference(geom1, ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
+          RAISE NOTICE 'TT_SafeDifference(%) : That worked...', context;
+          RETURN diffGeom;
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'TT_SafeDifference() ERROR 3: Snapping the second polygon failed. Try by snapping the both polygons (% and %) to grid using tolerance...', coalesce(geom1id, 'no ID provided'), coalesce(geom2id, 'no ID provided');
-        END;            
+          RAISE NOTICE 'TT_SafeDifference(%) ERROR 3: Snapping the second polygon failed. Try by snapping the both polygons (% and %) to grid using tolerance=%...', context, coalesce(geom1id, 'no ID provided'), coalesce(geom2id, 'no ID provided'), tolerance::text;
+        END;
 
         BEGIN
-          RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));          
+          diffGeom := ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
+          RAISE NOTICE 'TT_SafeDifference(%) : That worked...', context;
+          RETURN diffGeom;
         EXCEPTION WHEN OTHERS THEN
-          RAISE NOTICE 'TT_SafeDifference() ERROR 4: Snapping both polygons failed. Try by buffering the first polygon (%) by 0...', coalesce(geom1id, 'no ID provided');
+          RAISE NOTICE 'TT_SafeDifference(%) ERROR 4: Snapping both polygons failed. Try by buffering the first polygon (%) by 0...', context, coalesce(geom1id, 'no ID provided');
         END;
       END IF;
 
       BEGIN
-        RETURN ST_Difference(ST_Buffer(geom1, 0), geom2);
+        diffGeom := ST_Difference(ST_Buffer(geom1, 0), geom2);
+        RAISE NOTICE 'TT_SafeDifference(%) : That worked...', context;
+        RETURN diffGeom;
       EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'TT_SafeDifference() ERROR 5: Buffering the first polygon by 0 failed. Try by buffering the second polygon (%) by 0...', coalesce(geom2id, 'no ID provided');
+        RAISE NOTICE 'TT_SafeDifference(%) ERROR 5: Buffering the first polygon by 0 failed. Try by buffering the second polygon (%) by 0...', context, coalesce(geom2id, 'no ID provided');
       END;
 
       BEGIN
-        RETURN ST_Difference(geom1, ST_Buffer(geom2, 0));
+        diffGeom := ST_Difference(geom1, ST_Buffer(geom2, 0));
+        RAISE NOTICE 'TT_SafeDifference(%) : That worked...', context;
+        RETURN diffGeom;
       EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'TT_SafeDifference() FATAL ERROR: Operation failed. Returning MULTIPOLYGON EMPTY...';
+        RAISE NOTICE 'TT_SafeDifference(%) FATAL ERROR: Operation failed. Returning MULTIPOLYGON EMPTY...', context;
       END;
       RETURN ST_GeomFromText('MULTIPOLYGON EMPTY');
     ELSE
+      -- Safe is FALSE, just do the normal operation without any exception handling (faster)
       RETURN ST_Difference(geom1, geom2);
-      --RETURN ST_Difference(ST_MakeValid(ST_SnapToGrid(geom1, tolerance)), ST_MakeValid(ST_SnapToGrid(geom2, tolerance)));
     END IF;
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -1460,7 +1491,6 @@ RETURNS TABLE (id text,
     WHILE diffCnt < 2 AND ovlpCnt < 2 LOOP
       IF debug_l1 OR debug_l2 THEN RAISE NOTICE '-------------- SAFE DIFF % | SAFE OVLP % ---------------', upper((diffCnt = 1)::text), upper((ovlpCnt = 1)::text);END IF;
       BEGIN
-
         -- Initialize preValidYearPoly to the current polygon
         preValidYearPoly = poly_geom;
         preValidYearPolyYearEnd = refYearEnd;
@@ -1490,11 +1520,11 @@ RETURNS TABLE (id text,
         END IF;
 
         -- LOOP over all overlapping polygons sorted by photoYear ASC
-        IF debug_l1 THEN RAISE NOTICE 'START looping over intersecting polygons...';END IF;
+        IF debug_l1 OR debug_l2 THEN RAISE NOTICE 'START looping over intersecting polygons...';END IF;
         FOR ovlpRow IN EXECUTE ovlpPolyQuery 
         USING poly_row_id, poly_geom LOOP
           IF debug_l2 THEN RAISE NOTICE '  ---------------------------';END IF;
-          IF debug_l1 THEN RAISE NOTICE '  Processing overlapping polygon %', ovlpRow.gh_row_id;END IF;
+          IF debug_l1 OR debug_l2 THEN RAISE NOTICE '  Processing overlapping polygon %', ovlpRow.gh_row_id;END IF;
           IF debug_l2 THEN RAISE NOTICE '  111 ovlp poly id=%, py=%, inv=%, isvalid=%', ovlpRow.gh_row_id, ovlpRow.gh_photo_year, ovlpRow.gh_inv, ovlpRow.gh_is_valid;END IF;
           IF debug_l2 THEN RAISE NOTICE '  111 ovlp_area=%', ST_Area(ST_Intersection(poly_geom, ovlpRow.gh_geom));END IF;
 
@@ -1513,7 +1543,7 @@ RETURNS TABLE (id text,
             IF debug_l2 THEN RAISE NOTICE '  AAA.1 CASE SAME YEAR: Remove ovlpPoly from prePoly. ovlp.py = %', ovlpRow.gh_photo_year;END IF;
 
             justBeforeSafeDiff = TRUE;
-            preValidYearPoly = TT_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, safeGridSize, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, diffCnt > 0);
+            preValidYearPoly = TT_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, safeGridSize, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, diffCnt > 0, TRUE, 'case B1');
             justBeforeSafeDiff = FALSE;
             
             preValidYearPoly = ST_Multi(TT_TrimSubPolygons(ST_CollectionExtract(preValidYearPoly, 3), smallestPolyArea));
@@ -1530,7 +1560,7 @@ RETURNS TABLE (id text,
 
             IF postValidYearPoly IS NOT NULL THEN
               justBeforeSafeDiff = TRUE;
-              postValidYearPoly = TT_SafeDifference(postValidYearPoly, ovlpRow.gh_geom, safeGridSize, 'postValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, diffCnt > 0);
+              postValidYearPoly = TT_SafeDifference(postValidYearPoly, ovlpRow.gh_geom, safeGridSize, 'postValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, diffCnt > 0, TRUE, 'case B2');
               justBeforeSafeDiff = FALSE;
 
               postValidYearPoly = ST_Multi(TT_TrimSubPolygons(ST_CollectionExtract(postValidYearPoly, 3), smallestPolyArea));
@@ -1558,7 +1588,7 @@ RETURNS TABLE (id text,
             postValidYearPolyYearBegin = poly_photo_year;
 
             justBeforeSafeDiff = TRUE;
-            preValidYearPoly = TT_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, safeGridSize, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, diffCnt > 0);
+            preValidYearPoly = TT_SafeDifference(preValidYearPoly, ovlpRow.gh_geom, safeGridSize, 'preValidYearPoly from ' || poly_row_id, ovlpRow.gh_row_id, diffCnt > 0, TRUE, 'case C');
             justBeforeSafeDiff = FALSE;
 
             preValidYearPoly = ST_Multi(TT_TrimSubPolygons(ST_CollectionExtract(preValidYearPoly, 3), smallestPolyArea));
@@ -1584,9 +1614,9 @@ RETURNS TABLE (id text,
             -- Make sure the last computed polygon still intersect with ovlpPoly
             justBeforeSafeOvlp = TRUE;
             --IF TT_GeoHistoryOverlaps(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly)) THEN
-            IF TT_SafeOverlaps(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly), safeGridSize, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || poly_row_id, ovlpRow.gh_row_id, ovlpCnt > 0) THEN
+            IF TT_SafeOverlaps(ovlpRow.gh_geom, coalesce(postValidYearPoly, preValidYearPoly), safeGridSize, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || poly_row_id, ovlpRow.gh_row_id, ovlpCnt > 0, TRUE, 'case D') THEN
               justBeforeSafeOvlp = FALSE;
-              IF debug_l2 THEN RAISE NOTICE '  DDD: TT_SafeOverlaps() id TRUE';END IF;
+              IF debug_l2 THEN RAISE NOTICE '  DDD: TT_SafeOverlaps() worked...';END IF;
               IF oldOvlpPolyYear IS NOT NULL AND oldOvlpPolyYear != ovlpRow.gh_photo_year AND postValidYearPoly IS NOT NULL THEN
                 poly_id = poly_id + 1;
                 wkb_geometry = ST_Multi(TT_TrimSubPolygons(ST_CollectionExtract(postValidYearPoly, 3), smallestPolyArea));
@@ -1611,7 +1641,7 @@ RETURNS TABLE (id text,
               justBeforeSafeOvlp = FALSE;
 
               justBeforeSafeDiff = TRUE;
-              postValidYearPoly = TT_SafeDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, safeGridSize, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || poly_row_id, ovlpRow.gh_row_id, diffCnt > 0);
+              postValidYearPoly = TT_SafeDifference(coalesce(postValidYearPoly, preValidYearPoly), ovlpRow.gh_geom, safeGridSize, 'coalesce(postValidYearPoly, preValidYearPoly) from ' || poly_row_id, ovlpRow.gh_row_id, diffCnt > 0, TRUE, 'case D');
               justBeforeSafeDiff = FALSE;
 
               postValidYearPoly = ST_Multi(TT_TrimSubPolygons(ST_CollectionExtract(postValidYearPoly, 3), smallestPolyArea));
