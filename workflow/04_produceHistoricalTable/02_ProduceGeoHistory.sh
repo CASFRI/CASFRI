@@ -68,13 +68,16 @@ WITH inv_list AS (
   SELECT inventory_id, geo_row_cnt::int
   FROM inventory_metadata
   WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(ARRAY[${quoted_list}])))
+), geohistocnt AS (
+  SELECT left(cas_id, 4) inv, count(*) geo_history_cnt
+  FROM casfri50_history.geo_history
+  GROUP BY inv
 )
-SELECT inventory_id, 
-       max(geo_row_cnt) geo_row_cnt, 
-       count(*) geo_history_cnt,
-       count(*) - max(geo_row_cnt) diff
+SELECT coalesce(inventory_id, inv) inventory_id,
+       coalesce(geo_row_cnt, 0) geo_row_cnt,
+       coalesce(geo_history_cnt, 0) geo_history_cnt,
+       coalesce(geo_history_cnt, 0) - coalesce(geo_row_cnt, 0) diff
 FROM inv_list
-LEFT JOIN casfri50_history.geo_history ON (left(cas_id, 4) = inv_list.inventory_id)
-GROUP BY inventory_id
+FULL JOIN geohistocnt ON (inv = inventory_id)
 ORDER BY inventory_id;
 "
