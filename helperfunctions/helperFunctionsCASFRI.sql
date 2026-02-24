@@ -1220,7 +1220,6 @@ RETURNS text AS $$
     maxLayerNb int = 0;
     lyrMetadataTableName text := 'layer_metadata';
     lyrMetadataSchemaName text := 'public';
-
   BEGIN
     -- Check if table 'layer_metadata' exists
     IF NOT TT_TableExists(lyrMetadataSchemaName, lyrMetadataTableName) THEN
@@ -1778,7 +1777,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 --DROP FUNCTION IF EXISTS TT_StackTranslationRules(text, text);
 CREATE OR REPLACE FUNCTION TT_StackTranslationRules(
   schemaName text,
-  transTableList text DEFAULT NULL
+  transTableList text
 )
 RETURNS TABLE (ttable text,
                rule_id int,
@@ -1788,52 +1787,34 @@ RETURNS TABLE (ttable text,
                translation_rules text
 ) AS $$
   DECLARE
-    query text = '';
+    queryStr text = '';
     attrPart text = '';
     wherePart text = 'WHERE ';
     attributeArr text[];
     attributeArrOld text[];
-    tTableArr text[];
+    tTableArr text[] = ARRAY['ab_avi01_', 'bc_vri01_', 'ds_bea01_', 'ds_cfs01_', 'mb_fli01_',
+                             'mb_fri01_', 'mb_fri02_', 'nb_nbi01_', 'nl_nli01_', 'nl_nli02_',
+                             'ns_nsi01_', 'nt_fvi01_', 'on_fim02_', 'pc_pca01_', 'pc_pca02_',
+                             'pe_pei01_', 'qc_ini03_', 'qc_ini04_', 'qc_ipf05_', 'sk_sfv01_',
+                             'sk_utm01_', 'yt_yvi01_', 'yt_yvi02_'];
     tTable text;
     attr text;
     nb int = 1;
     nb2 int = 1;
   BEGIN
     -- Handle when only one keyword parameter is provided instead of a schema and a table
-    IF transTableList IS NULL AND lower(schemaName) IN ('cas', 'lyr', 'nfl', 'dst', 'eco', 'geo') THEN
-      transTableList = 'ab_avi01_' || lower(schemaName) || ', ' ||
-                       'bc_vri01_' || lower(schemaName) || ', ' ||
-                       'mb_fli01_' || lower(schemaName) || ', ' ||
-                       'mb_fri01_' || lower(schemaName) || ', ' ||
-                       'mb_fri02_' || lower(schemaName) || ', ' ||
-                       'nb_nbi01_' || lower(schemaName) || ', ' ||
-                       'nl_nli01_' || lower(schemaName) || ', ' ||
-                       'nl_nli02_' || lower(schemaName) || ', ' ||
-                       'ns_nsi01_' || lower(schemaName) || ', ' ||
-                       'nt_fvi01_' || lower(schemaName) || ', ' ||
-                       'on_fim02_' || lower(schemaName) || ', ' ||
-                       'pc_panp01_' || lower(schemaName) || ', ' ||
-                       'pc_wbnp01_' || lower(schemaName) || ', ' ||
-                       'pe_pei01_' || lower(schemaName) || ', ' ||
-                       'qc_ini03_' || lower(schemaName) || ', ' ||
-                       'qc_ini04_' || lower(schemaName) || ', ' ||
-                       'qc_ipf05_' || lower(schemaName) || ', ' ||
-                       'sk_sfv01_' || lower(schemaName) || ', ' ||
-                       'sk_utm01_' || lower(schemaName) || ', ' ||
-                       'yt_yvi01_' || lower(schemaName) || ', ' ||
-                       'yt_yvi02_' || lower(schemaName) || ', ' ||
-      schemaName = 'translation';
-
+    IF lower(transTableList) IN ('cas', 'lyr', 'nfl', 'dst', 'eco', 'geo') THEN
+      transTableList := array_to_string(tTableArr, transTableList || ', ') || transTableList;
     END IF;
 
     -- Parse the list of translation tables
     tTableArr = regexp_split_to_array(transTableList, '\s*,\s*');
-
     nb = 1;
-    query = 'SELECT ttable, rule_id, target_attribute, target_attribute_type, validation_rules, translation_rules FROM (' || chr(10);
+    queryStr = 'SELECT ttable, rule_id, target_attribute, target_attribute_type, validation_rules, translation_rules FROM (' || chr(10);
     FOREACH tTable IN ARRAY tTableArr LOOP
       IF NOT TT_TableExists(schemaName, tTable) THEN
-        RAISE EXCEPTION 'TT_StackTranslationRules() ERROR: Table ''%.%'' does not exist...', schemaName, tTable;
+        RAISE NOTICE 'TT_StackTranslationRules() : Table ''%.%'' does not exist. Skipping..', schemaName, tTable;
+        CONTINUE;
       END IF;
       RAISE NOTICE 'TT_StackTranslationRules(): Anlysing %...', schemaName || '.' || tTable;
       -- Build a list of all target attributes for this table
@@ -1858,9 +1839,9 @@ RETURNS TABLE (ttable text,
       END IF;
 
       IF nb > 1 THEN
-        query = query || 'UNION ALL' || chr(10);
+        queryStr = queryStr || 'UNION ALL' || chr(10);
       END IF;
-      query = query || 'SELECT ' || nb || ' nb, ''' || tTable || ''' ttable,' || chr(10) ||
+      queryStr = queryStr || 'SELECT ' || nb || ' nb, ''' || tTable || ''' ttable,' || chr(10) ||
                        '        rule_id::int,' || chr(10) ||
                        '        target_attribute::text,' || chr(10) ||
                        '        target_attribute_type::text,' || chr(10) ||
@@ -1869,14 +1850,39 @@ RETURNS TABLE (ttable text,
                        'FROM ' || TT_FullTableName(schemaName, tTable) || chr(10) ||
                        wherePart;
       IF nb < cardinality(tTableArr) THEN
-        query = query || chr(10);
+        queryStr = queryStr || chr(10);
       END IF;
       nb = nb + 1;
     END LOOP;
-    query = query  || chr(10) || ') foo' || chr(10) || 'ORDER BY rule_id, nb;';
-    RETURN QUERY EXECUTE query;
+    queryStr = queryStr  || chr(10) || ') foo' || chr(10) || 'ORDER BY rule_id, nb;';
+    RAISE NOTICE 'queryStr=%', queryStr;
+    RETURN QUERY EXECUTE queryStr;
   END
 $$ LANGUAGE plpgsql VOLATILE;
+
+/*
+SELECT * FROM TT_StackTranslationRules('translation', 'cas');
+SELECT * FROM TT_StackTranslationRules('translation', 'ab_avi01_nfl, bc_vri01_nfl');
+*/
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_StackTranslationRules(text);
+CREATE OR REPLACE FUNCTION TT_StackTranslationRules(
+  transTableList text
+)
+RETURNS TABLE (ttable text,
+               rule_id int,
+               target_attribute text,
+               target_attribute_type text,
+               validation_rules text,
+               translation_rules text
+) AS $$
+  SELECT TT_StackTranslationRules('translation', transTableList);
+$$ LANGUAGE sql VOLATILE;
+/*
+SELECT * FROM TT_StackTranslationRules('translation', 'nfl');
+SELECT * FROM TT_StackTranslationRules('translation', 'ab_avi01_nfl, bc_vri01_nfl');
+*/
+
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------

@@ -226,6 +226,7 @@ DROP FUNCTION IF EXISTS TT_CreateMapping(text, int, text, int);
 DROP FUNCTION IF EXISTS TT_DeleteAllViews(text);
 DROP FUNCTION IF EXISTS TT_ArrayDistinct(anyarray, boolean, boolean);
 DROP FUNCTION IF EXISTS TT_CountEstimate(text);
+DROP FUNCTION IF EXISTS TT_StackTranslationRules(text);
 DROP FUNCTION IF EXISTS TT_StackTranslationRules(text, text);
 DROP FUNCTION IF EXISTS TT_AddConstraint(name, name, text, text[], text[]);
 DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidText() CASCADE;
