@@ -149,8 +149,7 @@ pythonPath="C:/Python311"
 #################################################################
 # Git installation folder
 #################################################################
-gitPath="C:/Program Files/Git"
-bashCmd="$gitPath/git-bash.exe"
+bashCmd="C:/Program Files/Git/git-bash.exe"
 
 #################################################################
 # Set to True if you want conversion, test and/or translation 
