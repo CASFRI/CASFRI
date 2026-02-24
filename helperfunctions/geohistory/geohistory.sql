@@ -143,7 +143,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- function so that all geometry parts inside the same cell, from call to call get
 -- the same uid.
 --
--- This function is usefull to parallelize some queries.
+-- This function is useful to parallelize some queries.
 --
 --
 -- Self contained and typical example:

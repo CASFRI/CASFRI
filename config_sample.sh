@@ -46,7 +46,7 @@ maxGeoHistoryInParallel=10
 # load from the inventory_metadata table or define your own custom 
 # inventory lists below.
 #
-# Defining your own list is usefull when you want to load only
+# Defining your own list is useful when you want to load only
 # certain inventories (e.g. for testing purpose or because they
 # failed to load automatically the first time).
 #
