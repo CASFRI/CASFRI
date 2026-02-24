@@ -4,14 +4,14 @@ This procedure details the steps necessary to add or replace one or more invento
 
 This procedure assume that all the functions necessary to produce CASFRI are already installed in the database. This includes the PostgreSQL Table Translation Framework and the CASFRI Helper Functions.
 
-**1. If, and only if, you are replacing a source inventory with another one, you must drop it from the "rawfri" schema.**
+**1. If, and only if, you are replacing a source inventory with another one, you must first drop it from the "rawfri" schema.**
 
  1. DROP or rename each source inventories that have to be replaced from the "rawfri" schema in the database. If you just rename them, make sure to rename the associated indexes as well. If you DROP them, make sure to DROP CASCADE them as some VIEWs might depend on them.
 
     To drop an inventory (just replace "sk08" with the proper inventory_id):
 
     ```
-    DROP CASCADE rawfri.sk08;
+    DROP TABLE rawfri.sk08 CASCADE;
     ```
 
     To rename them:
@@ -22,15 +22,16 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
     ALTER INDEX sk08_wkb_geometry_geom_idx RENAME TO sk08_old_wkb_geometry_geom_idx;
     ```
     
- 2. List the inventories you want to load using the invList1 variable in your config.sh script. Make sure to comment out the other unused invList2-5 variables.
+ 2. List the inventories you want to load using the "invList" variable in the config.sh script.
 
- 3. Open a Bash command window, CD to the CASFRI conversion/sh folder and load all inventories to update using the load_all.sh script.
-    Check that the count of rows in the newly created tables matches the number of rows in the source table.
+ 3. Open a Bash shell, CD to the CASFRI conversion/sh folder and load all inventories to update using the convert_all.sh script.
+
+ 4. Check that the count of converted stands in the newly created tables matches CONVERTED_STAND_CNT in inventory_metadata.csv.
 
 
 **2. If you are replacing a source inventory or have modified a helper function or a translation table affecting the translation of some inventories, you must drop the associated translated rows.**
 
- 1. First drop all the constraints (including prmiry and foreign keys) on the tables of the "casfri50" schema
+ 1. First drop all the constraints (including primary and foreign keys) on the tables of the "casfri50" schema:
 
     ```
     SELECT TT_DropAllConstraints('casfri50', 'cas_all');
@@ -71,15 +72,17 @@ This procedure assume that all the functions necessary to produce CASFRI are alr
 
 **5. Make sure changes in translation tables and helper functions did not have unwanted side effect on other translations by running the translation tests and compare the results with the archived test tables.** 
 
-**6. Translate the new inventories using the proper workflow/02_produceCASFRI/02_perInventory scripts.**
+**6. Translate the new inventories using the CASFRI/workflow/02_produceCASFRI/01_createCASFRITables.sh script**
 
- 1. Copy and adjust an existing script if none exists for the new inventories.
- 
- 2. Launch the script
+ 1. The inventories translated will be the same as defined by the config.sh "invList" variable.
 
- 3. Check that the count of translated rows in the "casfri50.cas_all" tables matches the number of rows in the rawfri tables using or adjusting the workflow\02_produceCASFRI\03_ConstraintsChecksAndIndexes/00_checkCounts.sql script.
+ 2. Check that the count of translated rows in the "casfri50" tables matches the number of expected rows in the inventory_metadata table using the TT_TranslatedRowCount() function.
+
+```
+SELECT (TT_TranslatedRowCount(ARRAY['SK08', 'SK09'])).*
+``` 
  
- 4. Adjust and run all the scripts in the CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/ folder.
+ 3. Adjust and run the other scripts in the CASFRI/workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/ folder.
 
 **7. Regenerate the flat tables like this:**
 
@@ -88,7 +91,7 @@ REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_all_layers_same_row;
 REFRESH MATERIALIZED VIEW casfri50_flat.cas_flat_one_layer_per_row;
 ```
 
-**8. Generate the gridded version of the flat table for the new inventories with queries like this:**
+**8. Generate the gridded version of the flat table for the new inventories with a query like this:**
 
 ```
 INSERT INTO casfri50_history.casflat_gridded 
@@ -111,11 +114,12 @@ GROUP BY left(cas_id, 4);
     Add lines if they don't already exist.
 
 ```
-SELECT TT_ProduceDerivedCoverages('SK08', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK08'''));
-SELECT TT_ProduceDerivedCoverages('SK09', TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK09'''));
+SELECT TT_ProduceDerivedCoverages('SK08', TT_SuperUnion('casfri50', 'geo_all', 'cas_id', 'geometry', 'left(cas_id, 4) = ''SK08'''));
+SELECT TT_ProduceDerivedCoverages('SK09', TT_SuperUnion('casfri50', 'geo_all', 'cas_id', 'geometry', 'left(cas_id, 4) = ''SK09'''));
+
 ```
 
-**11. Determine the inventories affected by the addition of new inventories in the historical database using a query like this:**
+**11. Determine the inventories affected by the addition of new inventories in the historical table using a query like this:**
 
 ```
 SELECT DISTINCT left(cas_id, 4) inv
@@ -132,7 +136,7 @@ DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK08';
 DELETE FROM casfri50_history.geo_history WHERE left(cas_id, 4) = 'SK09';
 ```    
 
-**13. Set precedences for the new inventories in the casfri50_history.inv_precedence table defined in workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql if they are missing.**
+**13. Set precedences for the new inventories in the PRECEDENCE_RANK column of the metadata/inventory_metadata.csv table if they are missing.**
 
 **14. Recompute the history for all affected historical database inventories using lines from the workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sql**
 

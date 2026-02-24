@@ -110,29 +110,27 @@ changes should be archived to replace the old sampled tables.
 
 A proper development cycle should involve these steps:
 
-1) Generate and dump the translation tests tables.
-2) Make sure they do not show any differences from the archived ones. 
+1) Run the translation tests using the "test_translation.sh" script.
+2) Make sure the dumped test tables do not show any differences with the 
+   archived ones. 
 3) Make changes to a conversion script, a translation script or a helper 
    function.
 4) Validate, by your own method, that the changes have the desired effect on the 
    target data (quick).
 5) Repeat from stepo 1) until satisfied.
-6) Run the translation tests (slow) and dump the results from the database.
+6) Run the translation tests (slow).
 7) Compare the resulting tables with the archived ones to ensure the changes 
    affected only what they were supposed to affect.
 8) Fix scripts producing undesired changes (Back to step 1).
-9) Commit your script changes with the modified sampled test tables.
-
-Steps 1) and 6) - "Generate and dump the translation tests tables" involves 
-running those scripts in a bash command line window:
-
-1) Run the translation using "test_translation.sh".
-2) Execute "dump_test_tables.sh" to dump the test tables.
+9)  Commit your script changes with the modified sampled test tables.
 
 "test_translation.sh" now accept an argument being the two letters of a province.
 This will run the tests only for this province. e.g.
 
 ./test_translation.sh bc
+
+"test_translation.sh" will also automatically dump the resulting test tables in 
+your source tree for fast comparison with the archived tables.
 
 Steps 2) and 7) - "Compare the resulting tables with the archived ones" can
 be done efficiently in several ways. Here are two of them:
@@ -142,10 +140,9 @@ changed rows as soon as you dump the tables from the database. You can view the
 differences in three different modes: hunk, inline or splitted view. You can 
 easily stage selected lines to be committed and omit others if you wish.
 
-Another way is to make a copy of the "data13" folder (different versions of 
-PostgreSQL may generate a different set of sampled rows), dump the test tables 
-and to compare them back with the copy using your favorite diff application 
-(WinMerge is a good option on Windows).
+Another way is to make a copy of the "translation/test/tables" folder, run the 
+tests and to compare the tables back with the copied ones using your favorite 
+diff application (WinMerge is a good option on Windows).
 
 Archiving new tables is essential to ensure that future development cycles 
 begin from a reliable baseline.
