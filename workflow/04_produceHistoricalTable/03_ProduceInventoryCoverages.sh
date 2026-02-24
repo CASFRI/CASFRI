@@ -12,6 +12,10 @@ echo "The number of parallel processes for producing inventory coverages is set 
 echo "Press any key to proceed or CTRL-C to cancel..."
 read -n 1 -s
 
+# Load shapefile of Canada provinces limits
+"$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" canada_provinces.shp \
+-nln casfri50_coverage.canada_provinces $gdalLco $gdalOtherOptions \
+-progress $overwriteTable
 
 # Translate inventories for each inventory in the list
 tests_in_parallel=0
