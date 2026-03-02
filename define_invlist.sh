@@ -27,8 +27,10 @@ if ! [[ -v fullList ]]; then
   fullList=($("$psqlCmd" $psqlConnectionString -t -q -A -c "$sqlStatement"))
 
   { set +x; } 2>/dev/null
-fi
 
-echo "fullList as defined by define_invlist.sh for column ${metadataTableLoadingColumn} = ${fullList[@]}"
+  echo "fullList as defined by define_invlist.sh for column ${metadataTableLoadingColumn} = ${fullList[@]}"
+else
+  echo "fullList is already defined in config.sh. metadata/load_metadata.sh not used..."
+fi
 
 echo "######################## End define_invlist.sh ########################################"

@@ -153,7 +153,7 @@ gdalPyFolder="$gdalFolder"
 pythonPath="C:/Python311"
 
 #################################################################
-# Git installation folder
+# Bash executable path
 #################################################################
 bashCmd="C:/Program Files/Git/git-bash.exe"
 

@@ -1430,10 +1430,10 @@ CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
 -- they are ordered in the ovlpPolyQuery.
 --
 -- 1) Same year polygons with higher precedence are first removed 
--- from prePoly.
+-- from preValidYearPoly (prePoly).
 --
--- 2) Then postPoly is initialized from prePoly and all past polygons 
--- are removed from prePoly (when they are valid). prepoly is no 
+-- 2) Then a new postValidYearPoly (postPoly) is initialized from prePoly and all 
+-- past polygons are removed from prePoly (when they are valid). prePoly is no 
 -- more modified and is returned as is.
 --
 -- 3) Then one postPoly is produced by removing each newer polygon.
