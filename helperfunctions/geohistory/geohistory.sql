@@ -1246,7 +1246,7 @@ RETURNS geomlowuppval[] AS $$
   BEGIN
 --RAISE NOTICE '000 ----------------';
 --RAISE NOTICE '111 new range = [%,%]', newYLow, newYUpp;
-    IF newYLow > newYupp THEN
+    IF newYLow > newYUpp THEN
       RAISE EXCEPTION 'TT_ValidYearUnion() ERROR: Lower value is higher than higher value...';
     END IF;
     IF NOT storedGYRArr IS NULL THEN
