@@ -47,17 +47,21 @@ wait
 set -x
 
 echo "---------------------------------------------------------------------"
-echo "Creating index on left(cas_id, 2)..."
+echo "Creating index on jurisdiction left(cas_id, 2)..."
 "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
-CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING btree(left(cas_id, 2));\";$dontCloseGeoHistoryShell" &
+CREATE INDEX IF NOT EXISTS geo_history_jurisdiction_idx ON casfri50_history.geo_history USING btree(left(cas_id, 2));\";$dontCloseGeoHistoryShell" &
 
-echo "Creating index on left(cas_id, 4)..."
+echo "Creating index on inventory_id left(cas_id, 4)..."
 "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
-CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING btree(left(cas_id, 4));\";$dontCloseGeoHistoryShell" &
+CREATE INDEX IF NOT EXISTS geo_history_inventory_id_idx ON casfri50_history.geo_history USING btree(left(cas_id, 4));\";$dontCloseGeoHistoryShell" &
+
+echo "Creating index on cas_id..."
+"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
+CREATE INDEX IF NOT EXISTS geo_history_cas_id_idx ON casfri50_history.geo_history USING btree(cas_id);\";$dontCloseGeoHistoryShell" &
 
 echo "Creating spatial index on geom..."
 "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
-CREATE INDEX IF NOT EXISTS ON casfri50_history.geo_history USING gist(geom);\";$dontCloseGeoHistoryShell" &
+CREATE INDEX IF NOT EXISTS geo_history_geom_idx ON casfri50_history.geo_history USING gist(geom);\";$dontCloseGeoHistoryShell" &
 
 wait
 
@@ -86,6 +90,6 @@ SELECT coalesce(inventory_id, inv) inventory_id,
        coalesce(geo_history_cnt, 0) geo_history_cnt,
        coalesce(geo_history_cnt, 0) - coalesce(geo_row_cnt, 0) diff
 FROM inv_list
-FULL JOIN geohistocnt ON (inv = inventory_id)
+FULL OUTER JOIN geohistocnt ON (inv = inventory_id)
 ORDER BY inventory_id;
 "
