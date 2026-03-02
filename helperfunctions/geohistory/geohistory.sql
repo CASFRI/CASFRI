@@ -883,6 +883,114 @@ INSERT INTO casfri50_history.geo_history
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+
+--DROP PROCEDURE IF EXISTS TT_ProduceInvGeoHistory2Steps(text, boolean, boolean, boolean);
+CREATE OR REPLACE PROCEDURE TT_ProduceInvGeoHistory2Steps(
+  inv text,
+  createGeoHistory boolean DEFAULT TRUE,
+  individualTables boolean DEFAULT FALSE,
+  progress boolean DEFAULT TRUE
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    queryStr text = '';
+    seqName text := 'geohistory_' || lower(inv);
+    countQuery text;
+    expectedRowNb int = 0;
+    startTime timestamptz;
+  BEGIN
+    IF createGeoHistory OR NOT TT_TableExists('casfri50_history', lower(inv) || '_history') THEN
+      IF progress THEN
+        countQuery = format('
+  SELECT count(*) 
+  FROM casfri50_history.casflat_gridded
+  WHERE inventory_id = upper(%L);', inv);
+        RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of gridded polygon to process...', inv;
+        EXECUTE countQuery INTO expectedRowNb;
+  
+        RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % gridded polygon to process...', inv, expectedRowNb;
+        queryStr = format('
+  DROP SEQUENCE IF EXISTS %1$s;
+  CREATE SEQUENCE %1$s START 1;
+  ', seqName);
+      END IF;
+      IF NOT progress OR expectedRowNb > 0 THEN
+        startTime = clock_timestamp();
+      
+        queryStr = queryStr || format('
+  DROP TABLE IF EXISTS casfri50_history.%1$I_history CASCADE;
+  CREATE TABLE casfri50_history.%1$I_history AS', lower(inv));
+        queryStr = queryStr || format('
+  SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
+                              ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
+  FROM casfri50_history.casflat_gridded
+  WHERE inventory_id = upper(%L)', inv);
+  
+        IF progress THEN
+          queryStr = queryStr || format('
+  AND CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName, inv);
+        END IF;
+      
+        queryStr = queryStr || '
+  ORDER BY id, poly_id';
+  
+        startTime = clock_timestamp();
+        RAISE NOTICE 'queryStr1 = %', queryStr;
+        EXECUTE queryStr USING expectedRowNb, startTime;
+        COMMIT;
+      END IF
+    END IF;
+    --------------------------------------------------------------------------------
+    --------------------------------- Union query ----------------------------------
+    --------------------------------------------------------------------------------
+    IF progress THEN
+      countQuery = format('
+  SELECT count(*) 
+  FROM casfri50_history.%I_history;', lower(inv));
+      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of geo history polygons to union...', inv;
+      EXECUTE countQuery INTO expectedRowNb;
+
+      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % geo history polygon to union...', inv, expectedRowNb;
+    END IF;
+    IF NOT progress OR expectedRowNb > 0 THEN
+
+      queryStr := format('
+DROP SEQUENCE IF EXISTS %1$s;
+CREATE SEQUENCE %1$s START 1;', seqName);
+
+      IF individualTables THEN
+        queryStr = queryStr || format('
+DROP TABLE IF EXISTS casfri50_history.%1$I_history_unioned CASCADE;
+CREATE TABLE casfri50_history.%1$I_history_unioned AS', lower(inv));
+      ELSE
+        queryStr = queryStr || '
+INSERT INTO casfri50_history.geo_history';
+      END IF;
+      queryStr = queryStr || format('
+(WITH unioned AS (
+  SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
+  FROM casfri50_history.%1$I_history', lower(inv));
+      
+      IF progress THEN
+        queryStr = queryStr || format('
+WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName, inv);
+      END IF;
+
+      queryStr = queryStr || '
+  GROUP BY id
+)
+SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
+FROM unioned);';
+      RAISE NOTICE 'queryStr2 = %', queryStr;
+      EXECUTE queryStr USING expectedRowNb, startTime;
+    END IF;
+  END;
+$$;
+
+/*
+CALL TT_ProduceInvGeoHistory2Steps('PC02', TRUE, TRUE, TRUE);
+CALL TT_ProduceInvGeoHistory2Steps('PC02', FALSE, TRUE, TRUE)
+*/
 -------------------------------------------------------------------------------
 -- TT_IntersectingArea()
 ------------------------------------------------------------------

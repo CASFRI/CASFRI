@@ -16,12 +16,20 @@ read -n 1 -s
 # Translate inventories for each inventory in the list
 tests_in_parallel=0
 
+createGeoHistoryBoolean="FALSE"
+if [ "$createGeoHistory" = True ]; then
+  createGeoHistoryBoolean="TRUE"
+  echo "Creating geo history for inventories in the list..."
+else
+  echo "Skipping creation of geo history and proceeding to merge process only..."
+fi
+
 # Iterate over the list of inventory 
 translation_in_parallel=0
 for invID in "${fullList[@]}"
 do
   echo "######################################################################"
-  sqlStatement="SELECT TT_ProduceInvGeoHistory('$invID', FALSE, TRUE);"
+  sqlStatement="CALL TT_ProduceInvGeoHistory2Steps('$invID', ${createGeoHistoryBoolean}, FALSE, TRUE);"
   echo "---------------------------------------------------------------------"
   echo "Executing $sqlStatement"
 

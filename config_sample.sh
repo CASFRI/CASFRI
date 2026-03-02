@@ -37,7 +37,13 @@ maxTestsInParallel=30
 maxTranslationsInParallel=36
 
 # Maximum number of translations to run in parallel
-maxGeoHistoryInParallel=10
+maxGeoHistoryInParallel=12
+
+#################################################################
+# When True, launch the produce geohistory process and the merge process
+# When False, launch the merge process only because the geohistory was completed
+#################################################################
+createGeoHistory=True
 
 #################################################################
 # List of source tables to load and translate with convert_allall.sh
