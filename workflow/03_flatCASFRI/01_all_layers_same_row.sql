@@ -216,9 +216,12 @@ CREATE UNIQUE INDEX cas_flat_all_layers_same_row_casid_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING btree(cas_id);
 
 -- Add more indexes
-CREATE INDEX cas_flat_all_layers_same_row_inventory_idx
+CREATE INDEX cas_flat_all_layers_same_row_left_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 4));
-    
+
+CREATE INDEX cas_flat_all_layers_same_row_inventory_id_idx
+ON casfri50_flat.cas_flat_all_layers_same_row USING btree(inventory_id);
+
 CREATE INDEX cas_flat_all_layers_same_row_province_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 2));
 
