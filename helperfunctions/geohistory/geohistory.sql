@@ -825,43 +825,46 @@ RETURNS boolean AS $$
     startTime timestamptz;
   BEGIN
     IF progress THEN
-      countQuery = '
-      SELECT count(*) 
-      FROM casfri50_history.casflat_gridded
-      WHERE inventory_id = upper(''' || inv || ''');';
+      countQuery = format('
+SELECT count(*) 
+FROM casfri50_history.casflat_gridded
+WHERE inventory_id = upper(%L);', inv);
       RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - Counting the number of gridded polygon to process...', inv;
       EXECUTE countQuery INTO expectedRowNb;
 
       RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - % gridded polygon to process...', inv, expectedRowNb;
 
       seqName = 'geohistory_' || lower(inv);
-      queryStr = 'DROP SEQUENCE IF EXISTS ' || seqName || '_1;
-      CREATE SEQUENCE ' || seqName || '_1 START 1;
-      DROP SEQUENCE IF EXISTS ' || seqName || '_2;
-      CREATE SEQUENCE ' || seqName || '_2 START 1;';
+      queryStr = format('
+DROP SEQUENCE IF EXISTS %1$s_1;
+CREATE SEQUENCE %1$s_1 START 1;
+DROP SEQUENCE IF EXISTS %1$s_2;
+CREATE SEQUENCE %1$s_2 START 1;', seqName);
     END IF;
     startTime = clock_timestamp();
     
     IF individualTables THEN
-      queryStr = queryStr || '
-DROP TABLE IF EXISTS casfri50_history.' || lower(inv) || '_history CASCADE;
-CREATE TABLE casfri50_history.' || lower(inv) || '_history AS
-';
+      queryStr = queryStr || format('
+DROP TABLE IF EXISTS casfri50_history.%1$s_history CASCADE;
+CREATE TABLE casfri50_history.%1$s_history AS
+', lower(inv));
     ELSE
       queryStr = queryStr || '
 INSERT INTO casfri50_history.geo_history
 ';
     END IF;
-    queryStr = queryStr || '(WITH geohistory_gridded AS (
-      SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
-                                   ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
-      FROM casfri50_history.casflat_gridded
-      WHERE inventory_id = upper(''' || inv || ''')';
+    queryStr = queryStr || format('
+WITH geohistory_gridded AS (
+SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
+                             ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
+FROM casfri50_history.casflat_gridded
+WHERE inventory_id = %L', upper(inv));
 
     IF progress THEN
-      queryStr = queryStr || ' AND CASE WHEN nextval(''' || seqName || '_1'') % 1000 = 0 THEN TT_PrintMessage(''' || inv || ' - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(''' || seqName || '_1''), $1, $2)) ELSE TRUE END';
+      queryStr = queryStr || format('
+     AND CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_1', inv);
     END IF;
-    
+
     queryStr = queryStr || '
     ORDER BY id, poly_id
     ), wkb_version AS (
@@ -869,8 +872,8 @@ INSERT INTO casfri50_history.geo_history
       FROM geohistory_gridded';
       
     IF progress THEN
-      queryStr = queryStr || '
-      WHERE CASE WHEN nextval(''' || seqName || '_2'') % 1000 = 0 THEN TT_PrintMessage(''' || inv || ' - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(''' || seqName || '_2''), $1)) ELSE TRUE END';
+      queryStr = queryStr || format('
+      WHERE CASE WHEN nextval(%1$L) % 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_2', inv);
     END IF;
 
     queryStr = queryStr || '
