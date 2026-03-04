@@ -841,7 +841,6 @@ CREATE SEQUENCE %1$s_1 START 1;
 DROP SEQUENCE IF EXISTS %1$s_2;
 CREATE SEQUENCE %1$s_2 START 1;', seqName);
     END IF;
-    startTime = clock_timestamp();
     
     IF individualTables THEN
       queryStr = queryStr || format('
@@ -882,6 +881,7 @@ WHERE inventory_id = %L', upper(inv));
     SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
     FROM wkb_version);';
     RAISE NOTICE 'queryStr = %', queryStr;
+    startTime = clock_timestamp();
     EXECUTE queryStr USING expectedRowNb, startTime;
     RETURN TRUE;
   END;
@@ -939,6 +939,7 @@ DECLARE
   
         startTime = clock_timestamp();
         RAISE NOTICE 'queryStr1 = %', queryStr;
+        startTime = clock_timestamp();
         EXECUTE queryStr USING expectedRowNb, startTime;
         COMMIT;
       END IF
@@ -985,6 +986,7 @@ WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_Valid
 SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
 FROM unioned);';
       RAISE NOTICE 'queryStr2 = %', queryStr;
+      startTime = clock_timestamp();
       EXECUTE queryStr USING expectedRowNb, startTime;
     END IF;
   END;
