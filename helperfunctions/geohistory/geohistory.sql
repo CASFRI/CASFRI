@@ -904,6 +904,7 @@ DECLARE
   BEGIN
     IF createGeoHistory OR NOT TT_TableExists('casfri50_history', lower(inv) || '_history') THEN
       IF progress THEN
+        -- Count the number of rows to process for progress tracking
         countQuery = format('
   SELECT count(*) 
   FROM casfri50_history.casflat_gridded
@@ -912,6 +913,8 @@ DECLARE
         EXECUTE countQuery INTO expectedRowNb;
   
         RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % gridded polygon to process...', inv, expectedRowNb;
+
+        -- Create a sequence for progress tracking
         queryStr = format('
   DROP SEQUENCE IF EXISTS %1$s;
   CREATE SEQUENCE %1$s START 1;
@@ -923,6 +926,8 @@ DECLARE
         queryStr = queryStr || format('
   DROP TABLE IF EXISTS casfri50_history.%1$I_history CASCADE;
   CREATE TABLE casfri50_history.%1$I_history AS', lower(inv));
+
+        -- Fill the geo history table for the inventory with the result of TT_PolygonGeoHistory() on the gridded polygons
         queryStr = queryStr || format('
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
                               ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
@@ -930,10 +935,12 @@ DECLARE
   WHERE inventory_id = upper(%L)', inv);
   
         IF progress THEN
+          -- Add progress tracking to the query using the sequence created earlier
           queryStr = queryStr || format('
   AND CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName, inv);
         END IF;
-      
+
+        -- Order the results
         queryStr = queryStr || '
   ORDER BY id, poly_id';
   
@@ -941,13 +948,15 @@ DECLARE
         RAISE NOTICE 'queryStr1 = %', queryStr;
         startTime = clock_timestamp();
         EXECUTE queryStr USING expectedRowNb, startTime;
+        RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Committing...', inv;
         COMMIT;
-      END IF
+        RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Commit done...', inv;
     END IF;
     --------------------------------------------------------------------------------
     --------------------------------- Union query ----------------------------------
     --------------------------------------------------------------------------------
     IF progress THEN
+      -- Count the number of rows to process for progress tracking
       countQuery = format('
   SELECT count(*) 
   FROM casfri50_history.%I_history;', lower(inv));
@@ -955,31 +964,37 @@ DECLARE
       EXECUTE countQuery INTO expectedRowNb;
 
       RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % geo history polygon to union...', inv, expectedRowNb;
-    END IF;
-    IF NOT progress OR expectedRowNb > 0 THEN
+    
+      -- Create a sequence for progress tracking
 
       queryStr := format('
 DROP SEQUENCE IF EXISTS %1$s;
 CREATE SEQUENCE %1$s START 1;', seqName);
 
       IF individualTables THEN
+        -- Create the individual geo history table for this inventory
         queryStr = queryStr || format('
 DROP TABLE IF EXISTS casfri50_history.%1$I_history_unioned CASCADE;
 CREATE TABLE casfri50_history.%1$I_history_unioned AS', lower(inv));
       ELSE
+        -- Insert into the geo history table
         queryStr = queryStr || '
 INSERT INTO casfri50_history.geo_history';
       END IF;
+
+      -- Main query to union the geometries from the geo history table using TT_ValidYearUnion() and TT_UnnestValidYearUnion() to get the valid year ranges for each geometry
       queryStr = queryStr || format('
 (WITH unioned AS (
   SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
   FROM casfri50_history.%1$I_history', lower(inv));
       
       IF progress THEN
+        -- Add progress tracking to the query using the sequence created earlier
         queryStr = queryStr || format('
 WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName, inv);
       END IF;
 
+      -- GROUP BY and rename columns in a final SELECT
       queryStr = queryStr || '
   GROUP BY id
 )
