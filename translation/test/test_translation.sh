@@ -20,10 +20,10 @@ if [ $# -ne 0 ]; then
   fullList=("$@")
 fi
 
-echo "The final list of inventory to test is : ${fullList[@]}..."
-echo "The number of parallel processes for translation tests is set to ${maxTestsInParallel}..."
-echo "Press any key to proceed..."
-read -n 1 -s
+maxProcessInParallel=${maxTestsInParallel}
+leaveShellOpen=${leaveTestShellOpen}
+processName="TestTranslation"
+source ../../confirm_config.sh
 
 # Build a list of province codes to test based on the fullList array
 

@@ -20,10 +20,10 @@ if [ $# -gt 0 ]; then
   fi
 fi
 
-echo "The final list of inventory to translate is : ${fullList[@]}..."
-echo "The number of parallel processes for translations is set to ${maxTranslationsInParallel}..."
-echo "Press any key to proceed or CTRL-C to cancel..."
-read -n 1 -s
+maxProcessInParallel=${maxTranslationsInParallel}
+leaveShellOpen=${leaveTranslationsShellOpen}
+processName="TestTranslation"
+source ../../confirm_config.sh
 
 # Translate inventories for each inventory in the list
 tests_in_parallel=0

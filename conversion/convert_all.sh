@@ -22,10 +22,10 @@ else
   fullList=("${@^^}")
 fi
 
-echo "The final list of inventory to convert is : ${fullList[@]}..."
-echo "The number of parallel processes for conversion is set to ${maxConversionInParallel}..."
-echo "Press any key to proceed or CTRL-C to cancel..."
-read -n 1 -s
+maxProcessInParallel=${maxConversionInParallel}
+leaveShellOpen=${leaveConversionShellOpen}
+processName="ConvertInventories"
+source ../../confirm_config.sh
 
 # Iterate over the list of inventory
 echo "---------------------------------------------------------------------"

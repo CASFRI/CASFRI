@@ -8,10 +8,10 @@ if [ $# -gt 0 ]; then
     fullList=("${@^^}")
 fi
 
-echo "The final list of inventory to produce geo history for is : ${fullList[@]}..."
-echo "The number of parallel processes for producing geo history is set to ${maxGeoHistoryInParallel}..."
-echo "Press any key to proceed or CTRL-C to cancel..."
-read -n 1 -s
+maxProcessInParallel=${maxGeoHistoryInParallel}
+leaveShellOpen=${leaveGeoHistoryShellOpen}
+processName="ProduceGeoHistory"
+source ../../confirm_config.sh
 
 # Translate inventories for each inventory in the list
 tests_in_parallel=0
