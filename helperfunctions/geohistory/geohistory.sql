@@ -1661,7 +1661,7 @@ RETURNS TABLE (id text,
     currentRow RECORD;
     ovlpRow RECORD;
 
-    refYearBegin int = 1930;
+    refYearBegin int = 1900;
     refYearEnd int = 2030;
     smallestPolyArea double precision = 0.0001; -- 1 square cm
     safeGridSize  double precision = 0.01; -- 1 cm
@@ -1682,6 +1682,7 @@ RETURNS TABLE (id text,
     justBeforeSafeOvlp boolean = FALSE;
     ovlpCnt int;
   BEGIN
+    --IF poly_photo_year IS NULL OR poly_photo_year < refYearBegin THEN
     IF poly_photo_year IS NULL OR poly_photo_year < 0 THEN
       poly_photo_year = refYearBegin;
     END IF;
@@ -1823,8 +1824,9 @@ RETURNS TABLE (id text,
             justBeforeSafeDiff = FALSE;
 
             preValidYearPoly = ST_Multi(TT_TrimSubPolygons(ST_CollectionExtract(preValidYearPoly, 3), smallestPolyArea));
-            preValidYearPolyYearEnd = poly_photo_year - 1;
-
+            IF (poly_photo_year - 1) < refYearBegin THEN RAISE NOTICE 'TT_PolygonGeoHistory() - WARNING: Case C would have set preValidYearPolyYearEnd to a value smaller than refYearBegin. You might consider setting refYearBegin to a smaller value...';END IF;
+            preValidYearPolyYearEnd = greatest(poly_photo_year - 1, refYearBegin);
+            
             IF debug_l2 THEN
               wkb_geometry = preValidYearPoly;
               poly_type = 'debug_' || debugID || '_preValid_777_case_2_' || CASE WHEN wkb_geometry IS NULL THEN 'NULL' WHEN ST_IsEmpty(wkb_geometry) THEN 'EMPTY' ELSE ST_AsText(wkb_geometry) END;
@@ -1854,7 +1856,10 @@ RETURNS TABLE (id text,
                 IF wkb_geometry IS NOT NULL AND NOT ST_IsEmpty(wkb_geometry) AND ST_Area(wkb_geometry) > smallestPolyArea THEN
                   poly_type = '2_post_1';
                   valid_year_begin = postValidYearPolyYearBegin;
-                  valid_year_end = ovlpRow.gh_photo_year - 1;
+                  
+                  IF (ovlpRow.gh_photo_year - 1) < refYearBegin THEN RAISE NOTICE 'TT_PolygonGeoHistory() - WARNING: Case D would have set valid_year_end to a value smaller than refYearBegin. You might consider setting refYearBegin to a smaller value...';END IF;
+                  valid_year_end = greatest(ovlpRow.gh_photo_year - 1, refYearBegin);
+
                   valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
                   IF debug_l2 THEN RAISE NOTICE '  ---------';END IF;
                   IF debug_l2 THEN RAISE NOTICE '  RETURNING INTERMEDIATE postPoly valid_time=%', valid_time;END IF;
@@ -1888,7 +1893,9 @@ RETURNS TABLE (id text,
                 RAISE NOTICE '  DDD: Debug_poly = %', left(poly_type, 50);
                 RETURN NEXT;
               END IF;
-              preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, ovlpRow.gh_photo_year - 1);
+              
+              IF (ovlpRow.gh_photo_year - 1) < refYearBegin THEN RAISE NOTICE 'TT_PolygonGeoHistory() - WARNING: Case D would have set preValidYearPolyYearEnd to a value smaller than refYearBegin. You might consider setting refYearBegin to a smaller value...';END IF;
+              preValidYearPolyYearEnd = least(preValidYearPolyYearEnd, greatest(ovlpRow.gh_photo_year - 1, refYearBegin));
             ELSE
               IF debug_l2 THEN RAISE NOTICE '  DDD: TT_GeoHistoryOverlaps() is FALSE';END IF;
             END IF;
