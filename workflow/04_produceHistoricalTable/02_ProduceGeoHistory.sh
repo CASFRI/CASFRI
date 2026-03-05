@@ -44,6 +44,7 @@ done
 
 wait
 
+# Turn ON echo in order to display the exact command being executed below
 set -x
 
 echo "---------------------------------------------------------------------"
@@ -63,33 +64,19 @@ echo "Creating spatial index on geom..."
 "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
 CREATE INDEX IF NOT EXISTS geo_history_geom_idx ON casfri50_history.geo_history USING gist(geom);\";$dontCloseGeoHistoryShell" &
 
+# Wait for all index creation processes to finish before proceeding
 wait
 
+# Turn OFF echo
 { set +x; } 2>/dev/null
-
-echo "---------------------------------------------------------------------"
-echo "Comparing number of rows from casfr50.geo_all with the number of rows in the geo history table...
-"
 
 # Create a quoted list of inventory IDs for the SQL query
 printf -v quoted_list "'%s', " "${fullList[@]}"
 quoted_list=${quoted_list%, } # Remove the last comma and space
 
-"$psqlCmd" $psqlConnectionString -c "
-WITH inv_list AS (
-  SELECT inventory_id, geo_row_cnt::int
-  FROM inventory_metadata
-  WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(ARRAY[${quoted_list}])))
-), geohistocnt AS (
-  SELECT left(cas_id, 4) inv, count(*) geo_history_cnt
-  FROM casfri50_history.geo_history
-  GROUP BY inv
-)
-SELECT coalesce(inventory_id, inv) inventory_id,
-       coalesce(geo_row_cnt, 0) geo_row_cnt,
-       coalesce(geo_history_cnt, 0) geo_history_cnt,
-       coalesce(geo_history_cnt, 0) - coalesce(geo_row_cnt, 0) diff
-FROM inv_list
-FULL OUTER JOIN geohistocnt ON (inv = inventory_id)
-ORDER BY inventory_id;
+echo "---------------------------------------------------------------------"
+echo "Comparing number of rows from casfri50_flat.cas_flat_all_layers_same_row 
+with the number of rows in the geo history table for fullList = ${quoted_list}...
 "
+
+"$psqlCmd" $psqlConnectionString -P pager=off -c "SELECT * FROM TT_GeoHistoryRowCount(ARRAY[${quoted_list}]);"

@@ -708,6 +708,85 @@ CREATE OR REPLACE AGGREGATE TT_SplitAgg(geometry, geometry) (
   SFUNC=TT_SplitAgg_StateFN,
   STYPE=geometry[]
 );
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_GeoHistoryRowCount
+--
+-- Count the rows in the geo history table for an array of inventory_id
+-- When an ARRAY of inv id is passed (e.g. ARRAY['AB34', 'AB06']), return the 
+-- count only for these inventories.
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text[]);
+CREATE OR REPLACE FUNCTION TT_GeoHistoryRowCount(
+  invArr text[]
+) 
+RETURNS TABLE (
+  inventory_id text,
+  flat_table_cnt int,
+  geo_history_cnt int,
+  diff text
+) AS $$
+  WITH inv_list AS (
+    SELECT upper(unnest($1)) inv
+  ), flat_table_cnts AS (
+    SELECT i.inv, CASE WHEN f.inventory_id IS NULL THEN 0 ELSE count(*) END flat_table_cnt
+    FROM inv_list i
+    LEFT OUTER JOIN casfri50_flat.cas_flat_all_layers_same_row f ON (f.inventory_id = i.inv)
+    GROUP BY i.inv, f.inventory_id
+
+  ), geohistocnt AS (
+    SELECT i.inv, CASE WHEN left(g.cas_id, 4) IS NULL THEN 0 ELSE count(*) END geo_history_cnt
+    FROM inv_list i
+    LEFT OUTER JOIN casfri50_history.geo_history g ON (left(g.cas_id, 4) = i.inv)
+    GROUP BY i.inv, left(g.cas_id, 4)
+  )
+  SELECT coalesce(f.inv, g.inv) inventory_id,
+        coalesce(flat_table_cnt, 0) flat_table_cnt,
+        coalesce(geo_history_cnt, 0) geo_history_cnt,
+        coalesce(geo_history_cnt, 0) - coalesce(flat_table_cnt, 0) diff
+  FROM flat_table_cnts f
+  FULL OUTER JOIN geohistocnt g USING (inv)
+  ORDER BY inv;
+$$ LANGUAGE sql STABLE;
+--SELECT * FROM TT_GeoHistoryRowCount(ARRAY['Ab03', 'AB06', 'QC03']);
+-------------------------------------------------------------------------------
+-- TT_GeoHistoryRowCount
+--
+-- Count the rows in the geo history table for all inventories listed in 
+-- inventory_metadata or only for those identified in a specific column 
+-- (e.g. 'TRANSLATED_BY_CFS'). Otherwise return the count for all inventories 
+-- found in the rawfri schema.
+-------------------------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text); 
+CREATE OR REPLACE FUNCTION TT_GeoHistoryRowCount(
+  invMetadataColName text DEFAULT NULL
+) 
+RETURNS TABLE (
+  inventory_id text,
+  flat_table_cnt int,
+  geo_history_cnt int,
+  diff text
+) AS $$
+  DECLARE
+    queryStr text;
+  BEGIN
+    queryStr := format('
+WITH inv AS (
+  SELECT array_agg(md.inventory_id) invarr 
+  FROM inventory_metadata md
+  %s
+)
+SELECT * FROM TT_GeoHistoryRowCount((SELECT invarr FROM inv));',
+    CASE WHEN invMetadataColName IS NULL THEN '' ELSE format('  WHERE upper(%s) = ''YES''', invMetadataColName) END);
+    RAISE NOTICE 'queryStr = %', queryStr;
+    RETURN QUERY EXECUTE queryStr;
+  END
+$$ LANGUAGE plpgsql STABLE;
+-- SELECT (TT_GeoHistoryRowCount()).*
+-- SELECT (TT_GeoHistoryRowCount('TRANSLATED_BY_CUSTOM')).*
+------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------
 -- TT_ProduceDerivedCoverages()
 --
