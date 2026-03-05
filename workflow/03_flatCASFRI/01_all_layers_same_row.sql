@@ -212,13 +212,10 @@ LEFT JOIN casfri50.geo_all geo
 USING (cas_id);
 
 -- Add a unique index on cas_flat_all_layers_same_row
-CREATE UNIQUE INDEX cas_flat_all_layers_same_row_casid_idx
+CREATE UNIQUE INDEX cas_flat_all_layers_same_row_cas_id_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING btree(cas_id);
 
 -- Add more indexes
-CREATE INDEX cas_flat_all_layers_same_row_left_idx
-ON casfri50_flat.cas_flat_all_layers_same_row USING btree(left(cas_id, 4));
-
 CREATE INDEX cas_flat_all_layers_same_row_inventory_id_idx
 ON casfri50_flat.cas_flat_all_layers_same_row USING btree(inventory_id);
 
