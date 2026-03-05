@@ -31,9 +31,11 @@ gdalLco="-lco PRECISION=NO -lco GEOMETRY_NAME=wkb_geometry -lco FID=ogc_fid"
 
 gdalOtherOptions="-t_srs ESRI:102001"
 
+closeMsg="read -p 'Press enter close this shell...';"
+
 if [ "${leaveConversionShellOpen,,}" = "true" ]; then
   if [ "${closeWithEnter,,}" = "true" ]; then
-    dontCloseConversionShell="read -p 'Press enter close the command window...';"
+    dontCloseConversionShell="$closeMsg"
   else
     dontCloseConversionShell="exec bash"
   fi
@@ -41,7 +43,7 @@ fi
 
 if [ "${leaveTestShellOpen,,}" = "true" ]; then
   if [ "${closeWithEnter,,}" = "true" ]; then
-    dontCloseTestShell="read -p 'Press enter close the command window...';"
+    dontCloseTestShell="$closeMsg"
   else
     dontCloseTestShell="exec bash"
   fi
@@ -49,7 +51,7 @@ fi
 
 if [ "${leaveTranslationShellOpen,,}" = "true" ]; then
   if [ "${closeWithEnter,,}" = "true" ]; then
-    dontCloseTranslationShell="read -p 'Press enter close the command window...';"
+    dontCloseTranslationShell="$closeMsg"
   else
     dontCloseTranslationShell="exec bash"
   fi
@@ -57,7 +59,7 @@ fi
 
 if [ "${leaveGeoHistoryShellOpen,,}" = "true" ]; then
   if [ "${closeWithEnter,,}" = "true" ]; then
-    dontCloseGeoHistoryShell="read -p 'Press enter close the command window...';"
+    dontCloseGeoHistoryShell="$closeMsg"
   else
     dontCloseGeoHistoryShell="exec bash"
   fi
@@ -65,7 +67,7 @@ fi
 
 if [ "${leaveCoverageShellOpen,,}" = "true" ]; then
   if [ "${closeWithEnter,,}" = "true" ]; then
-    dontCloseCoverageShell="read -p 'Press enter close the command window...';"
+    dontCloseCoverageShell="$closeMsg"
   else
     dontCloseCoverageShell="exec bash"
   fi
