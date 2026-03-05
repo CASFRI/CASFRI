@@ -190,11 +190,7 @@ RETURNS TABLE (
   passed boolean,
   diff text
 ) AS $$
- DECLARE
-    queryStr text;
-  BEGIN
-    queryStr = '
-    WITH inv_metadata AS (
+  WITH inv_metadata AS (
       SELECT * FROM (
         SELECT 
           left(inventory_id, 2) jurisdiction, 
@@ -204,22 +200,22 @@ RETURNS TABLE (
         UNION ALL
         SELECT *
         FROM (VALUES
-          (''AB'', ''ab_photoyear'', 560),
-          (''AB'', ''ab_alpac_photoyear'', 1595),
-          (''AB'', ''ab_alpac_updated_photoyear'', 767),
-          (''NL'', ''nl01_photoyear'', 8083),
-          (''NL'', ''nl02_photoyear'', 64)
+          ('AB', 'ab_photoyear', 560),
+          ('AB', 'ab_alpac_photoyear', 1595),
+          ('AB', 'ab_alpac_updated_photoyear', 767),
+          ('NL', 'nl01_photoyear', 8083),
+          ('NL', 'nl02_photoyear', 64)
         ) AS t(jurisdiction, inventory_id, converted_stand_cnt)
       ) all_inv
-      WHERE inventory_id = ANY(SELECT LOWER(UNNEST($1)))
+      WHERE inventory_id = ANY(SELECT LOWER(unnest(invArr)))
       ORDER BY inventory_id
     ), loaded_inv AS (
       SELECT tablename
       FROM pg_catalog.pg_tables
-      WHERE schemaname = ''rawfri''
+      WHERE schemaname = 'rawfri'
       ORDER BY tablename
     ), inv_counts AS (
-      SELECT (TT_CountAndDiff(''rawfri'', coalesce(inventory_id, tablename), coalesce(converted_stand_cnt, 0))).*
+      SELECT (TT_CountAndDiff('rawfri', coalesce(inventory_id, tablename), coalesce(converted_stand_cnt, 0))).*
       FROM inv_metadata
       LEFT OUTER JOIN loaded_inv
       ON (inventory_id = tablename)
@@ -227,10 +223,8 @@ RETURNS TABLE (
     )
     SELECT tablename inventory_id, expected, counted, passed, diff
     FROM inv_counts
-    ORDER BY inventory_id;';
-    RETURN QUERY EXECUTE queryStr USING invArr;
-  END;
-$$ LANGUAGE plpgsql VOLATILE;
+    ORDER BY inventory_id;;
+$$ LANGUAGE sql STABLE;
 -- SELECT * FROM TT_ConvertedStandCount(ARRAY['AB34', 'AB06']);
 -------------------------------------------------------------------------------
 -- TT_ConvertedStandCount
@@ -260,10 +254,10 @@ RETURNS TABLE (
     )
     SELECT * FROM TT_ConvertedStandCount((SELECT invarr FROM inv));',
     CASE WHEN invMetadataColName IS NULL THEN '' ELSE format(' WHERE upper(%s) = ''YES''', invMetadataColName) END);
-    --RAISE NOTICE 'queryStr = %', queryStr;
+    RAISE NOTICE 'queryStr = %', queryStr;
     RETURN QUERY EXECUTE queryStr;
   END
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql STABLE;
 -- SELECT (TT_ConvertedStandCount()).*
 -- SELECT (TT_ConvertedStandCount('TRANSLATED_BY_CUSTOM')).*
 -------------------------------------------------------------------------------
@@ -288,69 +282,60 @@ RETURNS TABLE (
   diff text,
   status text
 ) AS $$
- DECLARE
-    queryStr text;
-  BEGIN
-    queryStr = '
-WITH row_counts AS (
-  SELECT upper(inventory_id) inventory_id, 
-         cas_row_cnt::int, 
-         dst_row_cnt::int, 
-         eco_row_cnt::int, 
-         lyr_row_cnt::int, 
-         nfl_row_cnt::int, 
-         geo_row_cnt::int
-  FROM inventory_metadata
-  WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST($1)))
-  ORDER BY inventory_id
-), row_counts_pivoted AS (
-  SELECT * FROM (
-    SELECT inventory_id, ''CAS'' cas_table, cas_row_cnt row_cnt 
-    FROM row_counts
-    UNION ALL
-    SELECT inventory_id, ''DST'' cas_table, dst_row_cnt row_cnt
-    FROM row_counts
-    UNION ALL
-    SELECT inventory_id, ''ECO'' cas_table, eco_row_cnt row_cnt
-    FROM row_counts
-    UNION ALL
-    SELECT inventory_id, ''LYR'' cas_table, lyr_row_cnt row_cnt
-    FROM row_counts
-    UNION ALL
-    SELECT inventory_id, ''NFL'' cas_table, nfl_row_cnt row_cnt
-    FROM row_counts
-    UNION ALL
-    SELECT inventory_id, ''GEO'' cas_table, geo_row_cnt row_cnt
-    FROM row_counts
-  ) pivoted
-  ORDER BY inventory_id, cas_table
-), translated_counts AS (
-  SELECT inventory_id, (TT_CountAndDiff(''casfri50'', 
-                          lower(cas_table) || ''_all'', 
-                          coalesce(row_cnt, 0), 
-                          ''WHERE left(cas_id, 4) = '''''' || inventory_id || '''''''')).*
-  FROM row_counts_pivoted
-  ORDER BY inventory_id
-)
-SELECT inventory_id, 
-       left(tablename, 3) cas_table, 
-       expected, 
-       counted, 
-       passed, 
-       diff,
-       CASE WHEN expected != 0 AND coalesce(counted, 0) = 0 THEN ''NOT_TRANSLATED''
-            WHEN coalesce(counted, 0) < expected THEN ''LESS''
-            WHEN coalesce(counted, 0) > expected THEN ''MORE''
-            ELSE ''OK''
-       END status
-FROM translated_counts
-ORDER BY inventory_id, cas_table;
-';
-    --RAISE NOTICE 'queryStr = %', queryStr;
-
-    RETURN QUERY EXECUTE queryStr USING invArr;
-  END;
-$$ LANGUAGE plpgsql VOLATILE;
+  WITH row_counts AS (
+    SELECT upper(inventory_id) inventory_id, 
+           cas_row_cnt::int, 
+           dst_row_cnt::int, 
+           eco_row_cnt::int, 
+           lyr_row_cnt::int, 
+           nfl_row_cnt::int, 
+           geo_row_cnt::int
+    FROM inventory_metadata
+    WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST($1)))
+    ORDER BY inventory_id
+  ), row_counts_pivoted AS (
+    SELECT * FROM (
+      SELECT inventory_id, 'CAS' cas_table, cas_row_cnt row_cnt 
+      FROM row_counts
+      UNION ALL
+      SELECT inventory_id, 'DST' cas_table, dst_row_cnt row_cnt
+      FROM row_counts
+      UNION ALL
+      SELECT inventory_id, 'ECO' cas_table, eco_row_cnt row_cnt
+      FROM row_counts
+      UNION ALL
+      SELECT inventory_id, 'LYR' cas_table, lyr_row_cnt row_cnt
+      FROM row_counts
+      UNION ALL
+      SELECT inventory_id, 'NFL' cas_table, nfl_row_cnt row_cnt
+      FROM row_counts
+      UNION ALL
+      SELECT inventory_id, 'GEO' cas_table, geo_row_cnt row_cnt
+      FROM row_counts
+    ) pivoted
+    ORDER BY inventory_id, cas_table
+  ), translated_counts AS (
+    SELECT inventory_id, (TT_CountAndDiff('casfri50', 
+                            lower(cas_table) || '_all', 
+                            coalesce(row_cnt, 0), 
+                            'WHERE left(cas_id, 4) = ''' || inventory_id || '''')).*
+    FROM row_counts_pivoted
+    ORDER BY inventory_id
+  )
+  SELECT inventory_id, 
+         left(tablename, 3) cas_table, 
+         expected, 
+         counted, 
+         passed, 
+         diff,
+         CASE WHEN expected != 0 AND coalesce(counted, 0) = 0 THEN 'NOT_TRANSLATED'
+              WHEN coalesce(counted, 0) < expected THEN 'LESS'
+              WHEN coalesce(counted, 0) > expected THEN 'MORE'
+              ELSE 'OK'
+         END status
+  FROM translated_counts
+  ORDER BY inventory_id, cas_table;
+$$ LANGUAGE sql STABLE;
 -- SELECT * FROM TT_TranslatedRowCount(ARRAY['Ab34', 'AB06']);
 -------------------------------------------------------------------------------
 -- TT_TranslatedRowCount
@@ -376,16 +361,17 @@ RETURNS TABLE (
     queryStr text;
   BEGIN
     queryStr := format('
-    WITH inv AS (
-      SELECT array_agg(md.inventory_id) invarr 
-      FROM inventory_metadata md%s
-    )
-    SELECT * FROM TT_TranslatedRowCount((SELECT invarr FROM inv));',
-    CASE WHEN invMetadataColName IS NULL THEN '' ELSE format(' WHERE upper(%s) = ''YES''', invMetadataColName) END);
-    --RAISE NOTICE 'queryStr = %', queryStr;
+WITH inv AS (
+  SELECT array_agg(md.inventory_id) invarr 
+  FROM inventory_metadata md
+  %s
+)
+SELECT * FROM TT_TranslatedRowCount((SELECT invarr FROM inv));',
+    CASE WHEN invMetadataColName IS NULL THEN '' ELSE format('  WHERE upper(%s) = ''YES''', invMetadataColName) END);
+    RAISE NOTICE 'queryStr = %', queryStr;
     RETURN QUERY EXECUTE queryStr;
   END
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql STABLE;
 -- SELECT (TT_TranslatedRowCount()).*
 -- SELECT (TT_TranslatedRowCount('TRANSLATED_BY_CUSTOM')).*
 -------------------------------------------------------------------------------
