@@ -292,8 +292,8 @@ The following diagram illustrates the temporalization procedure for a single pol
 
 ![Temporalization diagram](temporalization_diagram.jpg)
 
-Valid start and end dates are assigned using the following rules:
-* Each polygon is assigned a VALID_YEAR_BEGIN and a VALID_YEAR_END based on its CAS table STAND_PHOTO_YEAR attribute value. By default, at the end of the process, if a polygon does not overlap with another one in space and time, VALID_YEAR_BEGIN is assigned 1930 and VALID_YEAR_END is assigned 2030 since this polygon and its associated attributes are the best information we have for this area for all this period of time.
+Valid start and end years are assigned using the following rules:
+* Each polygon is assigned a VALID_YEAR_BEGIN and a VALID_YEAR_END value based on its CAS table STAND_PHOTO_YEAR value. By default, at the end of the process, if a polygon does not overlap with another one in space and time, VALID_YEAR_BEGIN is assigned 1930 and VALID_YEAR_END is assigned 2030 since this polygon and its associated attributes are the best information we have for this area for all this period of time.
   
 * When two polygons overlap:
 
