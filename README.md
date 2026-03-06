@@ -44,7 +44,7 @@ The current version is 5.3.1 and is available for download at https://github.com
 
 ./helperfunctions                       CASFRI specific helper functions used in translation tables
 
-./helperfunctions/geohistory            Functions used to build the historical version of CASFRI
+./helperfunctions/geohistory            Functions used to build the geo-historical version of CASFRI
 
 ./metadata                              Main inventory and layer medadata files and loading script
 
@@ -60,7 +60,7 @@ The current version is 5.3.1 and is available for download at https://github.com
 
 ./workflow/03_flatCASFRI                Scripts to build a flat (denormalized) version of CASFRI
 
-./workflow/04_produceHistoricalTable    Scripts to build a historical version of CASFRI and for computing inventories coverage polygons
+./workflow/04_produceHistoricalTable    Scripts to build a geo-historical version of CASFRI and for computing inventories coverage polygons
 </pre>
 
 # Requirements
@@ -271,7 +271,7 @@ The whole process assume that:
 4. Each cas table to be translated is listed the proper layer row of the CASFRI_TABLE column of the same metadata/layer_metadata.csv table.
 5. All source inventory attribute names have been mapped properly to the placeholder attribute names in the same metadata/layer_metadata.csv table.
 
-Translated data is INSERTed to the six CASFRI output tables in the 'casfri50' schema: cas_all, dst_all, eco_all, lyr_all, nfl_all, geo_all. The scripts in the [CASFRI/workflow/03_flatCASFRI/](https://github.com/CASFRI/CASFRI/tree/master/workflow/03_flatCASFRI) folder can be used to create two different denormalized tables of the six CASFRI tables: one with all layers for a given polygon reported on the same row, and one with all layers for a given polygon reported on different rows. The former is used to generate the historical version of the CASFRI database.
+Translated data is INSERTed to the six CASFRI output tables in the 'casfri50' schema: cas_all, dst_all, eco_all, lyr_all, nfl_all, geo_all. The scripts in the [CASFRI/workflow/03_flatCASFRI/](https://github.com/CASFRI/CASFRI/tree/master/workflow/03_flatCASFRI) folder can be used to create two different denormalized tables of the six CASFRI tables: one with all layers for a given polygon reported on the same row, and one with all layers for a given polygon reported on different rows. The former is used to generate the geo-historical version of the CASFRI database.
 
 The steps to add a completey new inventory to the CASFRI database are detailed in issue [#471](https://github.com/CASFRI/CASFRI/issues/471).
 
@@ -302,9 +302,9 @@ Valid start and end years are assigned using the following rules:
   * When both polygons have the same STAND_PHOTO_YEAR and valid values but come from different inventories, the polygon from the higher precedence inventory, as established by the TT_HasPrecedence() function and the PRECEDENCE_RANK column of the inventory_metadata.csv table, takes precedence. For example, if the values associated to two overlapping 2010 polygons are all valid but the first polygon comes from AB10 and the second comes from AB16, then TT_HasPrecedence() states that the AB16 polygon takes precedence.
   * When both polygons have the same STAND_PHOTO_YEAR, valid values and the same TT_HasPrecedence() rank, then both polygons are sorted by their unique identifier (CAS_ID) and the first one has precedence over the second one.
 
-No interpolation, interpretation or correction of attribute values is performed when generating the historical table. For this reason the historical table can be queried to recreate the 'state of the inventory' for a given year, but not necessarily the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require assigning the best forest attributes for every year based on time since disturbance considering all the information found in the numerous historic inventories. This is beyond the scope of this project, but the historical table could facilitate such modelling exercises for interested end users.
+No interpolation, interpretation or correction of attribute values is performed when generating the geo-historical table. For this reason the geo-historical table can be queried to recreate the 'state of the inventory' for a given year, but not necessarily the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require assigning the best forest attributes for every year based on time since disturbance considering all the information found in the numerous historic inventories. This is beyond the scope of this project, but the geo-historical table could facilitate such modelling exercises for interested end users.
 
-The historical table can be queried using VALID_YEAR_BEGIN and VALID_YEAR_END. For example, the following query would select the most valid polygon from the historical table for all observation points in a table:
+The geo-historical table can be queried using VALID_YEAR_BEGIN and VALID_YEAR_END. For example, the following query would select the most valid polygon from the geo-historical table for all observation points in a table:
 ```
 SELECT p.id, p.year, p.geom, gh.cas_id
 FROM mypointable p, casfri50_history.geo_history gh
@@ -316,7 +316,7 @@ The resulting table can then be joined, using the CAS_id attribute, with:
   b) one of the CASFRI normalized tables from the casfri50 schema (cas_all, dst_all, eco_all, lyr_all, nfl_all).
 
 # Parallelization
-Conversion, translation, production of the historical table and production of the inventory coverages are all very long processes when translating many inventories. In its current state, with more than 50 inventories supported, the final cas_all table gathers more than 66 million stands. If you include the other CASFRI tables (eco_all, dst_all, lyr_all, nfl_all and geo_all) that's more than 225 million rows translated. If you multiply this by the number of attributes composing each CASFRI table you get more than 3 billion values to translate. Even for a powerful database management system like PostgreSQL, that's a lot of information to process.
+Conversion, translation, production of the geo-historical table and production of the inventory coverages are all very long processes when dealing with many inventories. In its current state, with more than 50 inventories supported, the final cas_all table gathers more than 66 million stands. If you include the other CASFRI tables (eco_all, dst_all, lyr_all, nfl_all and geo_all) that's more than 225 million rows translated. If you multiply this by the number of attributes composing each CASFRI table you get more than 3 billion values to translate. Even for a powerful database management system like PostgreSQL, that's a lot of information to process.
 
 Much effort have been deployed during the development of CASFRI 5 to make this process as quick and efficient as possible. Moving from PostgreSQL 11 to PostgreSQL 13 and from PostGIS 2.5 to PostGIS 3.1 has been a good step in this regard. PostgreSQL 13 and up provide much better support for PARALLEL SAFE functions and PostGIS 3.1 uses the new faster GEOS 3.9 geometry library.
 
@@ -347,9 +347,9 @@ Once the metadata/inventory_metadata.csv has been edited and the proper variable
 
 3. ./workflow/03_flatCASFRI/**01_all_layers_same_row.sh** and ./workflow/03_flatCASFRI/**03_one_layer_per_row.sh** are used to produce the flat, denormalized VIEW versions of the translated tables. The resulting VIEWs are written to the casfri50_flat schema as MATERIALIZED VIEWs.
 
-4. ./workflow/04_produceHistoricalTable/**01_PrepareGeoHistory.sh** prepares the database before launching the historical table production process. It will create the target table and split the whole geometric coverage into a grid for faster and more robust processing. The functions required by this process have first to be defined in the database by executing the ./helperfunctions/geohistory/geohistory.sql before running 01_PrepareGeoHistory.sh.
+4. ./workflow/04_produceHistoricalTable/**01_PrepareGeoHistory.sh** prepares the database before launching the geo-historical table production process. It will create the target table and split the whole geometric coverage into a grid for faster and more robust processing. The functions required by this process have first to be defined in the database by executing the ./helperfunctions/geohistory/geohistory.sql before running 01_PrepareGeoHistory.sh.
 
-5. ./workflow/04_produceHistoricalTable/**02_ProduceGeoHistory.sh** generates the historical table based on the "invList" variable using the TT_ProduceInvGeoHistory() SQL function. The resulting tables are written to the casfri50_history schema.
+5. ./workflow/04_produceHistoricalTable/**02_ProduceGeoHistory.sh** generates the geo-historical table based on the "invList" variable using the TT_ProduceInvGeoHistory() SQL function. The resulting tables are written to the casfri50_history schema.
 
 6. ./workflow/04_produceHistoricalTable/**03_ProduceInventoryCoverages.sh** generates a set of tables with the inventories geographic coverage polygons simplified at different levels using the TT_ProduceDerivedCoverages() SQL function. The resulting tables are written to the casfri50_coverage schema.
 
