@@ -5,27 +5,27 @@ Prepared by: John A. Cosco, Chief Inventory Forester, February 2011
 Revised by: The CASFRI Project Team, March 31, 2021
 
 ## Table of contents
-<a href="#Intro">Introduction</a>
+<a href="#intro">Introduction</a>
 
-<a href="#CAS">Common Attribute Schema</a>
+<a href="#cas">Common Attribute Schema</a>
 
-<a href="#Error_codes">Error codes</a>
+<a href="#error_codes">Error codes</a>
 
-<a href="#HDR_attributes">HDR Attributes</a>
+<a href="#hdr_attributes">HDR Attributes</a>
 
-<a href="#CAS_attributes">CAS Attributes</a>
+<a href="#cas_attributes">CAS Attributes</a>
 
-<a href="#LYR_attributes">LYR Attributes</a>
+<a href="#lyr_attributes">LYR Attributes</a>
 
-<a href="#NFL_attributes">NFL Attributes</a>
+<a href="#nfl_attributes">NFL Attributes</a>
 
-<a href="#DST_attributes">DST Attributes</a>
+<a href="#dst_attributes">DST Attributes</a>
 
-<a href="#ECO_attributes">ECO Attributes</a>
+<a href="#eco_attributes">ECO Attributes</a>
 
-<a href="#GEO_attributes">GEO Attributes</a>
+<a href="#geo_attributes">GEO Attributes</a>
 
-<a name=Intro></a>
+<a name="intro"></a>
 ## Introduction  
 
 CASFRI (Common Attribute Schema for Forest Resource Inventories) is a standardised representation of the landcover attributes used in all contemporary Canadian forest resource inventory (FRI) datasets. Its specification focuses on attributes that are: 1) most commonly and consistently recorded among existing inventories and 2) most relevant to ecological modelling and forest management planning. In addition, an approximation of the Canadian Wetland Classification System is derived from FRI attributes, to the extent possible. This document accompanies version 5 of CASFRI and is based on the previous specification document written by Cosco in 2011<sup>1</sup>.
@@ -34,7 +34,7 @@ CASFRI version 5 incorporates 49 distinct source inventory datasets and more wil
 
 <sup>1</sup> Cosco, J. 2011. Common attribute schema (CAS) for forest inventories across Canada.
 
-<a name=CAS></a>
+<a name="CAS"></a>
 ## Common Attribute Schema  
 
 The common attribute schema (CAS) is a comprehensive attribute classification suitable for ecological modelling, forest management planning, and state of the environment reporting. Its development requires the selection of vegetation cover attributes and the assignment of common codes for each attribute that are broad enough to capture all relevant existing forest inventory attributes. CAS attributes represent the most common attributes that are consistently recorded in forest inventories across Canada including: stand structure (layers), moisture regime, crown closure, species composition, height, age (origin), site class or site index, non-forested cover types, non-vegetated cover types, and disturbance history. CAS also includes two attributes of ecological interest: ecosite and wetland. These two attributes are not common to most forest inventories across Canada; however, these attributes are considered important for avian habitat models and can possibly be acquired from other sources or partially or wholly derived from other attributes.  
@@ -63,34 +63,34 @@ Attributes for CAS are stored in seven attribute files to facilitate conversion 
 
 Table 1. CASFRI schema.
 
-| <sub>HDR</sub>               | <sub>CAS</sub>               | <sub>LYR</sub>                 | <sub>NFL</sub>                 | <sub>DST</sub>              | <sub>ECO</sub>              | <sub>GEO</sub>             |
-| ---------------------------- | ---------------------------- | ------------------------------ | ------------------------------ | --------------------------- | --------------------------- | -------------------------- |
-| <sub>INVENTORY_ID (PK)</sub> | <sub>CAS_ID (PK, FK)</sub>   | <sub>CAS_ID (PK, FK)</sub>     | <sub>CAS_ID (PK, FK)</sub>     | <sub>CAS_ID (PK, FK)</sub>  | <sub>CAS_ID (PK, FK)</sub>  | <sub>CAS_ID (PK, FK)</sub> |
-| <sub>JURISDICTION</sub>      | <sub>INVENTORY_ID (FK)</sub> | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>          | <sub>LAYER (PK)</sub>       | <sub>LAYER</sub>            | <sub>GEOMETRY</sub>        |
-| <sub>OWNER_TYPE</sub>        | <sub>ORIG_STAND_ID</sub>     | <sub>LAYER_RANK</sub>          | <sub>LAYER_RANK</sub>          | <sub>DIST_TYPE_1</sub>      | <sub>WETLAND_TYPE</sub>     |                            |
-| <sub>OWNER_NAME</sub>        | <sub>STAND_STRUCTURE</sub>   | <sub>SOIL_MOIST_REG</sub>      | <sub>SOIL_MOIST_REG</sub>      | <sub>DIST_YEAR_1</sub>      | <sub>WET_VEG_COVER</sub>    |                            |
-| <sub>STANDARD_TYPE</sub>     | <sub>NUM_OF_LAYERS</sub>     | <sub>STRUCTURE_PER</sub>       | <sub>STRUCTURE_PER</sub>       | <sub>DIST_EXT_UPPER_1</sub> | <sub>WET_LANDFORM_MOD</sub> |                            |
-| <sub>STANDARD_VERSION</sub>  | <sub>MAP_SHEET_ID</sub>      | <sub>STRUCTURE_RANGE</sub>     | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>DIST_EXT_LOWER_1</sub> | <sub>WET_LOCAL_MOD</sub>    |                            |
-| <sub>STANDARD_ID</sub>       | <sub>CASFRI_AREA</sub>       | <sub>CROWN_CLOSURE_UPPER</sub> | <sub>CROWN_CLOSURE_LOWER</sub> | <sub>DIST_TYPE_2</sub>      | <sub>ECO_SITE</sub>         |                            |
-| <sub>STANDARD_REVISION</sub> | <sub>CASFRI_PERIMETER</sub>  | <sub>CROWN_CLOSURE_LOWER</sub> |<sub> HEIGHT_UPPER</sub>        | <sub>DIST_YEAR_2</sub>      |                             |                            |
-| <sub>DOCUMENTATION_TITLES</sub> | <sub>SRC_INV_AREA</sub>   | <sub>HEIGHT_UPPER</sub>        | <sub>HEIGHT_LOWER</sub>        | <sub>DIST_EXT_UPPER_2</sub> |                             |                            |
-| <sub>SRC_DATA_FORMAT</sub>   | <sub>STAND_PHOTO_YEAR</sub>  | <sub>HEIGHT_LOWER</sub>        | <sub>NAT_NON_VEG</sub>         | <sub>DIST_EXT_LOWER_2</sub> |                             |                            |
-| <sub>PRODUCTION_YEARS </sub> |                              | <sub>PRODUCTIVITY</sub>        | <sub>NON_FOR_ANTH</sub>        | <sub>DIST_TYPE_3</sub>      |                             |                            |
-| <sub>PUBLICATION_DATE</sub>  |                              | <sub>PRODUCTIVITY_TYPE</sub>   | <sub>NON_FOR_VEG</sub>         | <sub>DIST_YEAR_3</sub>      |                             |                            |
-| <sub>ACQUISITION_DATE</sub>  |                              | <sub>SPECIES_1 - 10</sub>      |                                | <sub>DIST_EXT_UPPER_3</sub> |                             |                            |
-| <sub>ACQUISITION_TYPE</sub>  |                              | <sub>SPECIES_PER_1 - 10</sub>  |                                | <sub>DIST_EXT_LOWER_3</sub> |                             |                            |
-| <sub>ACQUISITION_LINKS</sub> |                              | <sub>ORIGIN_UPPER</sub>        |                                |                             |                             |                            |
-| <sub>CONTACT_INFO</sub>      |                              | <sub>ORIGIN_LOWER</sub>        |                                |                             |                             |                            |
-| <sub>DATA_AVAILABILITY</sub> |                              | <sub>SITE_CLASS</sub>          |                                |                             |                             |                            |
-| <sub>REDISTRIBUTION</sub>    |                              | <sub>SITE_INDEX</sub>          |                                |                             |                             |                            |
-| <sub>PERMISSION</sub>        |                              |                                |                                |                             |                             |                            |
-| <sub>LICENSE_AGREEMENT</sub> |                              |                                |                                |                             |                             |                            |
-| <sub>PHOTO_YEAR_SRC</sub>    |                              |                                |                                |                             |                             |                            |
-| <sub>PHOTO_YEAR_START</sub>  |                              |                                |                                |                             |                             |                            |
-| <sub>PHOTO_YEAR_END</sub>    |                              |                                |                                |                             |                             |                            |
+| <sub>[HDR](#hdr_attributes)</sub>                                   | <sub>[CAS](#cas_attributes)</sub>      | <sub>[LYR](#lyr_attributes)</sub>                      | <sub>[NFL](#nfl_attributes)</sub>                      | <sub>[DST](#dst_attributes)</sub>                | <sub>[ECO](#eco_attributes)</sub>                | <sub>[GEO](#geo_attributes)</sub>         |
+| ----------------------------                             | ----------------------------                      | ------------------------------                         | ------------------------------                         | ---------------------------                      | ---------------------------                      | --------------------------                |
+| <sub>[INVENTORY_ID](#hdr_inventory_id) (PK)</sub>        | <sub>[CAS_ID](#cas_cas_id) (PK, FK)</sub>         | <sub>[CAS_ID](#lyr_cas_id) (PK, FK)</sub>              | <sub>[CAS_ID](#nfl_cas_id) (PK, FK)</sub>              | <sub>[CAS_ID](#dst_cas_id) (PK, FK)</sub>        | <sub>[CAS_ID](#eco_cas_id) (PK, FK)</sub>        | <sub>[CAS_ID](#geo_cas_id) (PK, FK)</sub> |
+| <sub>[JURISDICTION](#jurisdiction)</sub>                 | <sub>[INVENTORY_ID](#cas_inventory_id) (FK)</sub> | <sub>[LAYER](#lyr_layer) (PK)</sub>                    | <sub>[LAYER](#nfl_layer) (PK)</sub>                    | <sub>[LAYER](#dst_layer) (PK)</sub>              | <sub>[LAYER](#eco_layer)</sub>                   | <sub>[GEOMETRY](#geometry)</sub>          |
+| <sub>[OWNER_TYPE](#owner_type)</sub>                     | <sub>[ORIG_STAND_ID](#orig_stand_id)</sub>        | <sub>[LAYER_RANK](#lyr_layer_rank)</sub>               | <sub>[LAYER_RANK](#nfl_layer_rank)</sub>               | <sub>[DIST_TYPE_1](#dist_type)</sub>             | <sub>[WETLAND_TYPE](#wetland_type)</sub>         |                                           |
+| <sub>[OWNER_NAME](#owner_name)</sub>                     | <sub>[STAND_STRUCTURE](#stand_structure)</sub>    | <sub>[SOIL_MOIST_REG](#lyr_soil_moist_reg)</sub>       | <sub>[SOIL_MOIST_REG](#nfl_soil_moist_reg)</sub>       | <sub>[DIST_YEAR_1](#dist_year)</sub>             | <sub>[WET_VEG_COVER](#wet_veg_cover)</sub>       |                                           |
+| <sub>[STANDARD_TYPE](#standard_type)</sub>               | <sub>[NUM_OF_LAYERS](#num_of_layers)</sub>        | <sub>[STRUCTURE_PER](#lyr_structure_per)</sub>         | <sub>[STRUCTURE_PER](#nfl_structure_per)</sub>         | <sub>[DIST_EXT_UPPER_1](#dist_ext)</sub>         | <sub>[WET_LANDFORM_MOD](#wet_landform_mod)</sub> |                                           |
+| <sub>[STANDARD_VERSION](#standard_version)</sub>         | <sub>[MAP_SHEET_ID](#map_sheet_id)</sub>          | <sub>[STRUCTURE_RANGE](#structure_range)</sub>         | <sub>[CROWN_CLOSURE_UPPER](#nfl_crown_closure)</sub>   | <sub>[DIST_EXT_LOWER_1](#dist_ext)</sub>         | <sub>[WET_LOCAL_MOD](#wet_local_mod)</sub>       |                                           |
+| <sub>[STANDARD_ID](#standard_id)</sub>                   | <sub>[CASFRI_AREA](#casfri_area)</sub>            | <sub>[CROWN_CLOSURE_UPPER](#lyr_crown_closure)</sub>   | <sub>[CROWN_CLOSURE_LOWER](#nfl_crown_closure)</sub>   | <sub>[DIST_TYPE_2](#dist_type)</sub>             | <sub>[ECO_SITE](#eco_site)</sub>                 |                                           |
+| <sub>[STANDARD_REVISION](#standard_revision)</sub>       | <sub>[CASFRI_PERIMETER](#casfri_perimeter)</sub>  | <sub>[CROWN_CLOSURE_LOWER](#lyr_crown_closure)</sub>   | <sub>[HEIGHT_UPPER](#nfl_height)</sub>                 | <sub>[DIST_YEAR_2](#dist_year)</sub>             |                                                  |                                           |
+| <sub>[DOCUMENTATION_TITLES](#documentation_titles)</sub> | <sub>[SRC_INV_AREA](#src_inv_area)</sub>          | <sub>[HEIGHT_UPPER](#lyr_height)</sub>                 | <sub>[HEIGHT_LOWER](#nfl_height)</sub>                 | <sub>[DIST_EXT_UPPER_2](#dist_ext)</sub>         |                                                  |                                           |
+| <sub>[SRC_DATA_FORMAT](#src_data_format)</sub>           | <sub>[STAND_PHOTO_YEAR](#stand_photo_year)</sub>  | <sub>[HEIGHT_LOWER](#lyr_height)</sub>                 | <sub>[NAT_NON_VEG](#nat_non_veg)</sub>                 | <sub>[DIST_EXT_LOWER_2](#dist_ext)</sub>         |                                                  |                                           |
+| <sub>[PRODUCTION_YEARS](#production_years) </sub>        |                                                   | <sub>[PRODUCTIVITY](#productivity)</sub>               | <sub>[NON_FOR_ANTH](#non_for_anth)</sub>               | <sub>[DIST_TYPE_3](#dist_type)</sub>             |                                                  |                                           |
+| <sub>[PUBLICATION_DATE](#publication_date)</sub>         |                                                   | <sub>[PRODUCTIVITY_TYPE](#productivity_type)</sub>     | <sub>[NON_FOR_VEG](#non_for_veg)</sub>                 | <sub>[DIST_YEAR_3](#dist_year)</sub>             |                                                  |                                           |
+| <sub>[ACQUISITION_DATE](#acquisition_date)</sub>         |                                                   | <sub>[SPECIES_1 - 10](#species)</sub>                  |                                                        | <sub>[DIST_EXT_UPPER_3](#dist_ext)</sub>         |                                                  |                                           |
+| <sub>[ACQUISITION_TYPE](#acquisition_type)</sub>         |                                                   | <sub>[SPECIES_PER_1 - 10](#species_per)</sub>          |                                                        | <sub>[DIST_EXT_LOWER_3](#dist_ext)</sub>         |                                                  |                                           |
+| <sub>[ACQUISITION_LINKS](#acquisition_links)</sub>       |                                                   | <sub>[ORIGIN_UPPER](#origin)</sub>                     |                                                        |                                                  |                                                  |                                           |
+| <sub>[CONTACT_INFO](#contact_info)</sub>                 |                                                   | <sub>[ORIGIN_LOWER](#origin)</sub>                     |                                                        |                                                  |                                                  |                                           |
+| <sub>[DATA_AVAILABILITY](#data_availability)</sub>       |                                                   | <sub>[SITE_CLASS](#site_class)</sub>                   |                                                        |                                                  |                                                  |                                           |
+| <sub>[REDISTRIBUTION](#redistribution)</sub>             |                                                   | <sub>[SITE_INDEX](#site_index)</sub>                   |                                                        |                                                  |                                                  |                                           |
+| <sub>[PERMISSION](#permission)</sub>                     |                                                   |                                                        |                                                        |                                                  |                                                  |                                           |
+| <sub>[LICENSE_AGREEMENT](#license_agreement)</sub>       |                                                   |                                                        |                                                        |                                                  |                                                  |                                           |
+| <sub>[PHOTO_YEAR_SRC](#photo_year_src)</sub>             |                                                   |                                                        |                                                        |                                                  |                                                  |                                           |
+| <sub>[PHOTO_YEAR_START](#photo_year_start)</sub>         |                                                   |                                                        |                                                        |                                                  |                                                  |                                           |
+| <sub>[PHOTO_YEAR_END](#photo_year_end)</sub>             |                                                   |                                                        |                                                        |                                                  |                                                  |                                           |
 
  
-<a name=Error_codes></a>
+<a name="error_codes"></a>
 ## CASFRI Error Codes  
 
 Error codes are needed during translation to report invalid or missing source inventory values. Error codes have been designed to match the CASFRI attribute type and to reflect the type of error that was encountered in the source inventory. Integer and double precision attributes will have error codes reported as integers (e.g. -9999) whereas text attributes will have errors reported as strings (e.g. 'INVALID_VALUE'). Possible error codes for each CASFRI attribute are listed in the attribute descriptions below.
@@ -127,12 +127,13 @@ Four types of attribute have been identified in CASFRI and only specific codes a
 * The main difference between the number and the range type is that range values can be out of range (OUT_OF_RANGE) while simple numbers cannot since they are not delimited.
 
 
-<a name=HDR_attributes></a>
+<a name="hdr_attributes"></a>
 ## HDR Attributes 
 
 Header information is a primary element of CAS. Header information identifies the source data set including jurisdiction, ownership, tenure type, inventory type, inventory version, inventory start and finish date and the year of acquisition for CAS. These attributes are described below.
 
 
+<a name="hdr_inventory_id"></a>
 ### INVENTORY_ID (PK)
 
 The **INVENTORY_ID** attribute is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments with newer inventories within a jurisdiction.
@@ -142,6 +143,7 @@ The **INVENTORY_ID** attribute is a unique identifier that is assigned to each f
 | Alphanumeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
 
+<a name="jurisdiction"></a>
 ### JURISDICTION
 
 The **JURISDICTION** attribute identifies the province, territory or national park from which the inventory data came.
@@ -164,6 +166,7 @@ The **JURISDICTION** attribute identifies the province, territory or national pa
 | Prince Albert National Park |
 
 
+<a name="owner_type"></a>
 ### OWNER_TYPE
 
 The **OWNER_TYPE** attribute identifies who owns the inventory data. Ownership of the inventory can be federal, provincial, territory, industry, private, or First Nation.
@@ -179,6 +182,7 @@ The **OWNER_TYPE** attribute identifies who owns the inventory data. Ownership o
 | UNKNOWN_VALUE | Owner type is unknown |
 
 
+<a name="owner_name"></a>
 ### OWNER_NAME
 
 The **OWNER_NAME** attribute identifies who owns the land covered by the inventory.
@@ -189,6 +193,7 @@ The **OWNER_NAME** attribute identifies who owns the land covered by the invento
 | UNKNOWN_VALUE | Owner name is unknown |
 
 
+<a name="standard_type"></a>
 ### STANDARD_TYPE
 
 The **STANDARD_TYPE** attribute identifies the kind of inventory that was produced for an area. The name, abbreviation, or acronym usually becomes the name used to identify an inventory. For example, Alberta had a series of successive forest inventories called Phase 1, Phase 2, and Phase 3. As inventories became more inclusive of attributes other than just the trees, they became known as vegetation inventories, for example, the Alberta Vegetation Inventory or AVI. The inventory type along with a version number usually identifies an inventory.
@@ -199,6 +204,7 @@ The **STANDARD_TYPE** attribute identifies the kind of inventory that was produc
 | UNKNOWN_VALUE  | Inventory name or type of inventory is unknown |
 
 
+<a name="standard_version"></a>
 ### STANDARD_VERSION
 
 The **STANDARD_VERSION** attribute identifies the version number of the standards used to produce the inventory, usually across large land bases and for a relatively long period of time. The inventory type along with a version number usually identifies an inventory.
@@ -209,6 +215,7 @@ The **STANDARD_VERSION** attribute identifies the version number of the standard
 | UNKNOWN_VALUE  | Inventory name or type of inventory is unknown |
 
 
+<a name="standard_id"></a>
 ### STANDARD_ID
 
 The **STANDARD_ID** attribute is the CASFRI unique identifier for the standard used to produce the inventory. If a standard is updated such that a new translation table is required, the **STANDARD_ID** is incremented. The numeric part of the standard id does not necessarily correspond to the version of the standard nor to a chronological order. It is simply a unique identifier.
@@ -217,6 +224,7 @@ The **STANDARD_ID** attribute is the CASFRI unique identifier for the standard u
 | :------------ | :------------ |
 | Alphanumeric | The CASFRI unique identifier of the inventory |
 
+<a name="standard_revision"></a>
 ### STANDARD_REVISION
 
 The **STANDARD_REVISION** attribute records whether any revisions have been made to the standard.
@@ -227,6 +235,7 @@ The **STANDARD_REVISION** attribute records whether any revisions have been made
 | UNKNOWN_VALUE | Standard revision is unknown |
 
 
+<a name="documentation_titles"></a>
 ### DOCUMENTATION_TITLES
 
 The **DOCUMENTATION_TITLES** attribute identifies titles of documents associated with the standard and the inventory data e.g., metadata, data dictionary, manual, etc.
@@ -237,6 +246,7 @@ The **DOCUMENTATION_TITLES** attribute identifies titles of documents associated
 | UNKNOWN_VALUE | Titles of documents are unknown |
 
 
+<a name="src_data_format"></a>
 ### SRC_DATA_FORMAT
 
 The **SRC_DATA_FORMAT** attribute identifies the format of the inventory data e.g., geodatabase, shapefile, e00 file. When many formats are used, they are separated by a comma.
@@ -252,6 +262,7 @@ The **SRC_DATA_FORMAT** attribute identifies the format of the inventory data e.
 | UNKNOWN_VALUE    | Format of the inventory is unknown |
 
 
+<a name="production_years"></a>
 ### PRODUCTION_YEARS
 
 The **PRODUCTION_YEARS** attribute identifies the year or the year interval (e.g. 1998-2003) during which the inventory was produced.
@@ -262,6 +273,7 @@ The **PRODUCTION_YEARS** attribute identifies the year or the year interval (e.g
 | UNKNOWN_VALUE | Year of production is unknown |
 
 
+<a name="publication_date"></a>
 ### PUBLICATION_DATE
 
 The **PUBLICATION_DATE**  attribute identifies the date at which the inventory data was published by the producer on the web or internally.
@@ -271,6 +283,7 @@ The **PUBLICATION_DATE**  attribute identifies the date at which the inventory d
 | Date   | Date at which the inventory data was published  |
 | UNKNOWN_VALUE | Publication date is unknown |
 
+<a name="acquisition_date"></a>
 ### ACQUISITION_DATE
 
 The **ACQUISITION_DATE** attribute identifies the date at which the inventory data was acquired by the CASFRI project.
@@ -281,6 +294,7 @@ The **ACQUISITION_DATE** attribute identifies the date at which the inventory da
 | UNKNOWN_VALUE | Acquisition date is unknown |
 
 
+<a name="acquisition_type"></a>
 ### ACQUISITION_TYPE
 
 The **ACQUISITION_TYPE** attribute identifies the mean by which the inventory data was acquired. This is mainly to identify inventories that were publicly available (online or by other means) when they were acquired by the CASFRI project.
@@ -295,6 +309,7 @@ The **ACQUISITION_TYPE** attribute identifies the mean by which the inventory da
 | EMAIL | Inventory data was acquired through an email exchange with the producer |
 | UNKNOWN_VALUE   | Acquisition type is unknown |
 
+<a name="acquisition_links"></a>
 ### ACQUISITION_LINKS
 
 The **ACQUISITION_LINKS** attribute identifies the HTTP or FTP addresses (there can be many) from which the inventory was downloaded. Temporary addresses are not provided.
@@ -305,6 +320,7 @@ The **ACQUISITION_LINKS** attribute identifies the HTTP or FTP addresses (there 
 | UNKNOWN_VALUE | Acquisition links are unknown |
 | NOT_APPLICABLE | Attribute does not apply to this record. (.g. Acquisition type is not FTP, nor HTTP) |
 
+<a name="contact_info"></a>
 ### CONTACT_INFO
 
 The **CONTACT_INFO** attribute identifies the contact information (name, address, phone, email, etc.) associated with the inventory data.
@@ -315,6 +331,7 @@ The **CONTACT_INFO** attribute identifies the contact information (name, address
 | UNKNOWN_VALUE | No contact info was provided |
 
 
+<a name="data_availability"></a>
 ### DATA_AVAILABILITY
 
 The **DATA_AVAILABILITY** attribute identifies the type of access to the inventory data e.g., direct contact or open access.
@@ -327,6 +344,7 @@ The **DATA_AVAILABILITY** attribute identifies the type of access to the invento
 | UNKNOWN_VALUE | Availability of the inventory is unknown |
 
 
+<a name="redistribution"></a>
 ### REDISTRIBUTION
 
 The **REDISTRIBUTION** attribute identifies the conditions under which the inventory data can be redistributed to other parties.
@@ -340,6 +358,7 @@ The **REDISTRIBUTION** attribute identifies the conditions under which the inven
 | UNKNOWN_VALUE  | The dataset redistribution conditions are unknown |
 
 
+<a name="permission"></a>
 ### PERMISSION
 
 The **PERMISSION** attribute identifies the degree of permission to which the data can be used i.e., whether the use of the data is unrestricted, restricted or limited.
@@ -353,6 +372,7 @@ The **PERMISSION** attribute identifies the degree of permission to which the da
 | UNKNOWN_VALUE | Use of the data is unknown |
 
 
+<a name="license_agreement"></a>
 ### LICENSE_AGREEMENT
 
 The **LICENSE_AGREEMENT** attribute identifies the type of license associated with the inventory data.
@@ -362,6 +382,7 @@ The **LICENSE_AGREEMENT** attribute identifies the type of license associated wi
 | Text   | Type of license associated with the inventory data |
 
 
+<a name="photo_year_src"></a>
 ### PHOTO_YEAR_SRC
 
 The **PHOTO_YEAR_SRC** attribute identifies the source data type that is used to define the photo year i.e., the year in which the inventory was considered initiated and completed.
@@ -375,6 +396,7 @@ The **PHOTO_YEAR_SRC** attribute identifies the source data type that is used to
 | UNKNOWN_VALUE    | Photo year source is unknown |
 
 
+<a name="photo_year_start"></a>
 ### PHOTO_YEAR_START
 
 The **PHOTO_YEAR_START** attribute identifies the year in which the inventory was considered initiated. An inventory can take several years to complete; therefore, start and end dates are included to identify the interval for when the inventory was completed.
@@ -385,6 +407,7 @@ The **PHOTO_YEAR_START** attribute identifies the year in which the inventory wa
 | -8886 | Earliest year of aerial photo acquisition is unknown |
 
 
+<a name="photo_year_end"></a>
 ### PHOTO_YEAR_END
 
 The **PHOTO_YEAR_END** attribute identifies the year in which the inventory was considered completed. An inventory can take several years to complete; therefore, start and end dates are included to identify the interval for when the inventory was completed. 
@@ -395,12 +418,12 @@ The **PHOTO_YEAR_END** attribute identifies the year in which the inventory was 
 | -8886 | Latest year of aerial photo acquisition is unknown |
 
 
-<a name=CAS_attributes></a>
+<a name="cas_attributes"></a>
 ## CAS Attributes
 
 The CAS base polygon data provides polygon specific information and links the original inventory polygon ID to the CAS ID. Identification attributes include original stand ID, CAS Stand ID, Mapsheet ID, and Inventory ID. Polygon attributes include stand structure, polygon area and polygon perimeter. Inventory Reference Year, Photo Year, and Administrative Unit are additional identifiers.
 
-<a name=CAS_ID></a>
+<a name="cas_cas_id"></a>
 ### CAS_ID (PK)
 
 The **CAS_ID** attribute is an alpha-numeric identifier that is unique for each polygon within CAS database. It is a concatenation of attributes containing the following sections:
@@ -417,6 +440,7 @@ In some inventories the source polygons have a unique identifier with a length o
 | :------------------- | :---------- |
 | Alphanumeric string |  CAS stand identification - unique string for each polygon within CAS |
 
+<a name="cas_inventory_id"></a>
 ### INVENTORY_ID (FK)
 
 The **INVENTORY_ID** attribute is a unique identifier that is assigned to each forest inventory. It is the concatenation of the **JURISDICTION** attribute plus an integer that increments for newly acquired inventories within a jurisdiction. Note that higher integer values do not necessarily indicate more recent inventories.
@@ -426,6 +450,7 @@ The **INVENTORY_ID** attribute is a unique identifier that is assigned to each f
 | Alphanumeric string of two characters followed by two digits. e.g., BC08, AB06, AB16, NB01 | Two characters represent the province/territory, two digits increment for each source inventory available from the province/territory |
 
 
+<a name="orig_stand_id"></a>
 ### ORIG_STAND_ID
 
 The **ORIG_STAND_ID** attribute is the unique number for each polygon within the original inventory.
@@ -435,6 +460,7 @@ The **ORIG_STAND_ID** attribute is the unique number for each polygon within the
 | Integer      | Unique number for each polygon within the original inventory |
 
 
+<a name="stand_structure"></a>
 ### STAND_STRUCTURE
 
 The **STAND_STRUCTURE** attribute identifies the physical arrangement or vertical pattern of organization of the vegetation within a polygon.
@@ -463,6 +489,7 @@ If COMPLEX or HORIZONTAL stand structure is assigned in the source data, it is a
 | NOT_APPLICABLE | Attribute does not apply to this record (e.g. polygon does not have canopy information) |
 
 
+<a name="num_of_layers"></a>
 ### NUM_OF_LAYERS  
 
 The **NUM_OF_LAYERS** attribute identifies the number of LYR and NFL layers associated with the stand. Note that NUM_OF_LAYERS is independent from STAND_STRUCTURE since STAND_STRUCTURE is only based on the number of canopy layers in the LYR table. STAND_STRUCTURE could therefore be SINGLE_LAYERED, even when NUM_OF_LAYERS is > 1.
@@ -473,6 +500,7 @@ The **NUM_OF_LAYERS** attribute identifies the number of LYR and NFL layers asso
 | -8886         | Number of layers is unknown (e.g. there is disturbance info, but no reported layers) |
 
 
+<a name="map_sheet_id"></a>
 ### MAP_SHEET_ID
 
 The **MAP_SHEET_ID** attribute identifies the map sheet to which the polygon in the source inventory belongs.
@@ -484,6 +512,7 @@ The **MAP_SHEET_ID** attribute identifies the map sheet to which the polygon in 
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
+<a name="casfri_area"></a>
 ### CASFRI_AREA
 
 The **CASFRI_AREA** attribute measures the area of each polygon in hectares (ha). It is measured to 2 decimal places by PostGIS.
@@ -493,6 +522,7 @@ The **CASFRI_AREA** attribute measures the area of each polygon in hectares (ha)
 | >=0.01        | Polygon (stand) area in hectares (ha) |
 
 
+<a name="casfri_perimeter"></a>
 ### CASFRI_PERIMETER
 
 The **CASFRI_PERIMETER** attribute measures the perimeter of each polygon in metres (m). It is measured to 2 decimal places. This attribute is calculated by PostGIS.
@@ -502,6 +532,7 @@ The **CASFRI_PERIMETER** attribute measures the perimeter of each polygon in met
 | >=0.01 | Polygon (stand) perimeter in metres (m) |
 
 
+<a name="src_inv_area"></a>
 ### SRC_INV_AREA
 
 The **SRC_INV_AREA** attribute measures the area of each polygon in hectares (ha). It is calculated by the data providers and may contain missing values. It is reported in CASFRI to 2 decimal places.
@@ -517,6 +548,7 @@ The **SRC_INV_AREA** attribute measures the area of each polygon in hectares (ha
 | -9999 | Source value is outside expected range |
 
 
+<a name="stand_photo_year"></a>
 ### STAND_PHOTO_YEAR
 
 The **STAND_PHOTO_YEAR** attribute identifies the year in which the aerial photography program was conducted for a particular polygon. This is in contrast to photo_year_start and photo_year_end which identify the interval for when the inventory was completed.
@@ -531,18 +563,19 @@ The **STAND_PHOTO_YEAR** attribute identifies the year in which the aerial photo
 | -9997 | Source value is invalid |
 | -9999 | Source value is outside expected range |
 
-<a name=LYR_attributes></a>
+<a name="lyr_attributes"></a>
 ## LYR Attributes
 
 Forest layer attributes.
 
 
+<a name="lyr_cas_id"></a>
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
+See <a href="#cas_cas_id">CAS_ID</a> in the CAS table.
 
 
-<a name=LAYER></a>
+<a name="lyr_layer"></a>
 ### LAYER (PK)
 
 Identifies the layer number of the LYR or NFL row within a particular polygon. A maximum of 9 layers can be identified. No two LYR or NFL layers can have the same value within the same polygon.
@@ -559,7 +592,7 @@ Notes:
 - The LYR and NFL tables define layers as described above. The LAYER attribute in the DST is always used to associate a DST record with a LYR or NFL layer. DST layer should never have values that don't match an existing LYR or NFL record.
 - ECO LAYER is only used in Parks Canada datasets with horizontal structure.
 
-<a name=LAYER_RANK></a>
+<a name="lyr_layer_rank"></a>
 ### LAYER_RANK
 
 Layer rank is an attribute related to LAYER and refers to the layer importance for forest management planning, operational, or silvicultural purposes. Layer rank is always copied from the source data when available. If no rank is assigned in the source data, CASFRI reports an error code. 
@@ -577,7 +610,7 @@ Some inventories (AB, NB, NT, ON, SK SKVI, and NS) do not have an explicit rank 
 | -9999 | Source value is outside expected range |
 
 
-<a name=STRUCTURE_PER></a>
+<a name="lyr_structure_per"></a>
 ### STRUCTURE_PER
 
 The **STRUCTURE_PER** attribute identifies the percentage of stand area for HORIZONTAL structured polygons. It is assigned in 10% increments, attributed to each stratum within the entire polygon and must add up to 100%. Any number of horizontal strata can be described per horizontal polygon.
@@ -594,6 +627,7 @@ The **STRUCTURE_PER** attribute identifies the percentage of stand area for HORI
 | -9999 | Source value is outside expected range |
 
 
+<a name="structure_range"></a>
 ### STRUCTURE_RANGE
 
 The **STRUCTURE_RANGE** attribute identifies the height range (m) around stand midpoint for COMPLEX structured polygons. For example, height range 6 means that the range around the midpoint height is 3 meters above and 3 meters below the midpoint.
@@ -613,7 +647,7 @@ Notes:
 - Applies to the following inventories: AB, NT, SK (SFVI), and YT (YVI02).
 
 
-<a name=SOIL_MOIST_REG></a>
+<a name="lyr_soil_moist_reg"></a>
 ### SOIL_MOIST_REG  
 
 The **SOIL_MOIST_REG** attribute identifies the available moisture supply for plant growth over a period of several years. Soil moisture regime is influenced by precipitation, evapotranspiration, topography, insolation, ground water, and soil texture. The CAS soil moisture regime code represents the similarity of classes across Canada.
@@ -635,7 +669,7 @@ The **SOIL_MOIST_REG** attribute identifies the available moisture supply for pl
 Notes: SOIL_MOIST_REG is usually a polygon level attribute and is therefore the same for any LYR and NFL records. AB and NT however report soil moisture separately for the overstory and understory layers which can lead to layer 1 and 2 having different values.
 
 
-<a name=CROWN_CLOSURE></a>
+<a name="lyr_crown_closure"></a>
 ### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER 
 
 The **CROWN_CLOSURE_UPPER** and **CROWN_CLOSURE_LOWER** attributes estimate the percentage of ground area covered by vertically projected tree crowns, shrubs, or herbaceous cover. Crown closure is usually estimated independently for each layer. Crown closure is commonly represented by classes and differs across Canada; therefore, CASFRI recognizes an upper and lower percentage bound for each class.
@@ -651,7 +685,7 @@ The **CROWN_CLOSURE_UPPER** and **CROWN_CLOSURE_LOWER** attributes estimate the 
 | -9999 | Source value is outside expected range |
 
 
-<a name=HEIGHT></a>
+<a name="lyr_height"></a>
 ### HEIGHT_UPPER, HEIGHT_LOWER
 
 The **HEIGHT_UPPER** and **HEIGHT_LOWER** attributes are based on an average height of leading species of dominant and co-dominant heights of the vegetation layer and can represent trees, shrubs, or herbaceous cover. Height can be represented by actual values or by height class and its representation is variable across Canada; therefore, CAS will use upper and lower bounds to represent height.
@@ -671,6 +705,7 @@ Note:
 * In BC10, separate heights are assigned for the dominant and co-dominant species in a layer. A weighted average is therefore computed based on the dominant and co-dominant heights, weighted by the percent cover of the dominant and co-dominant species in the layer.
 
 
+<a name="productivity"></a>
 ### PRODUCTIVITY
 The **PRODUCTIVITY** attribute classifies forested lands into either productive or unproductive for the purpose of forestry operations. This attribute is translated from source information where it exists. Not all inventories classify productivity. Some inventories have a source value that indicates PRODUCTIVE_FOREST, other inventories classify non-productive types in which case NON_PRODUCTIVE_FOREST is assigned and the non-productive code is translated as **PRODUCTIVITY_TYPE**. If any **PRODUCTIVITY** or **PRODUCTIVITY_TYPE** information is available in the source data, unknown rows are assigned UNKNOWN_VALUE. If no information is available in the source data, NOT_APPLICABLE is assigned.
 
@@ -682,6 +717,7 @@ The **PRODUCTIVITY** attribute classifies forested lands into either productive 
 | NOT_APPLICABLE         | Attribute does not apply to this record |
 
 
+<a name="productivity_type"></a>
 ### PRODUCTIVITY_TYPE
 
 The **PRODUCTIVITY_TYPE** attribute classifies forested lands by their productive or unproductive class, as assigned in the source data. **PRODUCTIVITY_TYPE** is a sub-class of **PRODUCTIVITY**, but both values may not always occur together. For example, a forested polygon could be labelled as non-productive but a type might not always be assigned. Generally, if a non-productive type is assigned, **PRODUCTIVITY** is reported as NON_PRODUCTIVE_FOREST. One exception is if there is another source attribute that directly assigns **PRODUCTIVITY** as is the case in BC which has separate attributes for classifying the harvestable land base, and for labelling non-productive types (note that this can actually lead to confusing assignments where polygons are labelled as non-productive in one attribute, but included in the harvestable land base in another attribute). Generally, HARVESTABLE is assigned along with PRODUCTIVE_FOREST; and PROTECTION_FOREST, TREED_MUSKEG, TREED_ROCK, ALPINE_FOREST, SCRUB_SHRUB and ALDER are assigned along with NON_PRODUCTIVE_FOREST.
@@ -701,6 +737,7 @@ This attribute is translated from source information where it exists. Since this
 | NOT_APPLICABLE         | Attribute does not apply to this record |
 
 
+<a name="species"></a>
 ### SPECIES_1 - SPECIES_10
 
 The **SPECIES_1** to **SPECIES_10** attributes identify the species composing a forested stand.
@@ -720,6 +757,7 @@ CASFRI v5 adopts the National Forest Inventory species codes for Canada (https:/
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
+<a name="species_per"></a>
 ### SPECIES_PER_1 - SPECIES_PER_10
 
 The **SPECIES_PER_1** to **SPECIES_PER_10** attributes identify the percentage of each species composing a forested stand. See SPECIES_1 - SPECIES_10 above.
@@ -735,6 +773,7 @@ The **SPECIES_PER_1** to **SPECIES_PER_10** attributes identify the percentage o
 | -9999 | Source value is outside expected range |
 
 
+<a name="origin"></a>
 ### ORIGIN_UPPER, ORIGIN_LOWER
 
 The **ORIGIN_UPPER** and **ORIGIN_LOWER** attributes identify the average initiation year of codominant and dominant trees of the leading species within each layer of a polygon. Origin is determined either to the nearest year or decade. An upper and lower bound is used to identify CASFRI origin. Some inventories include origin explicitly, and in some cases we calculate it using photo year and age.
@@ -750,6 +789,7 @@ The **ORIGIN_UPPER** and **ORIGIN_LOWER** attributes identify the average initia
 | -9999 | Source value is outside expected range |
 
 
+<a name="site_class"></a>
 ### SITE_CLASS
 
 The **SITE_CLASS** attribute estimates the potential productivity of land for tree growth. Site class reflects tree growth response to soils, topography, climate, elevation, and moisture availability. Site class is copied from the source data when available.
@@ -768,6 +808,7 @@ The **SITE_CLASS** attribute estimates the potential productivity of land for tr
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
+<a name="site_index"></a>
 ### SITE_INDEX
 
 The **SITE_INDEX** attribute estimates site productivity for tree growth. It is derived for all forested polygons based on leading species, height, and stand age based on a specified reference age. Site index is not available for most inventories across Canada, it is copied from the source data when available.
@@ -783,50 +824,56 @@ The **SITE_INDEX** attribute estimates site productivity for tree growth. It is 
 | -9999 | Source value is outside expected range |
 
 
-<a name=NFL_attributes></a>
+<a name="nfl_attributes"></a>
 ## NFL Attributes
 
 Non-forested attributes.
 
 
+<a name="nfl_cas_id"></a>
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
+See <a href="#cas_cas_id">CAS_ID</a> in the CAS table.
 
-
+<a name="nfl_layer"></a>
 ### LAYER (PK)
 
-See <a href="#LAYER">LAYER</a> in the LYR table.
+See <a href="#lyr_layer">LAYER</a> in the LYR table.
 
 
+<a name="nfl_layer_rank"></a>
 ### LAYER_RANK  
-See <a href="#LAYER_RANK">LAYER_RANK</a> in the LYR table.
+See <a href="#lyr_layer_rank">LAYER_RANK</a> in the LYR table.
 
 
+<a name="nfl_soil_moist_reg"></a>
 ### SOIL_MOIST_REG
+See <a href="#lyr_soil_moist_reg">SOIL_MOIST_REG</a> in the LYR table.
 
-See <a href="#SOIL_MOIST_REG">SOIL_MOIST_REG</a> in the LYR table.
 
-
+<a name="nfl_structure_per"></a>
 ### STRUCTURE_PER
 
-See <a href="#STRUCTURE_PER">STRUCTURE_PER</a> in the LYR table.
+See <a href="#lyr_structure_per">STRUCTURE_PER</a> in the LYR table.
 
 
+<a name="nfl_crown_closure"></a>
 ### CROWN_CLOSURE_UPPER, CROWN_CLOSURE_LOWER
 
-See <a href="#CROWN_CLOSURE ">CROWN_CLOSURE</a> in the LYR table.
+See <a href="#lyr_crown_closure">CROWN_CLOSURE</a> in the LYR table.
 
 Crown closure defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
 
+<a name="nfl_height"></a>
 ### HEIGHT_UPPER, HEIGHT_LOWER
 
-See <a href="#HEIGHT ">HEIGHT</a> in the LYR table.
+See <a href="#lyr_height">HEIGHT</a> in the LYR table.
 
 Height defined in the NFL table must be a value explicitly assigned to the NFL layer in the source data.
 
 
+<a name="nat_non_veg"></a>
 ### NAT_NON_VEG  
 
 The **NAT_NON_VEG** attribute identifies the type of natural land with no vegetation cover. The maximum vegetation cover varies across Canada but is usually less than six or ten percent.
@@ -857,6 +904,7 @@ The **NAT_NON_VEG** attribute identifies the type of natural land with no vegeta
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
+<a name="non_for_anth"></a>
 ### NON_FOR_ANTH
 
 The **NON_FOR_ANTH** attribute identifies the type of non-forested anthropogenic areas influenced or created by humans. These sites may or may not be vegetated.   
@@ -878,6 +926,7 @@ The **NON_FOR_ANTH** attribute identifies the type of non-forested anthropogenic
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
+<a name="non_for_veg"></a>
 ### NON_FOR_VEG  
 
 The **NON_FOR_VEG** attribute identifies the type of non-forested vegetated areas including all natural lands that have vegetation cover with usually less than 10% tree cover. These cover types can be stand alone or used in multi-layer situations.   
@@ -902,17 +951,19 @@ The **NON_FOR_VEG** attribute identifies the type of non-forested vegetated area
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
-<a name=DST_attributes></a>
+<a name="dst_attributes"></a>
 ## DST Attributes
 
+<a name="dst_cas_id"></a>
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
+See <a href="#cas_cas_id">CAS_ID</a> in the CAS table.
 
 
+<a name="dst_layer"></a>
 ### LAYER (PK)
 
-The **LAYER** attribute identifies the specific layer to which the disturbance is linked in the source data. It can be assigned to the corresponding LYR or NFL layer in CASFRI (See <a href="#LAYER">LYR table LAYER.</a>). When disturbances are not explicitly linked to a specific layer or when the source inventory arbitrarily assigns all disturbances to layer 1, -8886 (UNKNOWN_VALUE) is assigned to LAYER since the correct layer associated with the disturbance is unknown.
+The **LAYER** attribute identifies the specific layer to which the disturbance is linked in the source data. It can be assigned to the corresponding LYR or NFL layer in CASFRI (See <a href="#lyr_layer">LYR table LAYER.</a>). When disturbances are not explicitly linked to a specific layer or when the source inventory arbitrarily assigns all disturbances to layer 1, -8886 (UNKNOWN_VALUE) is assigned to LAYER since the correct layer associated with the disturbance is unknown.
 
 | Values   | Description |
 | :------- | :------- |
@@ -920,6 +971,7 @@ The **LAYER** attribute identifies the specific layer to which the disturbance i
 | -8886 | Source value should exist but is unknown |
 
 
+<a name="dist_type"></a>
 ### DIST_TYPE_1 - DIST_TYPE_3
 
 The **DIST_TYPE_1** to **DIST_TYPE_3** attributes identify the type of disturbance history that has occurred or is occurring within the polygon. The type of disturbance, the extent of the disturbance and the disturbance year, if known, may be recorded. The disturbance may be natural or human caused. Up to three disturbance events can be recorded with the oldest event described first. Silviculture treatments have been grouped into one category and include any silviculture treatment or treatments recorded for a polygon.  
@@ -949,6 +1001,7 @@ Note:
 * In some cases disturbance types can occur without years, and years can occur without disturbance types. Any disturbances with unknown years are reported as the oldest disturbance, and any missing disturbance types are reported as UNKNOWN_VALUE.
 
 
+<a name="dist_year"></a>
 ### DIST_YEAR_1 - DIST_YEAR_3  
 
 The **DIST_YEAR_1** to **DIST_YEAR_3** attributes identify the year a disturbance event occurred. The disturbance year may be unknown. Three disturbance years can be identified, one for each disturbance event.    
@@ -964,6 +1017,7 @@ The **DIST_YEAR_1** to **DIST_YEAR_3** attributes identify the year a disturbanc
 | -9999 | Source value is outside expected range |
 
 
+<a name="dist_ext"></a>
 ### DIST_EXT_UPPER_1 - DIST_EXT_UPPER_3, DIST_EXT_LOWER_1 - DIST_EXT_LOWER_3
 
 The **DIST_EXT_UPPER_1** to **DIST_EXT_UPPER_3** and the **DIST_EXT_LOWER_1** to **DIST_EXT_LOWER_3** attributes provide an estimate of the proportion of the polygon that has been affected by the associated disturbance. Extent codes and classes vary across Canada where they occur; therefore, CAS identifies upper and lower bounds for this category. Three disturbance extents can be identified, one for each disturbance event. Usually, extents are reported in increments of 10%, but YT03 uses 5% increments so the lowest possible DIST_EXT_UPPER value is 5%.  
@@ -980,17 +1034,19 @@ The **DIST_EXT_UPPER_1** to **DIST_EXT_UPPER_3** and the **DIST_EXT_LOWER_1** to
 | -9999 | Source value is outside expected range |
 
 
-<a name=ECO_attributes></a>
+<a name="eco_attributes"></a>
 ## ECO Attributes
 
 Ecological attributes are generally not included or are incompletely recorded in typical forest inventories across Canada. Two attributes have been included for CAS: ecosite and wetland. These attributes are to be translated or derived for CAS from other attributes whenever possible.  
 
 
+<a name="eco_cas_id"></a>
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
+See <a href="#cas_cas_id">CAS_ID</a> in the CAS table.
 
 
+<a name="eco_layer"></a>
 ### LAYER (PK)
 
 The **LAYER** attribute identifies the specific layer to which the wetland is linked in the source data. When wetlands are not explicitly linked to a specific layer -8886 (UNKNOWN_VALUE) is assigned. Layer is usually only populated for cases with horizontal structure where multiple wetland sub-components can be included within a single polygon (e.g. PC02). In this case each layer represents a different sub-component of the horizontal structure.
@@ -1001,6 +1057,7 @@ The **LAYER** attribute identifies the specific layer to which the wetland is li
 | -8886 | Source value should exist but is unknown |
 
 
+<a name="wetland"></a>
 ### WETLAND CLASSIFICATION
 
 The wetland classification scheme used for CAS follows the classes developed by the National Wetlands Working Group<sup>1</sup> and modified by Vitt and Halsey<sup>2,3</sup>. The scheme was further modified to take into account coastal and saline wetlands. The CAS wetland attribute is composed of four parts: wetland type (WETLAND_TYPE), wetland vegetation modifier (WET_VEG_COVER), wetland landform modifier (WET_LANDFORM_MOD), and wetland local modifier (WET_LOCAL_MOD).  
@@ -1010,6 +1067,7 @@ Five major wetland types are recognized based on wetland development from hydrol
 Not many forest inventories across Canada provide a wetland attribute. Some inventories have complete or partial wetland attributes while others will need to have wetland types derived from other attributes or ecosite information. The level of wetland detail that is possible to describe from a particular inventory database is dependent on the attributes that already exist. The wetland derivation may not be complete nor will it always be possible to derive or record all four wetland attributes in the CAS database. 
 
 
+<a name="wetland_type"></a>
 ### WETLAND_TYPE
 
 | Values | Description |
@@ -1027,6 +1085,7 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
+<a name="wet_veg_cover"></a>
 ### WET_VEG_COVER
 
 | Values | Description |
@@ -1039,6 +1098,7 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
+<a name="wet_landform_mod"></a>
 ### WET_LANDFORM_MOD
 
 | Values | Description |
@@ -1050,6 +1110,7 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
+<a name="wet_local_mod"></a>
 ### WET_LOCAL_MOD
 
 | Values | Description |
@@ -1069,6 +1130,7 @@ Not many forest inventories across Canada provide a wetland attribute. Some inve
 <sup>3</sup> Alberta Wetland Inventory Classification System. Version 2.0. April 2004. Halsey, et. al.  
 
   
+<a name="eco_site"></a>
 ### ECO_SITE
 
 The **ECO_SITE** attribute is a site-level description that provide a linkage between vegetation and soil/moisture and nutrient features on the site. A common attribute structure for ecosite is not provided for CAS because ecosite is not available for most forest inventories across Canada nor can it be derived from existing attributes. The **ECO_SITE** attribute is included in CAS to accommodate inventories that do include ecosite data.
@@ -1079,15 +1141,17 @@ The **ECO_SITE** attribute is a site-level description that provide a linkage be
 | NOT_APPLICABLE | Attribute does not apply to this record |
 
 
-<a name=GEO_attributes></a>
+<a name="geo_attributes"></a>
 ## GEO Attributes 
 
 Geometry attributes are calculated by the translation engine.
 
+<a name="geo_cas_id"></a>
 ### CAS_ID (PK, FK)
 
-See <a href="#CAS_ID">CAS_ID</a> in the CAS table.
+See <a href="#cas_cas_id">CAS_ID</a> in the CAS table.
 
+<a name="geometry"></a>
 ### GEOMETRY
 
 The **GEOMETRY** attribute stores the geometry associated with the record.
@@ -1185,7 +1249,7 @@ The **GEOMETRY** attribute stores the geometry associated with the record.
 
 * Province of Prince Edward Island. Natural Resources Division, Revised 2001.  
 
-  
+
 
 ### New Brunswick
 
