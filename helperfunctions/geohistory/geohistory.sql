@@ -984,6 +984,7 @@ DECLARE
     seqName text := 'geohistory_' || lower(inv);
     countQuery text;
     expectedRowNb int = 0;
+    expectedGroupNb int = 0;
     startTime timestamptz;
   BEGIN
     IF createGeoHistory OR NOT TT_TableExists('casfri50_history', lower(inv) || '_history') THEN
@@ -1022,17 +1023,20 @@ DECLARE
   
         IF progress THEN
           -- Add progress tracking to the query using the sequence created earlier
-          queryStr = queryStr || format('
-  AND CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName, inv);
+          queryStr = queryStr || format(' AND 
+        CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN 
+                  TT_PrintMessage(''%3$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) 
+             ELSE TRUE 
+        END', seqName, expectedRowNb, inv);
         END IF;
 
         -- Order the results
         queryStr = queryStr || '
   ORDER BY id, poly_id';
   
-        RAISE NOTICE 'queryStr1 = %', replace(replace(queryStr, '$1', 'expectedRowNb'), '$2', 'startTime');
+        RAISE NOTICE 'queryStr1 = %', replace(queryStr, '$1', 'startTime');
         startTime = clock_timestamp();
-        EXECUTE queryStr USING expectedRowNb, startTime;
+        EXECUTE queryStr USING startTime;
         RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Committing...', inv;
         COMMIT;
         RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Commit done...', inv;
@@ -1052,6 +1056,14 @@ FROM casfri50_history.%I_history;', lower(inv));
       RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of geo history polygons to union...', inv;
       EXECUTE countQuery INTO expectedRowNb;
       RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % geo history polygon to union...', inv, expectedRowNb;
+
+      -- Count the number of unioned groups array to unnest for progress tracking
+      countQuery = format('
+SELECT count(DISTINCT id) 
+FROM casfri50_history.%I_history;', lower(inv));
+      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of geo history unioned groups array to unnest...', inv;
+      EXECUTE countQuery INTO expectedGroupNb;
+      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % geo history unioned groups to unnest...', inv, expectedGroupNb;
     END IF;
 
     -- If progress is true and we computed the number of rows to process, we process only if it's >0
@@ -1060,8 +1072,12 @@ FROM casfri50_history.%I_history;', lower(inv));
       IF progress THEN
         -- Create a sequence for progress tracking
         queryStr := format('
-DROP SEQUENCE IF EXISTS %1$s;
-CREATE SEQUENCE %1$s START 1;', seqName);
+DROP SEQUENCE IF EXISTS %1$s_1;
+CREATE SEQUENCE %1$s_1 START 1;
+DROP SEQUENCE IF EXISTS %1$s_2;
+CREATE SEQUENCE %1$s_2 START 1;
+DROP SEQUENCE IF EXISTS %1$s_3;
+CREATE SEQUENCE %1$s_3 START 1;', seqName);
       END IF;
 
       IF individualTables THEN
@@ -1077,25 +1093,58 @@ INSERT INTO casfri50_history.geo_history';
 
       -- Main query to union the geometries from the geo history table using TT_ValidYearUnion() and TT_UnnestValidYearUnion() to get the valid year ranges for each geometry
       queryStr = queryStr || format('
-(WITH unioned AS (
-  SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
+(WITH unions AS (
+  SELECT id, TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end) vyu
   FROM casfri50_history.%1$I_history', lower(inv));
       
       IF progress THEN
         -- Add progress tracking to the query using the sequence created earlier
         queryStr = queryStr || format('
-  WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName, inv);
+  WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN 
+                  TT_PrintMessage(''%3$s - TT_ValidYearUnion() UNION - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) 
+             ELSE TRUE 
+        END', seqName || '_1', expectedRowNb, inv);
       END IF;
 
       -- GROUP BY and rename columns in a final SELECT
       queryStr = queryStr || '
-  GROUP BY id
+  GROUP BY id';
+
+       IF progress THEN
+        -- Add progress tracking to the query using the sequence created earlier
+        queryStr = queryStr || format('
+  HAVING CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN 
+                  TT_PrintMessage(''%3$s - TT_ValidYearUnion() UNION - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) 
+             ELSE TRUE 
+        END', seqName || '_2', expectedGroupNb, inv);
+      END IF;
+
+ 
+      queryStr = queryStr || '
+), union_cnt AS (
+  SELECT sum(array_length(vyu, 1)) cnt
+  FROM unions
+), unnested AS (
+  SELECT id, (TT_UnnestValidYearUnion(vyu)).* gvt';
+
+      IF progress THEN
+        -- Add progress tracking to the query using the sequence created earlier
+        queryStr = queryStr || format(',
+         CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = union_cnt.cnt::int THEN TT_PrintMessage(''%2$s - TT_ValidYearUnion() UNNEST - '' || TT_ProgressMsg(currval(%1$L), union_cnt.cnt::int, $1)) 
+              ELSE TRUE 
+         END msg', seqName || '_3', inv);
+      END IF;
+
+      queryStr = queryStr || '
+  FROM unions, union_cnt';
+      queryStr = queryStr || '
 )
 SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
-FROM unioned);';
-      RAISE NOTICE 'queryStr2 = %', replace(replace(queryStr, '$1', 'expectedRowNb'), '$2', 'startTime');
+FROM unnested);';
       startTime = clock_timestamp();
-      EXECUTE queryStr USING expectedRowNb, startTime;
+      
+      RAISE NOTICE 'queryStr2 = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
+      EXECUTE queryStr USING startTime;
     END IF;
   END;
 $$;
