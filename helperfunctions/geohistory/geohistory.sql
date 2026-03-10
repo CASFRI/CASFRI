@@ -1376,19 +1376,6 @@ CREATE TYPE geomlowuppval AS
   upperVal int
 );
 -------------------------------------------------------------------------------
--- TT_UnnestValidYearUnion() aggregate state function
-------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
-CREATE OR REPLACE FUNCTION TT_UnnestValidYearUnion(
-  gluv geomlowuppval[]
-) RETURNS TABLE (geom geometry, lowerVal int, upperVal int) AS $$
-  WITH unnested AS (
-    SELECT unnest(gluv) unnestedGluv
-  )
-  SELECT (unnestedGluv).geom, (unnestedGluv).lowerVal, (unnestedGluv).upperVal
-  FROM unnested
-$$ LANGUAGE sql;
--------------------------------------------------------------------------------
 -- TT_ValidYearUnion() aggregate state function
 ------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_ValidYearUnionStateFct(geomlowuppval[], geometry, int, int);
@@ -1571,7 +1558,7 @@ RETURNS geomlowuppval[] AS $$
 
     RETURN newGYRArr;
   END
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE;
 --------------------------------------
 --DROP AGGREGATE IF EXISTS TT_ValidYearUnion(geometry, int, int);
 CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
@@ -1579,9 +1566,22 @@ CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
   yearLower int,
   yearUpper int
 )(
-    SFUNC = TT_ValidYearUnionStateFct,
-    STYPE = geomlowuppval[]
+  SFUNC = TT_ValidYearUnionStateFct,
+  STYPE = geomlowuppval[]
 );
+-------------------------------------------------------------------------------
+-- TT_UnnestValidYearUnion() aggregate state function
+------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
+CREATE OR REPLACE FUNCTION TT_UnnestValidYearUnion(
+  gluv geomlowuppval[]
+) RETURNS TABLE (geom geometry, lowerVal int, upperVal int) AS $$
+  WITH unnested AS (
+    SELECT unnest(gluv) unnestedGluv
+  )
+  SELECT (unnestedGluv).geom, (unnestedGluv).lowerVal, (unnestedGluv).upperVal
+  FROM unnested
+$$ LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 
 ------------------------------------------------------------------
 -- TT_PolygonGeoHistory()
