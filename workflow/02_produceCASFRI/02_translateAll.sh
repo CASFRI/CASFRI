@@ -7,7 +7,7 @@ casTableList=("cas" "eco" "dst" "nfl" "lyr" "geo")
 
 if [ $# -gt 0 ]; then
   # Read the list of inventory to translate from the command prompt
-
+  useCommandArgumentInvList=True
   arg2=$2
   if [[ $# -eq 2 && "${arg2,,}" =~ ^(cas|eco|dst|nfl|lyr|geo)$ ]]; then
     echo "Using inventory list provided as argument: ${1^^} ${2^^}"

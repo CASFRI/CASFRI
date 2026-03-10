@@ -4,6 +4,8 @@ echo "pgdbname: ${pgdbname}"
 if [ "$useMetadataTableLoadingColumn" = True ]; then
   echo "invList defined by: inventory_metadata column"
   echo "metadataTableLoadingColumn: ${metadataTableLoadingColumn}"
+elif [ "$useCommandArgumentInvList" = True ]; then
+  echo "invList defined by: command line argument"
 else
   echo "invList defined by: config.sh"
 fi

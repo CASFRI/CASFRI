@@ -18,6 +18,7 @@ if [ -z "$invToLoad" ]; then
   done
   wait
 else
+  useCommandArgumentInvList=True
   echo "Using inventory list provided as arguments: ${@^^}"
   fullList=("${@^^}")
 fi

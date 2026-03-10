@@ -3,14 +3,16 @@
 source ../../common.sh
 source ../../define_invlist.sh
 
-if [ $# -gt 0 ]; then
-    fullList=("$@")
+if [ $# -gt 0 ]; then 
+  useCommandArgumentInvList=True
+  echo "Using inventory list provided as arguments: ${@^^}"
+  fullList=("$@")
 fi
 
-echo "The final list of inventory for which to produce a coverage polygon is : ${fullList[@]}..."
-echo "The number of parallel processes for producing inventory coverages is set to ${maxGeoHistoryInParallel}..."
-echo "Press any key to proceed or CTRL-C to cancel..."
-read -n 1 -s
+maxProcessInParallel=${maxGeoHistoryInParallel}
+leaveShellOpen=${leaveGeoHistoryShellOpen}
+processName="ProduceInventoryCoverage"
+source ../../confirm_config.sh
 
 # Load shapefile of Canada provinces limits
 "$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" canada_provinces.shp \

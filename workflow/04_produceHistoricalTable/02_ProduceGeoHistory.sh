@@ -4,8 +4,9 @@ source ../../common.sh
 source ../../define_invlist.sh
 
 if [ $# -gt 0 ]; then
-    echo "Using inventory list provided as arguments: ${@^^}"
-    fullList=("${@^^}")
+  useCommandArgumentInvList=True
+  echo "Using inventory list provided as arguments: ${@^^}"
+  fullList=("${@^^}")
 fi
 
 maxProcessInParallel=${maxGeoHistoryInParallel}

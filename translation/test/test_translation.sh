@@ -16,6 +16,7 @@ set -x
 # Otherwise, use the fullList from define_invlist.sh
 
 if [ $# -ne 0 ]; then
+  useCommandArgumentInvList=True
   echo "fullList defined by argument..."
   fullList=("$@")
 fi
