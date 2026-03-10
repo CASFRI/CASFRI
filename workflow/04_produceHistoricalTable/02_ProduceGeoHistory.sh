@@ -14,9 +14,6 @@ leaveShellOpen=${leaveGeoHistoryShellOpen}
 processName="ProduceGeoHistory"
 source ../../confirm_config.sh
 
-# Translate inventories for each inventory in the list
-tests_in_parallel=0
-
 # Iterate over the list of inventory 
 translation_in_parallel=0
 for invID in "${fullList[@]}"

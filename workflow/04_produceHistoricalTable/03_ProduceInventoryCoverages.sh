@@ -19,9 +19,6 @@ source ../../confirm_config.sh
 -nln casfri50_coverage.canada_provinces $gdalLco $gdalOtherOptions \
 -progress $overwriteTable
 
-# Translate inventories for each inventory in the list
-tests_in_parallel=0
-
 # Iterate over the list of inventory 
 coverage_in_parallel=0
 for invID in "${fullList[@]}"
