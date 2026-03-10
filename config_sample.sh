@@ -52,6 +52,24 @@ createGeoHistory=True
 geoHistoryInSeparateTables=False
 
 #################################################################
+# Set to True if you want conversion, test and/or translation 
+# command windows to stay open after completion
+leaveConversionShellOpen=False
+leaveTestShellOpen=False
+leaveTranslationShellOpen=False
+leaveGeoHistoryShellOpen=False
+leaveCoverageShellOpen=False
+
+closeWithEnter=False # otherwise close by closing the window
+
+#################################################################
+# Set to true if you want loaded inventories to overwrite already loaded ones
+overwriteFRI=True
+
+# Set to true if you want loaded translation tables to overwrite already loaded ones
+overwriteTTables=True
+
+#################################################################
 # Set to true if you want to perform post processing (index creation, display statistics, etc...)
 postProcessing=True
 
@@ -166,24 +184,6 @@ pythonPath="C:/Python311"
 # Bash executable path
 #################################################################
 bashCmd="C:/Program Files/Git/git-bash.exe"
-
-#################################################################
-# Set to True if you want conversion, test and/or translation 
-# command windows to stay open after completion
-leaveConversionShellOpen=False
-leaveTestShellOpen=False
-leaveTranslationShellOpen=False
-leaveGeoHistoryShellOpen=False
-leaveCoverageShellOpen=False
-
-closeWithEnter=False # otherwise close by closing the window
-
-#################################################################
-# Set to true if you want loaded inventories to overwrite already loaded ones
-overwriteFRI=True
-
-# Set to true if you want loaded translation tables to overwrite already loaded ones
-overwriteTTables=True
 
 #################################################################
 # Set some default values
