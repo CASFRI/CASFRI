@@ -44,6 +44,13 @@ maxGeoHistoryInParallel=12
 # When False, launch the merge process only because the geohistory was completed
 #################################################################
 createGeoHistory=True
+
+#################################################################
+# When True, launch the produce geohistory process and the merge process
+# When False, launch the merge process only because the geohistory was completed
+#################################################################
+geoHistoryInSeparateTables=False
+
 #################################################################
 # Set to true if you want to perform post processing (index creation, display statistics, etc...)
 postProcessing=True
