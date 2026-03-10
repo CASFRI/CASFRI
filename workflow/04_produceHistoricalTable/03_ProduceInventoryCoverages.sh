@@ -40,17 +40,19 @@ do
   fi
 done
 
-wait
+if [ "$postProcessing" = True ]; then
 
-echo "---------------------------------------------------------------------"
-echo "Comparing number of points in each coverage type for each inventory...
-"
+  wait
 
-# Create a quoted list of inventory IDs for the SQL query
-printf -v quoted_list "'%s', " "${fullList[@]}"
-quoted_list=${quoted_list%, } # Remove the last comma and space
+  echo "---------------------------------------------------------------------"
+  echo "Comparing number of points in each coverage type for each inventory...
+  "
 
-"$psqlCmd" $psqlConnectionString -c "
+  # Create a quoted list of inventory IDs for the SQL query
+  printf -v quoted_list "'%s', " "${fullList[@]}"
+  quoted_list=${quoted_list%, } # Remove the last comma and space
+
+  "$psqlCmd" $psqlConnectionString -c "
 WITH inv_list AS (
   SELECT inventory_id inv
   FROM inventory_metadata
@@ -70,3 +72,4 @@ LEFT JOIN casfri50_coverage.simplified d USING (inv)
 LEFT JOIN casfri50_coverage.smoothed e USING (inv)
 ORDER BY inv;
 "
+fi

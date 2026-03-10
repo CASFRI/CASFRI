@@ -49,16 +49,20 @@ do
   done
 done
 
-wait
+if [ "$postProcessing" = True ]; then
 
-# Display the count of rows for inventories in the current list
+  wait
 
-# Create a quoted list of inventory IDs for the SQL query
-printf -v quoted_list "'%s', " "${fullList[@]}"
-quoted_list=${quoted_list%, } # Remove the last comma and space
+  # Display the count of rows for inventories in the current list
 
-echo "---------------------------------------------------------------------"
-echo "Counting translated rows for fullList = ${quoted_list}
-"
+  # Create a quoted list of inventory IDs for the SQL query
+  printf -v quoted_list "'%s', " "${fullList[@]}"
+  quoted_list=${quoted_list%, } # Remove the last comma and space
 
-"$psqlCmd" $psqlConnectionString -P pager=off -c "SELECT * FROM TT_TranslatedRowCount(ARRAY[${quoted_list}]);"
+  echo "---------------------------------------------------------------------"
+  echo "Counting translated rows for fullList = ${quoted_list}
+  "
+
+  "$psqlCmd" $psqlConnectionString -P pager=off -c "SELECT * FROM TT_TranslatedRowCount(ARRAY[${quoted_list}]);"
+
+fi

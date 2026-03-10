@@ -35,41 +35,45 @@ do
   fi
 done
 
-wait
+if [ "$postProcessing" = True ]; then
 
-# Turn ON echo in order to display the exact command being executed below
-set -x
+  wait
 
-echo "---------------------------------------------------------------------"
-echo "Creating index on jurisdiction left(cas_id, 2)..."
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
-CREATE INDEX IF NOT EXISTS geo_history_jurisdiction_idx ON casfri50_history.geo_history USING btree(left(cas_id, 2));\";$dontCloseGeoHistoryShell" &
+  # Turn ON echo in order to display the exact command being executed below
+  set -x
 
-echo "Creating index on inventory_id left(cas_id, 4)..."
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
-CREATE INDEX IF NOT EXISTS geo_history_inventory_id_idx ON casfri50_history.geo_history USING btree(left(cas_id, 4));\";$dontCloseGeoHistoryShell" &
+  echo "---------------------------------------------------------------------"
+  echo "Creating index on jurisdiction left(cas_id, 2)..."
+  "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
+  CREATE INDEX IF NOT EXISTS geo_history_jurisdiction_idx ON casfri50_history.geo_history USING btree(left(cas_id, 2));\";$dontCloseGeoHistoryShell" &
 
-echo "Creating index on cas_id..."
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
-CREATE INDEX IF NOT EXISTS geo_history_cas_id_idx ON casfri50_history.geo_history USING btree(cas_id);\";$dontCloseGeoHistoryShell" &
+  echo "Creating index on inventory_id left(cas_id, 4)..."
+  "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
+  CREATE INDEX IF NOT EXISTS geo_history_inventory_id_idx ON casfri50_history.geo_history USING btree(left(cas_id, 4));\";$dontCloseGeoHistoryShell" &
 
-echo "Creating spatial index on geom..."
-"$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
-CREATE INDEX IF NOT EXISTS geo_history_geom_idx ON casfri50_history.geo_history USING gist(geom);\";$dontCloseGeoHistoryShell" &
+  echo "Creating index on cas_id..."
+  "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
+  CREATE INDEX IF NOT EXISTS geo_history_cas_id_idx ON casfri50_history.geo_history USING btree(cas_id);\";$dontCloseGeoHistoryShell" &
 
-# Wait for all index creation processes to finish before proceeding
-wait
+  echo "Creating spatial index on geom..."
+  "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"
+  CREATE INDEX IF NOT EXISTS geo_history_geom_idx ON casfri50_history.geo_history USING gist(geom);\";$dontCloseGeoHistoryShell" &
 
-# Turn OFF echo
-{ set +x; } 2>/dev/null
+  # Wait for all index creation processes to finish before proceeding
+  wait
 
-# Create a quoted list of inventory IDs for the SQL query
-printf -v quoted_list "'%s', " "${fullList[@]}"
-quoted_list=${quoted_list%, } # Remove the last comma and space
+  # Turn OFF echo
+  { set +x; } 2>/dev/null
 
-echo "---------------------------------------------------------------------"
-echo "Comparing number of rows from casfri50_flat.cas_flat_all_layers_same_row 
-with the number of rows in the geo history table for fullList = ${quoted_list}...
-"
+  # Create a quoted list of inventory IDs for the SQL query
+  printf -v quoted_list "'%s', " "${fullList[@]}"
+  quoted_list=${quoted_list%, } # Remove the last comma and space
 
-"$psqlCmd" $psqlConnectionString -P pager=off -c "SELECT * FROM TT_GeoHistoryRowCount(ARRAY[${quoted_list}]);"
+  echo "---------------------------------------------------------------------"
+  echo "Comparing number of rows from casfri50_flat.cas_flat_all_layers_same_row 
+  with the number of rows in the geo history table for fullList = ${quoted_list}...
+  "
+
+  "$psqlCmd" $psqlConnectionString -P pager=off -c "SELECT * FROM TT_GeoHistoryRowCount(ARRAY[${quoted_list}]);"
+
+fi

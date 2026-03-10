@@ -44,6 +44,9 @@ maxGeoHistoryInParallel=12
 # When False, launch the merge process only because the geohistory was completed
 #################################################################
 createGeoHistory=True
+#################################################################
+# Set to true if you want to perform post processing (index creation, display statistics, etc...)
+postProcessing=True
 
 #################################################################
 # List of source tables to load and translate with convert_allall.sh
