@@ -310,7 +310,7 @@ SELECT p.id, p.year, p.geom, gh.cas_id
 FROM mypointable p, casfri50_history.geo_history gh
 WHERE ST_Intersects(gh.geom, p.geom) AND gh.valid_year_begin <= p.year AND p.year <= gh.valid_year_end;
 ```
-The resulting table can then be joined, using the CAS_id attribute, with:
+The resulting table can then be joined, using the CAS_ID attribute, with:
 
   a) one of the two flat tables from the casfri50_flat schema or
   b) one of the CASFRI normalized tables from the casfri50 schema (cas_all, dst_all, eco_all, lyr_all, nfl_all).
