@@ -1154,7 +1154,7 @@ RETURNS boolean AS $$
 SELECT count(*) 
 FROM casfri50_history.casflat_gridded
 WHERE inventory_id = upper(%L);', inv);
-      RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - Counting the number of gridded polygon to process...', inv;
+      RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - Counting the number of gridded polygon to process from casfri50_history.casflat_gridded...', inv;
       EXECUTE countQuery INTO expectedRowNb;
 
       RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - % gridded polygon to process...', inv, expectedRowNb;
@@ -1240,7 +1240,7 @@ DECLARE
   SELECT count(*) 
   FROM casfri50_history.casflat_gridded
   WHERE inventory_id = upper(%L);', inv);
-        RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of gridded polygon to process...', inv;
+        RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of gridded polygon to process from casfri50_history.casflat_gridded...', inv;
         EXECUTE countQuery INTO expectedRowNb;
         RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % gridded polygon to process...', inv, expectedRowNb;
       END IF;
@@ -1299,7 +1299,7 @@ DECLARE
       countQuery = format('
 SELECT count(*) 
 FROM casfri50_history.%I_history;', lower(inv));
-      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of geo history polygons to union...', inv;
+      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of geo history polygons to union from casfri50_history.%_history...', inv, lower(inv);
       EXECUTE countQuery INTO expectedRowNb;
       RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % geo history polygon to union...', inv, expectedRowNb;
 
@@ -1347,7 +1347,7 @@ INSERT INTO casfri50_history.geo_history';
         -- Add progress tracking to the query using the sequence created earlier
         queryStr = queryStr || format('
   WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN 
-                  TT_PrintMessage(''%3$s - TT_ValidYearUnion() UNION - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) 
+                  TT_PrintMessage(''%3$s - TT_ValidYearUnion() FILTER - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) 
              ELSE TRUE 
         END', seqName || '_1', expectedRowNb, inv);
       END IF;
