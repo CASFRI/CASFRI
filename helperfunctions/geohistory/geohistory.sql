@@ -630,7 +630,7 @@ RETURNS TABLE (cas_id text, geom geometry) AS $$
     queryStr := format('
 SELECT (TT_ExtractNRandomBuffers($1, ''casfri50_history'', ''geo_history'', 
                                 %1$s, %2$s, %3$s, %4$s, %5$s, 
-                                ''valid_year_begin <= %6$s AND %6$s <= valid_year_end'')).*;
+                                ''valid_year_begin <= %6$s AND %6$s <= valid_year_end'', FALSE)).*;
 ', nbBuffer, buffSize, trimToBuffer::text, nbAttempts, coalesce(seed::text, 'NULL'), year);
     RAISE NOTICE 'queryStr=%', queryStr;
     RETURN QUERY EXECUTE queryStr USING inv;
@@ -648,8 +648,8 @@ FROM casfri50_history.geo_history
 WHERE left(cas_id, 4) = 'BC08';
 
 SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010)).*;
-SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 100, 0, FALSE, 100, 100)).*;
-SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 100, 10000, FALSE, 100, 100)).*;
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 100, 0, FALSE, 100, 110)).*;
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 3, 10000, TRUE, 100, 110)).*;
 
 */
 ------------------------------------------------------------------------------
