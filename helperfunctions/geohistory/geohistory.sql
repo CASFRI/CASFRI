@@ -407,6 +407,252 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
+-- TT_RandomBuffers
+--
+-- Create a random buffer inside a (multi)polygon
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_RandomBuffers(geometry, double precision, int, int);
+CREATE OR REPLACE FUNCTION TT_RandomBuffers(
+  mainGeom geometry,
+  buffSize double precision DEFAULT 0,
+  nbAttempts int DEFAULT 100,
+  seed int DEFAULT NULL
+)
+RETURNS geometry AS $$
+  WITH attempts AS (
+    SELECT generate_series(1, nbAttempts) n
+  ), buffers AS (
+    SELECT CASE WHEN seed IS NULL THEN
+                     CASE WHEN buffSize = 0 
+                          THEN ST_GeneratePoints(mainGeom, 1)
+                          ELSE ST_Buffer(ST_GeneratePoints(ST_Buffer(mainGeom, -buffSize), 1), buffSize)
+                     END
+                ELSE CASE WHEN buffSize = 0 THEN
+                               ST_GeneratePoints(mainGeom, 1, seed)
+                          ELSE ST_Buffer(ST_GeneratePoints(ST_Buffer(mainGeom, -buffSize), 1, seed), buffSize)
+                     END
+           END geom
+    FROM attempts
+  )
+  SELECT geom
+  FROM buffers
+  WHERE ST_Contains(mainGeom, geom)
+  LIMIT 1
+$$ LANGUAGE sql VOLATILE;
+/*
+-- tests
+SELECT TT_RandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 100000)
+SELECT TT_RandomBuffers(NULL, 100000)
+SELECT TT_RandomBuffers(ST_SetSRID(ST_Point(10, 20), 900914), 100000)
+SELECT TT_RandomBuffers(ST_SetSRID(ST_GeomFromText('POLYGON EMPTY'), 900914), 100000)
+SELECT TT_RandomBuffers(ST_SetSRID(ST_MakeLine(ST_MakePoint(10, 20), ST_MakePoint(30, 40)), 900914), 100000)
+SELECT TT_RandomBuffers(ST_Buffer(ST_SetSRID(ST_Point(10, 20), 900914), 0), 100000)
+SELECT TT_RandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 100000)
+SELECT TT_RandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), -1)
+SELECT TT_RandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 100000, 0)
+SELECT ST_AsText(TT_RandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 0))
+SELECT TT_RandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 200000), 100000)
+*/
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+-- TT_NRandomBuffers
+--
+-- Create n random buffers inside a (multi)polygon
+
+-- DROP FUNCTION IF EXISTS TT_NRandomBuffers(geometry, int, double precision, int, int);
+CREATE OR REPLACE FUNCTION TT_NRandomBuffers(
+  mainGeom geometry,
+  nbBuffer int DEFAULT 1,
+  buffSize double precision DEFAULT 0,
+  nbAttempts int DEFAULT 100,
+  seed int DEFAULT NULL
+)
+RETURNS SETOF geometry AS $$
+  DECLARE
+    n int := 0;
+    failed boolean := FALSE;
+    buffer geometry := ST_SetSRID(ST_GeomFromText('POLYGON EMPTY'), ST_SRID(mainGeom));
+  BEGIN
+    IF mainGeom IS NULL THEN
+      RAISE NOTICE 'TT_NRandomBuffers() - ERROR: mainGeom is NULL. Please provide a valid polygon...';
+      RETURN;
+    END IF;
+    IF NOT ST_GeometryType(mainGeom) IN ('ST_Polygon', 'ST_MultiPolygon') THEN
+      RAISE NOTICE 'TT_NRandomBuffers() - ERROR: mainGeom is not a (multi)polygon. Please provide a valid polygon...';
+      RETURN;
+    END IF;
+    IF ST_Area(mainGeom) = 0 THEN
+      RAISE NOTICE 'TT_NRandomBuffers() - ERROR: mainGeom is empty. Please provide a valid polygon...';
+      RETURN;
+    END IF;
+    IF nbBuffer < 1 THEN
+      RAISE NOTICE 'TT_NRandomBuffers() - ERROR: nbBuffer is smaller than 1. Please provide a positive value...';
+      RETURN;
+    END IF;
+    IF buffSize < 0 THEN
+      RAISE NOTICE 'TT_NRandomBuffers() - ERROR: buffSize is smaller than 0. Please provide a positive value...';
+      RETURN;
+    END IF;
+    IF nbAttempts < 1 THEN
+      RAISE NOTICE 'TT_NRandomBuffers() - ERROR: nbAttempts is smaller than 1. Please provide a positive value...';
+      RETURN;
+    END IF;
+    WHILE n < nbBuffer AND NOT buffer IS NULL LOOP
+      mainGeom := ST_Difference(mainGeom, buffer);
+      --RETURN NEXT mainGeom;
+      buffer := TT_RandomBuffers(mainGeom, buffSize, nbAttempts, CASE WHEN seed IS NULL THEN seed ELSE seed + n END);
+      --IF buffer IS NULL THEN RAISE NOTICE 'TT_NRandomBuffers() - buffer % is NULL', n; END IF;
+      IF NOT buffer IS NULL THEN
+        RETURN NEXT buffer;
+        n := n + 1;     
+      END IF;
+    END LOOP;
+    IF n < nbBuffer THEN RAISE NOTICE 'TT_NRandomBuffers() - Could produce only % buffers on %. Consider increasing the number of attempts (now %) or providing a smaller buffer size (now %)...', n, nbBuffer, nbAttempts, buffSize; END IF;
+    RETURN;
+  END;
+$$ LANGUAGE plpgsql VOLATILE;
+/*
+-- tests
+SELECT TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 5, 100000)
+SELECT TT_NRandomBuffers(NULL, 5, 100000)
+SELECT TT_NRandomBuffers(ST_SetSRID(ST_Point(10, 20), 900914), 5, 100000)
+SELECT TT_NRandomBuffers(ST_SetSRID(ST_GeomFromText('POLYGON EMPTY'), 900914), 5, 100000)
+SELECT TT_NRandomBuffers(ST_SetSRID(ST_MakeLine(ST_MakePoint(10, 20), ST_MakePoint(30, 40)), 900914), 5, 100000)
+SELECT TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_Point(10, 20), 900914), 0), 5, 100000)
+SELECT TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 0, 100000)
+SELECT TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 2, -1)
+SELECT TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 2, 100000, 0)
+SELECT ST_AsText(TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 2, 0))
+SELECT TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 200000), 5, 100000)
+SELECT TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 5, 100000, 100, 123)
+*/
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+-- TT_ExtractNRandomBuffers
+--
+-- Extract n random buffer for an inventory
+----------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ExtractNRandomBuffers(text[], name, name, int, double precision, boolean, int, int, text, boolean);
+CREATE OR REPLACE FUNCTION TT_ExtractNRandomBuffers(
+  invArr text[],
+  schemaName name DEFAULT 'casfri50',
+  tableName name DEFAULT 'geo_all',
+  nbBuffer int DEFAULT 1,
+  buffSize double precision DEFAULT 0,
+  trimToBuffer boolean DEFAULT FALSE,
+  nbAttempts int DEFAULT 100,
+  seed int DEFAULT NULL,
+  whereClause text DEFAULT NULL,
+  limitToInv boolean DEFAULT TRUE
+)
+RETURNS TABLE (cas_id text, geom geometry) AS $$
+  DECLARE
+    queryStr text;
+    attArr text[];
+    geomColumnName text;
+    attList text;
+  BEGIN
+    IF NOT TT_TableExists(schemaName, tableName) THEN
+      RAISE EXCEPTION 'TT_ExtractNRandomBuffers() - Table %.% does not exists...', schemaName, tableName;
+    END IF;
+    IF array_length(invArr, 1) = 0 THEN
+      RAISE EXCEPTION 'TT_ExtractNRandomBuffers() - invList is empty...';
+    END IF;
+    -- try to identify the geometry column name automatically (it must just contain 'geom')
+    attArr := TT_TableColumnNames(schemaName, tableName);
+    geomColumnName := (regexp_match(array_to_string(attArr, ','), '([^,]*geom[^,]*)'))[1];
+    RAISE NOTICE 'TT_ExtractNRandomBuffers() - geomColumnName = %', geomColumnName;
+    queryStr := format('
+WITH coverage AS (
+  SELECT inv, geom
+  FROM casfri50_coverage.simplified
+  WHERE upper(inv) = ANY($1)
+), buffers AS (
+  SELECT TT_NRandomBuffers(geom, %1$s, %2$s, %3$s, %4$s) geometry
+  FROM coverage
+)
+SELECT g.cas_id, g.%8$I
+FROM %5$I.%6$I g, buffers b
+WHERE %7$sST_Intersects(g.%8$I, b.geometry)%9$s', 
+      nbBuffer, 
+      buffsize,
+      nbAttempts,
+      coalesce(seed::text, 'NULL'),
+      schemaName, 
+      tableName,
+      CASE WHEN limitToInv THEN 'left(g.cas_id, 4) = ANY($1) AND ' ELSE '' END,
+      geomColumnName, 
+      CASE WHEN whereClause IS NULL OR whereClause = '' THEN ';' ELSE ' AND ' || whereClause || ';' END
+    );
+    IF trimToBuffer THEN
+      queryStr := replace(queryStr, ', g.' || geomColumnName, format(', ST_Intersection(g.%I, b.geometry) geom', geomColumnName));
+    END IF;
+    RAISE NOTICE 'queryStr=%', replace(queryStr, '$1', 'ARRAY[' || array_to_string(ARRAY(SELECT quote_literal(x) FROM unnest(invArr) AS t(x)), ',') || ']');
+    RETURN QUERY EXECUTE queryStr USING invArr;
+  END;
+$$ LANGUAGE 'plpgsql' STABLE;
+
+/*
+-- tests
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'])).*;
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded')).*;
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5)).*; 
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000)).*; 
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE)).*;
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123)).*;
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, 'left(cas_id, 4) = ''MB05''')).*;
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, '', TRUE)).*;
+SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, '', FALSE)).*;
+*/
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+-- TT_ExtractNRandomGeoHistoryBuffers
+--
+-- Simplify a polygon by adding and removing a buffer around it
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ExtractNRandomGeoHistoryBuffers(inv[], int, int, double precision, boolean, int, int);
+CREATE OR REPLACE FUNCTION TT_ExtractNRandomGeoHistoryBuffers(
+  inv text[],
+  year int,
+  nbBuffer int DEFAULT 1,
+  buffSize double precision DEFAULT 0,
+  trimToBuffer boolean DEFAULT FALSE,
+  nbAttempts int DEFAULT 100,
+  seed int DEFAULT NULL
+)
+RETURNS TABLE (cas_id text, geom geometry) AS $$
+  DECLARE
+    queryStr text;
+  BEGIN
+    queryStr := format('
+SELECT (TT_ExtractNRandomBuffers($1, ''casfri50_history'', ''geo_history'', 
+                                %1$s, %2$s, %3$s, %4$s, %5$s, 
+                                ''valid_year_begin <= %6$s AND %6$s <= valid_year_end'')).*;
+', nbBuffer, buffSize, trimToBuffer::text, nbAttempts, coalesce(seed::text, 'NULL'), year);
+    RAISE NOTICE 'queryStr=%', queryStr;
+    RETURN QUERY EXECUTE queryStr USING inv;
+  END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+/*
+--  tests
+SELECT count(*) cnt
+FROM casfri50_history.geo_history
+WHERE left(cas_id, 4) = 'BC08';
+
+SELECT min(valid_year_begin) min_valid_year_begin, 
+       max(valid_year_end) min_valid_year_end
+FROM casfri50_history.geo_history
+WHERE left(cas_id, 4) = 'BC08';
+
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010)).*;
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 100, 0, FALSE, 100, 100)).*;
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 100, 10000, FALSE, 100, 100)).*;
+
+*/
+------------------------------------------------------------------------------
 -- TT_PrintMessage
 --
 -- Print debug information when executing SQL
