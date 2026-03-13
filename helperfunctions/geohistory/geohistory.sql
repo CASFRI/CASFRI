@@ -407,7 +407,29 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- TT_RandomBuffers
+-- TT_GeneratePoints
+--
+-- Same as ST_GeneratePoints() but taking a NULL seed
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_GeneratePoints(geometry, int, int);
+CREATE OR REPLACE FUNCTION TT_GeneratePoints(
+  geom geometry,
+  nbPoints int DEFAULT 1,
+  seed int DEFAULT NULL
+)
+RETURNS geometry AS $$
+  SELECT CASE WHEN seed IS NULL THEN 
+                   ST_GeneratePoints(geom, nbPoints) 
+              ELSE ST_GeneratePoints(geom, nbPoints, seed)
+         END;
+$$ LANGUAGE sql VOLATILE;
+/*
+SELECT TT_GeneratePoints(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 5)
+SELECT TT_GeneratePoints(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 900914), 400000), 5, NULL)
+*/
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
 -- TT_RandomBuffer
 --
 -- Create a random buffer inside a (multi)polygon
@@ -423,15 +445,9 @@ RETURNS geometry AS $$
   WITH attempts AS (
     SELECT generate_series(1, nbAttempts) n
   ), buffers AS (
-    SELECT CASE WHEN seed IS NULL THEN
-                     CASE WHEN buffSize = 0 
-                          THEN ST_GeneratePoints(mainGeom, 1)
-                          ELSE ST_Buffer(ST_GeneratePoints(ST_Buffer(mainGeom, -buffSize), 1), buffSize)
-                     END
-                ELSE CASE WHEN buffSize = 0 THEN
-                               ST_GeneratePoints(mainGeom, 1, seed)
-                          ELSE ST_Buffer(ST_GeneratePoints(ST_Buffer(mainGeom, -buffSize), 1, seed), buffSize)
-                     END
+    SELECT CASE WHEN buffSize = 0 THEN
+                     ST_GeometryN(TT_GeneratePoints(mainGeom, 1, seed), 1)
+                ELSE ST_Buffer(ST_GeometryN(TT_GeneratePoints(ST_Buffer(mainGeom, -buffSize), 1, seed), 1), buffSize)
            END geom
     FROM attempts
   )
