@@ -937,7 +937,7 @@ CREATE OR REPLACE FUNCTION TT_SplitAgg_StateFN(
 )
 RETURNS geometry[] AS $$
   SELECT TT_SplitAgg_StateFN($1, $2, $3, 0.0);
-$$ LANGUAGE sql VOLATILE;
+$$ LANGUAGE sql IMMUTABLE;
 
 ---------------------------------------
 -- ST_SplitAgg aggregate
