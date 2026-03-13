@@ -48,7 +48,7 @@ DROP FUNCTION IF EXISTS TT_IntersectingArea(geometry, geometry, double precision
 DROP FUNCTION IF EXISTS TT_ExtractNRandomGeoHistoryBuffers(inv[], int, int, double precision, boolean, int, int);
 DROP FUNCTION IF EXISTS TT_ExtractNRandomBuffers(text[], name, name, int, double precision, boolean, int, int, text, boolean);
 DROP FUNCTION IF EXISTS TT_NRandomBuffers(geometry, int, double precision, int, int);
-DROP FUNCTION IF EXISTS TT_RandomBuffers(geometry, double precision, int, int);
+DROP FUNCTION IF EXISTS TT_RandomBuffer(geometry, double precision, int, int);
 DROP FUNCTION IF EXISTS TT_RandomPoints(geometry, integer, numeric);
 
 DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
