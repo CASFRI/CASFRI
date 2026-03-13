@@ -15,9 +15,12 @@
 -- Debug configuration variable. Set tt.debug to TRUE to display all RAISE NOTICE
 SET tt.debug_l1 TO FALSE;
 SET tt.debug_l2 TO FALSE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_AreasForSignificantYearsDebugQuery()
+--
+-- Generate a query helping to debug overlap problems in geo history tables.
 ------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_AreasForSignificantYearsDebugQuery(name, boolean);
 CREATE OR REPLACE FUNCTION TT_AreasForSignificantYearsDebugQuery(
@@ -64,7 +67,15 @@ WHERE cas_id =  ''YYYY'';
 '
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_AreasForSignificantYears()
+--
+-- Compare the unioned area with the sum of areas for significant year (DISTINCT 
+-- years of begin and end validity) of a test geo history table.
+-- 
+-- When area_diff_in_sq_meters is close to 0, the geo history table was properly 
+-- generated (no overlaps in space and time).
 ------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_AreasForSignificantYears(name, boolean, double precision);
 CREATE OR REPLACE FUNCTION TT_AreasForSignificantYears(
@@ -120,6 +131,8 @@ RAISE NOTICE 'queryStr=%', queryStr;
     RETURN QUERY EXECUTE queryStr;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_SplitByGrid
 --
@@ -326,6 +339,7 @@ $$ LANGUAGE plpgsql VOLATILE PARALLEL UNSAFE;
 SELECT * FROM TT_SplitByGridDebug('1', ST_Buffer(ST_MakePoint(0, 0), 100), 100);
 SELECT * FROM TT_SplitByGridDebug('2', NULL::geometry, 10);
 */
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_RandomPoints
@@ -670,6 +684,8 @@ SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 100, 0, FALSE, 1
 SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 3, 10000, TRUE, 100, 110)).*;
 
 */
+-------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------
 -- TT_PrintMessage
 --
@@ -686,6 +702,8 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE STRICT;
+-------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------
 -- TT_BufferedSmooth
 --
@@ -699,6 +717,8 @@ CREATE OR REPLACE FUNCTION TT_BufferedSmooth(
 RETURNS geometry AS $$
   SELECT ST_Buffer(ST_Buffer($1, $2), -$2)
 $$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------
 -- TT_RemoveHoles
 --
@@ -741,6 +761,8 @@ RETURNS geometry AS $$
     RETURN returnGeom;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
+-------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------
 -- TT_TrimSubPolygons
 --
@@ -782,6 +804,7 @@ RETURNS geometry AS $$
     RETURN returnGeom;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
+-------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 -- TT_SuperUnion
@@ -858,6 +881,8 @@ RETURNS geometry AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 -- Test
 -- SELECT TT_SuperUnionDebug('cas_id', 'casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
+-------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------
 -- TT_SigDigits()
 --
@@ -892,7 +917,9 @@ FROM series
 WHERE n != 0;
 
 SELECT round(123, -2);
------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 -- TT_SplitAgg aggregate state function
 --
 -- Split a geometry with all aggregated geometries
@@ -1014,10 +1041,8 @@ RETURNS TABLE (
   ORDER BY inv;
 $$ LANGUAGE sql STABLE;
 --SELECT * FROM TT_GeoHistoryRowCount(ARRAY['Ab03', 'AB06', 'QC03']);
--------------------------------------------------------------------------------
--- TT_GeoHistoryRowCount
---
--- Count the rows in the geo history table for all inventories listed in 
+---------------------------------------
+-- Variant counting for all inventories listed in 
 -- inventory_metadata or only for those identified in a specific column 
 -- (e.g. 'TRANSLATED_BY_CFS'). Otherwise return the count for all inventories 
 -- found in the rawfri schema.
@@ -1054,7 +1079,7 @@ $$ LANGUAGE plpgsql STABLE;
 ------------------------------------------------------------------------------
 -- TT_ProduceDerivedCoverages()
 --
--- Produce different simplified versions of coverage geometries
+-- Produce different simplified versions of coverage geometries.
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_ProduceDerivedCoverages(text, geometry, double precision, boolean, double precision);
 CREATE OR REPLACE FUNCTION TT_ProduceDerivedCoverages(
@@ -1119,6 +1144,7 @@ RETURNS boolean AS $$
     RETURN TRUE;
   END
 $$ LANGUAGE plpgsql VOLATILE;
+------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 -- TT_ProgressMsg()
@@ -1147,8 +1173,9 @@ RETURNS text AS $$
     RETURN msg;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
-
+-- test
 -- SELECT TT_ProgressMsg(1, 10, now())
+------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 -- TT_ProduceInvGeoHistory()
@@ -1414,9 +1441,12 @@ FROM unnested);';
 $$;
 
 /*
+-- tests
 CALL TT_ProduceInvGeoHistory2Steps('PC02', TRUE, TRUE, TRUE);
 CALL TT_ProduceInvGeoHistory2Steps('PC02', FALSE, TRUE, TRUE)
 */
+------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_IntersectingArea()
 ------------------------------------------------------------------
@@ -1434,6 +1464,8 @@ RETURNS double precision AS $$
     RETURN area;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_GeoHistoryOverlaps()
 ------------------------------------------------------------------
@@ -1452,6 +1484,8 @@ RETURNS boolean AS $$
            AND (NOT checkIntArea OR TT_IntersectingArea(geom1, geom2) > tolerance);
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_SafeOverlaps()
 ------------------------------------------------------------------
@@ -1538,6 +1572,8 @@ RETURNS boolean AS $$
     END IF;
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_SafeDifference()
 --
@@ -1629,9 +1665,11 @@ RETURNS geometry AS $$
     END IF;
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- New TYPE for TT_ValidYearUnionStateFct()
-------------------------------------------------------------------
+------------------------------------------------------------------------------
 DROP TYPE IF EXISTS geomlowuppval CASCADE;
 CREATE TYPE geomlowuppval AS
 (
@@ -1639,9 +1677,11 @@ CREATE TYPE geomlowuppval AS
   lowerVal int,
   upperVal int
 );
+------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_ValidYearUnion() aggregate state function
-------------------------------------------------------------------
+------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_ValidYearUnionStateFct(geomlowuppval[], geometry, int, int);
 CREATE OR REPLACE FUNCTION TT_ValidYearUnionStateFct(
   storedGYRArr geomlowuppval[],
@@ -1823,7 +1863,9 @@ RETURNS geomlowuppval[] AS $$
     RETURN newGYRArr;
   END
 $$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE;
---------------------------------------
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
 --DROP AGGREGATE IF EXISTS TT_ValidYearUnion(geometry, int, int);
 CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
   geom geometry,
@@ -1833,6 +1875,8 @@ CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
   SFUNC = TT_ValidYearUnionStateFct,
   STYPE = geomlowuppval[]
 );
+------------------------------------------------------------------------------
+
 -------------------------------------------------------------------------------
 -- TT_UnnestValidYearUnion() aggregate state function
 ------------------------------------------------------------------
@@ -1846,10 +1890,11 @@ CREATE OR REPLACE FUNCTION TT_UnnestValidYearUnion(
   SELECT (unnestedGluv).geom, (unnestedGluv).lowerVal, (unnestedGluv).upperVal
   FROM unnested
 $$ LANGUAGE sql IMMUTABLE PARALLEL SAFE;
+------------------------------------------------------------------------------
 
-------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- TT_PolygonGeoHistory()
-------------------------------------------------------------------
+--
 -- Logic table
 -- Overlapping polygons are treated starting with 1) the same year 
 -- ones, then 2) the older ones and finally 3) the newer ones as 
@@ -2275,6 +2320,7 @@ RETURNS TABLE (id text,
     IF debug_l1 OR debug_l2 THEN RAISE NOTICE  'TOOK % SECONDS', EXTRACT(EPOCH FROM clock_timestamp() - time);END IF;
   END
 $$ LANGUAGE plpgsql VOLATILE;
+------------------------------------------------------------------------------
 
 --DROP FUNCTION IF EXISTS TT_PolygonGeoHistory(text, text, geometry, name, name, name, name, name, name, name[]);
 CREATE OR REPLACE FUNCTION TT_PolygonGeoHistory(
@@ -2300,8 +2346,9 @@ RETURNS TABLE (id text,
                valid_time text) AS $$
  SELECT TT_PolygonGeoHistory(poly_inv, poly_row_id, 1930, TRUE, poly_geom, schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
 $$ LANGUAGE sql VOLATILE;
+------------------------------------------------------------------------------
 
----------------------------------------------------------------------------
+------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_TableGeoHistory(name, name, name, name, name, name, name[]);
 CREATE OR REPLACE FUNCTION TT_TableGeoHistory(
   schemaName name,
@@ -2380,11 +2427,13 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 --SELECT id gh_row_id, geom gh_geom, valid_year gh_photo_year, TT_RowIsValid(ARRAY[att]) gh_is_valid, * 
 --FROM public.test_geohistory ORDER BY gh_photo_year DESC;
+------------------------------------------------------------------------------
 
-
-------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- TT_GeoOblique()
-------------------------------------------------------------------
+--
+-- Make a polygon look like it is stacked in 3D considering its beginning year of validity
+------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_GeoOblique(geometry, int, double precision, double precision);
 CREATE OR REPLACE FUNCTION TT_GeoOblique(
   geom geometry,
@@ -2396,9 +2445,11 @@ RETURNS geometry AS $$
   SELECT ST_Affine(geom, 1, 1, 0, y_factor, 0, (year - 2000) * z_factor);
 $$ LANGUAGE sql IMMUTABLE;
 
-------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- TT_GeoHistoryOblique()
-------------------------------------------------------------------
+--
+-- Make geo history polygons look like they are stacked in 3D considering their beginning year of validity
+------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_GeoHistoryOblique(name, name, name, name, name, text, text[], double precision, double precision);
 CREATE OR REPLACE FUNCTION TT_GeoHistoryOblique(
   schemaName name,
@@ -2429,3 +2480,4 @@ RETURNS TABLE (id text,
           valid_time
   FROM TT_TableGeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
 $$ LANGUAGE sql IMMUTABLE;
+------------------------------------------------------------------------------
