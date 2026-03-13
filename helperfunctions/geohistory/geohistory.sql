@@ -498,10 +498,11 @@ RETURNS SETOF geometry AS $$
       RAISE NOTICE 'TT_NRandomBuffers() - ERROR: nbAttempts is smaller than 1. Please provide a positive value...';
       RETURN;
     END IF;
-    WHILE n < nbBuffer AND NOT buffer IS NULL LOOP
+    PERFORM setseed(seed/2147483647::numeric);
+    WHILE n < nbBuffers AND NOT buffer IS NULL LOOP
       mainGeom := ST_Difference(mainGeom, buffer);
       --RETURN NEXT mainGeom;
-      buffer := TT_RandomBuffers(mainGeom, buffSize, nbAttempts, CASE WHEN seed IS NULL THEN seed ELSE seed + n END);
+      buffer := TT_RandomBuffers(mainGeom, buffSize, nbAttempts, floor(random() * 2147483647)::int);
       --IF buffer IS NULL THEN RAISE NOTICE 'TT_NRandomBuffers() - buffer % is NULL', n; END IF;
       IF NOT buffer IS NULL THEN
         RETURN NEXT buffer;
