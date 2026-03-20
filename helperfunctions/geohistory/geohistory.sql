@@ -1781,187 +1781,115 @@ CREATE OR REPLACE FUNCTION TT_ValidYearUnionStateFct(
   newYUpp int
 )
 RETURNS geomlowuppval[] AS $$
-  DECLARE
-    storedGYR geomlowuppval;
-    storedYLow int;
-    storedYUpp int;
-    newGYRArr geomlowuppval[] = ARRAY[]::geomlowuppval[];
-    logStr text = '';
-  BEGIN
---RAISE NOTICE '000 ----------------';
---RAISE NOTICE '111 new range = [%,%]', newYLow, newYUpp;
-    IF newYLow > newYUpp THEN
-      RAISE EXCEPTION 'TT_ValidYearUnion() ERROR: Lower value (%) is higher than higher value (%)...', newYLow, newYUpp;
-    END IF;
-    IF NOT storedGYRArr IS NULL THEN
---RAISE NOTICE '--- BEGIN LOOP';
-      FOREACH storedGYR IN ARRAY storedGYRArr LOOP
-        storedYLow = storedGYR.lowerVal;
-        storedYUpp = storedGYR.upperVal;
---RAISE NOTICE '222 stored range = [%,%]', storedYLow, storedYUpp;
-        
-        ------------------------------------------------
-        -- new range has been all integrated (is now NULL) or is after stored range
-        -- | stored | 
-        --             | new |
-        IF newYLow IS NULL OR newYUpp IS NULL OR (storedYUpp < newYLow) THEN
---RAISE NOTICE '333 just add stored range';
-          -- add stored range
-          newGYRArr = array_append(newGYRArr, storedGYR);
-  
-        ------------------------------------------------
-        -- new range lower bound is lower than stored lower bound (n1 s1)
-        --     | stored |
-        -- | new |
-        ELSIF newYLow < storedYLow THEN
---RAISE NOTICE '444 newYLow < storedYLow';
-      
-          -- new range upper bound is lower than stored lower bound  (n1 n2 s1 s2) -> (n1 n2), (s1 s2)
-          --         | stored |
-          -- | new |
-           IF newYUpp < storedYLow THEN
---RAISE NOTICE '444.1 newYUpp < storedYLow';
-            -- add new range
-            newGYRArr = array_append(newGYRArr, (geom, newYLow, newYUpp)::geomlowuppval);
-            -- add stored range
-            newGYRArr = array_append(newGYRArr, storedGYR);
-            
-            -- new range was totally processed
-            newYLow = NULL;
-            newYUpp = NULL;
-  
-          -- new range upper bound is lower than stored upper bound (n1 s1 n2 s2) -> (n1 s1 - 1, s1 n2) (n2 + 1, s2)
-          --    | stored |
-          -- | new |
-          ELSIF newYUpp < storedYUpp THEN 
---RAISE NOTICE '444.2 newYUpp < storedYUpp';
-            -- add new range (newYLow, storedYLow - 1)
-            newGYRArr = array_append(newGYRArr, (geom, newYLow, storedYLow - 1)::geomlowuppval);
-            -- add new range (storedYLow, newYUpp)
-            newGYRArr = array_append(newGYRArr, (ST_Multi(ST_Union((storedGYR).geom, geom)), storedYLow, newYUpp)::geomlowuppval);
-            -- add stored range (newYUpp + 1, storedYUpp)
-            newGYRArr = array_append(newGYRArr, ((storedGYR).geom, newYUpp + 1, storedYUpp)::geomlowuppval);
-            -- new range was totally processed
-            newYLow = NULL;
-            newYUpp = NULL;
-  
-          -- new range upper bound is equal to or greater than stored upper bound (n1 s1 ns2) -> (n1 s1 - 1) (s1 s2)
-          ELSE --IF newYUpp = storedYUpp OR newYUpp > storedYUpp THEN
---RAISE NOTICE '444.3 newYUpp >= storedYUpp';
-            -- add new range (newYLow, storedYLow - 1)
-            newGYRArr = array_append(newGYRArr, (geom, newYLow, storedYLow - 1)::geomlowuppval);
-            -- add new range (storedYLow, storedYUpp)
-            newGYRArr = array_append(newGYRArr, (ST_Multi(ST_Union((storedGYR).geom, geom)), storedYLow, storedYUpp)::geomlowuppval);
-            
-            IF newYUpp > storedYUpp THEN
-              newYLow = storedYUpp + 1;
-            ELSE
-              -- new range was totally processed
-              newYLow = NULL;
-              newYUpp = NULL;
-            END IF;
-          END IF;
-        
-        ------------------------------------------------
-        -- new range lower bound is equal to stored lower bound (ns1)
-        ELSIF newYLow = storedYLow THEN
---RAISE NOTICE '555 newYLow = storedYLow';
-          -- new range upper bound is lower than stored upper bound (ns1 n2 s2) -> (s1 n2) (n2 + 1 s2)
-          IF newYUpp < storedYUpp THEN
---RAISE NOTICE '555.1 newYUpp < storedYUpp';
-            -- add new range (newYLow, newYUpp)
-            newGYRArr = array_append(newGYRArr, (ST_Multi(ST_Union((storedGYR).geom, geom)), newYLow, newYUpp)::geomlowuppval);
-  
-            -- add stored range (newYUpp + 1, storedYUpp)
-            newGYRArr = array_append(newGYRArr, ((storedGYR).geom, newYUpp + 1, storedYUpp)::geomlowuppval);
-  
-            -- new range was totally processed
-            newYLow = NULL;
-            newYUpp = NULL;
-  
-          -- new range upper bound is equal to or higher than stored upper bound (ns1 ns2) -> (s1 s2)
-          ELSE --IF newYUpp >= storedYUpp THEN
---RAISE NOTICE '555.2 newYUpp >= storedYUpp';
-            -- add new range (storedYLow, storedYUpp)
-            newGYRArr = array_append(newGYRArr, (ST_Multi(ST_Union((storedGYR).geom, geom)), storedYLow, storedYUpp)::geomlowuppval);
-  
-            IF newYUpp > storedYUpp THEN
-              newYLow = storedYUpp + 1;
-            ELSE
-              -- new range was totally processed
-              newYLow = NULL;
-              newYUpp = NULL;
-            END IF;
-          END IF;
-          
-        ------------------------------------------------
-        -- new range lower bound is lower than stored upper bound (s1 n1 s2)
-        ELSIF newYLow < storedYUpp THEN
---RAISE NOTICE '666 newYLow < storedYUpp';
+DECLARE
+  storedGYR geomlowuppval;
+  storedYLow int;
+  storedYUpp int;
+  newGYRArr geomlowuppval[] = ARRAY[]::geomlowuppval[];
+BEGIN
+  IF newYLow > newYUpp THEN
+    RAISE EXCEPTION 'TT_ValidYearUnion() ERROR: Lower value (%) is higher than higher value (%)...', newYLow, newYUpp;
+  END IF;
 
-          -- new range upper bound is lower than stored upper bound (s1 n1 n2 s2) -> (s1 n1 - 1) (n1 n2) (n2 + 1 s2)
-          IF newYUpp < storedYUpp THEN
---RAISE NOTICE '666.1 newYUpp < storedYUpp';
-            -- add stored range (storedYLow, newYLow - 1)
-            newGYRArr = array_append(newGYRArr, ((storedGYR).geom, storedYLow, newYLow - 1)::geomlowuppval);
-            -- add new range (newYLow, newYUpp)
-            newGYRArr = array_append(newGYRArr, (ST_Multi(ST_Union((storedGYR).geom, geom)), newYLow, newYUpp)::geomlowuppval);
-            -- add stored range (newYUpp + 1, storedYUpp)
-            newGYRArr = array_append(newGYRArr, ((storedGYR).geom, newYUpp + 1, storedYUpp)::geomlowuppval);
-            -- new range was totally processed
-            newYLow = NULL;
-            newYUpp = NULL;
-  
-          -- new range upper bound is equal to or greater than stored upper bound (s1 n1 ns2) -> (s1 n1 - 1) (n1 s2)
-          ELSE --IF newYUpp >= storedYUpp THEN
---RAISE NOTICE '666.2 newYUpp >= storedYUpp';
-            -- add stored range (storedYLow, newYLow - 1)
-            newGYRArr = array_append(newGYRArr, ((storedGYR).geom, storedYLow, newYLow - 1)::geomlowuppval);
-            -- add new range (newYLow, storedYUpp)
-            newGYRArr = array_append(newGYRArr, (ST_Multi(ST_Union((storedGYR).geom, geom)), newYLow, storedYUpp)::geomlowuppval);
-  
-            IF newYUpp > storedYUpp THEN
-              newYLow = storedYUpp + 1;
-            ELSE
-              -- new range was totally processed
-              newYLow = NULL;
-              newYUpp = NULL;
-            END IF;
-          END IF;
-          
-        ------------------------------------------------
-        -- new range lower bound is equal to stored upper bound (s1 n1s2)
-        ELSIF newYLow = storedYUpp THEN
---RAISE NOTICE '777 newYLow = storedYUpp';
-          -- new range upper bound is equal to or greater than stored upper bound (s1 n1ns2) -> (s1 n1 - 1) (n1 s2)
-          -- add stored range (storedYLow, newYLow - 1)
-          newGYRArr = array_append(newGYRArr, ((storedGYR).geom, storedYLow, newYLow - 1)::geomlowuppval);
-          -- add new range (newYLow, storedYUpp)
-          newGYRArr = array_append(newGYRArr, (ST_Multi(ST_Union((storedGYR).geom, geom)), newYLow, storedYUpp)::geomlowuppval);
-          IF newYUpp > storedYUpp THEN
-            newYLow = storedYUpp + 1;
-          ELSE -- new range was totally processed
-            newYLow = NULL;
-            newYUpp = NULL;
-          END IF;
+  IF storedGYRArr IS NOT NULL THEN
+    FOREACH storedGYR IN ARRAY storedGYRArr LOOP
+      storedYLow := storedGYR.lowerVal;
+      storedYUpp := storedGYR.upperVal;
+
+      -- New range already consumed, or entirely after stored: keep stored as-is
+      IF newYLow IS NULL OR storedYUpp < newYLow THEN
+        newGYRArr := array_append(newGYRArr, storedGYR);
+
+      -- New range entirely before stored: flush new, then keep stored
+      ELSIF newYUpp < storedYLow THEN
+        newGYRArr := array_append(newGYRArr, (geom, newYLow, newYUpp)::geomlowuppval);
+        newGYRArr := array_append(newGYRArr, storedGYR);
+        newYLow := NULL; newYUpp := NULL;
+
+      -- Ranges overlap: split into up-to-3 segments
+      ELSE
+        -- Segment before overlap (whichever range starts first)
+        IF newYLow < storedYLow THEN
+          newGYRArr := array_append(newGYRArr, (geom, newYLow, storedYLow - 1)::geomlowuppval);
+        ELSIF storedYLow < newYLow THEN
+          newGYRArr := array_append(newGYRArr, ((storedGYR).geom, storedYLow, newYLow - 1)::geomlowuppval);
         END IF;
-      END LOOP;
---RAISE NOTICE '--- END LOOP';
-    END IF;
-    -- if new range lower bound and new range upper bound are not NULL
-    IF NOT newYLow IS NULL AND NOT newYUpp IS NULL THEN
---RAISE NOTICE '888 add new range';
-      -- add new range
-      newGYRArr = array_append(newGYRArr, (geom, newYLow, newYUpp)::geomlowuppval);
-    END IF;
---FOREACH storedGYR IN ARRAY newGYRArr LOOP
---  logStr = logStr || '[' || (storedGYR).lowerval || ',' || (storedGYR).upperval || ']';
---END LOOP; 
---RAISE NOTICE '999 new array=%', logStr;
 
-    RETURN newGYRArr;
-  END
-$$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE;
+        -- Overlapping segment (merged geometry)
+        newGYRArr := array_append(newGYRArr,
+          (ST_Collect((storedGYR).geom, geom), GREATEST(newYLow, storedYLow), LEAST(newYUpp, storedYUpp))::geomlowuppval);
+
+        -- Segment after overlap (whichever range ends last)
+        IF newYUpp < storedYUpp THEN
+          newGYRArr := array_append(newGYRArr, ((storedGYR).geom, newYUpp + 1, storedYUpp)::geomlowuppval);
+          newYLow := NULL; newYUpp := NULL;
+        ELSIF storedYUpp < newYUpp THEN
+          newYLow := storedYUpp + 1;  -- new range continues past stored; carry remainder forward
+        ELSE
+          newYLow := NULL; newYUpp := NULL;  -- both ended together
+        END IF;
+      END IF;
+    END LOOP;
+  END IF;
+
+  -- Append any remaining new range not yet consumed
+  IF newYLow IS NOT NULL AND newYUpp IS NOT NULL THEN
+    newGYRArr := array_append(newGYRArr, (geom, newYLow, newYUpp)::geomlowuppval);
+  END IF;
+
+  RETURN newGYRArr;
+END
+$$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE COST 500;;
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ValidYearUnionCombineFct(geomlowuppval[], geomlowuppval[]) CASCADE;
+CREATE OR REPLACE FUNCTION TT_ValidYearUnionCombineFct(
+  state1 geomlowuppval[],
+  state2 geomlowuppval[]
+)
+RETURNS geomlowuppval[] AS $$
+DECLARE
+  gyr geomlowuppval;
+BEGIN
+  IF state1 IS NULL THEN RETURN state2; END IF;
+  IF state2 IS NULL THEN RETURN state1; END IF;
+
+  FOREACH gyr IN ARRAY state2 LOOP
+    state1 := TT_ValidYearUnionStateFct(state1, (gyr).geom, (gyr).lowerVal, (gyr).upperVal);
+  END LOOP;
+
+  RETURN state1;
+END
+$$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE COST 5000;;
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ValidYearUnionFinalFct(geomlowuppval[]) CASCADE;
+CREATE OR REPLACE FUNCTION TT_ValidYearUnionFinalFct(
+  state geomlowuppval[]
+)
+RETURNS geomlowuppval[] AS $$
+DECLARE
+  g geomlowuppval;
+  result geomlowuppval[] := ARRAY[]::geomlowuppval[];
+BEGIN
+
+  IF state IS NULL THEN
+    RETURN NULL;
+  END IF;
+
+  FOREACH g IN ARRAY state LOOP
+    result := array_append(
+      result,
+      (
+        ST_Multi(ST_UnaryUnion(g.geom)),
+        g.lowerVal,
+        g.upperVal
+      )::geomlowuppval
+    );
+  END LOOP;
+
+  RETURN result;
+
+END
+$$ LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE COST 5000;
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -1970,10 +1898,15 @@ CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
   geom geometry,
   yearLower int,
   yearUpper int
-)(
+) (
+  STYPE = geomlowuppval[],
   SFUNC = TT_ValidYearUnionStateFct,
-  STYPE = geomlowuppval[]
+  COMBINEFUNC = TT_ValidYearUnionCombineFct,
+  FINALFUNC = TT_ValidYearUnionFinalFct,
+  INITCOND = '{}',
+  PARALLEL = SAFE
 );
+
 ------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
