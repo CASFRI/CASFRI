@@ -1348,9 +1348,25 @@ DECLARE
       countQuery = format('
 SELECT count(*) 
 FROM casfri50_history.%I_history;', lower(inv));
-      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of geo history polygons to union from casfri50_history.%_history...', inv, lower(inv);
+      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of geo history polygons to union from casfri50_history.%_history in order to display progress...', inv, lower(inv);
       EXECUTE countQuery INTO expectedRowNb;
       RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % geo history polygon to union...', inv, expectedRowNb;
+    END IF;
+
+    -- If progress is true and we computed the number of rows to process, we process only if it's > 0
+    -- If progress is false, we proceed even if expectedRowNb = 0 since we did not compute it
+    IF NOT progress OR expectedRowNb > 0 THEN
+      -- Create an index on the id column of casfri50_history.%1$I_history
+      queryStr := format('
+CREATE INDEX IF NOT EXISTS %1$s_history_id_idx
+ON casfri50_history.%1$I_history(id);', lower(inv));
+      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Creating an index on casfri50_history.%_history id column...', inv, lower(inv);
+      EXECUTE queryStr;
+      COMMIT;
+      RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Index created and committed...', inv;
+    END IF;
+
+    IF progress THEN
     -- Count the number of id, valid_year groups for progress tracking
       countQuery = format('
 SELECT count(DISTINCT (id, valid_year_begin, valid_year_end)) 
