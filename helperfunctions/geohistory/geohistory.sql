@@ -845,7 +845,7 @@ RETURNS geometry AS $$
 $$ LANGUAGE plpgsql IMMUTABLE;
 -- Test
 -- SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
-
+----------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, name, text);
 CREATE OR REPLACE FUNCTION TT_SuperUnionDebug(
   schemaName name,
@@ -897,26 +897,14 @@ RETURNS numeric
 AS $$
   SELECT round(n::numeric, digits - 1 - floor(CASE WHEN n = 0 THEN 0 ELSE log(abs(n)) END)::int)
 $$ LANGUAGE sql IMMUTABLE STRICT;
+/*
+SELECT TT_SigDigits(0.0000372537::double precision, 3)
+SELECT TT_SigDigits(12353263256525, 5)
+SELECT TT_SigDigits(123, 2)
+SELECT TT_SigDigits(0, 5)
+SELECT TT_SigDigits(0.01, 5)
+*/
 
---SELECT TT_SigDigits(0.0000372537::double precision, 3)
---SELECT TT_SigDigits(12353263256525, 5)
---SELECT TT_SigDigits(123, 2)
---SELECT TT_SigDigits(0, 5)
---SELECT TT_SigDigits(0.01, 5)
-WITH series AS (
-  SELECT 111111111111 n, generate_series(1, 10) d
-)
-SELECT n, d, round(n, d - 1 - floor(log(abs(n)))::int), log(n), floor(log(n)), d - 1 - floor(log(n)), d - 1 - floor(log(abs(n)))::int
-FROM series;
-
-WITH series AS (
-  SELECT generate_series(1, 10) - 5 n
-)
-SELECT n, log(abs(n))
-FROM series
-WHERE n != 0;
-
-SELECT round(123, -2);
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1199,7 +1187,7 @@ RETURNS boolean AS $$
 SELECT count(*) 
 FROM casfri50_history.casflat_gridded
 WHERE inventory_id = upper(%L);', inv);
-      RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - Counting the number of gridded polygon to process from casfri50_history.casflat_gridded...', inv;
+      RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - Counting the number of gridded polygon to process from casfri50_history.casflat_gridded in order to display progress...', inv;
       EXECUTE countQuery INTO expectedRowNb;
 
       RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - % gridded polygon to process...', inv, expectedRowNb;
@@ -1325,8 +1313,8 @@ DECLARE
         queryStr = queryStr || '
   ORDER BY id, poly_id';
   
-        RAISE NOTICE 'queryStr1 = %', replace(queryStr, '$1', 'startTime');
         startTime = clock_timestamp();
+        RAISE NOTICE 'queryStr1 = %', replace(queryStr, '$1', 'startTime');
         EXECUTE queryStr USING startTime;
         RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Committing...', inv;
         COMMIT;
@@ -1681,8 +1669,10 @@ CREATE TYPE geomlowuppval AS
 
 -------------------------------------------------------------------------------
 -- TT_ValidYearUnion() aggregate state function
+--
+-- Union together year overlapping polygons.
 ------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ValidYearUnionStateFct(geomlowuppval[], geometry, int, int);
+--DROP FUNCTION IF EXISTS TT_ValidYearUnionStateFct(geomlowuppval[], geometry, int, int) CASCADE;
 CREATE OR REPLACE FUNCTION TT_ValidYearUnionStateFct(
   storedGYRArr geomlowuppval[],
   geom geometry,
@@ -1711,18 +1701,24 @@ RETURNS geomlowuppval[] AS $$
         
         ------------------------------------------------
         -- new range has been all integrated (is now NULL) or is after stored range
-        IF newYLow IS NULL OR newYUpp IS NULL OR (newYLow > storedYUpp) THEN
+        -- | stored | 
+        --             | new |
+        IF newYLow IS NULL OR newYUpp IS NULL OR (storedYUpp < newYLow) THEN
 --RAISE NOTICE '333 just add stored range';
           -- add stored range
           newGYRArr = array_append(newGYRArr, storedGYR);
   
         ------------------------------------------------
         -- new range lower bound is lower than stored lower bound (n1 s1)
+        --     | stored |
+        -- | new |
         ELSIF newYLow < storedYLow THEN
 --RAISE NOTICE '444 newYLow < storedYLow';
       
           -- new range upper bound is lower than stored lower bound  (n1 n2 s1 s2) -> (n1 n2), (s1 s2)
-          IF newYUpp < storedYLow THEN
+          --         | stored |
+          -- | new |
+           IF newYUpp < storedYLow THEN
 --RAISE NOTICE '444.1 newYUpp < storedYLow';
             -- add new range
             newGYRArr = array_append(newGYRArr, (geom, newYLow, newYUpp)::geomlowuppval);
@@ -1734,6 +1730,8 @@ RETURNS geomlowuppval[] AS $$
             newYUpp = NULL;
   
           -- new range upper bound is lower than stored upper bound (n1 s1 n2 s2) -> (n1 s1 - 1, s1 n2) (n2 + 1, s2)
+          --    | stored |
+          -- | new |
           ELSIF newYUpp < storedYUpp THEN 
 --RAISE NOTICE '444.2 newYUpp < storedYUpp';
             -- add new range (newYLow, storedYLow - 1)
@@ -2007,7 +2005,7 @@ RETURNS TABLE (id text,
                ref_year int,
                valid_year_begin int, 
                valid_year_end int, 
-               valid_time text) AS $$
+               valid_time_id text) AS $$
   DECLARE
     debug_l1 boolean = TT_Debug(1);
     debug_l2 boolean = TT_Debug(2);
@@ -2104,7 +2102,7 @@ RETURNS TABLE (id text,
           debugID = debugID + 1;
           valid_year_begin = refYearBegin;
           valid_year_end = preValidYearPolyYearEnd;
-          valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+          valid_time_id = id || '_' || valid_year_begin || '-' || valid_year_end;
           RAISE NOTICE '000 Debug_poly = %', left(poly_type, 50);
           RETURN NEXT;
         END IF;
@@ -2143,7 +2141,7 @@ RETURNS TABLE (id text,
               debugID = debugID + 1;
               valid_year_begin = refYearBegin;
               valid_year_end = preValidYearPolyYearEnd;
-              valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+              valid_time_id = id || '_' || valid_year_begin || '-' || valid_year_end;
               RAISE NOTICE '  AAA.2 Debug_poly = %', left(poly_type, 50);
               RETURN NEXT;
             END IF;
@@ -2160,7 +2158,7 @@ RETURNS TABLE (id text,
                 debugID = debugID + 1;
                 valid_year_begin = postValidYearPolyYearBegin;
                 valid_year_end = refYearEnd;
-                valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+                valid_time_id = id || '_' || valid_year_begin || '-' || valid_year_end;
                 RAISE NOTICE '  AAA.3 Debug_poly = %', left(poly_type, 50);
                 RETURN NEXT;
               END IF;
@@ -2191,7 +2189,7 @@ RETURNS TABLE (id text,
               debugID = debugID + 1;
               valid_year_begin = refYearBegin;
               valid_year_end = preValidYearPolyYearEnd;
-              valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+              valid_time_id = id || '_' || valid_year_begin || '-' || valid_year_end;
               RAISE NOTICE '  CCC Debug_poly = %', left(poly_type, 50);
               RETURN NEXT;
             END IF;
@@ -2218,9 +2216,9 @@ RETURNS TABLE (id text,
                   IF (ovlpRow.gh_photo_year - 1) < refYearBegin THEN RAISE NOTICE 'TT_PolygonGeoHistory() - WARNING: Case D would have set valid_year_end to a value smaller than refYearBegin. You might consider setting refYearBegin to a smaller value...';END IF;
                   valid_year_end = greatest(ovlpRow.gh_photo_year - 1, refYearBegin);
 
-                  valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+                  valid_time_id = id || '_' || valid_year_begin || '-' || valid_year_end;
                   IF debug_l2 THEN RAISE NOTICE '  ---------';END IF;
-                  IF debug_l2 THEN RAISE NOTICE '  RETURNING INTERMEDIATE postPoly valid_time=%', valid_time;END IF;
+                  IF debug_l2 THEN RAISE NOTICE '  RETURNING INTERMEDIATE postPoly valid_time_id=%', valid_time_id;END IF;
                   IF debug_l2 THEN RAISE NOTICE '  ---------';END IF;
                   RETURN NEXT;
                 ELSE
@@ -2247,7 +2245,7 @@ RETURNS TABLE (id text,
                 debugID = debugID + 1;
                 valid_year_begin = postValidYearPolyYearBegin;
                 valid_year_end = refYearEnd;
-                valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
+                valid_time_id = id || '_' || valid_year_begin || '-' || valid_year_end;
                 RAISE NOTICE '  DDD: Debug_poly = %', left(poly_type, 50);
                 RETURN NEXT;
               END IF;
@@ -2296,8 +2294,8 @@ RETURNS TABLE (id text,
         poly_type = '2_post_2';
         valid_year_begin = postValidYearPolyYearBegin;
         valid_year_end = refYearEnd;
-        valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-        IF debug_l2 THEN RAISE NOTICE 'RETURNING FINAL postPoly valid_time=%', valid_time;END IF;
+        valid_time_id = id || '_' || valid_year_begin || '-' || valid_year_end;
+        IF debug_l2 THEN RAISE NOTICE 'RETURNING FINAL postPoly valid_time_id=%', valid_time_id;END IF;
         RETURN NEXT;
       END IF;
     END IF;
@@ -2312,8 +2310,8 @@ RETURNS TABLE (id text,
         poly_type = '1_pre';
         valid_year_begin = refYearBegin;
         valid_year_end = preValidYearPolyYearEnd;
-        valid_time = id || '_' || valid_year_begin || '-' || valid_year_end;
-        IF debug_l2 THEN RAISE NOTICE 'RETURNING prePoly valid_time=%', valid_time;END IF;
+        valid_time_id = id || '_' || valid_year_begin || '-' || valid_year_end;
+        IF debug_l2 THEN RAISE NOTICE 'RETURNING prePoly valid_time_id=%', valid_time_id;END IF;
         RETURN NEXT;
       END IF;
     END IF;
@@ -2343,11 +2341,17 @@ RETURNS TABLE (id text,
                ref_year int,
                valid_year_begin int, 
                valid_year_end int, 
-               valid_time text) AS $$
+               valid_time_id text) AS $$
  SELECT TT_PolygonGeoHistory(poly_inv, poly_row_id, 1930, TRUE, poly_geom, schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
 $$ LANGUAGE sql VOLATILE;
 ------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------
+-- TT_TableGeoHistory()
+--
+-- Generate the geohistory table for an arbitrary table.
+-- TT_ProduceInvGeoHistory() and TT_ProduceInvGeoHistory2Steps() generate the 
+-- table for a whole inventory.
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_TableGeoHistory(name, name, name, name, name, name, name[]);
 CREATE OR REPLACE FUNCTION TT_TableGeoHistory(
@@ -2367,7 +2371,7 @@ RETURNS TABLE (id text,
                ref_year int,
                valid_year_begin int, 
                valid_year_end int, 
-               valid_time text) AS $$
+               valid_time_id text) AS $$
   DECLARE
     debug_l1 boolean = TT_Debug(1);
     debug_l2 boolean = TT_Debug(2);
@@ -2469,7 +2473,7 @@ RETURNS TABLE (id text,
                ref_year int,
                valid_year_begin int, 
                valid_year_end int, 
-               valid_time text) AS $$
+               valid_time_id text) AS $$
   SELECT id, 
           isvalid,
           TT_GeoOblique(wkb_geometry, valid_year_begin, z_factor, y_factor) wkb_geometry,
@@ -2477,7 +2481,7 @@ RETURNS TABLE (id text,
           ref_year,
           valid_year_begin, 
           valid_year_end,
-          valid_time
+          valid_time_id
   FROM TT_TableGeoHistory(schemaName, tableName, idColName, geoColName, photoYearColName, precedenceColName, validityColNames);
 $$ LANGUAGE sql IMMUTABLE;
 ------------------------------------------------------------------------------
