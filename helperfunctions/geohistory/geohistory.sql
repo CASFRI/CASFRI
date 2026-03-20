@@ -1982,11 +1982,11 @@ CREATE OR REPLACE AGGREGATE TT_ValidYearUnion(
 --DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
 CREATE OR REPLACE FUNCTION TT_UnnestValidYearUnion(
   gluv geomlowuppval[]
-) RETURNS TABLE (geom geometry, lowerVal int, upperVal int) AS $$
+) RETURNS TABLE (lowerVal int, upperVal int, geom geometry) AS $$
   WITH unnested AS (
     SELECT unnest(gluv) unnestedGluv
   )
-  SELECT (unnestedGluv).geom, (unnestedGluv).lowerVal, (unnestedGluv).upperVal
+  SELECT (unnestedGluv).lowerVal, (unnestedGluv).upperVal, (unnestedGluv).geom
   FROM unnested
 $$ LANGUAGE sql IMMUTABLE PARALLEL SAFE;
 ------------------------------------------------------------------------------
