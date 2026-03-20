@@ -1180,6 +1180,96 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
+-- TT_LoadPostgresCSVLogs()
+--
+-- Load a series of PostgreSQL log CSV tables into a queriable table.
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_LoadPostgresCSVLogs(text, text, text, text);
+CREATE OR REPLACE FUNCTION TT_LoadPostgresCSVLogs(
+    log_dir text,        -- folder containing CSV logs
+    file_prefix text,    -- e.g. 'postgresql-2026-03-18_'
+    start_suffix text,   -- e.g. '162822'
+    end_suffix text      -- e.g. '162832'
+) RETURNS void AS $$
+DECLARE
+    csv_file text;
+    create_sql text;
+    file_list text[];
+    f text;
+BEGIN
+    -- Drop table if exists
+    RAISE NOTICE 'Dropping existing table if it exists';
+    EXECUTE 'DROP TABLE IF EXISTS public.postgres_logs';
+
+    -- Create fresh table
+    create_sql := '
+    CREATE TABLE public.postgres_logs (
+        log_time text,
+        user_name text,
+        database_name text,
+        process_id text,
+        connection_from text,
+        session_id text,
+        session_line_num text,
+        command_tag text,
+        session_start_time text,
+        virtual_transaction_id text,
+        transaction_id text,
+        error_severity text,
+        sql_state_code text,
+        message text,
+        detail text,
+        hint text,
+        internal_query text,
+        internal_query_pos text,
+        context text,
+        query text,
+        query_pos text,
+        location text,
+        application_name text,
+        extra_field text
+    )';
+    RAISE NOTICE 'Creating table public.postgres_logs';
+    EXECUTE create_sql;
+
+    -- Get list of CSV files matching prefix
+    SELECT array_agg(fname) INTO file_list
+    FROM (
+        SELECT files AS fname
+        FROM pg_ls_dir(log_dir) AS files
+        WHERE files LIKE file_prefix || '%.csv'
+          AND substring(files from '(\d+)\.csv$') BETWEEN start_suffix AND end_suffix
+        ORDER BY files
+    ) t;
+
+    IF file_list IS NULL THEN
+        RAISE NOTICE 'No files found in the specified range';
+        RETURN;
+    END IF;
+
+    -- Loop through files and COPY into table
+    FOREACH f IN ARRAY file_list LOOP
+        csv_file := log_dir || '/' || f;
+        RAISE NOTICE 'Loading CSV file: %', csv_file;
+
+        EXECUTE format(
+            'COPY public.postgres_logs FROM %L WITH (FORMAT csv, HEADER false, DELIMITER '','', QUOTE ''"'', ESCAPE ''"'')',
+            csv_file
+        );
+    END LOOP;
+
+    RAISE NOTICE 'Finished loading logs';
+END;
+$$ LANGUAGE plpgsql;
+/*
+-- test
+SELECT TT_LoadPostgresLogs('F:/PostgreSQL13/data/log/', 'postgresql-2026-03-18', '162813', '162833');
+
+SELECT log_time, message
+FROM postgres_logs
+WHERE left(message, 17) = 'TT_ValidYearUnion';
+*/
+------------------------------------------------------------------------------
 -- TT_ProduceInvGeoHistory()
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_ProduceInvGeoHistory(text, boolean, boolean);

@@ -32,6 +32,7 @@ DROP FUNCTION IF EXISTS TT_SplitByGrid(geometry, double precision, double precis
 DROP FUNCTION IF EXISTS TT_SplitByGridDebug(text, geometry, double precision, double precision, double precision, double precision);
 DROP FUNCTION IF EXISTS TT_PrintMessage(text);
 DROP FUNCTION IF EXISTS TT_ProgressMsg(text, text, int, int);
+DROP FUNCTION IF EXISTS TT_LoadPostgresCSVLogs(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_BufferedSmooth(geometry, double precision);
 DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision);
 DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision);
