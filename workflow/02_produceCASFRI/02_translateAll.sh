@@ -25,28 +25,31 @@ leaveShellOpen=${leaveTranslationsShellOpen}
 processName="TestTranslation"
 source ../../confirm_config.sh
 
-# Iterate over the list of inventory 
-translation_in_parallel=0
-for invID in "${fullList[@]}"
-do
-  echo "######################################################################"
-  for casTable in "${casTableList[@]}"
+if [ "$postProcessingOnly" = "False" ]; then
+
+  # Iterate over the list of inventory 
+  translation_in_parallel=0
+  for invID in "${fullList[@]}"
   do
-    sqlStatement="CALL TT_TranslateInventory('$invID', 'T', '$casTable');"
-    echo "---------------------------------------------------------------------"
-    echo "Executing $sqlStatement"
+    echo "######################################################################"
+    for casTable in "${casTableList[@]}"
+    do
+      sqlStatement="CALL TT_TranslateInventory('$invID', 'T', '$casTable');"
+      echo "---------------------------------------------------------------------"
+      echo "Executing $sqlStatement"
 
-    "$bashCmd" -c "$psqlCmd $psqlConnectionString -P pager=off -c \"$sqlStatement\";$dontCloseTranslationShell" &
-    
-    ((translation_in_parallel++))
-    if ((translation_in_parallel >= maxTranslationsInParallel)); then
-      wait -n # wait for ANY job to finish
-      ((translation_in_parallel--))
-    fi
+      "$bashCmd" -c "$psqlCmd $psqlConnectionString -P pager=off -c \"$sqlStatement\";$dontCloseTranslationShell" &
+      
+      ((translation_in_parallel++))
+      if ((translation_in_parallel >= maxTranslationsInParallel)); then
+        wait -n # wait for ANY job to finish
+        ((translation_in_parallel--))
+      fi
+    done
   done
-done
+fi
 
-if [ "$postProcessing" = True ]; then
+if [[ "$postProcessing" = "True" || "$postProcessingOnly" = "True" ]]; then
 
   wait
 

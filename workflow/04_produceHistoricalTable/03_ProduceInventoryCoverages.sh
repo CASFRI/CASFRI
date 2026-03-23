@@ -3,6 +3,7 @@
 source ../../common.sh
 source ../../define_invlist.sh
 
+# Read the list of inventory to process from the command line
 if [ $# -gt 0 ]; then 
   useCommandArgumentInvList=True
   echo "Using inventory list provided as arguments: ${@^^}"
@@ -10,34 +11,38 @@ if [ $# -gt 0 ]; then
 fi
 
 maxProcessInParallel=${maxGeoHistoryInParallel}
-leaveShellOpen=${leaveGeoHistoryShellOpen}
+leaveShellOpen=${leaveCoverageShellOpen}
 processName="ProduceInventoryCoverage"
 source ../../confirm_config.sh
 
-# Load shapefile of Canada provinces limits
-"$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" canada_provinces.shp \
--nln casfri50_coverage.canada_provinces $gdalLco $gdalOtherOptions \
--progress $overwriteTable
+if [ "$postProcessingOnly" = "False" ]; then
 
-# Iterate over the list of inventory 
-coverage_in_parallel=0
-for invID in "${fullList[@]}"
-do
-  echo "######################################################################"
-  sqlStatement="SELECT TT_ProduceDerivedCoverages(upper('${invID}'), TT_SuperUnionDebug('casfri50', 'geo_all', 'cas_id', 'geometry', 'left(cas_id, 4) = upper(''${invID}'')'));"
-  echo "---------------------------------------------------------------------"
-  echo "Executing $sqlStatement"
+  # Load shapefile of Canada provinces limits
+  echo "Loading Canada province shapefile..."
+  "$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" canada_provinces.shp \
+  -nln casfri50_coverage.canada_provinces $gdalLco $gdalOtherOptions \
+  -progress $overwriteTable
 
-  "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"$sqlStatement\";$dontCloseCoverageShell" &
-  
-  ((coverage_in_parallel++))
-  if ((coverage_in_parallel >= maxGeoHistoryInParallel)); then
-    wait -n # wait for ANY job to finish
-    ((coverage_in_parallel--))
-  fi
-done
+  # Iterate over the list of inventory 
+  coverage_in_parallel=0
+  for invID in "${fullList[@]}"
+  do
+    echo "######################################################################"
+    sqlStatement="SELECT TT_ProduceDerivedCoverages(upper('${invID}'), TT_SuperUnionDebug('casfri50', 'geo_all', 'cas_id', 'geometry', 'left(cas_id, 4) = upper(''${invID}'')'));"
+    echo "---------------------------------------------------------------------"
+    echo "Executing $sqlStatement"
 
-if [ "$postProcessing" = True ]; then
+    "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"$sqlStatement\";$dontCloseCoverageShell" &
+    
+    ((coverage_in_parallel++))
+    if ((coverage_in_parallel >= maxGeoHistoryInParallel)); then
+      wait -n # wait for ANY job to finish
+      ((coverage_in_parallel--))
+    fi
+  done
+fi
+
+if [[ "$postProcessing" = "True" || "$postProcessingOnly" = "True" ]]; then
 
   wait
 

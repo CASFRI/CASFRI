@@ -3,6 +3,7 @@
 source ../../common.sh
 source ../../define_invlist.sh
 
+# Read the list of inventory to process from the command line
 if [ $# -gt 0 ]; then
   useCommandArgumentInvList=True
   echo "Using inventory list provided as arguments: ${@^^}"
@@ -14,25 +15,28 @@ leaveShellOpen=${leaveGeoHistoryShellOpen}
 processName="ProduceGeoHistory"
 source ../../confirm_config.sh
 
-# Iterate over the list of inventory 
-translation_in_parallel=0
-for invID in "${fullList[@]}"
-do
-  echo "######################################################################"
-  sqlStatement="CALL TT_ProduceInvGeoHistory2Steps('$invID', ${createGeoHistory}, ${geoHistoryInSeparateTables}, TRUE);"
-  echo "---------------------------------------------------------------------"
-  echo "Executing $sqlStatement"
+if [ "$postProcessingOnly" = "False" ]; then
 
-  "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"$sqlStatement\";$dontCloseGeoHistoryShell" &
-  
-  ((geohistory_in_parallel++))
-  if ((geohistory_in_parallel >= maxGeoHistoryInParallel)); then
-    wait -n # wait for ANY job to finish
-    ((geohistory_in_parallel--))
-  fi
-done
+  # Iterate over the list of inventory 
+  translation_in_parallel=0
+  for invID in "${fullList[@]}"
+  do
+    echo "######################################################################"
+    sqlStatement="CALL TT_ProduceInvGeoHistory2Steps('$invID', ${createGeoHistory}, ${geoHistoryInSeparateTables}, TRUE);"
+    echo "---------------------------------------------------------------------"
+    echo "Executing $sqlStatement"
 
-if [ "$postProcessing" = True ]; then
+    "$bashCmd" -c "$pgFolder/bin/psql -p $pgport -U $pguser -w -d $pgdbname -P pager=off -c \"$sqlStatement\";$dontCloseGeoHistoryShell" &
+    
+    ((geohistory_in_parallel++))
+    if ((geohistory_in_parallel >= maxGeoHistoryInParallel)); then
+      wait -n # wait for ANY job to finish
+      ((geohistory_in_parallel--))
+    fi
+  done
+fi
+
+if [[ "$postProcessing" = "True" || "$postProcessingOnly" = "True" ]]; then
 
   wait
 
