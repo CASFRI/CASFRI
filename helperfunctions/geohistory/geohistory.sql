@@ -92,41 +92,41 @@ RETURNS TABLE (year int,
     queryStr text;
   BEGIN
     queryStr = format('
-    WITH history AS (
-      SELECT *, wkt_geometry::geometry wkb_geometry 
-      FROM casfri50_history_test.sampling_area_%s%s_history_new 
-    ), all_significant_years AS (
-      SELECT DISTINCT syear
-      FROM (
-        SELECT DISTINCT valid_year_begin syear
-        FROM history
-        UNION ALL
-        SELECT DISTINCT valid_year_end syear
-        FROM history
-      ) foo
-      ORDER BY syear
-    ), sum_of_areas AS (
-      SELECT syear, 
-             sum(ST_Area(wkb_geometry)) sum_area
-      FROM history, all_significant_years
-      WHERE valid_year_begin <= syear AND syear <= valid_year_end
-      GROUP BY syear
-      ORDER BY syear
-    ), area_of_union AS (
-      SELECT syear, 
-             ST_Area(ST_Union(wkb_geometry)) union_area
-      FROM history, all_significant_years
-      WHERE valid_year_begin <= syear AND syear <= valid_year_end
-      GROUP BY syear
-      ORDER BY syear
-    )
-    SELECT sa.syear, sum_area, 
-           union_area, 
-           sum_area - union_area area_diff_in_sq_meters, 
-           10000 * (sum_area - union_area) area_diff_in_sq_centimeters
-    FROM sum_of_areas sa, area_of_union au
-    WHERE sa.syear = au.syear AND abs(sum_area - union_area) > %s
-    ORDER BY area_diff_in_sq_meters DESC, syear DESC;', tableName, CASE WHEN gridded THEN '_gridded' ELSE '' END, tolerance);
+WITH history AS (
+  SELECT *, wkt_geometry::geometry wkb_geometry 
+  FROM casfri50_history_test.sampling_area_%s%s_history_new 
+), all_significant_years AS (
+  SELECT DISTINCT syear
+  FROM (
+    SELECT DISTINCT valid_year_begin syear
+    FROM history
+    UNION ALL
+    SELECT DISTINCT valid_year_end syear
+    FROM history
+  ) foo
+  ORDER BY syear
+), sum_of_areas AS (
+  SELECT syear, 
+          sum(ST_Area(wkb_geometry)) sum_area
+  FROM history, all_significant_years
+  WHERE valid_year_begin <= syear AND syear <= valid_year_end
+  GROUP BY syear
+  ORDER BY syear
+), area_of_union AS (
+  SELECT syear, 
+          ST_Area(ST_Union(wkb_geometry)) union_area
+  FROM history, all_significant_years
+  WHERE valid_year_begin <= syear AND syear <= valid_year_end
+  GROUP BY syear
+  ORDER BY syear
+)
+SELECT sa.syear, sum_area, 
+        union_area, 
+        sum_area - union_area area_diff_in_sq_meters, 
+        10000 * (sum_area - union_area) area_diff_in_sq_centimeters
+FROM sum_of_areas sa, area_of_union au
+WHERE sa.syear = au.syear AND abs(sum_area - union_area) > %s
+ORDER BY area_diff_in_sq_meters DESC, syear DESC;', tableName, CASE WHEN gridded THEN '_gridded' ELSE '' END, tolerance);
 RAISE NOTICE 'queryStr=%', queryStr;
     RETURN QUERY EXECUTE queryStr;
   END;
@@ -824,17 +824,19 @@ RETURNS geometry AS $$
     returnGeom geometry;
   BEGIN
     RAISE NOTICE 'TT_SuperUnion() : START...';
-    queryStr = format('WITH gridded AS (' ||
-                  'SELECT TT_SplitByGrid(%s, 10000) split ' ||
-                  'FROM %I.%I ' ||
-                  CASE WHEN filterStr IS NULL THEN '' ELSE ' WHERE ' || filterStr END ||
-               '), first_level_union AS (' ||
-                  'SELECT ST_Union((split).geom) geom ' ||
-                  'FROM gridded ' ||
-                  'GROUP BY (split).tid' ||
-               ') ' ||
-               'SELECT ST_Union(geom) geom ' ||
-               'FROM first_level_union;', geomColumnName, schemaName, tableName);
+    queryStr = format('
+WITH gridded AS (
+  SELECT TT_SplitByGrid(%1$I, 10000) split 
+  FROM %2$I.%3$I%4$s
+), first_level_union AS (
+  SELECT ST_Union((split).geom) geom
+  FROM gridded
+  GROUP BY (split).tid
+)
+SELECT ST_Union(geom) geom 
+FROM first_level_union;
+', geomColumnName, schemaName, tableName, CASE WHEN filterStr IS NULL THEN '' ELSE format('
+  WHERE %s', filterStr) END);
     RAISE NOTICE 'queryStr=%', queryStr;
     EXECUTE queryStr INTO returnGeom;
     
@@ -860,17 +862,20 @@ RETURNS geometry AS $$
     returnGeom geometry;
   BEGIN
     RAISE NOTICE 'TT_SuperUnion() : START...';
-    queryStr = format('WITH gridded AS (' ||
-                  'SELECT TT_SplitByGridDebug(%s, %s, 10000) split ' ||
-                  'FROM %I.%I ' ||
-                  CASE WHEN filterStr IS NULL THEN '' ELSE ' WHERE ' || filterStr END ||
-               '), first_level_union AS (' ||
-                  'SELECT ST_Union((split).geom) geom ' ||
-                  'FROM gridded ' ||
-                  'GROUP BY (split).tid' ||
-               ') ' ||
-               'SELECT ST_Union(geom) geom ' ||
-               'FROM first_level_union;', idColumnName, geomColumnName, schemaName, tableName);
+    queryStr = format('
+WITH gridded AS (
+  SELECT TT_SplitByGridDebug(%1$I, %2$I, 10000) split 
+  FROM %3$I.%4$I%5$s
+), first_level_union AS (
+  SELECT ST_Union((split).geom) geom 
+  FROM gridded
+  GROUP BY (split).tid
+)
+SELECT ST_Union(geom) geom
+FROM first_level_union;
+', idColumnName, geomColumnName, 
+   schemaName, tableName, CASE WHEN filterStr IS NULL THEN '' ELSE format('
+  WHERE %s', filterStr) END);
     RAISE NOTICE 'queryStr=%', queryStr;
     EXECUTE queryStr INTO returnGeom;
     
@@ -1106,25 +1111,26 @@ RETURNS boolean AS $$
                      WHEN tableName = 'simplified' THEN simplifiedGeom
                      WHEN tableName = 'smoothed' THEN smoothedGeom
                 END;
-      queryStr = 'CREATE TABLE IF NOT EXISTS casfri50_coverage.' || tableName || '
-                 (inv text, nb_polys int, nb_points int, geom geometry);
-                 DELETE FROM casfri50_coverage.' || tableName || '
-                 WHERE upper(inv) = ''' || upper(fromInv) || ''';
-                 INSERT INTO casfri50_coverage.' || tableName || ' (inv, nb_polys, nb_points, geom) VALUES ($2, $3, $4, $5);';
+      queryStr = format('
+CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I(inv text, nb_polys int, nb_points int, geom geometry);
+DELETE FROM casfri50_coverage.%1$I
+WHERE upper(inv) = %2$L;
+INSERT INTO casfri50_coverage.%1$I (inv, nb_polys, nb_points, geom) VALUES ($2, $3, $4, $5);', tableName, upper(fromInv));
       EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
 
       -- Create a gridded version for each
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating % %...', fromInv, tableName || '_gridded';
-      queryStr = 'CREATE TABLE IF NOT EXISTS casfri50_coverage.' || tableName || '_gridded
-                 (inv text, nb_polys int, nb_points int, geom geometry);
-                 CREATE INDEX IF NOT EXISTS ' || tableName || '_geom_idx ON casfri50_coverage.' || tableName || '_gridded USING gist(geom);
-                 DELETE FROM casfri50_coverage.' || tableName || '_gridded
-                 WHERE upper(inv) = ''' || upper(fromInv) || ''';
-                 INSERT INTO casfri50_coverage.' || tableName || '_gridded (inv, nb_polys, nb_points, geom) 
-                 SELECT inv, nb_polys, ST_NPoints((geom).geom) nb_points, (geom).geom geom
-                 FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000) geom
-                       FROM casfri50_coverage.' || tableName || '
-                       WHERE upper(inv) = ''' || upper(fromInv) || ''') foo;';
+      queryStr = format('
+CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I_gridded(inv text, nb_polys int, nb_points int, geom geometry);
+CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.' || tableName || '_gridded USING gist(geom);
+DELETE FROM casfri50_coverage.%1$I_gridded
+WHERE upper(inv) = %2$L;
+INSERT INTO casfri50_coverage.%1$I_gridded (inv, nb_polys, nb_points, geom) 
+SELECT inv, nb_polys, ST_NPoints((geom).geom) nb_points, (geom).geom geom
+FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000) geom
+      FROM casfri50_coverage.%1$I
+      WHERE upper(inv) = %2$L
+     ) foo;', tableName, upper(fromInv));
       EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Processing of % finished...', fromInv;
     END LOOP;
@@ -1310,42 +1316,42 @@ CREATE SEQUENCE %1$s_2 START 1;', seqName);
       END IF;
       IF individualTables THEN
         queryStr = queryStr || format('
-  DROP TABLE IF EXISTS casfri50_history.%1$s_history CASCADE;
-  CREATE TABLE casfri50_history.%1$s_history AS
+DROP TABLE IF EXISTS casfri50_history.%1$s_history CASCADE;
+CREATE TABLE casfri50_history.%1$s_history AS (
   ', lower(inv));
       ELSE
         queryStr = queryStr || '
-  INSERT INTO casfri50_history.geo_history
+INSERT INTO casfri50_history.geo_history
   ';
       END IF;
       queryStr = queryStr || format('
-  WITH geohistory_gridded AS (
+WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
-                              ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
+                               ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
   FROM casfri50_history.casflat_gridded
   WHERE inventory_id = %L', upper(inv));
 
       IF progress THEN
-        queryStr = queryStr || format('
-      AND CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_1', inv);
+        queryStr = queryStr || format(' AND 
+        CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_1', inv);
       END IF;
 
       queryStr = queryStr || '
-      ORDER BY id, poly_id
-      ), wkb_version AS (
-        SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
-        FROM geohistory_gridded';
+  ORDER BY id, poly_id
+), wkb_version AS (
+  SELECT id, (TT_UnnestValidYearUnion(TT_ValidYearUnion(wkb_geometry, valid_year_begin, valid_year_end))).* gvt
+  FROM geohistory_gridded';
         
       IF progress THEN
         queryStr = queryStr || format('
-        WHERE CASE WHEN nextval(%1$L) % 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_2', inv);
+  WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_2', inv);
       END IF;
 
       queryStr = queryStr || '
-        GROUP BY id
-      )
-      SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
-      FROM wkb_version);';
+  GROUP BY id
+)
+SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
+FROM wkb_version);';
       RAISE NOTICE 'queryStr = %', replace(replace(queryStr, '$1', 'expectedRowNb'),'$2', 'startTime');
       startTime = clock_timestamp();
       EXECUTE queryStr USING expectedRowNb, startTime;
@@ -1353,7 +1359,7 @@ CREATE SEQUENCE %1$s_2 START 1;', seqName);
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
-
+------------------------------------------------------------------------------
 --DROP PROCEDURE IF EXISTS TT_ProduceInvGeoHistory2Steps(text, boolean, boolean, boolean);
 CREATE OR REPLACE PROCEDURE TT_ProduceInvGeoHistory2Steps(
   inv text,
@@ -1376,9 +1382,9 @@ DECLARE
       IF progress THEN
         -- Count the number of rows to process for progress tracking
         countQuery = format('
-  SELECT count(*) 
-  FROM casfri50_history.casflat_gridded
-  WHERE inventory_id = upper(%L);', inv);
+SELECT count(*) 
+FROM casfri50_history.casflat_gridded
+WHERE inventory_id = upper(%L);', inv);
         RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Counting the number of gridded polygon to process from casfri50_history.casflat_gridded in order to display progress...', inv;
         EXECUTE countQuery INTO expectedRowNb;
         RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - % gridded polygon to process...', inv, expectedRowNb;
@@ -1390,34 +1396,34 @@ DECLARE
         IF progress THEN
           -- Create a sequence for progress tracking
           queryStr = format('
-  DROP SEQUENCE IF EXISTS %1$s;
-  CREATE SEQUENCE %1$s START 1;
-  ', seqName);
+DROP SEQUENCE IF EXISTS %1$s;
+CREATE SEQUENCE %1$s START 1;
+', seqName);
         END IF;
         -- Create the geo history table for the inventory
         queryStr = queryStr || format('
-  DROP TABLE IF EXISTS casfri50_history.%1$I_history CASCADE;
-  CREATE TABLE casfri50_history.%1$I_history AS', lower(inv));
+DROP TABLE IF EXISTS casfri50_history.%1$I_history CASCADE;
+CREATE TABLE casfri50_history.%1$I_history AS', lower(inv));
 
         -- Fill the geo history table for the inventory with the result of TT_PolygonGeoHistory() on the gridded polygons
         queryStr = queryStr || format('
-  SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
-                              ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
-  FROM casfri50_history.casflat_gridded
-  WHERE inventory_id = upper(%L)', inv);
+SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
+                             ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
+FROM casfri50_history.casflat_gridded
+WHERE inventory_id = upper(%L)', inv);
   
         IF progress THEN
           -- Add progress tracking to the query using the sequence created earlier
           queryStr = queryStr || format(' AND 
-        CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN 
-                  TT_PrintMessage(''%3$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) 
-             ELSE TRUE 
-        END', seqName, expectedRowNb, inv);
+      CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN 
+                TT_PrintMessage(''%3$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) 
+            ELSE TRUE 
+      END', seqName, expectedRowNb, inv);
         END IF;
 
         -- Order the results
         queryStr = queryStr || '
-  ORDER BY id, poly_id';
+ORDER BY id, poly_id';
   
         startTime = clock_timestamp();
         RAISE NOTICE 'queryStr1 = %', replace(queryStr, '$1', 'startTime');
@@ -2168,13 +2174,13 @@ RETURNS TABLE (id text,
     END IF;
     -- Prepare the nested LOOP query looping through polygons overlapping the current main loop polygons
     ovlpPolyQuery = format('
-    SELECT  %1$I::text gh_row_id, 
-            %2$I gh_geom, 
-            CASE WHEN %3$I < 0 OR %3$I IS NULL THEN %4$s ELSE %3$I END gh_photo_year, 
-            %5$I::text gh_inv, 
-            %6$s gh_is_valid 
-    FROM %7$I.%8$I
-    WHERE %1$I::text != %9$L AND ($1 && %2$I) AND TT_SafeOverlaps($1, %2$I, %10$s, %9$L, %1$I, TRUE, FALSE, ''main loop'') ORDER BY gh_photo_year;',
+SELECT  %1$I::text gh_row_id, 
+        %2$I gh_geom, 
+        CASE WHEN %3$I < 0 OR %3$I IS NULL THEN %4$s ELSE %3$I END gh_photo_year, 
+        %5$I::text gh_inv, 
+        %6$s gh_is_valid 
+FROM %7$I.%8$I
+WHERE %1$I::text != %9$L AND ($1 && %2$I) AND TT_SafeOverlaps($1, %2$I, %10$s, %9$L, %1$I, TRUE, FALSE, ''main loop'') ORDER BY gh_photo_year;',
       idColName, 
       geoColName,
       photoYearColName, 
