@@ -1,6 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash
 
-echo "######################## Begin define_invlist.sh ########################################"
+#echo "######################## Begin define_invlist.sh ########################################"
 
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/common.sh
@@ -21,19 +21,12 @@ if ! [[ -v fullList ]]; then
   WHERE UPPER(TRIM($metadataTableLoadingColumn))='YES'
   "
 
-  echo "---------------------------------------------------------------------"
-  echo "Executing $sqlStatement"
-
-  set -x
-
   fullList=($("$psqlCmd" $psqlConnectionString -t -q -A -c "$sqlStatement"))
-
-  { set +x; } 2>/dev/null
 
   useMetadataTableLoadingColumn=True
   echo "fullList as defined by define_invlist.sh for column ${metadataTableLoadingColumn} = ${fullList[@]}"
 else
-  echo "fullList is already defined in config.sh. metadata/load_metadata.sh not used..."
+  echo "fullList is already defined. metadata/load_metadata.sh not used..."
 fi
 
-echo "######################## End define_invlist.sh ########################################"
+#echo "######################## End define_invlist.sh ########################################"

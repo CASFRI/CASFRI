@@ -1,6 +1,6 @@
 # Common postprocessing for all batch scripts
 
-echo "######################## Begin post_processing.sh #######################"
+#echo "######################## Begin post_processing.sh #######################"
 
 # Create a spatial index on wkb_geometry if requested (generally by conversion scripts generating the last target table with a SQL query)
 if [ ${createSQLSpatialIndex}x == Truex ]; then
@@ -22,4 +22,4 @@ if [ ${leaveConvShellOpen}x == Truex ]; then
   /bin/bash
 fi
 
-echo "######################## Begin post_processing.sh #######################"
+#echo "######################## Begin post_processing.sh #######################"

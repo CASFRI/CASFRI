@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "######################## Begin test_translation.sh ############################"
+#echo "######################## Begin test_translation.sh ############################"
 
 source ../../define_invlist.sh
 
@@ -125,4 +125,4 @@ done
 
 wait
 
-echo "######################## End test_translation.sh ############################"
+#echo "######################## End test_translation.sh ############################"

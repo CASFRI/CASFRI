@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "######################## Begin convert_all.sh ############################"
+#echo "######################## Begin convert_all.sh ############################"
 
 source ../common.sh
 source ../define_invlist.sh
@@ -74,4 +74,4 @@ if [[ "$postProcessing" = "True" || "$postProcessingOnly" = "True" ]]; then
 
 fi
 
-echo "######################## End convert_all.sh #############################"
+#echo "######################## End convert_all.sh #############################"

@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-echo "######################## Begin load_metadata.sh ########################################"
+#echo "######################## Begin load_metadata.sh ########################################"
 
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source $thisScriptDir/../common.sh
@@ -15,4 +15,4 @@ echo "Loading inventory_metadata.csv table into the database..."
 echo "Loading layer_metadata.csv table into the database..."
 "$ogrCmd" -f PostgreSQL "$gdalConnectionString" $thisScriptDir/layer_metadata.csv $overwriteTable
 
-echo "######################## End load_metadata.sh ########################################"
+#echo "######################## End load_metadata.sh ########################################"

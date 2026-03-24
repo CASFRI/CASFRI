@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Common setting and command for all bash scripts
-echo "######################## Begin common.sh ########################################"
+#echo "######################## Begin common.sh ########################################"
 
 # Determine the path to THIS script
 thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Load config variables from local config file
 if [ -f $thisScriptDir/config.sh ]; then 
-  echo Sourcing config.sh file...
+  #echo Sourcing config.sh file...
   source $thisScriptDir/config.sh
 else
   echo ERROR: No config.sh file. Please copy config_sample.sh to config.sh and edit it...
@@ -88,4 +88,4 @@ pretty_time() {
 
 SECONDS=0
 
-echo "######################## End common.sh ########################################"
+#echo "######################## End common.sh ########################################"
