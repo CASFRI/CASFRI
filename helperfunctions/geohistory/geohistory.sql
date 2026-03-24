@@ -2580,16 +2580,21 @@ RETURNS TABLE (id text,
       RAISE EXCEPTION 'TT_TableGeoHistory(): Column ''%'' not found in table %.%...', photoYearColName, schemaName, tableName;
     END IF;
     -- Prepare the main LOOP query looping through all polygons of the processed table
-    currentPolyQuery = 'SELECT ' || quote_ident(precedenceColName) || '::text gh_inv, ' ||
-                                    quote_ident(idColName)         || '::text gh_row_id, ' ||
-                                    quote_ident(photoYearColName)  || ' gh_photo_year, ' ||
-                                    CASE WHEN validityColNames IS NULL THEN 'TRUE' 
-                                                                       ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, '::text,') || '::text])' 
-                                    END || ' gh_is_valid, ' ||
-                                    quote_ident(geoColName) || ' gh_geom ' ||
-               'FROM ' || TT_FullTableName(schemaName, tableName) ||
-           --    ' WHERE ' || quote_ident(idColName) || '::text = ''NB01-xxxxxxxxxFOREST-xxxxxxxxxx-0000083722-0242567'' ' ||
-              ' ORDER BY gh_photo_year DESC;';
+    currentPolyQuery = format('
+SELECT %1$I::text gh_inv, %2$I::text gh_row_id, %3$I gh_photo_year, %4$s gh_is_valid, %5$I gh_geom
+FROM %6$I.%7$I' ||
+--' WHERE ' || quote_ident(idColName) || '::text = ''NB01-xxxxxxxxxFOREST-xxxxxxxxxx-0000083722-0242567'' ' ||
+' ORDER BY gh_photo_year DESC;
+', precedenceColName, 
+   idColName, 
+   photoYearColName, 
+   CASE WHEN validityColNames IS NULL THEN 'TRUE' 
+        ELSE 'TT_RowIsValid(ARRAY[' || array_to_string(validityColNames, '::text,') || '::text])' 
+   END,
+   geoColName,
+   schemaName,
+   tableName
+    );
     IF debug_l2 THEN RAISE NOTICE '111 currentPolyQuery = %', currentPolyQuery;END IF;
 
     -- LOOP over each polygon of the table
