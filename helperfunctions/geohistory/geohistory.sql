@@ -1379,6 +1379,9 @@ DECLARE
     raiseLog boolean := FALSE;
   BEGIN
     IF createGeoHistory OR NOT TT_TableExists('casfri50_history', lower(inv) || '_history') THEN
+      IF NOT createGeoHistory THEN
+        RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - createGeoHistory is set to FALSE but the casfri50_history.% table does not exist and we must create it before proceeding...', inv, lower(inv) || '_history';
+      END IF;
       IF progress THEN
         -- Count the number of rows to process for progress tracking
         countQuery = format('
