@@ -1175,13 +1175,13 @@ $$ LANGUAGE plpgsql VOLATILE;
 --DROP FUNCTION IF EXISTS TT_ProgressMsg(text, text, int, int);
 CREATE OR REPLACE FUNCTION TT_RaiseLog(
   process text,
-  last_processed_id text,
-  current_row_nb int DEFAULT NULL,
-  total_row_cnt int DEFAULT NULL
+  lastProcessedId text,
+  currentRowNb int DEFAULT NULL,
+  totalRowCnt int DEFAULT NULL
 ) RETURNS boolean AS $$
 BEGIN
   -- Main log message
-  RAISE LOG '%', format('%s, %s, %s, %s', process, last_processed_id, current_row_nb, total_row_cnt);
+  RAISE LOG '%', format('%s, %s, %s, %s', process, lastProcessedId, currentRowNb, totalRowCnt);
   RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
@@ -1192,79 +1192,79 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_LoadPostgresCSVLogs(text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_LoadPostgresCSVLogs(
-    log_dir text,        -- folder containing CSV logs
-    file_prefix text,    -- e.g. 'postgresql-2026-03-18_'
-    start_suffix text,   -- e.g. '162822'
-    end_suffix text      -- e.g. '162832'
+  logFolder text,        -- folder containing CSV logs
+  filePrefix text,    -- e.g. 'postgresql-2026-03-18_'
+  startSuffix text,   -- e.g. '162822'
+  endSuffix text      -- e.g. '162832'
 ) RETURNS void AS $$
 DECLARE
-    csv_file text;
-    create_sql text;
-    file_list text[];
-    f text;
+  csvFile text;
+  queryStr text;
+  fileList text[];
+  thisFile text;
 BEGIN
-    -- Drop table if exists
-    RAISE NOTICE 'Dropping existing table if it exists';
-    EXECUTE 'DROP TABLE IF EXISTS public.postgres_logs';
+  -- Drop table if exists
+  RAISE NOTICE 'Dropping table public.postgres_logs if it exists';
+  EXECUTE 'DROP TABLE IF EXISTS public.postgres_logs;';
 
-    -- Create fresh table
-    create_sql := '
-    CREATE TABLE public.postgres_logs (
-        log_time text,
-        user_name text,
-        database_name text,
-        process_id text,
-        connection_from text,
-        session_id text,
-        session_line_num text,
-        command_tag text,
-        session_start_time text,
-        virtual_transaction_id text,
-        transaction_id text,
-        error_severity text,
-        sql_state_code text,
-        message text,
-        detail text,
-        hint text,
-        internal_query text,
-        internal_query_pos text,
-        context text,
-        query text,
-        query_pos text,
-        location text,
-        application_name text,
-        extra_field text
-    )';
-    RAISE NOTICE 'Creating table public.postgres_logs';
-    EXECUTE create_sql;
+  -- Create fresh table
+  queryStr := '
+CREATE TABLE public.postgres_logs (
+  log_time text,
+  user_name text,
+  database_name text,
+  process_id text,
+  connection_from text,
+  session_id text,
+  session_line_num text,
+  command_tag text,
+  session_start_time text,
+  virtual_transaction_id text,
+  transaction_id text,
+  error_severity text,
+  sql_state_code text,
+  message text,
+  detail text,
+  hint text,
+  internal_query text,
+  internal_query_pos text,
+  context text,
+  query text,
+  query_pos text,
+  location text,
+  application_name text,
+  extra_field text
+);';
+  RAISE NOTICE 'Creating table public.postgres_logs...';
+  EXECUTE queryStr;
 
-    -- Get list of CSV files matching prefix
-    SELECT array_agg(fname) INTO file_list
-    FROM (
-        SELECT files AS fname
-        FROM pg_ls_dir(log_dir) AS files
-        WHERE files LIKE file_prefix || '%.csv'
-          AND substring(files from '(\d+)\.csv$') BETWEEN start_suffix AND end_suffix
-        ORDER BY files
-    ) t;
+  -- Get list of CSV files matching prefix
+  SELECT array_agg(fname) INTO fileList
+  FROM (
+    SELECT files AS fname
+    FROM pg_ls_dir(logFolder) AS files
+    WHERE files LIKE filePrefix || '%.csv'
+      AND substring(files from '(\d+)\.csv$') BETWEEN startSuffix AND endSuffix
+    ORDER BY files
+  ) t;
 
-    IF file_list IS NULL THEN
-        RAISE NOTICE 'No files found in the specified range';
-        RETURN;
-    END IF;
+  IF fileList IS NULL THEN
+    RAISE NOTICE 'No files found in the specified range...';
+    RETURN;
+  END IF;
 
-    -- Loop through files and COPY into table
-    FOREACH f IN ARRAY file_list LOOP
-        csv_file := log_dir || '/' || f;
-        RAISE NOTICE 'Loading CSV file: %', csv_file;
+  -- Loop through files and COPY into table
+  FOREACH thisFile IN ARRAY fileList LOOP
+    csvFile := logFolder || '/' || thisFile;
+    RAISE NOTICE 'Loading CSV file: %', csvFile;
 
-        EXECUTE format(
-            'COPY public.postgres_logs FROM %L WITH (FORMAT csv, HEADER false, DELIMITER '','', QUOTE ''"'', ESCAPE ''"'')',
-            csv_file
-        );
-    END LOOP;
+    EXECUTE format('
+COPY public.postgres_logs FROM %L WITH (FORMAT csv, HEADER false, DELIMITER '','', QUOTE ''"'', ESCAPE ''"'');
+', csvFile
+    );
+  END LOOP;
 
-    RAISE NOTICE 'Finished loading logs';
+  RAISE NOTICE 'Finished loading logs...';
 END;
 $$ LANGUAGE plpgsql;
 /*
