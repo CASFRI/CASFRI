@@ -1,14 +1,13 @@
 #!/bin/bash
 
-source ../../common.sh
-source ../../define_invlist.sh
-
 # Read the list of inventory to process from the command line
 if [ $# -gt 0 ]; then
   useCommandArgumentInvList=True
   echo "Using inventory list provided as arguments: ${@^^}"
   fullList=("${@^^}")
 fi
+
+source ../../define_invlist.sh
 
 maxProcessInParallel=${maxGeoHistoryInParallel}
 leaveShellOpen=${leaveGeoHistoryShellOpen}
@@ -22,7 +21,7 @@ if [ "$postProcessingOnly" = "False" ]; then
   for invID in "${fullList[@]}"
   do
     echo "######################################################################"
-    sqlStatement="CALL TT_ProduceInvGeoHistory2Steps('$invID', ${createGeoHistory}, ${geoHistoryInSeparateTables}, TRUE);"
+    sqlStatement="CALL TT_ProduceInvGeoHistory2Steps('$invID', ${createGeoHistory}, ${geoHistoryInSeparateTables}, True);"
     echo "---------------------------------------------------------------------"
     echo "Executing $sqlStatement"
 

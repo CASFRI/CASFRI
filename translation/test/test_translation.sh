@@ -2,7 +2,20 @@
 
 #echo "######################## Begin test_translation.sh ############################"
 
+# Determine the list of inventory to test. If a list is provided as arguments, use it. 
+# Otherwise, use the fullList from define_invlist.sh
+if [ $# -ne 0 ]; then
+  useCommandArgumentInvList=True
+  echo "fullList defined by argument..."
+  fullList=("$@")
+fi
+
 source ../../define_invlist.sh
+
+maxProcessInParallel=${maxTestsInParallel}
+leaveShellOpen=${leaveTestShellOpen}
+processName="TestTranslation"
+source ../../confirm_config.sh
 
 # Create the test schema and load the table of number of test per inventory and layer
 set -x
@@ -12,22 +25,7 @@ set -x
 
 { set +x; } 2>/dev/null
 
-# Determine the list of inventory to test. If a list is provided as arguments, use it. 
-# Otherwise, use the fullList from define_invlist.sh
-
-if [ $# -ne 0 ]; then
-  useCommandArgumentInvList=True
-  echo "fullList defined by argument..."
-  fullList=("$@")
-fi
-
-maxProcessInParallel=${maxTestsInParallel}
-leaveShellOpen=${leaveTestShellOpen}
-processName="TestTranslation"
-source ../../confirm_config.sh
-
 # Build a list of province codes to test based on the fullList array
-
 declare -A provToTestAssArr # the associative array to track unique province codes
 provToTestList=() # the list of unique province codes to test
 

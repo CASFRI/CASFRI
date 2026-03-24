@@ -1,14 +1,13 @@
 #!/bin/bash
 
-source ../../common.sh
-source ../../define_invlist.sh
-
 # Read the list of inventory to process from the command line
 if [ $# -gt 0 ]; then 
   useCommandArgumentInvList=True
   echo "Using inventory list provided as arguments: ${@^^}"
   fullList=("$@")
 fi
+
+source ../../define_invlist.sh
 
 maxProcessInParallel=${maxGeoHistoryInParallel}
 leaveShellOpen=${leaveCoverageShellOpen}

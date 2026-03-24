@@ -1,8 +1,5 @@
 #!/bin/bash
 
-source ../../common.sh
-source ../../define_invlist.sh
-
 casTableList=("cas" "eco" "dst" "nfl" "lyr" "geo")
 
 if [ $# -gt 0 ]; then
@@ -19,6 +16,8 @@ if [ $# -gt 0 ]; then
     fullList=("${@^^}")
   fi
 fi
+
+source ../../define_invlist.sh
 
 maxProcessInParallel=${maxTranslationsInParallel}
 leaveShellOpen=${leaveTranslationsShellOpen}
