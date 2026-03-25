@@ -880,7 +880,25 @@ SELECT TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = upper
 SELECT TT_SuperUnion('casfri50_history', 'casflat_gridded', 'geom', 'inventory_id = upper(''PC01'')', TRUE);
 */
 
---DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, name, text);
+------------------------------------------------------------------------------
+-- TT_InvSuperUnion
+--
+-- ST_Union() all polygons of an inventory in a two stage process 
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_InvSuperUnion(text, boolean);
+CREATE OR REPLACE FUNCTION TT_InvSuperUnion(
+  inv text,
+  alreadyGridded boolean DEFAULT TRUE
+)
+RETURNS geometry AS $$
+  SELECT CASE WHEN alreadyGridded THEN TT_SuperUnion('casfri50_history'::name, 'casflat_gridded'::name, 'geom'::name, 'inventory_id = upper(''' || inv || ''')', TRUE)
+              ELSE TT_SuperUnion('casfri50'::name, 'geo_all'::name, 'geometry'::name, 'left(cas_id, 4) = upper(''' || inv || ''')', FALSE)
+         END
+$$ LANGUAGE sql STABLE;
+-- SELECT TT_InvSuperUnion('PC01');
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_SuperUnionDebug(name, name, name, name, text);
 CREATE OR REPLACE FUNCTION TT_SuperUnionDebug(
   schemaName name,
