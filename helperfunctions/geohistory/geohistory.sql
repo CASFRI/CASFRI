@@ -767,7 +767,7 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 -- TT_TrimSubPolygons
 --
 -- Return only the biggest polygons from a multipolygon
-----------------------------------------------------
+------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_TrimSubPolygons(
   inGeom geometry,
@@ -810,13 +810,15 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 -- TT_SuperUnion
 --
 -- ST_Union() all polygons in a two stage process 
-----------------------------------------------------
---DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text);
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text, boolean, int);
 CREATE OR REPLACE FUNCTION TT_SuperUnion(
   schemaName name,
   tableName name,
   geomColumnName name,
-  filterStr text DEFAULT NULL
+  filterStr text DEFAULT NULL,
+  alreadyGridded boolean DEFAULT TRUE,
+  gridSize int DEFAULT 10000
 )
 RETURNS geometry AS $$
   DECLARE
@@ -824,19 +826,45 @@ RETURNS geometry AS $$
     returnGeom geometry;
   BEGIN
     RAISE NOTICE 'TT_SuperUnion() : START...';
-    queryStr = format('
+    IF alreadyGridded THEN
+      queryStr = format('
+WITH first_level_union AS (
+  SELECT tid, ST_Union(%1$I) geom
+  FROM %2$I.%3$I%4$s
+  GROUP BY tid
+)
+SELECT ST_Union(geom ORDER BY tid) geom 
+FROM first_level_union;', 
+        geomColumnName,
+        schemaName,
+        tableName,
+        CASE WHEN filterStr IS NULL THEN '' 
+             ELSE format('
+  WHERE %s', filterStr) 
+        END
+      );
+    ELSE
+      queryStr = format('
 WITH gridded AS (
-  SELECT TT_SplitByGrid(%1$I, 10000) split 
+  SELECT TT_SplitByGrid(%1$I, %5$s) split 
   FROM %2$I.%3$I%4$s
 ), first_level_union AS (
-  SELECT ST_Union((split).geom) geom
+  SELECT (split).tid, ST_Union((split).geom) geom
   FROM gridded
   GROUP BY (split).tid
 )
-SELECT ST_Union(geom) geom 
-FROM first_level_union;
-', geomColumnName, schemaName, tableName, CASE WHEN filterStr IS NULL THEN '' ELSE format('
-  WHERE %s', filterStr) END);
+SELECT ST_Union(geom ORDER BY tid) geom 
+FROM first_level_union;', 
+        geomColumnName, 
+        schemaName, 
+        tableName, 
+        CASE WHEN filterStr IS NULL THEN '' 
+             ELSE format('
+  WHERE %s', filterStr) 
+        END, 
+        gridSize
+      );
+    END IF;
     RAISE NOTICE 'queryStr=%', queryStr;
     EXECUTE queryStr INTO returnGeom;
     
@@ -846,9 +874,14 @@ FROM first_level_union;
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 -- Test
--- SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
-----------------------------------------------------
+/*
+SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
+SELECT TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = upper(''PC01'')', FALSE, 100000);
+SELECT TT_SuperUnion('casfri50_history', 'casflat_gridded', 'geom', 'inventory_id = upper(''PC01'')', TRUE);
+*/
+
 --DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, name, text);
+--DROP FUNCTION IF EXISTS TT_SuperUnionDebug(name, name, name, name, text);
 CREATE OR REPLACE FUNCTION TT_SuperUnionDebug(
   schemaName name,
   tableName name,
