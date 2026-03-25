@@ -934,7 +934,7 @@ FROM first_level_union;
 
     RETURN returnGeom;
   END
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql STABLE;
 -- Test
 -- SELECT TT_SuperUnionDebug('cas_id', 'casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
 -------------------------------------------------------------------------------
@@ -1125,15 +1125,14 @@ $$ LANGUAGE plpgsql STABLE;
 --
 -- Produce different simplified versions of coverage geometries.
 ------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ProduceDerivedCoverages(text, geometry, double precision, boolean, double precision);
-CREATE OR REPLACE FUNCTION TT_ProduceDerivedCoverages(
+--DROP PROCEDURE IF EXISTS TT_ProduceDerivedCoverages(text, geometry, double precision, boolean, double precision);
+CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
   fromInv text, -- inventoryID
   detailedGeom geometry, -- non simplified version of the coverage geometry
   minArea double precision DEFAULT 10000000, -- minimum area of holes and island to keep
   sparse boolean DEFAULT FALSE, -- apply a special treatment for sparce geometries
   sparseBuf double precision DEFAULT 5000 -- buffer to apply for sparse geometries
-)
-RETURNS boolean AS $$
+) AS $$
   DECLARE
     tableNameArr text[] = ARRAY['detailed', 'noholes', 'noislands', 'simplified', 'smoothed'];
     tableName text;
@@ -1153,7 +1152,10 @@ RETURNS boolean AS $$
     simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 100);
     RAISE NOTICE 'TT_TrimSubPolygons(TT_BufferedSmooth()) for ''%'' to produce smoothed...', fromInv;
     smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), minArea);
+
+    -- Get the count of point from a precomputed table
     SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE upper(inv) = upper(fromInv) INTO cnt;
+
     FOREACH tableName IN ARRAY tableNameArr LOOP
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating % %...', fromInv, tableName;
       outGeom = CASE WHEN tableName = 'detailed' THEN detailedGeom
@@ -1162,33 +1164,41 @@ RETURNS boolean AS $$
                      WHEN tableName = 'simplified' THEN simplifiedGeom
                      WHEN tableName = 'smoothed' THEN smoothedGeom
                 END;
+      -- First part is to INSERT the non gridded version.
       queryStr = format('
-CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I(inv text, nb_polys int, nb_points int, geom geometry);
-DELETE FROM casfri50_coverage.%1$I
-WHERE upper(inv) = %2$L;
-INSERT INTO casfri50_coverage.%1$I (inv, nb_polys, nb_points, geom) VALUES ($2, $3, $4, $5);', tableName, upper(fromInv));
-      EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
+CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I(inv text PRIMARY KEY, nb_polys int, nb_points int, geom geometry);
+INSERT INTO casfri50_coverage.%1$I (inv, nb_polys, nb_points, geom) VALUES ($1, $2, $3, $4)
+ON CONFLICT (inv)
+DO UPDATE SET
+    nb_polys = EXCLUDED.nb_polys,
+    nb_points = EXCLUDED.nb_points,
+    geom = EXCLUDED.geom;', tableName, upper(fromInv));
+      EXECUTE queryStr USING upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
+      COMMIT;
 
-      -- Create a gridded version for each
+      -- Create a gridded version for each. Begin by deleting any existing parts.
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating % %...', fromInv, tableName || '_gridded';
       queryStr = format('
 CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I_gridded(inv text, nb_polys int, nb_points int, geom geometry);
-CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.' || tableName || '_gridded USING gist(geom);
+CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.%1$I_gridded USING gist(geom);
 DELETE FROM casfri50_coverage.%1$I_gridded
-WHERE upper(inv) = %2$L;
+WHERE upper(inv) = %2$L;', tableName, upper(fromInv));
+      EXECUTE queryStr;
+      COMMIT;
+
+      -- INSERT parts into the gridded version.
+      queryStr = format('
 INSERT INTO casfri50_coverage.%1$I_gridded (inv, nb_polys, nb_points, geom) 
 SELECT inv, nb_polys, ST_NPoints((geom).geom) nb_points, (geom).geom geom
 FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000) geom
       FROM casfri50_coverage.%1$I
       WHERE upper(inv) = %2$L
      ) foo;', tableName, upper(fromInv));
-      EXECUTE queryStr USING tableName, upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
+      EXECUTE queryStr;
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Processing of % finished...', fromInv;
     END LOOP;
-    
-    RETURN TRUE;
   END
-$$ LANGUAGE plpgsql VOLATILE;
+$$ LANGUAGE plpgsql STABLE;
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
@@ -1781,7 +1791,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 -- TT_SafeOverlaps()
 ------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_SafeOverlaps(geometry, geometry, double precision, text, text, boolean, boolean);
+--DROP FUNCTION IF EXISTS TT_SafeOverlaps(geometry, geometry, double precision, text, text, boolean, boolean, text);
 CREATE OR REPLACE FUNCTION TT_SafeOverlaps(
   geom1 geometry,
   geom2 geometry,
@@ -1878,7 +1888,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- RAISE NOTICE messages to help identify the problematic cases and the approach 
 -- that worked.
 ------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean, boolean);
+--DROP FUNCTION IF EXISTS TT_SafeDifference(geometry, geometry, double precision, text, text, boolean, boolean, text);
 CREATE OR REPLACE FUNCTION TT_SafeDifference(
   geom1 geometry,
   geom2 geometry,
