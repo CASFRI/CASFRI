@@ -867,7 +867,7 @@ WITH first_level_union AS (
 
       IF progress THEN
         queryStr := queryStr || format(',
-         CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(1st level) - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_1', expectedGroupNb);
+         CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(1st level) - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_1', expectedGroupNb);
       END IF;
 
       queryStr := queryStr || format('
@@ -878,7 +878,7 @@ SELECT ST_Union(geom ORDER BY tid)', schemaName, tableName, filterStr);
 
       IF progress THEN
         queryStr := queryStr || format(',
-       CASE WHEN nextval(%1$L) %% 10 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(2nd level) - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_2', expectedGroupNb);
+       CASE WHEN nextval(%1$L) %% 10 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(2nd level) - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_2', expectedGroupNb);
       END IF;
 
       queryStr := queryStr || ' 
@@ -896,9 +896,10 @@ WITH gridded AS (
 SELECT ST_Union(geom ORDER BY tid) geom 
 FROM first_level_union;', geomColumnName, schemaName, tableName, filterStrs, gridSize);
     END IF;
-    RAISE NOTICE 'queryStr=%', queryStr;
+
     startTime = clock_timestamp();
-    EXECUTE queryStr INTO returnGeom USING expectedGroupNb, startTime;
+    RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
+    EXECUTE queryStr INTO returnGeom USING startTime;
     
     RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
 
@@ -1432,7 +1433,7 @@ WITH geohistory_gridded AS (
 
       IF progress THEN
         queryStr = queryStr || format(' AND 
-        CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_1', inv);
+        CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''%3$s - TT_PolygonGeoHistory() - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_1', expectedRowNb, inv);
       END IF;
 
       queryStr = queryStr || '
@@ -1443,7 +1444,7 @@ WITH geohistory_gridded AS (
         
       IF progress THEN
         queryStr = queryStr || format('
-  WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 THEN TT_PrintMessage(''%2$s - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_2', inv);
+  WHERE CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''%3$s - TT_ValidYearUnion() - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_2', expectedRowNb, inv);
       END IF;
 
       queryStr = queryStr || '
@@ -1451,9 +1452,9 @@ WITH geohistory_gridded AS (
 )
 SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
 FROM wkb_version);';
-      RAISE NOTICE 'queryStr = %', replace(replace(queryStr, '$1', 'expectedRowNb'),'$2', 'startTime');
       startTime = clock_timestamp();
-      EXECUTE queryStr USING expectedRowNb, startTime;
+    RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
+      EXECUTE queryStr USING startTime;
     END IF;
     RETURN TRUE;
   END;
