@@ -811,38 +811,78 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 --
 -- ST_Union() all polygons in a two stage process 
 ------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text, boolean, int);
+--DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text, boolean, int, boolean);
 CREATE OR REPLACE FUNCTION TT_SuperUnion(
   schemaName name,
   tableName name,
   geomColumnName name,
   filterStr text DEFAULT NULL,
   alreadyGridded boolean DEFAULT TRUE,
-  gridSize int DEFAULT 10000
+  gridSize int DEFAULT 10000,
+  progress boolean DEFAULT TRUE
 )
 RETURNS geometry AS $$
   DECLARE
-    queryStr text;
+    queryStr text := '';
+    countQuery text := '';
+    seqName text := '';
+    expectedGroupNb int = 0;
+    startTime timestamptz;
     returnGeom geometry;
   BEGIN
-    RAISE NOTICE 'TT_SuperUnion() : START...';
+    IF filterStr IS NULL THEN 
+      filterStr := '';
+      RAISE NOTICE 'TT_SuperUnion() : START with no filterStr...';
+    ELSE
+      filterStr := format('
+  WHERE %s', filterStr);
+      RAISE NOTICE 'TT_SuperUnion() : START with ''%''...', filterStr;
+    END IF;
+ 
     IF alreadyGridded THEN
-      queryStr = format('
+      -- For now, we implemented progress only for the alreadyGridded case because it is the previleged method and
+      -- the implementation for the non alreadyGridded case is very different (count has to be generated inside the CTE).
+      IF progress THEN
+        countQuery = format('
+SELECT count(DISTINCT tid)
+FROM %1$I.%2$I%3$s;', schemaName, tableName, filterStr);
+
+        RAISE NOTICE 'TT_SuperUnion() - Counting the number of groups of gridded polygons to process from casfri50_history.casflat_gridded in order to display progress...';
+        EXECUTE countQuery INTO expectedGroupNb;
+
+        RAISE NOTICE 'TT_SuperUnion() - % groups of gridded polygons to process...', expectedGroupNb;
+        seqName = 'superunion_' || floor(random() * 100000) + 1;
+
+        queryStr = format('
+DROP SEQUENCE IF EXISTS %1$s_1;
+CREATE SEQUENCE %1$s_1 START 1;
+DROP SEQUENCE IF EXISTS %1$s_2;
+CREATE SEQUENCE %1$s_2 START 21;', seqName);
+      END IF;
+
+      queryStr := queryStr || format('
 WITH first_level_union AS (
-  SELECT tid, ST_Union(%1$I) geom
-  FROM %2$I.%3$I%4$s
+  SELECT tid, 
+         ST_Union(%1$I) geom', geomColumnName);
+
+      IF progress THEN
+        queryStr := queryStr || format(',
+         CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(1st level) - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_1', expectedGroupNb);
+      END IF;
+
+      queryStr := queryStr || format('
+  FROM %1$I.%2$I%3$s
   GROUP BY tid
 )
-SELECT ST_Union(geom ORDER BY tid) geom 
-FROM first_level_union;', 
-        geomColumnName,
-        schemaName,
-        tableName,
-        CASE WHEN filterStr IS NULL THEN '' 
-             ELSE format('
-  WHERE %s', filterStr) 
-        END
-      );
+SELECT ST_Union(geom ORDER BY tid)', schemaName, tableName, filterStr);
+
+      IF progress THEN
+        queryStr := queryStr || format(',
+       CASE WHEN nextval(%1$L) %% 10 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(2nd level) - '' || TT_ProgressMsg(currval(%1$L), $1, $2)) ELSE TRUE END', seqName || '_2', expectedGroupNb);
+      END IF;
+
+      queryStr := queryStr || ' 
+FROM first_level_union;';
     ELSE
       queryStr = format('
 WITH gridded AS (
@@ -854,25 +894,17 @@ WITH gridded AS (
   GROUP BY (split).tid
 )
 SELECT ST_Union(geom ORDER BY tid) geom 
-FROM first_level_union;', 
-        geomColumnName, 
-        schemaName, 
-        tableName, 
-        CASE WHEN filterStr IS NULL THEN '' 
-             ELSE format('
-  WHERE %s', filterStr) 
-        END, 
-        gridSize
-      );
+FROM first_level_union;', geomColumnName, schemaName, tableName, filterStrs, gridSize);
     END IF;
     RAISE NOTICE 'queryStr=%', queryStr;
-    EXECUTE queryStr INTO returnGeom;
+    startTime = clock_timestamp();
+    EXECUTE queryStr INTO returnGeom USING expectedGroupNb, startTime;
     
     RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
 
     RETURN returnGeom;
   END
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql VOLATILE;
 -- Test
 /*
 SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
@@ -1364,7 +1396,7 @@ WHERE inventory_id = upper(%L);', inv);
       RAISE NOTICE 'TT_ProduceInvGeoHistory(%) - % gridded polygon to process...', inv, expectedRowNb;
     END IF;
 
-    -- If progress is true and we computed the number of rows to process, we process only if it's >0
+    -- If progress is true and we computed the number of rows to process, we process only if it's > 0
     -- If progress is false, we proceed even if expectedRowNb = 0
     IF NOT progress OR expectedRowNb > 0 THEN
       IF progress THEN

@@ -37,7 +37,7 @@ DROP FUNCTION IF EXISTS TT_BufferedSmooth(geometry, double precision);
 DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision);
 DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision);
 DROP FUNCTION IF EXISTS TT_InvSuperUnion(text, boolean);
-DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text, boolean, int);
+DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text, boolean, int, boolean);
 DROP FUNCTION IF EXISTS TT_SuperUnionDebug(name, name, name, name, text);
 DROP PROCEDURE IF EXISTS TT_ProduceDerivedCoverages(text, geometry, double precision, boolean, double precision);
 DROP FUNCTION IF EXISTS TT_ProduceInvGeoHistory(text, boolean, boolean);
