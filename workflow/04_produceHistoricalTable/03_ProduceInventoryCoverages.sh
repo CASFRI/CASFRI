@@ -16,12 +16,14 @@ source ../../confirm_config.sh
 
 if [ "$postProcessingOnly" = "False" ]; then
 
-  # Load shapefile of Canada provinces limits
-  echo "Loading Canada province shapefile..."
-  "$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" canada_provinces.shp \
-  -nln casfri50_coverage.canada_provinces $gdalLco $gdalOtherOptions \
-  -progress $overwriteTable
-
+  if [ "$useCommandArgumentInvList" = "False" ]; then
+    # Load shapefile of Canada provinces limits
+    echo "Loading Canada province shapefile..."
+    "$gdalFolder/ogr2ogr" -f "PostgreSQL" "$gdalConnectionString" canada_provinces.shp \
+    -nln casfri50_coverage.canada_provinces $gdalLco $gdalOtherOptions \
+    -progress $overwriteTable
+  fi
+  
   # Iterate over the list of inventory 
   coverage_in_parallel=0
   for invID in "${fullList[@]}"
