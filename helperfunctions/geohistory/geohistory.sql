@@ -1212,7 +1212,13 @@ DO UPDATE SET
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating % %...', fromInv, tableName || '_gridded';
       queryStr = format('
 CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I_gridded(inv text, nb_polys int, nb_points int, geom geometry);
-CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.%1$I_gridded USING gist(geom);
+CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.%1$I_gridded USING gist(geom);', tableName);
+      EXECUTE queryStr;
+      COMMIT;
+
+      -- Create a gridded version for each. Begin by deleting any existing parts.
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Deleting % %...', fromInv, tableName || '_gridded';
+      queryStr = format('
 DELETE FROM casfri50_coverage.%1$I_gridded
 WHERE upper(inv) = %2$L;', tableName, upper(fromInv));
       EXECUTE queryStr;
@@ -1230,7 +1236,7 @@ FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000) geom
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Processing of % finished...', fromInv;
     END LOOP;
   END
-$$ LANGUAGE plpgsql STABLE;
+$$ LANGUAGE plpgsql;
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
