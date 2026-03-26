@@ -1286,7 +1286,7 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
                 END;
       -- First part is to INSERT the non gridded version.
       RAISE NOTICE '-------------------------------------------------------------------';
-      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating table % and inserting polygon...', tableName;
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating table % if it does not exist and inserting polygon...', tableName;
       queryStr = format('
 CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I(inv text PRIMARY KEY, nb_polys int, nb_points int, geom geometry);
 INSERT INTO casfri50_coverage.%1$I (inv, nb_polys, nb_points, geom) VALUES ($1, $2, $3, $4)
@@ -1298,8 +1298,10 @@ DO UPDATE SET
       EXECUTE queryStr USING upper(fromInv), cnt, ST_NPoints(outGeom), outGeom;
       COMMIT;
 
-      -- Create a gridded version for each. Begin by deleting any existing parts.
-      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating table %...', tableName || '_gridded';
+      -- Create a gridded version for each. 
+      
+      -- Create the gridded table if it does not exists and index it.
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating table % if it does not exist...', tableName || '_gridded';
       queryStr = format('
 CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I_gridded(inv text, nb_polys int, nb_points int, geom geometry);
 CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.%1$I_gridded USING gist(geom);', tableName);
@@ -1314,7 +1316,7 @@ WHERE upper(inv) = %2$L;', tableName, upper(fromInv));
       EXECUTE queryStr;
       COMMIT;
 
-      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Deleting done. Inserting % gridded polygons into %...', fromInv, tableName || '_gridded';
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Inserting % gridded polygons into %...', fromInv, tableName || '_gridded';
       -- INSERT parts into the gridded version.
       queryStr = format('
 INSERT INTO casfri50_coverage.%1$I_gridded (inv, nb_polys, nb_points, geom) 
