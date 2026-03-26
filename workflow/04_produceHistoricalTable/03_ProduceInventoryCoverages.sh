@@ -61,11 +61,11 @@ WITH inv_list AS (
   WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(ARRAY[${quoted_list}])))
 )
 SELECT i.inv inventory_id, 
-       CASE WHEN a.nb_points IS NULL THEN 'NOT PRODUCED' ELSE a.nb_points::text END nb_pts_detailed, 
-       CASE WHEN b.nb_points IS NULL THEN 'NOT PRODUCED' ELSE b.nb_points::text END nb_pts_noholes, 
-       CASE WHEN c.nb_points IS NULL THEN 'NOT PRODUCED' ELSE c.nb_points::text END nb_pts_noislands, 
-       CASE WHEN d.nb_points IS NULL THEN 'NOT PRODUCED' ELSE d.nb_points::text END nb_pts_simplified, 
-       CASE WHEN e.nb_points IS NULL THEN 'NOT PRODUCED' ELSE e.nb_points::text END nb_pts_smoothed
+       CASE WHEN a.nb_points IS NULL THEN 0 ELSE a.nb_points END nb_pts_detailed, 
+       CASE WHEN b.nb_points IS NULL THEN 0 ELSE b.nb_points END nb_pts_noholes, 
+       CASE WHEN c.nb_points IS NULL THEN 0 ELSE c.nb_points END nb_pts_noislands, 
+       CASE WHEN d.nb_points IS NULL THEN 0 ELSE d.nb_points END nb_pts_simplified, 
+       CASE WHEN e.nb_points IS NULL THEN 0 ELSE e.nb_points END nb_pts_smoothed
 FROM inv_list i
 LEFT JOIN casfri50_coverage.detailed a USING (inv)
 LEFT JOIN casfri50_coverage.noholes b USING (inv)
