@@ -857,7 +857,8 @@ FROM %1$I.%2$I%3$s;', schemaName, tableName, filterStr);
 
         queryStr = format('
 DROP SEQUENCE IF EXISTS %1$s_1;
-CREATE SEQUENCE %1$s_1 START 1;', seqName);
+CREATE SEQUENCE %1$s_1 START 1;
+', seqName);
       END IF;
 
       queryStr := queryStr || format('
@@ -887,13 +888,20 @@ WITH gridded AS (
   GROUP BY (split).tid
 )
 SELECT ST_Union(geom ORDER BY tid) geom 
-FROM first_level_union;', geomColumnName, schemaName, tableName, filterStrs, gridSize);
+FROM first_level_union;', geomColumnName, schemaName, tableName, filterStr, gridSize);
+
     END IF;
 
     startTime = clock_timestamp();
     RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
     EXECUTE queryStr INTO returnGeom USING startTime;
     
+    -- DROP the SEQUENCE if it was created
+    IF alreadyGridded AND progress THEN
+      queryStr = format('DROP SEQUENCE IF EXISTS %1$s_1;', seqName);
+      EXECUTE queryStr;
+    END IF;
+
     RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
 
     RETURN returnGeom;
@@ -901,7 +909,7 @@ FROM first_level_union;', geomColumnName, schemaName, tableName, filterStrs, gri
 $$ LANGUAGE plpgsql VOLATILE;
 -- Test
 /*
-SELECT TT_SuperUnion('casfri50', 'geo_all', 'left(cas_id, 4) = ''SK03''');
+SELECT TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = ''SK03''', FALSE);
 SELECT TT_SuperUnion('casfri50', 'geo_all', 'geometry', 'left(cas_id, 4) = upper(''PC01'')', FALSE, 100000);
 SELECT TT_SuperUnion('casfri50_history', 'casflat_gridded', 'geom', 'inventory_id = upper(''PC01'')', TRUE);
 */
@@ -1220,7 +1228,7 @@ WITH inv AS (
   %s
 )
 SELECT * FROM TT_CoveragePointCount((SELECT invarr FROM inv));',
-    CASE WHEN invMetadataColName IS NULL THEN '' ELSE format('  WHERE upper(%s) = ''YES''', invMetadataColName) END);
+    CASE WHEN invMetadataColName IS NULL THEN '' ELSE format('WHERE upper(%s) = ''YES''', invMetadataColName) END);
     RAISE NOTICE 'queryStr = %', queryStr;
     RETURN QUERY EXECUTE queryStr;
   END
@@ -1504,7 +1512,8 @@ WHERE inventory_id = upper(%L);', inv);
 DROP SEQUENCE IF EXISTS %1$s_1;
 CREATE SEQUENCE %1$s_1 START 1;
 DROP SEQUENCE IF EXISTS %1$s_2;
-CREATE SEQUENCE %1$s_2 START 1;', seqName);
+CREATE SEQUENCE %1$s_2 START 1;
+', seqName);
       END IF;
       
       IF individualTables THEN
@@ -1544,13 +1553,25 @@ INSERT INTO casfri50_history.geo_history';
 )
 SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
 FROM wkb_version);';
+
+      IF progress THEN
+        queryStr = queryStr || format('
+
+DROP SEQUENCE IF EXISTS %1$s_1;
+DROP SEQUENCE IF EXISTS %1$s_2;', seqName);
+      END IF;
+
       startTime = clock_timestamp();
-    RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
+      RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
       EXECUTE queryStr USING startTime;
     END IF;
     RETURN TRUE;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+/*
+-- tests
+SELECT TT_ProduceInvGeoHistory('PC02', TRUE, TRUE);
+*/
 ------------------------------------------------------------------------------
 --DROP PROCEDURE IF EXISTS TT_ProduceInvGeoHistory2Steps(text, boolean, boolean, boolean);
 CREATE OR REPLACE PROCEDURE TT_ProduceInvGeoHistory2Steps(
@@ -1618,7 +1639,13 @@ WHERE inventory_id = upper(%L)', inv);
 
         -- Order the results
         queryStr = queryStr || '
-ORDER BY id, poly_id';
+ORDER BY id, poly_id;';
+
+        IF progress THEN
+          queryStr = queryStr || format('
+
+DROP SEQUENCE IF EXISTS %1$s_1;', seqName);
+        END IF;
   
         startTime = clock_timestamp();
         RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
@@ -1865,6 +1892,16 @@ INSERT INTO casfri50_history.geo_history';
 )
 SELECT id cas_id, geom, lowerval valid_year_begin, upperval valid_year_end
 FROM unnested);';
+
+      IF progress THEN
+        queryStr = queryStr || format('
+
+DROP SEQUENCE IF EXISTS %1$s_1;
+DROP SEQUENCE IF EXISTS %1$s_2;
+DROP SEQUENCE IF EXISTS %1$s_3;
+DROP SEQUENCE IF EXISTS %1$s_4;
+DROP SEQUENCE IF EXISTS %1$s_5;', seqName);
+      END IF;
 
       startTime = clock_timestamp();
       RAISE NOTICE 'queryStr2 = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
