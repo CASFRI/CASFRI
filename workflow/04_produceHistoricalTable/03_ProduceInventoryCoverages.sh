@@ -27,7 +27,8 @@ if [ "$postProcessingOnly" = "False" ]; then
   for invID in "${fullList[@]}"
   do
     echo "######################################################################"
-    sqlStatement="SELECT TT_ProduceDerivedCoverages(upper('${invID}'), TT_SuperUnionDebug('casfri50', 'geo_all', 'cas_id', 'geometry', 'left(cas_id, 4) = upper(''${invID}'')'));"
+    ##sqlStatement="SELECT TT_ProduceDerivedCoverages(upper('${invID}'), TT_SuperUnionDebug('casfri50', 'geo_all', 'cas_id', 'geometry', 'left(cas_id, 4) = upper(''${invID}'')'));"
+    sqlStatement="CALL TT_ProduceDerivedCoverages(upper('${invID}'), TT_InvSuperUnion(upper('${invID}')));"
     echo "---------------------------------------------------------------------"
     echo "Executing $sqlStatement"
 
