@@ -1420,18 +1420,18 @@ CREATE SEQUENCE %1$s_1 START 1;
 DROP SEQUENCE IF EXISTS %1$s_2;
 CREATE SEQUENCE %1$s_2 START 1;', seqName);
       END IF;
+      
       IF individualTables THEN
         queryStr = queryStr || format('
 DROP TABLE IF EXISTS casfri50_history.%1$s_history CASCADE;
-CREATE TABLE casfri50_history.%1$s_history AS (
-  ', lower(inv));
+CREATE TABLE casfri50_history.%1$s_history AS', lower(inv));
       ELSE
         queryStr = queryStr || '
-INSERT INTO casfri50_history.geo_history
-  ';
+INSERT INTO casfri50_history.geo_history';
       END IF;
+      
       queryStr = queryStr || format('
-WITH geohistory_gridded AS (
+(WITH geohistory_gridded AS (
   SELECT (TT_PolygonGeoHistory(inventory_id, cas_id, stand_photo_year, TRUE, geom,
                                ''casfri50_history'', ''casflat_gridded'', ''cas_id'', ''geom'', ''stand_photo_year'', ''inventory_id'')).*
   FROM casfri50_history.casflat_gridded
