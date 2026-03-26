@@ -1262,24 +1262,24 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
     cnt int;
   BEGIN
     RAISE NOTICE '-------------------------------------------------------------------';
-    RAISE NOTICE 'TT_RemoveHoles() for ''%'' to produce noholes polygon...', fromInv;
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_RemoveHoles() for ''%'' to produce noholes polygon...', fromInv;
     noHolesGeom = TT_RemoveHoles(detailedGeom, minArea);
-    RAISE NOTICE 'After TT_RemoveHoles() geometry has % vertexes...', ST_NPoints(noHolesGeom);
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_RemoveHoles() resulting geometry has % vertexes...', ST_NPoints(noHolesGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
-    RAISE NOTICE 'TT_TrimSubPolygons() for ''%'' to produce noislands polygon...', fromInv;
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons() for ''%'' to produce noislands polygon...', fromInv;
     noIslandsGeom = TT_TrimSubPolygons(noHolesGeom, minArea);
-    RAISE NOTICE 'After TT_TrimSubPolygons() geometry has % vertexes...', ST_NPoints(noIslandsGeom);
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons() resulting geometry has % vertexes...', ST_NPoints(noIslandsGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
-    RAISE NOTICE 'ST_SimplifyPreserveTopology() for ''%'' to produce simplified polygon...', fromInv;
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : ST_SimplifyPreserveTopology() for ''%'' to produce simplified polygon...', fromInv;
     simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 100);
-    RAISE NOTICE 'After ST_SimplifyPreserveTopology() geometry has % vertexes...', ST_NPoints(simplifiedGeom);
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : ST_SimplifyPreserveTopology() resulting geometry has % vertexes...', ST_NPoints(simplifiedGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
-    RAISE NOTICE 'TT_TrimSubPolygons(TT_BufferedSmooth()) for ''%'' to produce smoothed polygon...', fromInv;
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons(TT_BufferedSmooth()) for ''%'' to produce smoothed polygon...', fromInv;
     smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), minArea);
-    RAISE NOTICE 'After TT_BufferedSmooth() geometry has % vertexes...', ST_NPoints(smoothedGeom);
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_BufferedSmooth() resulting geometry has % vertexes...', ST_NPoints(smoothedGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
     -- Get the count of point from a precomputed table
@@ -1309,7 +1309,7 @@ DO UPDATE SET
       -- Create a gridded version for each. 
       
       -- Create the gridded table if it does not exists and index it.
-      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating table % if it does not exist...', tableName || '_gridded';
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating and indexing table % if it does not exist...', tableName || '_gridded';
       queryStr = format('
 CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I_gridded(inv text, nb_polys int, nb_points int, geom geometry);
 CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.%1$I_gridded USING gist(geom);', tableName);
@@ -1317,14 +1317,14 @@ CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.%1$I_gridded USING
       COMMIT;
 
       -- Create a gridded version for each. Begin by deleting any existing parts.
-      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Deleting % gridded polygons from %...', fromInv, tableName || '_gridded';
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Deleting ''%'' gridded polygons from %...', fromInv, tableName || '_gridded';
       queryStr = format('
 DELETE FROM casfri50_coverage.%1$I_gridded
 WHERE upper(inv) = %2$L;', tableName, upper(fromInv));
       EXECUTE queryStr;
       COMMIT;
 
-      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Inserting % gridded polygons into %...', fromInv, tableName || '_gridded';
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Inserting ''%'' gridded polygons into %...', fromInv, tableName || '_gridded';
       -- INSERT parts into the gridded version.
       queryStr = format('
 INSERT INTO casfri50_coverage.%1$I_gridded (inv, nb_polys, nb_points, geom) 
@@ -1334,10 +1334,11 @@ FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000) geom
       WHERE upper(inv) = %2$L
      ) foo;', tableName, upper(fromInv));
       EXECUTE queryStr;
-      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Processing of % done...', fromInv;
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Processing of ''%'' done...', fromInv;
     END LOOP;
   END
 $$ LANGUAGE plpgsql;
+-- CALL TT_ProduceDerivedCoverages('PC02', TT_InvSuperUnion('PC02'))
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
