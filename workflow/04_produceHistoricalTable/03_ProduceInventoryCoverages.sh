@@ -49,7 +49,7 @@ if [[ "$postProcessing" = "True" || "$postProcessingOnly" = "True" ]]; then
   wait
 
   echo "---------------------------------------------------------------------"
-  echo "Comparing number of points in each coverage type for each inventory...
+  echo "Comparing number of vertexes in each coverage type for each inventory...
   "
 
   # Create a quoted list of inventory IDs for the SQL query
@@ -81,4 +81,25 @@ LEFT OUTER JOIN casfri50_coverage.simplified d USING (inv)
 LEFT OUTER JOIN casfri50_coverage.smoothed e USING (inv)
 ORDER BY inv;
 "
+
+  echo "---------------------------------------------------------------------"
+  echo "List inventories for which the smoothed polygon has 0 vertexes...
+  "
+
+  "$psqlCmd" $psqlConnectionString -c "
+WITH inv_list AS (
+  SELECT inventory_id inv
+  FROM inventory_metadata
+  WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(ARRAY[${quoted_list}])))
+)
+SELECT string_agg(inv, ' ' ORDER BY inv)
+FROM inv_list i
+LEFT OUTER JOIN casfri50_coverage.detailed a USING (inv)
+LEFT OUTER JOIN casfri50_coverage.noholes b USING (inv)
+LEFT OUTER JOIN casfri50_coverage.noislands c USING (inv)
+LEFT OUTER JOIN casfri50_coverage.simplified d USING (inv)
+LEFT OUTER JOIN casfri50_coverage.smoothed e USING (inv)
+WHERE e.nb_points IS NULL;
+"
+
 fi
