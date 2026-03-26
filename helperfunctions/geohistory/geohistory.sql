@@ -857,9 +857,7 @@ FROM %1$I.%2$I%3$s;', schemaName, tableName, filterStr);
 
         queryStr = format('
 DROP SEQUENCE IF EXISTS %1$s_1;
-CREATE SEQUENCE %1$s_1 START 1;
-DROP SEQUENCE IF EXISTS %1$s_2;
-CREATE SEQUENCE %1$s_2 START 1;', seqName);
+CREATE SEQUENCE %1$s_1 START 1;', seqName);
       END IF;
 
       queryStr := queryStr || format('
@@ -876,15 +874,8 @@ WITH first_level_union AS (
   FROM %1$I.%2$I%3$s
   GROUP BY tid
 )
-SELECT ST_Union(geom ORDER BY tid)', schemaName, tableName, filterStr);
-
-      IF progress THEN
-        queryStr := queryStr || format(',
-       CASE WHEN nextval(%1$L) %% 10 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(2nd level) - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_2', expectedGroupNb);
-      END IF;
-
-      queryStr := queryStr || ' 
-FROM first_level_union;';
+SELECT ST_Union(geom ORDER BY tid)
+FROM first_level_union;', schemaName, tableName, filterStr);
     ELSE
       queryStr = format('
 WITH gridded AS (
