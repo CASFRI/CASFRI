@@ -56,50 +56,16 @@ if [[ "$postProcessing" = "True" || "$postProcessingOnly" = "True" ]]; then
   printf -v quoted_list "'%s', " "${fullList[@]}"
   quoted_list=${quoted_list%, } # Remove the last comma and space
 
-  "$psqlCmd" $psqlConnectionString -c "
-WITH inv_list AS (
-  SELECT inventory_id inv
-  FROM inventory_metadata
-  WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(ARRAY[${quoted_list}])))
-), loaded_inv AS (
-  SELECT DISTINCT(inventory_id) inv
-  FROM casfri50.cas_all
-)
-SELECT i.inv inventory_id, 
-       CASE WHEN l.inv IS NULL THEN FALSE ELSE TRUE END is_in_geo_all,
-       CASE WHEN a.nb_points IS NULL THEN 0 ELSE a.nb_points END nb_pts_detailed, 
-       CASE WHEN b.nb_points IS NULL THEN 0 ELSE b.nb_points END nb_pts_noholes, 
-       CASE WHEN c.nb_points IS NULL THEN 0 ELSE c.nb_points END nb_pts_noislands, 
-       CASE WHEN d.nb_points IS NULL THEN 0 ELSE d.nb_points END nb_pts_simplified, 
-       CASE WHEN e.nb_points IS NULL THEN 0 ELSE e.nb_points END nb_pts_smoothed
-FROM inv_list i
-LEFT OUTER JOIN loaded_inv l USING (inv)
-LEFT OUTER JOIN casfri50_coverage.detailed a USING (inv)
-LEFT OUTER JOIN casfri50_coverage.noholes b USING (inv)
-LEFT OUTER JOIN casfri50_coverage.noislands c USING (inv)
-LEFT OUTER JOIN casfri50_coverage.simplified d USING (inv)
-LEFT OUTER JOIN casfri50_coverage.smoothed e USING (inv)
-ORDER BY inv;
-"
+  "$psqlCmd" $psqlConnectionString -P pager=off -c "SELECT * FROM TT_CoveragePointCount(ARRAY[${quoted_list}]);"
 
   echo "---------------------------------------------------------------------"
   echo "List inventories for which the smoothed polygon has 0 vertexes...
   "
 
   "$psqlCmd" $psqlConnectionString -c "
-WITH inv_list AS (
-  SELECT inventory_id inv
-  FROM inventory_metadata
-  WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(ARRAY[${quoted_list}])))
-)
-SELECT string_agg(inv, ' ' ORDER BY inv)
-FROM inv_list i
-LEFT OUTER JOIN casfri50_coverage.detailed a USING (inv)
-LEFT OUTER JOIN casfri50_coverage.noholes b USING (inv)
-LEFT OUTER JOIN casfri50_coverage.noislands c USING (inv)
-LEFT OUTER JOIN casfri50_coverage.simplified d USING (inv)
-LEFT OUTER JOIN casfri50_coverage.smoothed e USING (inv)
-WHERE e.nb_points IS NULL;
+SELECT string_agg(inventory_id, ' ' ORDER BY inventory_id)
+FROM TT_CoveragePointCount(ARRAY[${quoted_list}])
+WHERE nb_pts_smoothed IS NULL;
 "
 
 fi

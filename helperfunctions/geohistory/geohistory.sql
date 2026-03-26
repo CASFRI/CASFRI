@@ -867,7 +867,7 @@ WITH first_level_union AS (
 
       IF progress THEN
         queryStr := queryStr || format(',
-         CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(1st level) - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_1', expectedGroupNb);
+         CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion() - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_1', expectedGroupNb);
       END IF;
 
       queryStr := queryStr || format('
@@ -1116,7 +1116,7 @@ $$ LANGUAGE sql STABLE;
 -- (e.g. 'TRANSLATED_BY_CFS'). Otherwise return the count for all inventories 
 -- found in the rawfri schema.
 -------------------------------------------------------------------------------
--- DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text); 
+-- DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text);
 CREATE OR REPLACE FUNCTION TT_GeoHistoryRowCount(
   invMetadataColName text DEFAULT NULL
 ) 
@@ -1143,6 +1143,90 @@ SELECT * FROM TT_GeoHistoryRowCount((SELECT invarr FROM inv));',
 $$ LANGUAGE plpgsql STABLE;
 -- SELECT (TT_GeoHistoryRowCount()).*
 -- SELECT (TT_GeoHistoryRowCount('TRANSLATED_BY_CUSTOM')).*
+------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_CoveragePointCount
+--
+-- Count the nunber of points (vertexes) of each coverage polygons in the 
+-- casfri50_coverage schema tables for an array of inventory_id.
+-- When an ARRAY of inv id is passed (e.g. ARRAY['AB34', 'AB06']), return the 
+-- count only for these inventories.
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_CoveragePointCount(text[]);
+CREATE OR REPLACE FUNCTION TT_CoveragePointCount(
+  invArr text[]
+) 
+RETURNS TABLE (
+  inventory_id text,
+  is_in_geo_all boolean,
+  nb_pts_detailed int,
+  nb_pts_noholes int,
+  nb_pts_noislands int,
+  nb_pts_simplified int,
+  nb_pts_smoothed int
+) AS $$
+  WITH inv_list AS (
+    SELECT inventory_id inv
+    FROM inventory_metadata
+    WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(invArr)))
+  ), loaded_inv AS (
+    SELECT DISTINCT(inventory_id) inv
+    FROM casfri50.cas_all
+  )
+  SELECT i.inv inventory_id, 
+        CASE WHEN l.inv IS NULL THEN FALSE ELSE TRUE END is_in_geo_all,
+        CASE WHEN a.nb_points IS NULL THEN 0 ELSE a.nb_points END nb_pts_detailed, 
+        CASE WHEN b.nb_points IS NULL THEN 0 ELSE b.nb_points END nb_pts_noholes, 
+        CASE WHEN c.nb_points IS NULL THEN 0 ELSE c.nb_points END nb_pts_noislands, 
+        CASE WHEN d.nb_points IS NULL THEN 0 ELSE d.nb_points END nb_pts_simplified, 
+        CASE WHEN e.nb_points IS NULL THEN 0 ELSE e.nb_points END nb_pts_smoothed
+  FROM inv_list i
+  LEFT OUTER JOIN loaded_inv l USING (inv)
+  LEFT OUTER JOIN casfri50_coverage.detailed a USING (inv)
+  LEFT OUTER JOIN casfri50_coverage.noholes b USING (inv)
+  LEFT OUTER JOIN casfri50_coverage.noislands c USING (inv)
+  LEFT OUTER JOIN casfri50_coverage.simplified d USING (inv)
+  LEFT OUTER JOIN casfri50_coverage.smoothed e USING (inv)
+  ORDER BY inv;
+$$ LANGUAGE sql STABLE;
+--SELECT * FROM TT_CoveragePointCount(ARRAY['Ab03', 'AB06', 'QC03']);
+---------------------------------------
+-- Variant counting points for all inventories listed in 
+-- inventory_metadata or only for those identified in a specific column 
+-- (e.g. 'TRANSLATED_BY_CFS'). Otherwise return the point count for all 
+-- inventories found in the rawfri schema.
+-------------------------------------------------------------------------------
+-- DROP FUNCTION IF EXISTS TT_CoveragePointCount(text);
+CREATE OR REPLACE FUNCTION TT_CoveragePointCount(
+  invMetadataColName text DEFAULT NULL
+) 
+RETURNS TABLE (
+  inventory_id text,
+  is_in_geo_all boolean,
+  nb_pts_detailed int,
+  nb_pts_noholes int,
+  nb_pts_noislands int,
+  nb_pts_simplified int,
+  nb_pts_smoothed int
+) AS $$
+  DECLARE
+    queryStr text;
+  BEGIN
+    queryStr := format('
+WITH inv AS (
+  SELECT array_agg(md.inventory_id) invarr 
+  FROM inventory_metadata md
+  %s
+)
+SELECT * FROM TT_CoveragePointCount((SELECT invarr FROM inv));',
+    CASE WHEN invMetadataColName IS NULL THEN '' ELSE format('  WHERE upper(%s) = ''YES''', invMetadataColName) END);
+    RAISE NOTICE 'queryStr = %', queryStr;
+    RETURN QUERY EXECUTE queryStr;
+  END
+$$ LANGUAGE plpgsql STABLE;
+-- SELECT (TT_CoveragePointCount()).*
+-- SELECT (TT_CoveragePointCount('TRANSLATED_BY_CUSTOM')).*
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------

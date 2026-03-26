@@ -55,6 +55,10 @@ DROP FUNCTION IF EXISTS TT_ExtractNRandomBuffers(text[], name, name, int, double
 DROP FUNCTION IF EXISTS TT_NRandomBuffers(geometry, int, double precision, int, int);
 DROP FUNCTION IF EXISTS TT_RandomBuffer(geometry, double precision, int, int);
 DROP FUNCTION IF EXISTS TT_RandomPoints(geometry, integer, numeric);
+DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text);
+DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text[]);
+DROP FUNCTION IF EXISTS TT_CoveragePointCount(text);
+DROP FUNCTION IF EXISTS TT_CoveragePointCount(text[]);
 
 DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
 DROP TYPE IF EXISTS geomlowuppval;
