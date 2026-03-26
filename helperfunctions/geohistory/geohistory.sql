@@ -1529,7 +1529,7 @@ WHERE inventory_id = upper(%L)', inv);
 ORDER BY id, poly_id';
   
         startTime = clock_timestamp();
-        RAISE NOTICE 'queryStr1 = %', replace(queryStr, '$1', 'startTime');
+        RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
         EXECUTE queryStr USING startTime;
         RAISE NOTICE 'TT_ProduceInvGeoHistory2Steps(%) - Committing...', inv;
         COMMIT;
