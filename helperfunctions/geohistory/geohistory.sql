@@ -857,7 +857,7 @@ FROM %1$I.%2$I%3$s;', schemaName, tableName, filterStr);
 DROP SEQUENCE IF EXISTS %1$s_1;
 CREATE SEQUENCE %1$s_1 START 1;
 DROP SEQUENCE IF EXISTS %1$s_2;
-CREATE SEQUENCE %1$s_2 START 21;', seqName);
+CREATE SEQUENCE %1$s_2 START 1;', seqName);
       END IF;
 
       queryStr := queryStr || format('
