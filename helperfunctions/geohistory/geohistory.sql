@@ -235,7 +235,7 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
                               ST_SRID(ingeom)
         );
         IF ST_Intersects(env, ingeom) THEN
-          intgeom = ST_Intersection(ingeom, env);
+          intgeom = ST_MakeValid(ST_Intersection(ingeom, env));
           IF ST_Dimension(intgeom) = ST_Dimension(ingeom) OR
              ST_GeometryType(intgeom) = ST_GeometryType(ingeom) THEN
             geom = intgeom;
@@ -330,7 +330,7 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
         env = ST_MakeEnvelope(xminrounded + (x - 1) * xgridsize, yminrounded + (y - 1) * ygridsize, xminrounded + x * xgridsize, yminrounded + y * ygridsize, ST_SRID(ingeom));
         BEGIN
           IF ST_Intersects(env, ingeom) THEN
-            intgeom = ST_Intersection(ingeom, env);
+            intgeom = ST_MakeValid(ST_Intersection(ingeom, env));
             IF ST_Dimension(intgeom) = ST_Dimension(ingeom) OR
                ST_GeometryType(intgeom) = ST_GeometryType(ingeom) THEN
               geom = intgeom;
