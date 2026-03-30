@@ -1873,7 +1873,7 @@ INSERT INTO casfri50_history.geo_history';
       IF raiseLog THEN
         -- Add progress tracking to the query using the sequence created earlier
         queryStr = queryStr || format('
-        TT_RaiseLog(''TT_ProduceInvGeoHistory2Steps(Step 2/4 - BASE AGGREGATE)'', id, currval(%1$L)::int, %2$s)', seqName || '_2', expectedGroupNb);
+         TT_RaiseLog(''TT_ProduceInvGeoHistory2Steps(Step 2/4 - BASE AGGREGATE)'', id, currval(%1$L)::int, %2$s)', seqName || '_2', expectedGroupNb);
         IF progress THEN
           queryStr = queryStr || ' AND';
         END IF;
@@ -1885,14 +1885,10 @@ INSERT INTO casfri50_history.geo_history';
          CASE WHEN currval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN 
                    TT_PrintMessage(''%3$s - TT_ProduceInvGeoHistory2Steps(Step 2/5 - BASE AGGREGATE)  - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) 
               ELSE TRUE 
-         END', seqName || '_2', expectedGroupNb, inv);
-      END IF;      
-      IF progress THEN
-        -- Reset the start time for the next portion of the CTE query
-        queryStr = queryStr || '
+         END
 ), newStartTime1 AS (
   SELECT max(lastTime) newTime
-  FROM grouped';
+  FROM grouped', seqName || '_2', expectedGroupNb, inv);
       END IF;
 
       queryStr = queryStr || '
