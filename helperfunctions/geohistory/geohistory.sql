@@ -127,7 +127,7 @@ SELECT sa.syear, sum_area,
 FROM sum_of_areas sa, area_of_union au
 WHERE sa.syear = au.syear AND abs(sum_area - union_area) > %s
 ORDER BY area_diff_in_sq_meters DESC, syear DESC;', tableName, CASE WHEN gridded THEN '_gridded' ELSE '' END, tolerance);
-RAISE NOTICE 'queryStr=%', queryStr;
+    RAISE NOTICE 'queryStr=%', queryStr;
     RETURN QUERY EXECUTE queryStr;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -257,14 +257,15 @@ SELECT * FROM TT_SplitByGrid(NULL::geometry, 10);
 */
 
 -- Debug version of TT_SplitByGrid. Not parallel safe and with RAISE NOTICE for debugging purposes.
---DROP FUNCTION IF EXISTS TT_SplitByGridDebug(text, geometry, double precision, double precision, double precision, double precision);
+--DROP FUNCTION IF EXISTS TT_SplitByGridDebug(text, geometry, double precision, double precision, double precision, double precision, boolean);
 CREATE OR REPLACE FUNCTION TT_SplitByGridDebug(
   id text,
   ingeom geometry,
   xgridsize double precision,
   ygridsize double precision DEFAULT NULL,
   xgridoffset double precision DEFAULT 0.0,
-  ygridoffset double precision DEFAULT 0.0
+  ygridoffset double precision DEFAULT 0.0,
+  progress boolean DEFAULT FALSE
 )
 RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
   DECLARE
@@ -284,6 +285,9 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
     intgeom geometry;
     xfloor int;
     yfloor int;
+    nbCell int;
+    cellCnt int := 0;
+    startTime timestamptz := clock_timestamp();
   BEGIN
     IF ingeom IS NULL OR ST_IsEmpty(ingeom) THEN
       geom = ingeom;
@@ -311,8 +315,18 @@ RETURNS TABLE (geom geometry, tid int8, tx int, ty int, tgeom geometry) AS $$
     width = round((xmaxrounded - xminrounded) / xgridsize);
     height = round((ymaxrounded - yminrounded) / ygridsize);
 
+    IF progress THEN
+      nbCell = width * height;
+      RAISE NOTICE 'TT_SplitByGridDebug() - Splitting into a % x % grid of % cells...', width, height, nbCell;
+    END IF;
+
     FOR x IN 1..width LOOP
       FOR y IN 1..height LOOP
+        cellCnt := cellCnt + 1;
+        IF progress AND (cellCnt % 100 = 0 OR cellCnt = nbCell) THEN
+          RAISE NOTICE 'TT_SplitByGridDebug() - Processing row % - column % - %', lpad(x::text, 3, '0'), lpad(y::text, 3, '0'), TT_ProgressMsg(cellcnt, nbCell, startTime);
+        END IF;
+
         env = ST_MakeEnvelope(xminrounded + (x - 1) * xgridsize, yminrounded + (y - 1) * ygridsize, xminrounded + x * xgridsize, yminrounded + y * ygridsize, ST_SRID(ingeom));
         BEGIN
           IF ST_Intersects(env, ingeom) THEN
@@ -722,87 +736,138 @@ $$ LANGUAGE sql IMMUTABLE;
 ------------------------------------------------------------------------------
 -- TT_RemoveHoles
 --
--- Remove all hole from a polygon or a multipolygon
--- Used by TT_IsSurrounded_FinalFN2()
+-- Remove all holes greater than minKeepArea from a polygon or a multipolygon.
 ----------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_RemoveHoles(
   inGeom geometry,
-  minArea double precision DEFAULT NULL
+  minKeepArea double precision DEFAULT NULL,
+  progress boolean DEFAULT FALSE
 )
 RETURNS geometry AS $$
   DECLARE
-    returnGeom geometry;
+    currentGeom geometry;
+    finalGeom geometry;
+    returnGeom geometry := NULL;
+    i int := 0;
+    nbPoly int;
+    startTime timestamptz := clock_timestamp();
   BEGIN
-    --RAISE NOTICE 'TT_RemoveHoles() : START...';
-
-    IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
+    -- Early exit
+    IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) NOT IN ('ST_Polygon','ST_MultiPolygon')) THEN
+      RAISE NOTICE 'TT_RemoveHoles() - inGeom is either NULL, empty or not a polygon...';
       RETURN inGeom;
     END IF;
 
-    --RAISE NOTICE 'inGeom is %', CASE WHEN ST_IsValid(inGeom) THEN 'VALID' ELSE 'INVALID' END;
+    IF progress THEN
+      RAISE NOTICE 'TT_RemoveHoles() - Counting the number of subpolygons to process in order to display progress...';
+    END IF;
+    SELECT ST_NumGeometries(ST_Multi(inGeom)) INTO nbPoly;
+    RAISE NOTICE 'TT_RemoveHoles() - % subpolygons to process...', nbPoly;
 
-    WITH all_geoms AS (
-      SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
-    ), polygons AS (
-      SELECT ST_MakePolygon(ST_ExteriorRing(a.geom),  
-                       ARRAY(SELECT ST_ExteriorRing(b.geom) inner_ring
-                             FROM (SELECT (ST_DumpRings(geom)).*) b 
-                             WHERE b.path[1] > 0 AND
-                                   CASE WHEN minArea IS NULL OR minArea = 0 THEN FALSE ELSE TRUE END AND
-                                   ST_Area(b.geom) >= minArea
-                            )
-                           ) final_geom
-      FROM all_geoms a
-    )
-    SELECT ST_BuildArea(ST_Union(final_geom)) geom
-    FROM polygons INTO returnGeom;
-    
-    --RAISE NOTICE 'TT_RemoveHoles() : END Geometry has now % points...', ST_NPoints(returnGeom);
+    -- Loop through each polygon
+    FOR currentGeom IN
+      SELECT ST_GeometryN(ST_Multi(inGeom), gs)
+      FROM generate_series(1, nbPoly) AS gs
+    LOOP
+      i := i + 1;
+      -- Build polygon with filtered holes
+      SELECT ST_MakePolygon(ST_ExteriorRing(currentGeom),
+              ARRAY(SELECT ST_ExteriorRing(r.geom)
+                    FROM (SELECT (ST_DumpRings(currentGeom)).*) AS r
+                    WHERE r.path[1] > 0 AND minKeepArea IS NOT NULL AND minKeepArea <> 0 AND ST_Area(r.geom) >= minKeepArea
+              )
+            )
+      INTO finalGeom;
 
+      -- Incremental union
+      IF returnGeom IS NULL THEN
+        returnGeom := finalGeom;
+      ELSE
+        returnGeom := ST_Collect(returnGeom, finalGeom);
+      END IF;
+
+      -- Optional progress
+      IF progress AND (i % 100 = 0 OR i = nbPoly) THEN
+        PERFORM TT_PrintMessage('TT_RemoveHoles() - ' || TT_ProgressMsg(i, nbPoly, startTime));
+      END IF;
+    END LOOP;
+
+    -- Final union
+    IF progress THEN
+      RAISE NOTICE 'TT_RemoveHoles() - Final union with ST_BuildArea(ST_UnaryUnion())...';
+    END IF;
+    returnGeom := ST_BuildArea(ST_UnaryUnion(returnGeom));
     RETURN returnGeom;
   END;
-$$ LANGUAGE 'plpgsql' IMMUTABLE;
+$$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 -- TT_TrimSubPolygons
 --
--- Return only the biggest polygons from a multipolygon
+-- Return only polygons parts bigger than minKeepArea from a multipolygon.
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_TrimSubPolygons(
   inGeom geometry,
-  minArea double precision DEFAULT NULL
+  minKeepArea double precision DEFAULT 0,
+  progress boolean DEFAULT FALSE
 )
 RETURNS geometry AS $$
   DECLARE
-    returnGeom geometry;
+    currentGeom geometry;
+    currentGeomArea double precision;
+    finalGeom geometry;
+    returnGeom geometry := NULL;
+    i int := 0;
+    nbPoly int;
+    startTime timestamptz := clock_timestamp();
   BEGIN
-    --RAISE NOTICE 'TT_TrimSubPolygons() : START...';
-
-    IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) != 'ST_Polygon' AND ST_GeometryType(inGeom) != 'ST_MultiPolygon') THEN
+    IF inGeom IS NULL OR ST_IsEmpty(inGeom) OR (ST_GeometryType(inGeom) NOT IN ('ST_Polygon','ST_MultiPolygon')) THEN
+      RAISE NOTICE 'TT_TrimSubPolygons() - inGeom is either NULL, empty or not a polygon...';
       RETURN inGeom;
     END IF;
 
-    --RAISE NOTICE 'TT_TrimSubPolygons() : 111...';
+    IF progress THEN
+      RAISE NOTICE 'TT_TrimSubPolygons() - Counting the number of subpolygons to process in order to display progress...';
+    END IF;
+    SELECT ST_NumGeometries(ST_Multi(inGeom)) INTO nbPoly;
+    RAISE NOTICE 'TT_TrimSubPolygons() - % subpolygons to process...', nbPoly;
 
-    WITH all_geoms AS (
-      SELECT ST_GeometryN(ST_Multi(inGeom), generate_series(1, ST_NumGeometries(ST_Multi(inGeom)))) AS geom
-    )
-    SELECT ST_Union(geom) geom
-    FROM all_geoms
-    WHERE ST_Area(geom) >= minArea INTO returnGeom;
+    -- Loop through each polygon
+    FOR currentGeom IN
+      SELECT ST_GeometryN(ST_Multi(inGeom), gs)
+      FROM generate_series(1, nbPoly) AS gs
+    LOOP
+      i := i + 1;
+      -- Build polygon with filtered holes
+      currentGeomArea := ST_Area(currentGeom);
+      IF currentGeomArea > 0 AND currentGeomArea >= minKeepArea THEN
+      -- Incremental union
+        IF returnGeom IS NULL THEN
+          returnGeom := currentGeom;
+        ELSE
+          returnGeom := ST_Collect(returnGeom, currentGeom);
+        END IF;
+      END IF; 
 
-    --RAISE NOTICE 'TT_TrimSubPolygons() : 222...';
+      -- Optional progress
+      IF progress AND (i % 100 = 0 OR i = nbPoly) THEN
+        PERFORM TT_PrintMessage('TT_TrimSubPolygons() - ' || TT_ProgressMsg(i, nbPoly, startTime));
+      END IF;
+    END LOOP;
 
-    IF returnGeom IS NULL THEN
-      --RAISE NOTICE 'TT_TrimSubPolygons() : 333...';
+    IF returnGeom IS NULL OR ST_IsEmpty(returnGeom) OR ST_Area(returnGeom) <= 0 THEN
+      RAISE NOTICE 'TT_TrimSubPolygons() - Final geometry is either NULL, empty or not a polygon...';
       RETURN ST_SetSRID('POLYGON EMPTY'::geometry, ST_SRID(inGeom));
     END IF;
 
-    --RAISE NOTICE 'TT_TrimSubPolygons() : END Geometry has now % points...', ST_NPoints(returnGeom);
-
+    -- Final union
+    IF progress THEN
+      RAISE NOTICE 'TT_TrimSubPolygons() - Final union with ST_BuildArea(ST_UnaryUnion())...';
+    END IF;
+    returnGeom := ST_BuildArea(ST_UnaryUnion(returnGeom));
     RETURN returnGeom;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
@@ -1263,12 +1328,12 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
   BEGIN
     RAISE NOTICE '-------------------------------------------------------------------';
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_RemoveHoles() for ''%'' to produce noholes polygon...', fromInv;
-    noHolesGeom = TT_RemoveHoles(detailedGeom, minArea);
+    noHolesGeom = TT_RemoveHoles(detailedGeom, minArea, TRUE);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_RemoveHoles() resulting geometry has % vertexes...', ST_NPoints(noHolesGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons() for ''%'' to produce noislands polygon...', fromInv;
-    noIslandsGeom = TT_TrimSubPolygons(noHolesGeom, minArea);
+    noIslandsGeom = TT_TrimSubPolygons(noHolesGeom, minArea, TRUE);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons() resulting geometry has % vertexes...', ST_NPoints(noIslandsGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
@@ -1280,7 +1345,6 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons(TT_BufferedSmooth()) for ''%'' to produce smoothed polygon...', fromInv;
     smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), minArea);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_BufferedSmooth() resulting geometry has % vertexes...', ST_NPoints(smoothedGeom);
-    RAISE NOTICE '-------------------------------------------------------------------';
 
     -- Get the count of point from a precomputed table
     SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE upper(inv) = upper(fromInv) INTO cnt;
@@ -1329,7 +1393,7 @@ WHERE upper(inv) = %2$L;', tableName, upper(fromInv));
       queryStr = format('
 INSERT INTO casfri50_coverage.%1$I_gridded (inv, nb_polys, nb_points, geom) 
 SELECT inv, nb_polys, ST_NPoints((geom).geom) nb_points, (geom).geom geom
-FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000) geom
+FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000, NULL, 0, 0, TRUE) geom
       FROM casfri50_coverage.%1$I
       WHERE upper(inv) = %2$L
      ) foo;', tableName, upper(fromInv));
