@@ -29,13 +29,13 @@ DROP FUNCTION IF EXISTS TT_SafeOverlaps(geometry, geometry, double precision, te
 DROP FUNCTION IF EXISTS TT_SafeOverlaps(geometry, geometry, double precision, text, text, boolean, boolean, text);
 DROP FUNCTION IF EXISTS TT_GeoHistoryOverlaps(geometry, geometry, boolean, double precision);
 DROP FUNCTION IF EXISTS TT_SplitByGrid(geometry, double precision, double precision, double precision, double precision);
-DROP FUNCTION IF EXISTS TT_SplitByGridDebug(text, geometry, double precision, double precision, double precision, double precision);
+DROP FUNCTION IF EXISTS TT_SplitByGridDebug(text, geometry, double precision, double precision, double precision, double precision, boolean);
 DROP FUNCTION IF EXISTS TT_PrintMessage(text);
 DROP FUNCTION IF EXISTS TT_ProgressMsg(text, text, int, int);
 DROP FUNCTION IF EXISTS TT_LoadPostgresCSVLogs(text, text, text, text);
 DROP FUNCTION IF EXISTS TT_BufferedSmooth(geometry, double precision);
-DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision);
-DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision);
+DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision, boolean);
+DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision, boolean);
 DROP FUNCTION IF EXISTS TT_InvSuperUnion(text, boolean);
 DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text, boolean, int, boolean);
 DROP FUNCTION IF EXISTS TT_SuperUnionDebug(name, name, name, name, text);
@@ -57,8 +57,8 @@ DROP FUNCTION IF EXISTS TT_RandomBuffer(geometry, double precision, int, int);
 DROP FUNCTION IF EXISTS TT_RandomPoints(geometry, integer, numeric);
 DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text);
 DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text[]);
-DROP FUNCTION IF EXISTS TT_CoveragePointCount(text);
-DROP FUNCTION IF EXISTS TT_CoveragePointCount(text[]);
+DROP FUNCTION IF EXISTS TT_CoveragePointCount(text, boolean);
+DROP FUNCTION IF EXISTS TT_CoveragePointCount(text[], boolean);
 
 DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
 DROP TYPE IF EXISTS geomlowuppval;
