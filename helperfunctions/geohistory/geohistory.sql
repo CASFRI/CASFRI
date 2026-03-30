@@ -905,11 +905,14 @@ RETURNS geometry AS $$
   WHERE %s', filterStr);
       RAISE NOTICE 'TT_SuperUnion() : START with ''%''...', filterStr;
     END IF;
- 
+    
     IF alreadyGridded THEN
+      -----------------------------------------------------------------------------
+      -- Already gridded version
       -- For now, we implemented progress only for the alreadyGridded case because it is the previleged method and
       -- the implementation for the non alreadyGridded case is very different (count has to be generated inside the CTE).
-      IF progress THEN
+     -----------------------------------------------------------------------------
+     IF progress THEN
         countQuery = format('
 SELECT count(DISTINCT tid)
 FROM %1$I.%2$I%3$s;', schemaName, tableName, filterStr);
@@ -943,6 +946,9 @@ WITH first_level_union AS (
 SELECT ST_Union(geom ORDER BY tid)
 FROM first_level_union;', schemaName, tableName, filterStr);
     ELSE
+      -----------------------------------------------------------------------------
+      -- Non already gridded version
+      -----------------------------------------------------------------------------
       queryStr = format('
 WITH gridded AS (
   SELECT TT_SplitByGrid(%1$I, %5$s) split 
@@ -1300,7 +1306,7 @@ SELECT * FROM TT_CoveragePointCount(ARRAY['Ab03', 'AB06', 'QC03'], FALSE);
 -- (e.g. 'TRANSLATED_BY_CFS'). Otherwise return the point count for all 
 -- inventories found in the rawfri schema.
 -------------------------------------------------------------------------------
--- DROP FUNCTION IF EXISTS TT_CoveragePointCount(text);
+-- DROP FUNCTION IF EXISTS TT_CoveragePointCount(text, boolean);
 CREATE OR REPLACE FUNCTION TT_CoveragePointCount(
   invMetadataColName text DEFAULT NULL,
   checkExists boolean DEFAULT TRUE
