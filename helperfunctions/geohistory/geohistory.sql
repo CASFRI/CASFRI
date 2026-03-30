@@ -1226,9 +1226,10 @@ $$ LANGUAGE plpgsql STABLE;
 -- When an ARRAY of inv id is passed (e.g. ARRAY['AB34', 'AB06']), return the 
 -- count only for these inventories.
 -------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_CoveragePointCount(text[]);
+--DROP FUNCTION IF EXISTS TT_CoveragePointCount(text[], boolean);
 CREATE OR REPLACE FUNCTION TT_CoveragePointCount(
-  invArr text[]
+  invArr text[],
+  checkExists boolean DEFAULT TRUE
 ) 
 RETURNS TABLE (
   inventory_id text,
@@ -1239,31 +1240,60 @@ RETURNS TABLE (
   nb_pts_simplified int,
   nb_pts_smoothed int
 ) AS $$
-  WITH inv_list AS (
-    SELECT inventory_id inv
-    FROM inventory_metadata
-    WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST(invArr)))
-  ), loaded_inv AS (
-    SELECT DISTINCT(inventory_id) inv
-    FROM casfri50.cas_all
-  )
-  SELECT i.inv inventory_id, 
-        CASE WHEN l.inv IS NULL THEN FALSE ELSE TRUE END is_in_geo_all,
-        CASE WHEN a.nb_points IS NULL THEN 0 ELSE a.nb_points END nb_pts_detailed, 
-        CASE WHEN b.nb_points IS NULL THEN 0 ELSE b.nb_points END nb_pts_noholes, 
-        CASE WHEN c.nb_points IS NULL THEN 0 ELSE c.nb_points END nb_pts_noislands, 
-        CASE WHEN d.nb_points IS NULL THEN 0 ELSE d.nb_points END nb_pts_simplified, 
-        CASE WHEN e.nb_points IS NULL THEN 0 ELSE e.nb_points END nb_pts_smoothed
-  FROM inv_list i
-  LEFT OUTER JOIN loaded_inv l USING (inv)
-  LEFT OUTER JOIN casfri50_coverage.detailed a USING (inv)
-  LEFT OUTER JOIN casfri50_coverage.noholes b USING (inv)
-  LEFT OUTER JOIN casfri50_coverage.noislands c USING (inv)
-  LEFT OUTER JOIN casfri50_coverage.simplified d USING (inv)
-  LEFT OUTER JOIN casfri50_coverage.smoothed e USING (inv)
-  ORDER BY inv;
-$$ LANGUAGE sql STABLE;
---SELECT * FROM TT_CoveragePointCount(ARRAY['Ab03', 'AB06', 'QC03']);
+  DECLARE
+    queryStr text;
+  BEGIN
+    queryStr := '
+WITH inv_list AS (
+  SELECT inventory_id inv
+  FROM inventory_metadata
+  WHERE upper(inventory_id) = ANY(SELECT upper(UNNEST($1)))';
+      
+    IF checkExists THEN
+      queryStr := queryStr ||'
+), loaded_inv AS (
+  SELECT DISTINCT(inventory_id) inv
+  FROM casfri50.cas_all';
+    END IF;
+    
+    queryStr := queryStr ||'
+)
+SELECT i.inv::text inventory_id,';
+    IF checkExists THEN
+      queryStr := queryStr ||'
+  CASE WHEN l.inv IS NULL THEN FALSE ELSE TRUE END is_in_geo_all,';
+    ELSE 
+      queryStr := queryStr ||'
+  NULL::boolean is_in_geo_all,';
+    END IF;
+    
+    queryStr := queryStr ||'
+  coalesce(a.nb_points, 0) nb_pts_detailed, 
+  coalesce(b.nb_points, 0) nb_pts_noholes, 
+  coalesce(c.nb_points, 0) nb_pts_noislands, 
+  coalesce(d.nb_points, 0) nb_pts_simplified, 
+  coalesce(e.nb_points, 0) nb_pts_smoothed
+FROM inv_list i';
+    IF checkExists THEN
+      queryStr := queryStr ||'
+LEFT OUTER JOIN loaded_inv l USING (inv)';
+    END IF;
+    
+    queryStr := queryStr ||'
+LEFT OUTER JOIN casfri50_coverage.detailed a USING (inv)
+LEFT OUTER JOIN casfri50_coverage.noholes b USING (inv)
+LEFT OUTER JOIN casfri50_coverage.noislands c USING (inv)
+LEFT OUTER JOIN casfri50_coverage.simplified d USING (inv)
+LEFT OUTER JOIN casfri50_coverage.smoothed e USING (inv)
+ORDER BY inv;';
+    RAISE NOTICE 'queryStr=%', replace(queryStr, '$1', '''' || invArr::text || '''::text[]');
+    RETURN QUERY EXECUTE queryStr USING invArr;
+  END
+$$ LANGUAGE plpgsql STABLE;
+/*
+SELECT * FROM TT_CoveragePointCount(ARRAY['Ab03', 'AB06', 'QC03']);
+SELECT * FROM TT_CoveragePointCount(ARRAY['Ab03', 'AB06', 'QC03'], FALSE);
+*/
 ---------------------------------------
 -- Variant counting points for all inventories listed in 
 -- inventory_metadata or only for those identified in a specific column 
@@ -1272,7 +1302,8 @@ $$ LANGUAGE sql STABLE;
 -------------------------------------------------------------------------------
 -- DROP FUNCTION IF EXISTS TT_CoveragePointCount(text);
 CREATE OR REPLACE FUNCTION TT_CoveragePointCount(
-  invMetadataColName text DEFAULT NULL
+  invMetadataColName text DEFAULT NULL,
+  checkExists boolean DEFAULT TRUE
 ) 
 RETURNS TABLE (
   inventory_id text,
@@ -1292,14 +1323,17 @@ WITH inv AS (
   FROM inventory_metadata md
   %s
 )
-SELECT * FROM TT_CoveragePointCount((SELECT invarr FROM inv));',
+SELECT * FROM TT_CoveragePointCount((SELECT invarr FROM inv), $1);',
     CASE WHEN invMetadataColName IS NULL THEN '' ELSE format('WHERE upper(%s) = ''YES''', invMetadataColName) END);
-    RAISE NOTICE 'queryStr = %', queryStr;
-    RETURN QUERY EXECUTE queryStr;
+    RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', checkExists::text);
+    RETURN QUERY EXECUTE queryStr USING checkExists;
   END
 $$ LANGUAGE plpgsql STABLE;
--- SELECT (TT_CoveragePointCount()).*
--- SELECT (TT_CoveragePointCount('TRANSLATED_BY_CUSTOM')).*
+/*
+SELECT (TT_CoveragePointCount()).*
+SELECT (TT_CoveragePointCount('TRANSLATED_BY_ULAVAL')).*
+SELECT (TT_CoveragePointCount('TRANSLATED_BY_ULAVAL', FALSE)).*
+*/
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
