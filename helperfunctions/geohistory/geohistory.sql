@@ -772,7 +772,7 @@ RETURNS geometry AS $$
       RAISE NOTICE 'TT_RemoveHoles() - Counting the number of subpolygons to process in order to display progress...';
     END IF;
     SELECT ST_NumGeometries(ST_Multi(inGeom)) INTO nbPoly;
-    RAISE NOTICE 'TT_RemoveHoles() - % subpolygons to process...', nbPoly;
+    RAISE NOTICE 'TT_RemoveHoles() - % subpolygons to process...', lpad(nbPoly::text, 3, ' ');
 
     -- Loop through each polygon
     FOR currentGeom IN
@@ -842,7 +842,7 @@ RETURNS geometry AS $$
       RAISE NOTICE 'TT_TrimSubPolygons() - Counting the number of subpolygons to process in order to display progress...';
     END IF;
     SELECT ST_NumGeometries(ST_Multi(inGeom)) INTO nbPoly;
-    RAISE NOTICE 'TT_TrimSubPolygons() - % subpolygons to process...', nbPoly;
+    RAISE NOTICE 'TT_TrimSubPolygons() - % subpolygons to process...', lpad(nbPoly::text, 3, ' ');
 
     -- Loop through each polygon
     FOR currentGeom IN
