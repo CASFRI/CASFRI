@@ -883,6 +883,22 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 -------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
+-- TT_TrimHolesAndIslands
+--
+-- Remove holes and islands smaller than minKeepArea from a multipolygon.
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_TrimHolesAndIslands(geometry, double precision);
+CREATE OR REPLACE FUNCTION TT_TrimHolesAndIslands(
+  inGeom geometry,
+  minKeepArea double precision DEFAULT 0,
+  progress boolean DEFAULT FALSE
+)
+RETURNS geometry AS $$
+  SELECT TT_TrimSubPolygons(TT_RemoveHoles(inGeom, minKeepArea, progress), minKeepArea, progress);
+$$ LANGUAGE sql IMMUTABLE;
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
 -- TT_SuperUnion
 --
 -- ST_Union() all polygons in a two stage process 
@@ -1365,43 +1381,36 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
   sparseBuf double precision DEFAULT 5000 -- buffer to apply for sparse geometries
 ) AS $$
   DECLARE
-    tableNameArr text[] = ARRAY['detailed', 'noholes', 'noislands', 'simplified', 'smoothed'];
+    tableNameArr text[] = ARRAY['detailed', 'noholesnoislands', 'simplified', 'smoothed'];
     tableName text;
     queryStr text;
     outGeom geometry;
-    noHolesGeom geometry;
-    noIslandsGeom geometry;
+    noHolesNoIslandsGeom geometry;
     simplifiedGeom geometry;
     smoothedGeom geometry;
     cnt int;
   BEGIN
     RAISE NOTICE '-------------------------------------------------------------------';
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_RemoveHoles() for ''%'' to produce noholes polygon...', fromInv;
-    noHolesGeom = TT_RemoveHoles(detailedGeom, minArea, TRUE);
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_RemoveHoles() resulting geometry has % vertexes...', ST_NPoints(noHolesGeom);
-    RAISE NOTICE '-------------------------------------------------------------------';
-
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons() for ''%'' to produce noislands polygon...', fromInv;
-    noIslandsGeom = TT_TrimSubPolygons(noHolesGeom, minArea, TRUE);
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons() resulting geometry has % vertexes...', ST_NPoints(noIslandsGeom);
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands() for ''%'' to produce no holes and no islands polygon...', fromInv;
+    noHolesNoIslandsGeom = TT_TrimHolesAndIslands(detailedGeom, minArea, TRUE);
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands() resulting geometry has % vertexes...', ST_NPoints(noHolesNoIslandsGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : ST_SimplifyPreserveTopology() for ''%'' to produce simplified polygon...', fromInv;
-    simplifiedGeom = ST_SimplifyPreserveTopology(noIslandsGeom, 100);
+    simplifiedGeom = ST_SimplifyPreserveTopology(noHolesNoIslandsGeom, 100);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : ST_SimplifyPreserveTopology() resulting geometry has % vertexes...', ST_NPoints(simplifiedGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimSubPolygons(TT_BufferedSmooth()) for ''%'' to produce smoothed polygon...', fromInv;
-    smoothedGeom = TT_TrimSubPolygons(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), minArea);
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_BufferedSmooth() resulting geometry has % vertexes...', ST_NPoints(smoothedGeom);
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands(TT_BufferedSmooth()) for ''%'' to produce smoothed polygon...', fromInv;
+    smoothedGeom = TT_TrimHolesAndIslands(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), ST_Area(detailedGeom)/100, TRUE);
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands(TT_BufferedSmooth()) resulting geometry has % vertexes...', ST_NPoints(smoothedGeom);
 
     -- Get the count of point from a precomputed table
     SELECT a.cnt FROM casfri50_coverage.inv_counts a WHERE upper(inv) = upper(fromInv) INTO cnt;
 
     FOREACH tableName IN ARRAY tableNameArr LOOP
       outGeom = CASE WHEN tableName = 'detailed' THEN detailedGeom
-                     WHEN tableName = 'noholes' THEN noHolesGeom
-                     WHEN tableName = 'noislands' THEN noIslandsGeom
+                     WHEN tableName = 'noholesnoislands' THEN noHolesNoIslandsGeom
                      WHEN tableName = 'simplified' THEN simplifiedGeom
                      WHEN tableName = 'smoothed' THEN smoothedGeom
                 END;
