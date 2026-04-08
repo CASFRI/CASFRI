@@ -728,7 +728,9 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE STRICT;
 ------------------------------------------------------------------------------
 -- TT_BufferedSmooth
 --
--- Simplify a polygon by adding and removing a buffer around it
+-- Smooths a polygon by applying a sequence of buffer operations (expand → 
+-- contract → expand). This process generalizes the shape, removes narrow 
+-- external spikes by eliminating them, and fills small internal holes.
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_BufferedSmooth(geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_BufferedSmooth(
@@ -736,7 +738,7 @@ CREATE OR REPLACE FUNCTION TT_BufferedSmooth(
   bufsize double precision DEFAULT 0
 )
 RETURNS geometry AS $$
-  SELECT ST_Buffer(ST_Buffer($1, $2), -$2)
+  SELECT ST_Buffer(ST_Buffer(ST_Buffer(geom, bufsize), -(2 * bufsize)), bufsize)
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 
