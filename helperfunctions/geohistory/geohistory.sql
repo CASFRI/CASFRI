@@ -1553,6 +1553,7 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
     simplifiedGeom geometry;
     smoothedGeom geometry;
     cnt int;
+    tmpTableName text;
   BEGIN
     RAISE NOTICE '-------------------------------------------------------------------';
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands() for ''%'' to produce no holes and no islands polygon...', fromInv;
@@ -1597,29 +1598,40 @@ DO UPDATE SET
       -- Create the gridded table if it does not exists and index it.
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating and indexing table % if it does not exist...', tableName || '_gridded';
       queryStr = format('
-CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I_gridded(inv text, nb_polys int, nb_points int, geom geometry);
-CREATE INDEX IF NOT EXISTS %1$I_geom_idx ON casfri50_coverage.%1$I_gridded USING gist(geom);', tableName);
+CREATE TABLE IF NOT EXISTS casfri50_coverage.%1$I(inv text, nb_polys int, nb_points int, geom geometry);
+CREATE INDEX IF NOT EXISTS %1$s_geom_idx ON casfri50_coverage.%1$I USING gist(geom);', tableName || '_gridded');
       EXECUTE queryStr;
       COMMIT;
 
       -- Create a gridded version for each. Begin by deleting any existing parts.
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Deleting ''%'' gridded polygons from %...', fromInv, tableName || '_gridded';
       queryStr = format('
-DELETE FROM casfri50_coverage.%1$I_gridded
-WHERE upper(inv) = %2$L;', tableName, upper(fromInv));
+DELETE FROM casfri50_coverage.%1$I
+WHERE upper(inv) = %2$L;', tableName || '_gridded', upper(fromInv));
       EXECUTE queryStr;
       COMMIT;
 
-      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Inserting ''%'' gridded polygons into %...', fromInv, tableName || '_gridded';
-      -- INSERT parts into the gridded version.
+      -- Create parts into a TEMP gridded table.
+      tmpTableName := tableName || '_' || lower(fromInv) || '_gridded';
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Creating TEMP table ''%'' with gridded polygons from table %...', tmpTableName, tableName;
       queryStr = format('
-INSERT INTO casfri50_coverage.%1$I_gridded (inv, nb_polys, nb_points, geom) 
+CREATE TEMP TABLE IF NOT EXISTS %1$I AS
 SELECT inv, nb_polys, ST_NPoints((geom).geom) nb_points, (geom).geom geom
 FROM (SELECT inv, nb_polys, TT_SplitByGridDebug(inv, geom, 10000, NULL, 0, 0, TRUE) geom
-      FROM casfri50_coverage.%1$I
-      WHERE upper(inv) = %2$L
-     ) foo;', tableName, upper(fromInv));
+      FROM casfri50_coverage.%2$I
+      WHERE upper(inv) = %3$L
+     ) foo;', tmpTableName, tableName, upper(fromInv));
       EXECUTE queryStr;
+      COMMIT;
+
+      -- INSERT parts into the main gridded version.
+      RAISE NOTICE 'TT_ProduceDerivedCoverages() : Inserting gridded polygons from TEMP table % into table %...',  tmpTableName, tableName || '_gridded';
+      queryStr = format('
+INSERT INTO casfri50_coverage.%1$I 
+SELECT inv, nb_polys, nb_points, geom
+FROM %2$I;', tableName || '_gridded', tmpTableName);
+      EXECUTE queryStr;
+
       RAISE NOTICE 'TT_ProduceDerivedCoverages() : Processing of ''%'' done...', fromInv;
     END LOOP;
   END
