@@ -1432,7 +1432,7 @@ CREATE OR REPLACE FUNCTION TT_CoveragePointCount(
 ) 
 RETURNS TABLE (
   inventory_id text,
-  is_in_geo_all boolean,
+  is_in_flat_table boolean,
   nb_pts_detailed int,
   nb_pts_noholes int,
   nb_pts_noislands int,
@@ -1452,7 +1452,7 @@ WITH inv_list AS (
       queryStr := queryStr ||'
 ), loaded_inv AS (
   SELECT DISTINCT(inventory_id) inv
-  FROM casfri50.cas_all';
+  FROM casfri50_flat.cas_flat_all_layers_same_row';
     END IF;
     
     queryStr := queryStr ||'
@@ -1460,10 +1460,10 @@ WITH inv_list AS (
 SELECT i.inv::text inventory_id,';
     IF checkExists THEN
       queryStr := queryStr ||'
-  CASE WHEN l.inv IS NULL THEN FALSE ELSE TRUE END is_in_geo_all,';
+  CASE WHEN l.inv IS NULL THEN FALSE ELSE TRUE END is_in_flat_table,';
     ELSE 
       queryStr := queryStr ||'
-  NULL::boolean is_in_geo_all,';
+  NULL::boolean is_in_flat_table,';
     END IF;
     
     queryStr := queryStr ||'
@@ -1506,7 +1506,7 @@ CREATE OR REPLACE FUNCTION TT_CoveragePointCount(
 ) 
 RETURNS TABLE (
   inventory_id text,
-  is_in_geo_all boolean,
+  is_in_flat_table boolean,
   nb_pts_detailed int,
   nb_pts_noholes int,
   nb_pts_noislands int,
