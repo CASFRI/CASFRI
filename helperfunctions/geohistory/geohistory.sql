@@ -1661,7 +1661,7 @@ RETURNS text AS $$
       elapsedTime = EXTRACT(EPOCH FROM clock_timestamp() - startTime);
       --RAISE NOTICE 'TT_ProgressMsg() - elapsedTime=%', elapsedTime;
       remainingTime = ((100 - percentDone) * elapsedTime)/percentDone;
-      msg = msg || ' - ' || to_char(clock_timestamp(), 'HH24hMI') || ', ' || TT_PrettyDuration(elapsedTime, 3) || ' elapsed, ' || TT_PrettyDuration(remainingTime, 3) || ' remaining';
+      msg = msg || ' - ' || to_char(clock_timestamp(), 'HH24hMI') || ', ' || TT_PrettyDuration(elapsedTime, 3, 2) || ' elapsed, ' || TT_PrettyDuration(remainingTime, 3, 2) || ' remaining';
     END IF;
     msg = msg || '...';
     RETURN msg;
