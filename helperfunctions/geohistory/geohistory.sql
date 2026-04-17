@@ -760,9 +760,10 @@ $$ LANGUAGE sql IMMUTABLE;
 ------------------------------------------------------------------------------
 -- TT_RemoveHoles
 --
--- Remove all holes greater than minKeepArea from a polygon or a multipolygon.
-----------------------------------------------------
---DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision);
+-- Remove holes of size smaller than minKeepArea from a polygon or a 
+-- multipolygon. By default, minKeepArea is NULL and all holes are removed.
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_RemoveHoles(geometry, double precision, boolean);
 CREATE OR REPLACE FUNCTION TT_RemoveHoles(
   inGeom geometry,
   minKeepArea double precision DEFAULT NULL,
@@ -789,19 +790,21 @@ RETURNS geometry AS $$
       RAISE NOTICE 'TT_RemoveHoles() - Counting the number of subpolygons to process in order to display progress...';
     END IF;
     SELECT ST_NumGeometries(ST_Multi(inGeom)) INTO nbPoly;
-    RAISE NOTICE 'TT_RemoveHoles() - % subpolygons to process...', lpad(nbPoly::text, 3, ' ');
 
-    -- Loop through each polygon
+    -- Loop through each polygon of the multipolygon
     FOR currentGeom IN
       SELECT ST_GeometryN(ST_Multi(inGeom), gs)
       FROM generate_series(1, nbPoly) AS gs
     LOOP
       i := i + 1;
-      -- Build polygon with filtered holes
+      -- Build polygon with holes bigger than minKeepArea
       SELECT ST_MakePolygon(ST_ExteriorRing(currentGeom),
               ARRAY(SELECT ST_ExteriorRing(r.geom)
                     FROM (SELECT (ST_DumpRings(currentGeom)).*) AS r
-                    WHERE r.path[1] > 0 AND minKeepArea IS NOT NULL AND minKeepArea <> 0 AND ST_Area(r.geom) >= minKeepArea
+                    WHERE r.path[1] > 0 AND -- keep only the first exterior ring of each hole
+                          minKeepArea IS NOT NULL AND -- if minKeepArea is NULL, don't keep anything
+                          minKeepArea <> 0 AND -- if minKeepArea is 0, don't keep anything
+                          ST_Area(r.geom) >= minKeepArea -- keep holes bigger than minKeepArea
               )
             )
       INTO finalGeom;
@@ -836,8 +839,9 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- TT_TrimSubPolygons
 --
 -- Return only polygons parts bigger than minKeepArea from a multipolygon.
+-- By default, minKeepArea is NULL and all sub parts are removed.
 ------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision);
+--DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision, boolean);
 CREATE OR REPLACE FUNCTION TT_TrimSubPolygons(
   inGeom geometry,
   minKeepArea double precision DEFAULT 0,
@@ -862,7 +866,6 @@ RETURNS geometry AS $$
       RAISE NOTICE 'TT_TrimSubPolygons() - Counting the number of subpolygons to process in order to display progress...';
     END IF;
     SELECT ST_NumGeometries(ST_Multi(inGeom)) INTO nbPoly;
-    RAISE NOTICE 'TT_TrimSubPolygons() - % subpolygons to process...', lpad(nbPoly::text, 3, ' ');
 
     -- Loop through each polygon
     FOR currentGeom IN
@@ -875,7 +878,6 @@ RETURNS geometry AS $$
       IF currentGeomArea > 0 AND currentGeomArea >= minKeepArea THEN
         IF outGeom IS NULL THEN
           outGeom := currentGeom;
-          returnGeom := currentGeom;
         ELSE
           outGeom := ST_Collect(outGeom, currentGeom);
         END IF;
@@ -1021,7 +1023,7 @@ FROM first_level_union;', geomColumnName, schemaName, tableName, filterStr, grid
       EXECUTE queryStr;
     END IF;
 
-    RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
+    RAISE NOTICE 'TT_SuperUnion() - END Geometry has now % points...', ST_NPoints(outGeom);
 
     RETURN outGeom;
   END
@@ -1065,7 +1067,7 @@ RETURNS geometry AS $$
     queryStr text;
     outGeom geometry;
   BEGIN
-    RAISE NOTICE 'TT_SuperUnion() : START...';
+    RAISE NOTICE 'TT_SuperUnionDebug() : START...';
     queryStr = format('
 WITH gridded AS (
   SELECT TT_SplitByGridDebug(%1$I, %2$I, 10000) split 
@@ -1083,7 +1085,7 @@ FROM first_level_union;
     RAISE NOTICE 'queryStr=%', queryStr;
     EXECUTE queryStr INTO outGeom;
     
-    RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
+    RAISE NOTICE 'TT_SuperUnionDebug() : END Geometry has now % points...', ST_NPoints(outGeom);
 
     RETURN outGeom;
   END
@@ -1506,6 +1508,7 @@ RETURNS text AS $$
     msg = currentRowNb || '/' || expectedRowNb || ' (' || round(percentDone, 2) || '%) processed';
     IF NOT startTime IS NULL THEN
       elapsedTime = EXTRACT(EPOCH FROM clock_timestamp() - startTime);
+      --RAISE NOTICE 'TT_ProgressMsg() - elapsedTime=%', elapsedTime;
       remainingTime = ((100 - percentDone) * elapsedTime)/percentDone;
       msg = msg || ' - ' || to_char(clock_timestamp(), 'HH24hMI') || ', ' || TT_PrettyDuration(elapsedTime, 3) || ' elapsed, ' || TT_PrettyDuration(remainingTime, 3) || ' remaining';
     END IF;
@@ -1518,7 +1521,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 ------------------------------------------------------------------------------
 -- TT_RaiseLog()
 ------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_ProgressMsg(text, text, int, int);
+--DROP FUNCTION IF EXISTS TT_RaiseLog(text, text, int, int);
 CREATE OR REPLACE FUNCTION TT_RaiseLog(
   process text,
   lastProcessedId text,
@@ -1953,7 +1956,7 @@ INSERT INTO casfri50_history.geo_history';
       END IF;
 
       IF raiseLog THEN
-        -- Add progress tracking to the query using the sequence created earlier
+        -- Add logging
         queryStr = queryStr || format(',
         TT_RaiseLog(''TT_ValidYearUnion(Step 3/4 - AGGREGATE)'', id, %3$s(%1$L)::int, %2$s)', 
           seqName || '_3', 
@@ -1966,7 +1969,6 @@ INSERT INTO casfri50_history.geo_history';
   FROM grouped';
       
       IF progress THEN
-        -- Add progress tracking to the query using the sequence created earlier
         queryStr = queryStr || ', newStartTime1';
       END IF;
       -- GROUP BY and rename columns in a final SELECT
@@ -1974,7 +1976,7 @@ INSERT INTO casfri50_history.geo_history';
   GROUP BY id';
 
       IF progress OR raiseLog THEN
-        -- Add progress tracking to the query using the sequence created earlier
+        -- Add progress tracking
         queryStr = queryStr || format('%2$s
   HAVING nextval(%1$L) > 0 AND', seqName || '_4', CASE WHEN progress THEN ', newtime' ELSE '' END);
       END IF;
