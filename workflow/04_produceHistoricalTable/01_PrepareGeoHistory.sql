@@ -141,11 +141,18 @@ FROM casfri50_flat.cas_flat_all_layers_same_row;
 */
 
 -- Parallel unsafe version using some RAISE NOTICE and nextval() to display cas_id of failing polygons.
-CREATE TABLE casfri50_history.casflat_gridded AS
+-- We still prefer this version as it also display progress messages every 10000 polygons.
+-- Better being a bit slow with some feedback then fast without...
+WITH cnt_and_start AS (
+  SELECT count(*) cnt, clock_timestamp() start_time
+  FROM casfri50_flat.cas_flat_all_layers_same_row
+)
 SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGridDebug(cas_id, geometry, 1000)).*
-FROM casfri50_flat.cas_flat_all_layers_same_row
-WHERE CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 THEN TT_PrintMessage(now()::timestamp(0)::text || ' : ' || currval('bug_splitbygrid')::text || ' polygons gridded...') ELSE TRUE END
-;
+FROM casfri50_flat.cas_flat_all_layers_same_row, cnt_and_start
+WHERE CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 
+           THEN TT_PrintMessage('Gridding polygons - ' || TT_ProgressMsg(currval('bug_splitbygrid'), cnt::int, start_time)) 
+           ELSE TRUE 
+      END;
 
 SELECT count(*) number_of_gridded_polygons_generated 
 FROM casfri50_history.casflat_gridded;
@@ -158,8 +165,17 @@ CREATE INDEX ON casfri50_history.casflat_gridded USING gist(geom); --1h40
 -- Add an inventory to the gridded table if necessary
 
 INSERT INTO casfri50_history.casflat_gridded 
-SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGrid(geometry, 1000)).geom geom
-FROM casfri50_flat.cas_flat_all_layers_same_row
-WHERE left(cas_id, 4) = 'QC06' AND CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 THEN TT_PrintMessage(currval('bug_splitbygrid')::text) ELSE TRUE END;
+WITH cnt_and_start AS (
+  SELECT count(*) cnt, clock_timestamp() start_time
+  FROM casfri50_flat.cas_flat_all_layers_same_row
+  WHERE inventory_id = 'BC08'
+)
+SELECT cas_id, inventory_id, stand_photo_year, (TT_SplitByGridDebug(cas_id, geometry, 1000)).*
+FROM casfri50_flat.cas_flat_all_layers_same_row, cnt_and_start
+WHERE inventory_id = 'BC08' AND
+      CASE WHEN nextval('bug_splitbygrid') % 10000 = 0 
+           THEN TT_PrintMessage('Gridding polygons - ' || TT_ProgressMsg(currval('bug_splitbygrid'), cnt::int, start_time)) 
+           ELSE TRUE 
+      END;
 */
 
