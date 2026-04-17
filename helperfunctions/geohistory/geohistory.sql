@@ -923,28 +923,56 @@ $$ LANGUAGE sql IMMUTABLE;
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
+-- TT_PadInt
+--
+-- Pad positive and negative integer with leading zeros properly.
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_PadInt(int, int);
+CREATE OR REPLACE FUNCTION TT_PadInt(
+  n integer,
+  width integer
+)
+RETURNS text AS $$
+BEGIN
+  RETURN CASE 
+    WHEN n < 0 THEN '-' || lpad(abs(n)::text, width, '0')
+    ELSE lpad(n::text, width, '0')
+  END;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
 -- TT_SuperUnion
 --
 -- ST_Union() all polygons in a two stage process 
 ------------------------------------------------------------------------------
---DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text, boolean, int, boolean);
+--DROP FUNCTION IF EXISTS TT_SuperUnion(name, name, name, text, boolean, double precision, double precision, boolean, boolean);
 CREATE OR REPLACE FUNCTION TT_SuperUnion(
   schemaName name,
   tableName name,
   geomColumnName name,
   filterStr text DEFAULT NULL,
   alreadyGridded boolean DEFAULT TRUE,
-  gridSize int DEFAULT 10000,
-  progress boolean DEFAULT TRUE
+  gridSize double precision DEFAULT 10000,
+  minKeepArea double precision DEFAULT 10000000,
+  progress boolean DEFAULT TRUE,
+  debug boolean DEFAULT FALSE
 )
 RETURNS geometry AS $$
   DECLARE
     queryStr text := '';
     countQuery text := '';
     seqName text := '';
-    expectedGroupNb int = 0;
+    expectedGroupNb1 int = 0;
+    expectedGroupNb2 int = 0;
     startTime timestamptz;
     outGeom geometry;
+    secondLevelDivider int := 10;
+    rec RECORD;
+    rowNb int := 0;
+    oldGeomNbPts int := 0;
+    newGeomNbPts int := 0;
   BEGIN
     IF filterStr IS NULL THEN 
       filterStr := '';
@@ -963,37 +991,108 @@ RETURNS geometry AS $$
      -----------------------------------------------------------------------------
      IF progress THEN
         countQuery = format('
-SELECT count(DISTINCT tid)
-FROM %1$I.%2$I%3$s;', schemaName, tableName, filterStr);
+SELECT count(DISTINCT (tx, ty))
+FROM %1$I.%2$I%3$s', schemaName, tableName, filterStr);
 
-        RAISE NOTICE 'TT_SuperUnion() - Counting the number of groups of gridded polygons to process from casfri50_history.casflat_gridded in order to display progress...';
-        EXECUTE countQuery INTO expectedGroupNb;
+        RAISE NOTICE 'TT_SuperUnion() - Counting the number of 1st level groups of gridded polygons to process from casfri50_history.casflat_gridded in order to display progress...';
+        EXECUTE countQuery INTO expectedGroupNb1;
+        RAISE NOTICE 'TT_SuperUnion() - % groups of gridded polygons to process...', expectedGroupNb1;
 
-        RAISE NOTICE 'TT_SuperUnion() - % groups of gridded polygons to process...', expectedGroupNb;
-        seqName = 'superunion_' || floor(random() * 100000) + 1;
+        countQuery = format('
+SELECT count(DISTINCT (tx/%4$s, ty/%4$s))
+FROM %1$I.%2$I%3$s;', schemaName, tableName, filterStr, secondLevelDivider);
+
+        RAISE NOTICE 'TT_SuperUnion() - Counting the number of 2nd level groups of gridded polygons to process from casfri50_history.casflat_gridded in order to display progress...';
+        EXECUTE countQuery INTO expectedGroupNb2;
+        RAISE NOTICE 'TT_SuperUnion() - % groups of gridded polygons to process...', expectedGroupNb2;
+
+seqName = 'superunion_' || floor(random() * 100000) + 1;
 
         queryStr = format('
 DROP SEQUENCE IF EXISTS %1$s_1;
 CREATE SEQUENCE %1$s_1 START 1;
+DROP SEQUENCE IF EXISTS %1$s_2;
+CREATE SEQUENCE %1$s_2 START 1;
 ', seqName);
+        EXECUTE queryStr;
       END IF;
 
-      queryStr := queryStr || format('
+      queryStr := format('
 WITH first_level_union AS (
-  SELECT tid, 
-         ST_Union(%1$I) geom', geomColumnName);
+  SELECT tx/%2$s tx2, 
+         ty/%2$s ty2, 
+         ST_MakeValid(ST_Union(%1$I)) geom', geomColumnName, secondLevelDivider);
 
       IF progress THEN
         queryStr := queryStr || format(',
-         CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion() - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_1', expectedGroupNb);
+         clock_timestamp() lastTime,
+         CASE WHEN nextval(%1$L) %% 1000 = 0 OR currval(%1$L) = %2$s THEN TT_PrintMessage(''TT_SuperUnion(1st level union) - '' || TT_ProgressMsg(currval(%1$L), %2$s, $1)) ELSE TRUE END', seqName || '_1', expectedGroupNb1);
       END IF;
 
       queryStr := queryStr || format('
   FROM %1$I.%2$I%3$s
-  GROUP BY tid
+  GROUP BY tx, ty', schemaName, tableName, filterStr);
+
+      IF progress THEN
+        queryStr := queryStr || '
+), newStartTime AS (
+  SELECT max(lastTime) newTime
+  FROM first_level_union';
+      END IF;
+/* 
+      queryStr := queryStr || format('
+), second_level_union AS (
+  SELECT tx2, ty2, ST_MakeValid(TT_RemoveHoles(ST_Union(geom), %s)) geom', minKeepArea);
+*/
+      queryStr := queryStr || format('
+), second_level_union AS (
+  SELECT tx2, ty2, ST_MakeValid(ST_SnapToGrid(TT_RemoveHoles(ST_Union(geom), %s), 0.001)) geom', minKeepArea);
+
+      IF progress THEN
+        queryStr := queryStr || format(',
+         CASE WHEN nextval(%1$L) %% 100 = 0 
+                   THEN TT_PrintMessage(''TT_SuperUnion(2nd level union) - '' || TT_ProgressMsg(currval(%1$L), %2$s, max(newTime))) 
+              WHEN currval(%1$L) = %2$s
+                   THEN TT_PrintMessage(''TT_SuperUnion(2nd level union, processing last level union without progress) - '' || TT_ProgressMsg(currval(%1$L), %2$s, max(newTime)))
+              ELSE TRUE END', seqName || '_2', expectedGroupNb2);
+      END IF;
+
+      queryStr := queryStr || '
+  FROM first_level_union';
+
+      IF progress THEN
+        queryStr := queryStr || ', newStartTime';
+      END IF;
+
+      IF debug THEN
+        queryStr := queryStr || '
+  GROUP BY tx2, ty2
 )
-SELECT ST_Union(geom ORDER BY tid)
-FROM first_level_union;', schemaName, tableName, filterStr);
+SELECT tx2, ty2, geom
+FROM second_level_union
+ORDER BY ty2, tx2;';
+      ELSE
+ -- buffer, simplify, unbuffer
+       queryStr := queryStr || format('
+  GROUP BY tx2, ty2
+)
+SELECT TT_TrimHolesAndIslands(ST_Buffer(TT_TrimHolesAndIslands(ST_UnaryUnion(ST_Collect(ST_Buffer(geom, 150, ''endcap=square join=mitre''))), %1$s, TRUE), -150, ''endcap=square join=mitre''), %1$s) geom
+FROM second_level_union;', minKeepArea);
+
+/*       queryStr := queryStr || format('
+  GROUP BY tx2, ty2
+)
+SELECT TT_TrimHolesAndIslands(ST_Buffer(ST_Union(ST_Buffer(geom, 150, ''endcap=square join=mitre'')), -150, ''endcap=square join=mitre''), %s) geom
+FROM second_level_union;', minKeepArea);
+*/
+/*
+        queryStr := queryStr || format('
+  GROUP BY tx2, ty2
+)
+SELECT TT_TrimHolesAndIslands(ST_UnaryUnion(ST_Collect(geom)), %s) geom
+FROM second_level_union;', minKeepArea);
+*/
+       END IF;
     ELSE
       -----------------------------------------------------------------------------
       -- Non already gridded version
@@ -1014,12 +1113,56 @@ FROM first_level_union;', geomColumnName, schemaName, tableName, filterStr, grid
 
     startTime = clock_timestamp();
     RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
-    EXECUTE queryStr INTO returnGeom USING startTime;
+    IF alreadyGridded AND debug THEN
+      DROP TABLE IF EXISTS temp_superunion_debug;
+      CREATE TABLE IF NOT EXISTS temp_superunion_debug (
+        tx integer, ty integer, 
+        added_geom_nb_pts integer, added_geom_nb_parts integer, added_geom_nb_holes integer, added_geom geometry, 
+        unioned_geom_nb_pts integer, unioned_geom_nb_parts integer, unioned_geom_nb_holes integer, unioned_geom geometry
+      );
+      FOR rec IN EXECUTE queryStr USING startTime LOOP
+        IF progress THEN
+          rowNb := rowNb + 1;
+          oldGeomNbPts := coalesce(ST_Npoints(outGeom), 0);
+          newGeomNbPts := coalesce(ST_Npoints(rec.geom), 0);
+        END IF;
+        IF outGeom IS NULL THEN
+            startTime = clock_timestamp();
+            outGeom := ST_Buffer(rec.geom, 150, 'endcap=square join=mitre');
+        ELSE
+            --outGeom := ST_Union(outGeom, rec.geom);
+            outGeom := ST_Collect(
+              ST_Buffer(outGeom, 150, 'endcap=square join=mitre'), 
+              ST_Buffer(rec.geom, 150, 'endcap=square join=mitre')
+            );
+        END IF;
+        --outGeom := TT_RemoveHoles(outGeom, minKeepArea);
+        outGeom := ST_Buffer(TT_TrimHolesAndIslands(ST_UnaryUnion(outGeom), minKeepArea, TRUE), -150, 'endcap=square join=mitre');
+        INSERT INTO temp_superunion_debug (
+          tx, ty, 
+          added_geom_nb_pts, added_geom_nb_parts, added_geom_nb_holes, added_geom, 
+          unioned_geom_nb_pts, unioned_geom_nb_parts, unioned_geom_nb_holes, unioned_geom
+        )
+        VALUES (rec.tx2, rec.ty2, 
+                ST_NPoints(rec.geom), ST_NumGeometries(rec.geom), TT_NumHoles(rec.geom), rec.geom, 
+                ST_NPoints(outGeom), ST_NumGeometries(outGeom), TT_NumHoles(outGeom), outGeom
+               );
+        IF progress THEN
+          PERFORM TT_PrintMessage(format('TT_SuperUnion(3rd union) - %sx%s, %s+%s=%s (%s) - %s',
+            TT_PadInt(rec.tx2, 3), TT_PadInt(rec.ty2, 3), oldGeomNbPts, newGeomNbPts, (oldGeomNbPts + newGeomNbPts), coalesce(ST_Npoints(outGeom), 0) - (oldGeomNbPts + newGeomNbPts), TT_ProgressMsg(rowNb, expectedGroupNb2, startTime)));
+          --RAISE NOTICE 'TT_SuperUnion() - ST_Union() cell %,%...', rec.tx2, rec.ty2;
+        END IF;
+      END LOOP;
+      --outGeom := TT_TrimHolesAndIslands(outGeom, minKeepArea);
+    ELSE
       EXECUTE queryStr INTO outGeom USING startTime;
+    END IF;
     
     -- DROP the SEQUENCE if it was created
     IF alreadyGridded AND progress THEN
-      queryStr = format('DROP SEQUENCE IF EXISTS %1$s_1;', seqName);
+      queryStr = format('
+DROP SEQUENCE IF EXISTS %1$s_1;
+DROP SEQUENCE IF EXISTS %1$s_2;', seqName);
       EXECUTE queryStr;
     END IF;
 
@@ -1046,7 +1189,7 @@ CREATE OR REPLACE FUNCTION TT_InvSuperUnion(
   alreadyGridded boolean DEFAULT TRUE
 )
 RETURNS geometry AS $$
-  SELECT CASE WHEN alreadyGridded THEN TT_SuperUnion('casfri50_history'::name, 'casflat_gridded'::name, 'geom'::name, 'inventory_id = upper(''' || inv || ''')', TRUE)
+  SELECT CASE WHEN alreadyGridded THEN TT_SuperUnion('casfri50_history'::name, 'casflat_gridded'::name, 'geom'::name, 'inventory_id = upper(''' || inv || ''')', TRUE, 10000, 1000000, TRUE, FALSE)
               ELSE TT_SuperUnion('casfri50'::name, 'geo_all'::name, 'geometry'::name, 'left(cas_id, 4) = upper(''' || inv || ''')', FALSE)
          END
 $$ LANGUAGE sql STABLE;
@@ -1401,7 +1544,7 @@ SELECT (TT_CoveragePointCount('TRANSLATED_BY_ULAVAL', FALSE)).*
 CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
   fromInv text, -- inventoryID
   detailedGeom geometry, -- non simplified version of the coverage geometry
-  minArea double precision DEFAULT 10000000, -- minimum area of holes and island to keep
+  minKeepArea double precision DEFAULT 10000000, -- minimum area of holes and island to keep
   sparse boolean DEFAULT FALSE, -- apply a special treatment for sparce geometries
   sparseBuf double precision DEFAULT 5000 -- buffer to apply for sparse geometries
 ) AS $$
@@ -1417,7 +1560,7 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
   BEGIN
     RAISE NOTICE '-------------------------------------------------------------------';
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands() for ''%'' to produce no holes and no islands polygon...', fromInv;
-    noHolesNoIslandsGeom = TT_TrimHolesAndIslands(detailedGeom, minArea, TRUE);
+    noHolesNoIslandsGeom = TT_TrimHolesAndIslands(detailedGeom, minKeepArea, TRUE);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands() resulting geometry has % vertexes...', ST_NPoints(noHolesNoIslandsGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
