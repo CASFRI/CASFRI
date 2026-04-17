@@ -844,7 +844,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 --DROP FUNCTION IF EXISTS TT_TrimSubPolygons(geometry, double precision, boolean);
 CREATE OR REPLACE FUNCTION TT_TrimSubPolygons(
   inGeom geometry,
-  minKeepArea double precision DEFAULT 0,
+  minKeepArea double precision DEFAULT NULL,
   progress boolean DEFAULT FALSE
 )
 RETURNS geometry AS $$
@@ -875,7 +875,7 @@ RETURNS geometry AS $$
       i := i + 1;
       -- Build polygon with filtered holes
       currentGeomArea := ST_Area(currentGeom);
-      IF currentGeomArea > 0 AND currentGeomArea >= minKeepArea THEN
+      IF minKeepArea IS NOT NULL AND currentGeomArea > 0 AND currentGeomArea >= minKeepArea THEN
         IF outGeom IS NULL THEN
           outGeom := currentGeom;
         ELSE
@@ -914,7 +914,7 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 --DROP FUNCTION IF EXISTS TT_TrimHolesAndIslands(geometry, double precision);
 CREATE OR REPLACE FUNCTION TT_TrimHolesAndIslands(
   inGeom geometry,
-  minKeepArea double precision DEFAULT 0,
+  minKeepArea double precision DEFAULT NULL,
   progress boolean DEFAULT FALSE
 )
 RETURNS geometry AS $$
