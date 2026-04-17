@@ -1434,8 +1434,7 @@ RETURNS TABLE (
   inventory_id text,
   is_in_flat_table boolean,
   nb_pts_detailed int,
-  nb_pts_noholes int,
-  nb_pts_noislands int,
+  nb_pts_noholesnoislands int,
   nb_pts_simplified int,
   nb_pts_smoothed int
 ) AS $$
@@ -1468,10 +1467,9 @@ SELECT i.inv::text inventory_id,';
     
     queryStr := queryStr ||'
   coalesce(a.nb_points, 0) nb_pts_detailed, 
-  coalesce(b.nb_points, 0) nb_pts_noholes, 
-  coalesce(c.nb_points, 0) nb_pts_noislands, 
-  coalesce(d.nb_points, 0) nb_pts_simplified, 
-  coalesce(e.nb_points, 0) nb_pts_smoothed
+  coalesce(b.nb_points, 0) nb_pts_noholesnoislands, 
+  coalesce(c.nb_points, 0) nb_pts_simplified, 
+  coalesce(d.nb_points, 0) nb_pts_smoothed
 FROM inv_list i';
     IF checkExists THEN
       queryStr := queryStr ||'
@@ -1480,10 +1478,9 @@ LEFT OUTER JOIN loaded_inv l USING (inv)';
     
     queryStr := queryStr ||'
 LEFT OUTER JOIN casfri50_coverage.detailed a USING (inv)
-LEFT OUTER JOIN casfri50_coverage.noholes b USING (inv)
-LEFT OUTER JOIN casfri50_coverage.noislands c USING (inv)
-LEFT OUTER JOIN casfri50_coverage.simplified d USING (inv)
-LEFT OUTER JOIN casfri50_coverage.smoothed e USING (inv)
+LEFT OUTER JOIN casfri50_coverage.noholesnoislands b USING (inv)
+LEFT OUTER JOIN casfri50_coverage.simplified c USING (inv)
+LEFT OUTER JOIN casfri50_coverage.smoothed d USING (inv)
 ORDER BY inv;';
     RAISE NOTICE 'queryStr=%', replace(queryStr, '$1', '''' || invArr::text || '''::text[]');
     RETURN QUERY EXECUTE queryStr USING invArr;
@@ -1508,8 +1505,7 @@ RETURNS TABLE (
   inventory_id text,
   is_in_flat_table boolean,
   nb_pts_detailed int,
-  nb_pts_noholes int,
-  nb_pts_noislands int,
+  nb_pts_noholesnoislands int,
   nb_pts_simplified int,
   nb_pts_smoothed int
 ) AS $$
