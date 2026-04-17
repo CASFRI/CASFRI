@@ -59,7 +59,7 @@ DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text);
 DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text[]);
 DROP FUNCTION IF EXISTS TT_CoveragePointCount(text, boolean);
 DROP FUNCTION IF EXISTS TT_CoveragePointCount(text[], boolean);
-
+DROP FUNCTION IF EXISTS TT_NumHoles(geometry);
 DROP FUNCTION IF EXISTS TT_UnnestValidYearUnion(geomlowuppval[]);
 DROP TYPE IF EXISTS geomlowuppval;
 

@@ -743,6 +743,21 @@ $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
+-- TT_NumHoles
+--
+-- Count the number of holes in a polygon or a multipolygon.
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_NumHoles(geometry);
+CREATE OR REPLACE FUNCTION TT_NumHoles(
+  inGeom geometry
+)
+RETURNS integer AS $$
+  SELECT coalesce(sum(
+    greatest(ST_NumInteriorRings(g.geom), 0)
+  ), 0)
+  FROM ST_Dump(ST_Multi(inGeom)) AS g;
+$$ LANGUAGE sql IMMUTABLE;
+------------------------------------------------------------------------------
 -- TT_RemoveHoles
 --
 -- Remove all holes greater than minKeepArea from a polygon or a multipolygon.
@@ -757,9 +772,11 @@ RETURNS geometry AS $$
   DECLARE
     currentGeom geometry;
     finalGeom geometry;
-    returnGeom geometry := NULL;
+    outGeom geometry := NULL;
     i int := 0;
     nbPoly int;
+    nbInHoles int;
+    nbOutHoles int;
     startTime timestamptz := clock_timestamp();
   BEGIN
     -- Early exit
@@ -790,10 +807,10 @@ RETURNS geometry AS $$
       INTO finalGeom;
 
       -- Incremental union
-      IF returnGeom IS NULL THEN
-        returnGeom := finalGeom;
+      IF outGeom IS NULL THEN
+        outGeom := finalGeom;
       ELSE
-        returnGeom := ST_Collect(returnGeom, finalGeom);
+        outGeom := ST_Collect(outGeom, finalGeom);
       END IF;
 
       -- Optional progress
@@ -806,8 +823,11 @@ RETURNS geometry AS $$
     IF progress THEN
       RAISE NOTICE 'TT_RemoveHoles() - Final union with ST_BuildArea(ST_UnaryUnion())...';
     END IF;
-    returnGeom := ST_BuildArea(ST_UnaryUnion(returnGeom));
-    RETURN returnGeom;
+    outGeom := ST_BuildArea(ST_UnaryUnion(outGeom));
+    SELECT TT_NumHoles(inGeom) INTO nbInHoles;
+    SELECT TT_NumHoles(outGeom) INTO nbOutHoles;
+    RAISE NOTICE 'TT_RemoveHoles() - % subpolygons, % holes, % holes removed, % holes remaining...', lpad(nbPoly::text, 3, ' '), lpad(nbInHoles::text, 3, ' '), lpad((nbInHoles - nbOutHoles)::text, 3, ' '), lpad(nbOutHoles::text, 3, ' ');
+    RETURN outGeom;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 -------------------------------------------------------------------------------
@@ -828,7 +848,7 @@ RETURNS geometry AS $$
     currentGeom geometry;
     currentGeomArea double precision;
     finalGeom geometry;
-    returnGeom geometry := NULL;
+    outGeom geometry := NULL;
     i int := 0;
     nbPoly int;
     startTime timestamptz := clock_timestamp();
@@ -853,11 +873,11 @@ RETURNS geometry AS $$
       -- Build polygon with filtered holes
       currentGeomArea := ST_Area(currentGeom);
       IF currentGeomArea > 0 AND currentGeomArea >= minKeepArea THEN
-      -- Incremental union
-        IF returnGeom IS NULL THEN
+        IF outGeom IS NULL THEN
+          outGeom := currentGeom;
           returnGeom := currentGeom;
         ELSE
-          returnGeom := ST_Collect(returnGeom, currentGeom);
+          outGeom := ST_Collect(outGeom, currentGeom);
         END IF;
       END IF; 
 
@@ -867,7 +887,7 @@ RETURNS geometry AS $$
       END IF;
     END LOOP;
 
-    IF returnGeom IS NULL OR ST_IsEmpty(returnGeom) OR ST_Area(returnGeom) <= 0 THEN
+    IF outGeom IS NULL OR ST_IsEmpty(outGeom) OR ST_Area(outGeom) <= 0 THEN
       RAISE NOTICE 'TT_TrimSubPolygons() - Final geometry is either NULL, empty or not a polygon...';
       RETURN ST_SetSRID('POLYGON EMPTY'::geometry, ST_SRID(inGeom));
     END IF;
@@ -876,11 +896,13 @@ RETURNS geometry AS $$
     IF progress THEN
       RAISE NOTICE 'TT_TrimSubPolygons() - Final union with ST_BuildArea(ST_UnaryUnion())...';
     END IF;
-    returnGeom := ST_BuildArea(ST_UnaryUnion(returnGeom));
-    RETURN returnGeom;
+    outGeom := ST_BuildArea(ST_UnaryUnion(outGeom));
+    RAISE NOTICE 'TT_TrimSubPolygons() - % subpolygons, % parts removed...', lpad(nbPoly::text, 3, ' '), lpad((nbPoly - ST_NumGeometries(ST_Multi(outGeom)))::text, 3, ' ');
+
+    RETURN outGeom;
   END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 -- TT_TrimHolesAndIslands
@@ -920,7 +942,7 @@ RETURNS geometry AS $$
     seqName text := '';
     expectedGroupNb int = 0;
     startTime timestamptz;
-    returnGeom geometry;
+    outGeom geometry;
   BEGIN
     IF filterStr IS NULL THEN 
       filterStr := '';
@@ -991,6 +1013,7 @@ FROM first_level_union;', geomColumnName, schemaName, tableName, filterStr, grid
     startTime = clock_timestamp();
     RAISE NOTICE 'queryStr = %', replace(queryStr, '$1', quote_literal(startTime::text) || '::timestamptz');
     EXECUTE queryStr INTO returnGeom USING startTime;
+      EXECUTE queryStr INTO outGeom USING startTime;
     
     -- DROP the SEQUENCE if it was created
     IF alreadyGridded AND progress THEN
@@ -1000,7 +1023,7 @@ FROM first_level_union;', geomColumnName, schemaName, tableName, filterStr, grid
 
     RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
 
-    RETURN returnGeom;
+    RETURN outGeom;
   END
 $$ LANGUAGE plpgsql VOLATILE;
 -- Test
@@ -1040,7 +1063,7 @@ CREATE OR REPLACE FUNCTION TT_SuperUnionDebug(
 RETURNS geometry AS $$
   DECLARE
     queryStr text;
-    returnGeom geometry;
+    outGeom geometry;
   BEGIN
     RAISE NOTICE 'TT_SuperUnion() : START...';
     queryStr = format('
@@ -1058,11 +1081,11 @@ FROM first_level_union;
    schemaName, tableName, CASE WHEN filterStr IS NULL THEN '' ELSE format('
   WHERE %s', filterStr) END);
     RAISE NOTICE 'queryStr=%', queryStr;
-    EXECUTE queryStr INTO returnGeom;
+    EXECUTE queryStr INTO outGeom;
     
     RAISE NOTICE 'TT_SuperUnion() : END Geometry has now % points...', ST_NPoints(returnGeom);
 
-    RETURN returnGeom;
+    RETURN outGeom;
   END
 $$ LANGUAGE plpgsql STABLE;
 -- Test
