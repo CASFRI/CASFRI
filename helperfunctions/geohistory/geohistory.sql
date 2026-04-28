@@ -1564,17 +1564,17 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
     tmpTableName text;
   BEGIN
     RAISE NOTICE '-------------------------------------------------------------------';
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands() for ''%'' to produce no holes and no islands polygon...', fromInv;
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands() for ''%'' to produce no holes and no islands coverage...', fromInv;
     noHolesNoIslandsGeom = TT_TrimHolesAndIslands(detailedGeom, minKeepArea, TRUE);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands() resulting geometry has % vertexes...', ST_NPoints(noHolesNoIslandsGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : ST_SimplifyPreserveTopology() for ''%'' to produce simplified polygon...', fromInv;
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : ST_SimplifyPreserveTopology() for ''%'' to produce simplified coverage...', fromInv;
     simplifiedGeom = ST_SimplifyPreserveTopology(noHolesNoIslandsGeom, 100);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : ST_SimplifyPreserveTopology() resulting geometry has % vertexes...', ST_NPoints(simplifiedGeom);
     RAISE NOTICE '-------------------------------------------------------------------';
 
-    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands(TT_BufferedSmooth()) for ''%'' to produce smoothed polygon...', fromInv;
+    RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands(TT_BufferedSmooth()) for ''%'' to produce smoothed coverage...', fromInv;
     smoothedGeom = TT_TrimHolesAndIslands(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), ST_Area(detailedGeom)/100, TRUE);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands(TT_BufferedSmooth()) resulting geometry has % vertexes...', ST_NPoints(smoothedGeom);
 
