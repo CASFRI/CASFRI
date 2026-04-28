@@ -65,7 +65,7 @@ if [[ "$postProcessing" = "True" || "$postProcessingOnly" = "True" ]]; then
   "$psqlCmd" $psqlConnectionString -c "
 SELECT string_agg(inventory_id, ' ' ORDER BY inventory_id) inventories
 FROM TT_CoveragePointCount(ARRAY[${quoted_list}])
-WHERE is_in_geo_all AND nb_pts_smoothed = 0;
+WHERE is_in_flat_table AND nb_pts_noholesnoislands = 0;
 "
 
 fi
