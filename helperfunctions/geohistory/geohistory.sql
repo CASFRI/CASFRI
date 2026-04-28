@@ -849,8 +849,7 @@ CREATE OR REPLACE FUNCTION TT_TrimSubPolygons(
 )
 RETURNS geometry AS $$
   DECLARE
-    currentGeom geometry;
-    currentGeomArea double precision;
+    rec RECORD;
     finalGeom geometry;
     outGeom geometry := NULL;
     i int := 0;
@@ -868,24 +867,33 @@ RETURNS geometry AS $$
     SELECT ST_NumGeometries(ST_Multi(inGeom)) INTO nbPoly;
 
     -- Loop through each polygon
-    FOR currentGeom IN
-      SELECT ST_GeometryN(ST_Multi(inGeom), gs)
-      FROM generate_series(1, nbPoly) AS gs
+    FOR rec IN
+      WITH sub_geoms AS (
+        SELECT ST_GeometryN(ST_Multi(inGeom), gs) geom
+        FROM generate_series(1, nbPoly) AS gs
+      )
+      SELECT geom, ST_Area(geom) area
+      FROM sub_geoms
+      ORDER BY area DESC
     LOOP
       i := i + 1;
       -- Build polygon with filtered holes
-      currentGeomArea := ST_Area(currentGeom);
-      IF minKeepArea IS NOT NULL AND currentGeomArea > 0 AND currentGeomArea >= minKeepArea THEN
+      IF (minKeepArea IS NULL) OR 
+         (minKeepArea IS NOT NULL AND rec.area > 0 AND rec.area >= minKeepArea) THEN
         IF outGeom IS NULL THEN
-          outGeom := currentGeom;
+          outGeom := rec.geom;
         ELSE
-          outGeom := ST_Collect(outGeom, currentGeom);
+          outGeom := ST_Collect(outGeom, rec.geom);
         END IF;
       END IF; 
 
       -- Optional progress
       IF progress AND (i % 100 = 0 OR i = nbPoly) THEN
         PERFORM TT_PrintMessage('TT_TrimSubPolygons() - ' || TT_ProgressMsg(i, nbPoly, startTime));
+      END IF;
+      -- if minKeepArea IS NULL exit as soon as we have collected the first, biggest polygon
+      IF minKeepArea IS NULL THEN
+        EXIT;
       END IF;
     END LOOP;
 
