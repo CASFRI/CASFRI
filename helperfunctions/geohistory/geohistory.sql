@@ -1054,7 +1054,7 @@ WITH first_level_union AS (
 */
       queryStr := queryStr || format('
 ), second_level_union AS (
-  SELECT tx2, ty2, ST_MakeValid(ST_SnapToGrid(TT_RemoveHoles(ST_Union(geom), %s), 0.001)) geom', minKeepArea);
+  SELECT tx2, ty2, ST_MakeValid(TT_RemoveHoles(ST_Union(geom), %s)) geom', minKeepArea);
 
       IF progress THEN
         queryStr := queryStr || format(',
