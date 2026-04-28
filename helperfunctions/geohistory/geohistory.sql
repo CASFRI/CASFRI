@@ -1575,7 +1575,7 @@ CREATE OR REPLACE PROCEDURE TT_ProduceDerivedCoverages(
     RAISE NOTICE '-------------------------------------------------------------------';
 
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands(TT_BufferedSmooth()) for ''%'' to produce smoothed coverage...', fromInv;
-    smoothedGeom = TT_TrimHolesAndIslands(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 100 END), ST_Area(detailedGeom)/100, TRUE);
+    smoothedGeom = TT_TrimHolesAndIslands(TT_BufferedSmooth(simplifiedGeom, CASE WHEN sparse THEN sparseBuf ELSE 1000 END), ST_Area(detailedGeom)/100, TRUE);
     RAISE NOTICE 'TT_ProduceDerivedCoverages() : TT_TrimHolesAndIslands(TT_BufferedSmooth()) resulting geometry has % vertexes...', ST_NPoints(smoothedGeom);
 
     -- Get the count of point from a precomputed table
