@@ -41,7 +41,7 @@ source $thisScriptDir/../pre_conversion.sh
 DROP TABLE IF EXISTS ${targetFRISchema}.new_nl02_photoyear CASCADE;
 
 CREATE TABLE ${targetFRISchema}.new_nl02_photoyear AS
-SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, year, ogc_fid
+SELECT ST_MakeValid(wkb_geometry) AS wkb_geometry, EXTRACT(YEAR FROM photo_year) AS year, ogc_fid
 FROM ${fullTargetTableName};
 
 DROP TABLE IF EXISTS ${fullTargetTableName} CASCADE;
