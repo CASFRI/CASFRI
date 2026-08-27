@@ -585,7 +585,19 @@ SELECT TT_NRandomBuffers(ST_Buffer(ST_SetSRID(ST_MakePoint(-100000, 1550000), 90
 ------------------------------------------------------------------------------
 -- TT_ExtractNRandomBuffers
 --
--- Extract n random buffers for an inventory
+-- Extract n random buffers from an inventory.
+-- invArr text[] - Array of inventory codes determining where to create the
+--                 random buffers. If limitToInv is TRUE then only those 
+--                 inventories will be queries as well.
+-- schemaName - Name of the schema containing the table to query. Default to 'casfri50'.
+-- tableName - Name of the table to query. Default to 'geo_all'.
+-- nbBuffers - Number of random buffers to create. Default to 1.
+-- buffSize - Size of the random buffers to create. Default to 0 (point).
+-- trimToBuffer - Whether to trim the geometry to the buffer. Default to FALSE.
+-- nbAttempts - Number of attempts to create a random buffer. Default to 100.
+-- seed - Seed for the random number generator. Default to NULL (random).
+-- whereClause - Additional WHERE clause to filter the table. Default to NULL (no filter).
+-- limitToInv - Whether to limit the query to the inventories in invArr. Default to TRUE.
 ----------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_ExtractNRandomBuffers(text[], name, name, int, double precision, boolean, int, int, text, boolean);
 CREATE OR REPLACE FUNCTION TT_ExtractNRandomBuffers(
@@ -600,7 +612,7 @@ CREATE OR REPLACE FUNCTION TT_ExtractNRandomBuffers(
   whereClause text DEFAULT NULL,
   limitToInv boolean DEFAULT TRUE
 )
-RETURNS TABLE (cas_id text, geom geometry) AS $$
+RETURNS SETOF record AS $$
   DECLARE
     queryStr text;
     attArr text[];
@@ -626,13 +638,14 @@ WITH coverage AS (
   SELECT TT_NRandomBuffers(geom, %1$s, %2$s, %3$s, %4$s) geometry
   FROM coverage
 )
-SELECT g.cas_id, g.%8$I
-FROM %5$I.%6$I g, buffers b
-WHERE %7$sST_Intersects(g.%8$I, b.geometry)%9$s', 
+SELECT %5$s, b.geometry buffer_geom
+FROM %6$I.%7$I g, buffers b
+WHERE %8$sST_Intersects(g.%9$I, b.geometry)%10$s', 
       nbBuffers, 
       buffsize,
       nbAttempts,
       coalesce(seed::text, 'NULL'),
+      'g.' || array_to_string(attArr, ', g.'),
       schemaName, 
       tableName,
       CASE WHEN limitToInv THEN 'left(g.cas_id, 4) = ANY($1) AND ' ELSE '' END,
@@ -640,7 +653,8 @@ WHERE %7$sST_Intersects(g.%8$I, b.geometry)%9$s',
       CASE WHEN whereClause IS NULL OR whereClause = '' THEN ';' ELSE ' AND ' || whereClause || ';' END
     );
     IF trimToBuffer THEN
-      queryStr := replace(queryStr, ', g.' || geomColumnName, format(', ST_Intersection(g.%I, b.geometry) geom', geomColumnName));
+      -- replace 'g.geom' with 'ST_Intersection(g.geom, b.geometry) geom' in the query string
+      queryStr := replace(queryStr, ', g.' || geomColumnName, format(', ST_Intersection(g.%1$I, b.geometry) %1$I', geomColumnName));
     END IF;
     RAISE NOTICE 'queryStr=%', replace(queryStr, '$1', 'ARRAY[' || array_to_string(ARRAY(SELECT quote_literal(x) FROM unnest(invArr) AS t(x)), ',') || ']');
     RETURN QUERY EXECUTE queryStr USING invArr;
@@ -649,44 +663,96 @@ $$ LANGUAGE 'plpgsql' VOLATILE;
 
 /*
 -- tests
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'])).*;
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded')).*;
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5)).*; 
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000)).*; 
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE)).*;
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123)).*;
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, 'left(cas_id, 4) = ''MB05''')).*;
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, '', TRUE)).*;
-SELECT (TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, '', FALSE)).*;
+-- All defaults
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05']) AS t(cas_id text, geometry geometry, buffer_geom geometry);
+
+-- Extract from casflat_gridded
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded') 
+AS t(cas_id text, inventory_id text, stand_photo_year int, geom geometry, tid bigint, tx int, ty int, tgeom geometry, buffer_geom geometry);
+
+-- Extract 5 points from casflat_gridded
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5) 
+AS t(cas_id text, inventory_id text, stand_photo_year int, geom geometry, tid bigint, tx int, ty int, tgeom geometry, buffer_geom geometry);
+
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000) 
+AS t(cas_id text, inventory_id text, stand_photo_year int, geom geometry, tid bigint, tx int, ty int, tgeom geometry, buffer_geom geometry);
+
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE) 
+AS t(cas_id text, inventory_id text, stand_photo_year int, geom geometry, tid bigint, tx int, ty int, tgeom geometry, buffer_geom geometry);
+
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123) 
+AS t(cas_id text, inventory_id text, stand_photo_year int, geom geometry, tid bigint, tx int, ty int, tgeom geometry, buffer_geom geometry);
+
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, 'left(cas_id, 4) = ''MB05''') 
+AS t(cas_id text, inventory_id text, stand_photo_year int, geom geometry, tid bigint, tx int, ty int, tgeom geometry, buffer_geom geometry);
+
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, '', TRUE) 
+AS t(cas_id text, inventory_id text, stand_photo_year int, geom geometry, tid bigint, tx int, ty int, tgeom geometry, buffer_geom geometry);
+
+SELECT * 
+FROM TT_ExtractNRandomBuffers(ARRAY['MB05'], 'casfri50_history', 'casflat_gridded', 5, 2000, TRUE, 10, 123, '', FALSE) 
+AS t(cas_id text, inventory_id text, stand_photo_year int, geom geometry, tid bigint, tx int, ty int, tgeom geometry, buffer_geom geometry);
+
 */
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 -- TT_ExtractNRandomGeoHistoryBuffers
 --
--- Simplify a polygon by adding and removing a buffer around it
+-- Extract n random buffers from the geohistory table.
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_ExtractNRandomGeoHistoryBuffers(text[], int, int, double precision, boolean, int, int);
 CREATE OR REPLACE FUNCTION TT_ExtractNRandomGeoHistoryBuffers(
-  inv text[],
-  year int,
+  invArr text[],
+  year int DEFAULT NULL,
   nbBuffers int DEFAULT 1,
   buffSize double precision DEFAULT 0,
   trimToBuffer boolean DEFAULT FALSE,
   nbAttempts int DEFAULT 100,
   seed int DEFAULT NULL
 )
-RETURNS TABLE (cas_id text, geom geometry) AS $$
+RETURNS TABLE (
+  buffer_id int,
+  history_part_nb int,
+  cas_id text, 
+  valid_year_begin int, 
+  valid_year_end int, 
+  geometry geometry, 
+  buffer_geom geometry
+) AS $$
   DECLARE
     queryStr text;
   BEGIN
     queryStr := format('
-SELECT (TT_ExtractNRandomBuffers($1, ''casfri50_history'', ''geo_history'', 
-                                %1$s, %2$s, %3$s, %4$s, %5$s, 
-                                ''valid_year_begin <= %6$s AND %6$s <= valid_year_end'', FALSE)).*;
-', nbBuffers, buffSize, trimToBuffer::text, nbAttempts, coalesce(seed::text, 'NULL'), year);
+SELECT 
+  (dense_rank() OVER (ORDER BY buffer_geom))::int AS buffer_id,
+  (row_number() OVER (PARTITION BY buffer_geom ORDER BY valid_year_begin ASC))::int AS history_part_nb,
+  cas_id,
+  valid_year_begin,
+  valid_year_end,
+  geometry,
+  buffer_geom
+FROM TT_ExtractNRandomBuffers($1, ''casfri50_history'', ''geo_history'', %1$s, %2$s, %3$s, %4$s, %5$s, 
+                              %6$s, FALSE) AS t(cas_id text, geometry geometry, 
+                              valid_year_begin int, valid_year_end int, buffer_geom geometry)
+ORDER BY buffer_id, valid_year_begin DESC;
+', nbBuffers, 
+   buffSize, 
+   trimToBuffer::text, 
+   nbAttempts, 
+   coalesce(seed::text, 'NULL'), 
+   CASE WHEN year IS NULL THEN 'NULL' ELSE format('''valid_year_begin <= %1$s AND %1$s <= valid_year_end''', year) END
+    );
     RAISE NOTICE 'queryStr=%', queryStr;
-    RETURN QUERY EXECUTE queryStr USING inv;
+    RETURN QUERY EXECUTE queryStr USING invArr;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 /*
@@ -700,10 +766,68 @@ SELECT min(valid_year_begin) min_valid_year_begin,
 FROM casfri50_history.geo_history
 WHERE left(cas_id, 4) = 'BC08';
 
-SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010)).*;
-SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 100, 0, FALSE, 100, 110)).*;
-SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 3, 10000, TRUE, 100, 110)).*;
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010)).*; -- All defaults for year 2010
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 100, 0, FALSE, 100, 110)).*; -- 100 points with a seed
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], 2010, 3, 10000, TRUE, 100, 110)).*; -- 3 big buffers with a seed
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'])).*; -- All defaults for all years
 
+-- All defaults for all years for 100 points
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], NULL, 100, 0, TRUE, 100, 100)).*
+ORDER BY buffer_id, valid_year_begin DESC;
+
+-- All defaults for all years for 100 10km buffers
+SELECT (TT_ExtractNRandomGeoHistoryBuffers(ARRAY['BC08'], NULL, 10, 10000, TRUE)).*
+ORDER BY buffer_id, valid_year_begin DESC;
+*/
+-------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+-- TT_ExtractGeoHistoryGeom
+--
+-- Extract values from the geohistory table for a specific geometry.
+------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_ExtractGeoHistoryGeom(geometry, boolean);
+CREATE OR REPLACE FUNCTION TT_ExtractGeoHistoryGeom(
+  in_geom geometry,
+  trimToBuffer boolean DEFAULT FALSE
+)
+RETURNS TABLE (
+  inventory_id text,
+  valid_year_begin int,
+  valid_year_end int,
+  photo_year int,
+  origin int,
+  dist_year int,
+  dist_type text,
+  dist_ext_lower int,
+  dist_ext_upper int,
+  height double precision,
+  species text,
+  cas_id text, 
+  geom geometry
+) AS $$
+  SELECT inventory_id inv, 
+         valid_year_begin, 
+         valid_year_end, 
+         stand_photo_year photo_year,
+         lyr1_origin_lower origin, 
+         dist_year_1 dst_yr,
+         dist_type_1 dst_type,
+         dist_ext_lower_1 dst_ext_low,
+         dist_ext_upper_1 dst_ext_up,
+         lyr1_height_lower height,
+         lyr1_species_1 species,
+         g.cas_id cas_id,
+         CASE WHEN trimToBuffer THEN ST_Intersection(geom, in_geom) ELSE geom END geom
+  FROM casfri50_history.geo_history g,
+       casfri50_flat.cas_flat_all_layers_same_row f
+  WHERE ST_Intersects(geom, in_geom) AND f.cas_id = g.cas_id
+  ORDER BY valid_year_begin DESC;
+$$ LANGUAGE sql VOLATILE;
+/*
+--  tests
+SELECT * FROM TT_ExtractGeoHistoryGeom(ST_SetSRID(ST_MakePoint(-1882904, 1872332), 102001));
+SELECT * FROM TT_ExtractGeoHistoryGeom(ST_SetSRID(ST_MakePoint(-1882904, 1872332), 102001), TRUE);
 */
 -------------------------------------------------------------------------------
 
@@ -3149,7 +3273,7 @@ FROM %6$I.%7$I' ||
   END
 $$ LANGUAGE plpgsql VOLATILE;
 
---SELECT * FROM TT_GeoHistoryOblique('public', 'test_geohistory3', 'id', 'geom', 'valid_year', ARRAY['att'], 'att', 0.1)
+--SELECT * FROM TT_GeoHistoryOblique('public', 'test_geohistory', 'id', 'geom', 'valid_year', ARRAY['att'], 'att', 0.1)
 --ORDER BY id, valid_year_begin;
 
 --SELECT id gh_row_id, geom gh_geom, valid_year gh_photo_year, TT_RowIsValid(ARRAY[att]) gh_is_valid, * 
