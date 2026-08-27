@@ -84,6 +84,180 @@ RETURNS int[] AS $$
                -9995] -- WRONG_TYPE
 $$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsValidText(text);
+CREATE OR REPLACE FUNCTION TT_IsValidText(val text)
+RETURNS boolean AS $$
+  SELECT NOT val IS NULL AND val != ALL(TT_IsMissingOrInvalidText());
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsValidCode(text);
+CREATE OR REPLACE FUNCTION TT_IsValidCode(val text)
+RETURNS boolean AS $$
+  SELECT NOT val IS NULL AND val != ALL(TT_IsMissingOrNotInSetCode());
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsValidNumber(int);
+CREATE OR REPLACE FUNCTION TT_IsValidNumber(val int)
+RETURNS boolean AS $$
+  SELECT NOT val IS NULL AND val != ALL(TT_IsMissingOrInvalidNumber());
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsValidNumber(numeric);
+CREATE OR REPLACE FUNCTION TT_IsValidNumber(val numeric)
+RETURNS boolean AS $$
+  SELECT NOT val IS NULL AND val::int != ALL(TT_IsMissingOrInvalidNumber());
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsValidNumber(double precision);
+CREATE OR REPLACE FUNCTION TT_IsValidNumber(val double precision)
+RETURNS boolean AS $$
+  SELECT NOT val IS NULL AND val::int != ALL(TT_IsMissingOrInvalidNumber());
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsValidRange(int);
+CREATE OR REPLACE FUNCTION TT_IsValidRange(val int)
+RETURNS boolean AS $$
+  SELECT NOT val IS NULL AND val != ALL(TT_IsMissingOrInvalidRange());
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsValidRange(numeric);
+CREATE OR REPLACE FUNCTION TT_IsValidRange(val numeric)
+RETURNS boolean AS $$
+  SELECT NOT val IS NULL AND val != ALL(TT_IsMissingOrInvalidRange());
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_IsValidRange(double precision);
+CREATE OR REPLACE FUNCTION TT_IsValidRange(val double precision)
+RETURNS boolean AS $$
+  SELECT NOT val IS NULL AND val != ALL(TT_IsMissingOrInvalidRange());
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_HasSomeDSTInfo(text, int, int, int, text, int, int, int, text, int, int, int);
+CREATE OR REPLACE FUNCTION TT_HasSomeDSTInfo(
+  type_1 text, 
+  year_1 int, 
+  ext_lower_1 int, 
+  ext_upper_1 int,
+  type_2 text, 
+  year_2 int, 
+  ext_lower_2 int, 
+  ext_upper_2 int,
+  type_3 text, 
+  year_3 int, 
+  ext_lower_3 int, 
+  ext_upper_3 int
+)
+RETURNS boolean AS $$
+  SELECT TT_IsValidCode(type_1) OR
+         TT_IsValidRange(year_1) OR
+         TT_IsValidRange(ext_lower_1) OR
+         TT_IsValidRange(ext_upper_1) OR
+         TT_IsValidCode(type_2) OR
+         TT_IsValidRange(year_2) OR
+         TT_IsValidRange(ext_lower_2) OR
+         TT_IsValidRange(ext_upper_2) OR
+         TT_IsValidCode(type_3) OR
+         TT_IsValidRange(year_3) OR
+         TT_IsValidRange(ext_lower_3) OR
+         TT_IsValidRange(ext_upper_3);
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_HasSomeLYRInfo(text, int, double precision, int, int, double precision, double precision, text, text, text, int, text, int, text, int, text, int);
+CREATE OR REPLACE FUNCTION TT_HasSomeLYRInfo(
+  soil_moist_reg text,
+  structure_per int,
+  structure_range double precision,
+  crown_closure_lower int,
+  crown_closure_upper int,
+  height_lower double precision,
+  height_upper double precision,
+  productivity text,
+  productivity_type text,
+  species_1 text,
+  species_per_1 int,
+  species_2 text,
+  species_per_2 int,
+  species_3 text,
+  species_per_3 int,
+  species_4 text,
+  species_per_4 int,
+  species_5 text,
+  species_per_5 int,
+  species_6 text,
+  species_per_6 int,
+  origin_lower int,
+  origin_upper int,
+  site_class text,
+  site_index double precision
+)
+RETURNS boolean AS $$
+  SELECT TT_IsValidcode(soil_moist_reg) OR
+         TT_IsValidRange(structure_per) OR
+         TT_IsValidRange(structure_range) OR
+         TT_IsValidRange(crown_closure_lower) OR
+         TT_IsValidRange(crown_closure_upper) OR
+         TT_IsValidRange(height_lower) OR
+         TT_IsValidRange(height_upper) OR
+         TT_IsValidCode(productivity) OR
+         TT_IsValidCode(productivity_type) OR
+         TT_IsValidCode(species_1) OR
+         TT_IsValidRange(species_per_1) OR
+         TT_IsValidCode(species_2) OR
+         TT_IsValidRange(species_per_2) OR
+         TT_IsValidCode(species_3) OR
+         TT_IsValidRange(species_per_3) OR
+         TT_IsValidCode(species_4) OR
+         TT_IsValidRange(species_per_4) OR
+         TT_IsValidCode(species_5) OR
+         TT_IsValidRange(species_per_5) OR
+         TT_IsValidCode(species_6) OR
+         TT_IsValidRange(species_per_6) OR
+         TT_IsValidRange(origin_lower) OR
+         TT_IsValidRange(origin_upper) OR
+         TT_IsValidCode(site_class) OR
+         TT_IsValidRange(site_index);
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_HasSomeNFLInfo(text, int, int, int, double precision, double precision, text, text, text);
+CREATE OR REPLACE FUNCTION TT_HasSomeNFLInfo(
+  soil_moist_reg text,
+  structure_per int,
+  crown_closure_lower int,
+  crown_closure_upper int,
+  height_lower double precision,
+  height_upper double precision,
+  nat_non_veg text,
+  non_for_anth text,
+  non_for_veg text
+)
+RETURNS boolean AS $$
+  SELECT TT_IsValidcode(soil_moist_reg) OR
+         TT_IsValidRange(structure_per) OR
+         TT_IsValidRange(crown_closure_lower) OR
+         TT_IsValidRange(crown_closure_upper) OR
+         TT_IsValidRange(height_lower) OR
+         TT_IsValidRange(height_upper) OR
+         TT_IsValidCode(nat_non_veg) OR
+         TT_IsValidCode(non_for_anth) OR
+         TT_IsValidCode(non_for_veg);
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
+--DROP FUNCTION IF EXISTS TT_HasSomeECOInfo(text, int, int, int, double precision, double precision, text, text, text);
+CREATE OR REPLACE FUNCTION TT_HasSomeECOInfo(
+  wetland_type text,
+  wet_veg_cover text,
+  wet_landform_mod text,
+  wet_local_mod text,
+  eco_site text
+)
+RETURNS boolean AS $$
+  SELECT TT_IsValidCode(wetland_type) OR
+          TT_IsValidCode(wet_veg_cover) OR
+          TT_IsValidCode(wet_landform_mod) OR
+          TT_IsValidCode(wet_local_mod) OR
+          TT_IsValidText(eco_site);
+$$ LANGUAGE sql IMMUTABLE;
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 -- TT_Count
