@@ -1,4 +1,4 @@
-**CASFRI Inventory Update Procedure**
+**Old CASFRI Inventory Update Procedure**
 
 This procedure details the steps necessary to add or replace one or more inventories after you have completed a full translation of the CASFRI database and you do not want to reload or retranslate all the inventories and the historical table already processed.
 
