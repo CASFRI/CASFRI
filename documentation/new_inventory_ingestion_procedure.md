@@ -587,3 +587,55 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
     The inventory is ready when loaded counts agree with the original data and documented preparation; metadata and HDR are correct; all expected translated tables exist; identifiers, values, shapes, and links between tables pass their checks; samples are adequate; specific tests pass; and saved comparison results have been reviewed and can be reproduced. Check that the file changes do not accidentally include source datasets, computer-specific settings, or unrelated inventories.
 
     If the required output also includes combined tables, maps of inventory coverage, or historical tables showing which inventory applies at each place and time, continue through `workflow/03_flatCASFRI/` and `workflow/04_produceHistoricalTable/`. Confirm inventory priorities and rebuild historical results for overlapping affected inventories as well as NB99. Completing translation does not automatically update these additional products.
+
+21) **Commit the reviewed changes and push them to GitHub.**
+
+    A commit saves a selected set of file changes in your computer's Git history, with a message explaining the work. Pushing sends those commits to GitHub so other project contributors can access them. These commands share project files; they do not upload the PostgreSQL database itself.
+
+    Open Git Bash in the main CASFRI folder as explained in step 5. Check which files have changed, which branch you are using, and where Git will send the changes:
+
+    ```bash
+    git status
+    git branch --show-current
+    git remote -v
+    ```
+
+    A branch keeps a set of changes separate while they are being prepared and reviewed. A remote is a named connection to a repository on GitHub; `origin` is a common name. Confirm that the listed destination is the intended GitHub repository and that you have permission to push to it.
+
+    Use the branch agreed with the project team. If a new branch is needed, create one with a descriptive name, replacing NB99 with your inventory identifier:
+
+    ```bash
+    git switch -c add-nb99-inventory
+    ```
+
+    Review the changes with `git diff`. Open new files separately as well, because files not yet added to Git are not shown by that command. Include the inventory metadata, conversion script, mapping changes, translation rules, code-conversion tables, functions, documentation, and reviewed test results that belong to this update. Leave unrelated changes, personal working files, source datasets, and local connection settings out of the commit.
+
+    Use `git add` to select files for the commit. This is called staging. The following example selects three files; adapt it to the files you actually changed:
+
+    ```bash
+    git add -- metadata/inventory_metadata.csv metadata/layer_metadata.csv conversion/sh/load_nb99.sh
+    ```
+
+    Add the other required files by their exact paths in the same way, including new test files and accepted test-result CSVs. Then inspect everything selected:
+
+    ```bash
+    git diff --cached --stat
+    git diff --cached
+    git status
+    ```
+
+    The `--cached` commands show the changes selected for the next commit. Check that all required files are included and that their contents match the results you reviewed. If a file was selected by mistake, `git restore --staged -- path/to/file` removes it from the selection while keeping your edits on disk; replace `path/to/file` with its actual path.
+
+    Save the selected changes with a clear message identifying the inventory and the work completed:
+
+    ```bash
+    git commit -m "Add NB99 inventory conversion, translation, and tests"
+    ```
+
+    Push the commit to GitHub. This example uses the branch created above; replace the remote or branch name if yours differs:
+
+    ```bash
+    git push -u origin add-nb99-inventory
+    ```
+
+    Read the result to confirm that the push succeeded. If Git reports a permissions problem or conflicting remote changes, resolve that problem before treating the work as shared; do not overwrite other contributors' work. Open the branch on GitHub and verify that the expected commit and files are present. If the project uses pull requests, open one to request review and inclusion of the branch's changes, and describe the inventory added, the tests performed, and any remaining problems.

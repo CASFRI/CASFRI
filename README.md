@@ -355,11 +355,20 @@ Once the metadata/inventory_metadata.csv has been edited and the proper variable
 
 There is still much work to do to optimize the speed of many helper functions and to make them PARALLEL SAFE so that not only different inventories are processed on different CPUs (on the same machine) but individual inventory processing is also split across many CPUs (still on the same machine). It is quite difficult to write pl/pgSQL parallel functions that are also able to display some progress. Showing progress and feedback has been privileged over parallel processing for individual inventories. No real work has been done to split those processes across multiple machines.
 
-# Update Procedure
-The [update procedure](https://github.com/CASFRI/CASFRI/blob/master/documentation/inventory_update_procedure.md) is the method for incorporating new datasets without having to regenerate the whole CASFRI database. New datasets could be an entirely new inventory, or a partial inventory or depletion update.
+# Adding a new inventory to the CASFRI database
 
-An alternative method would be to rerun the full translation from scratch using the steps documented in this document or in the [release procedure](https://github.com/CASFRI/CASFRI/blob/master/documentation/release_procedure.md).
+To add a new inventory or inventory update, follow these main steps:
 
+1) **Document the inventory:** save the original files, assign an inventory identifier, and record its source, standard, dates, and permissions in the metadata/inventory_metadata.csv table.
+2) **Prepare the tools:** configure the software and a development database, then open Git Bash in the CASFRI folder.
+3) **Convert and load:** prepare the inventory's loading script, load the source data, and check record counts and polygon shapes.
+4) **Prepare translation:** describe how source columns and layers maps to CASFRI in the metadata/layer_metadata.csv table, then load and check the translation rules on a small sample.
+5) **Translate the inventory:** prepare the result tables and run the full translation, preserving existing inventory results.
+6) **Check and test:** verify counts, values, and shapes; write tests for specific cases; and compare sample results with previously accepted results.
+7) **Finish the update:** record the final record counts, test results, and any remaining problems. Update combined tables, coverage maps, and historical tables where required.
+8) **Save and share the changes:** commit the reviewed project changes in Git with a clear message, then push the commit to GitHub so others can access them.
+
+See the [detailed inventory ingestion procedure](documentation/new_inventory_ingestion_procedure.md) for the complete instructions, commands, examples, and checks, including how to add data without recreating existing result tables.
 
 # Credits
 **Steve Cumming**, Center for Forest Research, University Laval.
