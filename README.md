@@ -302,7 +302,21 @@ Valid start and end years are assigned using the following rules:
   * When both polygons have the same STAND_PHOTO_YEAR and valid values but come from different inventories, the polygon from the higher precedence inventory, as established by the TT_HasPrecedence() function and the PRECEDENCE_RANK column of the inventory_metadata.csv table, takes precedence. For example, if the values associated to two overlapping 2010 polygons are all valid but the first polygon comes from AB10 and the second comes from AB16, then TT_HasPrecedence() states that the AB16 polygon takes precedence.
   * When both polygons have the same STAND_PHOTO_YEAR, valid values and the same TT_HasPrecedence() rank, then both polygons are sorted by their unique identifier (CAS_ID) and the first one has precedence over the second one.
 
+<p align="center">
+  <img src="geohistory_diagram.jpg" alt="Geohistory diagram">
+  <br>
+  <em>Figure 2. Photo years determine when inventory information is valid for each stand. Successive inventories contain stand information photo-interpreted using photos from different years, so the periods of validity covered by their information vary across the landscape.</em>
+</p>
+
 No interpolation, interpretation or correction of attribute values is performed when generating the geo-historical table. For this reason the geo-historical table can be queried to recreate the 'state of the inventory' for a given year, but not necessarily the 'state of the forest'. The 'state of the inventory' is the best available information for a given point in time, whereas the 'state of the forest' would require assigning the best forest attributes for every year based on time since disturbance considering all the information found in the numerous historic inventories. This is beyond the scope of this project, but the geo-historical table could facilitate such modelling exercises for interested end users.
+
+The following diagram illustrates the temporalization procedure for a single polygon:
+
+<p align="center">
+  <img src="temporalization_diagram.jpg" alt="Temporalization diagram">
+  <br>
+  <em>Figure 3. Resolving overlaps for a single polygon. Photo years and priority rules determine which overlapping information is retained, producing polygon parts with defined start and end years of validity.</em>
+</p>
 
 The geo-historical table can be queried using VALID_YEAR_BEGIN and VALID_YEAR_END. For example, the following query would select the most valid polygon from the geo-historical table for all observation points in a table:
 ```
