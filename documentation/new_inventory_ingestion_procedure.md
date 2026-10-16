@@ -1,36 +1,34 @@
 # Procedure for adding a new inventory to CASFRI
 
-This guide explains how to document a new forest inventory, load it into the database, translate its information into the CASFRI format, and check the results. It describes the scripts included in this version of the project.
+This guide expands the six numbered steps of the README's [Translate a new inventory](../README.md#translate-a-new-inventory) procedure, with numbered subsections providing the details: archive and document, prepare and convert, prepare the translation, translate the complete inventory, generate and validate test tables, and record and share the work. Use a development copy of the database where practical and preserve existing converted and translated inventories.
 
 The examples use **NB99**, an invented identifier for a new New Brunswick inventory, and **NBI01**, an existing inventory standard. Replace NB99 with your new inventory's identifier and NBI01 with its actual standard. NB99 is not a dataset included with the project.
 
-Use a Git Bash command window for examples marked `bash`, including conversion, loading, translation scripts, and Git comparisons. Step 5 explains how to open that window. You can keep the same window open and reuse it throughout the procedure. Start each example from the main CASFRI folder unless a different folder is specified. The command `cd` changes folders, and `source` reads a settings or script file into the current Bash session. Parentheses around a group of commands keep its folder changes within that group. Text beginning with `$` in Bash examples refers to settings read from `config.sh` or `common.sh`; preserve that notation.
+Use a Git Bash command window for examples marked `bash`, including conversion, loading, translation scripts, and Git comparisons. Subsection 2.2 explains how to open that window. You can keep the same window open and reuse it throughout the procedure. Start each example from the main CASFRI folder unless a different folder is specified. Prefix shell-script paths with `./` in commands, for example `bash ./conversion/sh/load_nb99.sh` from the main folder or `bash ./convert_all.sh` from the `conversion/` folder. The prefix `./` means the current folder; preserve `../` in paths that refer to a parent folder. The command `cd` changes folders, and `source` reads a settings or script file into the current Bash session. Parentheses around a group of commands keep its folder changes within that group. Text beginning with `$` in Bash examples refers to settings read from `config.sh` or `common.sh`; preserve that notation.
 
 Run examples marked `sql` in a database query window, such as the Query Tool in pgAdmin, connected to the intended development database. Bash examples that start the `psql` program remain Git Bash commands: that program sends SQL to the database for you. SQL examples use the database groups `public`, `rawfri`, `translation`, `casfri50`, and `casfri50_test`, as the current scripts expect. These are instructions to follow with your own data; no inventory was loaded or translated when this guide was written.
 
-1) **Understand which files and tables are involved.**
+**Understand which files and tables are involved** - Conversion reads the original data files and loads them into a table such as `rawfri.nb99`. Translation then checks the source values and converts them to CASFRI's names, categories, units, and missing-value codes. The PostgreSQL Table Translation Framework is the software that turns the written translation rules into database operations. CASFRI adds the translated records to the appropriate result tables.
 
-    Conversion reads the original data files and loads them into a table such as `rawfri.nb99`. Translation then checks the source values and converts them to CASFRI's names, categories, units, and missing-value codes. The PostgreSQL Table Translation Framework is the software that turns the written translation rules into database operations. CASFRI adds the translated records to the appropriate result tables.
+| File or group of files | What it is used for |
+| --- | --- |
+| [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv) | Inventory name, source, dates, standard, permissions, priority, selection settings, and expected numbers of records |
+| [metadata/layer_metadata.csv](../metadata/layer_metadata.csv) | Which source columns and forest layers supply information to each CASFRI table |
+| `conversion/sh/load_nb99.sh` | The conversion script to create for the new inventory |
+| `translation/tables/nb_nbi01_*.csv` | Translation rules shared by inventories using NBI01; `*` stands for the different table names |
+| [translation/tables/species_code_mapping.csv](../translation/tables/species_code_mapping.csv) | Correspondences between source species codes and CASFRI species codes |
+| [helperfunctions/helperFunctionsCASFRI.sql](../helperfunctions/helperFunctionsCASFRI.sql) | Database operations used for conversion checks, mapping, translation, and tests |
+| `workflow/01_develTranslationTables/NB99.sql` | Database commands to save for developing and checking this inventory's translation |
+| [translation/test/nb_tests_per_layer.csv](../translation/test/nb_tests_per_layer.csv) | How many source records to sample for each inventory, result table, and input layer |
+| `translation/test/tables/*_nb_test.csv` | Saved test results for New Brunswick, used to compare results before and after a change |
 
-    | File or group of files | What it is used for |
-    | --- | --- |
-    | [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv) | Inventory name, source, dates, standard, permissions, priority, selection settings, and expected numbers of records |
-    | [metadata/layer_metadata.csv](../metadata/layer_metadata.csv) | Which source columns and forest layers supply information to each CASFRI table |
-    | `conversion/sh/load_nb99.sh` | The conversion script to create for the new inventory |
-    | `translation/tables/nb_nbi01_*.csv` | Translation rules shared by inventories using NBI01; `*` stands for the different table names |
-    | [translation/tables/species_code_mapping.csv](../translation/tables/species_code_mapping.csv) | Correspondences between source species codes and CASFRI species codes |
-    | [helperfunctions/helperFunctionsCASFRI.sql](../helperfunctions/helperFunctionsCASFRI.sql) | Database operations used for conversion checks, mapping, translation, and tests |
-    | `workflow/01_develTranslationTables/NB99.sql` | Database commands to save for developing and checking this inventory's translation |
-    | [translation/test/nb_tests_per_layer.csv](../translation/test/nb_tests_per_layer.csv) | How many source records to sample for each inventory, result table, and input layer |
-    | `translation/test/tables/*_nb_test.csv` | Saved test results for New Brunswick, used to compare results before and after a change |
+The result tables have short names: **HDR** describes the inventory; **CAS** identifies each source polygon; **LYR** describes forest layers; **NFL** describes non-forest land; **DST** describes disturbances; **ECO** contains ecological information; and **GEO** stores polygon shapes. HDR is copied from inventory metadata. The other six tables are produced by translation.
 
-    The result tables have short names: **HDR** describes the inventory; **CAS** identifies each source polygon; **LYR** describes forest layers; **NFL** describes non-forest land; **DST** describes disturbances; **ECO** contains ecological information; and **GEO** stores polygon shapes. HDR is copied from inventory metadata. The other six tables are produced by translation.
+Read the [CASFRI specification](specifications/README.md) for the meaning of each column, the permitted values, and how forest layers are represented.
 
-    Read the [CASFRI specification](specifications/README.md) for the meaning of each column, the permitted values, and how forest layers are represented.
+1) **Archive and document the new inventory** - Determine the next inventory identifier from [inventory_metadata.csv](../metadata/inventory_metadata.csv), save the original files under the folder defined by `friDir` in `config.sh`, and document the source, standard, dates, licensing, and expected counts in inventory metadata.
 
-2) **Choose an inventory identifier and determine which standard applies.**
-
-    Find comparable inventories in `inventory_metadata.csv` and check which identifiers are already used. Choose an unused four-character `INVENTORY_ID`: two letters for the province, territory, or other inventory group, followed by two digits. A higher number does not necessarily mean a more recent inventory. Older data newly added to CASFRI also receive a new identifier.
+    **1.1 Determine the inventory identifier and standard** - Find comparable inventories in `inventory_metadata.csv` and check which identifiers are already used. Find the highest number already used for the jurisdiction and increase it by one. For example, if AB34 is the last identifier used, assign AB35; do not reuse a gap in the numbering. Keep the four-character `INVENTORY_ID` format: two letters for the province, territory, or other inventory group, followed by two digits, and confirm that the new identifier is not already present. A higher number does not necessarily mean a more recent inventory. Older data newly added to CASFRI also receive a new identifier.
 
     Keep the dataset identifier and its standard separate. NB99 identifies one delivered dataset. NBI01 identifies the instructions used to describe and classify its forest information. Several inventories may follow the same standard.
 
@@ -40,9 +38,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Keep older inventories when adding newer deliveries. The README requires an update's publication date to be at least one year later than the previous version for inclusion. Resolve uncertain dates before deciding whether to include the update.
 
-3) **Store the original files and write an inventory description.**
-
-    Use the following folders beneath `friDir`, the setting that identifies where the source inventories are stored:
+    **1.2 Archive the original files and document their source** - Use the following folders beneath `friDir`, the setting that identifies where the source inventories are stored:
 
     ```text
     FRI/NB/NB99/
@@ -69,22 +65,57 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Decide whether the delivery contains one inventory or several separately identified parts. For example, [load_nb08.sh](../conversion/sh/load_nb08.sh) reads a delivery stored under NB06 and selects records for a particular holder. If doing this, record the shared source location and the exact rule used to select each part.
 
-4) **Add one row describing the inventory to the metadata file.**
+    **1.3 Document the inventory in inventory_metadata.csv** - Add exactly one row to `metadata/inventory_metadata.csv`. Keep the existing column names and order. Preserve quotation marks around values containing commas so those values stay in one column. If using a spreadsheet application, check that saving the CSV has not changed identifiers, dates, or quotation marks.
 
-    Add exactly one row to `metadata/inventory_metadata.csv`. Keep the existing column names and order. Preserve quotation marks around values containing commas so those values stay in one column. If using a spreadsheet application, check that saving the CSV has not changed identifiers, dates, or quotation marks.
+    ### Required inventory metadata columns
 
-    | Columns | What to enter |
-    | --- | --- |
-    | `INVENTORY_ID`, `JURISDICTION`, `OWNER_TYPE`, `OWNER_NAME` | Identifier, province/territory or inventory group, and responsible organization |
-    | `STANDARD_TYPE`, `STANDARD_VERSION`, `STANDARD_ID`, `STANDARD_REVISION`, `DOCUMENTATION_TITLES` | Applicable standard and the documents that describe it |
-    | `SRC_DATA_FORMAT`, `PRODUCTION_YEARS`, `PUBLICATION_DATE` | Original file format and dates |
-    | `ACQUISITION_PERSON`, `ACQUISITION_DATE`, `ACQUISITION_TYPE`, `ACQUISITION_LINKS`, `CONTACT_INFO` | Who obtained the data, when, from where, and whom to contact |
-    | `DATA_AVAILABILITY`, `REDISTRIBUTION`, `PERMISSION`, `LICENSE_AGREEMENT`, `LICENSE_AGREEMENT_URL` | Availability and documented permission to use or distribute the data |
-    | `PHOTO_YEAR_SRC`, `PHOTO_YEAR_START`, `PHOTO_YEAR_END` | How photograph years are determined and their range |
-    | `PRECEDENCE_RANK` | Priority used when inventories cover the same place and time |
-    | `TRANSLATED_BY_ULAVAL`, `TRANSLATED_BY_CFS`, `TRANSLATED_BY_CUSTOM` | YES/NO settings used to select inventories for processing |
-    | `CONVERTED_STAND_CNT`, `CAS_ROW_CNT`, `DST_ROW_CNT`, `ECO_ROW_CNT`, `LYR_ROW_CNT`, `NFL_ROW_CNT`, `GEO_ROW_CNT` | Expected number of loaded stands and translated rows, confirmed later |
-    | `COMMENT` | Explanations, unusual preparation, and the location of the inventory description |
+    Many columns are required for the whole translation process to work properly. The table below lists every column once, grouped by purpose. The groups are for reading this guide; keep the existing column order in the CSV file.
+
+    All columns are loaded by [load_metadata.sh](../metadata/load_metadata.sh). The **Used by scripts?** column indicates whether later processing explicitly uses the value. **Copied to HDR** means that [01_createCASFRITables.sql](../workflow/02_produceCASFRI/01_createCASFRITables.sql) copies the column into the inventory description table, `casfri50.hdr_all`. These columns must exist for that script to run, although the copying step does not require every descriptive value to be filled in. **No specific use found** means the value is retained in the metadata for documentation but is not explicitly used by the current processing scripts.
+
+    | Group | Column name | What it represents / what to enter | Used by scripts? | How it is used |
+    | --- | --- | --- | --- | --- |
+    | Identification and ownership | `INVENTORY_ID` | Unique four-character identifier, such as `NB99`. Add exactly one metadata row for this identifier. | Yes | Identifies the source table and inventory in selection, translation, tests, count checks, and historical processing. Its first two letters identify the jurisdiction for translation rules. Also copied to HDR, where it is the primary key. |
+    | Identification and ownership | `JURISDICTION` | Province, territory, or other jurisdiction responsible for the inventory. | Yes | Copied to HDR. Translation obtains its jurisdiction prefix from `INVENTORY_ID`, rather than from this descriptive field. |
+    | Identification and ownership | `OWNER_TYPE` | Category of owner or responsible organization, using the accepted metadata codes. | Yes | Copied to HDR to describe the owner category. |
+    | Identification and ownership | `OWNER_NAME` | Name of the owner or responsible organization. | Yes | Copied to HDR to identify the owner. |
+    | Inventory standard | `STANDARD_TYPE` | Name or family of the inventory standard, such as AVI. | Yes | Copied to HDR to describe the standard. |
+    | Inventory standard | `STANDARD_VERSION` | Published version of the inventory standard followed by the source data. | Yes | Copied to HDR to document the standard version. |
+    | Inventory standard | `STANDARD_ID` | CASFRI identifier for the applicable standard, such as `NBI01`. | Yes | `TT_TranslateInventory` combines it with the jurisdiction prefix and result-table name to select a translation table, such as `nb_nbi01_dst`. Also copied to HDR. |
+    | Inventory standard | `STANDARD_REVISION` | Revision of the source standard, where a separate revision is documented. | Yes | Copied to HDR to document the revision. |
+    | Inventory standard | `DOCUMENTATION_TITLES` | Titles of manuals and other documents describing the source inventory and its standard. | Yes | Copied to HDR as documentation references. |
+    | Source format and dates | `SRC_DATA_FORMAT` | Original delivery format, using the accepted metadata codes. | Yes | Copied to HDR. The inventory's conversion script specifies how to read the actual source files. |
+    | Source format and dates | `PRODUCTION_YEARS` | Year or period during which the source inventory was produced. | Yes | Copied to HDR to document production dates. |
+    | Source format and dates | `PUBLICATION_DATE` | Date when the source inventory was published or released. | Yes | Copied to HDR to document publication. |
+    | Acquisition and contact | `ACQUISITION_PERSON` | Person who obtained the inventory for the project. | No specific use found | Documents who acquired the data; not copied to HDR by the current creation script. |
+    | Acquisition and contact | `ACQUISITION_DATE` | Date when the project obtained the inventory. | Yes | Copied to HDR to document acquisition. |
+    | Acquisition and contact | `ACQUISITION_TYPE` | Method of acquisition, such as a download or direct delivery, using the accepted codes. | Yes | Copied to HDR to document how the data were obtained. |
+    | Acquisition and contact | `ACQUISITION_LINKS` | Download addresses or other references to the source of the delivery. | Yes | Copied to HDR as acquisition references. |
+    | Acquisition and contact | `CONTACT_INFO` | Contact information for the data provider or person able to clarify the inventory. | Yes | Copied to HDR as contact information. |
+    | Access and permissions | `DATA_AVAILABILITY` | Documented availability of the source data, using the accepted codes. | Yes | Copied to HDR to describe availability. |
+    | Access and permissions | `REDISTRIBUTION` | Documented conditions or restrictions on redistributing the data. | Yes | Copied to HDR to describe redistribution conditions. |
+    | Access and permissions | `PERMISSION` | Documented permission or restriction applicable to using the data. | Yes | Copied to HDR to record permission information. |
+    | Access and permissions | `LICENSE_AGREEMENT` | Applicable licence or agreement status, using the accepted codes. | Yes | Copied to HDR to record agreement information. |
+    | Access and permissions | `LICENSE_AGREEMENT_URL` | Address of the applicable licence or agreement. | No specific use found | Provides a documentation reference; not copied to HDR by the current creation script. |
+    | Photograph years | `PHOTO_YEAR_SRC` | Source or method used to determine photograph years, such as a source attribute or a spatial match to separate photograph-year data. | Yes | Copied to HDR to describe how photograph years were obtained. |
+    | Photograph years | `PHOTO_YEAR_START` | Earliest photograph year documented for the inventory. | Yes | Copied to HDR to describe the inventory's photograph-year range. Historical processing uses each translated polygon's `STAND_PHOTO_YEAR` to determine its dates. |
+    | Photograph years | `PHOTO_YEAR_END` | Latest photograph year documented for the inventory. | Yes | Copied to HDR to describe the inventory's photograph-year range. Historical processing uses each translated polygon's `STAND_PHOTO_YEAR` to determine its dates. |
+    | Historical priority | `PRECEDENCE_RANK` | Whole-number priority based on the documented quality and suitability of the inventory. | Yes, for historical processing | `TT_HasPrecedence`, defined by [01_PrepareGeoHistory.sql](../workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql), compares ranks when resolving overlaps between inventories. Higher numbers take precedence when this rule applies. |
+    | Automatic selection | `TRANSLATED_BY_ULAVAL` | YES/NO selection setting for the ULaval processing list. | Conditional | Selects inventories marked `YES` when `metadataTableLoadingColumn` names this column. Count-checking functions can also use it to select inventories. |
+    | Automatic selection | `TRANSLATED_BY_CFS` | YES/NO selection setting for the CFS processing list. | Conditional | Selects inventories marked `YES` when `metadataTableLoadingColumn` names this column. Count-checking functions can also use it to select inventories. |
+    | Automatic selection | `TRANSLATED_BY_CUSTOM` | YES/NO selection setting for a custom processing list. | Conditional | Selects inventories marked `YES` when `metadataTableLoadingColumn` names this column. Count-checking functions can also use it to select inventories. |
+    | Expected record counts | `CONVERTED_STAND_CNT` | Expected number of source stands after conversion and loading. Enter a whole number and confirm it against the loaded data. | Yes | `TT_ConvertedStandCount` compares it with the loaded source-table count. Automatic inventory selection also uses it to order inventories from largest to smallest, as explained below. |
+    | Expected record counts | `CAS_ROW_CNT` | Expected number of translated CAS records identifying source polygons. Enter a whole number. | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.cas_all`. |
+    | Expected record counts | `DST_ROW_CNT` | Expected number of translated disturbance records. Enter a whole number. | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.dst_all`. |
+    | Expected record counts | `ECO_ROW_CNT` | Expected number of translated ecological records. Enter a whole number. | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.eco_all`. |
+    | Expected record counts | `LYR_ROW_CNT` | Expected number of translated forest-layer records. Enter a whole number. | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.lyr_all`. |
+    | Expected record counts | `NFL_ROW_CNT` | Expected number of translated non-forest records. Enter a whole number. | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.nfl_all`. |
+    | Expected record counts | `GEO_ROW_CNT` | Expected number of translated polygon geometry records. Enter a whole number. | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.geo_all`. |
+    | Additional documentation | `COMMENT` | Explanations, unusual preparation, temporary estimates, and the location of the inventory description. | No specific use found | Retains notes for people maintaining the inventory; not copied to HDR by the current creation script. |
+
+    The translation and count-checking functions named above are defined in [helperFunctionsCASFRI.sql](../helperfunctions/helperFunctionsCASFRI.sql). The selection settings are used by [define_invlist.sh](../define_invlist.sh) when `fullList` is not already defined; only the column selected by `metadataTableLoadingColumn` determines which inventories are included.
+
+    **How expected stand counts affect processing order** - When inventories are selected automatically from metadata, [define_invlist.sh](../define_invlist.sh) sorts those marked `YES` in the selected column by `CONVERTED_STAND_CNT`, from largest to smallest. For example, an inventory with an expected count of 500,000 stands is listed before one with 100,000 stands, which is listed before one with 20,000 stands. The conversion and translation scripts use this order to launch their work, subject to the limits on simultaneous processes in `config.sh`; inventories can therefore finish in a different order. The sorting uses the count recorded in the metadata, without recounting the source data first. Inventories with equal counts have no specified order. If `fullList` is defined directly or inventory identifiers are supplied to the script on the command line, the supplied order is used instead.
 
     Follow the specification and comparable records for accepted values and codes representing missing information. Do not guess dates or permissions. If counts are temporary estimates, say so in the inventory description. A temporary zero must not later be mistaken for a confirmed empty table.
 
@@ -92,21 +123,21 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Choose `PRECEDENCE_RANK` based on the documented quality and suitability of the data. It controls which inventory is preferred in certain overlaps; it is not simply the next available inventory number. Check the historical-table rules before assigning it.
 
-5) **Prepare the software, settings, and test database.**
+2) **Prepare your processing environment and convert/load the inventory in the database** - Check [Shared preparation](../README.md#shared-preparation), create `conversion/sh/load_<inventory_id>.sh` from a similar existing script, and run it. Check loaded counts and polygon shapes, then update the confirmed count in [inventory_metadata.csv](../metadata/inventory_metadata.csv) if necessary.
 
-    The required tools are Bash for running scripts, GDAL/OGR for reading and converting spatial files, PostgreSQL for storing tables, PostGIS for working with spatial data inside PostgreSQL, and the PostgreSQL Table Translation Framework for applying translation rules.
+    **2.1 Check shared preparation and configure the database connection** - Complete [Shared preparation](../README.md#shared-preparation) for the database that will receive the inventory, preserving its existing data. The required tools are Bash for running scripts, GDAL/OGR for reading and converting spatial files, PostgreSQL for storing tables, PostGIS for working with spatial data inside PostgreSQL, and the PostgreSQL Table Translation Framework for applying translation rules.
 
     This version of the project's README specifies GDAL 3.10.x, PostgreSQL 13.1+, and PostGIS 3.1+. Record the versions actually used. Different versions can produce small differences in calculated areas or in which records are selected for tests.
 
-    If `config.sh` does not exist, copy [config_sample.sh](../config_sample.sh) to that name and enter your computer's settings. Set `friDir`, database connection details, `gdalFolder`, `psqlCmd`, `bashCmd`, and the limits on how many jobs can run at the same time. Keep `targetFRISchema=rawfri` and `targetTranslationFileSchema=translation`. Other parts of the current database code expect those names, so changing these settings alone will not move the complete process to different database groups.
+    If `config.sh` does not exist, copy [config_sample.sh](../config_sample.sh) to that name and enter your computer's settings. The configuration script is self-explanatory: its comments describe the settings and how to use them. Set `friDir`, database connection details, `gdalFolder`, `psqlCmd`, `bashCmd`, and the limits on how many jobs can run at the same time. Keep `targetFRISchema=rawfri` and `targetTranslationFileSchema=translation`. Other parts of the current database code expect those names, so changing these settings alone will not move the complete process to different database groups.
 
-    To work only on the example inventory, set `fullList=(NB99)` and `postProcessingOnly=False` in `config.sh`. Use the spelling and capitalization shown. The scripts check the latter setting before starting conversion or translation, but the sample settings file does not define it.
+    To work only on the example inventory, set `fullList=(NB99)` in `config.sh`. Keep `postProcessingOnly=False`, which is now included by default in `config_sample.sh`, to run conversion or translation. Setting it to `True` skips those operations and runs only the script's final processing steps, such as count checks. Use the spelling and capitalization shown.
 
     Review `overwriteFRI` before running a loading script. It controls whether existing loaded tables can be replaced. The current metadata and translation-table loading scripts also use the replacement setting derived from `overwriteFRI`; changing `overwriteTTables` alone does not control them.
 
-    Install the translation framework using the instructions provided with that project. It can be installed as the database extension `table_translation_framework` (an added database component), or by loading `engine.sql`, `helperFunctions.sql`, and `helperFunctionsGIS.sql` in that order. Run its checks: `engineTest.sql`, `helperFunctionsTest.sql`, and `helperFunctionsGISTest.sql`.
+    For a database that does not yet have PostGIS, execute `CREATE EXTENSION postgis;` in its pgAdmin Query Tool. Install the PostgreSQL Table Translation Framework using its `./install.sh` script from the framework project folder, following that project's configuration instructions. The installer places `table_translation_framework--x.y.z.sql` in PostgreSQL's `share/extension` folder. Enable it in the target database with `CREATE EXTENSION table_translation_framework;` if it is not already installed. Run the framework's `engineTest.sql`, `helperFunctionsTest.sql`, and `helperFunctionsGISTest.sql` and resolve failed checks.
 
-    **Open a Git Bash command window before running the commands below.** On Windows, open the Start menu, type **Git Bash**, and select the Git Bash application. If the shortcut is unavailable, open File Explorer and double-click `C:\Program Files\Git\git-bash.exe` on this computer. Git Bash is included with Git for Windows; if it is not installed on another computer, install Git for Windows before continuing.
+    **2.2 Open a Git Bash command window** - On Windows, open the Start menu, type **Git Bash**, and select the Git Bash application. If the shortcut is unavailable, open File Explorer and double-click `C:\Program Files\Git\git-bash.exe` on this computer. Git Bash is included with Git for Windows; if it is not installed on another computer, install Git for Windows before continuing.
 
     In the Git Bash window, go to the main CASFRI folder. For this computer, enter the following commands, pressing Enter after each line:
 
@@ -122,7 +153,9 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Keep the window open for later Bash examples. If you close it, open Git Bash again and repeat the folder-navigation commands above. If you have moved to another folder, use `cd /g/CASFRI/CASFRI` to return before starting the next example. Run any `source ./common.sh` line included in an example as well; it reads settings needed by that example.
 
-    Now run these commands in Git Bash to install and test the CASFRI database functions. The `psql` program sends the SQL files to the database specified in your settings:
+    **2.3 Install or replace the CASFRI helper functions** - For a first installation, use the installation and test commands below. To replace an existing installation, wait until no translation is running and keep PostGIS and the Table Translation Framework installed. In the Query Tool connected to the target database, execute `SELECT TT_DropAllTranslateFct();`, then open and execute the entire [helperFunctionsCasfriUninstall.sql](../helperfunctions/helperFunctionsCasfriUninstall.sql) file. These operations remove translation functions and procedures, CASFRI helper functions, and supporting and test views, including dependent objects where specified by the script. Check for errors before reinstalling.
+
+    Run these commands in Git Bash to install or reinstall the CASFRI helper functions and test them. The `psql` program sends the SQL files to the database specified in your settings:
 
     ```bash
     source ./common.sh
@@ -134,9 +167,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Read the test results, not just the message that the command finished. A check can report a failure without stopping the script. Use the development database because these installation and test files create or replace database tables and functions.
 
-6) **Examine the source data before preparing its conversion.**
-
-    In Git Bash, use `ogrinfo` to list the available map layers and examine columns, record counts, coordinate reference systems, polygon types, and geographic coverage. Replace `source.gdb` and `SourceLayer` with the actual file and map-layer names:
+    **2.4 Examine the source inventory files** - In Git Bash, use `ogrinfo` to list the available map layers and examine columns, record counts, coordinate reference systems, polygon types, and geographic coverage. Replace `source.gdb` and `SourceLayer` with the actual file and map-layer names:
 
     ```bash
     source ./common.sh
@@ -153,9 +184,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     If the input is an unsupported E00 file, retain the original and document how to convert it to a supported format before continuing.
 
-7) **Prepare the script that converts and loads the inventory.**
-
-    Copy a script for an inventory with a similar file format and structure to `conversion/sh/load_nb99.sh`. Adjust it for the new data. Follow its existing sequence: read `../../common.sh`; set `inventoryID`, source locations, map-layer names, and `fullTargetTableName`; read `../pre_conversion.sh`; convert and prepare the data; then read `../post_conversion.sh`. These paths are relative to the conversion script's folder.
+    **2.5 Create the conversion/loading script** - Copy a script for an inventory with a similar file format and structure to `conversion/sh/load_nb99.sh`. Adjust it for the new data. Follow its existing sequence: read `../../common.sh`; set `inventoryID`, source locations, map-layer names, and `fullTargetTableName`; read `../pre_conversion.sh`; convert and prepare the data; then read `../post_conversion.sh`. These paths are relative to the conversion script's folder.
 
     The result should be one source table, normally `rawfri.nb99`, containing all information needed for translation. Where the original data use several linked tables, combine the necessary columns into this single table. Keep original stand identifiers and add `src_filename` (the source filename) and `inventory_id` (the uppercase inventory identifier).
 
@@ -171,18 +200,38 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     `post_conversion.sh` creates an index on `ogc_fid`, which helps the database find records quickly, and runs `VACUUM ANALYZE` to maintain database performance. If SQL commands created the final table and it needs an index for spatial searches, follow the existing `createSQLSpatialIndex=True` setting.
 
-8) **Run conversion and check the loaded records.**
-
-    Load any required photograph-year or supporting datasets first. Then run the new conversion script in Git Bash. The first command checks Bash command syntax without converting data; the second performs conversion:
+    **2.6 Convert/load the inventory** - Load any required photograph-year or supporting datasets first. Then run the new conversion script in Git Bash. The first command checks Bash command syntax without converting data; the second performs conversion:
 
     ```bash
-    bash -n conversion/sh/load_nb99.sh
-    bash conversion/sh/load_nb99.sh
+    bash -n ./conversion/sh/load_nb99.sh
+    bash ./conversion/sh/load_nb99.sh
     ```
 
-    `conversion/convert_all.sh` can normally start conversion for a list of inventories from the `conversion/` folder. However, this version contains an incorrectly written condition for loading photo-year data: `if [ -z "$invToLoad" &&  ]; then`. Use the direct commands above until that problem has been corrected and checked. Do not assume supporting photograph-year tables were loaded automatically.
+    Alternatively, use [./convert_all.sh](../conversion/convert_all.sh) from the `conversion/` folder to convert one or more inventories. Keep the default `postProcessingOnly=False` in `config.sh` so conversion runs.
 
-    Read the messages and inspect the resulting table. Existing scripts do not always stop after an error. Run these SQL checks:
+    To convert the inventories selected by `fullList` in `config.sh`, or by the metadata selection column when `fullList` is not defined, use:
+
+    ```bash
+    (
+      cd conversion
+      bash ./convert_all.sh
+    )
+    ```
+
+    With no inventory identifiers on the command line, the script first loads every supporting photograph-year dataset listed in `photoYearList` and waits for those loading commands to finish before starting inventory conversion. Check that `photoYearList` contains the required datasets and that their source files are available. Supporting datasets not included in `photoYearList` must be loaded separately.
+
+    To convert only the new inventory, after loading any required supporting datasets, use:
+
+    ```bash
+    (
+      cd conversion
+      bash ./convert_all.sh NB99
+    )
+    ```
+
+    Replace `NB99` with the actual identifier; multiple identifiers can be separated by spaces. Providing identifiers selects those inventories instead of the configured list and skips automatic photograph-year loading. The individual conversion command shown earlier also requires supporting datasets to be loaded beforehand.
+
+    **2.7 Check loaded counts and polygon shapes** - Read the messages and inspect the resulting table. Existing scripts do not always stop after an error. Run these SQL checks:
 
     ```sql
     SELECT inventory_id, src_filename, count(*)
@@ -210,16 +259,16 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
     Once counts agree with the source and documented preparation, enter the confirmed count in `CONVERTED_STAND_CNT`. Reload metadata and run the comparison:
 
     ```bash
-    bash metadata/load_metadata.sh
+    bash ./metadata/load_metadata.sh
     ```
 
     ```sql
     SELECT * FROM TT_ConvertedStandCount(ARRAY['NB99']);
     ```
 
-9) **Record how source columns and layers correspond to CASFRI.**
+3) **Validate or prepare the translation for this inventory** - Add mapping rows in [layer_metadata.csv](../metadata/layer_metadata.csv). Reuse the existing translation tables for the inventory standard, or create one for each of CAS, DST, LYR, NFL, ECO, and GEO. Load them with [./load_tables.sh](../translation/load_tables.sh), create a development script in [workflow/01_develTranslationTables](../workflow/01_develTranslationTables), and validate sample translated rows before translating the complete inventory.
 
-    Add NB99 rows to `metadata/layer_metadata.csv`, using a comparable inventory as a starting point. Check every entry against the columns actually loaded into the database. There must be only one row for each inventory/layer combination. Add a row for each input layer or separate translation operation.
+    **3.1 Add mapping rows in layer_metadata.csv** - Add NB99 rows to `metadata/layer_metadata.csv`, using a comparable inventory as a starting point. Check every entry against the columns actually loaded into the database. There must be only one row for each inventory/layer combination. Add a row for each input layer or separate translation operation.
 
     In `casfri_table`, list the uppercase result-table names supplied by that row, such as `CAS ECO DST LYR GEO`, `LYR`, or `NFL`. A missing name can cause a complete result table to be skipped without stopping the process. Do not copy unnecessary quote characters from older records.
 
@@ -231,9 +280,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Document how the photograph year is obtained and what happens when it is missing. Do not silently replace it with publication year. Explain which result tables should legitimately be empty and which attributes should receive codes for missing or inapplicable information.
 
-10) **Prepare translation rules and code-conversion tables.**
-
-    CASFRI uses the province/group identifier and `STANDARD_ID` to find the rules. NB99 following NBI01 uses `translation.nb_nbi01_cas`, `nb_nbi01_lyr`, and the other relevant tables. Create a new set under `translation/tables/` only when needed. Supply rules for every result table named in layer metadata.
+    **3.2 Reuse or create the translation tables** - CASFRI uses the province/group identifier and `STANDARD_ID` to find the rules. NB99 following NBI01 uses `translation.nb_nbi01_cas`, `nb_nbi01_lyr`, and the other relevant tables. Reuse the existing translation tables when they already describe the inventory's standard. If the standard has no translation tables, create a complete set under `translation/tables/`: one table for each of CAS, DST, LYR, NFL, ECO, and GEO. For the example standard, these are `nb_nbi01_cas.csv`, `nb_nbi01_dst.csv`, `nb_nbi01_lyr.csv`, `nb_nbi01_nfl.csv`, `nb_nbi01_eco.csv`, and `nb_nbi01_geo.csv`. Use layer metadata and row-selection rules to describe which tables receive records; document any legitimately empty results.
 
     Translation CSV files contain these seven columns; keep their exact names:
 
@@ -259,15 +306,14 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Update `species_code_mapping.csv` and any other code-conversion tables when needed. These are also called lookup tables. Check that each source code has a clear meaning and an appropriate CASFRI value or documented error outcome. A change to a shared table can alter older inventories too.
 
-    Use existing database functions where possible. If a new function must be written, add it to `helperFunctionsCASFRI.sql`, add the corresponding removal command to `helperFunctionsCasfriUninstall.sql`, and add the tests described in step 18. Document the inventory interpretation that justifies the calculation.
-11) **Load the metadata and rules, then try a small sample.**
+    Use existing database functions where possible. If a new function must be written, add it to `helperFunctionsCASFRI.sql`, add the corresponding removal command to `helperFunctionsCasfriUninstall.sql`, and add the applicable helper-function tests described in subsection 5.5. Document the inventory interpretation that justifies the calculation.
 
-    In Git Bash, run the following commands to load the relevant CSV files. This script also reloads both metadata files:
+    **3.3 Load the translation tables and metadata** - In Git Bash, run the following commands to load the relevant CSV files. This script also reloads both metadata files:
 
     ```bash
     (
       cd translation
-      bash load_tables.sh nb_nbi01_cas.csv nb_nbi01_dst.csv \
+      bash ./load_tables.sh nb_nbi01_cas.csv nb_nbi01_dst.csv \
         nb_nbi01_eco.csv nb_nbi01_lyr.csv nb_nbi01_nfl.csv \
         nb_nbi01_geo.csv species_code_mapping.csv
     )
@@ -275,7 +321,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Include any other code-conversion CSVs required by the rules. If database functions have changed, load their updated definitions before preparing translation. Confirm that the expected metadata and translation tables are present in the database. Editing a CSV file on your computer does not automatically update its database copy.
 
-    Save commands used for investigation in `workflow/01_develTranslationTables/NB99.sql` so another person can repeat the checks. Older development examples sometimes use outdated mapping names. The following example uses the current naming format and samples 200 source rows:
+    **3.4 Create a development script and validate sample translated rows** - Create `workflow/01_develTranslationTables/NB99.sql` using a similar inventory's development script as a starting point. Save the commands used for investigation so another person can repeat the checks. Older development examples sometimes use outdated mapping names. The following example uses the current naming format and samples 200 source rows:
 
     ```sql
     SELECT TT_CreateMappingView('rawfri', 'nb99', 1, 'nb_nbi01', 1, 200);
@@ -287,26 +333,17 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
     );
     ```
 
-    `TT_CreateMappingView` prepares a view showing the source columns under the names expected by the chosen standard. `TT_Prepare` creates the database function that applies the LYR rules. The last query displays its translated results. These commands display a sample translation; they do not perform the complete inventory translation described in step 13.
+    `TT_CreateMappingView` prepares a view showing the source columns under the names expected by the chosen standard. `TT_Prepare` creates the database function that applies the LYR rules. The last query displays its translated results. These commands display a sample translation; they do not perform the complete inventory translation described in subsections 4.2 and 4.3.
 
     Repeat this preparation and inspection for every required result table and input layer. Check that columns are present, fixed values are correct, and the intended records were selected. `TT_Prepare` checks whether the rules are correctly written, but cannot establish whether they correctly interpret the inventory manual.
 
     Compare original and translated values for selected stands, including rare categories and missing information. Use the documented CAS_ID construction and original identifiers to match records. Do not assume that the last few characters of every CAS_ID identify a source record in the same way. Save expected values and supporting manual/page references in the inventory description.
 
-12) **Prepare the result tables without deleting existing inventory data.**
+4) **Translate the complete inventory** - Add its HDR record using the SQL below and run `CALL TT_TranslateInventory('<inventory_id>', 'T', '<CASFRI table>');` for each required table, with CAS first when existing constraints enforce table relationships. You can also use [./02_translateAll.sh](../workflow/02_produceCASFRI/02_translateAll.sh) from Git Bash with the new inventory identifier, subject to the same table relationships.
 
-    If using a new development database whose results can be discarded, run the following in Git Bash after loading metadata and rules:
+    **4.1 Add the HDR record** - Keep the existing result tables. If the database has not yet been initialized, complete the relevant database-creation instructions in [Build the whole database from scratch](../README.md#build-the-whole-database-from-scratch) in a separate empty database before returning to this procedure. Do not run `./01_createCASFRITables.sh` against tables containing results you need to keep: it deletes and recreates HDR and the translated tables, and can remove dependent database objects.
 
-    ```bash
-    (
-      cd workflow/02_produceCASFRI
-      bash 01_createCASFRITables.sh
-    )
-    ```
-
-    **This script deletes and recreates HDR and the translated tables. Its `CASCADE` option can also remove database objects that depend on those tables. Do not run it to add one inventory to a database containing results you need to keep.**
-
-    For an existing database, keep its result tables and first add the new inventory description to HDR. The following SQL copies only the required columns, following [01_createCASFRITables.sql](../workflow/02_produceCASFRI/01_createCASFRITables.sql):
+    Add the new inventory description to HDR before translating its records. The following SQL copies only the required columns, following [01_createCASFRITables.sql](../workflow/02_produceCASFRI/01_createCASFRITables.sql):
 
     ```sql
     INSERT INTO casfri50.hdr_all (
@@ -337,20 +374,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Keep existing constraints where possible when adding an inventory.
 
-13) **Translate all records in the inventory.**
-
-    In a new development database where table-link constraints do not impose an order, run this in Git Bash:
-
-    ```bash
-    (
-      cd workflow/02_produceCASFRI
-      bash 02_translateAll.sh NB99
-    )
-    ```
-
-    Check the displayed database name, inventory list, and processing settings before continuing. The list in `config.sh` can replace inventory names supplied on the command line because the script reads that settings file. Keep the settings and command consistent.
-
-    To translate one table at a time, particularly when existing table-link constraints require CAS first, run these SQL commands in order:
+    **4.2 Translate the complete inventory using SQL** - After adding the HDR record, run `CALL TT_TranslateInventory('<inventory_id>', 'T', '<CASFRI table>');` for each required result table. Use the following commands in order and wait for CAS to finish before translating its related tables when existing constraints enforce those relationships:
 
     ```sql
     CALL TT_TranslateInventory('NB99', 'T', 'cas');
@@ -363,13 +387,24 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     `CALL` starts the named database procedure. Each command prepares the appropriate rules, reads the mapped source information, and adds translated rows to its result table. The procedure does **not** automatically replace rows left by an earlier attempt.
 
-    If translation stops partway through, first determine which tables already contain NB99. Before retrying, remove only the affected NB99 rows, deleting related LYR/NFL/DST/ECO/GEO rows before their CAS rows where links require that order. Alternatively, start again with an empty development database whose results can be discarded. Rerunning without checking can create duplicate records.
+    **4.3 Translate the complete inventory using Git Bash** - Use [./02_translateAll.sh](../workflow/02_produceCASFRI/02_translateAll.sh) with the inventory identifier when parallel translation is suitable:
+
+    ```bash
+    (
+      cd workflow/02_produceCASFRI
+      bash ./02_translateAll.sh NB99
+    )
+    ```
+
+    This script can start translations of different result tables at the same time. If existing foreign-key constraints require CAS to finish first, use the sequential SQL commands above. Check the displayed database name, inventory list, and processing settings before continuing. Keep `fullList` in `config.sh` consistent with the inventory being added so existing inventories are not unintentionally retranslated.
+
+    **4.4 Check completion before repeating a translation** - If translation stops partway through, first determine which tables already contain NB99. Before retrying, remove only the affected NB99 rows, deleting related LYR/NFL/DST/ECO/GEO rows before their CAS rows where links require that order. Alternatively, start again with an empty development database whose results can be discarded. Rerunning without checking can create duplicate records.
 
     Save the messages and check each expected result table. Some missing-data problems are reported as messages followed by an early stop, without a command failure. A command that appears to finish successfully may therefore have translated only part of the inventory.
 
-14) **Check the complete results and confirm the expected row counts.**
+5) **Generate, validate and archive test tables** - Add sample settings for each inventory/CASFRI table/layer supported by the test script, following the recommended test-row counts in [translation/test/readme.md](../translation/test/readme.md). Run [./test_translation.sh](../translation/test/test_translation.sh), check sample sizes with [validate_number_of_tests.sql](../translation/test/validate_number_of_tests.sql), and compare the other inventories in the same jurisdiction when translation tables have changed.
 
-    Run this comparison of translated counts with inventory metadata:
+    **5.1 Validate the complete translation used to check the test tables** - Before accepting sample test tables, check the complete translation for the new inventory. These checks establish the counts and values against which the samples will be assessed. Run this comparison with inventory metadata:
 
     ```sql
     SELECT * FROM TT_TranslatedRowCount(ARRAY['NB99']);
@@ -403,17 +438,15 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Repeat checks of links and duplicates for the other relevant tables. Check that every expected CAS identifier appears in GEO and every GEO identifier appears in CAS. Equal counts alone do not prove that the two tables contain the same polygons. Inspect geographic coverage, coordinate reference systems, example shapes, and the units used for areas.
 
-    In a new validation database, run `01_addConstraints.sql`, `01_addGeoConstraints.sql`, `02_addIndexes.sql`, and `03_additionalChecks.sql` from [03_ConstraintsChecksAndIndexes](../workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes). Read each `passed` result and use the supplied investigation queries when a check fails. Constraints enforce data rules; indexes speed up database searches.
+    For additional database-wide validation in a separate validation database, the full-build procedure provides `01_addConstraints.sql`, `01_addGeoConstraints.sql`, `02_addIndexes.sql`, and `03_additionalChecks.sql` in [03_ConstraintsChecksAndIndexes](../workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes). Creating constraints and indexes again is not a routine requirement for adding an inventory to an existing database. Where these scripts are needed, inspect the reported results and use the investigation queries when a check fails. Constraints enforce data rules; indexes speed up database searches.
 
     These scripts change database objects. Before applying them to an existing installation, check which constraints and indexes are already present. An error saying an object already exists does not necessarily mean the inventory data are wrong.
 
-    Use [summary_statistics/summarize.R](../summary_statistics/summarize.R) and related R scripts after adjusting their database and output settings. R is the software used here to produce statistical summaries. Compare frequencies and ranges with the source data and comparable inventories. A table containing only permitted missing-value codes can pass basic checks while still indicating an incorrect column mapping.
+    When a broader review of translated values is needed, use [summary_statistics/summarize.R](../summary_statistics/summarize.R) and related R scripts after adjusting their database and output settings. R is the software used here to produce statistical summaries. Compare frequencies and ranges with the source data and comparable inventories. A table containing only permitted missing-value codes can pass basic checks while still indicating an incorrect column mapping.
 
     Enter the six confirmed translated counts in inventory metadata, reload it, and repeat the count comparisons. Record the evidence and reasons for legitimate differences in the inventory description.
 
-15) **Choose the source samples used to check future changes.**
-
-    Regression tests check whether a change has unexpectedly altered results that were previously accepted. CASFRI translates samples of source records and saves the results for comparison. This is quicker than translating every inventory in full.
+    **5.2 Add sample settings in nb_tests_per_layer.csv** - Regression tests check whether a change has unexpectedly altered results that were previously accepted. CASFRI translates samples of source records and saves the results for comparison. This is quicker than translating every inventory in full.
 
     Add rows to `translation/test/nb_tests_per_layer.csv` for every required combination of inventory, result table, and **input layer used by the mapping**. Use the existing lowercase names and header:
 
@@ -427,22 +460,20 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
     nb99,nfl,3,600
     ```
 
-    The sample sizes above are examples, not verified settings for your inventory. Use the actual input layers listed in layer metadata. `nb_test_rows` is the number of source records to sample before translation decides which records belong in the result. For example, sampling 1,000 stands might yield only a few disturbance records if disturbances are uncommon.
+    Follow the recommended translated test-row counts in [translation/test/readme.md](../translation/test/readme.md), then use [validate_number_of_tests.sql](../translation/test/validate_number_of_tests.sql) as explained in subsection 5.4 to check that the actual samples are sufficient. The sample sizes above are examples, not verified settings for your inventory. Use the actual input layers listed in layer metadata. `nb_test_rows` is the number of source records to sample before translation decides which records belong in the result. For example, sampling 1,000 stands might yield only a few disturbance records if disturbances are uncommon.
 
-    The standard test execution script checks CAS, ECO, DST, NFL, and LYR. It does not include HDR and GEO in these saved sample results. Check those tables using the complete-data checks and the specific tests in step 18.
+    For the README's instruction to add one sample setting per inventory/CASFRI-table/layer, use the tables supported by the sample test script: CAS, ECO, DST, NFL, and LYR. Do not add HDR or GEO sample entries to this file; the standard script does not test them. Validate the HDR record and GEO results with the complete-data checks and, where needed, the specific tests described in subsection 5.5.
 
     **A missing sample entry does not mean skip this case.** The current procedure treats an absent size as a request to use the full source table. A size of zero produces no sampled rows and must be explained. Include exactly one entry for each required inventory/table/input-layer combination.
 
     Reload inventory and layer metadata before running these tests. Naming an inventory directly can skip the scripts' automatic metadata-loading step. The test execution script does load the sample-size CSV itself.
 
-16) **Run the sample tests and check that the intended cases were included.**
-
-    Keep copies of previously accepted test CSVs and any edits not yet saved in Git's history. The test execution script deletes and rewrites CSV files in `translation/test/tables/`. It produces results but does not compare them with earlier results or decide whether they are correct. Run the following commands in Git Bash:
+    **5.3 Generate and validate the test tables** - Keep copies of previously accepted test CSVs and any edits not yet saved in Git's history. The test execution script deletes and rewrites CSV files in `translation/test/tables/`. It produces results but does not compare them with earlier results or decide whether they are correct. Run the following commands in Git Bash:
 
     ```bash
     (
       cd translation/test
-      bash test_translation.sh NB99
+      bash ./test_translation.sh NB99
     )
     ```
 
@@ -475,9 +506,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Also check for missing or negative sample sizes and inspect the actual number of test results. Correct settings do not by themselves prove that any records were tested.
 
-17) **Adjust sample sizes using the complete translation as a reference.**
-
-    Once complete translation results and sample results both exist, run:
+    **5.4 Check that enough test rows were translated** - Once complete translation results and sample results both exist, run:
 
     ```sql
     SELECT * FROM TT_CheckNumberOfTests('cas', 'nb', TRUE) WHERE inv = 'NB99';
@@ -507,9 +536,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Complete these adjustments before accepting the saved test files. Changing the sample size also changes which source records are selected, so it can change many rows in the comparison files.
 
-18) **Write specific tests for unusual cases and new calculations.**
-
-    Random samples can miss rare conditions. Prepare a table of cases to check, including ordinary values, NULL, empty text, unknown category codes, class boundaries, values outside permitted ranges, absent/present understory, changed layer order, forest/non-forest classification, disturbances, missing photograph years, and new species codes.
+    **5.5 Add specific tests when needed** - Use these additional checks when validating sample results reveals cases that random samples do not adequately cover, or when new or changed helper functions need testing. Relevant cases can include ordinary values, NULL, empty text, unknown category codes, class boundaries, values outside permitted ranges, absent/present understory, changed layer order, forest/non-forest classification, disturbances, missing photograph years, and new species codes. Record the applicable cases in a table of expected results.
 
     For each case, record the source values, the expected result, and the manual or specification reference that justifies it. Calculate the expected result independently before comparing it with the software output.
 
@@ -558,9 +585,7 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     Where practical, temporarily enter a deliberately wrong expected value to confirm that a test reports failure, then restore the correct value. Do not simply copy unreviewed translation output into the expected-result column: that would preserve a mistake rather than detect it.
 
-19) **Compare the new test files with the previously accepted results.**
-
-    In Git Bash, run these Git commands from the main project folder to see which test files changed and what changed inside two of them:
+    **5.6 Compare and archive the validated test tables** - In Git Bash, run these Git commands from the main project folder to see which test files changed and what changed inside two of them:
 
     ```bash
     git diff --stat -- translation/test/tables
@@ -570,29 +595,27 @@ Run examples marked `sql` in a database query window, such as the Query Tool in 
 
     `git diff --stat` summarizes changes by file. `git diff` shows changed lines; removed lines begin with `-` and added lines with `+`. Review the ECO, DST, and NFL files too.
 
-    If shared rules have not changed, adding NB99 should generally add NB99 results. Investigate changes to older inventories. Possible causes include a different sample, changed record identifiers, changed selection rules, a different row order, small differences in calculated geometry measurements, or an actual change in translation. [translation/test/readme.md](../translation/test/readme.md) explains these causes.
+    If translation tables were modified to accommodate the new inventory, compare the test rows for the other inventories in the same jurisdiction, as required by the README. If shared rules have not changed, adding NB99 should generally add NB99 results. Investigate changes to older inventories. Possible causes include a different sample, changed record identifiers, changed selection rules, a different row order, small differences in calculated geometry measurements, or an actual change in translation. [translation/test/readme.md](../translation/test/readme.md) explains these causes.
 
-    A new inventory has no previously accepted test results. Manually review representative new records and run the specific tests from step 18 before accepting the first saved files as a reference for future comparisons.
+    A new inventory has no previously accepted test results. Manually review representative new records and run any applicable specific tests from subsection 5.5 before accepting the first saved files as a reference for future comparisons.
 
     Do not accept the disappearance of older inventories merely because their source tables were absent from the test database. Produce complete replacement files using a database with the required inventories, or keep the incomplete files separately for investigation without replacing the accepted reference results.
 
-    If shared rules, code-conversion tables, or database functions changed, test every inventory that uses them. A general-purpose function can affect several provinces or territories. Record which inventories could not be tested; a skipped inventory has not passed.
+    If the changes also affect shared lookup tables or database functions used outside that jurisdiction, extend the comparisons to the other affected inventories. This additional scope applies when those shared components change. Record which affected inventories could not be tested; a skipped inventory has not passed.
 
     Run the tests again with the same inputs, software versions, and settings. The saved files should be identical. Investigate unexplained differences before saving the accepted results in Git's history. Record file checksums, how record identifiers were assigned, software versions, sample sizes, and the reasons for accepted changes.
 
-20) **Finish the documentation and prepare the inventory for use.**
+6) **Record and share the work** - Document final counts, test tables, and remaining problems; review the changed project files, commit them, and push them to GitHub. If denormalized (flat) tables, coverage maps, or historical results must include the new inventory, update those separately for the affected inventories without rerunning full-build initialization.
 
-    Review the inventory description, metadata, conversion script, column/layer mappings, translation rules, code-conversion tables, changed functions, and all tests together. Record commands used, confirmed counts, check results, sample sizes, manually reviewed examples, and remaining limitations. When ready, enable the intended YES/NO settings that include the inventory in larger processing jobs, and reload metadata.
+    **6.1 Document final counts, test tables, and remaining problems** - Review the inventory description, metadata, conversion script, column/layer mappings, translation rules, code-conversion tables, changed functions, and all tests together. Record commands used, confirmed counts, check results, sample sizes, manually reviewed examples, and remaining limitations. When ready, enable the intended YES/NO settings that include the inventory in larger processing jobs, and reload metadata.
 
-    The inventory is ready when loaded counts agree with the original data and documented preparation; metadata and HDR are correct; all expected translated tables exist; identifiers, values, shapes, and links between tables pass their checks; samples are adequate; specific tests pass; and saved comparison results have been reviewed and can be reproduced. Check that the file changes do not accidentally include source datasets, computer-specific settings, or unrelated inventories.
+    The inventory is ready when loaded counts agree with the original data and documented preparation; metadata and HDR are correct; all expected translated tables exist; identifiers, values, shapes, and links between tables pass their checks; samples are adequate; any applicable specific tests pass; and saved comparison results have been reviewed and can be reproduced. Check that the file changes do not accidentally include source datasets, computer-specific settings, or unrelated inventories.
 
-    If the required output also includes combined tables, maps of inventory coverage, or historical tables showing which inventory applies at each place and time, continue through `workflow/03_flatCASFRI/` and `workflow/04_produceHistoricalTable/`. Confirm inventory priorities and rebuild historical results for overlapping affected inventories as well as NB99. Completing translation does not automatically update these additional products.
+    **6.2 Update derived tables only if required** - If denormalized (flat) tables, coverage maps, or historical results must also include the new inventory, update the affected inventories using `workflow/03_flatCASFRI/` and `workflow/04_produceHistoricalTable/`. Confirm inventory priorities and rebuild historical results for overlapping affected inventories as well as NB99, without rerunning full-build initialization or deleting unrelated results. Completing translation does not automatically update these additional products.
 
-21) **Commit the reviewed changes and push them to GitHub.**
+    **6.3 Review, commit, and push the changes to GitHub** - A commit saves a selected set of file changes in your computer's Git history, with a message explaining the work. Pushing sends those commits to GitHub so other project contributors can access them. These commands share project files; they do not upload the PostgreSQL database itself.
 
-    A commit saves a selected set of file changes in your computer's Git history, with a message explaining the work. Pushing sends those commits to GitHub so other project contributors can access them. These commands share project files; they do not upload the PostgreSQL database itself.
-
-    Open Git Bash in the main CASFRI folder as explained in step 5. Check which files have changed, which branch you are using, and where Git will send the changes:
+    Open Git Bash in the main CASFRI folder as explained in subsection 2.2. Check which files have changed, which branch you are using, and where Git will send the changes:
 
     ```bash
     git status
