@@ -1,0 +1,31 @@
+---
+name: casfri-inventory-ingestion
+description: Prepare, convert, translate, and test a new CASFRI inventory, or maintain the associated inventory-ingestion documentation. Use the detailed project procedure and preserve existing inventory results.
+---
+
+# CASFRI inventory ingestion
+
+Use [the detailed inventory procedure](documentation/new_inventory_ingestion_procedure.md) as the authoritative procedure. Read its relevant sections before working; resolve script behavior against the current repository rather than relying on an archived document. Paths in this skill are relative to the CASFRI project root. User instructions take precedence over this skill.
+
+1) **Establish the task and scope** - Distinguish documenting the procedure from actually processing an inventory. Documentation edits do not authorize running database operations. For a new inventory, establish its source files, jurisdiction, identifier, standard, and intended database from available project information. Ask for missing information only when it blocks the requested work. NB99 is a fictitious example; do not treat it as a real inventory.
+
+   Keep the three database tasks distinct: translating a new inventory follows the detailed guide; building the whole database follows [the main README](README.md#build-the-whole-database-from-scratch); producing a release follows [the release procedure](documentation/release_procedure.md). Adding an inventory does not imply rebuilding the database or publishing a release.
+
+2) **Follow the detailed procedure** - Use its current section titles, commands, configuration variables, and checks. The six stages are:
+
+   - Archive and document the inventory. Put all inventory documentation in [inventory_metadata.csv](metadata/inventory_metadata.csv), using dedicated columns and `COMMENT` for additional explanations. Retain original deliveries and manuals in the source archive; do not introduce separate inventory-description Markdown files.
+   - Prepare the environment, convert and load the inventory. Start from a comparable conversion script, then verify the loaded counts and polygon shapes before accepting metadata counts.
+   - Prepare and validate the translation. Configure input-layer mappings and dependencies, load the translation tables and metadata, and inspect sample translations before processing the complete inventory.
+   - Translate the complete inventory. Add the HDR record and follow the guide's SQL or Bash execution method. Preserve existing inventories; do not run full-build initialization against results that must be retained. Check partial results before retrying to avoid duplicate rows.
+   - Generate, validate and archive test tables. Check the complete translation, sample sizes, specific test cases, and differences from accepted test results. Test generation alone does not establish correctness. Follow the guide's jurisdiction-wide test scope and preserve results for existing inventories.
+   - Record and share the work. Complete metadata documentation and review the changed files. Commit, push, or update derived products only when included in the user's requested work.
+
+3) **Prefer reuse when developing translations** - Reuse existing translation tables as much as possible, making simple modifications when they allow reuse. Create new tables when substantial changes are required or no suitable existing set is available. Recheck all affected inventories when shared translation tables, lookup tables, or functions change.
+
+   Use basic helper functions from the PostgreSQL Table Translation Framework wherever possible before writing specialized CASFRI functions. If those functions cannot meet the need, check existing CASFRI functions for reuse or adaptation. Whenever adding or modifying a function in [helperFunctionsCASFRI.sql](helperfunctions/helperFunctionsCASFRI.sql), add or update and run its tests in [helperFunctionsCASFRITest.sql](helperfunctions/helperFunctionsCASFRITest.sql). Add the corresponding removal command to [helperFunctionsCasfriUninstall.sql](helperfunctions/helperFunctionsCasfriUninstall.sql) for a new function. Consult the framework's local documentation and function definitions when selecting its basic functions.
+
+4) **Maintain the documents and this skill together** - Whenever the detailed guide changes, review this skill in the same task. Update any affected instructions, terminology, references, or workflow decisions. Pure formatting changes need no redundant rewrite here. Keep detailed commands and column descriptions in the guide rather than copying them into this skill.
+
+   Edit the detailed guide by default. Update the main README when the user requests it; keep corresponding procedure titles and wording aligned when changing both. Preserve the user's concurrent edits by reading files immediately before making changes.
+
+   Write for a nonprogrammer. Use numbered steps and subsections, with a bold title followed by ` - ` and a capitalized explanation. Use "CASFRI tables" for translated output tables, "translation tables" for tables containing rules, "configuration variables" for configuration values, and "denormalized (flat) table" for flat outputs. Explain how to open Git Bash where needed and prefix executable `.sh` paths with `./`, preserving necessary `../` paths.
