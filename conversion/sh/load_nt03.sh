@@ -38,7 +38,7 @@ srcFileName=NT_Forcov_
 srcFullPath="$friDir/NT/$inventoryID/data/inventory/$srcFileName.gdb"
 
 gdbTableName=NT_FORCOV_ATT
-fullTargetTableName=$targetFRISchema.nt03
+fullTargetTableName=${targetFRISchema}.nt03
 polyTargetTableName=${fullTargetTableName}_poly
 
 ########################################## Process ######################################
@@ -56,31 +56,31 @@ source $thisScriptDir/../pre_conversion.sh
 # Fix case 3, then case 2, then case 1
 "$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
-DROP TABLE IF EXISTS rawfri.nt03_case3 CASCADE;
+DROP TABLE IF EXISTS ${targetFRISchema}.nt03_case3 CASCADE;
 
-CREATE TABLE rawfri.nt03_case3 AS
+CREATE TABLE ${targetFRISchema}.nt03_case3 AS
 WITH tab AS (SELECT * FROM ${fullTargetTableName}_poly ORDER BY wkb_geometry, fc_id, areaha, dis1code)
 SELECT DISTINCT ON(wkb_geometry, fc_id, areaha) * FROM tab;
 
 -- Merge polygons where everything except geometry matches, dont sum area (case 2 in issue)
-DROP TABLE IF EXISTS rawfri.nt03_case2;
+DROP TABLE IF EXISTS ${targetFRISchema}.nt03_case2;
 
-CREATE TABLE rawfri.nt03_case2 AS
+CREATE TABLE ${targetFRISchema}.nt03_case2 AS
 SELECT min(ogc_fid) ogc_fid, ST_Union(wkb_geometry) wkb_geometry, fc_id, areaha, invproj_id, seam_id, landbase, landcov, landpos, typeclas, densitycls, structur, strc_per, mesopos, moisture, sp1, sp1_per, sp2, sp2per, sp3, sp3per, sp4, sp4per, height, crownclos, origin, siteclass, wetland, ref_year, landuse, dis1code, dis1ext, dis1year, mintypeclas, minmoist, minsp1, minsp1per, minsp2, minsp2per, minsp3, minsp3per, minsp4, minsp4per, minheight, mincrownclos, minorigin, minsiteclass, si_50, src_filename, inventory_id
-FROM rawfri.nt03_case3
+FROM ${targetFRISchema}.nt03_case3
 GROUP BY(fc_id, areaha, invproj_id, seam_id, landbase, landcov, landpos, typeclas, densitycls, structur, strc_per, mesopos, moisture, sp1, sp1_per, sp2, sp2per, sp3, sp3per, sp4, sp4per, height, crownclos, origin, siteclass, wetland, ref_year, landuse, dis1code, dis1ext, dis1year, mintypeclas, minmoist, minsp1, minsp1per, minsp2, minsp2per, minsp3, minsp3per, minsp4, minsp4per, minheight, mincrownclos, minorigin, minsiteclass, si_50, src_filename, inventory_id);
   
 -- Merge polygons where everything except geometry and areas match, sum areas (case 1 in issue)
-DROP TABLE IF EXISTS $fullTargetTableName;
+DROP TABLE IF EXISTS ${fullTargetTableName};
 
-CREATE TABLE $fullTargetTableName AS
+CREATE TABLE ${fullTargetTableName} AS
 SELECT min(ogc_fid) ogc_fid, ST_Union(wkb_geometry) wkb_geometry, fc_id, sum(areaha) areaha, invproj_id, seam_id, landbase, landcov, landpos, typeclas, densitycls, structur, strc_per, mesopos, moisture, sp1, sp1_per, sp2, sp2per, sp3, sp3per, sp4, sp4per, height, crownclos, origin, siteclass, wetland, ref_year, landuse, dis1code, dis1ext, dis1year, mintypeclas, minmoist, minsp1, minsp1per, minsp2, minsp2per, minsp3, minsp3per, minsp4, minsp4per, minheight, mincrownclos, minorigin, minsiteclass, si_50, src_filename, inventory_id
-FROM rawfri.nt03_case2
+FROM ${targetFRISchema}.nt03_case2
 GROUP BY(fc_id, invproj_id, seam_id, landbase, landcov, landpos, typeclas, densitycls, structur, strc_per, mesopos, moisture, sp1, sp1_per, sp2, sp2per, sp3, sp3per, sp4, sp4per, height, crownclos, origin, siteclass, wetland, ref_year, landuse, dis1code, dis1ext, dis1year, mintypeclas, minmoist, minsp1, minsp1per, minsp2, minsp2per, minsp3, minsp3per, minsp4, minsp4per, minheight, mincrownclos, minorigin, minsiteclass, si_50, src_filename, inventory_id);
 
 DROP TABLE ${fullTargetTableName}_poly CASCADE;
-DROP TABLE rawfri.nt03_case3 CASCADE;
-DROP TABLE rawfri.nt03_case2 CASCADE;
+DROP TABLE ${targetFRISchema}.nt03_case3 CASCADE;
+DROP TABLE ${targetFRISchema}.nt03_case2 CASCADE;
 "
 
 createSQLSpatialIndex=True

@@ -25,10 +25,10 @@ source $thisScriptDir/../../common.sh
 inventoryID=ON01
 srcFolder="$friDir/ON/$inventoryID/data/inventory/"
 
-fullTargetTableName=$targetFRISchema.on01
-tempPoly=$targetFRISchema.on01_poly
-tempForAtt=$targetFRISchema.on01_forest_att
-tempNonForAtt=$targetFRISchema.on01_nonfor_att
+fullTargetTableName=${targetFRISchema}.on01
+tempPoly=${targetFRISchema}.on01_poly
+tempForAtt=${targetFRISchema}.on01_forest_att
+tempNonForAtt=${targetFRISchema}.on01_nonfor_att
 
 overwrite_option="$overwriteTable"
 
@@ -38,7 +38,7 @@ thisScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )
 source $thisScriptDir/../pre_conversion.sh
 
 # drop any temp tables from previous loads
-"$gdalFolder\ogrinfo" "$gdalConnectionString" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 DROP TABLE IF EXISTS $tempPoly CASCADE;
 DROP TABLE IF EXISTS $tempForAtt CASCADE;
@@ -87,7 +87,7 @@ done
 
 unset PGCLIENTENCODING
 
-"$gdalFolder\ogrinfo" "$gdalConnectionString" \
+"$gdalFolder/ogrinfo" "$gdalConnectionString" \
 -sql "
 CREATE INDEX ON $tempForAtt USING btree(src_filename);
 CREATE INDEX ON $tempForAtt USING btree(recno);
@@ -122,7 +122,7 @@ SELECT a.ogc_fid, a.area_meter, a.perimeter_, a.polyid, a.polytype, a.owner, a.a
        b.fixed, b.spcomp, b.pw, b.pr, b.pj, b.sb, b.sw, b.bf, b.ce, b.la, b.he, b.po, b.pl, b.pb, b.bw, b.yb, b.mh,
        b.ms, b.ab, b.aw, b.bd, b.be, b.ch, b.ew, b.iw, b.qr, b.ob, b.ow, b.oh, b.oc, b.bugdep, b.bugdepgtv,
        b.bugdepcai, b.distrd, b.distrds, b.distrdp
-FROM (rawfri.on01_poly a
+FROM (${targetFRISchema}.on01_poly a
 LEFT JOIN $tempForAtt b ON (a.src_filename = b.src_filename AND a.recno::int = b.recno::int))
 LEFT JOIN non_forested_distinct c ON (a.src_filename = c.src_filename AND a.recno::int = c.recno::int);
 
