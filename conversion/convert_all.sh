@@ -19,7 +19,7 @@ source ../confirm_config.sh
 if [ "$postProcessingOnly" = "False" ]; then
   # Load the photoyear tables first as some conversions are dependent on them (which ones?)
   # Load them only if the list was not provided as argument on the command line
-  if [ -z "$invToLoad" &&  ]; then
+  if [ "$useCommandArgumentInvList" = "False" ]; then
     echo "Convert the fixed list of photo year tables first..."
     for photoYearFile in "${photoYearList[@]}"
     do
