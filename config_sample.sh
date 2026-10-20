@@ -74,6 +74,10 @@ overwriteTTables=True
 postProcessing=True
 
 #################################################################
+# Set to true if you want to only perform post processing (index creation, display statistics, etc...)
+postProcessingOnly=False
+
+#################################################################
 # List of source tables to load and translate with convert_allall.sh
 #
 # You can either let convert_all.sh build the list or inventories to 
