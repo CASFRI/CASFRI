@@ -2139,7 +2139,9 @@ $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
 -- TT_DropAllConstraints
 --
--- Drop all constraint on a table
+-- Drop all constraints on a regular or partitioned table.
+-- Invalid schema/table arguments raise an error before any changes.
+-- Constraint-removal failures roll back the changes and return FALSE.
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_DropAllConstraints(name, name);
 CREATE OR REPLACE FUNCTION TT_DropAllConstraints(
@@ -2150,7 +2152,34 @@ RETURNS boolean AS $$
   DECLARE
     consList RECORD;
     queryStr text;
+    tableOid oid;
+    relationKind "char";
   BEGIN
+    IF schemaName IS NULL THEN
+      RAISE EXCEPTION 'TT_DropAllConstraints(): schemaName cannot be NULL'
+        USING ERRCODE = 'invalid_parameter_value';
+    END IF;
+    IF tableName IS NULL THEN
+      RAISE EXCEPTION 'TT_DropAllConstraints(): tableName cannot be NULL'
+        USING ERRCODE = 'invalid_parameter_value';
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_namespace WHERE nspname = schemaName) THEN
+      RAISE EXCEPTION 'TT_DropAllConstraints(): schema % does not exist', schemaName
+        USING ERRCODE = 'invalid_schema_name';
+    END IF;
+    SELECT rel.oid, rel.relkind INTO tableOid, relationKind
+    FROM pg_catalog.pg_class rel
+    JOIN pg_catalog.pg_namespace nsp ON nsp.oid = rel.relnamespace
+    WHERE nsp.nspname = schemaName AND rel.relname = tableName;
+    IF tableOid IS NULL THEN
+      RAISE EXCEPTION 'TT_DropAllConstraints(): table %.% does not exist', schemaName, tableName
+        USING ERRCODE = 'undefined_table';
+    END IF;
+    IF relationKind NOT IN ('r', 'p') THEN
+      RAISE EXCEPTION 'TT_DropAllConstraints(): %.% is not a regular or partitioned table', schemaName, tableName
+        USING ERRCODE = 'wrong_object_type';
+    END IF;
+
     BEGIN
       FOR consList IN SELECT conname
                       FROM pg_catalog.pg_constraint con
@@ -2158,7 +2187,7 @@ RETURNS boolean AS $$
                       INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
                       WHERE nsp.nspname = schemaName AND rel.relname = tableName
       LOOP
-        queryStr = 'ALTER TABLE ' || schemaName || '.' || tableName || ' DROP CONSTRAINT IF EXISTS ' || consList.conname ||' CASCADE;';
+        queryStr = format('ALTER TABLE %I.%I DROP CONSTRAINT IF EXISTS %I CASCADE;', schemaName, tableName, consList.conname);
         RAISE NOTICE 'TT_DropAllConstraint(): Dropping contraint ''%'' (%)...', consList.conname, queryStr;
         EXECUTE queryStr;
       END LOOP;
@@ -2169,6 +2198,143 @@ RETURNS boolean AS $$
   END;
 $$ LANGUAGE plpgsql VOLATILE;
 -------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- TT_DropForeignKeyConstraints
+--
+-- Drop only the CAS_ID foreign keys from DST/ECO/LYR/NFL/GEO to CAS in the
+-- requested schema (default casfri50). Match tables and columns, not names.
+-- Primary keys, CHECK constraints, CAS -> HDR and other foreign keys remain.
+-- Returns TRUE on success; errors propagate and roll back this function call.
+-------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_DropForeignKeyConstraints(
+  schemaName name DEFAULT 'casfri50'
+)
+RETURNS boolean AS $$
+DECLARE
+  constraintRow record;
+BEGIN
+  IF schemaName IS NULL THEN
+    RAISE EXCEPTION 'TT_DropForeignKeyConstraints(): schemaName cannot be NULL'
+      USING ERRCODE = 'invalid_parameter_value';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = schemaName) THEN
+    RAISE EXCEPTION 'TT_DropForeignKeyConstraints(): schema % does not exist', schemaName
+      USING ERRCODE = 'invalid_schema_name';
+  END IF;
+
+  FOR constraintRow IN
+    SELECT child.relname AS table_name, fk.conname AS constraint_name
+    FROM pg_constraint fk
+    JOIN pg_class child ON child.oid = fk.conrelid
+    JOIN pg_namespace child_schema ON child_schema.oid = child.relnamespace
+    JOIN pg_class parent ON parent.oid = fk.confrelid
+    JOIN pg_attribute child_column
+      ON child_column.attrelid = child.oid AND child_column.attname = 'cas_id'
+      AND NOT child_column.attisdropped
+    JOIN pg_attribute parent_column
+      ON parent_column.attrelid = parent.oid AND parent_column.attname = 'cas_id'
+      AND NOT parent_column.attisdropped
+    WHERE fk.contype = 'f'
+      AND child_schema.nspname = schemaName
+      AND parent.relnamespace = child.relnamespace
+      AND parent.relname = 'cas_all'
+      AND child.relname = ANY (ARRAY['dst_all', 'eco_all', 'lyr_all', 'nfl_all', 'geo_all'])
+      AND fk.conkey = ARRAY[child_column.attnum]
+      AND fk.confkey = ARRAY[parent_column.attnum]
+    ORDER BY child.relname, fk.conname
+  LOOP
+    RAISE NOTICE 'TT_DropForeignKeyConstraints(): Dropping constraint % from %',
+                 quote_ident(constraintRow.constraint_name),
+                 format('%I.%I', schemaName, constraintRow.table_name);
+    EXECUTE format('ALTER TABLE %I.%I DROP CONSTRAINT %I',
+                   schemaName, constraintRow.table_name, constraintRow.constraint_name);
+  END LOOP;
+  RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+-------------------------------------------------------------------------------
+-- TT_AddForeignKeyConstraints
+--
+-- Add and validate the five CAS_ID foreign keys from DST/ECO/LYR/NFL/GEO to
+-- CAS in the requested schema (default casfri50). Reuse a matching constraint under
+-- any name; validate it if it was created NOT VALID. Repeated calls do not
+-- add duplicates. All six tables must exist. Any error rolls back this call,
+-- including constraints already added before a later validation fails.
+-------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION TT_AddForeignKeyConstraints(
+  schemaName name DEFAULT 'casfri50'
+)
+RETURNS boolean AS $$
+DECLARE
+  tableName name;
+  parentTable oid;
+  childTable oid;
+  parentColumn smallint;
+  childColumn smallint;
+  constraintRow record;
+  constraintFound boolean;
+BEGIN
+  IF schemaName IS NULL THEN
+    RAISE EXCEPTION 'TT_AddForeignKeyConstraints(): schemaName cannot be NULL'
+      USING ERRCODE = 'invalid_parameter_value';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = schemaName) THEN
+    RAISE EXCEPTION 'TT_AddForeignKeyConstraints(): schema % does not exist', schemaName
+      USING ERRCODE = 'invalid_schema_name';
+  END IF;
+
+  parentTable = to_regclass(format('%I.cas_all', schemaName));
+  IF parentTable IS NULL THEN
+    RAISE EXCEPTION 'TT_AddForeignKeyConstraints(): table %.cas_all does not exist', schemaName
+      USING ERRCODE = 'undefined_table';
+  END IF;
+  SELECT attnum INTO parentColumn FROM pg_attribute
+  WHERE attrelid = parentTable AND attname = 'cas_id' AND NOT attisdropped;
+  IF parentColumn IS NULL THEN
+    RAISE EXCEPTION 'TT_AddForeignKeyConstraints(): %.cas_all has no cas_id column', schemaName
+      USING ERRCODE = 'undefined_column';
+  END IF;
+
+  FOREACH tableName IN ARRAY ARRAY['dst_all', 'eco_all', 'lyr_all', 'nfl_all', 'geo_all']::name[]
+  LOOP
+    childTable = to_regclass(format('%I.%I', schemaName, tableName));
+    IF childTable IS NULL THEN
+      RAISE EXCEPTION 'TT_AddForeignKeyConstraints(): table %.% does not exist', schemaName, tableName
+        USING ERRCODE = 'undefined_table';
+    END IF;
+    SELECT attnum INTO childColumn FROM pg_attribute
+    WHERE attrelid = childTable AND attname = 'cas_id' AND NOT attisdropped;
+    IF childColumn IS NULL THEN
+      RAISE EXCEPTION 'TT_AddForeignKeyConstraints(): %.% has no cas_id column', schemaName, tableName
+        USING ERRCODE = 'undefined_column';
+    END IF;
+
+    constraintFound = FALSE;
+    FOR constraintRow IN
+      SELECT conname, convalidated
+      FROM pg_constraint
+      WHERE contype = 'f' AND conrelid = childTable AND confrelid = parentTable
+        AND conkey = ARRAY[childColumn] AND confkey = ARRAY[parentColumn]
+    LOOP
+      constraintFound = TRUE;
+      IF NOT constraintRow.convalidated THEN
+        EXECUTE format('ALTER TABLE %I.%I VALIDATE CONSTRAINT %I',
+                       schemaName, tableName, constraintRow.conname);
+      END IF;
+    END LOOP;
+
+    IF NOT constraintFound THEN
+      EXECUTE format(
+        'ALTER TABLE %I.%I ADD FOREIGN KEY (cas_id) REFERENCES %I.cas_all (cas_id) MATCH FULL',
+        schemaName, tableName, schemaName
+      );
+    END IF;
+  END LOOP;
+  RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
 
 -------------------------------------------------------------------------------
 -- TT_RunAllTests

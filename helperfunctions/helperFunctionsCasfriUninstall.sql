@@ -236,6 +236,8 @@ DROP FUNCTION IF EXISTS TT_IsMissingOrInvalidRange() CASCADE;
 DROP FUNCTION IF EXISTS TT_IsJsonGeometry(text);
 DROP FUNCTION IF EXISTS TT_Count(name, name, text, boolean);
 DROP FUNCTION IF EXISTS TT_DropAllConstraints(name, name);
+DROP FUNCTION IF EXISTS TT_DropForeignKeyConstraints(name);
+DROP FUNCTION IF EXISTS TT_AddForeignKeyConstraints(name);
 DROP FUNCTION IF EXISTS TT_CheckNumberOfTests(text, text);
 DROP FUNCTION IF EXISTS TT_CountAndDiff(name, name, int, text);
 DROP FUNCTION IF EXISTS TT_ConvertedStandCount(text); 

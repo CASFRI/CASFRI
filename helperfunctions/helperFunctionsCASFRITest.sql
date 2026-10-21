@@ -14,9 +14,115 @@
 -------------------------------------------------------------------------------
 SET lc_messages TO 'en_US.UTF-8';
 
--- Create some test lookup table
-DROP TABLE IF EXISTS test_lookup_qc_stdstr CASCADE;
-CREATE TABLE test_lookup_qc_stdstr AS
+-- Constraint-helper tests use the framework's existing TT_IsError function.
+-- All test objects are created in the dedicated casfri50_unittest schema.
+CREATE SCHEMA IF NOT EXISTS casfri50_unittest;
+
+-- Match the five CAS_ID links by their real tables and columns, not by names.
+CREATE OR REPLACE VIEW casfri50_unittest.tt_fk_constraint_test_targets AS
+SELECT ns.nspname AS schema_name, child.relname AS table_name, fk.conname, fk.convalidated
+FROM pg_constraint fk
+JOIN pg_class child ON child.oid = fk.conrelid
+JOIN pg_namespace ns ON ns.oid = child.relnamespace
+JOIN pg_class parent ON parent.oid = fk.confrelid
+JOIN pg_attribute ca ON ca.attrelid = child.oid AND ca.attname = 'cas_id'
+JOIN pg_attribute pa ON pa.attrelid = parent.oid AND pa.attname = 'cas_id'
+WHERE fk.contype = 'f' AND parent.relname = 'cas_all'
+  AND parent.relnamespace = child.relnamespace
+  AND child.relname = ANY (ARRAY['dst_all', 'eco_all', 'lyr_all', 'nfl_all', 'geo_all'])
+  AND fk.conkey = ARRAY[ca.attnum] AND fk.confkey = ARRAY[pa.attnum];
+
+-- Recreate the constraint-test tables before each check, run its SQL, and return
+-- the final SELECT's boolean result. Each check supplies its actions and assertion.
+-- Successful checks keep their new tables and rows; no old tables are restored.
+-- TT_IsError(statement, TRUE) checks SQLSTATE without depending on error wording.
+CREATE OR REPLACE FUNCTION casfri50_unittest.TT_TestConstraintTables(testSql text)
+RETURNS boolean AS $$
+DECLARE
+  testSchema name := 'casfri50_unittest';
+  childName name;
+  testPassed boolean;
+BEGIN
+  -- Rebuild only the dedicated constraint-test fixtures. Listing all related
+  -- tables together handles their mutual foreign keys without CASCADE.
+  -- Unlisted dependent objects cause an error instead of being silently removed.
+  DROP VIEW IF EXISTS casfri50_unittest.tt_fk_test_view;
+  DROP TABLE IF EXISTS
+    casfri50_unittest."dst_all",
+    casfri50_unittest."eco_all",
+    casfri50_unittest."lyr_all",
+    casfri50_unittest."nfl_all",
+    casfri50_unittest."geo_all",
+    casfri50_unittest."tt_fk_control_dst_all",
+    casfri50_unittest."tt_fk_unrelated",
+    casfri50_unittest."cas_all",
+    casfri50_unittest."hdr_all",
+    casfri50_unittest."tt_fk_control_cas_all",
+    casfri50_unittest."tt_fk_initial_constraints",
+    casfri50_unittest."tt_fk_no_constraints",
+    casfri50_unittest."TT FK mixed case table";
+
+    -- Create a minimal HDR table and a valid inventory identifier for the fixtures.
+    EXECUTE format('CREATE TABLE %I.hdr_all (inventory_id text PRIMARY KEY)', testSchema);
+    -- Supply the inventory row required by the CAS-to-HDR foreign key.
+    EXECUTE format('INSERT INTO %I.hdr_all VALUES (''INV'')', testSchema);
+
+    -- CAS has a primary key, a nonempty-ID check and a link to HDR. The drop-only
+    -- function must leave all three types of constraint in place.
+    EXECUTE format('CREATE TABLE %I.cas_all (
+      cas_id text PRIMARY KEY CHECK (length(cas_id) > 0),
+      inventory_id text REFERENCES %I.hdr_all (inventory_id))', testSchema, testSchema);
+    -- Start with one CAS row that every initial child row can reference.
+    EXECUTE format('INSERT INTO %I.cas_all VALUES (''base'', ''INV'')', testSchema);
+    -- This control parent contains all IDs used later. A child CAS_ID link to
+    -- this differently named table must survive because it does not reference CAS.
+    EXECUTE format('CREATE TABLE %I.tt_fk_control_cas_all (cas_id text PRIMARY KEY)', testSchema);
+    EXECUTE format('INSERT INTO %I.tt_fk_control_cas_all VALUES (''base''), (''late''), (''orphan''), (''pending'')', testSchema);
+
+    -- These control tables are outside the five target table names. Their foreign
+    -- keys must remain even though they use CAS_ID or reference the CAS table.
+    EXECUTE format('CREATE TABLE %I.tt_fk_control_dst_all (cas_id text REFERENCES %I.tt_fk_control_cas_all)', testSchema, testSchema);
+    EXECUTE format('CREATE TABLE %I.tt_fk_unrelated (cas_id text REFERENCES %I.cas_all)', testSchema, testSchema);
+
+    -- Give each target table one key to remove and several constraints to keep:
+    -- a primary key, a CHECK, a link to HDR, another column's link to CAS, and
+    -- CAS_ID's link to the control parent. Custom key names exercise SQL quoting.
+    FOREACH childName IN ARRAY ARRAY['dst_all', 'eco_all', 'lyr_all', 'nfl_all', 'geo_all']::name[]
+    LOOP
+      EXECUTE format('CREATE TABLE %I.%I (
+        cas_id text PRIMARY KEY CHECK (length(cas_id) > 0),
+        inventory_id text REFERENCES %I.hdr_all (inventory_id),
+        other_cas_id text REFERENCES %I.cas_all (cas_id),
+        FOREIGN KEY (cas_id) REFERENCES %I.tt_fk_control_cas_all (cas_id),
+        CONSTRAINT %I FOREIGN KEY (cas_id) REFERENCES %I.cas_all (cas_id) MATCH FULL)',
+        testSchema, childName, testSchema, testSchema, testSchema,
+        'custom key ' || childName, testSchema);
+      -- Each initial row satisfies all foreign keys before the removal test.
+      EXECUTE format('INSERT INTO %I.%I VALUES (''base'', ''INV'', ''base'')', testSchema, childName);
+    END LOOP;
+
+    -- Snapshot constraint identities and definitions before the case-specific SQL.
+    -- Tests compare counts and foreign keys outside casfri50_unittest with this table.
+    CREATE TABLE casfri50_unittest.tt_fk_initial_constraints AS
+    SELECT con.oid AS constraint_oid, ns.nspname AS schema_name, con.contype,
+           pg_get_constraintdef(con.oid) AS definition,
+           con.convalidated, con.condeferrable, con.condeferred
+    FROM pg_constraint con JOIN pg_namespace ns ON ns.oid = con.connamespace;
+    -- Run the actions before evaluating the final SELECT, regardless of the
+    -- order in which the numbered UNION ALL checks are evaluated.
+    EXECUTE testSql INTO STRICT testPassed;
+    RETURN coalesce(testPassed, FALSE);
+EXCEPTION WHEN OTHERS THEN
+    -- Report unexpected setup or query errors as failed checks and show why.
+    RAISE WARNING 'Constraint test failed [%]: %', SQLSTATE, SQLERRM;
+    RETURN FALSE;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+-- Provide Quebec stand-structure examples with one or two age layers.
+-- Keep this lookup fixture in the same schema as the other test objects.
+DROP TABLE IF EXISTS casfri50_unittest.test_lookup_qc_stdstr CASCADE;
+CREATE TABLE casfri50_unittest.test_lookup_qc_stdstr AS
 SELECT 'VIR'::text source_val, '1'::text num_of_layers, 'VIR'::text layer_1_age, ''::text layer_2_age
 UNION ALL
 SELECT 'VIN'::text, '1'::text, 'VIN'::text, ''::text
@@ -31,23 +137,26 @@ SELECT '10'::text, '1'::text, '10'::text, ''::text
 UNION ALL
 SELECT '1010'::text, '2'::text, '10'::text, '10'::text;
 
--- Create some test lookup table
-DROP TABLE IF EXISTS test_lookup_on_species CASCADE;
-CREATE TABLE test_lookup_on_species AS
+-- Provide two Ontario species abbreviations and their expected CASFRI codes.
+-- Recreate the lookup fixture so repeated runs start with the same values.
+DROP TABLE IF EXISTS casfri50_unittest.test_lookup_on_species CASCADE;
+CREATE TABLE casfri50_unittest.test_lookup_on_species AS
 SELECT 'Sw'::text source_val, 'PICE_GLAU'::text spec1
 UNION ALL
 SELECT 'Sb'::text, 'PICE_MARI'::text;
 
--- test photo year table with geometry
-DROP TABLE IF EXISTS photo_test2 CASCADE;
-CREATE TABLE photo_test2 AS
+-- Provide three overlapping polygons with photo years 1990, 1999 and 2000.
+-- The photo-year checks below use these geometries to test spatial matches;
+-- every call explicitly selects casfri50_unittest as the fixture schema.
+DROP TABLE IF EXISTS casfri50_unittest.photo_test2 CASCADE;
+CREATE TABLE casfri50_unittest.photo_test2 AS
 SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 7, 7 7, 7 0, 0 0)))', 4268) AS the_geom, 1990::text AS YEAR
 UNION ALL
 SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 2, 2 2, 2 0, 0 0)))', 4268), 1999::text
 UNION ALL
 SELECT ST_GeometryFromText('MULTIPOLYGON(((6 6, 6 15, 15 15, 15 6, 6 6)))', 4268), 2000::text;
 -----------------------------------------------------------
--- Comment out the following line and the last one of the file to display 
+-- Comment out the following line and the last one of the file to display
 -- only failing tests
 SELECT * FROM (
 -----------------------------------------------------------
@@ -56,145 +165,148 @@ SELECT * FROM (
 -- It is required to list tests which would not appear because they failed
 -- by returning nothing.
 WITH test_nb AS (
-  SELECT 'TT_vri01_non_for_veg_validation'::text function_tested,           1 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_vri01_nat_non_veg_validation'::text function_tested,           2 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_vri01_non_for_anth_validation'::text function_tested,          3 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_vri01_origin_translation'::text function_tested,               4 maj_num,  1 nb_test UNION ALL
-  SELECT 'TT_vri01_site_index_translation'::text function_tested,           5 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,          6 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,          7 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,         8 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_avi01_non_for_veg_translation'::text function_tested,          9 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,     10 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_nb_nbi01_wetland_validation'::text function_tested,           12 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nb_nbi01_wetland_translation'::text function_tested,          13 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested, 14 maj_num, 11 nb_test UNION ALL
-  SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested, 15 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_CreateFilterView'::text function_tested,                      16 maj_num, 23 nb_test UNION ALL
-  SELECT 'TT_vri01_dist_yr_translation'::text function_tested,             17 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_fim_species_code'::text function_tested,                      24 maj_num,  7 nb_test UNION ALL
-  SELECT 'TT_fim_species_percent_translation'::text function_tested,       26 maj_num,  8 nb_test UNION ALL
-  SELECT 'TT_yvi01_nat_non_veg_validation'::text function_tested,          27 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi01_nat_non_veg_translation'::text function_tested,         28 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi01_non_for_veg_translation'::text function_tested,         29 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,    30 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_avi01_stand_structure_validation'::text function_tested,      31 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_avi01_stand_structure_translation'::text function_tested,     32 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,      33 maj_num,  7 nb_test UNION ALL
-  SELECT 'TT_fvi01_countOfNotNull'::text function_tested,                  34 maj_num,  7 nb_test UNION ALL
-  SELECT 'TT_vri01_countOfNotNull'::text function_tested,                  35 maj_num, 17 nb_test UNION ALL
-  SELECT 'TT_sk_utm01_species_percent_validation'::text function_tested,   36 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,  37 maj_num, 11 nb_test UNION ALL
-  SELECT 'TT_sk_utm01_species'::text function_tested,                      38 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,     39 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                  40 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,               41 maj_num,  6 nb_test UNION ALL
-  SELECT 'TT_HasNFLInfo'::text function_tested,                            42 maj_num, 13 nb_test UNION ALL
-  SELECT 'TT_pe_pei01_countOfNotNull'::text function_tested,               43 maj_num,  8 nb_test UNION ALL
-  SELECT 'TT_vri01_hasCountOfNotNull'::text function_tested,               44 maj_num,  6 nb_test UNION ALL
-  SELECT 'TT_ns_nsi01_hasCountOfNotNull'::text function_tested,            45 maj_num,  6 nb_test UNION ALL
-  SELECT 'TT_fvi01_hasCountOfNotNull'::text function_tested,               46 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_on_fim02_countOfNotNull'::text function_tested,               47 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_on_fim02_hasCountOfNotNull'::text function_tested,            48 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_pe_pei01_hasCountOfNotNull'::text function_tested,            49 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_sfv01_hasCountOfNotNull'::text function_tested,               50 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_sk_utm_countOfNotNull'::text function_tested,                 51 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,              52 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_bc_height'::text function_tested,                             53 maj_num,  6 nb_test UNION ALL
-  SELECT 'TT_fvi01_structure_per'::text function_tested,                   54 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_fvi01_structure_per_validation'::text function_tested,        55 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_wetland_code_translation'::text function_tested,              56 maj_num,  6 nb_test UNION ALL
-  SELECT 'TT_qc_prg3_wetland_validation'::text function_tested,            57 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_qc_prg5_wetland_validation'::text function_tested,            58 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,           59 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_species'::text function_tested,                       60 maj_num, 14 nb_test UNION ALL
-  SELECT 'TT_qc_prg5_species'::text function_tested,                       61 maj_num,  8 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,       62 maj_num, 12 nb_test UNION ALL
-  SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,       63 maj_num, 10 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested, 64 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                 66 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,              67 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_mb_fli01_stand_structure_translation'::text function_tested,  68 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_isCommercial'::text function_tested,                 69 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_isNonCommercial'::text function_tested,              70 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,71 maj_num,3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,72 maj_num,3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_height_upper_translation'::text function_tested,     73 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_height_lower_translation'::text function_tested,     74 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_isForest'::text function_tested,                     75 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,     76 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,77 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,               78 maj_num, 13 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,     79 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,     80 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,      81 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_qc_origin_translation'::text function_tested,                 82 maj_num,  1 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,83 maj_num, 3 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,     84 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_height_validation'::text function_tested,            85 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_qc_prg3_wetland_translation'::text function_tested,           86 maj_num, 15 nb_test UNION ALL
-  SELECT 'TT_qc_prg5_wetland_translation'::text function_tested,           87 maj_num,  7 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,           88 maj_num,  7 nb_test UNION ALL
-  SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,            89 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_qc_countOfNotNull'::text function_tested,                     90 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                  91 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_lyr_layer_translation'::text function_tested,                 92 maj_num, 15 nb_test UNION ALL
-	SELECT 'TT_bc_lyr_layer_translation'::text function_tested,              93 maj_num,  6 nb_test UNION ALL
-	SELECT 'TT_ab_avi01_wetland_translation'::text function_tested,          94 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_ab_avi01_wetland_validation'::text function_tested,           95 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_nl_nli01_wetland_translation'::text function_tested,          96 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_nl_nli01_wetland_validation'::text function_tested,           97 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_bc_vri01_wetland_translation'::text function_tested,          98 maj_num,  7 nb_test UNION ALL
-	SELECT 'TT_bc_vri01_wetland_validation'::text function_tested,           99 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_ns_nsi01_wetland_translation'::text function_tested,         100 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_ns_nsi01_wetland_validation'::text function_tested,          101 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pe_pei01_wetland_translation'::text function_tested,         102 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_pe_pei01_wetland_validation'::text function_tested,          103 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_nt_fvi01_wetland_translation'::text function_tested,         104 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_nt_fvi01_wetland_validation'::text function_tested,          105 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc01_species_per_translation'::text function_tested,         106 maj_num,  7 nb_test UNION ALL
-	SELECT 'TT_sk_utm01_wetland_translation'::text function_tested,         107 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_utm01_wetland_validation'::text function_tested,          108 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_ab_photo_year_validation'::text function_tested,             109 maj_num,  6 nb_test UNION ALL
-	SELECT 'TT_ab_photo_year_translation'::text function_tested,            110 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_sfv01_wetland_translation'::text function_tested,         111 maj_num,  7 nb_test UNION ALL
-	SELECT 'TT_sk_sfv01_wetland_validation'::text function_tested,          112 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_mb_fli01_wetland_translation'::text function_tested,         113 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_mb_fli01_wetland_validation'::text function_tested,          114 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_mb_fri01_wetland_translation'::text function_tested,         115 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,          116 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc02_wetland_translation'::text function_tested,             117 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_pc02_wetland_validation'::text function_tested,              118 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_pc02_countOfNotNull'::text function_tested,                  119 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,               120 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_yt_wetland_translation'::text function_tested,               121 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_yt_wetland_validation'::text function_tested,                122 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_nb_lyr_layer_translation'::text function_tested,             123 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_nb_countOfNotNull'::text function_tested,                    124 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_nb_hasCountOfNotNull'::text function_tested,                 125 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_ns_lyr_layer_translation'::text function_tested,             126 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_on_lyr_layer_translation'::text function_tested,             127 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,        128 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_qc_prg3_src_inv_area_translation'::text function_tested,     130 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_stand_structure_translation'::text function_tested, 131 maj_num,  3 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_copyText'::text function_tested,        132 maj_num,  5 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_mapText'::text function_tested,         133 maj_num,  1 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_matchList'::text function_tested,       134 maj_num,  1 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_notNull'::text function_tested,         135 maj_num,  2 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,         136 maj_num,  1 nb_test UNION ALL
-	SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,137 maj_num,  4 nb_test UNION ALL
-	SELECT 'TT_nt_lyr_layer_translation'::text function_tested,             138 maj_num,  6 nb_test UNION ALL
-  SELECT 'TT_pe_pei01_dist_type_length_validation'::text function_tested, 139 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_mb_fri03_getSpeciesPer1'::text function_tested,               140 maj_num,  5 nb_test UNION ALL
-  SELECT 'TT_mb_fri03_species_validation'::text function_tested,           141 maj_num,  9 nb_test UNION ALL
-  SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,            142 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,               143 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested, 144 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nb_stand_structure_translation'::text function_tested,        145 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi01_non_for_anth_translation':: text function_tested,       146 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi01_hascountofnotnull'::text function_tested,               147 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_yvi01_countofnotnull'::text function_tested,                  148 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_checkNumberOfTests'::text function_tested,                       149 maj_num,  4 nb_test
+  SELECT 'TT_vri01_non_for_veg_validation'::text function_tested,               1 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_vri01_nat_non_veg_validation'::text function_tested,               2 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_vri01_non_for_anth_validation'::text function_tested,              3 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_vri01_origin_translation'::text function_tested,                   4 maj_num,  1 nb_test UNION ALL
+  SELECT 'TT_vri01_site_index_translation'::text function_tested,               5 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_vri01_non_for_veg_translation'::text function_tested,              6 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_vri01_nat_non_veg_translation'::text function_tested,              7 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_vri01_non_for_anth_translation'::text function_tested,             8 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_avi01_non_for_veg_translation'::text function_tested,              9 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nbi01_stand_structure_translation'::text function_tested,         10 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_nb_nbi01_wetland_validation'::text function_tested,               12 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nb_nbi01_wetland_translation'::text function_tested,              13 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nbi01_nb01_productive_for_translation'::text function_tested,     14 maj_num, 11 nb_test UNION ALL
+  SELECT 'TT_nbi01_nb02_productive_for_translation'::text function_tested,     15 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_CreateFilterView'::text function_tested,                          16 maj_num, 23 nb_test UNION ALL
+  SELECT 'TT_vri01_dist_yr_translation'::text function_tested,                 17 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_fim_species_code'::text function_tested,                          24 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_fim_species_percent_translation'::text function_tested,           26 maj_num,  8 nb_test UNION ALL
+  SELECT 'TT_yvi01_nat_non_veg_validation'::text function_tested,              27 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_nat_non_veg_translation'::text function_tested,             28 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_non_for_veg_translation'::text function_tested,             29 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_yvi01_nfl_soil_moisture_validation'::text function_tested,        30 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_avi01_stand_structure_validation'::text function_tested,          31 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_avi01_stand_structure_translation'::text function_tested,         32 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_fvi01_stand_structure_validation'::text function_tested,          33 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_fvi01_countOfNotNull'::text function_tested,                      34 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_vri01_countOfNotNull'::text function_tested,                      35 maj_num, 17 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_species_percent_validation'::text function_tested,       36 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_species_percent_translation'::text function_tested,      37 maj_num, 11 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_species'::text function_tested,                          38 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_sfv01_stand_structure_translation'::text function_tested,         39 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_sfv01_countOfNotNull'::text function_tested,                      40 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_ns_nsi01_countOfNotNull'::text function_tested,                   41 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_HasNFLInfo'::text function_tested,                                42 maj_num, 13 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_countOfNotNull'::text function_tested,                   43 maj_num,  8 nb_test UNION ALL
+  SELECT 'TT_vri01_hasCountOfNotNull'::text function_tested,                   44 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_ns_nsi01_hasCountOfNotNull'::text function_tested,                45 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_fvi01_hasCountOfNotNull'::text function_tested,                   46 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_on_fim02_countOfNotNull'::text function_tested,                   47 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_on_fim02_hasCountOfNotNull'::text function_tested,                48 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_hasCountOfNotNull'::text function_tested,                49 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_sfv01_hasCountOfNotNull'::text function_tested,                   50 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_sk_utm_countOfNotNull'::text function_tested,                     51 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_sk_utm_hasCountOfNotNull'::text function_tested,                  52 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_bc_height'::text function_tested,                                 53 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_fvi01_structure_per'::text function_tested,                       54 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_fvi01_structure_per_validation'::text function_tested,            55 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_wetland_code_translation'::text function_tested,                  56 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_qc_prg3_wetland_validation'::text function_tested,                57 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_wetland_validation'::text function_tested,                58 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_row_translation_rule_nt_lyr'::text function_tested,               59 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_species'::text function_tested,                           60 maj_num, 14 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_species'::text function_tested,                           61 maj_num,  8 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_species_per_translation'::text function_tested,           62 maj_num, 12 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_species_per_translation'::text function_tested,           63 maj_num, 10 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_not_double_species_validation'::text function_tested,     64 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_mb_fri_countOfNotNull'::text function_tested,                     66 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_mb_fri_hasCountOfNotNull'::text function_tested,                  67 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_stand_structure_translation'::text function_tested,      68 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_isCommercial'::text function_tested,                     69 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_isNonCommercial'::text function_tested,                  70 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_crown_closure_upper_translation'::text function_tested,  71 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_crown_closure_lower_translation'::text function_tested,  72 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_height_upper_translation'::text function_tested,         73 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_height_lower_translation'::text function_tested,         74 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_isForest'::text function_tested,                         75 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,         76 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,    77 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,                   78 maj_num, 13 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,         79 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,         80 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,          81 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_qc_origin_translation'::text function_tested,                     82 maj_num,  1 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,   83 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_crown_closure_validation'::text function_tested,         84 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_height_validation'::text function_tested,                85 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_qc_prg3_wetland_translation'::text function_tested,               86 maj_num, 15 nb_test UNION ALL
+  SELECT 'TT_qc_prg5_wetland_translation'::text function_tested,               87 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_wetland_translation'::text function_tested,               88 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_qc_prg4_wetland_validation'::text function_tested,                89 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_qc_countOfNotNull'::text function_tested,                         90 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_qc_hasCountOfNotNull'::text function_tested,                      91 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_lyr_layer_translation'::text function_tested,                     92 maj_num, 15 nb_test UNION ALL
+  SELECT 'TT_bc_lyr_layer_translation'::text function_tested,                  93 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_ab_avi01_wetland_translation'::text function_tested,              94 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_ab_avi01_wetland_validation'::text function_tested,               95 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_wetland_translation'::text function_tested,              96 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_wetland_validation'::text function_tested,               97 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_bc_vri01_wetland_translation'::text function_tested,              98 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_bc_vri01_wetland_validation'::text function_tested,               99 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_ns_nsi01_wetland_translation'::text function_tested,             100 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_ns_nsi01_wetland_validation'::text function_tested,              101 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_wetland_translation'::text function_tested,             102 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_wetland_validation'::text function_tested,              103 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_nt_fvi01_wetland_translation'::text function_tested,             104 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_nt_fvi01_wetland_validation'::text function_tested,              105 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_pc01_species_per_translation'::text function_tested,             106 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_wetland_translation'::text function_tested,             107 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_sk_utm01_wetland_validation'::text function_tested,              108 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_ab_photo_year_validation'::text function_tested,                 109 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_ab_photo_year_translation'::text function_tested,                110 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_sk_sfv01_wetland_translation'::text function_tested,             111 maj_num,  7 nb_test UNION ALL
+  SELECT 'TT_sk_sfv01_wetland_validation'::text function_tested,              112 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_wetland_translation'::text function_tested,             113 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_wetland_validation'::text function_tested,              114 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_mb_fri01_wetland_translation'::text function_tested,             115 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,              116 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_pc02_wetland_translation'::text function_tested,                 117 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_pc02_wetland_validation'::text function_tested,                  118 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_pc02_countOfNotNull'::text function_tested,                      119 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,                   120 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_yt_wetland_translation'::text function_tested,                   121 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yt_wetland_validation'::text function_tested,                    122 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_nb_lyr_layer_translation'::text function_tested,                 123 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_nb_countOfNotNull'::text function_tested,                        124 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_nb_hasCountOfNotNull'::text function_tested,                     125 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_ns_lyr_layer_translation'::text function_tested,                 126 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_on_lyr_layer_translation'::text function_tested,                 127 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_sk_sfvi_lyr_layer_translation'::text function_tested,            128 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_qc_prg3_src_inv_area_translation'::text function_tested,         130 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_yt_yvi02_stand_structure_translation'::text function_tested,     131 maj_num,  3 nb_test UNION ALL
+  SELECT 'TT_yt_yvi02_disturbance_copyText'::text function_tested,            132 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_yt_yvi02_disturbance_mapText'::text function_tested,             133 maj_num,  1 nb_test UNION ALL
+  SELECT 'TT_yt_yvi02_disturbance_matchList'::text function_tested,           134 maj_num,  1 nb_test UNION ALL
+  SELECT 'TT_yt_yvi02_disturbance_notNull'::text function_tested,             135 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_yt_yvi02_disturbance_copyInt'::text function_tested,             136 maj_num,  1 nb_test UNION ALL
+  SELECT 'TT_yt_yvi02_disturbance_hasCountOfLayers'::text function_tested,    137 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nt_lyr_layer_translation'::text function_tested,                 138 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_pe_pei01_dist_type_length_validation'::text function_tested,     139 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_mb_fri03_getSpeciesPer1'::text function_tested,                  140 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_mb_fri03_species_validation'::text function_tested,              141 maj_num,  9 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_hasCountOfNotNull'::text function_tested,               142 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_mb_fli01_countOfNotNull'::text function_tested,                  143 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nt_fvi01_species_per_range_validation'::text function_tested,    144 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_nb_stand_structure_translation'::text function_tested,           145 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_non_for_anth_translation':: text function_tested,          146 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_hascountofnotnull'::text function_tested,                  147 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_yvi01_countofnotnull'::text function_tested,                     148 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_checkNumberOfTests'::text function_tested,                       149 maj_num,  4 nb_test UNION ALL
+  SELECT 'TT_DropForeignKeyConstraints'::text function_tested,                150 maj_num,  8 nb_test UNION ALL
+  SELECT 'TT_AddForeignKeyConstraints'::text function_tested,                 151 maj_num, 12 nb_test UNION ALL
+  SELECT 'TT_DropAllConstraints'::text function_tested,                       152 maj_num, 11 nb_test
  ),
 test_series AS (
 -- Build a table of function names with a sequence of number for each function to be tested
@@ -3964,31 +4076,31 @@ UNION ALL
 SELECT '109.1'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - no overlap'::text description,
-       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.2'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - one overlap'::text description,
-       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.3'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test pre AB25 inventories - three overlap'::text description,
-       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
+       TT_ab_photo_year_validation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', NULL::text, NULL::text, NULL::text, NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.4'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test post AB25 inventories - null'::text description,
-       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', NULL::text, '1900', '2020', '0') passed
+       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', NULL::text, '1900', '2020', '0') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.5'::text number,
        'TT_ab_photo_year_validation'::text function_tested,
        'Test post AB25 inventories - passes'::text description,
-       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', '2000', '1900', '2020', NULL::text) passed
+       TT_ab_photo_year_validation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', '2000', '1900', '2020', NULL::text) passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '109.6'::text number,
@@ -4002,25 +4114,25 @@ UNION ALL
 SELECT '110.1'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - no overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) IS NULL passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(20 20, 20 21, 21 21, 21 20, 20 20)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.2'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) = 1990 passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(3 3, 3 5, 5 5, 5 3, 3 3)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) = 1990 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.3'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test pre AB25 inventories - multiple overlap'::text description,
-       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) = 2000 passed
+       TT_ab_photo_year_translation('AB06', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', 'YEAR', NULL::text, NULL::text) = 2000 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.4'::text number,
        'TT_ab_photo_year_translation'::text function_tested,
        'Test post AB25 inventories'::text description,
-       TT_ab_photo_year_translation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'public', 'photo_test2', 'the_geom', 'YEAR', '2001', NULL::text) = 2001 passed
+       TT_ab_photo_year_translation('AB26', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'), 4268)))::text, 'casfri50_unittest', 'photo_test2', 'the_geom', 'YEAR', '2001', NULL::text) = 2001 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '110.5'::text number,
@@ -4964,6 +5076,387 @@ SELECT '149.4'::text number,
        'Test wrong second argument'::text description,
        TT_IsError('SELECT TT_checkNumberOfTests(''cas''::text, ''x''::text, NULL::boolean);'::text) = 'ERROR in TT_CheckNumberOfTests(): Second argument must be either ''ab'', ''bc'', ''ds'', ''mb'', ''nb'', ''nl'', ''ns'', ''nt'', ''on'', ''pc'', ''pe'', ''qc'', ''sk'' or ''yt''...' passed
 ---------------------------------------------------------
+UNION ALL
+-- 150.1: Remove the five CAS_ID links and inspect the constraint catalog.
+SELECT '150.1'::text number,
+       'TT_DropForeignKeyConstraints'::text function_tested,
+       'Drop all five matching keys with custom names'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+SELECT (SELECT count(*) FROM casfri50_unittest.tt_fk_constraint_test_targets WHERE schema_name = 'casfri50_unittest') = 0;
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 150.2: Compare the remaining constraint count with the untouched fixture snapshot.
+SELECT '150.2'::text number,
+       'TT_DropForeignKeyConstraints'::text function_tested,
+       'Preserve primary keys, checks, CAS/HDR and unrelated foreign keys'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+SELECT
+  (SELECT count(*) FROM pg_constraint con JOIN pg_namespace ns ON ns.oid = con.connamespace
+   WHERE ns.nspname = 'casfri50_unittest') =
+  (SELECT count(*) FROM casfri50_unittest.tt_fk_initial_constraints WHERE schema_name = 'casfri50_unittest') - 5;
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 150.3: Compare existing foreign keys outside the unit-test schema in both directions.
+SELECT '150.3'::text number,
+       'TT_DropForeignKeyConstraints'::text function_tested,
+       'Leave foreign keys in other schemas unchanged'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+SELECT NOT EXISTS (
+  (SELECT con.oid AS constraint_oid, ns.nspname AS schema_name, con.contype,
+          pg_get_constraintdef(con.oid) AS definition, con.convalidated, con.condeferrable, con.condeferred
+   FROM pg_constraint con JOIN pg_namespace ns ON ns.oid = con.connamespace
+   WHERE con.contype = 'f' AND ns.nspname <> 'casfri50_unittest'
+   EXCEPT
+   SELECT constraint_oid, schema_name, contype, definition, convalidated, condeferrable, condeferred
+   FROM casfri50_unittest.tt_fk_initial_constraints WHERE contype = 'f' AND schema_name <> 'casfri50_unittest')
+  UNION ALL
+  (SELECT constraint_oid, schema_name, contype, definition, convalidated, condeferrable, condeferred
+   FROM casfri50_unittest.tt_fk_initial_constraints WHERE contype = 'f' AND schema_name <> 'casfri50_unittest'
+   EXCEPT
+   SELECT con.oid, ns.nspname, con.contype, pg_get_constraintdef(con.oid),
+          con.convalidated, con.condeferrable, con.condeferred
+   FROM pg_constraint con JOIN pg_namespace ns ON ns.oid = con.connamespace
+   WHERE con.contype = 'f' AND ns.nspname <> 'casfri50_unittest')
+);
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 150.4: Run the drop twice; the second call must return TRUE and leave counts unchanged.
+SELECT '150.4'::text number,
+       'TT_DropForeignKeyConstraints'::text function_tested,
+       'Repeated drop succeeds without changing other constraints'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest') AND (SELECT
+  (SELECT count(*) FROM pg_constraint con JOIN pg_namespace ns ON ns.oid = con.connamespace
+   WHERE ns.nspname = 'casfri50_unittest') =
+  (SELECT count(*) FROM casfri50_unittest.tt_fk_initial_constraints WHERE schema_name = 'casfri50_unittest') - 5);
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 150.5: Insert DST before its CAS row after dropping the links.
+SELECT '150.5'::text number,
+       'TT_DropForeignKeyConstraints'::text function_tested,
+       'Allow a related row to load before its CAS row'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+WITH added AS (
+  INSERT INTO casfri50_unittest.dst_all VALUES ('late', 'INV', NULL) RETURNING cas_id
+)
+SELECT count(*) = 1 FROM added WHERE cas_id = 'late';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 150.6: Require SQLSTATE 3F000 (invalid_schema_name).
+SELECT '150.6'::text number,
+       'TT_DropForeignKeyConstraints'::text function_tested,
+       'Reject a nonexistent schema'::text description,
+       TT_IsError($error$
+SELECT TT_DropForeignKeyConstraints(('tt_fk_missing_' || pg_backend_pid())::name);
+$error$, TRUE) = '3F000' passed
+---------------------------------------------------------
+UNION ALL
+-- 150.7: Require SQLSTATE 22023 (invalid_parameter_value).
+SELECT '150.7'::text number,
+       'TT_DropForeignKeyConstraints'::text function_tested,
+       'Reject a NULL schema'::text description,
+       TT_IsError($error$
+SELECT TT_DropForeignKeyConstraints(NULL::name);
+$error$, TRUE) = '22023' passed
+---------------------------------------------------------
+UNION ALL
+-- 150.8: Inspect the declared default without changing the real casfri50 schema.
+SELECT '150.8'::text number,
+       'TT_DropForeignKeyConstraints'::text function_tested,
+       'Default schema is casfri50 when the argument is omitted'::text description,
+       pronargdefaults = 1 AND pg_get_expr(proargdefaults, 0) = '''casfri50''::name' passed
+FROM pg_proc WHERE oid = 'TT_DropForeignKeyConstraints(name)'::regprocedure
+---------------------------------------------------------
+UNION ALL
+-- 151.1: Load DST before CAS, supply CAS, and restore five validated keys.
+SELECT '151.1'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Add five validated keys after the CAS rows arrive'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+INSERT INTO casfri50_unittest.dst_all VALUES ('late', 'INV', NULL);
+INSERT INTO casfri50_unittest.cas_all VALUES ('late', 'INV');
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+SELECT count(*) = 5 AND bool_and(convalidated) FROM casfri50_unittest.tt_fk_constraint_test_targets WHERE schema_name = 'casfri50_unittest';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.2: Restore the keys and call the function again without creating duplicates.
+SELECT '151.2'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Repeated add does not duplicate constraints'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest') AND (SELECT count(*) = 5 AND bool_and(convalidated) FROM casfri50_unittest.tt_fk_constraint_test_targets WHERE schema_name = 'casfri50_unittest');
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.3: Require SQLSTATE 23503 (foreign_key_violation).
+SELECT '151.3'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Restored keys reject a row with no matching CAS record'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+SELECT TT_IsError($error$
+INSERT INTO casfri50_unittest.dst_all VALUES ('orphan', 'INV', NULL);
+$error$, TRUE) = '23503';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.4: Require SQLSTATE 23503 (foreign_key_violation).
+SELECT '151.4'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Orphan in the last table fails and rolls back all earlier additions'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+INSERT INTO casfri50_unittest.geo_all VALUES ('orphan', 'INV', NULL);
+SELECT TT_IsError($error$
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+$error$, TRUE) = '23503'
+  AND (SELECT count(*) FROM casfri50_unittest.tt_fk_constraint_test_targets WHERE schema_name = 'casfri50_unittest') = 0;
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.5: Repair a missing CAS row after failed restoration, then retry successfully.
+SELECT '151.5'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Restore successfully after fixing the missing CAS record'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropForeignKeyConstraints('casfri50_unittest');
+INSERT INTO casfri50_unittest.geo_all VALUES ('orphan', 'INV', NULL);
+SELECT TT_IsError($attempt$
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+$attempt$, TRUE);
+INSERT INTO casfri50_unittest.cas_all VALUES ('orphan', 'INV');
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+SELECT count(*) = 5 AND bool_and(convalidated) FROM casfri50_unittest.tt_fk_constraint_test_targets WHERE schema_name = 'casfri50_unittest';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.6: Reuse an existing key even when its constraint name has been changed.
+SELECT '151.6'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Reuse a matching foreign key under a custom name'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+ALTER TABLE casfri50_unittest.dst_all RENAME CONSTRAINT "custom key dst_all" TO "renamed CAS link";
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+SELECT count(*) = 5 AND bool_or(conname = 'renamed CAS link')
+FROM casfri50_unittest.tt_fk_constraint_test_targets WHERE schema_name = 'casfri50_unittest';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.7: Require SQLSTATE 23503 (foreign_key_violation).
+SELECT '151.7'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Existing NOT VALID keys must pass validation'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+ALTER TABLE casfri50_unittest.geo_all DROP CONSTRAINT "custom key geo_all";
+INSERT INTO casfri50_unittest.geo_all VALUES ('pending', 'INV', NULL);
+ALTER TABLE casfri50_unittest.geo_all ADD CONSTRAINT pending_key
+  FOREIGN KEY (cas_id) REFERENCES casfri50_unittest.cas_all (cas_id) NOT VALID;
+SELECT TT_IsError($error$
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+$error$, TRUE) = '23503'
+  AND (SELECT NOT convalidated FROM casfri50_unittest.tt_fk_constraint_test_targets
+       WHERE schema_name = 'casfri50_unittest' AND conname = 'pending_key');
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.8: Repair that orphan and require the existing key to become validated.
+SELECT '151.8'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Validate an existing key after its data are repaired'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+ALTER TABLE casfri50_unittest.geo_all DROP CONSTRAINT "custom key geo_all";
+INSERT INTO casfri50_unittest.geo_all VALUES ('pending', 'INV', NULL);
+ALTER TABLE casfri50_unittest.geo_all ADD CONSTRAINT pending_key
+  FOREIGN KEY (cas_id) REFERENCES casfri50_unittest.cas_all (cas_id) NOT VALID;
+SELECT TT_IsError($attempt$
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+$attempt$, TRUE);
+INSERT INTO casfri50_unittest.cas_all VALUES ('pending', 'INV');
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+SELECT count(*) = 5 AND bool_and(convalidated) FROM casfri50_unittest.tt_fk_constraint_test_targets WHERE schema_name = 'casfri50_unittest';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.9: Require SQLSTATE 42P01 (undefined_table).
+SELECT '151.9'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Reject missing CASFRI tables'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+DROP TABLE casfri50_unittest.nfl_all;
+SELECT TT_IsError($error$
+SELECT TT_AddForeignKeyConstraints('casfri50_unittest');
+$error$, TRUE) = '42P01';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 151.10: Require SQLSTATE 22023 (invalid_parameter_value).
+SELECT '151.10'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Reject a NULL schema'::text description,
+       TT_IsError($error$
+SELECT TT_AddForeignKeyConstraints(NULL::name);
+$error$, TRUE) = '22023' passed
+---------------------------------------------------------
+UNION ALL
+-- 151.11: Require SQLSTATE 3F000 (invalid_schema_name).
+SELECT '151.11'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Reject a nonexistent schema'::text description,
+       TT_IsError($error$
+SELECT TT_AddForeignKeyConstraints(('tt_fk_missing_' || pg_backend_pid())::name);
+$error$, TRUE) = '3F000' passed
+---------------------------------------------------------
+UNION ALL
+-- 151.12: Inspect the add function default without calling it on real CASFRI tables.
+SELECT '151.12'::text number,
+       'TT_AddForeignKeyConstraints'::text function_tested,
+       'Default schema is casfri50 when the argument is omitted'::text description,
+       pronargdefaults = 1 AND pg_get_expr(proargdefaults, 0) = '''casfri50''::name' passed
+FROM pg_proc WHERE oid = 'TT_AddForeignKeyConstraints(name)'::regprocedure
+---------------------------------------------------------
+UNION ALL
+-- 152.1: Require SQLSTATE 22023 (invalid_parameter_value).
+SELECT '152.1'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Reject a NULL schema'::text description,
+       TT_IsError($error$
+SELECT TT_DropAllConstraints(NULL::name, 'cas_all');
+$error$, TRUE) = '22023' passed
+---------------------------------------------------------
+UNION ALL
+-- 152.2: Require SQLSTATE 22023 (invalid_parameter_value).
+SELECT '152.2'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Reject a NULL table'::text description,
+       TT_IsError($error$
+SELECT TT_DropAllConstraints('casfri50_unittest', NULL::name);
+$error$, TRUE) = '22023' passed
+---------------------------------------------------------
+UNION ALL
+-- 152.3: Require SQLSTATE 3F000 (invalid_schema_name).
+SELECT '152.3'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Reject a nonexistent schema'::text description,
+       TT_IsError($error$
+SELECT TT_DropAllConstraints(('tt_fk_missing_' || pg_backend_pid())::name, 'cas_all');
+$error$, TRUE) = '3F000' passed
+---------------------------------------------------------
+UNION ALL
+-- 152.4: Require SQLSTATE 42P01 (undefined_table).
+SELECT '152.4'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Reject a nonexistent table'::text description,
+       TT_IsError($error$
+SELECT TT_DropAllConstraints('casfri50_unittest', ('tt_fk_missing_table_' || pg_backend_pid())::name);
+$error$, TRUE) = '42P01' passed
+---------------------------------------------------------
+UNION ALL
+-- 152.5: Require SQLSTATE 42P01 (undefined_table).
+SELECT '152.5'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Require the table to exist in the specified schema'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_IsError($error$
+SELECT TT_DropAllConstraints('pg_catalog', 'geo_all');
+$error$, TRUE) = '42P01';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 152.6: Require SQLSTATE 42809 (wrong_object_type).
+SELECT '152.6'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Reject a view instead of silently returning success'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+CREATE VIEW casfri50_unittest.tt_fk_test_view AS SELECT 1 AS value;
+SELECT TT_IsError($error$
+SELECT TT_DropAllConstraints('casfri50_unittest', 'tt_fk_test_view');
+$error$, TRUE) = '42809';
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 152.7: An existing ordinary table without constraints is a valid no-op.
+SELECT '152.7'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Accept an existing table with no constraints'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+CREATE TABLE casfri50_unittest.tt_fk_no_constraints (value int);
+SELECT TT_DropAllConstraints('casfri50_unittest', 'tt_fk_no_constraints');
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 152.8: Remove all constraints from the artificial CAS table, including its primary key.
+SELECT '152.8'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Still remove all constraints from a valid table'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+SELECT TT_DropAllConstraints('casfri50_unittest', 'cas_all');
+SELECT NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conrelid = 'casfri50_unittest.cas_all'::regclass);
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 152.9: Handle spaces and capital letters in table and constraint names.
+SELECT '152.9'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Handle quoted table and constraint names'::text description,
+       casfri50_unittest.TT_TestConstraintTables(
+         $test$
+CREATE TABLE casfri50_unittest."TT FK mixed case table" (value int CONSTRAINT "TT FK mixed case key" PRIMARY KEY);
+SELECT TT_DropAllConstraints('casfri50_unittest', 'TT FK mixed case table');
+SELECT NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conrelid = 'casfri50_unittest."TT FK mixed case table"'::regclass
+);
+$test$) passed
+---------------------------------------------------------
+UNION ALL
+-- 152.10: Require SQLSTATE 3F000 (invalid_schema_name).
+SELECT '152.10'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Reject an empty schema name'::text description,
+       TT_IsError($error$
+SELECT TT_DropAllConstraints('', 'cas_all');
+$error$, TRUE) = '3F000' passed
+---------------------------------------------------------
+UNION ALL
+-- 152.11: Require SQLSTATE 42P01 (undefined_table).
+SELECT '152.11'::text number,
+       'TT_DropAllConstraints'::text function_tested,
+       'Reject an empty table name'::text description,
+       TT_IsError($error$
+SELECT TT_DropAllConstraints('casfri50_unittest', '');
+$error$, TRUE) = '42P01' passed
 ) AS b 
 ON (a.function_tested = b.function_tested AND (regexp_split_to_array(number, '\.'))[2] = min_num)
 ORDER BY maj_num::int, min_num::int

@@ -384,10 +384,10 @@ Read the [CASFRI specification](specifications/README.md) for the meaning of eac
     **4.2 Drop the foreign keys linking the other tables to CAS** - In the database Query Tool, run:
 
     ```sql
-    SELECT TT_DropForeignKeyConstraints('casfri50');
+    SELECT TT_DropForeignKeyConstraints();
     ```
 
-    The function returns `true` when successful. It removes only the `cas_id` foreign keys from DST, ECO, LYR, NFL, and GEO to CAS in the specified schema. These links normally prevent inserting a related record before its CAS record exists. Dropping them allows all six tables to be translated in parallel. Primary keys, value checks, other foreign keys, and the CAS-to-HDR link remain in place. Add HDR first as described in subsection 4.1. These functions are installed from `helperFunctionsCASFRI.sql` in subsection 2.3.
+    With no argument, the function uses the `casfri50` schema; pass another schema name explicitly if needed. It displays a notice naming each constraint and table before dropping the constraint, and returns `true` when successful. It removes only the `cas_id` foreign keys from DST, ECO, LYR, NFL, and GEO to CAS in the specified schema. These links normally prevent inserting a related record before its CAS record exists. Dropping them allows all six tables to be translated in parallel. Primary keys, value checks, other foreign keys, and the CAS-to-HDR link remain in place. Add HDR first as described in subsection 4.1. These functions are installed from `helperFunctionsCASFRI.sql` in subsection 2.3.
 
     **4.3 Translate all CASFRI tables in parallel** - Check that `postProcessingOnly=False` and that `maxTranslationsInParallel` allows the intended number of simultaneous translations. Check the displayed database name, inventory list, and processing configuration variables. In Git Bash, run [./02_translateAll.sh](../workflow/02_produceCASFRI/02_translateAll.sh) with the new inventory identifier:
 
@@ -407,10 +407,10 @@ Read the [CASFRI specification](specifications/README.md) for the meaning of eac
     After all tables have finished translating successfully, restore and validate the five foreign keys in the database Query Tool:
 
     ```sql
-    SELECT TT_AddForeignKeyConstraints('casfri50');
+    SELECT TT_AddForeignKeyConstraints();
     ```
 
-    The function returns `true` only when all five foreign keys are present and validated. If it reports a missing CAS record, investigate and correct the incomplete or incorrect translation, then run it again. It reuses existing matching foreign keys without adding duplicates. The functions apply to the specified schema, so these links are temporarily absent for every inventory in that schema during translation.
+    With no argument, the function uses `casfri50`; pass the same schema name used when dropping the constraints if working in another schema. It returns `true` only when all five foreign keys are present and validated. If it reports a missing CAS record, investigate and correct the incomplete or incorrect translation, then run it again. It reuses existing matching foreign keys without adding duplicates. The functions apply to the specified schema, so these links are temporarily absent for every inventory in that schema during translation.
 
 5) **Generate, validate and archive test tables** - Establish reviewed reference results and check whether the changes affect existing inventories.
 
