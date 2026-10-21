@@ -2892,7 +2892,7 @@ SELECT  %1$I::text gh_row_id,
         %5$I::text gh_inv, 
         %6$s gh_is_valid 
 FROM %7$I.%8$I
-WHERE %1$I::text != %9$L AND ($1 && %2$I) AND TT_SafeOverlaps($1, %2$I, %10$s, %9$L, %1$I, TRUE, FALSE, ''main loop'') ORDER BY gh_photo_year;',
+WHERE %1$I::text != %9$L AND ($1 && %2$I) AND TT_SafeOverlaps($1, %2$I, %10$s, %9$L, %1$I::text, TRUE, FALSE, ''main loop'') ORDER BY gh_photo_year;',
       idColName, 
       geoColName,
       photoYearColName, 
