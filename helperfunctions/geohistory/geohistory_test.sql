@@ -54,10 +54,10 @@ RETURNS boolean AS $$
   END
 $$ LANGUAGE plpgsql IMMUTABLE;
 
---SELECT * FROM test_geohistory;
---SELECT ARRAY[id::text, att] FROM test_geohistory;
---SELECT TT_RowIsValid(ARRAY[id::text, att]) FROM test_geohistory;
---SELECT TT_RowIsValid(ARRAY[att]) FROM test_geohistory;
+--SELECT * FROM casfri50_history_test.test_0;
+--SELECT ARRAY[idx::text, att] FROM casfri50_history_test.test_0;
+--SELECT TT_RowIsValid(ARRAY[idx::text, att]) FROM casfri50_history_test.test_0;
+--SELECT TT_RowIsValid(ARRAY[att]) FROM casfri50_history_test.test_0;
 ------------------------------------------------------------------
 -- TT_HasPrecedence()
 --
