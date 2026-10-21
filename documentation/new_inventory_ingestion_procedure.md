@@ -350,7 +350,7 @@ Read the [CASFRI specification](specifications/README.md) for the meaning of eac
 
     Compare original and translated values for selected stands, including rare categories and missing information. Use the documented CAS_ID construction and original identifiers to match records. Do not assume that the last few characters of every CAS_ID identify a source record in the same way.
 
-4) **Translate the complete inventory** - Add HDR, temporarily drop the five foreign keys linking the other CASFRI tables to CAS, translate the tables in parallel, and restore the foreign keys.
+4) **Translate the complete inventory** - Add HDR, drop all constraints from the six translated CASFRI tables, translate the tables in parallel, and reapply the standard constraints.
 
     **4.1 Add the HDR record** - Keep the existing CASFRI tables. If the database has not yet been initialized, complete the relevant database-creation instructions in [Build the whole database from scratch](../README.md#build-the-whole-database-from-scratch) in a separate empty database before returning to this procedure. Do not run `./01_createCASFRITables.sh` against tables containing results you need to keep: it deletes and recreates HDR and the translated tables, and can remove dependent database objects.
 
@@ -381,13 +381,22 @@ Read the [CASFRI specification](specifications/README.md) for the meaning of eac
 
     Check that HDR contains exactly one correct NB99 row. The command avoids adding another row if NB99 already exists, but it does not correct an existing row. Update the relevant values separately if needed. Do not replace the column list with `SELECT *`, because the metadata table contains extra columns that HDR does not have.
 
-    **4.2 Drop the foreign keys linking the other tables to CAS** - In the database Query Tool, run:
+    **4.2 Drop all constraints from the translated CASFRI tables** - In the database Query Tool, run the following six commands:
 
     ```sql
-    SELECT TT_DropForeignKeyConstraints();
+    SELECT TT_DropAllConstraints('casfri50', 'cas_all');
+    SELECT TT_DropAllConstraints('casfri50', 'dst_all');
+    SELECT TT_DropAllConstraints('casfri50', 'eco_all');
+    SELECT TT_DropAllConstraints('casfri50', 'lyr_all');
+    SELECT TT_DropAllConstraints('casfri50', 'nfl_all');
+    SELECT TT_DropAllConstraints('casfri50', 'geo_all');
     ```
 
-    With no argument, the function uses the `casfri50` schema; pass another schema name explicitly if needed. It displays a notice naming each constraint and table before dropping the constraint, and returns `true` when successful. It removes only the `cas_id` foreign keys from DST, ECO, LYR, NFL, and GEO to CAS in the specified schema. These links normally prevent inserting a related record before its CAS record exists. Dropping them allows all six tables to be translated in parallel. Primary keys, value checks, other foreign keys, and the CAS-to-HDR link remain in place. Add HDR first as described in subsection 4.1. These functions are installed from `helperFunctionsCASFRI.sql` in subsection 2.3.
+    These commands already appear in a commented block at the end of [01_addConstraints.sql](../workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql). Execute the six statements above, rather than the whole file, at this stage. Check that every call returns `true` before starting translation. The function is installed from `helperFunctionsCASFRI.sql` in subsection 2.3.
+
+    The function removes primary keys, foreign keys, and value-check constraints from each named table. This removes the links that would otherwise require CAS records to exist before related records can be inserted, allowing all six tables to be translated in parallel. Loading can also be faster because PostgreSQL can check the removed constraints and rebuild primary-key indexes after translation, instead of checking and maintaining them for every inserted row. In PostgreSQL 13, existing column-level `NOT NULL` requirements remain in place. Keep HDR and its primary key; add the new HDR record as described in subsection 4.1.
+
+    Constraint removal applies to all inventories in these tables. The function uses `CASCADE`, so removing a primary key also removes foreign keys that depend on it, including any from other tables. The scripts in subsection 4.4 reapply the standard CASFRI constraints; separately restore any additional constraints defined for your database. The commands and restoration scripts use `casfri50`; adapt both consistently if the translated tables use another schema.
 
     **4.3 Translate all CASFRI tables in parallel** - Check that `postProcessingOnly=False` and that `maxTranslationsInParallel` allows the intended number of simultaneous translations. Check the displayed database name, inventory list, and processing configuration variables. In Git Bash, run [./02_translateAll.sh](../workflow/02_produceCASFRI/02_translateAll.sh) with the new inventory identifier:
 
@@ -398,19 +407,15 @@ Read the [CASFRI specification](specifications/README.md) for the meaning of eac
     )
     ```
 
-    The script starts separate translation processes for CAS, ECO, DST, NFL, LYR, and GEO, up to the configured limit. Each process prepares a translation function from the appropriate translation table, reads the mapped source information, and adds translated rows to its CASFRI table. No table needs to finish before the others start while the five foreign keys are absent. Keep `fullList` in `config.sh` consistent with the inventory being added so existing inventories are not unintentionally retranslated.
+    The script starts separate translation processes for CAS, ECO, DST, NFL, LYR, and GEO, up to the configured limit. Each process prepares a translation function from the appropriate translation table, reads the mapped source information, and adds translated rows to its CASFRI table. No table needs to finish before the others start while the constraints are absent. Keep `fullList` in `config.sh` consistent with the inventory being added so existing inventories are not unintentionally retranslated.
 
-    **4.4 Check completion and restore the foreign keys** - Wait until every translation process has finished, including any separate command windows. Save the messages and check each expected CASFRI table. Some missing-data problems are reported as messages followed by an early stop, without a command failure. A command that appears to finish successfully may therefore have translated only part of the inventory.
+    **4.4 Check completion and reapply the constraints** - Wait until every translation process has finished, including any separate command windows. Save the messages and check each expected CASFRI table. Some missing-data problems are reported as messages followed by an early stop, without a command failure. A command that appears to finish successfully may therefore have translated only part of the inventory.
 
     If translation stops partway through, determine which tables already contain NB99 before retrying. Remove only the affected NB99 rows, or start again with an empty development database whose results can be discarded. The translation procedure does not automatically replace rows left by an earlier attempt; rerunning without checking can create duplicates.
 
-    After all tables have finished translating successfully, restore and validate the five foreign keys in the database Query Tool:
+    After all tables have finished translating successfully, open and run [01_addConstraints.sql](../workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql) in the database Query Tool. After it completes successfully, run [01_addGeoConstraints.sql](../workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addGeoConstraints.sql). Keep the constraint-removal block at the end of the first script commented out.
 
-    ```sql
-    SELECT TT_AddForeignKeyConstraints();
-    ```
-
-    With no argument, the function uses `casfri50`; pass the same schema name used when dropping the constraints if working in another schema. It returns `true` only when all five foreign keys are present and validated. If it reports a missing CAS record, investigate and correct the incomplete or incorrect translation, then run it again. It reuses existing matching foreign keys without adding duplicates. The functions apply to the specified schema, so these links are temporarily absent for every inventory in that schema during translation.
+    These scripts reapply and test the standard primary keys, foreign keys, required values, and value checks for the translated tables. The first script handles CAS, DST, ECO, LYR, and NFL; the second handles GEO and must run afterward because GEO refers to CAS. Review each script's `passed` column and error messages. Investigate and correct every failed check, then rerun the affected checks until they pass. These checks cover existing inventories as well as the new inventory.
 
 5) **Generate, validate and archive test tables** - Establish reviewed reference results and check whether the changes affect existing inventories.
 
