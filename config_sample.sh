@@ -75,7 +75,7 @@ postProcessing=True
 postProcessingOnly=False
 
 #################################################################
-# List of source tables to load and translate with convert_allall.sh
+# List of source tables to load and translate with convert_all.sh
 #
 # You can either let convert_all.sh build the list or inventories to 
 # load from the inventory_metadata table or define your own custom 
