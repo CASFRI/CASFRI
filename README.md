@@ -166,7 +166,7 @@ CASFRI is composed of seven relational tables as detailed in the [CASFRI specifi
 In general, each standard for each jurisdiction uses a single set of translation tables. All source datasets using the same standard should use the same set of translation tables. Differences in attribute names can be accommodated using the workflow scripts described below. In some cases minor differences in attributes between datasets using the same standard can be accommodated by designing translation helper functions that can deal with both formats. An example would be two datasets using the same standard, but different values for graminoids (e.g. 'Grm' in one dataset and 'graminoids' in another). These can be passed to a single translation function, dealing with all possible values, in the translation table (e.g. mapText(source_value, {'Grm', 'graminoids'}, {'GRAMINOID', 'GRAMINOID'})).
 
 ## Row Translation Rule
-An important feature of the [PostgreSQL Table Translation Framework](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework) is the use of a ROW_TRANSLATION_RULE in the translation table to filter in only relevant source rows to be translated. This ensures that the LYR table for example, only includes rows that actually contain forest layer information.
+An important feature of the [PostgreSQL Table Translation Framework](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework) is `ROW_TRANSLATION_RULE`, which filters source rows so that only relevant records are translated into the target CASFRI table. This ensures that the LYR table for example, only includes rows that actually contain forest layer information.
 
 ## Error Codes
 Error codes are needed during translation when source values are invalid, null, or missing. In CASFRI 5, error codes have been designed to match the attribute type and to reflect the type of error that was encountered. For example, an integer attribute will have error codes reported as integers (e.g. -8888) whereas text attributes will have errors reported as text (e.g. NULL_VALUE). Different error codes are reported depending on the rule being invalidated. A full description of possible error codes can be found in the [CASFRI specification](https://github.com/CASFRI/CASFRI/tree/master/documentation/specifications).
@@ -203,7 +203,7 @@ In CASFRI, helper functions used in the translation tables `VALIDATION_RULES` an
 
 ### 2. layer_metadata table
 
-`layer_metadata.csv` matches source columns and input layers to the names expected by reusable translation tables.
+`layer_metadata.csv` matches source columns and input layers to the names expected by reusable translation tables. Each source inventory row lists all source attributes needed to produce the target CASFRI attribute values. The same source attribute may appear several times because it is used to produce several target values.
 
 * **INVENTORY_ID -** Identifies a standard mapping, such as `AB_AVI01`, or a source inventory, such as `AB03`.
 * **LAYER -** Identifies the source layer whose attributes are mapped by an inventory row. Its number does not necessarily match the final CASFRI layer number.
@@ -215,7 +215,7 @@ The remaining cells contain the standard's expected names or the corresponding s
 You can read this file like this (e.g. for inventory AB16): "When translating the AB16 layer 2 attributes values to the  AVI01 standard attribute (e.g. stand_structure) using the AB_AVI01 LYR translation table, map these columns names (e.g. std_struct, nat_nonveg, anth_noveg, anthro_veg, nonfor_veg, sp1, sp2, sp3, us_sp1, us_sp2, us_sp3
 ) to these columns names (stand_structure, nfl, anth_veg, anth_non, nat_non, species_1_layer1, species_2_layer1, species_3_layer1, species_1_layer2, species_2_layer2, species_3_layer2)."
 
-As another example, NB08 maps the `l1s1` source column name to the `species_1` standard name for layer 1 and `l2s1` to the same name for layer 2. The value validation and conversion actual processing code remains in the translation tables and helper functions.
+As another example, NB08 maps the `l1s1` source column name to the `species_1` standard name for layer 1 and `l2s1` to the same name for layer 2. The value validation and translation actual processing code remains in the translation tables and helper functions.
 
 A **fixed value** is supplied directly to every record in a mapping instead of being read from a source column. See [section 3.1 of the detailed procedure](documentation/new_inventory_ingestion_procedure.md#31-add-mapping-rows-in-layer_metadatacsv) for examples, quoting rules, and `NULL` handling.
 
@@ -310,7 +310,7 @@ The following diagram illustrates the temporalization procedure for a single pol
   <em>Figure 3. Resolving overlaps for a single polygon. Photo years and priority rules determine which overlapping information is retained, producing polygon parts with defined start and end years of validity.</em>
 </p>
 
-The geo-historical table can be queried using the `VALID_YEAR_BEGIN` and `VALID_YEAR_END` columns. For example, the following query would select the most valid polygon from the geo-historical table for all observation points in a table:
+The geo-historical table can be queried using the `VALID_YEAR_BEGIN` and `VALID_YEAR_END` columns. For example, the following query selects the polygon intersecting each observation point and valid in its observation year:
 ```
 SELECT p.id, p.year, p.geom, gh.cas_id
 FROM mypointable p, casfri50_history.geo_history gh
@@ -501,7 +501,7 @@ Run [./03_ProduceInventoryCoverages.sh](workflow/04_produceHistoricalTable/03_Pr
 
 ### 15) Record the completed build
 
-Update unexpected record counts and create GitHub issues for failed test results and other problems. Review, commit, and push any valid changes to GitHub. Follow the separate release procedure only when a published version number is required.
+Investigate count discrepancies; update expected metadata counts only after confirming and documenting the correct values. Create GitHub issues for failed test results and other problems. Review, commit, and push any valid changes to GitHub. Follow the separate release procedure only when a published version number is required.
 
 Parallel processing across inventories does not mean that every operation within one inventory uses several CPU cores. Further optimization of helper functions, including marking suitable functions `PARALLEL SAFE`, is still needed. Reporting progress has been prioritized where it is difficult to combine with parallel execution inside an individual inventory. These scripts do not allow distributing work across multiple computers.
 
@@ -511,7 +511,7 @@ Use this procedure to add and translate newly acquired inventories. Be careful o
 
 ### 1) Archive and document the new inventory
 
-Determine an inventory identifier for the new inventory by looking at the existing ones in the [inventory_metadata.csv](metadata/inventory_metadata.csv) table. Just increase the last number used for a juristiction by 1 (e.g. AB35). Save the original files in the folder defined by the `friDir` `config.sh` variable in a folder hierarchy similar to other existing ones. Document its source, standard, dates, licensing, and expected counts in [inventory_metadata.csv](metadata/inventory_metadata.csv). Use the `COMMENT` column to explain unusual file or layer choices and coordinate-system corrections, without duplicating names or coordinate-system information already preserved in the source files or conversion script. All columns are documented in the [detailed inventory ingestion procedure](documentation/new_inventory_ingestion_procedure.md) file.
+Determine an inventory identifier for the new inventory by looking at the existing ones in the [inventory_metadata.csv](metadata/inventory_metadata.csv) table. Just increase the last number used for a juristiction by 1 (e.g. AB35). Save the original files in the folder defined by the `friDir` `config.sh` variable in a folder hierarchy similar to other existing ones. Document its source, standard, dates, licensing, and expected counts in [inventory_metadata.csv](metadata/inventory_metadata.csv). Use the `COMMENT` column or the inventory's README to explain unusual file or layer choices and coordinate-system corrections, without duplicating names or coordinate-system information already preserved in the source files or conversion script. All columns are documented in the [detailed inventory ingestion procedure](documentation/new_inventory_ingestion_procedure.md) file.
 
 ### 2) Prepare the environment, convert and load the inventory
 
