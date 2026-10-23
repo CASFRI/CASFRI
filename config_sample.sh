@@ -40,14 +40,14 @@ maxTranslationsInParallel=36
 maxGeoHistoryInParallel=12
 
 #################################################################
-# When True, launch the produce geohistory process and the merge process
-# When False, launch the merge process only because the geohistory was completed
+# When True, launch the geohistory process and the post-geohistory unioning process.
+# When False, launch the unioning process only because the geohistory was completed.
 #################################################################
 createGeoHistory=True
 
 #################################################################
-# When True, launch the produce geohistory process and the merge process
-# When False, launch the merge process only because the geohistory was completed
+# When True, create one geohistory table per inventory.
+# When False, create one geohistory table for all inventories.
 #################################################################
 geoHistoryInSeparateTables=False
 
@@ -65,9 +65,6 @@ closeWithEnter=False # otherwise close by closing the window
 #################################################################
 # Set to true if you want loaded inventories to overwrite already loaded ones
 overwriteFRI=True
-
-# Set to true if you want loaded translation tables to overwrite already loaded ones
-overwriteTTables=True
 
 #################################################################
 # Set to true if you want to perform post processing (index creation, display statistics, etc...)
@@ -94,7 +91,7 @@ postProcessingOnly=False
 # also leave the "fullList" variable undefined below.
 #################################################################
 
-# Extra, non inventory tables to load (not translate) in either cases.
+# Other conversion script to run (mostly for photo year data common to many inventories).
 photoYearList=(ab_photoyear nl01_photoyear nl02_photoyear)
 
 #----------------------------------------------------------------
