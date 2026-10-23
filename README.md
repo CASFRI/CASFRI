@@ -3,6 +3,9 @@
 https://casfri.github.io/CASFRI/
 
 # Introduction
+
+In this document, column names are in UPPERCASE and values in lowercase unless their required spelling uses capitals, such as `'LYR'`. Code examples retain their actual spelling.
+
 Digital Forest Resource Inventories (FRIs) are compiled by provincial and territorial governments and are key inputs into forest management planning. They have also been used widely to model species habitat in the Canadian boreal forest and, in combination with climate and weather data, to model wildfire size and frequency. FRI datasets consist of stand records interpreted from aerial photography at scales ranging from 1:10,000 to 1:40,000. They are typically conducted on a 10- to 20-year cycle and may be periodically updated to reflect changes such as burned areas, harvesting, insect damage, silviculture, and forest growth. The records estimate the location, extent, condition, composition, and structure of the forest resource. Each jurisdiction has developed its own procedures and standards for forest inventories. 
 
 The Common Attribute Schema for Forest Resource Inventories (CASFRI) harmonizes FRI data from each jurisdiction in Canada, allowing a national FRI relational database to be created with continuous coverage. CASFRI reconciles the many differences in variable formats, attributes, and standards among those disparate inventories. Harmonization allows models to be developed using data from multiple jurisdictions or inventory versions.
@@ -36,7 +39,7 @@ The current version is 5.3.1 and is available for download at https://github.com
 <pre>
 ./                                      Sample files for configuring and running scripts
 
-./conversion                            Bash scripts for converting and loading FRI datasets into PostgreSQL
+./conversion                            Bash scripts for converting and loading FRI datasets into PostgreSQL/PostGIS
 
 ./docs                                  GitHub enabled website
 
@@ -91,21 +94,21 @@ The production process of CASFRI 5 requires:
 **Helper function -** A set of PL/pgSQL functions used in the translation table to facilitate validation of source values and their translation to target values.
 
 # FRI and Inventory Standard Identifiers
-CASFRI 5 uses a four characters unique code named "inventory_id" to identify each FRI. This code is composed of two letters for the province or territory, and two numbers that increment for each new FRI added for that province/territory (e.g. BC01). Higher numbers do not necessarily imply more recent inventories. Sometimes newly acquired older inventories are added to the metadata table and are assigned a higher identifier.
+CASFRI 5 identifies each FRI with a unique four-character code in the `INVENTORY_ID` column. This code is composed of two letters for the province or territory, and two numbers that increment for each new FRI added for that province/territory (e.g. BC01). Higher numbers do not necessarily imply more recent inventories. Sometimes newly acquired older inventories are added to the metadata table and are assigned a higher identifier.
 
 Inventory standards define the attribute specifications (i.e., the data dictionary) used for a given inventory. Each jurisdiction has their own unique inventory standards. Multiple FRIs, from the same province or territory, can use the same standard. Jurisdictions occasionally update or redesign their standards, resulting in either a new version number or a markedly different standard. Translating inventories to the CASFRI specifications requires different sets of translation tables for different inventory standards. Each standard is assigned a code made of three letters identifying the standard, and two numbers identifying the version of the standard (e.g. VRI01). These codes are listed in the [inventory_metadata](https://github.com/CASFRI/CASFRI/blob/master/metadata/inventory_metadata.csv) table and used to name the translation tables and the translation functions.
 
 # Handling Updates
 Historical forestry data are highly valuable for forest research. For this reason, CASFRI accommodates both older inventories and subsequent updates. One common type of update in FRIs is re-inventories, in which legacy photo-interpretation data are revised to meet modern standards. Another type of update is the so-called "depletion updates" which compile newly identified disturbances. In many jurisdictions, depletion-updates are produced annually to "cut-in" polygons disturbed by harvesting, wildfire or insects activity.
 
-Both types of updates are incorporated in CASFRI 5 by loading and translating the updated dataset and assigning it an incremented identifier (inventory_id). Any duplicate records are subsequently resolved through the temporalization procedure.
+Both types of updates are incorporated in CASFRI 5 by loading and translating the updated dataset and assigning it an incremented identifier in the `INVENTORY_ID` column. Any duplicate records are subsequently resolved through the temporalization procedure.
 
 To be incorporated into the database, an update should have a publication date at least one year later than the previous version. When data are publicly available, this information can typically be found in the metadata.
 
 # Conversion and Loading
 Conversion and loading are performed simultaneously using the GDAL ogr2ogr tool. Each source FRI has it's own dedicated loading script that generates a single target table in PostgreSQL. If a source FRI consists of multiple files or multiple relational tables, the conversion/loading scripts append all files or tables into a single target flat database table, thereby eliminating schema complexity and facilitating translation. Some FRIs include an additional shapefile linking each stand to a photo year; these are loaded in the database using a separate script. 
 
-Each loading script also adds two key attributes to the source table: "src_filename", containing the name of the source file, and "inventory_id", the unique inventory identifier. These attributes are subsequently used to construct the CAS_ID, a unique identifier that is also designed to be able to trace each translated row back to its original row in the source dataset.
+Each loading script also adds two columns to the source table: the `SRC_FILENAME` column, containing the name of the source file, and the `INVENTORY_ID` column, containing the unique inventory identifier. These columns are subsequently used to construct values in the `CAS_ID` column, uniquely identifying each polygon and allowing each translated row to be traced back to its original row in the source dataset.
 
 
 ## Supported File Types
@@ -196,28 +199,35 @@ It is important to understand that a single translation table can be used for mu
 
 ### 1. Placeholder names in translation table helper functions
 
-Translation table helper functions use placeholder attribute names instead of actual source inventory attribute names. Every translation using a common translation table to translate similar inventories map inventory attribute names to these placeholder column names. That's how a single translation table can be reused to translate many inventories from the same jurisdiction. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow script, VIEWs are created to map the source inventory attribute names to the placeholder attribute names found in the translation table. One can then run the same translation using as many different VIEWs as there are inventories and layers.
+In CASFRI, helper functions used in the translation tables `VALIDATION_RULES` and `TRANSLATION_RULES` columns use placeholder attribute names instead of actual source inventory attribute names. Every translation using a common translation table to translate similar inventories map inventory attribute names to these placeholder column names. This mapping is defined in the `layer_metadata.csv` table described below. That's how a single translation table can be reused to translate many inventories from the same jurisdiction. Otherwise many translation tables using the same helper functions but with different attribute names would have to be created. In the workflow scripts, the `layer_metadata.csv` table is used to create VIEWs mapping the source inventory attribute names to the placeholder attribute names found in the translation table. One can then run the same translation using as many different VIEWs as there are source inventories and layers.
 
 ### 2. layer_metadata table
 
-This table defines the mapping of attributes from each source table layers to the placeholder names used in the translation tables. For each translation table, the layer_metadata table contains a row listing the translation table placeholder names, and rows for each translation that needs to be completed using the source inventory. If multiple LYR, DST or NFL layers have to be translated for an inventory, multiple rows are defined in the layer_metadata table. This table has the following columns:
+`layer_metadata.csv` matches source columns and input layers to the names expected by reusable translation tables.
 
-* **INVENTORY_ID -** either identifies a translation table (e.g. AB_AVI01) or a source inventory from which to match the attribute names (e.g. AB03).
-* **LAYER -** a unique integer value incrementing for LYR layers followed by NFL layers.
-* **CASFRI_TABLE -** identifies the CASFRI tables (cas, eco, dst, lyr, nfl) that are translated using each particular layer number.
-* **TTABLE_EXISTS -** indicates if the row represents the placeholder names of an existing translation table or only the source inventory attribute names for which no actual translation table exists.
+* **INVENTORY_ID -** Identifies a standard mapping, such as `AB_AVI01`, or a source inventory, such as `AB03`.
+* **LAYER -** Identifies the source layer whose attributes are mapped by an inventory row. Its number does not necessarily match the final CASFRI layer number.
+* **CASFRI_TABLE -** Lists the tables supplied by that row: CAS, ECO, DST, LYR, NFL, or GEO.
+* **TTABLE_EXISTS -** Distinguishes standard rows (`yes`) from inventory rows (`no`).
 
-All the other columns represent target attributes in the CASFRI tables. The values in each cell list the attributes to be mapped to the translation table placeholder attribute names. In the case of the translation table rows, the values must match the placeholder names used in the translation table. In the case of rows representing source datasets, the values must match source (raw) attribute names.
+The remaining cells contain the standard's expected names or the corresponding source-column names and fixed values. Match their order when listing several inputs.
+
+You can read this file like this (e.g. for inventory AB16): "When translating the AB16 layer 2 attributes values to the  AVI01 standard attribute (e.g. stand_structure) using the AB_AVI01 LYR translation table, map these columns names (e.g. std_struct, nat_nonveg, anth_noveg, anthro_veg, nonfor_veg, sp1, sp2, sp3, us_sp1, us_sp2, us_sp3
+) to these columns names (stand_structure, nfl, anth_veg, anth_non, nat_non, species_1_layer1, species_2_layer1, species_3_layer1, species_1_layer2, species_2_layer2, species_3_layer2)."
+
+As another example, NB08 maps the `l1s1` source column name to the `species_1` standard name for layer 1 and `l2s1` to the same name for layer 2. The value validation and conversion actual processing code remains in the translation tables and helper functions.
+
+A **fixed value** is supplied directly to every record in a mapping instead of being read from a source column. See [section 3.1 of the detailed procedure](documentation/new_inventory_ingestion_procedure.md#31-add-mapping-rows-in-layer_metadatacsv) for examples, quoting rules, and `NULL` handling.
 
 ### 3. TT_CreateMappingView()
 
 This function is used to create the VIEWs mapping the raw inventory tables attribute names to the translation tables placeholder names according to the mapping found in the layer_metadata table. TT_CreateMappingView() is also used to create random selections of source rows for development or testing purpose. It takes the following arguments:
 
 * **schemaName -** name of the schema the source inventory was loaded to.
-* **fromTableName -** identifier of the source inventory in the layer_metadata table (inventory_id) from which to map the attribute names.
-* **fromLayer (default to 1) -** matches the LAYER column in the layer_metadata table.
+* **fromTableName -** identifier of the source inventory in the `INVENTORY_ID` column of the layer_metadata table from which to map the attribute names.
+* **fromLayer (default to 1) -** matches the `LAYER` column in the layer_metadata table.
 * **toTableName (default to fromTableName) -** identifier of the translation standard in the layer_metadata table to which to map the attribute names (prefixed with the jurisdiction code. e.g. "bc_vri01").
-* **toLayer (default to 1) -** matches the LAYER column in the layer_metadata table (for our purposes this is always set to 1).
+* **toLayer (default to 1) -** matches the `LAYER` column in the layer_metadata table (for our purposes this is always set to 1).
 * **randomNb (default to all rows) -** number of random rows to select. If blank, all rows are selected.
 * **viewNameSuffix (default to "")-** suffix to give to the VIEW created.
 
@@ -231,7 +241,7 @@ The function creates a VIEW with a name based on the input arguments:
 
 * When 'randomNb' is provided, the VIEW produces that number of randomly selected rows and the VIEW name is suffixed with that same number. For example `SELECT TT_CreateMappingView('rawfri', 'ab03', 2, 'ab_avi01', 1, 200);` creates a VIEW named **ab03_l2_to_ab_avi01_l1_map_200** in the **rawfri** schema.
 
-The following diagram illustrates, using a simple attribute (SPECIES_1), how:
+The following diagram illustrates, using a simple attribute (species_1), how:
 
 1. The layer_metadata table is used by the TT_CreateMappingView() function to produce VIEWs on the different layers of forest data from the converted raw source inventory tables.
 
@@ -241,7 +251,7 @@ The following diagram illustrates, using a simple attribute (SPECIES_1), how:
    
 Validation and translation rules in the translation tables always use the same VIEWs attribute names when reused to translate different versions of the same inventory or different layers within that inventory. The VIEWs, which map the different source data names to those used in the translation tables, allow the same translation table to be reused for multiple inventories and layers avoiding lots of code duplication.
 
-Each inventory and each layer is translated by a different query using the proper VIEW. For the layer 1 translation, the source attribute SP1 is mapped to the placeholder name (SPECIES_1). For the layer 2 translation, the understory attribute usp1 is also mapped to the same placeholder name (SPECIES_1) because the logic for translating layer 1 and layer 2 are the same.
+Each inventory and each layer is translated by a different query using the proper VIEW. For the layer 1 translation, the source attribute sp1 is mapped to the placeholder name (species_1). For the layer 2 translation, the understory attribute usp1 is also mapped to the same placeholder name (species_1) because the logic for translating layer 1 and layer 2 are the same.
 
 The diagram also shows how :
 
@@ -267,22 +277,22 @@ The geo-historical table is created using the scripts found in the workflow/04_p
 
 * **01_PrepareGeoHistory.sh and 01_PrepareGeoHistory.sql** overwrite the default TT_RowIsValid() and TT_HasPrecedence() functions, create the geo_history table and split the whole CASFRI geometry coverage into a grid for easier spatial processing.
 
-* **02_ProduceGeoHistory.sh and 02_ProduceGeoHistory.sql** process each gridded polygon one by one. The algorithm uses the STAND_PHOTO_YEAR of each polygon as the reference date to determine its valid start and end year. Each polyon is intersected with all other overlapping polygons and the resulting polygon parts are assigned a VALID_YEAR_BEGIN and a VALID_YEAR_END value. In the case of overlaps, the polygon with the most complete and accurate information is prioritized as described below. Both scripts use the TT_ProduceInvGeoHistory() function.
+* **02_ProduceGeoHistory.sh and 02_ProduceGeoHistory.sql** process each gridded polygon one by one. The algorithm uses the value in the `STAND_PHOTO_YEAR` column for each polygon as the reference date to determine its valid start and end year. Each polyon is intersected with all other overlapping polygons and the resulting polygon parts are assigned values in the `VALID_YEAR_BEGIN` and `VALID_YEAR_END` columns. In the case of overlaps, the polygon with the most complete and accurate information is prioritized as described below. Both scripts use the TT_ProduceInvGeoHistory() function.
 
 * **03_ProduceInventoryCoverages.sh and 03_ProduceInventoryCoverages.sql** produce a set of tables containing different versions of coverage polygons for each inventory. Both scripts use the TT_SuperUnion() and the TT_ProduceDerivedCoverages() functions.
 
 Valid start and end years are assigned using the following rules:
-* Each polygon is assigned a VALID_YEAR_BEGIN and a VALID_YEAR_END value based on its CAS table STAND_PHOTO_YEAR value. By default, at the end of the process, if a polygon does not overlap with another one in space and time, VALID_YEAR_BEGIN is assigned 1930 and VALID_YEAR_END is assigned 2030 since this polygon and its associated attributes are the best information we have for this area for all this period of time.
+* Each polygon is assigned values in the `VALID_YEAR_BEGIN` and `VALID_YEAR_END` columns based on the value in the CAS table's `STAND_PHOTO_YEAR` column. By default, at the end of the process, if a polygon does not overlap with another one in space and time, `VALID_YEAR_BEGIN` is set to `1930` and `VALID_YEAR_END` to `2030` since this polygon and its associated attributes are the best information we have for this area for all this period of time.
   
 * When two polygons overlap:
 
-  * More recent polygons take precedence over older polygons starting at their VALID_YEAR_BEGIN year. For example, a polygon from 2010 takes precedence over a 2000 polygon starting in year 2010. The 2000 polygon has precedence from 1930 until 2009 and the 2010 polygon has precedence from 2010 to 2030.
+  * More recent polygons take precedence over older polygons starting at the year in their `VALID_YEAR_BEGIN` column. For example, a polygon from 2010 takes precedence over a 2000 polygon starting in year 2010. The 2000 polygon has precedence from 1930 until 2009 and the 2010 polygon has precedence from 2010 to 2030.
 
-  * When both polygons have the same STAND_PHOTO_YEAR, the polygon with valid values takes precedence over polygons with invalid values. Invalid values are defined as all significant CASFRI attributes being NULL or empty. This rarely happens, but if it does, the polygon with valid values takes precedence.
+  * When both polygons have the same value in the `STAND_PHOTO_YEAR` column, the polygon with valid values takes precedence over polygons with invalid values. Invalid values are defined as all significant CASFRI attributes being NULL or empty. This rarely happens, but if it does, the polygon with valid values takes precedence.
 
-  * When both polygons have the same STAND_PHOTO_YEAR and valid values but come from different inventories, the polygon from the higher precedence inventory, as established by the TT_HasPrecedence() function and the PRECEDENCE_RANK column of the inventory_metadata.csv table, takes precedence. For example, if the values associated to two overlapping 2010 polygons are all valid but the first polygon comes from AB10 and the second comes from AB16, then TT_HasPrecedence() states that the AB16 polygon takes precedence.
+  * When both polygons have the same value in the `STAND_PHOTO_YEAR` column and valid values but come from different inventories, the polygon from the higher precedence inventory, as established by the TT_HasPrecedence() function and the `PRECEDENCE_RANK` column of the inventory_metadata.csv table, takes precedence. For example, if the values associated to two overlapping 2010 polygons are all valid but the first polygon comes from AB10 and the second comes from AB16, then TT_HasPrecedence() states that the AB16 polygon takes precedence.
 
-  * When both polygons have the same STAND_PHOTO_YEAR, valid values and the same TT_HasPrecedence() rank, then both polygons are sorted by their unique identifier (CAS_ID) and the first one has precedence over the second one.
+  * When both polygons have the same value in the `STAND_PHOTO_YEAR` column, valid values and the same TT_HasPrecedence() rank, then both polygons are sorted by the unique identifier in the `CAS_ID` column and the first one has precedence over the second one.
 
 <p align="center">
   <img src="geohistory_diagram.jpg" alt="Geohistory diagram">
@@ -300,20 +310,20 @@ The following diagram illustrates the temporalization procedure for a single pol
   <em>Figure 3. Resolving overlaps for a single polygon. Photo years and priority rules determine which overlapping information is retained, producing polygon parts with defined start and end years of validity.</em>
 </p>
 
-The geo-historical table can be queried using VALID_YEAR_BEGIN and VALID_YEAR_END. For example, the following query would select the most valid polygon from the geo-historical table for all observation points in a table:
+The geo-historical table can be queried using the `VALID_YEAR_BEGIN` and `VALID_YEAR_END` columns. For example, the following query would select the most valid polygon from the geo-historical table for all observation points in a table:
 ```
 SELECT p.id, p.year, p.geom, gh.cas_id
 FROM mypointable p, casfri50_history.geo_history gh
 WHERE ST_Intersects(gh.geom, p.geom) AND gh.valid_year_begin <= p.year AND p.year <= gh.valid_year_end;
 ```
-The resulting table can then be joined, using the CAS_ID attribute, with:
+The resulting table can then be joined, using the `CAS_ID` column, with:
 
   a) one of the two flat tables from the casfri50_flat schema or
   b) one of the CASFRI normalized tables from the casfri50 schema (cas_all, dst_all, eco_all, lyr_all, nfl_all).
 
 # Database Procedures
 
-All three tasks below require the [shared preparation](#shared-preparation). Complete it for the database you will use, then follow the numbered procedure for your task:
+All three tasks below require the [Shared preparation](#shared-preparation) section. Complete it for the database you will use, then follow the numbered procedure for your task:
 
 | Task | Result |
 | --- | --- |
@@ -335,9 +345,29 @@ Set up the required software and configuration variables before running the data
 
 - Keep `targetFRISchema=rawfri` for loaded source tables and `targetTranslationFileSchema=translation` for translation tables, as required by the current SQL procedures.
 
-- On Windows, use Git Bash to run `.sh` scripts. Prefix the script path with `./`, for example `./convert_all.sh` or `bash ./convert_all.sh`. Here, `./` means the current folder. Run each workflow script from the folder containing it, because several scripts use file locations relative to that folder. The [detailed inventory guide](documentation/new_inventory_ingestion_procedure.md) explains how to open Git Bash and use the commands.
+- On Windows, use Git Bash to run `.sh` scripts. Prefix the script path with `./`, for example `./convert_all.sh` or `bash ./convert_all.sh`. Here, `./` means the current folder. Run each workflow script from the folder containing it, because several scripts use file locations relative to that folder. See [Open a Git Bash command window](#open-a-git-bash-command-window) below for instructions on opening the window and using commands.
 
 - Use pgAdmin or `psql` to run SQL files.
+
+### Open a Git Bash command window
+
+On Windows, open the Start menu, type **Git Bash**, and select the Git Bash application. If the shortcut is unavailable, open File Explorer and double-click `C:\Program Files\Git\git-bash.exe` on this computer. Git Bash is included with Git for Windows; if it is not installed on another computer, install Git for Windows before continuing.
+
+In the Git Bash window, go to the main CASFRI folder. Enter the following commands pressing Enter after each line:
+
+```bash
+cd /d/CASFRI/
+pwd
+ls README.md common.sh config_sample.sh
+```
+
+Git Bash writes the Windows path `D:\CASFRI` as `/d/CASFRI`. If the project is elsewhere, change the path accordingly. Put a path containing spaces in double quotation marks, for example `cd "/d/My Projects/CASFRI"`. The `pwd` command displays the current folder. The `ls` command should list the three named files. If it reports that a file cannot be found, check that you opened the main project folder before proceeding.
+
+Copy each Bash example into this window using Shift+Insert or the window's Paste command. Copy only the commands, without the surrounding Markdown backticks. For commands spread across several lines, copy the complete block and keep the backslash `\` at each continued line's end. Press Enter if needed to start the last line, then read the messages and wait for the command prompt to return before continuing. Some scripts open additional windows; check their results too.
+
+Press **Up Arrow** to recall the last command. Edit it if needed, then press **Enter** to run it again. Press **Up Arrow** repeatedly to recall earlier commands.
+
+Keep the window open for later Bash examples. Start each example from the main CASFRI folder unless a different folder is specified. If you close the window, open Git Bash again and repeat the folder-navigation commands above. If you have moved to another folder, use `cd /d/CASFRI` to return before starting the next example. Run any `source ./common.sh` line included in an example as well; it reads the configuration variables needed by that example.
 
 ### Install the PostgreSQL Table Translation Framework
 
@@ -373,9 +403,9 @@ For every inventory being translated, verify these requirements:
 
 - [inventory_metadata.csv](metadata/inventory_metadata.csv) contains one row identifying and documenting the inventory and its standard. Many metadata values must be filled in for the whole translation process to work properly. See the [inventory metadata table](documentation/new_inventory_ingestion_procedure.md#required-inventory-metadata-columns) in the detailed procedure for the complete list, their uses, and how expected stand counts affect processing order.
 
-- [translation/tables](translation/tables) contains the required translation CSV tables, named by jurisdiction, `STANDARD_ID`, and CASFRI table, for example `bc_vri01_dst.csv`.
+- [translation/tables](translation/tables) contains the required translation CSV tables, named by jurisdiction, the value in the `STANDARD_ID` column, and CASFRI table, for example `bc_vri01_dst.csv`.
 
-- [layer_metadata.csv](metadata/layer_metadata.csv) contains the standard's general column names under an identifier such as `BC_VRI01`, plus a row for each inventory input layer. Each row's `CASFRI_TABLE` lists the tables it supplies, and its source column names correspond to the names referenced in the translation tables.
+- [layer_metadata.csv](metadata/layer_metadata.csv) contains the standard's general column names under an identifier such as `BC_VRI01`, plus a row for each inventory input layer. The `CASFRI_TABLE` column lists the tables supplied by each row, and its source column names correspond to the names referenced in the translation tables.
 
 [./load_tables.sh](translation/load_tables.sh) loads the translation and lookup tables and reloads both metadata files. Use [./load_metadata.sh](metadata/load_metadata.sh) when only metadata needs reloading. The [Workflow Scripts](#workflow-scripts) section explains how to perform the following three operations individually:
 
@@ -393,23 +423,23 @@ Translation adds rows to `casfri50.cas_all`, `dst_all`, `eco_all`, `lyr_all`, `n
 
 Use this procedure to create a complete database from supported inventories.
 
-Conversion, translation, production of the geo-historical table and production of the inventory coverages are all very long processes when dealing with many inventories. In its current state, with more than 50 inventories supported, the final cas_all table gathers more than 66 million stands. If you include the other CASFRI tables (eco_all, dst_all, lyr_all, nfl_all and geo_all) that's more than 225 million rows translated. If you multiply this by the number of attributes composing each CASFRI table you get more than 3 billion values to translate. Even for a powerful database management system like PostgreSQL, that's a lot of information to process. The whole process described in this section should take many days to complete.
+Conversion, translation, production of the geo-historical table and production of the inventory coverages are all very long processes when dealing with many inventories. In its current state, with more than 50 inventories supported, the final cas_all table gathers more than 66 million stands. If you include the other CASFRI tables (eco_all, dst_all, lyr_all, nfl_all and geo_all) that's more than 225 million rows translated. If you multiply this by the number of attributes composing each CASFRI table you get more than 3 billion values to translate. Even for a powerful database management system like PostgreSQL/PostGIS, that's a lot of information to process. The whole process described in this section should take many days to complete.
 
 The Bash batch scripts below run separate processing jobs in parallel on the same computer. Where corresponding SQL scripts are provided, you can run them individually for closer monitoring and troubleshooting. The numbered steps give the processing order; the parallel configuration variables control how many jobs run together within each stage.
 
 ### 1) Create and configure a new database
 
-Create an empty PostgreSQL database and complete [Shared preparation](#shared-preparation) for it.
+Create an empty PostgreSQL database and complete the [Shared preparation](#shared-preparation) section from the main README for it.
 
 ### 2) There are five ways to determine the list of inventories to translate
 
 #### a) Use one of the inventory_metadata file predetermined list
 
-Set `metadataTableLoadingColumn` to `TRANSLATED_BY_CFS`, `TRANSLATED_BY_ULAVAL` in `config.sh`. All the inventories marked as YES in that column of [inventory_metadata.csv](metadata/inventory_metadata.csv) will be converted and translated. You must leave `fullList` undefined in `config.sh` for this to work. It's good practice to review which inventories are marked as YES before proceeding.
+Set `metadataTableLoadingColumn` in `config.sh` to the name of the `TRANSLATED_BY_CFS` or `TRANSLATED_BY_ULAVAL` column. All the inventories marked as YES in that column of [inventory_metadata.csv](metadata/inventory_metadata.csv) will be converted and translated. You must leave `fullList` undefined in `config.sh` for this to work. It's good practice to review which inventories are marked as YES before proceeding.
 
 #### b) Use the inventory_metadata file customizable list
 
-Set `metadataTableLoadingColumn` to `TRANSLATED_BY_CUSTOM`, and mark the required inventories YES in that column of [inventory_metadata.csv](metadata/inventory_metadata.csv). Similarly you must leave `fullList` undefined in `config.sh` for this to work. You can also add your own column and set `metadataTableLoadingColumn` to it.
+Set `metadataTableLoadingColumn` to the name of the `TRANSLATED_BY_CUSTOM` column, and set all required inventories to `YES` in this column in [inventory_metadata.csv](metadata/inventory_metadata.csv). Similarly you must leave `fullList` undefined in `config.sh` for this to work. You can also add your own column and set `metadataTableLoadingColumn` to it.
 
 #### c) Use a short, temporary list
 
@@ -429,7 +459,9 @@ To keep command windows open and check or inspect any error when converting, tes
 
 ### 5) Convert and load the inventories
 
-Run [./convert_all.sh](conversion/convert_all.sh) from the `conversion/` folder. All inventories defined by `fullList` or the metadata/inventory_metadata.csv `TRANSLATED_BY_XXX` column will be converted/loaded to PostgreSQL/PostGIS. When no inventory are supplied on the command line, photograph-year datasets listed in `config.sh` `photoYearList` are also loaded before converting the inventories.
+Run [./convert_all.sh](conversion/convert_all.sh) from the `conversion/` folder. All inventories defined by `fullList` or the metadata/inventory_metadata.csv `TRANSLATED_BY_XXX` column will be converted/loaded to PostgreSQL/PostGIS.
+
+The `photoYearList` configuration variable identifies specific scripts loading shapefiles shared by several inventories. When no inventory identifiers are supplied on the command line, these datasets are loaded once before the conversion batch, so each inventory can reuse them without loading them again. This loading is repeated on each such conversion run. Supplying inventory identifiers skips automatic photograph-year loading; in an existing database, reuse the shared tables already loaded and load required datasets separately only if they are missing or need updating.
 
 ### 6) Check the converted record counts
 
@@ -479,11 +511,11 @@ Use this procedure to add and translate newly acquired inventories. Be careful o
 
 ### 1) Archive and document the new inventory
 
-Determine an inventory identifier for the new inventory by looking at the existing ones in the [inventory_metadata.csv](metadata/inventory_metadata.csv) table. Just increase the last number used for a juristiction by 1 (e.g. AB35). Save the original files in the folder defined by the `friDir` `config.sh` variable in a folder hierarchy similar to other existing ones. Document its source, standard, dates, licensing, and expected counts in [inventory_metadata.csv](metadata/inventory_metadata.csv). Use `COMMENT` to explain unusual file or layer choices and coordinate-system corrections, without duplicating names or coordinate-system information already preserved in the source files or conversion script. All columns are documented in the [detailed inventory ingestion procedure](documentation/new_inventory_ingestion_procedure.md) file.
+Determine an inventory identifier for the new inventory by looking at the existing ones in the [inventory_metadata.csv](metadata/inventory_metadata.csv) table. Just increase the last number used for a juristiction by 1 (e.g. AB35). Save the original files in the folder defined by the `friDir` `config.sh` variable in a folder hierarchy similar to other existing ones. Document its source, standard, dates, licensing, and expected counts in [inventory_metadata.csv](metadata/inventory_metadata.csv). Use the `COMMENT` column to explain unusual file or layer choices and coordinate-system corrections, without duplicating names or coordinate-system information already preserved in the source files or conversion script. All columns are documented in the [detailed inventory ingestion procedure](documentation/new_inventory_ingestion_procedure.md) file.
 
 ### 2) Prepare the environment, convert and load the inventory
 
-Check [Shared preparation](#shared-preparation), create a new `conversion/sh/load_<inventory_id>.sh` based on an existing script dealing with the same type of source inventory files and run it. Check loaded counts and polygon shapes. If necessary update the actual count of loaded polygons in [inventory_metadata.csv](metadata/inventory_metadata.csv)
+Check the [Shared preparation](#shared-preparation) section from the main README, create a new `conversion/sh/load_<inventory_id>.sh` based on an existing script dealing with the same type of source inventory files and run it. Check loaded counts and polygon shapes. If necessary update the actual count of loaded polygons in [inventory_metadata.csv](metadata/inventory_metadata.csv)
 
 ### 3) Prepare and validate the inventory translation
 
