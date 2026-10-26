@@ -185,7 +185,7 @@ Validation is performed at multiple stages during and after translation:
 * **Validation of output using summary statistics** - The [summary_statistics](https://github.com/CASFRI/CASFRI/tree/master/summary_statistics) folder contains scripts (primarily summarize.R) to produce summary statistics for all attributes in each source inventory. These scripts use the R programming language and require that R be installed (https://www.r-project.org/). The output is a set of html files containing the summary information. These can be used to check for outliers, unexpected values, correct assignment of error codes etc.
 
 ## Workflow Scripts
-The [./02_translateAll.sh](workflow/02_produceCASFRI/02_translateAll.sh) script translates selected inventories using the `TT_TranslateInventory` database procedure. For manual development, the same process can be performed by calling three functions in order:
+The [./02_translateAll.sh](workflow/02_produceCASFRI/02_translateAll.sh) script translates selected inventories using the `TT_TranslateInventory()` database procedure. For manual development, the same process can be performed by calling three functions in order:
 
 * TT_Prepare() to validates and compile the translation table into a TT_TanslateXXX() function.
 * TT_CreateMappingView() to create a VIEW mapping the raw inventory tables attribute names to the translation tables attribute names.
@@ -409,9 +409,9 @@ For every inventory being translated, verify these requirements:
 
 [./load_tables.sh](translation/load_tables.sh) loads the translation and lookup tables and reloads both metadata files. Use [./load_metadata.sh](metadata/load_metadata.sh) when only metadata needs reloading. The [Workflow Scripts](#workflow-scripts) section explains how to perform the following three operations individually:
 
-1) Prepare the inventory's translation functions from the loaded translation tables using `TT_Prepare`.
+1) Prepare the inventory's translation functions from the loaded translation tables using `TT_Prepare()`.
 
-2) Create database views that match source column names and forest layers to the names referenced in those translation tables using `TT_CreateMappingView`.
+2) Create database views that match source column names and forest layers to the names referenced in those translation tables using `TT_CreateMappingView()`.
 
 3) Run the prepared translation functions on those views and insert the results into the CASFRI tables.
 
@@ -523,7 +523,7 @@ Add mapping rows in the [layer_metadata.csv](metadata/layer_metadata.csv) table.
 
 ### 4) Translate the complete inventory
 
-Add its HDR record using the SQL snippet in the detailed instructions. Use `TT_DropAllConstraints('casfri50', tableName)` for each of the six translated CASFRI tables, as described in the detailed instructions. This allows the tables to load independently in parallel and can speed up loading by postponing constraint checks and rebuilding primary-key indexes afterward. Run [./02_translateAll.sh](workflow/02_produceCASFRI/02_translateAll.sh) from Git Bash with the new inventory identifier to translate the tables in parallel. Wait for every translation process to finish and resolve any errors, then run [01_addConstraints.sql](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql), followed by [01_addGeoConstraints.sql](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addGeoConstraints.sql), to reapply and test the standard constraints. Resolve every failed check.
+Use `TT_DropAllConstraints('casfri50', tableName)` for each of the six translated CASFRI tables, as described in the detailed instructions. This allows the tables to load independently in parallel and can speed up loading by postponing constraint checks and rebuilding primary-key indexes afterward. Then replace its HDR record using the SQL snippet in the detailed instructions. Run [./02_translateAll.sh](workflow/02_produceCASFRI/02_translateAll.sh) from Git Bash with the new inventory identifier to translate the tables in parallel. Wait for every translation process to finish and resolve any errors, then run [01_addConstraints.sql](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql), followed by [01_addGeoConstraints.sql](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addGeoConstraints.sql), to reapply and test the standard constraints. Resolve every failed check.
 
 ### 5) Generate, validate and archive test tables
 

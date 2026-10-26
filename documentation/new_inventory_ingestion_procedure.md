@@ -122,7 +122,7 @@ All columns are loaded by [load_metadata.sh](../metadata/load_metadata.sh). The 
 | Identification and ownership | `OWNER_NAME` | Name of the owner or responsible organization. | Yes | No | Copied to HDR to identify the owner. |
 | Inventory standard | `STANDARD_TYPE` | Name or family of the inventory standard, such as AVI. | Yes | No | Copied to HDR to describe the standard. |
 | Inventory standard | `STANDARD_VERSION` | Published version of the inventory standard followed by the source data. | Yes | No | Copied to HDR to document the standard version. |
-| Inventory standard | `STANDARD_ID` | CASFRI identifier for the applicable standard, such as `NBI01`. | Yes | Yes | `TT_TranslateInventory` combines it with the jurisdiction prefix and CASFRI table name to select a translation table, such as `nb_nbi01_dst`. Also copied to HDR. |
+| Inventory standard | `STANDARD_ID` | CASFRI identifier for the applicable standard, such as `NBI01`. | Yes | Yes | `TT_TranslateInventory()` combines it with the jurisdiction prefix and CASFRI table name to select a translation table, such as `nb_nbi01_dst`. Also copied to HDR. |
 | Inventory standard | `STANDARD_REVISION` | Revision of the source standard, where a separate revision is documented. | Yes | No | Copied to HDR to document the revision. |
 | Inventory standard | `DOCUMENTATION_TITLES` | Titles of manuals and other documents describing the source inventory and its standard. | Yes | No | Copied to HDR as documentation references. |
 | Source format and dates | `SRC_DATA_FORMAT` | Original delivery format, using the accepted metadata codes. | Yes | No | Copied to HDR. The inventory's conversion script specifies how to read the actual source files. |
@@ -141,17 +141,17 @@ All columns are loaded by [load_metadata.sh](../metadata/load_metadata.sh). The 
 | Photograph years | `PHOTO_YEAR_SRC` | Source or method used to determine photograph years, such as a source attribute or a spatial match to separate photograph-year data. | Yes | No | Copied to HDR to describe how photograph years were obtained. |
 | Photograph years | `PHOTO_YEAR_START` | Earliest photograph year documented for the inventory. | Yes | No | Copied to HDR to describe the inventory's photograph-year range. Historical processing uses the value in each translated polygon's `STAND_PHOTO_YEAR` column to determine its dates. |
 | Photograph years | `PHOTO_YEAR_END` | Latest photograph year documented for the inventory. | Yes | No | Copied to HDR to describe the inventory's photograph-year range. Historical processing uses the value in each translated polygon's `STAND_PHOTO_YEAR` column to determine its dates. |
-| Historical priority | `PRECEDENCE_RANK` | Whole-number priority based on the documented quality and suitability of the inventory. | No | Yes, for historical processing | `TT_HasPrecedence`, defined by [01_PrepareGeoHistory.sql](../workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql), compares ranks when resolving overlaps between inventories. Higher numbers take precedence when this rule applies. |
+| Historical priority | `PRECEDENCE_RANK` | Whole-number priority based on the documented quality and suitability of the inventory. | No | Yes, for historical processing | `TT_HasPrecedence()`, defined by [01_PrepareGeoHistory.sql](../workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sql), compares ranks when resolving overlaps between inventories. Higher numbers take precedence when this rule applies. |
 | Automatic selection | `TRANSLATED_BY_ULAVAL` | YES/NO inventory selection setting for the ULaval processing list. | No | Conditional | Selects inventories marked `YES` when `metadataTableLoadingColumn` names this column. Count-checking functions can also use it to select inventories. |
 | Automatic selection | `TRANSLATED_BY_CFS` | YES/NO inventory selection setting for the CFS processing list. | No | Conditional | Selects inventories marked `YES` when `metadataTableLoadingColumn` names this column. Count-checking functions can also use it to select inventories. |
 | Automatic selection | `TRANSLATED_BY_CUSTOM` | YES/NO inventory selection setting for a custom processing list. | No | Conditional | Selects inventories marked `YES` when `metadataTableLoadingColumn` names this column. Count-checking functions can also use it to select inventories. |
-| Expected record counts | `CONVERTED_STAND_CNT` | Expected number of source stands after conversion and loading. Enter a whole number and confirm it against the loaded data. | No | Yes | `TT_ConvertedStandCount` compares it with the loaded source-table count. Automatic inventory selection also uses it to order inventories from largest to smallest, as explained below. |
-| Expected record counts | `CAS_ROW_CNT` | Expected number of translated CAS records identifying source polygons. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.cas_all`. |
-| Expected record counts | `DST_ROW_CNT` | Expected number of translated disturbance records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.dst_all`. |
-| Expected record counts | `ECO_ROW_CNT` | Expected number of translated ecological records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.eco_all`. |
-| Expected record counts | `LYR_ROW_CNT` | Expected number of translated forest-layer records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.lyr_all`. |
-| Expected record counts | `NFL_ROW_CNT` | Expected number of translated non-forest records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.nfl_all`. |
-| Expected record counts | `GEO_ROW_CNT` | Expected number of translated polygon geometry records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount` compares it with the inventory's row count in `casfri50.geo_all`. |
+| Expected record counts | `CONVERTED_STAND_CNT` | Expected number of source stands after conversion and loading. Enter a whole number and confirm it against the loaded data. | No | Yes | `TT_ConvertedStandCount()` compares it with the loaded source-table count. Automatic inventory selection also uses it to order inventories from largest to smallest, as explained below. |
+| Expected record counts | `CAS_ROW_CNT` | Expected number of translated CAS records identifying source polygons. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount()` compares it with the inventory's row count in `casfri50.cas_all`. |
+| Expected record counts | `DST_ROW_CNT` | Expected number of translated disturbance records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount()` compares it with the inventory's row count in `casfri50.dst_all`. |
+| Expected record counts | `ECO_ROW_CNT` | Expected number of translated ecological records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount()` compares it with the inventory's row count in `casfri50.eco_all`. |
+| Expected record counts | `LYR_ROW_CNT` | Expected number of translated forest-layer records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount()` compares it with the inventory's row count in `casfri50.lyr_all`. |
+| Expected record counts | `NFL_ROW_CNT` | Expected number of translated non-forest records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount()` compares it with the inventory's row count in `casfri50.nfl_all`. |
+| Expected record counts | `GEO_ROW_CNT` | Expected number of translated polygon geometry records. Enter a whole number. | No | Yes, for count checks | `TT_TranslatedRowCount()` compares it with the inventory's row count in `casfri50.geo_all`. |
 | Additional documentation | `COMMENT` | Additional inventory documentation, including interpretation and preparation decisions, temporary estimates, manual references, test results, and remaining limitations. | No | No | Retains notes for people maintaining the inventory; not copied to HDR by the current creation script. |
 
 The translation and count-checking functions named above are defined in [helperFunctionsCASFRI.sql](../helperfunctions/helperFunctionsCASFRI.sql). The inventory selection configuration variables are used by [define_invlist.sh](../define_invlist.sh) when `fullList` is not already defined; only the column selected by `metadataTableLoadingColumn` in `config.sh` determines which inventories are included.
@@ -335,29 +335,21 @@ rule_id,target_attribute,target_attribute_type,validation_rules,translation_rule
 
 | Column | What it describes |
 | --- | --- |
-| `RULE_ID` | A unique rule number that also sets the final column order in the translated table |
-| `TARGET_ATTRIBUTE` | The name of the translated column to produce |
-| `TARGET_ATTRIBUTE_TYPE` | The type of value expected, such as text, integer, or a double precision |
-| `VALIDATION_RULES` | Rules the source value must follow before being translated, return an error otherwise |
-| `TRANSLATION_RULES` | Rules to translate a valid source value |
+| `RULE_ID` | A unique rule number that sets the translated column order required by the CASFRI table |
+| `TARGET_ATTRIBUTE` | The target CASFRI column name from the [specification](specifications/README.md), such as `DIST_YEAR_1` in DST. Add one translation-table row per attribute. |
+| `TARGET_ATTRIBUTE_TYPE` | The data type required by the [CASFRI specification](specifications/README.md): `text`, `integer`, or `double precision`; `geometry`. |
+| `VALIDATION_RULES` | Rules that determine whether source values are valid for translation. If a rule fails, it is translated to one of the codes prescribed by the attribute specification and [Table 2: CASFRI error codes](specifications/README.md#error_codes), distinguishing missing, unknown, invalid, out-of-range, and inapplicable information. Select numeric or text codes according to the translated column's type. |
+| `TRANSLATION_RULES` | Rules to translate a valid source value to a CASFRI value |
 | `DESCRIPTION` | A plain-language explanation of the rules |
 | `DESC_UPTODATE_WITH_RULES` | Whether the explanation is up to date with the encoded current rules |
 
-Ensure the translated columns have the data types and order required by the target CASFRI table.
+To filter source rows, add a row to the translation table and set `TARGET_ATTRIBUTE` to `ROW_TRANSLATION_RULE`. Only source rows that pass at least one condition in the `VALIDATION_RULES` column of this row will be translated (logical OR); excluded rows will produce no translated row. For example, exclude stands with no understory information when translating an understory layer. Make sure excluded records will be translated by another mean. See the [PostgreSQL Table Translation Framework](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework) for details about `ROW_TRANSLATION_RULE`.
 
-To filter source rows, add a row to the translation table and set `TARGET_ATTRIBUTE` to `ROW_TRANSLATION_RULE`. The conditions in its `VALIDATION_RULES` column filter the source rows: A row will be translated if and only if at least one of the ROW_TRANSLATION_RULE 'validation_rules' is validated (like if there was a OR operator between them); excluded rows produce no translated row. For example, filter out an absent understory so it does not produce an extra LYR row filled with missing-value codes. Test records that should pass the filter and records that should be excluded. Detailed explanation on how to use `ROW_TRANSLATION_RULE` are provided in the [PostgreSQL Table Translation Framework](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework).
-
-In the DESCRIPTION column, explain what the source attribute represents and how it is validated and translated, including relevant codes, units, ranges, and category thresholds.
-
-When a validation rule fails, translation assigns the relevant error or missing-value code. Preserve the distinction between NULL, empty text, unknown values, invalid values, values outside the accepted range, and information that does not apply. The code must suit the translated column's type.
-
-Review polygon identifiers, species and percentages, crown closure, height, origin year, productivity, non-forest classes, disturbances, wetlands, and shapes.
-
-Values in the `CAS_ID` column must be 50 characters long, unique for each polygon, and traceable to the source; follow the existing standard's construction rules. All rows produced for the same stand in CAS, LYR, NFL, DST, ECO, and GEO must share this value so they can be linked, including when the stand produces several layer or disturbance rows. Layer numbers must not change this value.
+Values in the `CAS_ID` column must be 50 characters long, unique for each polygon, and traceable to the source; follow the existing standard's construction rules. All rows produced for the same stand in CAS, LYR, NFL, DST, ECO, and GEO must share this value so they can be linked, including when the stand produces several layer or disturbance rows. Two or more stands from different layers should have the same CAS_ID.
 
 Update `species_code_mapping.csv` and other lookup tables when code correspondences are missing or incorrect. Check that each source code has a documented meaning and maps to a CASFRI code consistent with that meaning, or to the prescribed error code. A change to a shared table can alter older inventories too.
 
-First use the basic helper functions provided by the PostgreSQL Table Translation Framework wherever possible. If they cannot perform the required operation, check whether an existing specialized CASFRI helper function can be reused or adapted before writing a new one. When adding or modifying a specialized CASFRI helper function in [helperFunctionsCASFRI.sql](../helperfunctions/helperFunctionsCASFRI.sql), add or update its tests in [helperFunctionsCASFRITest.sql](../helperfunctions/helperFunctionsCASFRITest.sql), following subsection 5.5. For a new function, also add the corresponding removal command to [helperFunctionsCasfriUninstall.sql](../helperfunctions/helperFunctionsCasfriUninstall.sql). Document the inventory interpretation that justifies the calculation.
+In `VALIDATION_RULES` and `TRANSLATION_RULES` prefer the PostgreSQL Table Translation Framework's basic helper functions. If they cannot perform the required operation, reuse or adapt an existing CASFRI helper function before writing a new one in [helperFunctionsCASFRI.sql](../helperfunctions/helperFunctionsCASFRI.sql). Add or update its tests in [helperFunctionsCASFRITest.sql](../helperfunctions/helperFunctionsCASFRITest.sql), following subsection 5.5. For a new function, add its removal command to [helperFunctionsCasfriUninstall.sql](../helperfunctions/helperFunctionsCasfriUninstall.sql). Explain the inventory interpretation behind the calculation in the `COMMENT` column or the inventory's README.
 
 ### 3.3 Load the translation tables and metadata
 
@@ -372,20 +364,29 @@ Loading translation and lookup tables is optional if unchanged versions are alre
 )
 ```
 
-Always load new or modified inventory and layer metadata. If skipping the command above, run `bash ./metadata/load_metadata.sh` from the main project folder.
+You can also just reload all translation and lookup tables from `translation/tables/` by omitting the filenames:
+
+```bash
+(
+  cd translation
+  bash ./load_tables.sh
+)
+```
+
+`load_tables.sh` also reload inventory and layer metadata. If skipping `load_tables.sh`, load new or modified metadata with `bash ./metadata/load_metadata.sh` from the main project folder.
 
 Include any other lookup CSVs required by the rules. If helper functions have been added or modified, load their definitions and run [helperFunctionsCASFRITest.sql](../helperfunctions/helperFunctionsCASFRITest.sql) following subsection 2.3. Resolve failed tests before preparing translation. Confirm that the expected metadata and translation tables are present in the database. Editing a CSV file on your computer does not automatically update its database copy.
 
 ### 3.4 Create a development script and validate sample translated rows
 
-Create `workflow/01_develTranslationTables/NB99.sql` using a similar inventory's development script as a starting point. Save the commands used for investigation so another person can rerun them. Older development examples sometimes use outdated mapping names. In the database Query Tool, run these two queries to create a mapping view from 200 source rows and display its first 10 records:
+Create `workflow/01_develTranslationTables/NB99.sql` using a similar inventory's development script as a starting point. Save the commands used for investigation so another person can rerun them. When copying a development script, update its inventory identifier, standard identifier, and mapping-view names. Open the file in the PostgreSQL Query Tool, run these two queries to create a mapping view from 200 source rows and display its rows:
 
 ```sql
 SELECT TT_CreateMappingView('rawfri', 'nb99', 1, 'nb_nbi01', 1, 200);
-SELECT * FROM rawfri.nb99_l1_to_nb_nbi01_l1_map_200 LIMIT 10;
+SELECT * FROM rawfri.nb99_l1_to_nb_nbi01_l1_map_200;
 ```
 
-In the results, check the expected column names, compare values with the matching original stands, and verify fixed values and selected records. If the mapping is incorrect, correct `layer_metadata.csv`, reload it with `./metadata/load_metadata.sh`, and recreate the view. Then prepare and run the sample translation:
+Inspect as many rows as possible: check the expected column names, compare values with the matching original stands, and verify fixed values and selected records. If the mapping is incorrect, correct `layer_metadata.csv`, reload it with `./metadata/load_metadata.sh`, and recreate the view. Then prepare and run the sample translation:
 
 ```sql
 SELECT TT_Prepare('translation', 'nb_nbi01_lyr', '_nb99_lyr_devel');
@@ -394,23 +395,60 @@ SELECT * FROM TT_Translate_nb99_lyr_devel(
 );
 ```
 
-`TT_CreateMappingView` prepares a view showing the source columns under the names expected by the chosen standard. `TT_Prepare` creates the database function that applies the rules in the LYR translation table. The last query displays its translated results. These commands display a sample translation; they do not perform the complete inventory translation described in subsections 4.2 and 4.3.
+`TT_CreateMappingView()` prepares a view showing the source columns under the names expected by the chosen standard. `TT_Prepare()` creates the database function that applies the rules in the LYR translation table. The last query displays its translated results. These commands display a sample translation; they do not perform the complete inventory translation described in subsections 4.1 to 4.3.
 
-Repeat this preparation and inspection for every required CASFRI table and input layer. `TT_Prepare` checks whether the rules are correctly written, but cannot establish whether they correctly interpret the inventory manual.
+Repeat this preparation and inspection for every required CASFRI table and input layer. `TT_Prepare()` checks whether the rules are correctly written, but cannot establish whether they correctly interpret the inventory manual.
 
 Compare original and translated values for selected stands, including rare categories and missing information. Use the documented construction of values in the `CAS_ID` column and original identifiers to match records. Do not assume that the last few characters of every value in the `CAS_ID` column identify a source record in the same way.
 
+Pay particular attention to `UNKNOWN_VALUE` (`-8886`), `OUT_OF_RANGE` (`-9999`), `NOT_IN_SET` (`-9998`), `INVALID_VALUE` (`-9997`), and `WRONG_TYPE` (`-9995`). These codes may be produced for valid source values that the existing translation tables or CASFRI helper functions do not yet handle. Compare the affected source values with the inventory manual and correct the rules or functions where needed before accepting the translation.
+
+To inspect all distinct values of a source attribute and how often each occurs, query the full loaded source table so rare values missing from the sample are included. For example, if species codes are stored in the `L1S1` column:
+
+```sql
+SELECT l1s1, COUNT(*) AS cnt
+FROM rawfri.nb99
+GROUP BY l1s1
+ORDER BY l1s1;
+```
+
+Replace `nb99` and `l1s1` with the actual source table and column names. Compare the values with the inventory manual and the values handled by the translation rules and helper functions.
+
 ## 4) Translate the complete inventory
 
-Add HDR, drop all constraints from the six translated CASFRI tables, translate the tables in parallel, and reapply the standard constraints.
+Drop all constraints from the six translated CASFRI tables, replace the inventory's HDR record, translate the tables in parallel, and reapply the standard constraints.
 
-### 4.1 Add the HDR record
+### 4.1 Drop all constraints from the translated CASFRI tables
 
 Keep the existing CASFRI tables. If the database has not yet been initialized, complete the relevant database-creation instructions in [Build the whole database from scratch](../README.md#build-the-whole-database-from-scratch) in a separate empty database before returning to this procedure. Do not run `./01_createCASFRITables.sh` against tables containing results you need to keep: it deletes and recreates HDR and the translated tables, and can remove dependent database objects.
 
-Add the new inventory's metadata to HDR before translating its records. The following SQL copies only the required columns, following [01_createCASFRITables.sql](../workflow/02_produceCASFRI/01_createCASFRITables.sql):
+In the database Query Tool, run the following six commands:
 
 ```sql
+SELECT TT_DropAllConstraints('casfri50', 'cas_all');
+SELECT TT_DropAllConstraints('casfri50', 'dst_all');
+SELECT TT_DropAllConstraints('casfri50', 'eco_all');
+SELECT TT_DropAllConstraints('casfri50', 'lyr_all');
+SELECT TT_DropAllConstraints('casfri50', 'nfl_all');
+SELECT TT_DropAllConstraints('casfri50', 'geo_all');
+```
+
+These commands already appear in a commented block at the end of [01_addConstraints.sql](../workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql). Execute the six statements above, rather than the whole file, at this stage. Check that every call returns `true` before starting translation. The function is installed from `helperFunctionsCASFRI.sql` in subsection 2.3.
+
+The function removes primary keys, foreign keys, and constraints that perform value checks from each named table. This removes the links that would otherwise require CAS records to exist before related records can be inserted, allowing all six tables to be translated in parallel. Translation can also be faster because PostgreSQL can check the removed constraints and rebuild primary-key indexes afterward, instead of checking and maintaining them for every inserted row. In PostgreSQL 13, existing column-level `NOT NULL` requirements remain in place. Keep HDR and its primary key; replace the inventory's HDR record as described in subsection 4.2.
+
+Constraint removal applies to all inventories in these tables. The function uses `CASCADE`, so removing a primary key also removes foreign keys that depend on it, including any from other tables. The scripts in subsection 4.4 reapply the standard CASFRI constraints; separately restore any additional constraints defined for your database. The commands and restoration scripts use `casfri50`; adapt both consistently if the translated tables use another schema.
+
+### 4.2 Add the HDR record
+
+Confirm that inventory metadata contains exactly one row for NB99. Delete its existing HDR row, if any, then insert the current metadata using the HDR columns listed in [01_createCASFRITables.sql](../workflow/02_produceCASFRI/01_createCASFRITables.sql).
+
+```sql
+BEGIN;
+
+DELETE FROM casfri50.hdr_all
+WHERE inventory_id = 'NB99';
+
 INSERT INTO casfri50.hdr_all (
   inventory_id, jurisdiction, owner_type, owner_name, standard_type,
   standard_version, standard_id, standard_revision, documentation_titles,
@@ -427,32 +465,12 @@ SELECT m.inventory_id, m.jurisdiction, m.owner_type, m.owner_name,
        m.redistribution, m.permission, m.license_agreement,
        m.photo_year_start, m.photo_year_end, m.photo_year_src
 FROM public.inventory_metadata m
-WHERE m.inventory_id = 'NB99'
-  AND NOT EXISTS (
-    SELECT 1 FROM casfri50.hdr_all h WHERE h.inventory_id = m.inventory_id
-  );
+WHERE m.inventory_id = 'NB99';
+
+COMMIT;
 ```
 
-Check that HDR contains exactly one row for NB99, with values matching its inventory metadata. The command avoids adding another row if NB99 already exists, but it does not correct an existing row. Update the relevant values separately if needed. Do not replace the column list with `SELECT *`, because the metadata table contains extra columns that HDR does not have.
-
-### 4.2 Drop all constraints from the translated CASFRI tables
-
-In the database Query Tool, run the following six commands:
-
-```sql
-SELECT TT_DropAllConstraints('casfri50', 'cas_all');
-SELECT TT_DropAllConstraints('casfri50', 'dst_all');
-SELECT TT_DropAllConstraints('casfri50', 'eco_all');
-SELECT TT_DropAllConstraints('casfri50', 'lyr_all');
-SELECT TT_DropAllConstraints('casfri50', 'nfl_all');
-SELECT TT_DropAllConstraints('casfri50', 'geo_all');
-```
-
-These commands already appear in a commented block at the end of [01_addConstraints.sql](../workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql). Execute the six statements above, rather than the whole file, at this stage. Check that every call returns `true` before starting translation. The function is installed from `helperFunctionsCASFRI.sql` in subsection 2.3.
-
-The function removes primary keys, foreign keys, and constraints that perform value checks from each named table. This removes the links that would otherwise require CAS records to exist before related records can be inserted, allowing all six tables to be translated in parallel. Loading can also be faster because PostgreSQL can check the removed constraints and rebuild primary-key indexes after translation, instead of checking and maintaining them for every inserted row. In PostgreSQL 13, existing column-level `NOT NULL` requirements remain in place. Keep HDR and its primary key; add the new HDR record as described in subsection 4.1.
-
-Constraint removal applies to all inventories in these tables. The function uses `CASCADE`, so removing a primary key also removes foreign keys that depend on it, including any from other tables. The scripts in subsection 4.4 reapply the standard CASFRI constraints; separately restore any additional constraints defined for your database. The commands and restoration scripts use `casfri50`; adapt both consistently if the translated tables use another schema.
+Run the entire block together. `BEGIN` and `COMMIT` keep the delete and insert together so an insert error does not leave the HDR row deleted. If an error occurs, run `ROLLBACK;` before retrying. Check that HDR contains exactly one row for NB99, with values matching its inventory metadata. Keep the explicit column list because the metadata table contains extra columns that HDR does not have.
 
 ### 4.3 Translate all CASFRI tables in parallel
 
@@ -465,7 +483,7 @@ Check that `postProcessingOnly=False` and that `maxTranslationsInParallel` allow
 )
 ```
 
-The script starts separate translation processes for CAS, ECO, DST, NFL, LYR, and GEO, up to the configured limit. Each process prepares a translation function from the appropriate translation table, reads the mapped source information, and adds translated rows to its CASFRI table. No table needs to finish before the others start while the constraints are absent. Keep `fullList` in `config.sh` consistent with the inventory being added so existing inventories are not unintentionally retranslated.
+The script starts separate translation processes for CAS, ECO, DST, NFL, LYR, and GEO, up to the configured limit. Each process prepares a translation function from the appropriate translation table, reads the mapped source information, and adds translated rows to its CASFRI table. No table needs to finish before the others start while the constraints are absent. Keep `fullList` in `config.sh` consistent with the inventory being added so existing inventories are not unintentionally retranslated. Running `./02_translateAll.sh` without inventory identifiers processes the configured `fullList`, or all inventories marked `YES` in the metadata column selected by `metadataTableLoadingColumn` if `fullList` is undefined; either list may include inventories already translated.
 
 ### 4.4 Check completion and reapply the constraints
 
@@ -518,7 +536,7 @@ nb99,nfl,3,600
 
 Follow the recommended translated test-row counts in [translation/test/readme.md](../translation/test/readme.md), then use [validate_number_of_tests.sql](../translation/test/validate_number_of_tests.sql) as explained in subsection 5.4 to check that the actual samples are sufficient. The sample sizes above are examples, not verified settings for your inventory. Use the actual input layers listed in layer metadata. The number of translated test rows can be smaller than the number of source rows selected, because translation decides which records belong in the result. For example, sampling 1,000 stands might yield only a few disturbance records if disturbances are uncommon.
 
-For the README's instruction to add one sample setting per inventory/CASFRI-table/layer, use the tables supported by the sample test script: CAS, ECO, DST, NFL, and LYR. Do not add HDR or GEO sample entries to this file; the standard script does not test them. Check the HDR record as described in subsection 4.1 and inspect the translated GEO results and geographic coverage.
+For the README's instruction to add one sample setting per inventory/CASFRI-table/layer, use the tables supported by the sample test script: CAS, ECO, DST, NFL, and LYR. Do not add HDR or GEO sample entries to this file; the standard script does not test them. Check the HDR record as described in subsection 4.2 and inspect the translated GEO results and geographic coverage.
 
 **A missing sample entry does not mean skip this case.** The current procedure treats an absent size as a request to use the full source table. A size of zero produces no sampled rows and must be explained. Include exactly one entry for each required inventory/table/input-layer combination.
 
@@ -535,7 +553,7 @@ Keep copies of previously accepted test CSVs and any edits not yet saved in Git'
 )
 ```
 
-This command selects **New Brunswick**, not just NB99. For each CASFRI table, the script uses `TT_RunAllTests` to look through New Brunswick inventories in metadata and test those whose source tables are present. The metadata's inventory selection configuration variables do not limit that list.
+This command selects **New Brunswick**, not just NB99. For each CASFRI table, the script uses `TT_RunAllTests()` to look through New Brunswick inventories in metadata and test those whose source tables are present. The metadata's inventory selection configuration variables do not limit that list.
 
 If the database contains only NB99, the tests cannot check the other New Brunswick inventories. To replace the accepted New Brunswick test files with complete new results, use a database containing the required other inventories too.
 
