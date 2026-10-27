@@ -28,8 +28,8 @@ SELECT * FROM translation.ds_cfs01_cas; --WHERE rule_id::int <> 5;
 
 SELECT * FROM translation_devel.ds_cfs01_cas_devel;
 SELECT TT_Prepare('translation_devel', 'ds_cfs01_cas_devel', '_ds03_cas_devel');
-SELECT TT_CreateMappingView('rawfri', 'ds03', 'ds', 200);
-SELECT * FROM TT_Translate_ds03_cas_devel('rawfri', 'ds03_l1_to_ds_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'ds03', 'ds_cfs01', 200);
+SELECT * FROM TT_Translate_ds03_cas_devel('rawfri', 'ds03_l1_to_ds_cfs01_l1_map_200');
 
 
 -- DST ATTRIBUTES
@@ -41,8 +41,8 @@ SELECT * FROM translation.ds_cfs01_dst; --WHERE rule_id::int = 1;
 
 SELECT * FROM translation_devel.ds_cfs01_dst_devel;
 SELECT TT_Prepare('translation_devel', 'ds_cfs01_dst_devel', '_ds03_dst_devel');
-SELECT TT_CreateMappingView('rawfri', 'ds03', 'ds', 200);
-SELECT * FROM TT_Translate_ds03_dst_devel('rawfri', 'ds03_l1_to_ds_l1_map_200'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'ds03', 'ds_cfs01', 200);
+SELECT * FROM TT_Translate_ds03_dst_devel('rawfri', 'ds03_l1_to_ds_cfs01_l1_map_200'); -- 4 s.
 
 
 -- GEO ATTRIBUTES
@@ -53,15 +53,15 @@ SELECT * FROM translation.ds_cfs01_geo; --WHERE rule_id::int = 1
 
 SELECT * FROM translation_devel.ds_cfs01_geo_devel;
 SELECT TT_Prepare('translation_devel', 'ds_cfs01_geo_devel', '_ds03_geo_devel');
-SELECT TT_CreateMappingView('rawfri', 'ds03', 'ds', 200);
-SELECT * FROM TT_Translate_ds03_geo_devel('rawfri', 'ds03_l1_to_ds_l1_map_200'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'ds03', 'ds_cfs01', 200);
+SELECT * FROM TT_Translate_ds03_geo_devel('rawfri', 'ds03_l1_to_ds_cfs01_l1_map_200'); -- 4 s.
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT b.inventory_id, b.src_filename, b.map_sheet_id, b.orig_stand_id, b.ogc_fid, a.cas_id,
        b.stand_photo_year, a.dist_year_1
-FROM TT_Translate_ds03_dst_devel('rawfri', 'ds03_l1_to_ds_l1_map_200') a, 
-     rawfri.ds03_l1_to_ds_l1_map_200 b
+FROM TT_Translate_ds03_dst_devel('rawfri', 'ds03_l1_to_ds_cfs01_l1_map_200') a,
+     rawfri.ds03_l1_to_ds_cfs01_l1_map_200 b
 WHERE b.ogc_fid::int = trim(leading 'x' from right(a.cas_id, 7))::int;
 
 --------------------------------------------------------------------------

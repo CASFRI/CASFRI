@@ -30,22 +30,22 @@ WHERE TT_NotEmpty(nb_species_codes);
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Translate the samples (reusing NB01 translation functions prepared by NB01.sql)
-SELECT TT_CreateMappingView('rawfri', 'nb02', 1, 'nb', 1, 200);
-SELECT * FROM TT_Translate_nb01_cas_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 5 s.
+SELECT TT_CreateMappingView('rawfri', 'nb02', 1, 'nb_nbi01', 1, 200);
+SELECT * FROM TT_Translate_nb01_cas_devel('rawfri', 'nb02_l1_to_nb_nbi01_l1_map_200'); -- 5 s.
 
-SELECT * FROM TT_Translate_nb01_dst_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 4 s.
+SELECT * FROM TT_Translate_nb01_dst_devel('rawfri', 'nb02_l1_to_nb_nbi01_l1_map_200'); -- 4 s.
 
-SELECT * FROM TT_Translate_nb01_eco_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 2 s.
+SELECT * FROM TT_Translate_nb01_eco_devel('rawfri', 'nb02_l1_to_nb_nbi01_l1_map_200'); -- 2 s.
 
-SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 7 s.
+SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l1_to_nb_nbi01_l1_map_200'); -- 7 s.
 
-SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb', 1, 200);
-SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l2_to_nb_l1_map_200'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'nb02', 2, 'nb_nbi01', 1, 200);
+SELECT * FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l2_to_nb_nbi01_l1_map_200'); -- 7 s.
 
-SELECT TT_CreateMappingView('rawfri', 'nb02', 3, 'nb', 1, 200);
-SELECT * FROM TT_Translate_nb01_nfl_devel('rawfri', 'nb02_l3_to_nb_l1_map_200'); -- 3 s.
+SELECT TT_CreateMappingView('rawfri', 'nb02', 3, 'nb_nbi01', 1, 200);
+SELECT * FROM TT_Translate_nb01_nfl_devel('rawfri', 'nb02_l3_to_nb_nbi01_l1_map_200'); -- 3 s.
 
-SELECT * FROM TT_Translate_nb01_geo_devel('rawfri', 'nb02_l1_to_nb_l1_map_200'); -- 2 s.
+SELECT * FROM TT_Translate_nb01_geo_devel('rawfri', 'nb02_l1_to_nb_nbi01_l1_map_200'); -- 2 s.
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id, 
@@ -53,7 +53,7 @@ SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id,
        b.l1ht, a.height_upper, a.height_lower, 
        b.l1s1, a.species_1,
        b.l1pr1, a.species_per_1
-FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l1_to_nb_l1_map_200') a, rawfri.nb02_l1_to_nb_l1_map_200 b
+FROM TT_Translate_nb01_lyr_devel('rawfri', 'nb02_l1_to_nb_nbi01_l1_map_200') a, rawfri.nb02_l1_to_nb_nbi01_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------

@@ -109,22 +109,22 @@ SELECT TT_Prepare('translation_devel', 'bc10_vri01_nfl_devel', '_bc10_nfl_devel'
 SELECT TT_Prepare('translation_devel', 'bc10_vri01_geo_devel', '_bc10_geo_devel');
 
 -- Translate the samples
-SELECT TT_CreateMappingView('rawfri', 'bc10', 1, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc10_cas_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 5 s.
+SELECT TT_CreateMappingView('rawfri', 'bc10', 1, 'bc_vri01', 1, 200);
+SELECT * FROM TT_Translate_bc10_cas_devel('rawfri', 'bc10_l1_to_bc_vri01_l1_map_200'); -- 5 s.
 
-SELECT * FROM TT_Translate_bc10_dst_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 4 s.
+SELECT * FROM TT_Translate_bc10_dst_devel('rawfri', 'bc10_l1_to_bc_vri01_l1_map_200'); -- 4 s.
 
-SELECT * FROM TT_Translate_bc10_eco_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 2 s.
+SELECT * FROM TT_Translate_bc10_eco_devel('rawfri', 'bc10_l1_to_bc_vri01_l1_map_200'); -- 2 s.
 
-SELECT * FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 7 s.
+SELECT * FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l1_to_bc_vri01_l1_map_200'); -- 7 s.
 
-SELECT TT_CreateMappingView('rawfri', 'bc10', 2, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l2_to_bc_l1_map_200'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'bc10', 2, 'bc_vri01', 1, 200);
+SELECT * FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l2_to_bc_vri01_l1_map_200'); -- 7 s.
 
-SELECT TT_CreateMappingView('rawfri', 'bc10', 3, 'bc', 1, 200);
-SELECT * FROM TT_Translate_bc10_nfl_devel('rawfri', 'bc10_l3_to_bc_l1_map_200'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'bc10', 3, 'bc_vri01', 1, 200);
+SELECT * FROM TT_Translate_bc10_nfl_devel('rawfri', 'bc10_l3_to_bc_vri01_l1_map_200'); -- 4 s.
 
-SELECT * FROM TT_Translate_bc10_geo_devel('rawfri', 'bc10_l1_to_bc_l1_map_200'); -- 2 s.
+SELECT * FROM TT_Translate_bc10_geo_devel('rawfri', 'bc10_l1_to_bc_vri01_l1_map_200'); -- 2 s.
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT b.src_filename, b.inventory_id, b.map_id, b.ogc_fid, a.cas_id, 
@@ -132,7 +132,7 @@ SELECT b.src_filename, b.inventory_id, b.map_id, b.ogc_fid, a.cas_id,
        b.proj_height_1, a.height_upper, a.height_lower,
        b.species_cd_1, a.species_1,
        b.species_pct_1, a.species_per_1
-FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l1_to_bc_l1_map_200') a, rawfri.bc10_l1_to_bc_l1_map_200 b
+FROM TT_Translate_bc10_lyr_devel('rawfri', 'bc10_l1_to_bc_vri01_l1_map_200') a, rawfri.bc10_l1_to_bc_vri01_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------

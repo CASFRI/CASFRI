@@ -31,8 +31,8 @@ SELECT * FROM translation.mb_fri02_cas;
 --WHERE rule_id::int <> 5;
 SELECT * FROM translation_devel.mb01_fri02_cas_devel;
 SELECT TT_Prepare('translation_devel', 'mb01_fri02_cas_devel', '_mb01_cas_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb01', 'mb_fri2', 200);
-SELECT * FROM TT_Translate_mb01_cas_devel('rawfri', 'mb01_l1_to_mb_fri2_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'mb01', 'mb_fri02', 200);
+SELECT * FROM TT_Translate_mb01_cas_devel('rawfri', 'mb01_l1_to_mb_fri02_l1_map_200');
 
 -- LYR1 ATTRIBUTES
 SELECT * FROM translation.mb_fri02_lyr;
@@ -42,8 +42,8 @@ SELECT * FROM translation.mb_fri02_lyr;
 --WHERE rule_id::int != 4;
 SELECT * FROM translation_devel.mb01_fri02_lyr_devel;
 SELECT TT_Prepare('translation_devel', 'mb01_fri02_lyr_devel', '_mb01_lyr_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri2', 1, 200);
-SELECT * FROM TT_Translate_mb01_lyr_devel('rawfri', 'mb01_l1_to_mb_fri2_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri02', 1, 200);
+SELECT * FROM TT_Translate_mb01_lyr_devel('rawfri', 'mb01_l1_to_mb_fri02_l1_map_200');
 
 -- DST ATTRIBUTES
 SELECT * FROM translation.mb_fri02_dst;
@@ -52,11 +52,11 @@ CREATE TABLE translation_devel.mb01_fri02_dst_devel AS
 SELECT * FROM translation.mb_fri02_dst; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.mb01_fri02_dst_devel;
 SELECT TT_Prepare('translation_devel', 'mb01_fri02_dst_devel', '_mb01_dst_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri2', 1, 200);
-SELECT * FROM TT_Translate_mb01_dst_devel('rawfri', 'mb01_l1_to_mb_fri2_l1_map_200'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri02', 1, 200);
+SELECT * FROM TT_Translate_mb01_dst_devel('rawfri', 'mb01_l1_to_mb_fri02_l1_map_200'); -- 4 s.
 
 SELECT a.cas_id, b.dist_type_1, a.dist_type_1, a.dist_type_2 
-FROM TT_Translate_mb01_dst_devel('rawfri', 'mb01_l1_to_mb_l1_map_200') a, rawfri.mb01_l1_to_mb_l1_map_200 b
+FROM TT_Translate_mb01_dst_devel('rawfri', 'mb01_l1_to_mb_fri02_l1_map_200') a, rawfri.mb01_l1_to_mb_fri02_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 -- NFL ATTRIBUTES
@@ -67,8 +67,8 @@ SELECT * FROM translation.mb_fri02_nfl;
 --WHERE rule_id::int != 4; --IN (0,1,2,3);
 SELECT * FROM translation_devel.mb01_fri02_nfl_devel;
 SELECT TT_Prepare('translation_devel', 'mb01_fri02_nfl_devel', '_mb01_nfl_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb01', 2, 'mb_fri2', 1, 200);
-SELECT * FROM TT_Translate_mb01_nfl_devel('rawfri', 'mb01_l2_to_mb_fri2_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'mb01', 2, 'mb_fri02', 1, 200);
+SELECT * FROM TT_Translate_mb01_nfl_devel('rawfri', 'mb01_l2_to_mb_fri02_l1_map_200');
 
 -- ECO ATTRIBUTES
 SELECT * FROM translation.mb_fri02_eco;
@@ -77,8 +77,8 @@ CREATE TABLE translation_devel.mb01_fri02_eco_devel AS
 SELECT * FROM translation.mb_fri02_eco; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.mb01_fri02_eco_devel;
 SELECT TT_Prepare('translation_devel', 'mb01_fri02_eco_devel', '_mb01_eco_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri2', 1, 200);
-SELECT * FROM TT_Translate_mb01_eco_devel('rawfri', 'mb01_l1_to_mb_fri2_l1_map_200'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri02', 1, 200);
+SELECT * FROM TT_Translate_mb01_eco_devel('rawfri', 'mb01_l1_to_mb_fri02_l1_map_200'); -- 4 s.
 
 -- GEO ATTRIBUTES
 SELECT * FROM translation.mb_fri02_geo;
@@ -87,8 +87,8 @@ CREATE TABLE translation_devel.mb01_fri02_geo_devel AS
 SELECT * FROM translation.mb_fri02_geo; --WHERE rule_id::int = 1
 SELECT * FROM translation_devel.mb01_fri02_geo_devel;
 SELECT TT_Prepare('translation_devel', 'mb01_fri02_geo_devel', '_mb01_geo_devel');
-SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri2', 1, 200);
-SELECT * FROM TT_Translate_mb01_geo_devel('rawfri', 'mb01_l1_to_mb_fri2_l1_map_200'); -- 4 s.
+SELECT TT_CreateMappingView('rawfri', 'mb01', 1, 'mb_fri02', 1, 200);
+SELECT * FROM TT_Translate_mb01_geo_devel('rawfri', 'mb01_l1_to_mb_fri02_l1_map_200'); -- 4 s.
 
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
@@ -97,7 +97,7 @@ SELECT b.src_filename, b.inventory_id, b.poly_id, b.ogc_fid, a.cas_id,
        b.l1ht, a.height_upper, a.height_lower, 
        b.l1s1, a.species_1,
        b.l1pr1, a.species_per_1
-FROM TT_Translate_mb01_lyr_devel('rawfri', 'mb01_l1_to_mb_l1_map_200') a, rawfri.mb01_l1_to_mb_l1_map_200 b
+FROM TT_Translate_mb01_lyr_devel('rawfri', 'mb01_l1_to_mb_fri02_l1_map_200') a, rawfri.mb01_l1_to_mb_fri02_l1_map_200 b
 WHERE b.ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------

@@ -110,25 +110,25 @@ SELECT TT_Prepare('translation_devel', 'ab21_avi01_nfl_devel', '_ab21_nfl_devel'
 SELECT TT_Prepare('translation_devel', 'ab21_avi01_geo_devel', '_ab21_geo_devel');
 
 -- Translate the samples
-SELECT TT_CreateMappingView('rawfri', 'ab21', 1, 'ab', 1, 200);
-SELECT * FROM TT_Translate_ab21_cas_devel('rawfri', 'ab21_l1_to_ab_l1_map_200'); -- 6 s.
+SELECT TT_CreateMappingView('rawfri', 'ab21', 1, 'ab_avi01', 1, 200);
+SELECT * FROM TT_Translate_ab21_cas_devel('rawfri', 'ab21_l1_to_ab_avi01_l1_map_200'); -- 6 s.
 
-SELECT * FROM TT_Translate_ab21_dst_devel('rawfri', 'ab21_l1_to_ab_l1_map_200'); -- 5 s.
+SELECT * FROM TT_Translate_ab21_dst_devel('rawfri', 'ab21_l1_to_ab_avi01_l1_map_200'); -- 5 s.
 
-SELECT * FROM TT_Translate_ab21_eco_devel('rawfri', 'ab21_l1_to_ab_l1_map_200'); -- 3 s.
+SELECT * FROM TT_Translate_ab21_eco_devel('rawfri', 'ab21_l1_to_ab_avi01_l1_map_200'); -- 3 s.
 
-SELECT * FROM TT_Translate_ab21_lyr_devel('rawfri', 'ab21_l1_to_ab_l1_map_200'); -- 7 s.
+SELECT * FROM TT_Translate_ab21_lyr_devel('rawfri', 'ab21_l1_to_ab_avi01_l1_map_200'); -- 7 s.
 
-SELECT TT_CreateMappingView('rawfri', 'ab21', 2, 'ab', 1, 200);
-SELECT * FROM TT_Translate_ab21_lyr_devel('rawfri', 'ab21_l2_to_ab_l1_map_200'); -- 7 s.
+SELECT TT_CreateMappingView('rawfri', 'ab21', 2, 'ab_avi01', 1, 200);
+SELECT * FROM TT_Translate_ab21_lyr_devel('rawfri', 'ab21_l2_to_ab_avi01_l1_map_200'); -- 7 s.
 
-SELECT TT_CreateMappingView('rawfri', 'ab21', 3, 'ab', 1, 200);
-SELECT * FROM TT_Translate_ab21_nfl_devel('rawfri', 'ab21_l3_to_ab_l1_map_200'); -- 5 s.
+SELECT TT_CreateMappingView('rawfri', 'ab21', 3, 'ab_avi01', 1, 200);
+SELECT * FROM TT_Translate_ab21_nfl_devel('rawfri', 'ab21_l3_to_ab_avi01_l1_map_200'); -- 5 s.
 
-SELECT TT_CreateMappingView('rawfri', 'ab21', 4, 'ab', 1, 200);
-SELECT * FROM TT_Translate_ab21_nfl_devel('rawfri', 'ab21_l4_to_ab_l1_map_200'); -- 5 s.
+SELECT TT_CreateMappingView('rawfri', 'ab21', 4, 'ab_avi01', 1, 200);
+SELECT * FROM TT_Translate_ab21_nfl_devel('rawfri', 'ab21_l4_to_ab_avi01_l1_map_200'); -- 5 s.
 
-SELECT * FROM TT_Translate_ab21_geo_devel('rawfri', 'ab21_l1_to_ab_l1_map_200'); -- 5 s.
+SELECT * FROM TT_Translate_ab21_geo_devel('rawfri', 'ab21_l1_to_ab_avi01_l1_map_200'); -- 5 s.
 
 -- Display original values and translated values side-by-side to compare and debug the translation table
 SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id, 
@@ -136,7 +136,7 @@ SELECT b.src_filename, b.inventory_id, b.ogc_fid, a.cas_id,
        b.height, a.height_upper, a.height_lower,
        b.spec1, a.species_1,
        b.spec1_per, a.species_per_1
-FROM TT_Translate_ab21_lyr_devel('rawfri', 'ab21_l1_to_ab_l1_map_200') a, rawfri.ab21_l1_to_ab_l1_map_200 b
+FROM TT_Translate_ab21_lyr_devel('rawfri', 'ab21_l1_to_ab_avi01_l1_map_200') a, rawfri.ab21_l1_to_ab_avi01_l1_map_200 b
 WHERE ogc_fid::int = right(a.cas_id, 7)::int;
 
 --------------------------------------------------------------------------

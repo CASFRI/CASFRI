@@ -30,23 +30,23 @@ WHERE TT_NotEmpty(nt_species_codes);
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
 -- Translate the samples (reusing NT01 translation functions prepared by NT01.sql)
-SELECT TT_CreateMappingView('rawfri', 'nt02', 1, 'nt', 1, 200);
-SELECT * FROM TT_Translate_nt01_cas_devel('rawfri', 'nt02_l1_to_nt_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 1, 'nt_fvi01', 1, 200);
+SELECT * FROM TT_Translate_nt01_cas_devel('rawfri', 'nt02_l1_to_nt_fvi01_l1_map_200');
 
-SELECT * FROM TT_Translate_nt01_dst_devel('rawfri', 'nt02_l1_to_nt_l1_map_200');
+SELECT * FROM TT_Translate_nt01_dst_devel('rawfri', 'nt02_l1_to_nt_fvi01_l1_map_200');
 
-SELECT * FROM TT_Translate_nt01_eco_devel('rawfri', 'nt02_l1_to_nt_l1_map_200');
+SELECT * FROM TT_Translate_nt01_eco_devel('rawfri', 'nt02_l1_to_nt_fvi01_l1_map_200');
 
-SELECT * FROM TT_Translate_nt01_lyr_devel('rawfri', 'nt02_l1_to_nt_l1_map_200');
+SELECT * FROM TT_Translate_nt01_lyr_devel('rawfri', 'nt02_l1_to_nt_fvi01_l1_map_200');
 
-SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt', 1, 200);
-SELECT * FROM TT_Translate_nt01_lyr_devel('rawfri', 'nt02_l2_to_nt_l1_map_200');
+SELECT TT_CreateMappingView('rawfri', 'nt02', 2, 'nt_fvi01', 1, 200);
+SELECT * FROM TT_Translate_nt01_lyr_devel('rawfri', 'nt02_l2_to_nt_fvi01_l1_map_200');
 
-SELECT * FROM TT_Translate_nt01_nfl_devel('rawfri', 'nt02_l1_to_nt_l1_map_200');
+SELECT * FROM TT_Translate_nt01_nfl_devel('rawfri', 'nt02_l1_to_nt_fvi01_l1_map_200');
 
-SELECT * FROM TT_Translate_nt01_nfl_devel('rawfri', 'nt02_l2_to_nt_l1_map_200');
+SELECT * FROM TT_Translate_nt01_nfl_devel('rawfri', 'nt02_l2_to_nt_fvi01_l1_map_200');
 
-SELECT * FROM TT_Translate_nt01_geo_devel('rawfri', 'nt02_l1_to_nt_l1_map_200');
+SELECT * FROM TT_Translate_nt01_geo_devel('rawfri', 'nt02_l1_to_nt_fvi01_l1_map_200');
 
 --------------------------------------------------------------------------
 SELECT TT_DeleteAllLogs('translation_devel');
