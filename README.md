@@ -509,21 +509,29 @@ Parallel processing across inventories does not mean that every operation within
 
 Use this procedure to add and translate newly acquired inventories. Be careful of not deleting other existing converted and translated inventories from the database. See the [detailed inventory ingestion procedure](documentation/new_inventory_ingestion_procedure.md) for complete instructions, commands, examples, tests, and handling of existing tables.
 
-### 1) Archive and document the new inventory
+### 1) Archive and document the new inventory [(detailed)](documentation/new_inventory_ingestion_procedure.md#1-archive-and-document-the-new-inventory)
 
 Determine an inventory identifier for the new inventory by looking at the existing ones in the [inventory_metadata.csv](metadata/inventory_metadata.csv) table. Just increase the last number used for a juristiction by 1 (e.g. AB35). Save the original files in the folder defined by the `friDir` `config.sh` variable in a folder hierarchy similar to other existing ones. Document its source, standard, dates, licensing, and expected counts in [inventory_metadata.csv](metadata/inventory_metadata.csv). Use the `COMMENT` column or the inventory's README to explain unusual file or layer choices and coordinate-system corrections, without duplicating names or coordinate-system information already preserved in the source files or conversion script. All columns are documented in the [detailed inventory ingestion procedure](documentation/new_inventory_ingestion_procedure.md) file.
 
-### 2) Prepare the environment, convert and load the inventory
+### 2) Prepare the environment, convert and load the inventory [(detailed)](documentation/new_inventory_ingestion_procedure.md#2-prepare-the-environment-convert-and-load-the-inventory)
 
-Check the [Shared preparation](#shared-preparation) section from the main README, create a new `conversion/sh/load_<inventory_id>.sh` based on an existing script dealing with the same type of source inventory files and run it. Check loaded counts and polygon shapes. If necessary update the actual count of loaded polygons in [inventory_metadata.csv](metadata/inventory_metadata.csv)
+Check the [Shared preparation](#shared-preparation) section from the main README. Create a new `conversion/sh/load_<inventory_id>.sh` conversion script from a comparable example, then choose one of these methods:
 
-### 3) Prepare and validate the inventory translation
+- **Method A: Run the conversion script directly** - Run `./conversion/sh/load_<inventory_id>.sh` from the main project folder. Run the record-count check separately afterward.
+
+- **Method B: Use the configured inventory list** - Define `fullList` in `config.sh`, then run `./convert_all.sh` without identifiers from the `conversion/` folder. If `fullList` is undefined, inventories are selected from `metadataTableLoadingColumn`, defined in `config.sh` in the `inventory_metadata.csv` table instead.
+
+- **Method C: Supply the inventory identifier** - Run `./convert_all.sh NB99` from the `conversion/` folder, replacing `NB99` with the new inventory's identifier. Make sure to define `fullList` anyway in `config.sh` in case you forget the argument.
+
+Methods B and C are preferred because they check counts automatically when `postProcessing=True`. Check record counts and polygon shapes, and update metadata with confirmed counts.
+
+### 3) Prepare and validate the inventory translation [(detailed)](documentation/new_inventory_ingestion_procedure.md#3-prepare-and-validate-the-inventory-translation)
 
 Add mapping rows in [layer_metadata.csv](metadata/layer_metadata.csv). Reuse existing translation tables as much as possible, making simple modifications while preserving correct translations of existing inventories. Create a new set for CAS, DST, LYR, NFL, ECO, and GEO only when substantial changes are needed or no suitable set exists. Load missing or modified translation and lookup tables with [./load_tables.sh](translation/load_tables.sh); omit filenames to reload them all. This script also reloads inventory and layer metadata.
 
 Adapt a comparable development script in [workflow/01_develTranslationTables](workflow/01_develTranslationTables), updating its inventory identifier, standard identifier, and mapping-view names. Inspect as many mapped and translated sample rows as possible, including rare values, and examine distinct source values. Investigate error codes that may hide valid source values not handled by the rules, and fix any `TRANSLATION_ERROR` (`-3333`) bug. See [sample validation](documentation/new_inventory_ingestion_procedure.md#34-create-a-development-script-and-validate-sample-translated-rows) for queries and error-code details.
 
-### 4) Translate the complete inventory
+### 4) Translate the complete inventory [(detailed)](documentation/new_inventory_ingestion_procedure.md#4-translate-the-complete-inventory)
 
 Run `TT_DropAllConstraints('casfri50', tableName)` for each of the six translated CASFRI tables before replacing the HDR record; keep HDR and its primary key. This allows parallel translation and can speed it up by postponing constraint checks and rebuilding primary-key indexes afterward. Replace only the new inventory's HDR row using the delete-and-insert transaction in [subsection 4.2 of the detailed procedure](documentation/new_inventory_ingestion_procedure.md#42-add-the-hdr-record).
 
@@ -531,7 +539,7 @@ Run [./02_translateAll.sh](workflow/02_produceCASFRI/02_translateAll.sh) from Gi
 
 Wait for every translation process to finish. Check translated counts against metadata either by rerunning the script with `postProcessingOnly=True` or by executing `TT_TranslatedRowCount()`, following [subsection 4.4](documentation/new_inventory_ingestion_procedure.md#44-check-completion-and-reapply-the-constraints). Restore `postProcessingOnly=False` before further conversion or translation. Resolve unexpected counts, then run [01_addConstraints.sql](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addConstraints.sql), followed by [01_addGeoConstraints.sql](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_addGeoConstraints.sql), to reapply and test the standard constraints. Resolve every failed check.
 
-### 5) Generate, validate and archive test tables
+### 5) Generate, validate and archive test tables [(detailed)](documentation/new_inventory_ingestion_procedure.md#5-generate-validate-and-archive-test-tables)
 
 Use the complete translation validated in step 4 as the reference. Define the number of random source rows in [translation/test/nb_tests_per_layer.csv](translation/test/nb_tests_per_layer.csv), setting `NB_TEST_ROWS` for each required inventory/CASFRI-table/input-layer combination. Run [./test_translation.sh](translation/test/test_translation.sh), then [validate_number_of_tests.sql](translation/test/validate_number_of_tests.sql) to check the translated test-row counts against the recommendations in [translation/test/readme.md](translation/test/readme.md).
 
@@ -539,7 +547,7 @@ Because `ROW_TRANSLATION_RULE` filters rows in tables such as LYR and NFL, the s
 
 Sample tests cover CAS, ECO, DST, NFL, and LYR, excluding HDR and GEO. Use the HDR and GEO checks in step 4 and compare translated GEO coverage with the source polygons in your GIS, as explained in [subsection 5.1 of the detailed procedure](documentation/new_inventory_ingestion_procedure.md#51-define-the-number-of-rows-to-test-in-nb_tests_per_layercsv). Run [helperFunctionsCASFRITest.sql](helperfunctions/helperFunctionsCASFRITest.sql) for new or modified CASFRI helper functions. Review the generated test CSVs and compare results for affected existing inventories, including those sharing modified translation tables, lookup tables, or functions.
 
-### 6) Record and share the work
+### 6) Record and share the work [(detailed)](documentation/new_inventory_ingestion_procedure.md#6-record-and-share-the-work)
 
 Document final counts, test tables, and remaining problems; review the changed project files, including accepted test CSVs in `translation/test/tables/`, commit them, and push them to GitHub. If denormalized (flat) tables, coverage maps, or historical results must also include the new inventory, update those separately for the affected inventories without rerunning full-build initialization.
 
