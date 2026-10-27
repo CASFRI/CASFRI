@@ -519,7 +519,7 @@ Check the [Shared preparation](#shared-preparation) section from the main README
 
 - **Method A: Run the conversion script directly** - Run `./conversion/sh/load_<inventory_id>.sh` from the main project folder. Run the record-count check separately afterward.
 
-- **Method B: Use the configured inventory list** - Define `fullList` in `config.sh`, then run `./convert_all.sh` without identifiers from the `conversion/` folder. If `fullList` is undefined, inventories are selected from `metadataTableLoadingColumn`, defined in `config.sh` in the `inventory_metadata.csv` table instead.
+- **Method B: Use the configured inventory list** - Define `fullList` in `config.sh`, then run `./convert_all.sh` without identifiers from the `conversion/` folder. If `fullList` is undefined, all inventories marked `YES` in the `inventory_metadata.csv` table column named by `metadataTableLoadingColumn` are processed.
 
 - **Method C: Supply the inventory identifier** - Run `./convert_all.sh NB99` from the `conversion/` folder, replacing `NB99` with the new inventory's identifier. Make sure to define `fullList` anyway in `config.sh` in case you forget the argument.
 
@@ -543,11 +543,11 @@ Wait for all translations to finish, check translated row counts against metadat
 
 ### 5) Generate, validate and archive test tables [(detailed)](documentation/new_inventory_ingestion_procedure.md#5-generate-validate-and-archive-test-tables)
 
-Define random source sample sizes in [translation/test/nb_tests_per_layer.csv](translation/test/nb_tests_per_layer.csv). Run [./test_translation.sh](translation/test/test_translation.sh) for the inventory's jurisdiction and check sample counts with [validate_number_of_tests.sql](translation/test/validate_number_of_tests.sql), adjusting and regenerating samples as needed to obtain the proper number of tested row.
+Define random source sample sizes in [translation/test/nb_tests_per_layer.csv](translation/test/nb_tests_per_layer.csv). Run [./test_translation.sh](translation/test/test_translation.sh) for the inventory's jurisdiction. Check translated test-row counts against the recommendations using [validate_number_of_tests.sql](translation/test/validate_number_of_tests.sql), adjusting and regenerating samples as needed.
 
 Run [helperFunctionsCASFRITest.sql](helperfunctions/helperFunctionsCASFRITest.sql) for new or modified CASFRI helper functions. 
 
-Review the generated test CSVs and compare results for affected existing inventories, including those sharing modified translation tables, lookup tables, or functions.
+Verify the new inventory's test values against the source data and specification. Compare affected existing inventories with their archived test CSVs.
 
 ### 6) Record and share the work [(detailed)](documentation/new_inventory_ingestion_procedure.md#6-record-and-share-the-work)
 
