@@ -355,7 +355,7 @@ In `VALIDATION_RULES` and `TRANSLATION_RULES` prefer the PostgreSQL Table Transl
 
 ### 3.3 Load the translation tables and metadata
 
-Loading translation and lookup tables is optional if unchanged versions are already present in the database. Load missing or modified tables with [./load_tables.sh](../translation/load_tables.sh) from the [Shared preparation](../README.md#shared-preparation) section from the main README, using the inventory's CSV files:
+Loading translation and lookup tables is optional if unchanged versions are already present in the database. Load missing or modified tables with [./load_tables.sh](../translation/load_tables.sh), using the inventory's CSV files:
 
 ```bash
 (
