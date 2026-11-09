@@ -100,7 +100,7 @@ Reinstall all the functions as in step 3.2 and 3.3.
 Check the count of converted inventories with the `TT_ConvertedStandCount()` function like this:
 
 ```sql
-SELECT (TT_ConvertedStandCount('`TRANSLATED_BY_CFS`')).*;
+SELECT (TT_ConvertedStandCount('TRANSLATED_BY_CFS')).*;
 ```
 
 The expected count of converted stands is in the `CONVERTED_STAND_CNT` column of [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv). If many inventories failed to convert and you want to give them another try, you can list them directly in `config.sh` using the `invList` array variable. If `invList` is set, [conversion/convert_all.sh](../conversion/convert_all.sh) ignores the flags in [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv) and launches a conversion subscript only for those inventories. To see error messages, set the `leaveConversionShellOpen` variable to True.
@@ -142,7 +142,7 @@ At the end of [02_translateAll.sh](../workflow/02_produceCASFRI/02_translateAll.
 You can also rerun this counting process in pgAdmin or with psql:
 
 ```sql
-SELECT (TT_TranslatedRowCount('`TRANSLATED_BY_CFS`')).*
+SELECT (TT_TranslatedRowCount('TRANSLATED_BY_CFS')).*
 ```
 
 You should be able to explain every difference between the expected count and the actual number of translated rows and you should commit new values in `inventory_metadata.csv` only once you can explain them.
