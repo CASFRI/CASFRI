@@ -31,7 +31,7 @@ In GitKraken (or your favorite git client), create a branch for both CASFRI and 
 
 ### 1.4 Organize release issues
 
-In GitHub, create a new column in each repository [Project](https://github.com/CASFRI/CASFRI/projects) named after the release and move all fixed issues to this column. This is to avoid that issues fixed on the trunk, after the creation of the branch, get mixed with issues fixed on the branch.
+In GitHub, create a new column named after the release in the CASFRI [Project](https://github.com/CASFRI/CASFRI/projects) and in the PostgreSQL Table Translation Framework [Project](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/projects). Move each fixed issue to the release column in its repository. This keeps issues fixed on the trunk after branch creation separate from issues fixed on the release branch.
 
 ### 1.5 Create a test database
 
@@ -103,7 +103,7 @@ Check the count of converted inventories with the `TT_ConvertedStandCount()` fun
 SELECT (TT_ConvertedStandCount('TRANSLATED_BY_CFS')).*;
 ```
 
-The expected count of converted stands is in the `CONVERTED_STAND_CNT` column of [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv). If many inventories failed to convert and you want to give them another try, you can list them directly in `config.sh` using the `invList` array variable. If `invList` is set, [conversion/convert_all.sh](../conversion/convert_all.sh) ignores the flags in [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv) and launches a conversion subscript only for those inventories. To see error messages, set the `leaveConversionShellOpen` variable to True.
+The expected count of converted stands is in the `CONVERTED_STAND_CNT` column of [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv). If many inventories failed to convert and you want to give them another try, you can list them directly in `config.sh` using the `fullList` array variable. If `fullList` is set, [conversion/convert_all.sh](../conversion/convert_all.sh) ignores the flags in [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv) and launches a conversion subscript only for those inventories. To see error messages, set the `leaveConversionShellOpen` variable to True.
 
 You can also launch the same procedure by listing the inventories to process directly as parameters to [conversion/convert_all.sh](../conversion/convert_all.sh):
 
@@ -131,7 +131,7 @@ More details about the translation tests can be found in [translation/test/readm
 
 ## 5) Run the translation
 
-In the Bash shell, change to `workflow/02_produceCASFRI/` and run [01_createCASFRITables.sh](../workflow/02_produceCASFRI/01_createCASFRITables.sh), then [02_translateAll.sh](../workflow/02_produceCASFRI/02_translateAll.sh). The first script prepares the target schema and tables; the second translates all inventories flagged for processing in [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv) or listed directly in the `invList` variable.
+In the Bash shell, change to `workflow/02_produceCASFRI/` and run [01_createCASFRITables.sh](../workflow/02_produceCASFRI/01_createCASFRITables.sh), then [02_translateAll.sh](../workflow/02_produceCASFRI/02_translateAll.sh). The first script prepares the target schema and tables; the second translates all inventories flagged for processing in [metadata/inventory_metadata.csv](../metadata/inventory_metadata.csv) or listed directly in the `fullList` variable.
 
 ## 6) Validate the translation
 
@@ -153,7 +153,7 @@ In pgAdmin, run [workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes/01_add
 
 ## 7) Generate the denormalized (flat) tables
 
-Run [workflow/03_flatCASFRI/01_all_layers_same_row.sh](../workflow/03_flatCASFRI/01_all_layers_same_row.sh) and [workflow/03_flatCASFRI/03_one_layer_per_row.sh](../workflow/03_flatCASFRI/03_one_layer_per_row.sh) to produce the two different flat versions of the database. Those two scripts simply run their `.sql` equivalents. You can execute the SQL scripts in pgAdmin or with psql instead. You can also optionally run the test scripts.
+Run [workflow/03_flatCASFRI/01_all_layers_same_row.sh](../workflow/03_flatCASFRI/01_all_layers_same_row.sh) and [workflow/03_flatCASFRI/03_one_layer_per_row.sh](../workflow/03_flatCASFRI/03_one_layer_per_row.sh) to produce the two different flat versions of the database. Then run [workflow/03_flatCASFRI/02_all_layers_same_row_test.sql](../workflow/03_flatCASFRI/02_all_layers_same_row_test.sql) and [workflow/03_flatCASFRI/04_one_layer_per_row_test.sql](../workflow/03_flatCASFRI/04_one_layer_per_row_test.sql) to check the number of rows in each version. Review the test results and resolve any unexpected differences before continuing.
 
 ## 8) Generate the historical database and inventory coverages
 
@@ -185,20 +185,20 @@ Execute [workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sh](../
 
 ## 9) Merge code modifications into the main branch
 
-Commit all changes you made to stabilize the release and get the complete translation to work to the branch and report all those changes to the trunk. Make sure to associate all those changes to the release issue created at the beginning of the release process and to the issue describing each actual fix.
+Commit all changes you made to stabilize the release and get the complete translation to work to the branch and report all those changes to the trunk. Make sure to associate all those changes to the release issues created at the beginning of the release process and to the issues describing each actual fix.
 
 ## 10) Document and create the release
 
-### 10.1 Update the version number
+### 10.1 Update both version numbers
 
-Change the version number in the main [README.md](../README.md).
+Update the CASFRI version number and release link in the main [README.md](../README.md). Update the framework version number and release link in the framework's [PostgreSQL-Table-Translation-Framework/README.md](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/README.md), and set `tt_version` in the framework's [PostgreSQL-Table-Translation-Framework/configSample.sh](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/configSample.sh) to the same framework version. Follow each project's versioning scheme.
 
-### 10.2 Document issues included in the release
+### 10.2 Document the issues included in each release
 
-List all the issues still in the [Project](https://github.com/CASFRI/CASFRI/projects) column created at the beginning of the release process in the issue named after the release. Group them by main feature added or "Other bug fixes". Look at previous releases for reference on how to describe the release.
+For each repository, list the issues in its release project column in that repository's release-tracking issue. Group them by main feature or "Other bug fixes," and include known problems that remain unresolved. Look at previous releases for reference on how to describe the release.
 
-### 10.3 Create the GitHub release
+### 10.3 Create both GitHub releases
 
-Create a new release in GitHub and copy the description text from the release issue. Close the issue.
+Create a GitHub release in each repository using its version number and copy its description from its release-tracking issue. Close both release-tracking issues after publishing the releases.
 
 Congratulations! You're done!
