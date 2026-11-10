@@ -323,17 +323,16 @@ The resulting table can then be joined, using the `CAS_ID` column, with:
 
 # Database Procedures
 
-All three tasks below require the [Shared preparation](#shared-preparation) section. Complete it for the database you will use, then follow the numbered procedure for your task:
+All three tasks below require the [Common setup](#common-setup) section. Complete it for the database you will use, then follow the numbered procedure describing your task:
 
 | Task | Result |
 | --- | --- |
-| [Build the whole database from scratch](#build-the-whole-database-from-scratch) | A new database containing all selected inventories and the denormalized (flat) tables, historical tables, and coverage tables |
-| [Translate a new inventory](#translate-a-new-inventory) | One additional inventory translated and tested, while existing inventory results are preserved |
-| [Produce a new release](#produce-a-new-release) | A fully tested, documented version published on GitHub, following the release procedure |
+| [Build the whole database from scratch](#build-the-whole-database-from-scratch) | A new database containing all selected inventories and the denormalized (flat) tables, historical tables, and coverage tables. |
+| [Translate a new inventory](#translate-a-new-inventory) | One or more additional inventories translated and tested, while already translated inventories are preserved. |
+| [Produce a new release](#produce-a-new-release) | A fully tested, documented version published on GitHub. Building a database or translating an inventory does not by itself create a release. |
 
-Building a database or translating an inventory does not by itself create a release.
 
-## Shared preparation
+## Common setup
 
 ### Prepare required software and configuration variables
 
@@ -375,7 +374,9 @@ Install and test the framework in the database you will use for CASFRI:
 
 - Enable PostGIS with `CREATE EXTENSION postgis;`.
 
-- Run the framework's [./install.sh](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/install.sh). It places `table_translation_framework--x.y.z.sql` in PostgreSQL's `share/extension` folder.
+- Copy the framework's [PostgreSQL-Table-Translation-Framework/configSample.sh](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/configSample.sh) (or [PostgreSQL-Table-Translation-Framework/configSample.bat](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/configSample.bat)) to `config.sh` (or `config.bat`). Set `pghome` to the PostgreSQL installation folder and `tt_version` to the framework version you will install.
+
+- From the framework folder, run [./install.sh](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/install.sh) (or [install.bat](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/install.bat)). It places `table_translation_framework--x.y.z.sql` in PostgreSQL's `share/extension` folder.
 
 - Enable the framework in the database with `CREATE EXTENSION table_translation_framework;`.
 
@@ -383,13 +384,13 @@ Install and test the framework in the database you will use for CASFRI:
 
 ### Install or replace the CASFRI helper functions
 
-These database functions complement the PostgreSQL Table Translation Framework helper functions with CASFRI-specific validation and translation functions. Use the following instructions for a first installation or to replace an existing installation:
+These database functions complement the PostgreSQL Table Translation Framework helper functions with CASFRI-specific validation and translation functions. Use the following instructions for a new database or to update an existing one:
 
 - Select the target database in pgAdmin and open its Query Tool.
 
-- **For a first installation:** open [helperFunctionsCASFRI.sql](helperfunctions/helperFunctionsCASFRI.sql) in the Query Tool and execute the entire file, then run the tests described below.
+- **For a fresh database:** open [helperFunctionsCASFRI.sql](helperfunctions/helperFunctionsCASFRI.sql) in the Query Tool and execute the entire file, then run the tests described below.
 
-- **To replace an existing installation:** wait until no translation is running. Keep PostGIS and the Table Translation Framework installed throughout the replacement, and perform the following operations in the same database.
+- **To update an existing database:** wait until no translation is running. Keep PostGIS and the Table Translation Framework installed throughout the update, and perform the following operations in the same database.
 
 - First, execute `SELECT TT_DropAllTranslateFct();` to remove translation functions and procedures.
 
@@ -399,7 +400,7 @@ These database functions complement the PostgreSQL Table Translation Framework h
 
 - **After either installation or reinstallation:** execute [helperFunctionsCASFRITest.sql](helperfunctions/helperFunctionsCASFRITest.sql). A successfull test should display no rows. Review and resolve any failed tests before translating inventories.
 
-For every inventory being translated, verify these requirements:
+For every new inventory being translated, verify these three requirements:
 
 - [inventory_metadata.csv](metadata/inventory_metadata.csv) contains one row identifying and documenting the inventory and its standard. Many metadata values must be filled in for the whole translation process to work properly. See the [inventory metadata table](documentation/new_inventory_ingestion_procedure.md#required-inventory-metadata-columns) in the detailed procedure for the complete list, their uses, and how expected stand counts affect processing order.
 
@@ -407,17 +408,8 @@ For every inventory being translated, verify these requirements:
 
 - [layer_metadata.csv](metadata/layer_metadata.csv) contains the standard's general column names under an identifier such as `BC_VRI01`, plus a row for each inventory input layer. The `CASFRI_TABLE` column lists the tables supplied by each row, and its source column names correspond to the names referenced in the translation tables.
 
-[./load_tables.sh](translation/load_tables.sh) loads the translation and lookup tables and reloads both metadata files. Use [./load_metadata.sh](metadata/load_metadata.sh) when only metadata needs reloading. The [Workflow Scripts](#workflow-scripts) section explains how to perform the following three operations individually:
+Loads the translation, lookup tables and metadata files using the [./load_tables.sh](translation/load_tables.sh) script. Use [./load_metadata.sh](metadata/load_metadata.sh) alone when only metadata needs reloading.
 
-1) Prepare the inventory's translation functions from the loaded translation tables using `TT_Prepare()`.
-
-2) Create database views that match source column names and forest layers to the names referenced in those translation tables using `TT_CreateMappingView()`.
-
-3) Run the prepared translation functions on those views and insert the results into the CASFRI tables.
-
-After the source data, metadata, and translation tables have been loaded, run these three operations together with `CALL TT_TranslateInventory('AB03');`, replacing `AB03` with the inventory identifier.
-
-Translation adds rows to `casfri50.cas_all`, `dst_all`, `eco_all`, `lyr_all`, `nfl_all`, and `geo_all`. `hdr_all` describes each inventory and is populated from inventory metadata. Repeating a translation does not automatically replace its earlier rows.
 
 ## Build the whole database from scratch
 
@@ -429,25 +421,23 @@ The Bash batch scripts below run separate processing jobs in parallel on the sam
 
 ### 1) Create and configure a new database
 
-Create an empty PostgreSQL database and complete the [Shared preparation](#shared-preparation) section from the main README for it.
+Create an empty PostgreSQL database and complete the [Common setup](#common-setup) section from the main README for it.
 
-### 2) There are five ways to determine the list of inventories to translate
+### 2) Determine the list of inventories to translate
 
-#### a) Use one of the inventory_metadata file predetermined list
+There are 3 methods to determine the list of inventories to translate:
 
-Set `metadataTableLoadingColumn` in `config.sh` to the name of the `TRANSLATED_BY_CFS` or `TRANSLATED_BY_ULAVAL` column. All the inventories marked as YES in that column of [inventory_metadata.csv](metadata/inventory_metadata.csv) will be converted and translated. You must leave `fullList` undefined in `config.sh` for this to work. It's good practice to review which inventories are marked as YES before proceeding.
+#### Method 1) Use one of the inventory_metadata file predetermined list or the custom list
 
-#### b) Use the inventory_metadata file customizable list
+Set `metadataTableLoadingColumn` in `config.sh` to `TRANSLATED_BY_CFS`, `TRANSLATED_BY_ULAVAL` or `TRANSLATED_BY_CUSTOM`. All the inventories marked as YES in that column of the [inventory_metadata.csv](metadata/inventory_metadata.csv) table will be converted and translated. You must leave `fullList` undefined in `config.sh` for this to work. It's good practice to review which inventories are marked as YES before proceeding. You can also add your own column and set `metadataTableLoadingColumn` to it.
 
-Set `metadataTableLoadingColumn` to the name of the `TRANSLATED_BY_CUSTOM` column, and set all required inventories to `YES` in this column in [inventory_metadata.csv](metadata/inventory_metadata.csv). Similarly you must leave `fullList` undefined in `config.sh` for this to work. You can also add your own column and set `metadataTableLoadingColumn` to it.
+#### Method 2) Use a short, temporary list
 
-#### c) Use a short, temporary list
+For a short, temporary selection, such as reprocessing inventories that failed after a complete run or translating a set of newly acquired inventories, define `fullList=(AB03 AB06)` in `config.sh`. This overrides predetermined or custom lists defined in method 1. The configuration can assemble `fullList` from smaller lists defined in other variables such as `invList1` and `invList2`; the only variable used by the various scripts is `fullList`. The script always gives you the opportunity to review and confirm the list that will be processed before continuing.
 
-For a short, temporary selection, such as reprocessing inventories that failed after a complete run or translating a set of newly acquired inventories, define `fullList=(AB03 AB06)` in `config.sh`. This overrides predetermined or custom lists defined in the inventory_metadata.csv table. The configuration can assemble `fullList` from smaller lists defined in other variables such as `invList1` and `invList2`; the only variable used by the various scripts is `fullList`. The script always gives you the opprtunity to review and confirm the list that will be processed before continuing.
+#### Method 3) List the inventories directly when calling a processing script
 
-#### d) List the inventories directly when calling a processing script
-
-Most processing scripts also accept inventory identifiers on the command line. This is usefull if you need to reconvert or retranslate only a couple of inventories. The script always gives you the opprtunity to review and confirm the list that will be processed before continuing. This overrides the `fullList` defined in `config.sh`.
+Most processing scripts also accept inventory identifiers on the command line. This is usefull if you need to reconvert or retranslate only a couple of inventories. The script always gives you the opprtunity to review and confirm the list that will be processed before continuing. This overrides method 1 and method 2.
 
 ### 3) Set how many processes can run at the same time
 
@@ -485,7 +475,7 @@ Review the counts displayed at the end of translation. They are compared with th
 
 ### 11) Apply constraints, create indexes, and run additional checks
 
-Run `01_addConstraints.sql`, `01_addGeoConstraints.sql`, `02_addIndexes.sql`, and `03_additionalChecks.sql` in [03_ConstraintsChecksAndIndexes](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes). Review the applied constraints and investigate and resolve any failures or unexpected results.
+Run `01_addConstraints.sql`, `01_addGeoConstraints.sql`, `02_addIndexes.sql`, and `03_additionalChecks.sql` in [03_ConstraintsChecksAndIndexes](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes). Review the applied constraints and investigate and resolve any failures or unexpected results. Make sure a GitHub issue exist for each constraint that fails and remains unresolved, and add its issue number to that constraint's description in the SQL script. Remove the issue reference when it is resolved and the constraint passes.
 
 ### 12) Produce both denormalized (flat) tables
 
@@ -495,13 +485,15 @@ Run [./01_all_layers_same_row.sh](workflow/03_flatCASFRI/01_all_layers_same_row.
 
 Execute [geohistory.sql](helperfunctions/geohistory/geohistory.sql) in the database in order to define the necessary functions, then run [./01_PrepareGeoHistory.sh](workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sh) and [./02_ProduceGeoHistory.sh](workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sh) from the `workflow/04_produceHistoricalTable` folder. These scripts prepare the grid and historical tables and process the selected inventories into `casfri50_history`. Have a look at the [CASFRI Geo-Historical Table](#casfri-geo-historical-table) section for more details about the geohistory table. CAUTION: Production of the geohistory table might take a long time.
 
+Test the geohistory table: from `helperfunctions/geohistory/` run [./load_test_tables.sh](helperfunctions/geohistory/load_test_tables.sh) and [./load_test_tables_with_inv_data.sh](helperfunctions/geohistory/load_test_tables_with_inv_data.sh). Run [helperfunctions/geohistory/geohistory_test.sql](helperfunctions/geohistory/geohistory_test.sql), [helperfunctions/geohistory/geohistory_test_with_inv_data.sql](helperfunctions/geohistory/geohistory_test_with_inv_data.sql), and [helperfunctions/geohistory/geohistory_test_with_inv_data_gridded.sql](helperfunctions/geohistory/geohistory_test_with_inv_data_gridded.sql) in pgAdmin or `psql`. These three scripts do not have .sh wrapper scripts yet. Then run [./dump_test_tables_with_inv_data.sh](helperfunctions/geohistory/dump_test_tables_with_inv_data.sh), compare its output with archived tables, and explain differences before accepting updated files.
+
 ### 14) Produce inventory coverage maps
 
 Run [./03_ProduceInventoryCoverages.sh](workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sh) from the `workflow/04_produceHistoricalTable` folder to create the inventory coverage tables in `casfri50_coverage`.
 
 ### 15) Record the completed build
 
-Investigate count discrepancies; update expected metadata counts only after confirming and documenting the correct values. Create GitHub issues for failed test results and other problems. Review, commit, and push any valid changes to GitHub. Follow the separate release procedure only when a published version number is required.
+Investigate count discrepancies; update expected metadata counts only after confirming and documenting the correct values. Create GitHub issues for failed test results and other problems. Review, commit, and push any valid changes to GitHub. Follow [Produce a new release](#produce-a-new-release) only when a published version number is required.
 
 Parallel processing across inventories does not mean that every operation within one inventory uses several CPU cores. Further optimization of helper functions, including marking suitable functions `PARALLEL SAFE`, is still needed. Reporting progress has been prioritized where it is difficult to combine with parallel execution inside an individual inventory. These scripts do not allow distributing work across multiple computers.
 
@@ -515,7 +507,7 @@ Determine an inventory identifier for the new inventory by looking at the existi
 
 ### 2) Prepare the environment, convert and load the inventory [(detailed)](documentation/new_inventory_ingestion_procedure.md#2-prepare-the-environment-convert-and-load-the-inventory)
 
-Check the [Shared preparation](#shared-preparation) section from the main README. Create a new `conversion/sh/load_<inventory_id>.sh` conversion script from a comparable example, then choose one of these methods:
+Check the [Common setup](#common-setup) section from the main README. Create a new `conversion/sh/load_<inventory_id>.sh` conversion script from a comparable example, then choose one of these methods:
 
 - **Method A: Run the conversion script directly** - Run `./conversion/sh/load_<inventory_id>.sh` from the main project folder. Run the record-count check separately afterward.
 
@@ -555,31 +547,58 @@ Complete the inventory documentation and create GitHub issues for unresolved pro
 
 ## Produce a new release
 
-Use this procedure when preparing a named version for publication. It includes a complete build and additional checks of the code, installation, documentation, and release contents. Follow [documentation/release_procedure.md](documentation/release_procedure.md) for the detailed and complete release process.
+Use this procedure when preparing a versioned version of CASFRI and the PostgreSQL Table Translation Framework for publication. Plan about one week to complete the whole procedure; building the complete database can take many days and you might have to fix some relatively complex issues to complete the release. Only major issues preventing the conversion or translation process from working properly should be fixed during the release process. It is better to address other issues in subsequent releases.
+
+A complete release includes:
+
+- The complete conversion and translation of all the acquired inventories.
+- The stabilization of the code to complete this whole translation.
+- A validation of the final completed database.
+- The generation of two denormalized (flat) versions of the database.
+- The generation of the inventories geographical coverages.
+- The generation of a historical version of the translated database.
+- The documentation of remaining issues discovered while completing the complete, actual translation.
+- The documentation of the release itself.
 
 ### 1) Prepare the release
 
-Choose the version number, close resolved issues, and create release issues and branches for CASFRI and the PostgreSQL Table Translation Framework. Organize the issues included in the release.
+Determine a new version number for each project according to its versioning scheme: CASFRI's [Version Number Scheme](#version-number-scheme) and the framework's [README.md](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/README.md).
+
+Make sure all resolved GitHub issues are closed before starting to work on the release.
+
+Create one release-tracking issue in each repository, one for CASFRI and one for the framework. It should look like [this issue](https://github.com/CASFRI/CASFRI/issues/733). Name each `Produce Release vX.Y.Z` using that repository's new version number. Use each issue to collect commits and draft the release notes for that repository.
+
+Create a release branch in each repository and switch to that branch before changing or testing code.
+
+In the CASFRI [Project](https://github.com/CASFRI/CASFRI/projects) and the framework [Project](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/projects), create a release column and move each repository's fixed issues into its column. This keeps issues fixed on the main development branches separate from issues fixed on the release branches.
 
 ### 2) Convert and translate the whole list of inventories
 
-Follow [Build the whole database from scratch](#build-the-whole-database-from-scratch) in a fresh database, using all inventories selected for the release.
+Create a fresh test database and follow the [Build the whole database from scratch](#build-the-whole-database-from-scratch) procedure, selecting all inventories intended for the release. That procedure covers the shared setup, conversion, translation-table loading, translation, count checks, constraints, flat tables, geohistory, and inventory coverage tables.
 
 ### 3) Complete release testing
 
-Follow the release guide's installation, uninstallation, and reinstallation checks; translation tests and validation; and denormalized (flat) table and [geohistory tests](helperfunctions/geohistory). Compare generated test files with accepted results and explain all changes.
+The [Common setup](#common-setup) section covers framework and helper-function installation and tests. When producing a release, it is also important to make sure the uninstallation scripts properly uninstall everything.
+
+In the test database, run `SELECT TT_DropAllTranslateFct();`, execute [helperfunctions/helperFunctionsCasfriUninstall.sql](helperfunctions/helperFunctionsCasfriUninstall.sql), then `DROP EXTENSION table_translation_framework;`. Check the `public` schema for remaining `TT_` functions and add any that remain to the appropriate uninstall script. Reinstall the extension with `CREATE EXTENSION table_translation_framework;`, rerun its tests, and reinstall and test the CASFRI helper functions as described in Common setup.
+
+Double check the results of translation tests, counts, constraints, and flat-table tests from steps 8 and 10–12 of [Build the whole database from scratch](#build-the-whole-database-from-scratch). Compare translation-test CSVs with accepted files, explain differences, and resolve unexpected results. See the [translation-test README](translation/test/readme.md) for details about those tests.
 
 ### 4) Resolve release-blocking problems
 
-Fix major issues preventing completion of the complete build, record failed checks and remaining problems as described in the release guide, and repeat affected tests. Leave unrelated improvements for later releases.
+Fix major problems that prevent the complete build or its tests from succeeding. Leave unrelated improvements for a later release. Repeat affected tests after each fix. Create a GitHub issue for every constraint failure that remains unresolved, and record other unresolved problems in the appropriate release-tracking issue as known problems.
 
 ### 5) Commit and share corrections
 
-Associate commits with the release and relevant issue numbers, push them to GitHub, and merge the release fixes into the main development branch.
+Commit all changes made to stabilize the release and produce the complete translation to their respective release branches. In the commit message, associate each commit with the repository's release-tracking issue that were created at the beginning of the release procedure and with the issue describing the fix. Push the commits to GitHub, then merge the release fixes into the main development branches.
 
 ### 6) Document and publish
 
-Update version numbers, prepare release notes describing features, fixes, and known problems, create the GitHub releases, and close the release issues.
+Update the CASFRI version number and release link in this [README.md](README.md). Update the framework version number and release link in its own [PostgreSQL-Table-Translation-Framework/README.md](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/README.md), and set `tt_version` in [PostgreSQL-Table-Translation-Framework/configSample.sh](https://github.com/CASFRI/PostgreSQL-Table-Translation-Framework/blob/master/configSample.sh) to the same framework version.
+
+In each repository's release-tracking issue, prepare release notes grouped by main feature or `Other bug fixes`, including known problems that remain unresolved. Create a GitHub release in each repository using its version number and the description from its release-tracking issue. Close both release-tracking issues after publishing the releases.
+
+Congratulations! You're done!
 
 # Credits
 **Steve Cumming**, Center for Forest Research, University Laval.

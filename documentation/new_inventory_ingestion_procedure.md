@@ -6,7 +6,7 @@ In this document, column names are in UPPERCASE and values in lowercase unless t
 
 The examples use **NB99**, an invented identifier for a new New Brunswick inventory, and **NBI01**, an existing inventory standard. Replace NB99 with your new inventory's identifier and NBI01 with its actual standard. NB99 is not a dataset included with the project.
 
-Use a Git Bash command window for examples marked `bash`, including conversion, loading, translation scripts, and Git comparisons. Follow [Open a Git Bash command window](../README.md#open-a-git-bash-command-window) in the [Shared preparation](../README.md#shared-preparation) section from the main README to open the window and start commands from the correct folder.
+Use a Git Bash command window for examples marked `bash`, including conversion, loading, translation scripts, and Git comparisons. Follow [Open a Git Bash command window](../README.md#open-a-git-bash-command-window) in the [Common setup](../README.md#common-setup) section from the main README to open the window and start commands from the correct folder.
 
 - Prefix shell-script paths with `./` in commands, for example `bash ./conversion/sh/load_nb99.sh` from the main folder or `bash ./convert_all.sh` from the `conversion/` folder. The prefix `./` means the current folder; preserve `../` in paths that refer to a parent folder.
 
@@ -170,15 +170,15 @@ Prepare the tools and create a checked source table for translation.
 
 ### 2.1 Check the environment and database connection
 
-Installing tools and creating or editing `config.sh` are optional if the existing environment and configuration are already suitable. Complete any missing setup and change configuration variables that are incorrect for this inventory, following the [Shared preparation](../README.md#shared-preparation) section from the main README. Always check the database connection and configuration before processing. Select the intended inventories, for example with `fullList=(NB99)`, and set `postProcessingOnly=False` before conversion or translation.
+Installing tools and creating or editing `config.sh` are optional if the existing environment and configuration are already suitable. Complete any missing setup and change configuration variables that are incorrect for this inventory, following the [Common setup](../README.md#common-setup) section from the main README. Always check the database connection and configuration before processing. Select the intended inventories, for example with `fullList=(NB99)`, and set `postProcessingOnly=False` before conversion or translation.
 
 ### 2.2 Open a Git Bash command window
 
-Follow [Open a Git Bash command window](../README.md#open-a-git-bash-command-window) in the [Shared preparation](../README.md#shared-preparation) section from the main README before running the Bash examples in this guide.
+Follow [Open a Git Bash command window](../README.md#open-a-git-bash-command-window) in the [Common setup](../README.md#common-setup) section from the main README before running the Bash examples in this guide.
 
 ### 2.3 Install or replace the CASFRI helper functions
 
-Installation or replacement is optional when the required helper functions are already installed and up to date. Install them if missing, or replace them if their definitions have changed, following [Install or replace the CASFRI helper functions](../README.md#install-or-replace-the-casfri-helper-functions) in the [Shared preparation](../README.md#shared-preparation) section from the main README. Run the helper-function tests and resolve failed tests before continuing.
+Installation or replacement is optional when the required helper functions are already installed and up to date. Install them if missing, or replace them if their definitions have changed, following [Install or replace the CASFRI helper functions](../README.md#install-or-replace-the-casfri-helper-functions) in the [Common setup](../README.md#common-setup) section from the main README. Run the helper-function tests and resolve failed tests before continuing.
 
 ### 2.4 Examine the source inventory files
 
@@ -694,7 +694,7 @@ See the VS Code guides to [staging and committing](https://code.visualstudio.com
 
 #### Method C: Commit and push with Git Bash
 
-If you manage your repository with Git commands, follow this method. Open Git Bash in the main CASFRI folder as explained in the [Shared preparation](../README.md#shared-preparation) section from the main README. Inspect the changed files, branch, destination, and differences:
+If you manage your repository with Git commands, follow this method. Open Git Bash in the main CASFRI folder as explained in the [Common setup](../README.md#common-setup) section from the main README. Inspect the changed files, branch, destination, and differences:
 
 ```bash
 git status

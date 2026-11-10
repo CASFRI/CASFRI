@@ -26,7 +26,7 @@ Use [the detailed inventory procedure](documentation/new_inventory_ingestion_pro
 
 4) **Maintain the documents and this skill together** - Whenever the detailed guide changes, review this skill in the same task. Update any affected instructions, terminology, references, or workflow decisions. Pure formatting changes need no redundant rewrite here. Keep detailed commands and column descriptions in the guide rather than copying them into this skill.
 
-   Refer to the [Shared preparation](README.md#shared-preparation) section from the main README using that exact linked wording.
+   Refer to the [Common setup](README.md#common-setup) section from the main README using that exact linked wording.
 
    Edit the detailed guide by default. Update the main README when the user requests it; keep corresponding procedure titles and wording aligned when changing both. Preserve the user's concurrent edits by reading files immediately before making changes.
 
