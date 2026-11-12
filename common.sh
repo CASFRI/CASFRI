@@ -15,14 +15,58 @@ else
   exit 1
 fi
 
+# Derive tool paths from the installation selected in config.sh.
+# Export makes variables available to external programs and child shells;
+# ordinary shell variables are visible only within the current shell.
+# GDAL_DRIVER_PATH: folder containing optional GDAL driver plugins, including
+# the PostgreSQL driver. GDAL reads it to discover those plugins.
+# GDAL_DATA: folder containing GDAL resource files (schemas and other data).
+# PROJ_DATA: folder containing PROJ's proj.db coordinate-system database and
+# transformation resources, used by GDAL when reprojecting geometries.
+# These three variables must be exported because GDAL/PROJ read them from
+# the process environment, not from Bash variables or config.sh directly.
+if [ "${useMiniconda:-False}" = True ]; then
+  if [ -z "${miniCondaFolder:-}" ] ||
+     [ ! -d "$miniCondaFolder/conda-meta" ] ||
+     [ ! -f "$miniCondaFolder/python.exe" ] ||
+     [ ! -f "$miniCondaFolder/Library/bin/ogr2ogr.exe" ]; then
+    printf '%s\n' \
+      "ERROR: useMiniconda=True, but the configured environment is missing or incomplete." \
+      "Configured folder: ${miniCondaFolder:-not set}" \
+      "Expected: conda-meta, python.exe, and Library/bin/ogr2ogr.exe." \
+      "Correct miniCondaFolder, install the missing software, or set useMiniconda=False." >&2
+    exit 1
+  fi
+
+  gdalFolder="$miniCondaFolder/Library/bin"
+  gdalPyFolder="$miniCondaFolder/Scripts"
+  pythonPath="$miniCondaFolder"
+  export GDAL_DRIVER_PATH="$miniCondaFolder/Library/lib/gdalplugins"
+  export GDAL_DATA="$miniCondaFolder/Library/share/gdal"
+  export PROJ_DATA="$miniCondaFolder/Library/share/proj"
+else
+  gdalPyFolder="${gdalPyFolder:-$gdalFolder}"
+  export GDAL_DRIVER_PATH="${GDAL_DRIVER_PATH:-$gdalFolder/gdalplugins}"
+  export GDAL_DATA="${GDAL_DATA:-$gdalFolder/gdal-data}"
+  export PROJ_DATA="${PROJ_DATA:-${PROJ_LIB:-$gdalFolder/projlib}}"
+fi
+
+ogrCmd="$gdalFolder/ogr2ogr"
+# PROJ_DATA replaces the legacy variable and prevents conflicting paths.
+unset PROJ_LIB
+# PATH controls executable lookup and, on Windows, helps locate companion
+# DLLs. Export it so child programs and shells inherit these tool folders.
+export PATH="$gdalFolder:$pythonPath:$gdalPyFolder:$PATH"
+
 if [ $overwriteFRI == True ]; then
   overwriteTable=-overwrite
 else 
   overwriteTable=
 fi
 
+# Ask GDAL's PostgreSQL driver to use COPY for faster bulk loading when
+# possible. Export it because the driver runs inside the external GDAL process.
 export PG_USE_COPY=YES
-export PROJ_LIB="$gdalFolder/projlib"
 
 gdalConnectionString="PG:host=$pghost port=$pgport dbname=${pgdbname} user=${pguser} password=${pgpassword}"
 psqlConnectionString="-d $pgdbname -U $pguser -h $pghost -p $pgport"

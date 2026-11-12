@@ -150,36 +150,29 @@ extraList2=()
 #fullList=("${extraList1[@]}" "${extraList2[@]}")
 
 #################################################################
-# GDAL executables folder
+# GDAL and Python installation
 #################################################################
-# with miniconda
-#gdalFolder="C:/ProgramData/Miniconda3/Library/bin/"
+# Set True for a Windows Conda environment; False for standalone tools.
+useMiniconda=False
+# Environment root containing conda-meta, python.exe and Library/bin/ogr2ogr.exe.
+miniCondaFolder="C:/ProgramData/Miniconda3"
 
-# without miniconda
+# Standalone installation paths (used only when useMiniconda=False).
 gdalFolder="C:/Program Files/GDAL"
+pythonPath="C:/Python311"
 
-ogrCmd=$gdalFolder/ogr2ogr
+# common.sh derives gdalPyFolder, ogrCmd and the GDAL/PROJ resource paths.
+# It exports resource variables so external GDAL/PROJ programs can read them.
+# Optional standalone resource overrides for different package layouts:
+# Folder containing optional driver plugins (such as the PostgreSQL driver).
+#GDAL_DRIVER_PATH="$gdalFolder/gdalplugins"
+# Folder containing GDAL resource files, including schemas.
+#GDAL_DATA="$gdalFolder/gdal-data"
+# Folder containing proj.db and coordinate-transformation resources.
+#PROJ_DATA="$gdalFolder/projlib"
 
 # Set this to true if using GDAL version 1.11.4
 gdal_1_11_4=False
-
-#################################################################
-# GDAL python executable folder (gdal_calc.py and gdal_polygonize.py)
-#################################################################
-# with miniconda
-#gdalPyFolder="C:/ProgramData/Miniconda3/Scripts/"
-
-# without miniconda
-gdalPyFolder="$gdalFolder"
-
-#################################################################
-# Python installation folder
-#################################################################
-# with miniconda
-#pythonPath="C:/ProgramData/miniconda3"
-
-# without miniconda
-pythonPath="C:/Python311"
 
 #################################################################
 # Bash executable path
