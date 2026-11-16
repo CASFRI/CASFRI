@@ -785,6 +785,7 @@ ORDER BY buffer_id, valid_year_begin DESC;
 -- TT_ExtractGeoHistoryGeom
 --
 -- Extract values from the geohistory table for a specific geometry.
+-- Resolve the production tables when called, after geohistory preparation.
 ------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_ExtractGeoHistoryGeom(geometry, boolean);
 CREATE OR REPLACE FUNCTION TT_ExtractGeoHistoryGeom(
@@ -806,24 +807,27 @@ RETURNS TABLE (
   cas_id text, 
   geom geometry
 ) AS $$
-  SELECT inventory_id inv, 
-         valid_year_begin, 
-         valid_year_end, 
-         stand_photo_year photo_year,
-         lyr1_origin_lower origin, 
-         dist_year_1 dst_yr,
-         dist_type_1 dst_type,
-         dist_ext_lower_1 dst_ext_low,
-         dist_ext_upper_1 dst_ext_up,
-         lyr1_height_lower height,
-         lyr1_species_1 species,
+BEGIN
+  RETURN QUERY
+  SELECT f.inventory_id inv,
+         g.valid_year_begin,
+         g.valid_year_end,
+         f.stand_photo_year photo_year,
+         f.lyr1_origin_lower origin,
+         f.dist_year_1 dst_yr,
+         f.dist_type_1 dst_type,
+         f.dist_ext_lower_1 dst_ext_low,
+         f.dist_ext_upper_1 dst_ext_up,
+         f.lyr1_height_lower height,
+         f.lyr1_species_1 species,
          g.cas_id cas_id,
-         CASE WHEN trimToBuffer THEN ST_Intersection(geom, in_geom) ELSE geom END geom
+         CASE WHEN trimToBuffer THEN ST_Intersection(g.geom, in_geom) ELSE g.geom END geom
   FROM casfri50_history.geo_history g,
        casfri50_flat.cas_flat_all_layers_same_row f
-  WHERE ST_Intersects(geom, in_geom) AND f.cas_id = g.cas_id
-  ORDER BY valid_year_begin DESC;
-$$ LANGUAGE sql VOLATILE;
+  WHERE ST_Intersects(g.geom, in_geom) AND f.cas_id = g.cas_id
+  ORDER BY g.valid_year_begin DESC;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
 /*
 --  tests
 SELECT * FROM TT_ExtractGeoHistoryGeom(ST_SetSRID(ST_MakePoint(-1882904, 1872332), 102001));
@@ -1480,6 +1484,7 @@ CREATE OR REPLACE AGGREGATE TT_SplitAgg(geometry, geometry) (
 -- Count the rows in the geo history table for an array of inventory_id
 -- When an ARRAY of inv id is passed (e.g. ARRAY['AB34', 'AB06']), return the 
 -- count only for these inventories.
+-- Resolve the production tables when called, after geohistory preparation.
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_GeoHistoryRowCount(text[]);
 CREATE OR REPLACE FUNCTION TT_GeoHistoryRowCount(
@@ -1491,6 +1496,8 @@ RETURNS TABLE (
   geo_history_cnt int,
   diff text
 ) AS $$
+BEGIN
+  RETURN QUERY
   WITH inv_list AS (
     SELECT upper(unnest($1)) inv
   ), flat_table_cnts AS (
@@ -1506,13 +1513,14 @@ RETURNS TABLE (
     GROUP BY i.inv, left(g.cas_id, 4)
   )
   SELECT coalesce(f.inv, g.inv) inventory_id,
-        coalesce(flat_table_cnt, 0) flat_table_cnt,
-        coalesce(geo_history_cnt, 0) geo_history_cnt,
-        coalesce(geo_history_cnt, 0) - coalesce(flat_table_cnt, 0) diff
+        coalesce(f.flat_table_cnt, 0)::int flat_table_cnt,
+        coalesce(g.geo_history_cnt, 0)::int geo_history_cnt,
+        (coalesce(g.geo_history_cnt, 0) - coalesce(f.flat_table_cnt, 0))::text diff
   FROM flat_table_cnts f
   FULL OUTER JOIN geohistocnt g USING (inv)
   ORDER BY inv;
-$$ LANGUAGE sql STABLE;
+END;
+$$ LANGUAGE plpgsql STABLE;
 --SELECT * FROM TT_GeoHistoryRowCount(ARRAY['Ab03', 'AB06', 'QC03']);
 ---------------------------------------
 -- Variant counting for all inventories listed in 
