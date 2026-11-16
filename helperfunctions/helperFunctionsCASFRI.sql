@@ -364,6 +364,8 @@ RETURNS TABLE (
   passed boolean,
   diff text
 ) AS $$
+BEGIN
+  RETURN QUERY EXECUTE $query$
   WITH inv_metadata AS (
       SELECT * FROM (
         SELECT 
@@ -381,7 +383,7 @@ RETURNS TABLE (
           ('NL', 'nl02_photoyear', 64)
         ) AS t(jurisdiction, inventory_id, converted_stand_cnt)
       ) all_inv
-      WHERE inventory_id = ANY(SELECT LOWER(unnest(invArr)))
+      WHERE inventory_id = ANY(SELECT LOWER(unnest($1)))
       ORDER BY inventory_id
     ), loaded_inv AS (
       SELECT tablename
@@ -397,8 +399,10 @@ RETURNS TABLE (
     )
     SELECT tablename inventory_id, expected, counted, passed, diff
     FROM inv_counts
-    ORDER BY inventory_id;;
-$$ LANGUAGE sql STABLE;
+    ORDER BY inventory_id;
+  $query$ USING invArr;
+END;
+$$ LANGUAGE plpgsql STABLE;
 -- SELECT * FROM TT_ConvertedStandCount(ARRAY['AB34', 'AB06']);
 -------------------------------------------------------------------------------
 -- TT_ConvertedStandCount
@@ -456,6 +460,8 @@ RETURNS TABLE (
   diff text,
   status text
 ) AS $$
+BEGIN
+  RETURN QUERY EXECUTE $query$
   WITH row_counts AS (
     SELECT upper(inventory_id) inventory_id, 
            cas_row_cnt::int, 
@@ -509,7 +515,9 @@ RETURNS TABLE (
          END status
   FROM translated_counts
   ORDER BY inventory_id, cas_table;
-$$ LANGUAGE sql STABLE;
+  $query$ USING invArr;
+END;
+$$ LANGUAGE plpgsql STABLE;
 -- SELECT * FROM TT_TranslatedRowCount(ARRAY['Ab34', 'AB06']);
 -------------------------------------------------------------------------------
 -- TT_TranslatedRowCount
