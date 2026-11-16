@@ -7,6 +7,8 @@ description: Prepare, convert, translate, and test a new CASFRI inventory, or ma
 
 Use [the detailed inventory procedure](documentation/new_inventory_ingestion_procedure.md) as the authoritative procedure. Read its relevant sections before working; resolve script behavior against the current repository rather than relying on an archived document. Paths in this skill are relative to the CASFRI project root. User instructions take precedence over this skill.
 
+For code changes, do not automatically add descriptions of the changes to the main README. Suggest a README update instead, and edit it only when the user requests or approves it.
+
 1) **Establish the task and scope** - Distinguish documenting the procedure from actually processing an inventory. Documentation edits do not authorize running database operations. For a new inventory, establish its source files, jurisdiction, identifier, standard, and intended database from available project information. Ask for missing information only when it blocks the requested work. NB99 is a fictitious example; do not treat it as a real inventory.
 
    Keep the three database tasks distinct: translating a new inventory follows the detailed guide; building the whole database follows [the main README](README.md#build-the-whole-database-from-scratch); producing a release follows [the release procedure](documentation/release_procedure.md). Adding an inventory does not imply rebuilding the database or publishing a release.
