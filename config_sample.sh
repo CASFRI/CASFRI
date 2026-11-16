@@ -4,7 +4,7 @@
 #################################################################
 # Path to base folder of all source inventories
 #################################################################
-friDir=E:/FRIs
+friDir=/data/fris
 
 #################################################################
 # PostgreSQL configuration
@@ -47,7 +47,7 @@ createGeoHistory=True
 
 #################################################################
 # When True, create one geohistory table per inventory.
-# When False, create one geohistory table for all inventories.
+# When False, create only one geohistory table for all inventories.
 #################################################################
 geoHistoryInSeparateTables=False
 
@@ -102,7 +102,7 @@ metadataTableLoadingColumn=TRANSLATED_BY_CFS
 #metadataTableLoadingColumn=TRANSLATED_BY_ULAVAL
 
 # You can also add your own custom column in the inventory_metadata table if you don't mind editing it.
-#metadataTableLoadingColumn=TRANSLATED_BY_ME
+#metadataTableLoadingColumn=TRANSLATED_BY_CUSTOM
 
 #----------------------------------------------------------------
 # Otherwise you can define your own list from here.
@@ -152,50 +152,69 @@ extraList2=()
 #################################################################
 # GDAL and Python installation
 #################################################################
-# Set True for a Windows Conda environment; False for standalone tools.
+# Set to True if GDAL and Python are provided by Conda.
+# Set to False for standalone/system tools (Windows or Linux).
 useMiniconda=False
-# Environment root containing conda-meta, python.exe and Library/bin/ogr2ogr.exe.
-miniCondaFolder="C:/ProgramData/Miniconda3"
 
-# Standalone installation paths (used only when useMiniconda=False).
-gdalFolder="C:/Program Files/GDAL"
-pythonPath="C:/Python311"
+#################################################################
+# Optional configurations normally handled by common.sh
+#
+# common.sh supplies defaults for the remaining variables according
+# to the value set for useMiniconda. It will test for the presence
+# of required tools and set defaults accordingly. Set the variables
+# below only if common.sh report non passing test for certain variables.
+#Use absolute paths.
+#################################################################
 
-# common.sh derives gdalPyFolder, ogrCmd and the GDAL/PROJ resource paths.
-# It exports resource variables so external GDAL/PROJ programs can read them.
-# Optional standalone resource overrides for different package layouts:
+#################################################################
+# Conda: select the root containing conda-meta; all tool/resource paths are derived.
+# Windows example: miniCondaFolder="C:/ProgramData/Miniconda3"
+#################################################################
+#miniCondaFolder="$HOME/miniconda3/envs/casfri"
+
+#################################################################
+# Non conda installation only: executable directories, not installation prefixes.
+# Windows examples: gdalFolder="C:/Program Files/GDAL", pythonPath="C:/Python311"
+#################################################################
+#gdalFolder="/usr/local/bin"
+#pythonPath="/usr/local/bin"
+
+#################################################################
+# Directory containing gdal_calc.py and gdal_polygonize.py, if different from gdalFolder.
+#################################################################
+#gdalPyFolder="/usr/local/bin"
+
+#################################################################
+# GDAL base variables.
+#################################################################
+
 # Folder containing optional driver plugins (such as the PostgreSQL driver).
-#GDAL_DRIVER_PATH="$gdalFolder/gdalplugins"
+#GDAL_DRIVER_PATH="/usr/local/lib/gdalplugins"
+
 # Folder containing GDAL resource files, including schemas.
-#GDAL_DATA="$gdalFolder/gdal-data"
+#GDAL_DATA="/usr/local/share/gdal"
+
 # Folder containing proj.db and coordinate-transformation resources.
-#PROJ_DATA="$gdalFolder/projlib"
+#PROJ_DATA="/usr/local/share/proj"
 
 # Set this to true if using GDAL version 1.11.4
-gdal_1_11_4=False
+#gdal_1_11_4=False
 
 #################################################################
 # Bash executable path
 #################################################################
-bashCmd="C:/Program Files/Git/git-bash.exe"
+# Full executable path; Windows example: "C:/Program Files/Git/git-bash.exe".
+#bashCmd="/bin/bash"
 
 #################################################################
-# Set some default values
+# PostgreSQL installation overrides
 #################################################################
+# pgversion set the default PostgreSQL version for Windows installation. Default is 13.
+#pgversion=13
 
-##############################
-# Set pgversion if your version of PostgreSQL is different than 13
-# pgversion=11
+# Prefix containing bin/psql and bin/raster2pgsql (not the bin directory itself).
+#pgFolder="/usr/local"
 
-if ! [[ -v pgversion ]]; then
-  pgversion=13
-fi
-pgFolder="/c/PROGRA~1/PostgreSQL/$pgversion"
-psqlCmd="$pgFolder/bin/psql"
-
-##############################
-# Set bashCmd if your bash command is different from the standard Linux bash command
-if ! [[ -v bashCmd ]]; then
-  bashCmd="/bin/bash"
-fi
+# Override only when psql is elsewhere; otherwise derived from pgFolder.
+#psqlCmd="/usr/local/bin/psql"
 

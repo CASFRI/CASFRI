@@ -128,7 +128,7 @@ do
   	echo "Creating ${reducedRasterFullPath}.tif..."
   
 #    "$pythonPath/scripts/gdal_calc.py" -A "${croppedRasterFullPath}.tif" \
-    "$pythonPath/python.exe" "$gdalPyFolder/gdal_calc.py" -A "${croppedRasterFullPath}.tif" \
+    "$pythonCmd" "$gdalPyFolder/gdal_calc.py" -A "${croppedRasterFullPath}.tif" \
     --type=Byte \
     --calc="(numpy.where(A==0, 255, A-numpy.trunc(A/100)*100))" \
     --co="COMPRESS=LZW" --co="TILED=YES" --co="BLOCKXSIZE=1024" --co="BLOCKYSIZE=1024" \
@@ -144,7 +144,7 @@ do
   echo --------------------------------
   echo Vectorize the raster into a temporary .sql file if requested
   if [ ! -e "${reducedRasterFullPath}.sql" ] && [ "${createSQLFile}" == "true" ]; then
-    "$pythonPath/python.exe" "$gdalPyFolder/gdal_polygonize.py" "${reducedRasterFullPath}.tif" \
+    "$pythonCmd" "$gdalPyFolder/gdal_polygonize.py" "${reducedRasterFullPath}.tif" \
     -lco SPATIAL_INDEX=NONE -lco SRID=3978 \
     -f PGDUMP \
     ${reducedRasterFullPath}.sql ${tempTargetTableName} year

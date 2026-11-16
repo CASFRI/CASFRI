@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ../../config.sh
+source ../../common.sh
 
 set -x
 
