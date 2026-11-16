@@ -1284,19 +1284,20 @@ SELECT (TT_CheckNumberOfTests('nfl', 'bc', TRUE)).*
 
 -------------------------------------------------------------------------------
 -- TT_CreateMapping
+-- The five-argument overload selects the schema containing layer_metadata.
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_CreateMapping(text, int, text, int);
 CREATE OR REPLACE FUNCTION TT_CreateMapping(
   fromTableName text,
   fromLayer int,
   toTableName text,
-  toLayer int
+  toLayer int,
+  lyrMetadataSchemaName text
 )
 RETURNS TABLE (num int, key text, from_att text, to_att text, contributing boolean) AS $$
   DECLARE
     queryStr text;
     lyrMetadataTableName text := 'layer_metadata';
-    lyrMetadataSchemaName text := 'public';
   BEGIN
     IF NOT TT_TableExists(lyrMetadataSchemaName, lyrMetadataTableName) THEN
       RAISE EXCEPTION 'ERROR TT_CreateMapping(): Could not find table ''%.%''...', lyrMetadataSchemaName, lyrMetadataTableName;
@@ -1341,6 +1342,16 @@ RETURNS TABLE (num int, key text, from_att text, to_att text, contributing boole
     RETURN QUERY EXECUTE queryStr;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+
+CREATE OR REPLACE FUNCTION TT_CreateMapping(
+  fromTableName text,
+  fromLayer int,
+  toTableName text,
+  toLayer int
+)
+RETURNS TABLE (num int, key text, from_att text, to_att text, contributing boolean) AS $$
+  SELECT * FROM TT_CreateMapping(fromTableName, fromLayer, toTableName, toLayer, 'public');
+$$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -1673,15 +1684,17 @@ $$ LANGUAGE sql VOLATILE;
 -- TT_NotEmpty() and 'whereOutAttrList' are NOT TT_NotEmpty(). The name
 -- of the view can be suffixed with viewNameSuffix. Otherwise it will get a
 -- random number.
+-- The seven-argument overload selects the schema containing layer_metadata.
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_CreateFilterView(text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION TT_CreateFilterView(
   schemaName text,
   tableName text,
   selectAttrList text,
-  whereInAttrList text DEFAULT '',
-  whereOutAttrList text DEFAULT '',
-  viewNameSuffix text DEFAULT NULL
+  whereInAttrList text,
+  whereOutAttrList text,
+  viewNameSuffix text,
+  lyrMetadataSchemaName text
 )
 RETURNS text AS $$
   DECLARE
@@ -1709,7 +1722,6 @@ RETURNS text AS $$
     trimmedAttName text;
     indentStr text;
     lyrMetadataTableName text := 'layer_metadata';
-    lyrMetadataSchemaName text := 'public';
   BEGIN
     -- Check if table 'layer_metadata' exists
     IF NOT TT_TableExists(lyrMetadataSchemaName, lyrMetadataTableName) THEN
@@ -1728,7 +1740,7 @@ RETURNS text AS $$
 
     -- Replace selectAttrList CASFRI attribute with their mapping attributes
     FOR mappingRec IN SELECT key, string_agg(from_att, ', ') attrs
-                      FROM TT_CreateMapping(tableName, 1, tableName, 1)
+                      FROM TT_CreateMapping(tableName, 1, tableName, 1, lyrMetadataSchemaName)
                       WHERE TT_NotEmpty(from_att) AND key != 'inventory_id' AND key != 'layer'
                       GROUP BY key
     LOOP
@@ -1737,7 +1749,7 @@ RETURNS text AS $$
 
     -- Replace whereInAttrList and whereOutAttrList CASFRI attributes with their mapping attribute. only the
     FOR mappingRec IN SELECT key, string_agg(from_att, ', ') attrs
-                      FROM TT_CreateMapping(tableName, 1, tableName, 1)
+                      FROM TT_CreateMapping(tableName, 1, tableName, 1, lyrMetadataSchemaName)
                       WHERE TT_NotEmpty(from_att) AND contributing AND key != 'inventory_id' AND key != 'layer'
                       GROUP BY key
     LOOP
@@ -1757,7 +1769,7 @@ RETURNS text AS $$
 
       -- Loop through all layer_metadata row mapping
       FOR mappingRec IN SELECT *
-                        FROM TT_CreateMapping(tableName, layer::int, tableName, layer::int)
+                        FROM TT_CreateMapping(tableName, layer::int, tableName, layer::int, lyrMetadataSchemaName)
                         WHERE TT_NotEmpty(from_att)
       LOOP
         -- Pick attributes corresponding to keywords
@@ -1929,6 +1941,19 @@ RETURNS text AS $$
     RETURN queryStr;
   END;
 $$ LANGUAGE plpgsql VOLATILE;
+
+CREATE OR REPLACE FUNCTION TT_CreateFilterView(
+  schemaName text,
+  tableName text,
+  selectAttrList text,
+  whereInAttrList text DEFAULT '',
+  whereOutAttrList text DEFAULT '',
+  viewNameSuffix text DEFAULT NULL
+)
+RETURNS text AS $$
+  SELECT TT_CreateFilterView(schemaName, tableName, selectAttrList,
+                            whereInAttrList, whereOutAttrList, viewNameSuffix, 'public');
+$$ LANGUAGE sql VOLATILE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -8293,13 +8318,15 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- to get the upper bound of age range. Then subtract this from the photo
 -- year to get origin upper.
 -- photo year is calculated by intersecting with the photo year map.
+-- The four-argument overload accepts a photo-year schema for isolated tests.
 
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_nl_nli01_origin_upper_translation(text, text, text);
 CREATE OR REPLACE FUNCTION TT_nl_nli01_origin_upper_translation(
   age_class text,
   src_filename text,
-  the_geom text
+  the_geom text,
+  photo_year_schema text
 )
 RETURNS int AS $$
   DECLARE
@@ -8308,7 +8335,7 @@ RETURNS int AS $$
     age int;
   BEGIN
     map_unit_int = substring(src_filename, 3,3)::int;
-    photo_year = TT_geoIntersectionInt(the_geom, 'rawfri', 'nl01_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
+    photo_year = TT_geoIntersectionInt(the_geom, photo_year_schema, 'nl01_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
 
     IF map_unit_int > 0 AND map_unit_int <=180 THEN
       age = TT_mapText(age_class, '{''1'',''2'',''3'',''4'',''5'',''6'',''7''}', '{''0'',''21'',''41'',''61'',''81'',''101'',''121''}')::int; -- Newfoundland
@@ -8321,6 +8348,15 @@ RETURNS int AS $$
     RETURN photo_year - age;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION TT_nl_nli01_origin_upper_translation(
+  age_class text,
+  src_filename text,
+  the_geom text
+)
+RETURNS int AS $$
+  SELECT TT_nl_nli01_origin_upper_translation(age_class, src_filename, the_geom, 'rawfri');
+$$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -8369,13 +8405,15 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 -- to get the upper bound of age range. Then subtract this from the photo
 -- year to get origin upper.
 -- photo year is calculated by intersecting with the photo year map.
+-- The four-argument overload accepts a photo-year schema for isolated tests.
 
 -------------------------------------------------------------------------------
 --DROP FUNCTION IF EXISTS TT_nl_nli01_origin_lower_translation(text, text, text);
 CREATE OR REPLACE FUNCTION TT_nl_nli01_origin_lower_translation(
   age_class text,
   src_filename text,
-  the_geom text
+  the_geom text,
+  photo_year_schema text
 )
 RETURNS int AS $$
   DECLARE
@@ -8384,7 +8422,7 @@ RETURNS int AS $$
     age int;
   BEGIN
     map_unit_int = substring(src_filename, 3,3)::int;
-    photo_year = TT_geoIntersectionInt(the_geom, 'rawfri', 'nl01_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
+    photo_year = TT_geoIntersectionInt(the_geom, photo_year_schema, 'nl01_photoyear', 'wkb_geometry', 'photoyear', 'GREATEST_AREA');
 
     -- don't return the last values of 7 and 9 because the upper age is not defined, therefore lower origin is unknown_value. Catch these with validation.
     IF map_unit_int > 0 AND map_unit_int <=180 THEN
@@ -8398,6 +8436,15 @@ RETURNS int AS $$
     RETURN photo_year - age;
   END;
 $$ LANGUAGE plpgsql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION TT_nl_nli01_origin_lower_translation(
+  age_class text,
+  src_filename text,
+  the_geom text
+)
+RETURNS int AS $$
+  SELECT TT_nl_nli01_origin_lower_translation(age_class, src_filename, the_geom, 'rawfri');
+$$ LANGUAGE sql IMMUTABLE;
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------

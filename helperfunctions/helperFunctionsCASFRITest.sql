@@ -119,6 +119,46 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
+-- Filter-view fixtures contain only the source columns and mappings used below.
+-- Recreating the source table also removes views from previous test runs.
+DROP TABLE IF EXISTS casfri50_unittest.ab06 CASCADE;
+CREATE TABLE casfri50_unittest.ab06 (
+  inventory_id text, src_filename text, trm_1 text, poly_num text, ogc_fid int,
+  sp1 text, sp2 text, sp3 text, usp1 text, usp2 text, usp3 text,
+  nat_non text, anth_veg text, anth_non text, nfl text,
+  unat_non text, uanth_veg text, uanth_non text, unfl text,
+  mod1 text, mod1_yr text, mod1_ext text, mod2 text, mod2_yr text, mod2_ext text,
+  moist_reg text, density text, sp1_per text, trm text, tpr text,
+  wkb_geometry geometry
+);
+
+DROP TABLE IF EXISTS casfri50_unittest.layer_metadata;
+CREATE TABLE casfri50_unittest.layer_metadata (
+  inventory_id text, layer text, cas_id text DEFAULT '',
+  species_1 text DEFAULT '', species_2 text DEFAULT '', species_3 text DEFAULT '',
+  site_class text DEFAULT '',
+  nat_non_veg text DEFAULT '', non_for_anth text DEFAULT '', non_for_veg text DEFAULT '',
+  dist_type_1 text DEFAULT '', dist_year_1 text DEFAULT '', dist_ext_upper_1 text DEFAULT '',
+  dist_type_2 text DEFAULT '', dist_year_2 text DEFAULT '', dist_ext_upper_2 text DEFAULT '',
+  wetland_type text DEFAULT ''
+);
+INSERT INTO casfri50_unittest.layer_metadata
+  (inventory_id, layer, cas_id, species_1, species_2, species_3, site_class,
+   dist_type_1, dist_year_1, dist_ext_upper_1,
+   dist_type_2, dist_year_2, dist_ext_upper_2, wetland_type)
+VALUES
+  ('AB06', '1', 'inventory_id, src_filename, trm_1, poly_num, ogc_fid',
+   'sp1', 'sp2', 'sp3', 'tpr', 'mod1', 'mod1_yr', 'mod1_ext',
+   'mod2', 'mod2_yr', 'mod2_ext', 'moist_reg, nfl, nat_non, sp1, sp2, density, sp1_per');
+INSERT INTO casfri50_unittest.layer_metadata
+  (inventory_id, layer, species_1, species_2, species_3)
+VALUES ('AB06', '2', 'usp1', 'usp2', 'usp3');
+INSERT INTO casfri50_unittest.layer_metadata
+  (inventory_id, layer, nat_non_veg, non_for_anth, non_for_veg)
+VALUES
+  ('AB06', '3', 'nat_non', 'anth_veg, anth_non', 'nfl'),
+  ('AB06', '4', 'unat_non', 'uanth_veg, uanth_non', 'unfl');
+
 -- Provide Quebec stand-structure examples with one or two age layers.
 -- Keep this lookup fixture in the same schema as the other test objects.
 DROP TABLE IF EXISTS casfri50_unittest.test_lookup_qc_stdstr CASCADE;
@@ -145,6 +185,11 @@ SELECT 'Sw'::text source_val, 'PICE_GLAU'::text spec1
 UNION ALL
 SELECT 'Sb'::text, 'PICE_MARI'::text;
 
+-- PC02 layer-count tests only require membership in the species-code lookup.
+DROP TABLE IF EXISTS casfri50_unittest.test_lookup_pc02_species;
+CREATE TABLE casfri50_unittest.test_lookup_pc02_species AS
+SELECT 'AL'::text AS pc02_species_codes;
+
 -- Provide three overlapping polygons with photo years 1990, 1999 and 2000.
 -- The photo-year checks below use these geometries to test spatial matches;
 -- every call explicitly selects casfri50_unittest as the fixture schema.
@@ -155,6 +200,14 @@ UNION ALL
 SELECT ST_GeometryFromText('MULTIPOLYGON(((0 0, 0 2, 2 2, 2 0, 0 0)))', 4268), 1999::text
 UNION ALL
 SELECT ST_GeometryFromText('MULTIPOLYGON(((6 6, 6 15, 15 15, 15 6, 6 6)))', 4268), 2000::text;
+
+-- NL01 uses 1995 from the largest overlap, not 1980 from the smaller polygons.
+-- No production photo-year tables are required or modified.
+DROP TABLE IF EXISTS casfri50_unittest.nl01_photoyear;
+CREATE TABLE casfri50_unittest.nl01_photoyear AS
+SELECT the_geom AS wkb_geometry,
+       CASE WHEN year = '2000' THEN 1995 ELSE 1980 END AS photoyear
+FROM casfri50_unittest.photo_test2;
 -----------------------------------------------------------
 -- Comment out the following line and the last one of the file to display
 -- only failing tests
@@ -234,8 +287,8 @@ WITH test_nb AS (
   SELECT 'TT_nl_nli01_productivity_translation'::text function_tested,         76 maj_num,  3 nb_test UNION ALL
   SELECT 'TT_nl_nli01_productivity_type_translation'::text function_tested,    77 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_qc_prg4_lengthMatchList'::text function_tested,                   78 maj_num, 13 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,         79 maj_num,  4 nb_test UNION ALL
-  SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,         80 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_upper_translation'::text function_tested,         79 maj_num,  5 nb_test UNION ALL
+  SELECT 'TT_nl_nli01_origin_lower_translation'::text function_tested,         80 maj_num,  6 nb_test UNION ALL
   SELECT 'TT_nl_nli01_origin_lower_validation'::text function_tested,          81 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_qc_origin_translation'::text function_tested,                     82 maj_num,  1 nb_test UNION ALL
   SELECT 'TT_nl_nli01_origin_newfoundland_validation'::text function_tested,   83 maj_num,  3 nb_test UNION ALL
@@ -274,8 +327,8 @@ WITH test_nb AS (
   SELECT 'TT_mb_fri01_wetland_validation'::text function_tested,              116 maj_num,  2 nb_test UNION ALL
   SELECT 'TT_pc02_wetland_translation'::text function_tested,                 117 maj_num,  3 nb_test UNION ALL
   SELECT 'TT_pc02_wetland_validation'::text function_tested,                  118 maj_num,  2 nb_test UNION ALL
-  SELECT 'TT_pc02_countOfNotNull'::text function_tested,                      119 maj_num,  3 nb_test UNION ALL
-  SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,                   120 maj_num,  2 nb_test UNION ALL
+  SELECT 'TT_pc02_countOfNotNull'::text function_tested,                      119 maj_num,  6 nb_test UNION ALL
+  SELECT 'TT_pc02_hasCountOfNotNull'::text function_tested,                   120 maj_num,  5 nb_test UNION ALL
   SELECT 'TT_yt_wetland_translation'::text function_tested,                   121 maj_num,  4 nb_test UNION ALL
   SELECT 'TT_yt_wetland_validation'::text function_tested,                    122 maj_num,  2 nb_test UNION ALL
   SELECT 'TT_nb_lyr_layer_translation'::text function_tested,                 123 maj_num,  5 nb_test UNION ALL
@@ -683,61 +736,61 @@ UNION ALL
 SELECT '16.1'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple lyr1 first argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', NULL, NULL, 'lyr1') = 'DROP VIEW IF EXISTS rawfri.ab06_lyr1 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', NULL, NULL, 'lyr1', 'casfri50_unittest') = 'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1 AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06;' passed
+FROM casfri50_unittest.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.2'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple nfl1 first argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'nfl3', NULL, NULL, 'nfl3') = 'DROP VIEW IF EXISTS rawfri.ab06_nfl3 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_nfl3 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'nfl3', NULL, NULL, 'nfl3', 'casfri50_unittest') = 'DROP VIEW IF EXISTS casfri50_unittest.ab06_nfl3 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_nfl3 AS
 SELECT nat_non, anth_veg, anth_non, nfl
-FROM rawfri.ab06;' passed
+FROM casfri50_unittest.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.3'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple dst1 first argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'dst1', NULL, NULL, 'dst1') = 'DROP VIEW IF EXISTS rawfri.ab06_dst1 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_dst1 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'dst1', NULL, NULL, 'dst1', 'casfri50_unittest') = 'DROP VIEW IF EXISTS casfri50_unittest.ab06_dst1 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_dst1 AS
 SELECT mod1, mod1_yr, mod1_ext, mod2, mod2_yr, mod2_ext
-FROM rawfri.ab06;' passed
+FROM casfri50_unittest.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.4'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Group of many attributes for selectAttrList'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1, nfl3, dst1', NULL, NULL, 'lyr1_nfl3_dst1') = 'DROP VIEW IF EXISTS rawfri.ab06_lyr1_nfl3_dst1 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_nfl3_dst1 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1, nfl3, dst1', NULL, NULL, 'lyr1_nfl3_dst1', 'casfri50_unittest') = 'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_nfl3_dst1 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_nfl3_dst1 AS
 SELECT sp1, sp2, sp3, nat_non, anth_veg, anth_non, nfl, mod1, mod1_yr, mod1_ext, mod2, mod2_yr, mod2_ext
-FROM rawfri.ab06;' passed
+FROM casfri50_unittest.ab06;' passed
 ---------------------------------------------------------
 --UNION ALL
 --SELECT '16.5'::text number,
 --       'TT_CreateFilterView'::text function_tested,
 --       'Wrong first argument test 1'::text description,
---       TT_CreateFilterView('rawfri', 'ab06', 'lyr', NULL, NULL, 'lyr') = 
---       'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''lyr'' attribute not found in table ''rawfri.ab06''...' passed
+--       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr', NULL, NULL, 'lyr', 'casfri50_unittest') =
+--       'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''lyr'' attribute not found in table ''casfri50_unittest.ab06''...' passed
 ---------------------------------------------------------
 --UNION ALL
 --SELECT '16.6'::text number,
 --       'TT_CreateFilterView'::text function_tested,
 --       'Wrong first argument test 2'::text description,
---       TT_CreateFilterView('rawfri', 'ab06', 'lyr, lyr1, nfl1, dst1', NULL, NULL, 'lyr1_nfl1_dst1') = 
---       'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''lyr'' attribute not found in table ''rawfri.ab06''...' passed
+--       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr, lyr1, nfl1, dst1', NULL, NULL, 'lyr1_nfl1_dst1', 'casfri50_unittest') =
+--       'ERROR TT_CreateFilterView(): ''selectAttrList'' parameter''s ''lyr'' attribute not found in table ''casfri50_unittest.ab06''...' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.5'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl3', NULL, 'lyr1_for_nfl3') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', 'nfl3', NULL, 'lyr1_for_nfl3', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl3 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl3 AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
       (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
       (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -747,21 +800,21 @@ UNION ALL
 SELECT '16.6'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Wrong second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'lyr', NULL, 'lyr1_for_lyr') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_lyr CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_lyr AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', 'lyr', NULL, 'lyr1_for_lyr', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_lyr CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_lyr AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06;' passed
+FROM casfri50_unittest.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.7'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl3, nfl4', NULL, 'lyr1_for_nfl3_nfl4') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_nfl4 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_nfl4 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', 'nfl3, nfl4', NULL, 'lyr1_for_nfl3_nfl4', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl3_nfl4 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl3_nfl4 AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
       (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
       (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -775,11 +828,11 @@ UNION ALL
 SELECT '16.8'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''and'' second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl3, nfl4]', NULL, 'lyr1_for_nfl3_and_nfl4') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_and_nfl4 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', '[nfl3, nfl4]', NULL, 'lyr1_for_nfl3_and_nfl4', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl3_and_nfl4 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl3_and_nfl4 AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
         (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
         (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -795,11 +848,11 @@ UNION ALL
 SELECT '16.9'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''or/and'' second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'dst1, [nfl3, nfl4]', NULL, 'lyr1_for_dst_or_nfl3_and_nfl4') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_dst_or_nfl3_and_nfl4 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_dst_or_nfl3_and_nfl4 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', 'dst1, [nfl3, nfl4]', NULL, 'lyr1_for_dst_or_nfl3_and_nfl4', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_dst_or_nfl3_and_nfl4 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_dst_or_nfl3_and_nfl4 AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE (TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR 
         (TT_NotEmpty(mod1_yr::text) AND mod1_yr::text != ''0'') OR 
         (TT_NotEmpty(mod1_ext::text) AND mod1_ext::text != ''0'') OR 
@@ -822,11 +875,11 @@ UNION ALL
 SELECT '16.10'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''and/or'' second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl1, nfl2], dst1', NULL, 'lyr1_for_nfl1_and_nfl2_or_dst') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_and_nfl2_or_dst CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1_and_nfl2_or_dst AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', '[nfl1, nfl2], dst1', NULL, 'lyr1_for_nfl1_and_nfl2_or_dst', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl1_and_nfl2_or_dst CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl1_and_nfl2_or_dst AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE (TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR 
       (TT_NotEmpty(mod1_yr::text) AND mod1_yr::text != ''0'') OR 
       (TT_NotEmpty(mod1_ext::text) AND mod1_ext::text != ''0'') OR 
@@ -838,11 +891,11 @@ UNION ALL
 SELECT '16.11'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Complex ''and/or'' second argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl3, nfl4], dst1', NULL, 'lyr1_for_nfl3_and_nfl4_or_dst') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4_or_dst CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_and_nfl4_or_dst AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', '[nfl3, nfl4], dst1', NULL, 'lyr1_for_nfl3_and_nfl4_or_dst', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl3_and_nfl4_or_dst CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl3_and_nfl4_or_dst AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
         (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
         (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -864,11 +917,11 @@ UNION ALL
 SELECT '16.12'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple third argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl1, nfl2', 'dst1', 'lyr1_for_nfl1_or_nfl2_not_dst') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_or_nfl2_not_dst CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1_or_nfl2_not_dst AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', 'nfl1, nfl2', 'dst1', 'lyr1_for_nfl1_or_nfl2_not_dst', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl1_or_nfl2_not_dst CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl1_or_nfl2_not_dst AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE NOT
        ((TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR 
       (TT_NotEmpty(mod1_yr::text) AND mod1_yr::text != ''0'') OR 
@@ -881,11 +934,11 @@ UNION ALL
 SELECT '16.13'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple third argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', 'nfl3, nfl4', 'dst1', 'lyr1_for_nfl3_or_nfl4_not_dst') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_or_nfl4_not_dst CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_or_nfl4_not_dst AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', 'nfl3, nfl4', 'dst1', 'lyr1_for_nfl3_or_nfl4_not_dst', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl3_or_nfl4_not_dst CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl3_or_nfl4_not_dst AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
       (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
       (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -906,11 +959,11 @@ UNION ALL
 SELECT '16.14'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple ''and'' second argument with third argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl1, nfl2]', 'dst1', 'lyr1_for_nfl1_and_nfl2_not_dst') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl1_and_nfl2_not_dst CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl1_and_nfl2_not_dst AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', '[nfl1, nfl2]', 'dst1', 'lyr1_for_nfl1_and_nfl2_not_dst', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl1_and_nfl2_not_dst CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl1_and_nfl2_not_dst AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE NOT
        ((TT_NotEmpty(mod1::text) AND mod1::text != ''0'') OR 
       (TT_NotEmpty(mod1_yr::text) AND mod1_yr::text != ''0'') OR 
@@ -923,11 +976,11 @@ UNION ALL
 SELECT '16.15'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Simple ''and'' second argument with third argument test'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1', '[nfl3, nfl4]', 'dst1', 'lyr1_for_nfl3_and_nfl4_not_dst') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_for_nfl3_and_nfl4_not_dst CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_for_nfl3_and_nfl4_not_dst AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1', '[nfl3, nfl4]', 'dst1', 'lyr1_for_nfl3_and_nfl4_not_dst', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_for_nfl3_and_nfl4_not_dst CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_for_nfl3_and_nfl4_not_dst AS
 SELECT sp1, sp2, sp3
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE (((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
         (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
         (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -950,11 +1003,11 @@ UNION ALL
 SELECT '16.16'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test empty ''eco'' keywords'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'eco', 'nfl3, eco', NULL, 'eco_for_nfl3_or_eco') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl3_or_eco CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_eco_for_nfl3_or_eco AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'eco', 'nfl3, eco', NULL, 'eco_for_nfl3_or_eco', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_eco_for_nfl3_or_eco CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_eco_for_nfl3_or_eco AS
 SELECT moist_reg, nfl, nat_non, sp1, sp2, density, sp1_per
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE (TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
       (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
       (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -971,11 +1024,11 @@ UNION ALL
 SELECT '16.17'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test empty keywords in ''and'' second argument'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'eco', '[nfl3, eco]', 'dst2', 'eco_for_nfl3_and_eco_not_dst2') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_eco_for_nfl3_and_eco_not_dst2 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_eco_for_nfl3_and_eco_not_dst2 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'eco', '[nfl3, eco]', 'dst2', 'eco_for_nfl3_and_eco_not_dst2', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_eco_for_nfl3_and_eco_not_dst2 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_eco_for_nfl3_and_eco_not_dst2 AS
 SELECT moist_reg, nfl, nat_non, sp1, sp2, density, sp1_per
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE ((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
         (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
         (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -994,11 +1047,11 @@ UNION ALL
 SELECT '16.18'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with some source attributes in each parameter'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'lyr1, wkb_geometry', '[nfl3, inventory_id, nfl4]', 'dst1, trm', 'extra_lyr1_for_nfl3_and_nfl4_not_dst') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_extra_lyr1_for_nfl3_and_nfl4_not_dst CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_extra_lyr1_for_nfl3_and_nfl4_not_dst AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'lyr1, wkb_geometry', '[nfl3, inventory_id, nfl4]', 'dst1, trm', 'extra_lyr1_for_nfl3_and_nfl4_not_dst', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_extra_lyr1_for_nfl3_and_nfl4_not_dst CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_extra_lyr1_for_nfl3_and_nfl4_not_dst AS
 SELECT sp1, sp2, sp3, wkb_geometry
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE (((TT_NotEmpty(nat_non::text) AND nat_non::text != ''0'') OR 
         (TT_NotEmpty(anth_veg::text) AND anth_veg::text != ''0'') OR 
         (TT_NotEmpty(anth_non::text) AND anth_non::text != ''0'') OR 
@@ -1024,31 +1077,31 @@ UNION ALL
 SELECT '16.19'::text number,
        'TT_CreateFilterView'::text function_tested,
        'All arguments NULL'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', NULL, NULL, NULL, 'null') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_null CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_null AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', NULL, NULL, NULL, 'null', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_null CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_null AS
 SELECT *
-FROM rawfri.ab06;' passed
+FROM casfri50_unittest.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.20'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test one CASFRI attribute to be replaced by source attributes'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'CAS_ID', NULL, NULL, 'cas_id') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_cas_id CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_cas_id AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'CAS_ID', NULL, NULL, 'cas_id', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_cas_id CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_cas_id AS
 SELECT inventory_id, src_filename, trm_1, poly_num, ogc_fid
-FROM rawfri.ab06;' passed
+FROM casfri50_unittest.ab06;' passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '16.21'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test CASFRI attribute inside ''and'' braquets'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'cas_id', '[lyr1, cas_id]', 'nat_non_veg', 'lyr1_cas_id_nfl') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_lyr1_cas_id_nfl CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_lyr1_cas_id_nfl AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'cas_id', '[lyr1, cas_id]', 'nat_non_veg', 'lyr1_cas_id_nfl', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_lyr1_cas_id_nfl CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_lyr1_cas_id_nfl AS
 SELECT inventory_id, src_filename, trm_1, poly_num, ogc_fid
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE ((TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR 
         (TT_NotEmpty(sp2::text) AND sp2::text != ''0'') OR 
         (TT_NotEmpty(sp3::text) AND sp3::text != ''0''))
@@ -1064,11 +1117,11 @@ UNION ALL
 SELECT '16.22'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with whereOutAttrList attribute only'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', NULL, NULL, 'LYR1', 'not_lyr1') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_not_lyr1 CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_not_lyr1 AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', NULL, NULL, 'LYR1', 'not_lyr1', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_not_lyr1 CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_not_lyr1 AS
 SELECT *
-FROM rawfri.ab06
+FROM casfri50_unittest.ab06
 WHERE NOT
        ((TT_NotEmpty(sp1::text) AND sp1::text != ''0'') OR 
       (TT_NotEmpty(sp2::text) AND sp2::text != ''0'') OR 
@@ -1078,11 +1131,11 @@ UNION ALL
 SELECT '16.23'::text number,
        'TT_CreateFilterView'::text function_tested,
        'Test with whereOutAttrList attribute only'::text description,
-       TT_CreateFilterView('rawfri', 'ab06', 'site_class, LYR1', NULL, NULL, 'site_class') = 
-       'DROP VIEW IF EXISTS rawfri.ab06_site_class CASCADE;
-CREATE OR REPLACE VIEW rawfri.ab06_site_class AS
+       TT_CreateFilterView('casfri50_unittest', 'ab06', 'site_class, LYR1', NULL, NULL, 'site_class', 'casfri50_unittest') =
+       'DROP VIEW IF EXISTS casfri50_unittest.ab06_site_class CASCADE;
+CREATE OR REPLACE VIEW casfri50_unittest.ab06_site_class AS
 SELECT tpr, sp1, sp2, sp3
-FROM rawfri.ab06;' passed
+FROM casfri50_unittest.ab06;' passed
 ---------------------------------------------------------
   -- TT_vri01_dist_yr_translation
 ---------------------------------------------------------
@@ -3181,25 +3234,31 @@ UNION ALL
 SELECT '79.1'::text number,
        'TT_nl_nli01_origin_upper_translation'::text function_tested,
        'Test age class 1 Newfoundland'::text description,
-       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1995 passed
+       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') = 1995 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '79.2'::text number,
        'TT_nl_nli01_origin_upper_translation'::text function_tested,
        'Test age class 2 Newfoundland'::text description,
-       TT_nl_nli01_origin_upper_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1974 passed
+       TT_nl_nli01_origin_upper_translation('2', 'mu001', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') = 1974 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '79.3'::text number,
        'TT_nl_nli01_origin_upper_translation'::text function_tested,
        'Test age class 9 Labrador'::text description,
-       TT_nl_nli01_origin_upper_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1834 passed
+       TT_nl_nli01_origin_upper_translation('9', 'mu300', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') = 1834 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '79.4'::text number,
        'TT_nl_nli01_origin_upper_translation'::text function_tested,
        'Test age class 9 Newfoundland, null'::text description,
-       TT_nl_nli01_origin_upper_translation('9', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
+       TT_nl_nli01_origin_upper_translation('9', 'mu001', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '79.5'::text number,
+       'TT_nl_nli01_origin_upper_translation'::text function_tested,
+       'No overlapping photo-year polygon'::text description,
+       TT_nl_nli01_origin_upper_translation('1', 'mu001', ST_MakeEnvelope(20, 20, 21, 21, 4268)::text, 'casfri50_unittest') IS NULL passed
 ---------------------------------------------------------
   -- TT_nl_nli01_origin_lower_translation
 ---------------------------------------------------------
@@ -3207,31 +3266,37 @@ UNION ALL
 SELECT '80.1'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 1 Newfoundland'::text description,
-       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1975 passed
+       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') = 1975 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '80.2'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 2 Newfoundland'::text description,
-       TT_nl_nli01_origin_lower_translation('2', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1955 passed
+       TT_nl_nli01_origin_lower_translation('2', 'mu001', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') = 1955 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '80.3'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 9 Labrador'::text description,
-       TT_nl_nli01_origin_lower_translation('9', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
+       TT_nl_nli01_origin_lower_translation('9', 'mu300', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') IS NULL passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '80.4'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 8 Labrador, null'::text description,
-       TT_nl_nli01_origin_lower_translation('8', 'mu300', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) = 1835 passed
+       TT_nl_nli01_origin_lower_translation('8', 'mu300', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') = 1835 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '80.5'::text number,
        'TT_nl_nli01_origin_lower_translation'::text function_tested,
        'Test age class 8 Newfoundland, null'::text description,
-       TT_nl_nli01_origin_lower_translation('8', 'mu001', ST_Multi(ST_MakePolygon(ST_SetSRID(ST_GeomFromText('LINESTRING(2632203 2088435,2628245 2094183,2635341 2099086,2639309 2093346,2632203 2088435)'), 102001)))::text) IS NULL passed
+       TT_nl_nli01_origin_lower_translation('8', 'mu001', ST_MakeEnvelope(0, 0, 15, 15, 4268)::text, 'casfri50_unittest') IS NULL passed
+---------------------------------------------------------
+UNION ALL
+SELECT '80.6'::text number,
+       'TT_nl_nli01_origin_lower_translation'::text function_tested,
+       'No overlapping photo-year polygon'::text description,
+       TT_nl_nli01_origin_lower_translation('1', 'mu001', ST_MakeEnvelope(20, 20, 21, 21, 4268)::text, 'casfri50_unittest') IS NULL passed
 ---------------------------------------------------------
   -- tt_nl_nli01_origin_lower_validation
 ---------------------------------------------------------
@@ -4318,31 +4383,37 @@ UNION ALL
 SELECT '119.1'::text number,
        'TT_pc02_countOfNotNull'::text function_tested,
        'Basic pass 1'::text description,
-       TT_pc02_countOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 7 passed
+       TT_pc02_countOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '15') = 7 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.2'::text number,
        'TT_pc02_countOfNotNull'::text function_tested,
        'Basic pass 2'::text description,
-       TT_pc02_countOfNotNull(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '2', '3', '4', '5', '6', '7', NULL::text, 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 7 passed
+       TT_pc02_countOfNotNull(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '2', '3', '4', '5', '6', '7', NULL::text, 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '15') = 7 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.3'::text number,
        'TT_pc02_countOfNotNull'::text function_tested,
        'Basic pass 3'::text description,
-       TT_pc02_countOfNotNull('AL', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '', '', '', '', '', '', 'Z', 'translation', 'species_code_mapping', 'pc02_species_codes', '15') = 3 passed
+       TT_pc02_countOfNotNull('AL', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '', '', '', '', '', '', 'Z', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '15') = 3 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.4'::text number,
        'TT_pc02_countOfNotNull'::text function_tested,
        'Basic pass 3'::text description,
-       TT_pc02_countOfNotNull('AL', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '', '', '', '', '', '', 'Z', 'translation', 'species_code_mapping', 'pc02_species_codes', '14') = 2 passed
+       TT_pc02_countOfNotNull('AL', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '1', '', '', '', '', '', '', 'Z', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '14') = 2 passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '119.5'::text number,
        'TT_pc02_countOfNotNull'::text function_tested,
        'Zero count'::text description,
-       TT_pc02_countOfNotNull(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '14') = 0 passed
+       TT_pc02_countOfNotNull(NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '', '', '', '', '', '', '', '', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '14') = 0 passed
+---------------------------------------------------------
+UNION ALL
+SELECT '119.6'::text number,
+       'TT_pc02_countOfNotNull'::text function_tested,
+       'Species absent from lookup is not counted'::text description,
+       TT_pc02_countOfNotNull('NOT_A_SPECIES', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '', '', '', '', '', '', '', '', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '15') = 0 passed
 ---------------------------------------------------------
  -- TT_pc02_hasCountOfNotNull
 ---------------------------------------------------------
@@ -4350,25 +4421,31 @@ UNION ALL
 SELECT '120.1'::text number,
        'TT_pc02_hasCountOfNotNull'::text function_tested,
        'Basic pass 1'::text description,
-       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '7', 'TRUE') passed
+       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '7', 'TRUE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '120.2'::text number,
        'TT_pc02_hasCountOfNotNull'::text function_tested,
        'Basic fail 1'::text description,
-       TT_pc02_hasCountOfNotNull(NULL::text, 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '7', 'FALSE') IS FALSE passed
+       TT_pc02_hasCountOfNotNull(NULL::text, 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '7', 'FALSE') IS FALSE passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '120.3'::text number,
        'TT_pc02_hasCountOfNotNull'::text function_tested,
        'Basic pass 2'::text description,
-       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '1', 'FALSE') passed
+       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '1', 'FALSE') passed
 ---------------------------------------------------------
 UNION ALL
 SELECT '120.4'::text number,
        'TT_pc02_hasCountOfNotNull'::text function_tested,
        'Basic fail 2'::text description,
-       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'translation', 'species_code_mapping', 'pc02_species_codes', '1', 'TRUE') IS FALSE passed
+       TT_pc02_hasCountOfNotNull('AL', 'AL', 'AL', 'AL', 'AL', 'AL', 'AL', '', '', '', '', '', '', '', '', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '1', 'TRUE') IS FALSE passed
+---------------------------------------------------------
+UNION ALL
+SELECT '120.5'::text number,
+       'TT_pc02_hasCountOfNotNull'::text function_tested,
+       'Species absent from lookup cannot satisfy minimum count'::text description,
+       TT_pc02_hasCountOfNotNull('NOT_A_SPECIES', NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, NULL::text, '', '', '', '', '', '', '', '', 'casfri50_unittest', 'test_lookup_pc02_species', 'pc02_species_codes', '1', 'FALSE') IS FALSE passed
 ---------------------------------------------------------
  -- TT_yt_wetland_translation
 ---------------------------------------------------------
