@@ -334,7 +334,7 @@ All three tasks below require the [Common setup](#common-setup) section. Complet
 
 ## Common setup
 
-### Prepare required software and configuration variables
+### 1) Prepare required software and configuration variables
 
 Set up the required software and configuration variables before running the database scripts:
 
@@ -348,7 +348,7 @@ Set up the required software and configuration variables before running the data
 
 - Use pgAdmin or `psql` to run SQL files.
 
-### Open a Git Bash command window
+### 2) Open a Git Bash command window
 
 On Windows, open the Start menu, type **Git Bash**, and select the Git Bash application. If the shortcut is unavailable, open File Explorer and double-click `C:\Program Files\Git\git-bash.exe` on this computer. Git Bash is included with Git for Windows; if it is not installed on another computer, install Git for Windows before continuing.
 
@@ -368,7 +368,7 @@ Press **Up Arrow** to recall the last command. Edit it if needed, then press **E
 
 Keep the window open for later Bash examples. Start each example from the main CASFRI folder unless a different folder is specified. If you close the window, open Git Bash again and repeat the folder-navigation commands above. If you have moved to another folder, use `cd /d/CASFRI` to return before starting the next example. Run any `source ./common.sh` line included in an example as well; it reads the configuration variables needed by that example.
 
-### Install the PostgreSQL Table Translation Framework
+### 3) Install the PostgreSQL Table Translation Framework
 
 Install and test the framework in the database you will use for CASFRI:
 
@@ -382,7 +382,7 @@ Install and test the framework in the database you will use for CASFRI:
 
 - Run the framework's `engineTest.sql`, `helperFunctionsTest.sql`, and `helperFunctionsGISTest.sql` to test the installation.
 
-### Install or replace the CASFRI helper functions
+### 4) Install or replace the CASFRI helper functions
 
 These database functions complement the PostgreSQL Table Translation Framework helper functions with CASFRI-specific validation and translation functions. Use the following instructions for a new database or to update an existing one:
 
@@ -399,6 +399,8 @@ These database functions complement the PostgreSQL Table Translation Framework h
 - Check for errors, then execute the entire [helperFunctionsCASFRI.sql](helperfunctions/helperFunctionsCASFRI.sql) file again to reinstall the functions and procedures.
 
 - **After either installation or reinstallation:** execute [helperFunctionsCASFRITest.sql](helperfunctions/helperFunctionsCASFRITest.sql). A successfull test should display no rows. Review and resolve any failed tests before translating inventories.
+
+### 5) Validate and load required definition tables
 
 For every new inventory being translated, verify these three requirements:
 
@@ -439,7 +441,7 @@ For a short, temporary selection, such as reprocessing inventories that failed a
 
 Most processing scripts also accept inventory identifiers on the command line. This is usefull if you need to reconvert or retranslate only a couple of inventories. The script always gives you the opprtunity to review and confirm the list that will be processed before continuing. This overrides method 1 and method 2.
 
-### 3) Set how many processes can run at the same time
+### 3) Set how many conversion and translation can run at the same time
 
 Adjust `maxConversionInParallel`, `maxTestsInParallel`, `maxTranslationsInParallel`, and `maxGeoHistoryInParallel` in `config.sh` to suit the computer's CPU cores, available memory, and disk capacity. Conversion and historical processing involve substantial disk access and computation, so their maximums should be lower than the translation and test maximums. For each process, batch scripts start separate command processes up to the configured maximum and automatically start another one as soon as one finishes.
 
@@ -455,43 +457,47 @@ The `photoYearList` configuration variable identifies specific scripts loading s
 
 ### 6) Check the converted record counts
 
-Review the counts of converted/loaded polygons displayed at the end of conversion. They are compared with expected counts defined in the `CONVERTED_STAND_CNT` column of the [inventory_metadata.csv](metadata/inventory_metadata.csv) table. This count takes some time. You can prevent the count to be processed by setting `postProcessing` in `config.sh` to False. You can also run only the counts by setting `postProcessingOnly` to True in the same file. Another way to check for the counts is execute the `SELECT * FROM TT_ConvertedStandCount();` SQL query directly in the database. You can restrict the list of inventory for which to produce a count like this: `SELECT * FROM TT_ConvertedStandCount(ARRAY['AB03', 'AB06']);`.Investigate and resolve unexpected differences before continuing.
+Review the counts of converted/loaded polygons displayed at the end of conversion. They are compared with expected counts defined in the `CONVERTED_STAND_CNT` column of the [inventory_metadata.csv](metadata/inventory_metadata.csv) table.
 
-### 7) Load the translation tables
+This count takes some time when it is done over many inventories. You can prevent the count to be processed by setting `postProcessing` in `config.sh` to False. You can also run only the counts by setting `postProcessingOnly` to True in the same file. Another way to check for the counts is execute the `SELECT * FROM TT_ConvertedStandCount();` SQL query directly in the database. You can restrict the list of inventory for which to produce a count like this: `SELECT * FROM TT_ConvertedStandCount(ARRAY['AB03', 'AB06']);`.
 
-Run [./load_tables.sh](translation/load_tables.sh) from the `translation/` folder to load the translation tables in the database.
+Investigate and resolve unexpected differences before continuing.
 
-### 8) Check sample test translations before launching the full translation
+### 7) Check sample test translations before launching the full translation
 
 Run [./test_translation.sh](translation/test/test_translation.sh) for the selected inventories. It runs `CALL TT_RunAllTests('$prov', '$casTable');` for each select inventory and each CAFRI table, writes results to the `casfri50_test` database schema, and exports CSVs for comparison with expected results. Resolve unexplained differences. See the [translation test instructions](translation/test/readme.md) for detailed instructions about these tests.
     
-### 9) Create the CASFRI tables and translate all selected inventories
+### 8) Create the CASFRI tables and translate all selected inventories
 
 From `workflow/02_produceCASFRI`, run [./01_createCASFRITables.sh](workflow/02_produceCASFRI/01_createCASFRITables.sh), then [./02_translateAll.sh](workflow/02_produceCASFRI/02_translateAll.sh). **CAUTION: 01_createCASFRITables.sh deletes and recreates all the CASFRI tables; use it only when existing tables can be discarded.**
 
-### 10) Check the translated record counts
+### 9) Check the translated record counts
 
-Review the counts displayed at the end of translation. They are compared with the expected counts in the `CAS_ROW_CNT`, `DST_ROW_CNT`, `ECO_ROW_CNT`, `LYR_ROW_CNT`, `NFL_ROW_CNT`, and `GEO_ROW_CNT` columns of [inventory_metadata.csv](metadata/inventory_metadata.csv). Counting can take time. To skip it during translation, set `postProcessing=False` and keep `postProcessingOnly=False` in `config.sh`. To run only the counts, set `postProcessingOnly=True` and rerun [./02_translateAll.sh](workflow/02_produceCASFRI/02_translateAll.sh) from `workflow/02_produceCASFRI`. Alternatively, you can execute the `SELECT * FROM TT_TranslatedRowCount();` SQL query directly in the database. You can restrict the list of inventory on which to produce a count like this: `SELECT * FROM TT_TranslatedRowCount(ARRAY['AB03', 'AB06']);`. Investigate and resolve unexpected differences before continuing, and explain any changes before updating expected counts.
+Review the counts displayed at the end of translation. They are compared with the expected counts in the `CAS_ROW_CNT`, `DST_ROW_CNT`, `ECO_ROW_CNT`, `LYR_ROW_CNT`, `NFL_ROW_CNT`, and `GEO_ROW_CNT` columns of [inventory_metadata.csv](metadata/inventory_metadata.csv).
 
-### 11) Apply constraints, create indexes, and run additional checks
+Counting can take time when it is done over many inventories. To skip it during translation, set `postProcessing=False` and keep `postProcessingOnly=False` in `config.sh`. To run only the counts, set `postProcessingOnly=True` and rerun [./02_translateAll.sh](workflow/02_produceCASFRI/02_translateAll.sh) from `workflow/02_produceCASFRI`. Alternatively, you can execute the `SELECT * FROM TT_TranslatedRowCount();` SQL query directly in the database. You can restrict the list of inventory on which to produce a count like this: `SELECT * FROM TT_TranslatedRowCount(ARRAY['AB03', 'AB06']);`.
 
-Run `01_addConstraints.sql`, `01_addGeoConstraints.sql`, `02_addIndexes.sql`, and `03_additionalChecks.sql` in [03_ConstraintsChecksAndIndexes](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes). Review the applied constraints and investigate and resolve any failures or unexpected results. Make sure a GitHub issue exist for each constraint that fails and remains unresolved, and add its issue number to that constraint's description in the SQL script. Remove the issue reference when it is resolved and the constraint passes.
+Investigate and resolve unexpected differences before continuing, and explain any changes before updating expected counts.
 
-### 12) Produce both denormalized (flat) tables
+### 10) Apply constraints, create indexes, and run additional checks
 
-Run [./01_all_layers_same_row.sh](workflow/03_flatCASFRI/01_all_layers_same_row.sh) and [./03_one_layer_per_row.sh](workflow/03_flatCASFRI/03_one_layer_per_row.sh), or their corresponding SQL files. They create Materialised Views of the denormalized (flat) tables in the `casfri50_flat` schema. The first View models the first two forested layers in the same stand row. The second View models each stand layer in separate rows. The first View supplies the base table for the geo-historical process. Test the resulting Views with [02_all_layers_same_row_test.sql](workflow/03_flatCASFRI/02_all_layers_same_row_test.sql) for the table with layers on the same row and [04_one_layer_per_row_test.sql](workflow/03_flatCASFRI/04_one_layer_per_row_test.sql) for the table with one layer per row. Those tests check the number of rows produced. Review the test results and resolve any unexpected differences before continuing.
+Run `01_addConstraints.sql`, `01_addGeoConstraints.sql`, `02_addIndexes.sql`, and `03_additionalChecks.sql` [03_ConstraintsChecksAndIndexes](workflow/02_produceCASFRI/03_ConstraintsChecksAndIndexes) in pgAdmin or using the psql client. Review the applied constraints and investigate and resolve any failures or unexpected results. Make sure a GitHub issue exist for each constraint that fails and remains unresolved, and add its issue number to that constraint's description in the SQL script. Remove the issue reference when it is resolved and the constraint passes.
 
-### 13) Produce the geo-historical table
+### 11) Produce both denormalized (flat) tables
 
-Execute [geohistory.sql](helperfunctions/geohistory/geohistory.sql) in the database in order to define the necessary functions, then run [./01_PrepareGeoHistory.sh](workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sh) and [./02_ProduceGeoHistory.sh](workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sh) from the `workflow/04_produceHistoricalTable` folder. These scripts prepare the grid and historical tables and process the selected inventories into `casfri50_history`. Have a look at the [CASFRI Geo-Historical Table](#casfri-geo-historical-table) section for more details about the geohistory table. CAUTION: Production of the geohistory table might take a long time.
+Run [./01_all_layers_same_row.sh](workflow/03_flatCASFRI/01_all_layers_same_row.sh) and [./03_one_layer_per_row.sh](workflow/03_flatCASFRI/03_one_layer_per_row.sh) from the [workflow/03_flatCASFRI](workflow/03_flatCASFRI) folder in bash, or their corresponding SQL files in pgAdmin or using the psql client. They create Materialised Views of the denormalized (flat) tables in the `casfri50_flat` schema. The first View models the first two forested layers in the same stand row. The second View models each stand layer in separate rows. The first View supplies the base table for the geo-historical process. Test the resulting Views with [02_all_layers_same_row_test.sql](workflow/03_flatCASFRI/02_all_layers_same_row_test.sql) for the table with layers on the same row and [04_one_layer_per_row_test.sql](workflow/03_flatCASFRI/04_one_layer_per_row_test.sql) for the table with one layer per row. Those tests check the number of rows produced. Review the test results and resolve any unexpected differences before continuing.
+
+### 12) Produce the geo-historical table
+
+Execute [geohistory.sql](helperfunctions/geohistory/geohistory.sql) from the [workflow/04_produceHistoricalTable](workflow/04_produceHistoricalTable) folder in the database in order to define the necessary functions, then run [./01_PrepareGeoHistory.sh](workflow/04_produceHistoricalTable/01_PrepareGeoHistory.sh) and [./02_ProduceGeoHistory.sh](workflow/04_produceHistoricalTable/02_ProduceGeoHistory.sh) from the `workflow/04_produceHistoricalTable` folder. These scripts prepare the grid and historical tables and process the selected inventories into `casfri50_history`. Have a look at the [CASFRI Geo-Historical Table](#casfri-geo-historical-table) section for more details about the geohistory table. CAUTION: Production of the geohistory table might take a long time.
 
 Test the geohistory table: from `helperfunctions/geohistory/` run [./load_test_tables.sh](helperfunctions/geohistory/load_test_tables.sh) and [./load_test_tables_with_inv_data.sh](helperfunctions/geohistory/load_test_tables_with_inv_data.sh). Run [helperfunctions/geohistory/geohistory_test.sql](helperfunctions/geohistory/geohistory_test.sql), [helperfunctions/geohistory/geohistory_test_with_inv_data.sql](helperfunctions/geohistory/geohistory_test_with_inv_data.sql), and [helperfunctions/geohistory/geohistory_test_with_inv_data_gridded.sql](helperfunctions/geohistory/geohistory_test_with_inv_data_gridded.sql) in pgAdmin or `psql`. These three scripts do not have .sh wrapper scripts yet. Then run [./dump_test_tables_with_inv_data.sh](helperfunctions/geohistory/dump_test_tables_with_inv_data.sh), compare its output with archived tables, and explain differences before accepting updated files.
 
-### 14) Produce inventory coverage maps
+### 13) Produce inventory coverage maps
 
 Run [./03_ProduceInventoryCoverages.sh](workflow/04_produceHistoricalTable/03_ProduceInventoryCoverages.sh) from the `workflow/04_produceHistoricalTable` folder to create the inventory coverage tables in `casfri50_coverage`.
 
-### 15) Record the completed build
+### 14) Record the completed build
 
 Investigate count discrepancies; update expected metadata counts only after confirming and documenting the correct values. Create GitHub issues for failed test results and other problems. Review, commit, and push any valid changes to GitHub. Follow [Produce a new release](#produce-a-new-release) only when a published version number is required.
 
@@ -582,7 +588,7 @@ The [Common setup](#common-setup) section covers framework and helper-function i
 
 In the test database, run `SELECT TT_DropAllTranslateFct();`, execute [helperfunctions/helperFunctionsCasfriUninstall.sql](helperfunctions/helperFunctionsCasfriUninstall.sql), then `DROP EXTENSION table_translation_framework;`. Check the `public` schema for remaining `TT_` functions and add any that remain to the appropriate uninstall script. Reinstall the extension with `CREATE EXTENSION table_translation_framework;`, rerun its tests, and reinstall and test the CASFRI helper functions as described in Common setup.
 
-Double check the results of translation tests, counts, constraints, and flat-table tests from steps 8 and 10–12 of [Build the whole database from scratch](#build-the-whole-database-from-scratch). Compare translation-test CSVs with accepted files, explain differences, and resolve unexpected results. See the [translation-test README](translation/test/readme.md) for details about those tests.
+Double check the results of translation tests, counts, constraints, and flat-table tests from steps 7 and 9–11 of [Build the whole database from scratch](#build-the-whole-database-from-scratch). Compare translation-test CSVs with accepted files, explain differences, and resolve unexpected results. See the [translation-test README](translation/test/readme.md) for details about those tests.
 
 ### 4) Resolve release-blocking problems
 
