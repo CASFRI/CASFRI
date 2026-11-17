@@ -1035,7 +1035,9 @@ RETURNS geometry AS $$
       RAISE NOTICE 'TT_TrimSubPolygons() - Final union with ST_BuildArea(ST_UnaryUnion())...';
     END IF;
     outGeom := ST_BuildArea(ST_UnaryUnion(outGeom));
-    RAISE NOTICE 'TT_TrimSubPolygons() - % subpolygons, % parts removed...', lpad(nbPoly::text, 3, ' '), lpad((nbPoly - ST_NumGeometries(ST_Multi(outGeom)))::text, 3, ' ');
+    IF progress THEN
+      RAISE NOTICE 'TT_TrimSubPolygons() - % subpolygons, % parts removed...', lpad(nbPoly::text, 3, ' '), lpad((nbPoly - ST_NumGeometries(ST_Multi(outGeom)))::text, 3, ' ');
+    END IF;
 
     RETURN outGeom;
   END;

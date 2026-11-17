@@ -143,6 +143,7 @@ FROM casfri50_flat.cas_flat_all_layers_same_row;
 -- Parallel unsafe version using some RAISE NOTICE and nextval() to display cas_id of failing polygons.
 -- We still prefer this version as it also display progress messages every 10000 polygons.
 -- Better being a bit slow with some feedback then fast without...
+CREATE TABLE casfri50_history.casflat_gridded AS
 WITH cnt_and_start AS (
   SELECT count(*) cnt, clock_timestamp() start_time
   FROM casfri50_flat.cas_flat_all_layers_same_row

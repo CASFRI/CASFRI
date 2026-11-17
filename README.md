@@ -421,6 +421,20 @@ Conversion, translation, production of the geo-historical table and production o
 
 The Bash batch scripts below run separate processing jobs in parallel on the same computer. Where corresponding SQL scripts are provided, you can run them individually for closer monitoring and troubleshooting. The numbered steps give the processing order; the parallel configuration variables control how many jobs run together within each stage.
 
+### Building from scratch using an AI assistant
+
+Before using the prompt, copy [config_sample.sh](config_sample.sh) to `config.sh` if it does not already exist, then configure it as described in [Common setup](#common-setup).
+
+Open both repositories as workspace folders in Visual Studio Code or Positron, make sure the assistant have full access to PostgreSQL and adapt the selection column and source path in this example prompt:
+
+> Read all Markdown files in both workspace folders and follow the complete procedure to build a new database from scratch. Use the existing `config.sh` file and the `.sh` scripts as much as possible.
+>
+> Import the inventories marked `YES` in the selection column of the `inventory_metadata` table specified by `metadataTableLoadingColumn` in `config.sh`. Leave `fullList` undefined. Source data is the folder specified by the  `friDir` variable; do not modify anything in this folder.
+>
+> Read the previous build report, if available, and use its lessons to avoid repeating known problems.
+>
+> Write a report with a problems table containing: No., Main step (description followed by its number in parentheses), Problem, Action / resolution, Status, Priority, and TODO. Assign priority "high" to quick fixes and substantive defects even when complex; use "medium" or "low" for other actionable TODOs and "N/A" for rows marked "AI assistant can handle the situation". In TODO, describe the code change needed to prevent recurrence; otherwise write "AI assistant can handle the situation". Include a separate timing table with Step, Start, Seconds, and Result.
+
 ### 1) Create and configure a new database
 
 Create an empty PostgreSQL database and complete the [Common setup](#common-setup) section from the main README for it.

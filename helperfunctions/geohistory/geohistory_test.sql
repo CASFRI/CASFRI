@@ -108,16 +108,18 @@ RETURNS boolean AS $$
         RETURN FALSE;
       END IF;
     END IF;
-    IF inv1 != inv2 THEN
-      RAISE NOTICE 'inv1 (%) % precedence over inv2 (%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2) 
-                                                                     THEN 'has' 
-                                                                     ELSE 'does not have'
-                                                                END, inv2;
-    ELSE
-      RAISE NOTICE 'uid1 (%) % precedence over uid2 (%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2) 
-                                                                     THEN 'has' 
-                                                                     ELSE 'does not have'
-                                                                END, uid2;
+    IF TT_Debug(1) THEN
+      IF inv1 != inv2 THEN
+        RAISE NOTICE 'inv1 (%) % precedence over inv2 (%)', inv1, CASE WHEN (numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)
+                                                                       THEN 'has'
+                                                                       ELSE 'does not have'
+                                                                  END, inv2;
+      ELSE
+        RAISE NOTICE 'uid1 (%) % precedence over uid2 (%)', uid1, CASE WHEN (numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)
+                                                                       THEN 'has'
+                                                                       ELSE 'does not have'
+                                                                  END, uid2;
+      END IF;
     END IF;
     RETURN ((numInv AND inv1::decimal > inv2::decimal) OR (NOT numInv AND inv1 > inv2)) OR 
             (inv1 = inv2 AND ((numUid AND uid1::decimal > uid2::decimal) OR (NOT numUid AND uid1 > uid2)));
