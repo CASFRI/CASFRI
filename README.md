@@ -431,6 +431,8 @@ Open both repositories as workspace folders in Visual Studio Code or Positron, m
 >
 > Import the inventories marked `YES` in the selection column of the `inventory_metadata` table specified by `metadataTableLoadingColumn` in `config.sh`. Leave `fullList` undefined. Source data is the folder specified by the  `friDir` variable; do not modify anything in this folder.
 >
+> Do not write or expose information that could compromise the security of the machine hosting the database. Keep credentials and other secrets out of reports, logs, generated files and version control; redact sensitive command output before displaying or saving it.
+>
 > Read the previous build report, if available, and use its lessons to avoid repeating known problems.
 >
 > Write a report with a problems table containing: No., Main step (description followed by its number in parentheses), Problem, Action / resolution, Status, Priority, and TODO. Assign priority "high" to quick fixes and substantive defects even when complex; use "medium" or "low" for other actionable TODOs and "N/A" for rows marked "AI assistant can handle the situation". In TODO, describe the code change needed to prevent recurrence; otherwise write "AI assistant can handle the situation". Include a separate timing table with Step, Start, Seconds, and Result.

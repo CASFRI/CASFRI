@@ -1,18 +1,19 @@
-# Fresh CASFRI database build - 2026-11-16
+# Fresh CASFRI test database build - 2026-11-16
 
 ## Scope and safeguards
 
+- **Purpose: test build only.** This run exercised the full workflow on four inventories; it was not a production deployment or release. References below to production functions or outputs describe the normal workflow used within this test database.
 - Requested inventories: **AB03, AB06, AB07, AB08 only**.
 - Existing local configuration: `config.sh`; target `casfri_ai`, localhost port 5435.
 - The target database did not exist at preflight. Existing databases were not dropped or changed.
-- `E:\Fris` is read-only input for this work: no extraction, renaming, editing, or output is directed there.
+- The source directory configured by `friDir` is read-only input for this work: no extraction, renaming, editing, or output is directed there.
 - Read all 11 pre-existing Markdown files in the two workspaces. Follow the main README's **Build the whole database from scratch**, including common setup, checks, both flat tables, history, and coverages. Archived inventory-update and release instructions are context, not authorization to publish or commit.
 - Preserve the three pre-existing edits in geohistory functions, geohistory tests, and historical preparation SQL.
 - Keep credentials out of logs. Run existing shell scripts wherever practical, capturing their output and independently checking database results rather than trusting exit codes alone.
 
 ## Status
 
-**Completed**, with the test-compatibility and numerical-geometry caveats documented below.
+**Test build completed**, with the test-compatibility and numerical-geometry caveats documented below.
 
 - Database: **casfri_ai**, localhost:5435, using the existing local configuration.
 - PostgreSQL 13.12; PostGIS 3.4.0; GEOS 3.12.0. GDAL 3.13.3 was used for loading.
@@ -332,5 +333,4 @@ Measured invocations total **1,113.35 seconds** (18 minutes 33.35 seconds), plus
 - The three pre-existing source edits remain untouched. No new implementation changes were made to compensate for the stale assertions. Updating those tests to compare allowed row patterns, current explicit bounds, error semantics and topological geometry is recommended separately.
 - No accepted regression CSVs, source inventories, README, metadata expected counts or translation rules were changed. No commits, pushes or releases were performed.
 - No new GitHub issues were created. Every applied data constraint passed; pre-existing test-assertion incompatibilities and the archived cross-province regression limitation are preserved explicitly in this report rather than being presented as successful tests.
-- Detailed redacted logs, timing CSV, original/generated test comparisons, SQL verification scripts and source manifests/hashes are retained in the session evidence folder:
-  `C:\Users\pirac25\.copilot\session-state\64cf30a0-3aaa-40ab-b78e-d92a16f91595\files`.
+- Detailed redacted logs, timing CSV, original/generated test comparisons, SQL verification scripts and source manifests/hashes are retained in a local evidence directory outside the repository.
